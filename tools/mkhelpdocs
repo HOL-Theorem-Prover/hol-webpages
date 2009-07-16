@@ -1,0 +1,60 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]
+then
+        echo "Usage: $0 <releasename> <holdir>" >&2
+        exit 1
+fi
+
+release=$1
+shift
+holdir=$1
+shift
+
+if [ -w $release-helpdocs ]
+then
+    echo "Deleting existing $release-helpdocs directory"
+    /bin/rm -rf $release-helpdocs
+fi
+
+echo "Making directory $release-helpdocs"
+mkdir $release-helpdocs
+
+echo "Copying across help directory"
+cp -R $holdir/help $release-helpdocs
+
+# first deal with the help side of things
+pushd $release-helpdocs/help
+/bin/rm -r template HOL.Help
+
+# correct urls in HOLindex.html
+echo "Correcting URLs in HOLindex.html"
+perl -p -i -e 's|file:///.*help/src-sml/htmlsigs|src-sml/htmlsigs|g;' HOLindex.html
+
+# clean up src-sml a bit
+cd src-sml
+echo "Cleaning out source code in src-sml"
+/bin/rm -f *.sml *.ML *.lex *.sig Holmakefile
+
+
+# correct urls in htmlsigs
+echo "Correcting htmlsigs URLs"
+cd htmlsigs
+perl -p -i -e 's|file:///.*?src/|../../../src/|g;
+               s|file:///.*?help/Docfiles/|../../Docfiles/|g;
+               s|(<a href=".*\.sml")|\1 type="text/plain"|gi;' *.html
+
+# clear up help/Docfiles
+cd ../../Docfiles
+rm *.doc *.adoc
+
+# now bring across src
+
+popd
+echo "Copying across src/"
+cp -R $holdir/src $release-helpdocs
+
+echo "Purging copied directories"
+find . -regex '.*HOLMK\|.*\.svn' -exec /bin/rm -rf \{\} \; -prune
+find . -regex '.*\.u[oi]\|.*Theory\.sml\|.*\.exe\|.*svn.*tmp\|.*~\|.*Holmakefile' -delete
+find $release-helpdocs/src -regex '.*Manual\|.*help\|.*examples' -execdir /bin/rm -rf \{\} \; -prune
