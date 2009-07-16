@@ -1,0 +1,188 @@
+<HTML>
+<HEAD><TITLE>Theory: quotient_option</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "quotient_option"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "quotientTheory.html"><STRONG><font color="black">quotient</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">OPTION_REL</font></STRONG>
+                                         <td>
+                                         :('a -> 'a -> bool) ->
+                                          'a option -> 'a option -> bool
+    <tr><td>
+        <STRONG><font color="black">OPTION_REL_tupled</font></STRONG>
+        <td>
+        :('a -> 'a -> bool) # 'a option # 'a option -> bool
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">OPTION_REL_tupled_primitive_def</font></STRONG>
+<DD>
+<PRE>
+|- OPTION_REL_tupled =
+   WFREC (@R'. WF R')
+     (\OPTION_REL_tupled a.
+        case a of
+           (R,NONE,NONE) -> I T
+        || (R,NONE,SOME y) -> I F
+        || (R,SOME x,NONE) -> I F
+        || (R,SOME x,SOME y') -> I (R x y'))
+</PRE>
+
+<DT><STRONG><font color="black">OPTION_REL_curried_def</font></STRONG>
+<DD>
+<PRE>
+|- !x x1 x2. OPTION_REL x x1 x2 <=> OPTION_REL_tupled (x,x1,x2)
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">OPTION_MAP_I</font></STRONG>
+<DD>
+<PRE>
+|- OPTION_MAP I = I
+</PRE>
+
+<DT><STRONG><font color="black">OPTION_REL_ind</font></STRONG>
+<DD>
+<PRE>
+|- !P.
+     (!R. P R NONE NONE) /\ (!R x. P R (SOME x) NONE) /\
+     (!R y. P R NONE (SOME y)) /\ (!R x y. P R (SOME x) (SOME y)) ==>
+     !v v1 v2. P v v1 v2
+</PRE>
+
+<DT><STRONG><font color="black">OPTION_REL_def</font></STRONG>
+<DD>
+<PRE>
+|- (OPTION_REL R NONE NONE <=> T) /\ (OPTION_REL R (SOME x) NONE <=> F) /\
+   (OPTION_REL R NONE (SOME y) <=> F) /\
+   (OPTION_REL R (SOME x) (SOME y) <=> R x y)
+</PRE>
+
+<DT><STRONG><font color="black">OPTION_REL_EQ</font></STRONG>
+<DD>
+<PRE>
+|- OPTION_REL $= = $=
+</PRE>
+
+<DT><STRONG><font color="black">OPTION_EQUIV</font></STRONG>
+<DD>
+<PRE>
+|- !R. EQUIV R ==> EQUIV (OPTION_REL R)
+</PRE>
+
+<DT><STRONG><font color="black">OPTION_QUOTIENT</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     QUOTIENT (OPTION_REL R) (OPTION_MAP abs) (OPTION_MAP rep)
+</PRE>
+
+<DT><STRONG><font color="black">NONE_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> (NONE = OPTION_MAP abs NONE)
+</PRE>
+
+<DT><STRONG><font color="black">NONE_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> OPTION_REL R NONE NONE
+</PRE>
+
+<DT><STRONG><font color="black">SOME_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==> !x. SOME x = OPTION_MAP abs (SOME (rep x))
+</PRE>
+
+<DT><STRONG><font color="black">SOME_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==> !x y. R x y ==> OPTION_REL R (SOME x) (SOME y)
+</PRE>
+
+<DT><STRONG><font color="black">IS_SOME_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==> !x. IS_SOME x <=> IS_SOME (OPTION_MAP rep x)
+</PRE>
+
+<DT><STRONG><font color="black">IS_SOME_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !x y. OPTION_REL R x y ==> (IS_SOME x <=> IS_SOME y)
+</PRE>
+
+<DT><STRONG><font color="black">IS_NONE_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==> !x. IS_NONE x <=> IS_NONE (OPTION_MAP rep x)
+</PRE>
+
+<DT><STRONG><font color="black">IS_NONE_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !x y. OPTION_REL R x y ==> (IS_NONE x <=> IS_NONE y)
+</PRE>
+
+<DT><STRONG><font color="black">OPTION_MAP_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !a f.
+         OPTION_MAP f a =
+         OPTION_MAP abs2 (OPTION_MAP ((abs1 --> rep2) f) (OPTION_MAP rep1 a))
+</PRE>
+
+<DT><STRONG><font color="black">OPTION_MAP_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !a1 a2 f1 f2.
+         (R1 ===> R2) f1 f2 /\ OPTION_REL R1 a1 a2 ==>
+         OPTION_REL R2 (OPTION_MAP f1 a1) (OPTION_MAP f2 a2)
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>

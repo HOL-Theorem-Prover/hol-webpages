@@ -1,0 +1,218 @@
+<HTML>
+<HEAD><TITLE>Theory: quotient_sum</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "quotient_sum"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "quotientTheory.html"><STRONG><font color="black">quotient</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">+++</font></STRONG>
+                                         <td>
+                                         :('a -> 'a -> bool) ->
+                                          ('b -> 'b -> bool) ->
+                                          'a + 'b -> 'a + 'b -> bool
+    <tr><td>
+        <STRONG><font color="black">SUM_REL_tupled</font></STRONG>
+        <td>
+        :('a -> 'a -> bool) # ('b -> 'b -> bool) # ('a + 'b) # ('a + 'b) ->
+         bool
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">SUM_REL_tupled_primitive_def</font></STRONG>
+<DD>
+<PRE>
+|- SUM_REL_tupled =
+   WFREC (@R. WF R)
+     (\SUM_REL_tupled a.
+        case a of
+           (R1,R2,INL a1,INL a2) -> I (R1 a1 a2)
+        || (R1,R2,INL a1,INR b2') -> I F
+        || (R1,R2,INR b1,INL a2') -> I F
+        || (R1,R2,INR b1,INR b2) -> I (R2 b1 b2))
+</PRE>
+
+<DT><STRONG><font color="black">SUM_REL_curried_def</font></STRONG>
+<DD>
+<PRE>
+|- !x x1 x2 x3. (x +++ x1) x2 x3 <=> SUM_REL_tupled (x,x1,x2,x3)
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">SUM_REL_ind</font></STRONG>
+<DD>
+<PRE>
+|- !P.
+     (!R1 R2 a1 a2. P R1 R2 (INL a1) (INL a2)) /\
+     (!R1 R2 b1 b2. P R1 R2 (INR b1) (INR b2)) /\
+     (!R1 R2 a1 b2. P R1 R2 (INL a1) (INR b2)) /\
+     (!R1 R2 b1 a2. P R1 R2 (INR b1) (INL a2)) ==>
+     !v v1 v2 v3. P v v1 v2 v3
+</PRE>
+
+<DT><STRONG><font color="black">SUM_REL_def</font></STRONG>
+<DD>
+<PRE>
+|- ((R1 +++ R2) (INL a1) (INL a2) <=> R1 a1 a2) /\
+   ((R1 +++ R2) (INR b1) (INR b2) <=> R2 b1 b2) /\
+   ((R1 +++ R2) (INL a1) (INR b2) <=> F) /\
+   ((R1 +++ R2) (INR b1) (INL a2) <=> F)
+</PRE>
+
+<DT><STRONG><font color="black">SUM_REL_EQ</font></STRONG>
+<DD>
+<PRE>
+|- $= +++ $= = $=
+</PRE>
+
+<DT><STRONG><font color="black">SUM_EQUIV</font></STRONG>
+<DD>
+<PRE>
+|- !R1 R2. EQUIV R1 ==> EQUIV R2 ==> EQUIV (R1 +++ R2)
+</PRE>
+
+<DT><STRONG><font color="black">SUM_QUOTIENT</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       QUOTIENT (R1 +++ R2) (abs1 ++ abs2) (rep1 ++ rep2)
+</PRE>
+
+<DT><STRONG><font color="black">INL_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==> !a. INL a = (abs1 ++ abs2) (INL (rep1 a))
+</PRE>
+
+<DT><STRONG><font color="black">INL_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !a1 a2. R1 a1 a2 ==> (R1 +++ R2) (INL a1) (INL a2)
+</PRE>
+
+<DT><STRONG><font color="black">INR_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==> !b. INR b = (abs1 ++ abs2) (INR (rep2 b))
+</PRE>
+
+<DT><STRONG><font color="black">INR_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !b1 b2. R2 b1 b2 ==> (R1 +++ R2) (INR b1) (INR b2)
+</PRE>
+
+<DT><STRONG><font color="black">ISL_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==> !a. ISL a <=> ISL ((rep1 ++ rep2) a)
+</PRE>
+
+<DT><STRONG><font color="black">ISL_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !a1 a2. (R1 +++ R2) a1 a2 ==> (ISL a1 <=> ISL a2)
+</PRE>
+
+<DT><STRONG><font color="black">ISR_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==> !a. ISR a <=> ISR ((rep1 ++ rep2) a)
+</PRE>
+
+<DT><STRONG><font color="black">ISR_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !a1 a2. (R1 +++ R2) a1 a2 ==> (ISR a1 <=> ISR a2)
+</PRE>
+
+<DT><STRONG><font color="black">SUM_MAP_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !R3 abs3 rep3.
+         QUOTIENT R3 abs3 rep3 ==>
+         !R4 abs4 rep4.
+           QUOTIENT R4 abs4 rep4 ==>
+           !f g.
+             f ++ g =
+             ((rep1 ++ rep3) --> (abs2 ++ abs4))
+               ((abs1 --> rep2) f ++ (abs3 --> rep4) g)
+</PRE>
+
+<DT><STRONG><font color="black">SUM_MAP_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !R3 abs3 rep3.
+         QUOTIENT R3 abs3 rep3 ==>
+         !R4 abs4 rep4.
+           QUOTIENT R4 abs4 rep4 ==>
+           !f1 f2 g1 g2.
+             (R1 ===> R2) f1 f2 /\ (R3 ===> R4) g1 g2 ==>
+             ((R1 +++ R3) ===> (R2 +++ R4)) (f1 ++ g1) (f2 ++ g2)
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>
