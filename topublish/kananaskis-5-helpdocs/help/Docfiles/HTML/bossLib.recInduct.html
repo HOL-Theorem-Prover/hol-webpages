@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>bossLib.recInduct</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>recInduct : thm -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Performs recursion induction.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An invocation </SPAN><SPAN class = "BRKT">recInduct&nbsp;thm</SPAN><SPAN class = "TEXT"> on a goal </SPAN><SPAN class = "BRKT">g</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">thm</SPAN><SPAN class = "TEXT"> is typically an
+induction scheme returned from an invocation of </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">Hol_defn</SPAN><SPAN class = "TEXT">,
+attempts to match the consequent of </SPAN><SPAN class = "BRKT">thm</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">g</SPAN><SPAN class = "TEXT"> and, if successful,
+then replaces </SPAN><SPAN class = "BRKT">g</SPAN><SPAN class = "TEXT"> by the instantiated antecedents of </SPAN><SPAN class = "BRKT">thm</SPAN><SPAN class = "TEXT">. The order of
+quantification of the goal should correspond with the order of
+quantification in the conclusion of </SPAN><SPAN class = "BRKT">thm</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">recInduct</SPAN><SPAN class = "TEXT"> fails if the goal is not universally quantified in a way
+corresponding with the quantification of the conclusion of </SPAN><SPAN class = "BRKT">thm</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Suppose we had introduced a function for incrementing a number until it
+no longer can be found in a given list:
+</SPAN><DIV class = "XMPL"><pre>
+   variant x L = if MEM x L then variant (x + 1) L else x
+</pre></DIV>
+<SPAN class = "TEXT">
+Typically </SPAN><SPAN class = "BRKT">Hol_defn</SPAN><SPAN class = "TEXT"> would be used to make such a definition, and some
+subsequent proof would be required to establish termination. Once that
+work was done, the specified recursion equations would be available as a
+theorem and, as well, a corresponding induction theorem would also be
+generated. In the case of </SPAN><SPAN class = "BRKT">variant</SPAN><SPAN class = "TEXT">, the induction theorem </SPAN><SPAN class = "BRKT">variant_ind</SPAN><SPAN class = "TEXT">
+is
+</SPAN><DIV class = "XMPL"><pre>
+   |- !P. (!x L. (MEM x L ==&gt; P (x + 1) L) ==&gt; P x L) ==&gt; !v v1. P v v1
+</pre></DIV>
+<SPAN class = "TEXT">
+Suppose now that we wish to prove that the variant with respect to a
+list is not in the list:
+</SPAN><DIV class = "XMPL"><pre>
+   ?- !x L. ~MEM (variant x L) L`,
+</pre></DIV>
+<SPAN class = "TEXT">
+One could try mathematical induction, but that won&rsquo;t work well, since
+</SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> gets incremented in recursive calls. Instead, induction with
+&lsquo;</SPAN><SPAN class = "BRKT">variant</SPAN><SPAN class = "TEXT">-induction&rsquo; works much better. </SPAN><SPAN class = "BRKT">recInduct</SPAN><SPAN class = "TEXT"> can be used to
+apply such theorems in tactic proof. For our example,  
+</SPAN><SPAN class = "BRKT">recInduct&nbsp;variant_ind</SPAN><SPAN class = "TEXT"> yields the goal
+</SPAN><DIV class = "XMPL"><pre>
+   ?- !x L. (MEM x L ==&gt; ~MEM (variant (x + 1) L) L) ==&gt; ~MEM (variant x L) L
+</pre></DIV>
+<SPAN class = "TEXT">
+A few simple tactic applications then prove this goal.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.Induct.html">Induct</A>,
+<A HREF = "bossLib.Induct_on.html">Induct_on</A>,
+<A HREF = "bossLib.completeInduct_on.html">completeInduct_on</A>,
+<A HREF = "bossLib.measureInduct_on.html">measureInduct_on</A>,
+<A HREF = "Prim_rec.INDUCT_THEN.html">INDUCT_THEN</A>,
+<A HREF = "bossLib.Cases.html">Cases</A>,
+<A HREF = "bossLib.Hol_datatype.html">Hol_datatype</A>,
+<A HREF = "proofManagerLib.g.html">g</A>,
+<A HREF = "proofManagerLib.e.html">e</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-5</div></BODY></HTML>

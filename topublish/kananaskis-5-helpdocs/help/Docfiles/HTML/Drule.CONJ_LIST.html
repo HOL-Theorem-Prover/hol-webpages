@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Drule.CONJ_LIST</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>CONJ_LIST : (int -&gt; thm -&gt; thm list)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Drule.html">Drule</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Extracts a list of conjuncts from a theorem (non-flattening version).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">CONJ_LIST</SPAN><SPAN class = "TEXT"> is the proper inverse of </SPAN><SPAN class = "BRKT">LIST_CONJ</SPAN><SPAN class = "TEXT">. Unlike </SPAN><SPAN class = "BRKT">CONJUNCTS</SPAN><SPAN class = "TEXT"> which
+recursively splits as many conjunctions as possible both to the left and to
+the right, </SPAN><SPAN class = "BRKT">CONJ_LIST</SPAN><SPAN class = "TEXT"> splits the top-level conjunction and then splits
+(recursively) only the right conjunct. The integer argument is required
+because the term </SPAN><SPAN class = "BRKT">tn</SPAN><SPAN class = "TEXT"> may itself be a conjunction. A list of </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> theorems is
+returned.
+</SPAN><DIV class = "XMPL"><pre>
+    A |- t1 /\ (t2 /\ ( ... /\ tn)...)
+   ------------------------------------  CONJ_LIST n (A |- t1 /\ ... /\ tn)
+    A |- t1   A |- t2   ...   A |- tn
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the integer argument (</SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">) is less than one, or if the input theorem
+has less than </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> conjuncts.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Suppose the identifier </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is bound to the theorem:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- (x /\ y) /\ z /\ w
+</pre></DIV>
+<SPAN class = "TEXT">
+Here are some applications of </SPAN><SPAN class = "BRKT">CONJ_LIST</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   - CONJ_LIST 0 th;
+   ! Uncaught exception: 
+   ! HOL_ERR
+
+   - CONJ_LIST 1 th;
+   &gt; val it = [[A] |- (x /\ y) /\ z /\ w] : thm list
+
+   - CONJ_LIST 2 th;
+   &gt; val it = [ [A] |- x /\ y,  [A] |- z /\ w] : thm list
+
+   - CONJ_LIST 3 th;
+   &gt; val it = [ [A] |- x /\ y,  [A] |- z,  [A] |- w] : thm list
+
+   - CONJ_LIST 4 th;
+   ! Uncaught exception: 
+   ! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Drule.BODY_CONJUNCTS.html">BODY_CONJUNCTS</A>,
+<A HREF = "Drule.LIST_CONJ.html">LIST_CONJ</A>,
+<A HREF = "Drule.CONJUNCTS.html">CONJUNCTS</A>,
+<A HREF = "Thm.CONJ.html">CONJ</A>,
+<A HREF = "Thm.CONJUNCT1.html">CONJUNCT1</A>,
+<A HREF = "Thm.CONJUNCT2.html">CONJUNCT2</A>,
+<A HREF = "Drule.CONJ_PAIR.html">CONJ_PAIR</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-5</div></BODY></HTML>

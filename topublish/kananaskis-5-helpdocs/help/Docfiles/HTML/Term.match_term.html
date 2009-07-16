@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Term.match_term</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>match_term : term -&gt; term -&gt; (term,term) subst * (hol_type,hol_type) subst</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Term.html">Term</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Finds instantiations to match one term to another.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An application </SPAN><SPAN class = "BRKT">match_term&nbsp;M&nbsp;N</SPAN><SPAN class = "TEXT"> attempts to find a set of type
+and term instantiations for </SPAN><SPAN class = "BRKT">M</SPAN><SPAN class = "TEXT"> to make it alpha-convertible
+to </SPAN><SPAN class = "BRKT">N</SPAN><SPAN class = "TEXT">. If </SPAN><SPAN class = "BRKT">match_term</SPAN><SPAN class = "TEXT"> succeeds, it returns the instantiations
+in the form of a pair containing a term substitution and a 
+type substitution. In particular, if </SPAN><SPAN class = "BRKT">match_term&nbsp;pat&nbsp;ob</SPAN><SPAN class = "TEXT"> succeeds 
+in returning a value </SPAN><SPAN class = "BRKT">(S,T)</SPAN><SPAN class = "TEXT">, then 
+</SPAN><DIV class = "XMPL"><pre>
+   aconv (subst S (inst T pat)) ob.
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the term cannot be matched by one-way instantiation.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following shows how </SPAN><SPAN class = "BRKT">match_term</SPAN><SPAN class = "TEXT"> could be used to match the
+conclusion of a theorem to a term.
+</SPAN><DIV class = "XMPL"><pre>
+   - val th = REFL (Term `x:'a`);
+    val th = |- x = x : thm
+
+   - match_term (concl th) (Term `1 = 1`);
+   val it = ([{redex = `x`, residue = `1`}],
+             [{redex = `:'a`, residue = `:num`}])
+     : term subst * hol_type subst
+
+  - INST_TY_TERM it th;
+  val it = |- 1 = 1
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">For instantiating theorems </SPAN><SPAN class = "BRKT">PART_MATCH</SPAN><SPAN class = "TEXT"> is usually easier to use.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Type.match_type.html">match_type</A>,
+<A HREF = "Drule.INST_TY_TERM.html">INST_TY_TERM</A>,
+<A HREF = "Drule.PART_MATCH.html">PART_MATCH</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-5</div></BODY></HTML>

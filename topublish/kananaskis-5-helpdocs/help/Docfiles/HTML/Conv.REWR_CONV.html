@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Conv.REWR_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>REWR_CONV : (thm -&gt; conv)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Conv.html">Conv</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Uses an instance of a given equation to rewrite a term.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">REWR_CONV</SPAN><SPAN class = "TEXT"> is one of the basic building blocks for the implementation of
+rewriting in the HOL system. In particular, the term replacement or rewriting
+done by all the built-in rewriting rules and tactics is ultimately done by
+applications of </SPAN><SPAN class = "BRKT">REWR_CONV</SPAN><SPAN class = "TEXT"> to appropriate subterms.  The description given
+here for </SPAN><SPAN class = "BRKT">REWR_CONV</SPAN><SPAN class = "TEXT"> may therefore be taken as a specification of the atomic
+action of replacing equals by equals that is used in all these higher level
+rewriting tools.</SPAN>
+<P>
+<SPAN class = "TEXT">The first argument to </SPAN><SPAN class = "BRKT">REWR_CONV</SPAN><SPAN class = "TEXT"> is expected to be an equational theorem
+which is to be used as a left-to-right rewrite rule.  The general form of this
+theorem is:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- t[x1,...,xn] = u[x1,...,xn]
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">x1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">xn</SPAN><SPAN class = "TEXT"> are all the variables that occur free in the
+left-hand side of the conclusion of the theorem but do not occur free in the
+assumptions. Any of these variables may also be universally quantified at the
+outermost level of the equation, as for example in:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- !x1...xn. t[x1,...,xn] = u[x1,...,xn]
+</pre></DIV>
+<SPAN class = "TEXT">
+Note that </SPAN><SPAN class = "BRKT">REWR_CONV</SPAN><SPAN class = "TEXT"> will also work, but will give a generally
+undesirable result (see below), if the right-hand side of the equation contains
+free variables that do not also occur free on the left-hand side, as for
+example in:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- t[x1,...,xn] = u[x1,...,xn,y1,...,ym]
+</pre></DIV>
+<SPAN class = "TEXT">
+where the variables </SPAN><SPAN class = "BRKT">y1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">ym</SPAN><SPAN class = "TEXT"> do not occur free in
+</SPAN><SPAN class = "BRKT">t[x1,...,xn]</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is an equational theorem of the kind shown above, then
+</SPAN><SPAN class = "BRKT">REWR_CONV&nbsp;th</SPAN><SPAN class = "TEXT"> returns a conversion that maps terms of the form
+</SPAN><SPAN class = "BRKT">t[e1,...,en/x1,...,xn]</SPAN><SPAN class = "TEXT">, in which the terms </SPAN><SPAN class = "BRKT">e1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">en</SPAN><SPAN class = "TEXT"> are free for
+</SPAN><SPAN class = "BRKT">x1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">xn</SPAN><SPAN class = "TEXT"> in </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">, to theorems of the form:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- t[e1,...,en/x1,...,xn] = u[e1,...,en/x1,...,xn]
+</pre></DIV>
+<SPAN class = "TEXT">
+That is, </SPAN><SPAN class = "BRKT">REWR_CONV&nbsp;th&nbsp;tm</SPAN><SPAN class = "TEXT"> attempts to match the left-hand side of
+the rewrite rule </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> to the term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT">.  If such a match is possible, then
+</SPAN><SPAN class = "BRKT">REWR_CONV</SPAN><SPAN class = "TEXT"> returns the corresponding substitution instance of </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">REWR_CONV</SPAN><SPAN class = "TEXT"> is given a theorem </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- t[x1,...,xn] = u[x1,...,xn,y1,...,ym]
+</pre></DIV>
+<SPAN class = "TEXT">
+where the variables </SPAN><SPAN class = "BRKT">y1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">ym</SPAN><SPAN class = "TEXT"> do not occur free in the
+left-hand side, then the result of applying the conversion </SPAN><SPAN class = "BRKT">REWR_CONV&nbsp;th</SPAN><SPAN class = "TEXT"> to
+a term </SPAN><SPAN class = "BRKT">t[e1,...,en/x1,...,xn]</SPAN><SPAN class = "TEXT"> will be:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- t[e1,...,en/x1,...,xn] = u[e1,...,en,v1,...,vm/x1,...,xn,y1,...,ym]
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">v1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">vm</SPAN><SPAN class = "TEXT"> are variables chosen so as to be free nowhere
+in </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> or in the input term.  The user has no control over the choice of the
+variables </SPAN><SPAN class = "BRKT">v1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">vm</SPAN><SPAN class = "TEXT">, and the variables actually chosen may well be
+inconvenient for other purposes.  This situation is, however, relatively rare;
+in most equations the free variables on the right-hand side are a subset of the
+free variables on the left-hand side.</SPAN>
+<P>
+<SPAN class = "TEXT">In addition to doing substitution for free variables in the supplied equational
+theorem (or &lsquo;rewrite rule&rsquo;), </SPAN><SPAN class = "BRKT">REWR_CONV&nbsp;th&nbsp;tm</SPAN><SPAN class = "TEXT"> also does type instantiation,
+if this is necessary in order to match the left-hand side of the given rewrite
+rule </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> to the term argument </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT">.  If, for example, </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is the theorem:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- t[x1,...,xn] = u[x1,...,xn]
+</pre></DIV>
+<SPAN class = "TEXT">
+and the input term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> is (a substitution instance of) an instance
+of </SPAN><SPAN class = "BRKT">t[x1,...,xn]</SPAN><SPAN class = "TEXT"> in which the types </SPAN><SPAN class = "BRKT">ty1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">tyi</SPAN><SPAN class = "TEXT"> are substituted for the
+type variables </SPAN><SPAN class = "BRKT">vty1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">vtyi</SPAN><SPAN class = "TEXT">, that is if:
+</SPAN><DIV class = "XMPL"><pre>
+   tm = t[ty1,...,tyn/vty1,...,vtyn][e1,...,en/x1,...,xn]
+</pre></DIV>
+<SPAN class = "TEXT">
+then </SPAN><SPAN class = "BRKT">REWR_CONV&nbsp;th&nbsp;tm</SPAN><SPAN class = "TEXT"> returns:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- (t = u)[ty1,...,tyn/vty1,...,vtyn][e1,...,en/x1,...,xn]
+</pre></DIV>
+<SPAN class = "TEXT">
+Note that, in this case, the type variables </SPAN><SPAN class = "BRKT">vty1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">vtyi</SPAN><SPAN class = "TEXT"> must
+not occur anywhere in the hypotheses </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT">.  Otherwise, the conversion will fail.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">REWR_CONV&nbsp;th</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is not an equation or an equation universally
+quantified at the outermost level.  If </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is such an equation:
+</SPAN><DIV class = "XMPL"><pre>
+  th = A |- !v1....vi. t[x1,...,xn] = u[x1,...,xn,y1,...,yn]
+</pre></DIV>
+<SPAN class = "TEXT">
+then </SPAN><SPAN class = "BRKT">REWR_CONV&nbsp;th&nbsp;tm</SPAN><SPAN class = "TEXT"> fails unless the term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> is
+alpha-equivalent to an instance of the left-hand side </SPAN><SPAN class = "BRKT">t[x1,...,xn]</SPAN><SPAN class = "TEXT"> which
+can be obtained by instantiation of free type variables (i.e. type variables
+not occurring in the assumptions </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT">) and substitution for the free variables
+</SPAN><SPAN class = "BRKT">x1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">xn</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following example illustrates a straightforward use of </SPAN><SPAN class = "BRKT">REWR_CONV</SPAN><SPAN class = "TEXT">.
+The supplied rewrite rule is polymorphic, and both substitution for free
+variables and type instantiation may take place.  </SPAN><SPAN class = "BRKT">EQ_SYM_EQ</SPAN><SPAN class = "TEXT"> is the theorem:
+</SPAN><DIV class = "XMPL"><pre>
+   |- !x:'a. !y. (x = y) = (y = x)
+</pre></DIV>
+<SPAN class = "TEXT">
+and </SPAN><SPAN class = "BRKT">REWR_CONV&nbsp;EQ_SYM_EQ</SPAN><SPAN class = "TEXT"> behaves as follows:
+</SPAN><DIV class = "XMPL"><pre>
+   - REWR_CONV EQ_SYM_EQ (Term `1 = 2`);
+   &gt; val it = |- (1 = 2) = (2 = 1) : thm
+
+   - REWR_CONV EQ_SYM_EQ (Term `1 &lt; 2`);
+   ! Uncaught exception: 
+   ! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT">
+The second application fails because the left-hand side </SPAN><SPAN class = "BRKT">x&nbsp;=&nbsp;y</SPAN><SPAN class = "TEXT"> of
+the rewrite rule does not match the term to be rewritten, namely </SPAN><SPAN class = "BRKT">1&nbsp;&lt;&nbsp;2</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">In the following example, one might expect the result to be the theorem
+</SPAN><SPAN class = "BRKT">A&nbsp;|-&nbsp;f&nbsp;2&nbsp;=&nbsp;2</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> is the assumption of the supplied rewrite rule:
+</SPAN><DIV class = "XMPL"><pre>
+   - REWR_CONV (ASSUME (Term `!x:'a. f x = x`)) (Term `f 2:num`);
+   ! Uncaught exception: 
+   ! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT">
+The application fails, however, because the type variable
+</SPAN><SPAN class = "BRKT">'a</SPAN><SPAN class = "TEXT"> appears in the assumption of the theorem returned by 
+</SPAN><SPAN class = "BRKT">ASSUME&nbsp;(Term&nbsp;`!x:'a.&nbsp;f&nbsp;x&nbsp;=&nbsp;x`)</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Failure will also occur in situations like:
+</SPAN><DIV class = "XMPL"><pre>
+   - REWR_CONV (ASSUME (Term `f (n:num) = n`)) (Term `f 2:num`);
+   ! Uncaught exception: 
+   ! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT">
+where the left-hand side of the supplied equation contains a free
+variable (in this case </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">) which is also free in the assumptions, but which
+must be instantiated in order to match the input term.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Rewrite.REWRITE_CONV.html">REWRITE_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-5</div></BODY></HTML>

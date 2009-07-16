@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>ConseqConv.DEPTH_CONSEQ_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>DEPTH_CONSEQ_CONV : directed_conseq_conv -&gt; directed_conseq_conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/ConseqConv.html">ConseqConv</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Applies a consequence conversion repeatedly to all the sub-terms of a term, in bottom-up
+order.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">DEPTH_CONSEQ_CONV&nbsp;c&nbsp;tm</SPAN><SPAN class = "TEXT"> breaks the term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> down into boolean
+subterms. It can break up the following operators: </SPAN><SPAN class = "BRKT">/\</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">\/</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">~</SPAN><SPAN class = "TEXT">,
+</SPAN><SPAN class = "BRKT">==&gt;</SPAN><SPAN class = "TEXT"> and quantification. Then it applies the directed consequence conversion
+</SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> to terms and iterates. Finally, it puts everything together again.</SPAN>
+<P>
+<SPAN class = "TEXT">Notice that some operators switch the direction that is passed to </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">, e.g. to
+strengthen a term </SPAN><SPAN class = "BRKT">~t</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">DEPTH_CONSEQ_CONV</SPAN><SPAN class = "TEXT"> tries to weaken </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Consider the expression </SPAN><SPAN class = "BRKT">FEVERY&nbsp;P&nbsp;(f&nbsp;|+&nbsp;(x1,&nbsp;y1)&nbsp;|+&nbsp;(x2,y2))</SPAN><SPAN class = "TEXT">. 
+It states that all elements of the finite map 
+</SPAN><SPAN class = "BRKT">f&nbsp;|+&nbsp;(x1,&nbsp;y1)&nbsp;|+&nbsp;(x2,&nbsp;y2)</SPAN><SPAN class = "TEXT"> satisfy the predicate </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT">. However, the definition of </SPAN><SPAN class = "BRKT">x1</SPAN><SPAN class = "TEXT"> and
+</SPAN><SPAN class = "BRKT">x2</SPAN><SPAN class = "TEXT"> possible hide definitions of these keys inside </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> or in case </SPAN><SPAN class = "BRKT">x1&nbsp;=&nbsp;x2</SPAN><SPAN class = "TEXT"> 
+the middle update is void. You easily get into a lot of aliasing problems while
+proving thus a statement. However, the following theorem holds:
+</SPAN><DIV class = "XMPL"><pre>
+   |- !f x y. FEVERY P (f |+ (x,y)) /\ P (x,y) ==&gt; FEVERY P (f |+ (x,y))
+</pre></DIV>
+<SPAN class = "TEXT">
+Given a directed consequence conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> that instantiates this theorem,
+DEPTH_CONSEQ_CONV can be used to apply it repeatedly and at
+substructures as well:
+</SPAN><DIV class = "XMPL"><pre>
+  DEPTH_CONSEQ_CONV c CONSEQ_CONV_STRENGTHEN_direction
+     ``!y2. FEVERY P (f |+ (x1, y1) |+ (x2,y2)) /\ Q z`` =
+
+
+  |- (!y2. FEVERY P f /\ P (x1, y1) /\ P (x2,y2) /\ Q z) ==&gt;
+     (!y2. FEVERY P (f |+ (x1, y1) |+ (x2,y2)) /\ Q z)
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Conv.DEPTH_CONV.html">DEPTH_CONV</A>,
+<A HREF = "ConseqConv.ONCE_DEPTH_CONSEQ_CONV.html">ONCE_DEPTH_CONSEQ_CONV</A>,
+<A HREF = "ConseqConv.NUM_DEPTH_CONSEQ_CONV.html">NUM_DEPTH_CONSEQ_CONV</A>,
+<A HREF = "ConseqConv.DEPTH_STRENGTHEN_CONSEQ_CONV.html">DEPTH_STRENGTHEN_CONSEQ_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-5</div></BODY></HTML>

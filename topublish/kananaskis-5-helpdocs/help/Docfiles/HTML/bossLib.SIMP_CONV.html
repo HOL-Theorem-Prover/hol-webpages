@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>bossLib.SIMP_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>SIMP_CONV : simpset -&gt; thm list -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Applies a simpset and a list of rewrite rules to simplify a term.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">simpLib</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SIMP_CONV</SPAN><SPAN class = "TEXT"> is the fundamental engine of the HOL simplification
+library.  It repeatedly applies the transformations included in
+the provided simpset (which is augmented with the given rewrite rules)
+to a term, ultimately yielding a theorem equating the original
+term to another.</SPAN>
+<P>
+<SPAN class = "TEXT">Values of the </SPAN><SPAN class = "BRKT">simpset</SPAN><SPAN class = "TEXT"> type embody a suite of different
+transformations that might be applicable to given terms.  These
+&ldquo;transformational components&rdquo; are rewrites, conversions, AC-rules,
+congruences, decision procedures and a filter, which is used to modify
+the way in which rewrite rules are added to the simpset.  The exact
+types for these components, known as simpset fragments, and the way
+they can be combined to create simpsets is given in the reference
+entry for </SPAN><SPAN class = "BRKT">SSFRAG</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Rewrite rules are used similarly to the way in they are used in the
+rewriting system (</SPAN><SPAN class = "BRKT">REWRITE_TAC</SPAN><SPAN class = "TEXT"> et al.).  These are equational
+theorems oriented to rewrite from left-hand-side to right-hand-side.
+Further, </SPAN><SPAN class = "BRKT">SIMP_CONV</SPAN><SPAN class = "TEXT"> handles obvious problems.  If a rewrite rule is
+of the general form </SPAN><SPAN class = "BRKT">[...]&nbsp;|-&nbsp;x&nbsp;=&nbsp;f&nbsp;x</SPAN><SPAN class = "TEXT">, then it will be discarded, and
+a message is printed to this effect.  On the other hand, if the
+right-hand-side is a permutation of the pattern on the left, as in
+</SPAN><SPAN class = "BRKT">|-&nbsp;x&nbsp;+&nbsp;y&nbsp;=&nbsp;y&nbsp;+&nbsp;x</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">|-&nbsp;x&nbsp;INSERT&nbsp;(y&nbsp;INSERT&nbsp;s)&nbsp;=&nbsp;y&nbsp;INSERT&nbsp;(x&nbsp;INSERT&nbsp;s)</SPAN><SPAN class = "TEXT">,
+then such rules will only be applied if the term to which they are
+being applied is strictly reduced according to some term ordering.</SPAN>
+<P>
+<SPAN class = "TEXT">Rewriting is done using a form of higher-order matching, and also uses
+conditional rewriting.  This latter means that theorems of the form
+</SPAN><SPAN class = "BRKT">|-&nbsp;P&nbsp;==&gt;&nbsp;(x&nbsp;=&nbsp;y)</SPAN><SPAN class = "TEXT"> can be used as rewrites.  If a term matching </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> is
+found, the simplifier will attempt to satisfy the side-condition </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT">.
+If it is able to do so, then the rewriting will be performed.  In the
+process of attempting to rewrite </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT"> to true, further side conditions
+may be generated.  The simplifier limits the size of the stack of side
+conditions to be solved (the reference variable
+</SPAN><SPAN class = "BRKT">Cond_rewr.stack_limit</SPAN><SPAN class = "TEXT"> holds this limit), so this will not introduce
+an infinite loop.</SPAN>
+<P>
+<SPAN class = "TEXT">Rewrite rules can always be added &ldquo;on the fly&rdquo; as all of the
+simplification functions take a </SPAN><SPAN class = "BRKT">thm&nbsp;list</SPAN><SPAN class = "TEXT"> argument where these rules
+can be specified.  If a set of rewrite rules is frequently used, then
+these should probably be made into a </SPAN><SPAN class = "BRKT">ssfrag</SPAN><SPAN class = "TEXT"> value with the
+</SPAN><SPAN class = "BRKT">rewrites</SPAN><SPAN class = "TEXT"> function and then added to an existing simpset with </SPAN><SPAN class = "BRKT">++</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The conversions which are part of simpsets are useful for situations
+where simple rewriting is not enough to transform certain terms.  For
+example, the </SPAN><SPAN class = "BRKT">BETA_CONV</SPAN><SPAN class = "TEXT"> conversion is not expressible as a standard
+first order rewrite, but is part of the </SPAN><SPAN class = "BRKT">bool_ss</SPAN><SPAN class = "TEXT"> simpset and the
+application of this simpset will thus simplify all occurrences of
+</SPAN><SPAN class = "BRKT">(\x.&nbsp;e1)&nbsp;e2</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">In fact, conversions in simpsets are not typically applied
+indiscriminately to all sub-terms.  (If a conversion is applied to an
+inappropriate sub-term and fails, this failure is caught by the
+simplifier and ignored.)  Instead, conversions in simpsets are
+accompanied by a term-pattern which specifies the sort of situations
+in which they should be applied.  This facility is used in the
+definition of </SPAN><SPAN class = "BRKT">bool_ss</SPAN><SPAN class = "TEXT"> to include </SPAN><SPAN class = "BRKT">ETA_CONV</SPAN><SPAN class = "TEXT">, but stop it from
+transforming </SPAN><SPAN class = "BRKT">!x.&nbsp;P&nbsp;x</SPAN><SPAN class = "TEXT"> into </SPAN><SPAN class = "BRKT">$!&nbsp;P</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">AC-rules allow simpsets to be constructed that automatically normalise
+terms involving associative and commutative operators, again according
+to some arbitrary term ordering metric.</SPAN>
+<P>
+<SPAN class = "TEXT">Congruence rules allow </SPAN><SPAN class = "BRKT">SIMP_CONV</SPAN><SPAN class = "TEXT"> to assume additional context as a
+term is rewritten.  In a term such as </SPAN><SPAN class = "BRKT">P&nbsp;==&gt;&nbsp;Q&nbsp;/\&nbsp;f&nbsp;x</SPAN><SPAN class = "TEXT"> the truth of
+term P may be assumed as an additional piece of context in the
+rewriting of </SPAN><SPAN class = "BRKT">Q&nbsp;/\&nbsp;f&nbsp;x</SPAN><SPAN class = "TEXT">.  The congruence theorem that states this is
+valid is (</SPAN><SPAN class = "BRKT">IMP_CONG</SPAN><SPAN class = "TEXT">):
+</SPAN><DIV class = "XMPL"><pre>
+   |- (P = P') ==&gt; (P' ==&gt; (Q = Q')) ==&gt; ((P ==&gt; Q) = (P' ==&gt; Q'))
+</pre></DIV>
+<SPAN class = "TEXT">
+Other congruence theorems can be part of simpsets.  The system
+provides </SPAN><SPAN class = "BRKT">IMP_CONG</SPAN><SPAN class = "TEXT"> above and </SPAN><SPAN class = "BRKT">COND_CONG</SPAN><SPAN class = "TEXT"> as part of the </SPAN><SPAN class = "BRKT">CONG_ss</SPAN><SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">ssfrag</SPAN><SPAN class = "TEXT"> value.  (These </SPAN><SPAN class = "BRKT">simpset</SPAN><SPAN class = "TEXT"> fragments can be incorporated into
+simpsets with the </SPAN><SPAN class = "BRKT">++</SPAN><SPAN class = "TEXT"> function.)  Other congruence theorems are
+already proved for operators such as conjunction and disjunction, but
+use of these in standard simpsets is not recommended as the
+computation of all the additional contexts for a simple chain of
+conjuncts or disjuncts can be very computationally intensive.</SPAN>
+<P>
+<SPAN class = "TEXT">Decision procedures in simpsets are similar to conversions.  They are
+arbitrary pieces of code that are applied to sub-terms at low
+priority.  They are given access to the wider context through a list
+of relevant theorems.  The </SPAN><SPAN class = "BRKT">arith_ss</SPAN><SPAN class = "TEXT"> simpset includes an arithmetic
+decision procedure implemented in this way.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SIMP_CONV</SPAN><SPAN class = "TEXT"> never fails, but may diverge.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- SIMP_CONV arith_ss [] ``(\x. x + 3) 4``;
+&gt; val it = |- (\x. x + 3) 4 = 7 : thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SIMP_CONV</SPAN><SPAN class = "TEXT"> is a powerful way of manipulating terms.  Other functions
+in the simplification library provide the same facilities when in the
+contexts of goals and tactics (</SPAN><SPAN class = "BRKT">SIMP_TAC</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">ASM_SIMP_TAC</SPAN><SPAN class = "TEXT"> etc.), and
+theorems (</SPAN><SPAN class = "BRKT">SIMP_RULE</SPAN><SPAN class = "TEXT">), but </SPAN><SPAN class = "BRKT">SIMP_CONV</SPAN><SPAN class = "TEXT"> provides the underlying
+functionality, and is useful in its own right, just as conversions are
+generally.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.plus2.html">++</A>,
+<A HREF = "bossLib.ASM_SIMP_TAC.html">ASM_SIMP_TAC</A>,
+<A HREF = "bossLib.FULL_SIMP_TAC.html">FULL_SIMP_TAC</A>,
+<A HREF = "simpLib.mk_simpset.html">mk_simpset</A>,
+<A HREF = "bossLib.rewrites.html">rewrites</A>,
+<A HREF = "bossLib.SIMP_RULE.html">SIMP_RULE</A>,
+<A HREF = "bossLib.SIMP_TAC.html">SIMP_TAC</A>,
+<A HREF = "simpLib.SSFRAG.html">SSFRAG</A>,
+<A HREF = "bossLib.EVAL.html">EVAL</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-5</div></BODY></HTML>

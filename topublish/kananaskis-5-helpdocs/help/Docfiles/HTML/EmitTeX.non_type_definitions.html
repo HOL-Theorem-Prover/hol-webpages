@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>EmitTeX.non_type_definitions</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>non_type_definitions : string -&gt; (string * thm) list</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/EmitTeX.html">EmitTeX</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A versions of </SPAN><SPAN class = "BRKT">definitions</SPAN><SPAN class = "TEXT"> that attempts to filter out definitions created by </SPAN><SPAN class = "BRKT">Hol_datatype</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An invocation </SPAN><SPAN class = "BRKT">non_type_definitions&nbsp;thy</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">thy</SPAN><SPAN class = "TEXT"> is the name of a currently
+loaded theory segment, will return a list of the definitions stored in
+that theory. Each definition is paired with its name in the result.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails. If </SPAN><SPAN class = "BRKT">thy</SPAN><SPAN class = "TEXT"> is not the name of a currently loaded theory segment,
+the empty list is returned.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- new_theory "example";
+&lt;&lt;HOL message: Created theory "example"&gt;&gt;
+&gt; val it = () : unit
+- val _ = Hol_datatype `example = First | Second`;
+&lt;&lt;HOL message: Defined type: "example"&gt;&gt;
+- val example_def = Define
+    `(example First = Second) /\ (example Second = First)`;
+Definition has been stored under "example_def".
+&gt; val example_def = |- (example First = Second) /\ (example Second = First) :
+  thm
+
+- definitions "example";
+&gt; val it =
+    [("example_TY_DEF", |- ?rep. TYPE_DEFINITION (\n. n &lt; 2) rep),
+     ("example_BIJ",
+      |- (!a. num2example (example2num a) = a) /\
+         !r. (\n. n &lt; 2) r = (example2num (num2example r) = r)),
+     ("First", |- First = num2example 0),
+     ("Second", |- Second = num2example 1),
+     ("example_size_def", |- !x. example_size x = 0),
+     ("example_case",
+      |- !v0 v1 x.
+           (case x of First -&gt; v0 || Second -&gt; v1) =
+           (\m. (if m = 0 then v0 else v1)) (example2num x)),
+     ("example_def", |- (example First = Second) /\ (example Second = First))]
+     : (string * thm) list
+
+- EmitTeX.non_type_definitions "example";
+&gt; val it =
+    [("example_def", |- (example First = Second) /\ (example Second = First))]
+     : (string * thm) list
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "DB.definitions.html">definitions</A>,
+<A HREF = "bossLib.Hol_datatype.html">Hol_datatype</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-5</div></BODY></HTML>

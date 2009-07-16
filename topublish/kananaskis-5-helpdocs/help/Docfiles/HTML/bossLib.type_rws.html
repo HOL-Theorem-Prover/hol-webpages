@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>bossLib.type_rws</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>type_rws : string -&gt; thm list</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">List rewrites for a concrete type.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An application </SPAN><SPAN class = "BRKT">type_rws&nbsp;s</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> is the name of a declared datatype,
+returns a list of rewrite rules corresponding to the types. The list
+typically  contains theorems about the distinctness and injectivity of
+constructors, the definition of the &rsquo;case&rsquo; constant introduced at the
+time the type was defined, and any extra rewrites coming from the use of
+records.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> is not the name of a declared datatype.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- type_rws "list";
+
+&gt; val it =
+    [|- (!v f. case v f [] = v) /\ !v f a0 a1. case v f (a0::a1) = f a0 a1,
+     |- !a1 a0. ~([] = a0::a1), 
+     |- !a1 a0. ~(a0::a1 = []),
+     |- !a0 a1 a0' a1'. (a0::a1 = a0'::a1') = (a0 = a0') /\ (a1 = a1')]
+
+- Hol_datatype `point = &lt;| x:num ; y:num |&gt;`;
+&lt;&lt;HOL message: Defined type: "point"&gt;&gt;
+
+- type_rws "point";
+&gt; val it =
+    [|- !f a0 a1. case f (point a0 a1) = f a0 a1,
+     |- !a0 a1 a0' a1'.
+          (point a0 a1 = point a0' a1') = (a0 = a0') /\ (a1 = a1'),
+     |- !z x p. p with &lt;|y := x; x := z|&gt; = p with &lt;|x := z; y := x|&gt;,
+     |- (!x p. (p with y := x).x = p.x) /\ (!x p. (p with x := x).y = p.y) /\
+        (!x p. (p with x := x).x = x) /\ !x p. (p with y := x).y = x,
+     |- (!n n0. (point n n0).x = n) /\ !n n0. (point n n0).y = n0,
+     |- (!n1 n n0. point n n0 with x := n1 = point n1 n0) /\
+        !n1 n n0. point n n0 with y := n1 = point n n1,
+     |- (!p. p with x := p.x = p) /\ !p. p with y := p.y = p,
+     |- (!x2 x1 p. p with &lt;|x := x1; x := x2|&gt; = p with x := x1) /\
+        !x2 x1 p. p with &lt;|y := x1; y := x2|&gt; = p with y := x1,
+     |- (!p f. (p with y updated_by f).x = p.x) /\
+        (!p f. (p with x updated_by f).y = p.y) /\
+        (!p f. (p with x updated_by f).x = f p.x) /\
+        !p f. (p with y updated_by f).y = f p.y,
+     |- !p n0 n. p with &lt;|x := n0; y := n|&gt; = &lt;|x := n0; y := n|&gt;]
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">RW_TAC</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">SRW_TAC</SPAN><SPAN class = "TEXT"> automatically include these rewrites.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.rewrites.html">rewrites</A>,
+<A HREF = "bossLib.RW_TAC.html">RW_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-5</div></BODY></HTML>

@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Q.ABBREV_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Q.ABBREV_TAC : term quotation -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Q.html">Q</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Introduces an abbreviation into a goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The tactic </SPAN><SPAN class = "BRKT">Q.ABBREV_TAC&nbsp;q</SPAN><SPAN class = "TEXT"> parses the quotation </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> in the context of
+the goal to which it is applied.  The result must be a term of the
+form </SPAN><SPAN class = "BRKT">v&nbsp;=&nbsp;e</SPAN><SPAN class = "TEXT"> with </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> a variable.  The effect of the tactic is to
+replace the term </SPAN><SPAN class = "BRKT">e</SPAN><SPAN class = "TEXT"> wherever it occurs in the goal by </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> (or a
+primed variant of </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> if </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> already occurs in the goal), and to add
+the assumption </SPAN><SPAN class = "BRKT">Abbrev(v&nbsp;=&nbsp;e)</SPAN><SPAN class = "TEXT"> to the goal&rsquo;s assumptions.  Again, if
+</SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> already occurs free in the goal, then the new assumption will be
+</SPAN><SPAN class = "BRKT">Abbrev(v'&nbsp;=&nbsp;e)</SPAN><SPAN class = "TEXT">, with </SPAN><SPAN class = "BRKT">v'</SPAN><SPAN class = "TEXT"> a suitably primed version of </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">It is not an error if the expression </SPAN><SPAN class = "BRKT">e</SPAN><SPAN class = "TEXT"> does not occur anywhere
+within the goal.  In this situation, the effect of the tactic is
+simply to add the assumption </SPAN><SPAN class = "BRKT">Abbrev(v&nbsp;=&nbsp;e)</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">Abbrev</SPAN><SPAN class = "TEXT"> constant is defined in </SPAN><SPAN class = "BRKT">markerTheory</SPAN><SPAN class = "TEXT"> to be the identity
+function over boolean values.  It is used solely as a tag, so that
+abbreviations can be found by other tools, and so that simplification
+tactics such as </SPAN><SPAN class = "BRKT">RW_TAC</SPAN><SPAN class = "TEXT"> will not eliminate them.  When it sees them
+as part of its context, the simplifier treats terms of the form
+</SPAN><SPAN class = "BRKT">Abbrev(v&nbsp;=&nbsp;e)</SPAN><SPAN class = "TEXT"> as assumptions </SPAN><SPAN class = "BRKT">e&nbsp;=&nbsp;v</SPAN><SPAN class = "TEXT">.  In this way, the simplifier
+can use abbreviations to create further sharing, after an
+abbreviation&rsquo;s creation.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the quotation is ill-typed.  This may happen because
+variables in the quotation that also appear in the goal are given the
+same type in the quotation as they have in the goal.  Also fails if
+the variable of the equation appears in the expression that it is
+supposed to be abbreviating.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Substitution in the goal:
+</SPAN><DIV class = "XMPL"><pre>
+   - Q.ABBREV_TAC `n = 10` ([], ``10 &lt; 9 * 10``);
+   &gt; val it = ([([``Abbrev(n = 10)``], ``n &lt; 9 * n``)], fn) :
+     (term list * term) list * (thm list -&gt; thm)
+</pre></DIV>
+<SPAN class = "TEXT">
+and the assumptions:
+</SPAN><DIV class = "XMPL"><pre>
+   - Q.ABBREV_TAC `m = n + 2` ([``f (n + 2) &lt; 6``], ``n &lt; 7``);
+   &gt; val it = ([([``Abbrev(m = n + 2)``, ``f m &lt; 6``], ``n &lt; 7``)], fn) :
+     (term list * term) list * (thm list -&gt; thm)
+</pre></DIV>
+<SPAN class = "TEXT">
+and both
+</SPAN><DIV class = "XMPL"><pre>
+   - Q.ABBREV_TAC `u = x ** 32` ([``x ** 32 = f z``],
+                                  ``g (x ** 32 + 6) - 10 &lt; 65``);
+   &gt; val it =
+       ([([``Abbrev(u = x ** 32)``, ``u = f z``], ``g (u + 6) - 10 &lt; 65``)],
+        fn) :
+       (term list * term) list * (thm list -&gt; thm)
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Though it is possible to abbreviate functions, using quotations such
+as </SPAN><SPAN class = "BRKT">`f&nbsp;=&nbsp;\n.&nbsp;n&nbsp;+&nbsp;3`</SPAN><SPAN class = "TEXT">, in this case </SPAN><SPAN class = "BRKT">ABBREV_TAC</SPAN><SPAN class = "TEXT"> will not do anything
+more than replace exact copies of the abstraction.  Following
+</SPAN><SPAN class = "BRKT">ABBREV_TAC</SPAN><SPAN class = "TEXT"> with
+</SPAN><DIV class = "XMPL"><pre>
+   POP_ASSUM (ASSUME_TAC o GSYM o
+              SIMP_RULE bool_ss [FUN_EQ_THM, markerTheory.Abbrev_def])
+</pre></DIV>
+<SPAN class = "TEXT">
+will turn the assumption </SPAN><SPAN class = "BRKT">`Abbrev(f&nbsp;=&nbsp;(\n.&nbsp;n&nbsp;+&nbsp;3))`</SPAN><SPAN class = "TEXT"> into
+</SPAN><SPAN class = "BRKT">`!n.&nbsp;n&nbsp;+&nbsp;3&nbsp;=&nbsp;f&nbsp;n`</SPAN><SPAN class = "TEXT"> which may find more instances of the desired
+pattern.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "BasicProvers.Abbr.html">Abbr</A>,
+<A HREF = "Q.HO_MATCH_ABBREV_TAC.html">HO_MATCH_ABBREV_TAC</A>,
+<A HREF = "Q.MATCH_ABBREV_TAC.html">MATCH_ABBREV_TAC</A>,
+<A HREF = "Q.PAT_ABBREV_TAC.html">PAT_ABBREV_TAC</A>,
+<A HREF = "Q.UNABBREV_TAC.html">UNABBREV_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-5</div></BODY></HTML>
