@@ -1,0 +1,110 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure permLib</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure permLib</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/sort/permLib.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature permLib =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  include Abbrev
+<A NAME="line4"></A>
+<A NAME="line5"></A>  (* Syntax *)
+<A NAME="line6"></A>  val PERM_tm   : term
+<A NAME="line7"></A>  val dest_PERM : term -&gt; term * term
+<A NAME="line8"></A>  val is_PERM   : term -&gt; bool
+<A NAME="line9"></A>
+<A NAME="line10"></A>
+<A NAME="line11"></A>
+<A NAME="line12"></A>  (* Given a term of the form "PERM l1 l2" this
+<A NAME="line13"></A>     conversion tries to eliminate common parts of
+<A NAME="line14"></A>     l1 and l2. It knows about APPEND and CONS.
+<A NAME="line15"></A>
+<A NAME="line16"></A>     Example:
+<A NAME="line17"></A>
+<A NAME="line18"></A>     PERM_ELIM_DUPLICATES_CONV ``PERM (x::l1++y::l2++l3) (y::l3++z::l2++l4)``
+<A NAME="line19"></A>
+<A NAME="line20"></A>     |- PERM (x::l1 ++ y::l2 ++ l3) (y::l3 ++ z::l2 ++ l4) &lt;=&gt;
+<A NAME="line21"></A>        PERM (x::l1) ([z] ++ l4)
+<A NAME="line22"></A>  *)
+<A NAME="line23"></A>  val PERM_ELIM_DUPLICATES_CONV : term -&gt; thm
+<A NAME="line24"></A>
+<A NAME="line25"></A>
+<A NAME="line26"></A>
+<A NAME="line27"></A>  (* Given a term ``PERM l1 l2`` this conversions sorts the lists l1 and l2.
+<A NAME="line28"></A>
+<A NAME="line29"></A>     Example:
+<A NAME="line30"></A>
+<A NAME="line31"></A>     PERM_NO_ELIM_NORMALISE_CONV ``PERM (x::l1++y::l2++l3) (y::l3++z::l2++l4)``
+<A NAME="line32"></A>
+<A NAME="line33"></A>     |- PERM (x::l1++y::l2++l3) (y::l3++z::l2++l4) &lt;=&gt;
+<A NAME="line34"></A>        PERM (x::y::(l1 ++ l2 ++ l3)) (y::z::(l2 ++ l3 ++ l4))
+<A NAME="line35"></A>  )*
+<A NAME="line36"></A>  val PERM_NO_ELIM_NORMALISE_CONV = fn : term -&gt; thm
+<A NAME="line37"></A>
+<A NAME="line38"></A>
+<A NAME="line39"></A>  (* Turns ``PERM l1 l2`` into ``PERM l2 l1`` iff l1 is in some sence 
+<A NAME="line40"></A>     smaller than l2. This is useful in combination with PERM_REWR_CONV.
+<A NAME="line41"></A>
+<A NAME="line42"></A>     Exmaple:
+<A NAME="line43"></A>
+<A NAME="line44"></A>     PERM_TURN_CONV ``PERM (x::l1) (y::z::l1 ++ l2 ++ l3)``
+<A NAME="line45"></A>
+<A NAME="line46"></A>     |- PERM (x::l1) (y::z::l1 ++ l2 ++ l3) &lt;=&gt;
+<A NAME="line47"></A>        PERM (y::z::l1 ++ l2 ++ l3) (x::l1)
+<A NAME="line48"></A>  *)
+<A NAME="line49"></A>  val PERM_TURN_CONV : term -&gt; thm
+<A NAME="line50"></A>
+<A NAME="line51"></A>
+<A NAME="line52"></A>  (* Combines PERM_ELIM_DUPLICATES_CONV, PERM_NO_ELIM_NORMALISE_CONV and
+<A NAME="line53"></A>     PERM_TURN_CONV *)
+<A NAME="line54"></A>
+<A NAME="line55"></A>
+<A NAME="line56"></A>     Example:
+<A NAME="line57"></A>
+<A NAME="line58"></A>     PERM_NORMALISE_CONV ``PERM (x::l1++y::l2++l3) (y::l3++z::l2++l4)``
+<A NAME="line59"></A>
+<A NAME="line60"></A>     |- PERM (x::l1++y::l2++l3) (y::l3++z::l2++l4) &lt;=&gt;
+<A NAME="line61"></A>        PERM (z::l4) (x::l1)
+<A NAME="line62"></A>  *)
+<A NAME="line63"></A>  val PERM_NORMALISE_CONV : term -&gt; thm
+<A NAME="line64"></A>
+<A NAME="line65"></A>  (* Given two terms l1 and l2. PERM_SPLIT l1 l2 tries to find
+<A NAME="line66"></A>     a l2' such that PERM l2 (l1 ++ l2') holds.
+<A NAME="line67"></A>
+<A NAME="line68"></A>     Example:
+<A NAME="line69"></A>
+<A NAME="line70"></A>     PERM_SPLIT ``(y::l4)`` ``(y::l3++z::l2++l4)``
+<A NAME="line71"></A>
+<A NAME="line72"></A>     |- PERM (y::l3++z::l2++l4) (y::l4 ++ (l3 ++ z::l2)
+<A NAME="line73"></A>  *)
+<A NAME="line74"></A>  val PERM_SPLIT : term -&gt; term -&gt; thm
+<A NAME="line75"></A>
+<A NAME="line76"></A>
+<A NAME="line77"></A>  (* Given a theorem |- PERM l r and a term 
+<A NAME="line78"></A>     PERM l1 l2 then 
+<A NAME="line79"></A>     PERM_REWR_CONV tries to replace l in l1 or l2 with r. 
+<A NAME="line80"></A>     Afterwards PERM_NORMALISE_CONV is used.
+<A NAME="line81"></A>
+<A NAME="line82"></A>     Example:
+<A NAME="line83"></A>     PERM_REWR_CONV (ASSUME ``PERM l1 [x;y;z]``) ``PERM (z::y::x'::l2) (l3++x'::l1)``
+<A NAME="line84"></A>
+<A NAME="line85"></A>     [PERM l1 [x; y; z]]
+<A NAME="line86"></A>       |- PERM (z::y::x'::l2) (l3 ++ x'::l1) &lt;=&gt; PERM (x::l3) l2 : thm
+<A NAME="line87"></A>  *)
+<A NAME="line88"></A>  val PERM_REWR_CONV : thm -&gt; term -&gt; thm
+<A NAME="line89"></A>
+<A NAME="line90"></A>
+<A NAME="line91"></A>  (* A SSFRAG to use these PERM tools with the simplifier *)
+<A NAME="line92"></A>  val PERM_ss : simpLib.ssfrag
+<A NAME="line93"></A>
+<A NAME="line94"></A>end
+<A NAME="line95"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/sort/permLib.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

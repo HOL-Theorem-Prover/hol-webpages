@@ -1,0 +1,183 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure sumTheory</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure sumTheory</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/sum/sumScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature sumTheory =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  type thm = Thm.thm
+<A NAME="line4"></A>  
+<A NAME="line5"></A>  (*  Definitions  *)
+<A NAME="line6"></A>    val <A HREF="#INL_DEF-val">INL_DEF</A> : thm
+<A NAME="line7"></A>    val <A HREF="#INR_DEF-val">INR_DEF</A> : thm
+<A NAME="line8"></A>    val <A HREF="#ISL-val">ISL</A> : thm
+<A NAME="line9"></A>    val <A HREF="#ISR-val">ISR</A> : thm
+<A NAME="line10"></A>    val <A HREF="#IS_SUM_REP-val">IS_SUM_REP</A> : thm
+<A NAME="line11"></A>    val <A HREF="#OUTL-val">OUTL</A> : thm
+<A NAME="line12"></A>    val <A HREF="#OUTR-val">OUTR</A> : thm
+<A NAME="line13"></A>    val <A HREF="#SUM_MAP_def-val">SUM_MAP_def</A> : thm
+<A NAME="line14"></A>    val <A HREF="#sum_ISO_DEF-val">sum_ISO_DEF</A> : thm
+<A NAME="line15"></A>    val <A HREF="#sum_TY_DEF-val">sum_TY_DEF</A> : thm
+<A NAME="line16"></A>    val <A HREF="#sum_case_def-val">sum_case_def</A> : thm
+<A NAME="line17"></A>  
+<A NAME="line18"></A>  (*  Theorems  *)
+<A NAME="line19"></A>    val <A HREF="#FORALL_SUM-val">FORALL_SUM</A> : thm
+<A NAME="line20"></A>    val <A HREF="#INL-val">INL</A> : thm
+<A NAME="line21"></A>    val <A HREF="#INR-val">INR</A> : thm
+<A NAME="line22"></A>    val <A HREF="#INR_INL_11-val">INR_INL_11</A> : thm
+<A NAME="line23"></A>    val <A HREF="#INR_neq_INL-val">INR_neq_INL</A> : thm
+<A NAME="line24"></A>    val <A HREF="#ISL_OR_ISR-val">ISL_OR_ISR</A> : thm
+<A NAME="line25"></A>    val <A HREF="#SUM_MAP-val">SUM_MAP</A> : thm
+<A NAME="line26"></A>    val <A HREF="#SUM_MAP_CASE-val">SUM_MAP_CASE</A> : thm
+<A NAME="line27"></A>    val <A HREF="#SUM_MAP_I-val">SUM_MAP_I</A> : thm
+<A NAME="line28"></A>    val <A HREF="#sum_Axiom-val">sum_Axiom</A> : thm
+<A NAME="line29"></A>    val <A HREF="#sum_CASES-val">sum_CASES</A> : thm
+<A NAME="line30"></A>    val <A HREF="#sum_INDUCT-val">sum_INDUCT</A> : thm
+<A NAME="line31"></A>    val <A HREF="#sum_axiom-val">sum_axiom</A> : thm
+<A NAME="line32"></A>    val <A HREF="#sum_case_cong-val">sum_case_cong</A> : thm
+<A NAME="line33"></A>    val <A HREF="#sum_distinct-val">sum_distinct</A> : thm
+<A NAME="line34"></A>    val <A HREF="#sum_distinct1-val">sum_distinct1</A> : thm
+<A NAME="line35"></A>  
+<A NAME="line36"></A>  val sum_grammars : type_grammar.grammar * term_grammar.grammar
+<A NAME="line37"></A>  
+<A NAME="line38"></A>  val sum_rwts : simpLib.ssfrag
+<A NAME="line39"></A>(*
+   [combin] Parent theory of "sum"
+   
+   [sat] Parent theory of "sum"
+   
+   [<A NAME="INL_DEF-val"><B>INL_DEF</B></A>]  Definition
+      
+      |- !e. INL e = ABS_sum (\b x y. (x = e) /\ b)
+   
+   [<A NAME="INR_DEF-val"><B>INR_DEF</B></A>]  Definition
+      
+      |- !e. INR e = ABS_sum (\b x y. (y = e) /\ ~b)
+   
+   [<A NAME="ISL-val"><B>ISL</B></A>]  Definition
+      
+      |- (!x. ISL (INL x)) /\ !y. ~ISL (INR y)
+   
+   [<A NAME="ISR-val"><B>ISR</B></A>]  Definition
+      
+      |- (!x. ISR (INR x)) /\ !y. ~ISR (INL y)
+   
+   [<A NAME="IS_SUM_REP-val"><B>IS_SUM_REP</B></A>]  Definition
+      
+      |- !f.
+           IS_SUM_REP f &lt;=&gt;
+           ?v1 v2.
+             (f = (\b x y. (x = v1) /\ b)) \/
+             (f = (\b x y. (y = v2) /\ ~b))
+   
+   [<A NAME="OUTL-val"><B>OUTL</B></A>]  Definition
+      
+      |- !x. OUTL (INL x) = x
+   
+   [<A NAME="OUTR-val"><B>OUTR</B></A>]  Definition
+      
+      |- !x. OUTR (INR x) = x
+   
+   [<A NAME="SUM_MAP_def-val"><B>SUM_MAP_def</B></A>]  Definition
+      
+      |- (!f g a. (f ++ g) (INL a) = INL (f a)) /\
+         !f g b. (f ++ g) (INR b) = INR (g b)
+   
+   [<A NAME="sum_ISO_DEF-val"><B>sum_ISO_DEF</B></A>]  Definition
+      
+      |- (!a. ABS_sum (REP_sum a) = a) /\
+         !r. IS_SUM_REP r &lt;=&gt; (REP_sum (ABS_sum r) = r)
+   
+   [<A NAME="sum_TY_DEF-val"><B>sum_TY_DEF</B></A>]  Definition
+      
+      |- ?rep. TYPE_DEFINITION IS_SUM_REP rep
+   
+   [<A NAME="sum_case_def-val"><B>sum_case_def</B></A>]  Definition
+      
+      |- (!f g x. sum_case f g (INL x) = f x) /\
+         !f g y. sum_case f g (INR y) = g y
+   
+   [<A NAME="FORALL_SUM-val"><B>FORALL_SUM</B></A>]  Theorem
+      
+      |- (!s. P s) &lt;=&gt; (!x. P (INL x)) /\ !y. P (INR y)
+   
+   [<A NAME="INL-val"><B>INL</B></A>]  Theorem
+      
+      |- !x. ISL x ==&gt; (INL (OUTL x) = x)
+   
+   [<A NAME="INR-val"><B>INR</B></A>]  Theorem
+      
+      |- !x. ISR x ==&gt; (INR (OUTR x) = x)
+   
+   [<A NAME="INR_INL_11-val"><B>INR_INL_11</B></A>]  Theorem
+      
+      |- (!y x. (INL x = INL y) &lt;=&gt; (x = y)) /\
+         !y x. (INR x = INR y) &lt;=&gt; (x = y)
+   
+   [<A NAME="INR_neq_INL-val"><B>INR_neq_INL</B></A>]  Theorem
+      
+      |- !v1 v2. INR v2 &lt;&gt; INL v1
+   
+   [<A NAME="ISL_OR_ISR-val"><B>ISL_OR_ISR</B></A>]  Theorem
+      
+      |- !x. ISL x \/ ISR x
+   
+   [<A NAME="SUM_MAP-val"><B>SUM_MAP</B></A>]  Theorem
+      
+      |- !f g z.
+           (f ++ g) z =
+           if ISL z then INL (f (OUTL z)) else INR (g (OUTR z))
+   
+   [<A NAME="SUM_MAP_CASE-val"><B>SUM_MAP_CASE</B></A>]  Theorem
+      
+      |- !f g z. (f ++ g) z = sum_case (INL o f) (INR o g) z
+   
+   [<A NAME="SUM_MAP_I-val"><B>SUM_MAP_I</B></A>]  Theorem
+      
+      |- I ++ I = I
+   
+   [<A NAME="sum_Axiom-val"><B>sum_Axiom</B></A>]  Theorem
+      
+      |- !f g. ?h. (!x. h (INL x) = f x) /\ !y. h (INR y) = g y
+   
+   [<A NAME="sum_CASES-val"><B>sum_CASES</B></A>]  Theorem
+      
+      |- !ss. (?x. ss = INL x) \/ ?y. ss = INR y
+   
+   [<A NAME="sum_INDUCT-val"><B>sum_INDUCT</B></A>]  Theorem
+      
+      |- !P. (!x. P (INL x)) /\ (!y. P (INR y)) ==&gt; !s. P s
+   
+   [<A NAME="sum_axiom-val"><B>sum_axiom</B></A>]  Theorem
+      
+      |- !f g. ?!h. (h o INL = f) /\ (h o INR = g)
+   
+   [<A NAME="sum_case_cong-val"><B>sum_case_cong</B></A>]  Theorem
+      
+      |- !M M' f g.
+           (M = M') /\ (!x. (M' = INL x) ==&gt; (f x = f' x)) /\
+           (!y. (M' = INR y) ==&gt; (g y = g' y)) ==&gt;
+           (sum_case f g M = sum_case f' g' M')
+   
+   [<A NAME="sum_distinct-val"><B>sum_distinct</B></A>]  Theorem
+      
+      |- !x y. INL x &lt;&gt; INR y
+   
+   [<A NAME="sum_distinct1-val"><B>sum_distinct1</B></A>]  Theorem
+      
+      |- !x y. INR y &lt;&gt; INL x
+   
+   
+*)
+end
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/sum/sumScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

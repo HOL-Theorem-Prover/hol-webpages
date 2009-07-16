@@ -1,0 +1,110 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure Net</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure Net</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/experimental-kernel/Net.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>(* ===================================================================== *)
+<A NAME="line2"></A>(* FILE          : Net.sig                                               *)
+<A NAME="line3"></A>(* DESCRIPTION   : Signature for term nets.                              *)
+<A NAME="line4"></A>(*                                                                       *)
+<A NAME="line5"></A>(* AUTHOR        : ICL HOL group.                                        *)
+<A NAME="line6"></A>(* DATE          : August 26, 1991                                       *)
+<A NAME="line7"></A>(* Modified      : September 23, 1997, Ken Larsen                        *)
+<A NAME="line8"></A>(* Rewritten and                                                         *)
+<A NAME="line9"></A>(* Expanded      : July 17, 1999, Konrad Slind                           *)
+<A NAME="line10"></A>(* ===================================================================== *)
+<A NAME="line11"></A>
+<A NAME="line12"></A>signature Net =
+<A NAME="line13"></A>sig
+<A NAME="line14"></A>  type 'a net
+<A NAME="line15"></A>  type term = Term.term
+<A NAME="line16"></A>
+<A NAME="line17"></A>  val empty     : 'a net
+<A NAME="line18"></A>  val insert    : term * 'a -&gt; 'a net -&gt; 'a net
+<A NAME="line19"></A>  val match     : term -&gt; 'a net -&gt; 'a list
+<A NAME="line20"></A>  val <A HREF="#index-val">index</A>     : term -&gt; 'a net -&gt; 'a list
+<A NAME="line21"></A>  val <A HREF="#delete-val">delete</A>    : term * ('a -&gt; bool) -&gt; 'a net -&gt; 'a net
+<A NAME="line22"></A>  val <A HREF="#filter-val">filter</A>    : ('a -&gt; bool) -&gt; 'a net -&gt; 'a net
+<A NAME="line23"></A>  val <A HREF="#union-val">union</A>     : 'a net -&gt; 'a net -&gt; 'a net
+<A NAME="line24"></A>  val <A HREF="#map-val">map</A>       : ('a -&gt; 'b) -&gt; 'a net -&gt; 'b net
+<A NAME="line25"></A>  val <A HREF="#itnet-val">itnet</A>     : ('a -&gt; 'b -&gt; 'b) -&gt; 'a net -&gt; 'b -&gt; 'b
+<A NAME="line26"></A>  val <A HREF="#size-val">size</A>      : 'a net -&gt; int
+<A NAME="line27"></A>  val <A HREF="#listItems-val">listItems</A> : 'a net -&gt; 'a list
+<A NAME="line28"></A>
+<A NAME="line29"></A>  val <A HREF="#enter-val">enter</A>     : term * 'a -&gt; 'a net -&gt; 'a net  (* for compatibility *)
+<A NAME="line30"></A>  val <A HREF="#lookup-val">lookup</A>    : term -&gt; 'a net -&gt; 'a list      (* for compatibility *)
+<A NAME="line31"></A>
+<A NAME="line32"></A>
+<A NAME="line33"></A>(*---------------------------------------------------------------------------
+<A NAME="line34"></A>
+<A NAME="line35"></A>    A term net is a collection of items, each of which can be thought
+<A NAME="line36"></A>    of as being indexed by a path which is computed from a term which
+<A NAME="line37"></A>    is supplied when the item is inserted into the net. Type information,
+<A NAME="line38"></A>    and the names of variables, is not represented in paths, so more than
+<A NAME="line39"></A>    one term may be indexed by the same path, i.e., the extraction
+<A NAME="line40"></A>    operations are not exact. In this sense, term nets are akin to
+<A NAME="line41"></A>    hash tables.
+<A NAME="line42"></A>
+<A NAME="line43"></A>  [empty] is the empty term net.
+<A NAME="line44"></A>
+<A NAME="line45"></A>  [insert (tm, x) net]
+<A NAME="line46"></A>
+<A NAME="line47"></A>    The term tm is used as a key to compute a path at which to
+<A NAME="line48"></A>    store x in net. If the path does not already exist in net,
+<A NAME="line49"></A>    it is created. Note that insert merely adds x to the net;
+<A NAME="line50"></A>    if x has already been stored under tm, then it is not overwritten.
+<A NAME="line51"></A>
+<A NAME="line52"></A>  [match tm net]
+<A NAME="line53"></A>
+<A NAME="line54"></A>    Term nets can be used to cut down on the number of match attempts
+<A NAME="line55"></A>    that a matching function would have to make, say when rewriting
+<A NAME="line56"></A>    with a collection of theorems. "match tm net" will return every
+<A NAME="line57"></A>    element that has been inserted into the net using a term M as the
+<A NAME="line58"></A>    key, such that M possibly matches tm. The matches are returned in
+<A NAME="line59"></A>    "most specific match first" order.
+<A NAME="line60"></A>
+   [<A NAME="index-val"><B>index</B></A> tm net]
+
+    An alternative use of term nets ignores any paths in the net
+    arising from clearly non-alpha-convertible terms. "index" is a more
+    discriminating entrypoint than "match", in the sense that the set
+    of results is always a subset of those returned for matches.
+
+   [<A NAME="delete-val"><B>delete</B></A> (tm,P) net] uses tm as an index into the net. There can be
+     more than one element indexable by tm. The net resulting from
+     removing all such elements that also meet the predicate P is
+     returned.
+
+   [<A NAME="filter-val"><B>filter</B></A> P net] The net resulting from removing all elements meeting
+      P is returned.
+
+   [<A NAME="union-val"><B>union</B></A> net1 net2] joins net1 and net2. Looking up or fetching
+     an element from the result should return the union of the
+     results of separately fetching or looking up in net1 and net2.
+
+   [<A NAME="map-val"><B>map</B></A> f net] returns a new net, each element of which has had f
+     applied to it.
+
+   [<A NAME="itnet-val"><B>itnet</B></A> f net b] folds function f through net, with base value b.
+
+   [<A NAME="size-val"><B>size</B></A> net] returns the number of elements in the net.
+
+   [<A NAME="listItems-val"><B>listItems</B></A> net] lists the elements in the net, in no particular order.
+
+   [<A NAME="enter-val"><B>enter</B></A> (tm,x) net] An outdated version of insert, kept for compatibility.
+
+   [<A NAME="lookup-val"><B>lookup</B></A> tm net] An outdated version of match, kept for compatibility.
+
+ ---------------------------------------------------------------------------*)
+end;
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/experimental-kernel/Net.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

@@ -1,0 +1,371 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure quoteTheory</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure quoteTheory</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/ring/src/quoteScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature quoteTheory =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  type thm = Thm.thm
+<A NAME="line4"></A>  
+<A NAME="line5"></A>  (*  Definitions  *)
+<A NAME="line6"></A>    val <A HREF="#index_TY_DEF-val">index_TY_DEF</A> : thm
+<A NAME="line7"></A>    val <A HREF="#index_case_def-val">index_case_def</A> : thm
+<A NAME="line8"></A>    val <A HREF="#index_compare_curried_def-val">index_compare_curried_def</A> : thm
+<A NAME="line9"></A>    val <A HREF="#index_compare_tupled_primitive_def-val">index_compare_tupled_primitive_def</A> : thm
+<A NAME="line10"></A>    val <A HREF="#index_lt_def-val">index_lt_def</A> : thm
+<A NAME="line11"></A>    val <A HREF="#index_repfns-val">index_repfns</A> : thm
+<A NAME="line12"></A>    val <A HREF="#index_size_def-val">index_size_def</A> : thm
+<A NAME="line13"></A>    val <A HREF="#varmap_TY_DEF-val">varmap_TY_DEF</A> : thm
+<A NAME="line14"></A>    val <A HREF="#varmap_case_def-val">varmap_case_def</A> : thm
+<A NAME="line15"></A>    val <A HREF="#varmap_find_curried_def-val">varmap_find_curried_def</A> : thm
+<A NAME="line16"></A>    val <A HREF="#varmap_find_tupled_primitive_def-val">varmap_find_tupled_primitive_def</A> : thm
+<A NAME="line17"></A>    val <A HREF="#varmap_repfns-val">varmap_repfns</A> : thm
+<A NAME="line18"></A>    val <A HREF="#varmap_size_def-val">varmap_size_def</A> : thm
+<A NAME="line19"></A>  
+<A NAME="line20"></A>  (*  Theorems  *)
+<A NAME="line21"></A>    val <A HREF="#compare_index_equal-val">compare_index_equal</A> : thm
+<A NAME="line22"></A>    val <A HREF="#compare_list_index-val">compare_list_index</A> : thm
+<A NAME="line23"></A>    val <A HREF="#datatype_index-val">datatype_index</A> : thm
+<A NAME="line24"></A>    val <A HREF="#datatype_varmap-val">datatype_varmap</A> : thm
+<A NAME="line25"></A>    val <A HREF="#index_11-val">index_11</A> : thm
+<A NAME="line26"></A>    val <A HREF="#index_Axiom-val">index_Axiom</A> : thm
+<A NAME="line27"></A>    val <A HREF="#index_case_cong-val">index_case_cong</A> : thm
+<A NAME="line28"></A>    val <A HREF="#index_compare_def-val">index_compare_def</A> : thm
+<A NAME="line29"></A>    val <A HREF="#index_compare_ind-val">index_compare_ind</A> : thm
+<A NAME="line30"></A>    val <A HREF="#index_distinct-val">index_distinct</A> : thm
+<A NAME="line31"></A>    val <A HREF="#index_induction-val">index_induction</A> : thm
+<A NAME="line32"></A>    val <A HREF="#index_nchotomy-val">index_nchotomy</A> : thm
+<A NAME="line33"></A>    val <A HREF="#varmap_11-val">varmap_11</A> : thm
+<A NAME="line34"></A>    val <A HREF="#varmap_Axiom-val">varmap_Axiom</A> : thm
+<A NAME="line35"></A>    val <A HREF="#varmap_case_cong-val">varmap_case_cong</A> : thm
+<A NAME="line36"></A>    val <A HREF="#varmap_distinct-val">varmap_distinct</A> : thm
+<A NAME="line37"></A>    val <A HREF="#varmap_find_def-val">varmap_find_def</A> : thm
+<A NAME="line38"></A>    val <A HREF="#varmap_find_ind-val">varmap_find_ind</A> : thm
+<A NAME="line39"></A>    val <A HREF="#varmap_induction-val">varmap_induction</A> : thm
+<A NAME="line40"></A>    val <A HREF="#varmap_nchotomy-val">varmap_nchotomy</A> : thm
+<A NAME="line41"></A>  
+<A NAME="line42"></A>  val quote_grammars : type_grammar.grammar * term_grammar.grammar
+<A NAME="line43"></A>  
+<A NAME="line44"></A>  
+<A NAME="line45"></A>(*
+   [prelim] Parent theory of "quote"
+   
+   [<A NAME="index_TY_DEF-val"><B>index_TY_DEF</B></A>]  Definition
+      
+      |- ?rep.
+           TYPE_DEFINITION
+             (\a0.
+                !'index' .
+                  (!a0.
+                     (?a.
+                        (a0 =
+                         (\a.
+                            ind_type$CONSTR 0 ARB
+                              (ind_type$FCONS a (\n. ind_type$BOTTOM)))
+                           a) /\ 'index' a) \/
+                     (?a.
+                        (a0 =
+                         (\a.
+                            ind_type$CONSTR (SUC 0) ARB
+                              (ind_type$FCONS a (\n. ind_type$BOTTOM)))
+                           a) /\ 'index' a) \/
+                     (a0 =
+                      ind_type$CONSTR (SUC (SUC 0)) ARB
+                        (\n. ind_type$BOTTOM)) ==&gt;
+                     'index' a0) ==&gt;
+                  'index' a0) rep
+   
+   [<A NAME="index_case_def-val"><B>index_case_def</B></A>]  Definition
+      
+      |- (!f f1 v a. index_case f f1 v (Left_idx a) = f a) /\
+         (!f f1 v a. index_case f f1 v (Right_idx a) = f1 a) /\
+         !f f1 v. index_case f f1 v End_idx = v
+   
+   [<A NAME="index_compare_curried_def-val"><B>index_compare_curried_def</B></A>]  Definition
+      
+      |- !x x1. index_compare x x1 = index_compare_tupled (x,x1)
+   
+   [<A NAME="index_compare_tupled_primitive_def-val"><B>index_compare_tupled_primitive_def</B></A>]  Definition
+      
+      |- index_compare_tupled =
+         WFREC
+           (@R.
+              WF R /\ (!m' n'. R (n',m') (Left_idx n',Left_idx m')) /\
+              !m' n'. R (n',m') (Right_idx n',Right_idx m'))
+           (\index_compare_tupled a.
+              case a of
+                 (Left_idx n',Left_idx m') -&gt;
+                   I (index_compare_tupled (n',m'))
+              || (Left_idx n',Right_idx m'') -&gt; I LESS
+              || (Left_idx n',End_idx) -&gt; I GREATER
+              || (Right_idx n'',Left_idx m'''') -&gt; I GREATER
+              || (Right_idx n'',Right_idx m''') -&gt;
+                   I (index_compare_tupled (n'',m'''))
+              || (Right_idx n'',End_idx) -&gt; I GREATER
+              || (End_idx,Left_idx v12) -&gt; I LESS
+              || (End_idx,Right_idx v13) -&gt; I LESS
+              || (End_idx,End_idx) -&gt; I EQUAL)
+   
+   [<A NAME="index_lt_def-val"><B>index_lt_def</B></A>]  Definition
+      
+      |- !i1 i2. index_lt i1 i2 &lt;=&gt; (index_compare i1 i2 = LESS)
+   
+   [<A NAME="index_repfns-val"><B>index_repfns</B></A>]  Definition
+      
+      |- (!a. mk_index (dest_index a) = a) /\
+         !r.
+           (\a0.
+              !'index' .
+                (!a0.
+                   (?a.
+                      (a0 =
+                       (\a.
+                          ind_type$CONSTR 0 ARB
+                            (ind_type$FCONS a (\n. ind_type$BOTTOM))) a) /\
+                      'index' a) \/
+                   (?a.
+                      (a0 =
+                       (\a.
+                          ind_type$CONSTR (SUC 0) ARB
+                            (ind_type$FCONS a (\n. ind_type$BOTTOM))) a) /\
+                      'index' a) \/
+                   (a0 =
+                    ind_type$CONSTR (SUC (SUC 0)) ARB
+                      (\n. ind_type$BOTTOM)) ==&gt;
+                   'index' a0) ==&gt;
+                'index' a0) r &lt;=&gt; (dest_index (mk_index r) = r)
+   
+   [<A NAME="index_size_def-val"><B>index_size_def</B></A>]  Definition
+      
+      |- (!a. index_size (Left_idx a) = 1 + index_size a) /\
+         (!a. index_size (Right_idx a) = 1 + index_size a) /\
+         (index_size End_idx = 0)
+   
+   [<A NAME="varmap_TY_DEF-val"><B>varmap_TY_DEF</B></A>]  Definition
+      
+      |- ?rep.
+           TYPE_DEFINITION
+             (\a0'.
+                !'varmap' .
+                  (!a0'.
+                     (a0' = ind_type$CONSTR 0 ARB (\n. ind_type$BOTTOM)) \/
+                     (?a0 a1 a2.
+                        (a0' =
+                         (\a0 a1 a2.
+                            ind_type$CONSTR (SUC 0) a0
+                              (ind_type$FCONS a1
+                                 (ind_type$FCONS a2
+                                    (\n. ind_type$BOTTOM)))) a0 a1 a2) /\
+                        'varmap' a1 /\ 'varmap' a2) ==&gt;
+                     'varmap' a0') ==&gt;
+                  'varmap' a0') rep
+   
+   [<A NAME="varmap_case_def-val"><B>varmap_case_def</B></A>]  Definition
+      
+      |- (!v f. varmap_case v f Empty_vm = v) /\
+         !v f a0 a1 a2. varmap_case v f (Node_vm a0 a1 a2) = f a0 a1 a2
+   
+   [<A NAME="varmap_find_curried_def-val"><B>varmap_find_curried_def</B></A>]  Definition
+      
+      |- !x x1. varmap_find x x1 = varmap_find_tupled (x,x1)
+   
+   [<A NAME="varmap_find_tupled_primitive_def-val"><B>varmap_find_tupled_primitive_def</B></A>]  Definition
+      
+      |- varmap_find_tupled =
+         WFREC
+           (@R.
+              WF R /\
+              (!v1 x v2 i1. R (i1,v2) (Right_idx i1,Node_vm x v1 v2)) /\
+              !v2 x v1 i1. R (i1,v1) (Left_idx i1,Node_vm x v1 v2))
+           (\varmap_find_tupled a.
+              case a of
+                 (Left_idx i1',Empty_vm) -&gt; I (@x. T)
+              || (Left_idx i1',Node_vm x'' v1'' v2'') -&gt;
+                   I (varmap_find_tupled (i1',v1''))
+              || (Right_idx i1,Empty_vm) -&gt; I (@x. T)
+              || (Right_idx i1,Node_vm x' v1' v2') -&gt;
+                   I (varmap_find_tupled (i1,v2'))
+              || (End_idx,Empty_vm) -&gt; I (@x. T)
+              || (End_idx,Node_vm x v1 v2) -&gt; I x)
+   
+   [<A NAME="varmap_repfns-val"><B>varmap_repfns</B></A>]  Definition
+      
+      |- (!a. mk_varmap (dest_varmap a) = a) /\
+         !r.
+           (\a0'.
+              !'varmap' .
+                (!a0'.
+                   (a0' = ind_type$CONSTR 0 ARB (\n. ind_type$BOTTOM)) \/
+                   (?a0 a1 a2.
+                      (a0' =
+                       (\a0 a1 a2.
+                          ind_type$CONSTR (SUC 0) a0
+                            (ind_type$FCONS a1
+                               (ind_type$FCONS a2 (\n. ind_type$BOTTOM))))
+                         a0 a1 a2) /\ 'varmap' a1 /\ 'varmap' a2) ==&gt;
+                   'varmap' a0') ==&gt;
+                'varmap' a0') r &lt;=&gt; (dest_varmap (mk_varmap r) = r)
+   
+   [<A NAME="varmap_size_def-val"><B>varmap_size_def</B></A>]  Definition
+      
+      |- (!f. varmap_size f Empty_vm = 0) /\
+         !f a0 a1 a2.
+           varmap_size f (Node_vm a0 a1 a2) =
+           1 + (f a0 + (varmap_size f a1 + varmap_size f a2))
+   
+   [<A NAME="compare_index_equal-val"><B>compare_index_equal</B></A>]  Theorem
+      
+      |- !i1 i2. (index_compare i1 i2 = EQUAL) &lt;=&gt; (i1 = i2)
+   
+   [<A NAME="compare_list_index-val"><B>compare_list_index</B></A>]  Theorem
+      
+      |- !l1 l2. (list_compare index_compare l1 l2 = EQUAL) &lt;=&gt; (l1 = l2)
+   
+   [<A NAME="datatype_index-val"><B>datatype_index</B></A>]  Theorem
+      
+      |- DATATYPE (index Left_idx Right_idx End_idx)
+   
+   [<A NAME="datatype_varmap-val"><B>datatype_varmap</B></A>]  Theorem
+      
+      |- DATATYPE (varmap Empty_vm Node_vm)
+   
+   [<A NAME="index_11-val"><B>index_11</B></A>]  Theorem
+      
+      |- (!a a'. (Left_idx a = Left_idx a') &lt;=&gt; (a = a')) /\
+         !a a'. (Right_idx a = Right_idx a') &lt;=&gt; (a = a')
+   
+   [<A NAME="index_Axiom-val"><B>index_Axiom</B></A>]  Theorem
+      
+      |- !f0 f1 f2.
+           ?fn.
+             (!a. fn (Left_idx a) = f0 a (fn a)) /\
+             (!a. fn (Right_idx a) = f1 a (fn a)) /\ (fn End_idx = f2)
+   
+   [<A NAME="index_case_cong-val"><B>index_case_cong</B></A>]  Theorem
+      
+      |- !M M' f f1 v.
+           (M = M') /\ (!a. (M' = Left_idx a) ==&gt; (f a = f' a)) /\
+           (!a. (M' = Right_idx a) ==&gt; (f1 a = f1' a)) /\
+           ((M' = End_idx) ==&gt; (v = v')) ==&gt;
+           (index_case f f1 v M = index_case f' f1' v' M')
+   
+   [<A NAME="index_compare_def-val"><B>index_compare_def</B></A>]  Theorem
+      
+      |- (index_compare End_idx End_idx = EQUAL) /\
+         (!v10. index_compare End_idx (Left_idx v10) = LESS) /\
+         (!v11. index_compare End_idx (Right_idx v11) = LESS) /\
+         (!v2. index_compare (Left_idx v2) End_idx = GREATER) /\
+         (!v3. index_compare (Right_idx v3) End_idx = GREATER) /\
+         (!n' m'.
+            index_compare (Left_idx n') (Left_idx m') =
+            index_compare n' m') /\
+         (!n' m'. index_compare (Left_idx n') (Right_idx m') = LESS) /\
+         (!n' m'.
+            index_compare (Right_idx n') (Right_idx m') =
+            index_compare n' m') /\
+         !n' m'. index_compare (Right_idx n') (Left_idx m') = GREATER
+   
+   [<A NAME="index_compare_ind-val"><B>index_compare_ind</B></A>]  Theorem
+      
+      |- !P.
+           P End_idx End_idx /\ (!v10. P End_idx (Left_idx v10)) /\
+           (!v11. P End_idx (Right_idx v11)) /\
+           (!v2. P (Left_idx v2) End_idx) /\
+           (!v3. P (Right_idx v3) End_idx) /\
+           (!n' m'. P n' m' ==&gt; P (Left_idx n') (Left_idx m')) /\
+           (!n' m'. P (Left_idx n') (Right_idx m')) /\
+           (!n' m'. P n' m' ==&gt; P (Right_idx n') (Right_idx m')) /\
+           (!n' m'. P (Right_idx n') (Left_idx m')) ==&gt;
+           !v v1. P v v1
+   
+   [<A NAME="index_distinct-val"><B>index_distinct</B></A>]  Theorem
+      
+      |- (!a' a. Left_idx a &lt;&gt; Right_idx a') /\
+         (!a. Left_idx a &lt;&gt; End_idx) /\ !a. Right_idx a &lt;&gt; End_idx
+   
+   [<A NAME="index_induction-val"><B>index_induction</B></A>]  Theorem
+      
+      |- !P.
+           (!i. P i ==&gt; P (Left_idx i)) /\ (!i. P i ==&gt; P (Right_idx i)) /\
+           P End_idx ==&gt;
+           !i. P i
+   
+   [<A NAME="index_nchotomy-val"><B>index_nchotomy</B></A>]  Theorem
+      
+      |- !ii.
+           (?i. ii = Left_idx i) \/ (?i. ii = Right_idx i) \/
+           (ii = End_idx)
+   
+   [<A NAME="varmap_11-val"><B>varmap_11</B></A>]  Theorem
+      
+      |- !a0 a1 a2 a0' a1' a2'.
+           (Node_vm a0 a1 a2 = Node_vm a0' a1' a2') &lt;=&gt;
+           (a0 = a0') /\ (a1 = a1') /\ (a2 = a2')
+   
+   [<A NAME="varmap_Axiom-val"><B>varmap_Axiom</B></A>]  Theorem
+      
+      |- !f0 f1.
+           ?fn.
+             (fn Empty_vm = f0) /\
+             !a0 a1 a2. fn (Node_vm a0 a1 a2) = f1 a0 a1 a2 (fn a1) (fn a2)
+   
+   [<A NAME="varmap_case_cong-val"><B>varmap_case_cong</B></A>]  Theorem
+      
+      |- !M M' v f.
+           (M = M') /\ ((M' = Empty_vm) ==&gt; (v = v')) /\
+           (!a0 a1 a2.
+              (M' = Node_vm a0 a1 a2) ==&gt; (f a0 a1 a2 = f' a0 a1 a2)) ==&gt;
+           (varmap_case v f M = varmap_case v' f' M')
+   
+   [<A NAME="varmap_distinct-val"><B>varmap_distinct</B></A>]  Theorem
+      
+      |- !a2 a1 a0. Empty_vm &lt;&gt; Node_vm a0 a1 a2
+   
+   [<A NAME="varmap_find_def-val"><B>varmap_find_def</B></A>]  Theorem
+      
+      |- (!x v2 v1. varmap_find End_idx (Node_vm x v1 v2) = x) /\
+         (!x v2 v1 i1.
+            varmap_find (Right_idx i1) (Node_vm x v1 v2) =
+            varmap_find i1 v2) /\
+         (!x v2 v1 i1.
+            varmap_find (Left_idx i1) (Node_vm x v1 v2) =
+            varmap_find i1 v1) /\
+         (!v5. varmap_find (Left_idx v5) Empty_vm = @x. T) /\
+         (!v6. varmap_find (Right_idx v6) Empty_vm = @x. T) /\
+         (varmap_find End_idx Empty_vm = @x. T)
+   
+   [<A NAME="varmap_find_ind-val"><B>varmap_find_ind</B></A>]  Theorem
+      
+      |- !P.
+           (!x v1 v2. P End_idx (Node_vm x v1 v2)) /\
+           (!i1 x v1 v2. P i1 v2 ==&gt; P (Right_idx i1) (Node_vm x v1 v2)) /\
+           (!i1 x v1 v2. P i1 v1 ==&gt; P (Left_idx i1) (Node_vm x v1 v2)) /\
+           (!v5. P (Left_idx v5) Empty_vm) /\
+           (!v6. P (Right_idx v6) Empty_vm) /\ P End_idx Empty_vm ==&gt;
+           !v v1. P v v1
+   
+   [<A NAME="varmap_induction-val"><B>varmap_induction</B></A>]  Theorem
+      
+      |- !P.
+           P Empty_vm /\
+           (!v v0. P v /\ P v0 ==&gt; !a. P (Node_vm a v v0)) ==&gt;
+           !v. P v
+   
+   [<A NAME="varmap_nchotomy-val"><B>varmap_nchotomy</B></A>]  Theorem
+      
+      |- !vv. (vv = Empty_vm) \/ ?a v v0. vv = Node_vm a v v0
+   
+   
+*)
+end
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/ring/src/quoteScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

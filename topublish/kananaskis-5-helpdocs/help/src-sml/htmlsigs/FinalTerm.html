@@ -1,0 +1,99 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure FinalTerm</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure FinalTerm</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/prekernel/FinalTerm.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature FinalTerm =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>
+<A NAME="line4"></A>  eqtype term
+<A NAME="line5"></A>  type hol_type
+<A NAME="line6"></A>  type ('a,'b)subst = ('a,'b)Lib.subst
+<A NAME="line7"></A>  type 'a set       = 'a HOLset.set
+<A NAME="line8"></A>
+<A NAME="line9"></A>  val type_of       : term -&gt; hol_type
+<A NAME="line10"></A>  val free_vars     : term -&gt; term list
+<A NAME="line11"></A>  val free_vars_lr  : term -&gt; term list
+<A NAME="line12"></A>  val FVL           : term list -&gt; term set -&gt; term set
+<A NAME="line13"></A>  val free_in       : term -&gt; term -&gt; bool
+<A NAME="line14"></A>  val all_vars      : term -&gt; term list
+<A NAME="line15"></A>  val free_varsl    : term list -&gt; term list
+<A NAME="line16"></A>  val all_varsl     : term list -&gt; term list
+<A NAME="line17"></A>  val type_vars_in_term : term -&gt; hol_type list
+<A NAME="line18"></A>  val var_occurs    : term -&gt; term -&gt; bool
+<A NAME="line19"></A>
+<A NAME="line20"></A>  val genvar        : hol_type -&gt; term
+<A NAME="line21"></A>  val genvars       : hol_type -&gt; int -&gt; term list
+<A NAME="line22"></A>  val variant       : term list -&gt; term -&gt; term
+<A NAME="line23"></A>  val prim_variant  : term list -&gt; term -&gt; term
+<A NAME="line24"></A>  val gen_variant   : (string -&gt; bool) -&gt; string -&gt; term list -&gt; term -&gt; term
+<A NAME="line25"></A>
+<A NAME="line26"></A>  val mk_var        : string * hol_type -&gt; term
+<A NAME="line27"></A>  val mk_primed_var : string * hol_type -&gt; term
+<A NAME="line28"></A>  val decls         : string -&gt; term list
+<A NAME="line29"></A>  val all_consts    : unit -&gt; term list
+<A NAME="line30"></A>  val mk_const      : string * hol_type -&gt; term
+<A NAME="line31"></A>  val prim_mk_const : {Thy:string, Name:string} -&gt; term
+<A NAME="line32"></A>  val mk_thy_const  : {Thy:string, Name:string, Ty:hol_type} -&gt; term
+<A NAME="line33"></A>  val list_mk_comb  : term * term list -&gt; term
+<A NAME="line34"></A>  val mk_comb       : term * term -&gt; term
+<A NAME="line35"></A>  val mk_abs        : term * term -&gt; term
+<A NAME="line36"></A>  val list_mk_binder : term option -&gt; term list * term -&gt; term
+<A NAME="line37"></A>  val list_mk_abs   : term list * term -&gt; term
+<A NAME="line38"></A>  val dest_var      : term -&gt; string * hol_type
+<A NAME="line39"></A>  val dest_const    : term -&gt; string * hol_type
+<A NAME="line40"></A>  val dest_thy_const : term -&gt; {Thy:string, Name:string, Ty:hol_type}
+<A NAME="line41"></A>  val dest_comb     : term -&gt; term * term
+<A NAME="line42"></A>  val strip_binder  : term option -&gt; term -&gt; term list * term
+<A NAME="line43"></A>  val strip_abs     : term -&gt; term list * term
+<A NAME="line44"></A>  val dest_abs      : term -&gt; term * term
+<A NAME="line45"></A>  val is_var        : term -&gt; bool
+<A NAME="line46"></A>  val is_genvar     : term -&gt; bool
+<A NAME="line47"></A>  val is_const      : term -&gt; bool
+<A NAME="line48"></A>  val is_comb       : term -&gt; bool
+<A NAME="line49"></A>  val is_abs        : term -&gt; bool
+<A NAME="line50"></A>  val rator         : term -&gt; term
+<A NAME="line51"></A>  val rand          : term -&gt; term
+<A NAME="line52"></A>  val bvar          : term -&gt; term
+<A NAME="line53"></A>  val body          : term -&gt; term
+<A NAME="line54"></A>  val rename_bvar   : string -&gt; term -&gt; term
+<A NAME="line55"></A>
+<A NAME="line56"></A>  val same_const    : term -&gt; term -&gt; bool
+<A NAME="line57"></A>  val aconv         : term -&gt; term -&gt; bool
+<A NAME="line58"></A>  val beta_conv     : term -&gt; term
+<A NAME="line59"></A>  val eta_conv      : term -&gt; term
+<A NAME="line60"></A>  val subst         : (term,term) subst -&gt; term -&gt; term
+<A NAME="line61"></A>  val inst          : (hol_type,hol_type) subst -&gt; term -&gt; term
+<A NAME="line62"></A>
+<A NAME="line63"></A>  val raw_match     : hol_type list -&gt; term set
+<A NAME="line64"></A>                      -&gt; term -&gt; term
+<A NAME="line65"></A>                      -&gt; (term,term)subst * (hol_type,hol_type)subst
+<A NAME="line66"></A>                      -&gt; ((term,term)subst * term set) *
+<A NAME="line67"></A>                         ((hol_type,hol_type)subst * hol_type list)
+<A NAME="line68"></A>  val match_terml   : hol_type list -&gt; term set -&gt; term -&gt; term
+<A NAME="line69"></A>                        -&gt; (term,term)subst * (hol_type,hol_type)subst
+<A NAME="line70"></A>  val match_term    : term -&gt; term -&gt; (term,term)subst*(hol_type,hol_type)subst
+<A NAME="line71"></A>  val norm_subst    : ((term,term)subst * term set) *
+<A NAME="line72"></A>                      ((hol_type,hol_type)subst * hol_type list)
+<A NAME="line73"></A>                      -&gt; ((term,term)subst * (hol_type,hol_type)subst)
+<A NAME="line74"></A>
+<A NAME="line75"></A>  val var_compare   : term * term -&gt; order
+<A NAME="line76"></A>  val compare       : term * term -&gt; order
+<A NAME="line77"></A>  val term_eq       : term -&gt; term -&gt; bool
+<A NAME="line78"></A>
+<A NAME="line79"></A>  val empty_tmset   : term set
+<A NAME="line80"></A>  val empty_varset  : term set
+<A NAME="line81"></A>
+<A NAME="line82"></A>  val term_size     : term -&gt; int
+<A NAME="line83"></A>end
+<A NAME="line84"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/prekernel/FinalTerm.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

@@ -1,0 +1,67 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure mlibStream</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure mlibStream</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/metis/mlibStream.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>(* ========================================================================= *)
+<A NAME="line2"></A>(* A POSSIBLY-INFINITE STREAM DATATYPE FOR ML                                *)
+<A NAME="line3"></A>(* Copyright (c) 2001-2004 Joe Hurd.                                         *)
+<A NAME="line4"></A>(* ========================================================================= *)
+<A NAME="line5"></A>
+<A NAME="line6"></A>signature mlibStream =
+<A NAME="line7"></A>sig
+<A NAME="line8"></A>
+<A NAME="line9"></A>datatype 'a stream = NIL | CONS of 'a * (unit -&gt; 'a stream)
+<A NAME="line10"></A>
+<A NAME="line11"></A>(* If you're wondering how to create an infinite stream: *)
+<A NAME="line12"></A>(* val stream4 = let fun s4 () = CONS 4 s4 in s4 () end; *)
+<A NAME="line13"></A>
+<A NAME="line14"></A>(* mlibStream constructors *)
+<A NAME="line15"></A>val repeat : 'a -&gt; 'a stream
+<A NAME="line16"></A>val count  : int -&gt; int stream
+<A NAME="line17"></A>val powers : ('a -&gt; 'a) -&gt; 'a -&gt; 'a stream
+<A NAME="line18"></A>
+<A NAME="line19"></A>(* mlibStream versions of standard list operations: these should all terminate *)
+<A NAME="line20"></A>val cons        : 'a -&gt; (unit -&gt; 'a stream) -&gt; 'a stream
+<A NAME="line21"></A>val null        : 'a stream -&gt; bool
+<A NAME="line22"></A>val hd          : 'a stream -&gt; 'a                      (* raises Empty *)
+<A NAME="line23"></A>val tl          : 'a stream -&gt; 'a stream               (* raises Empty *)
+<A NAME="line24"></A>val hd_tl       : 'a stream -&gt; 'a * 'a stream          (* raises Empty *)
+<A NAME="line25"></A>val sing        : 'a -&gt; 'a stream
+<A NAME="line26"></A>val append      : 'a stream -&gt; (unit -&gt; 'a stream) -&gt; 'a stream
+<A NAME="line27"></A>val map         : ('a -&gt; 'b) -&gt; 'a stream -&gt; 'b stream
+<A NAME="line28"></A>val maps        : ('a -&gt; 's -&gt; 'b * 's) -&gt; 's -&gt; 'a stream -&gt; 'b stream
+<A NAME="line29"></A>val zipwith     : ('a -&gt; 'b -&gt; 'c) -&gt; 'a stream -&gt; 'b stream -&gt; 'c stream
+<A NAME="line30"></A>val zip         : 'a stream -&gt; 'b stream -&gt; ('a * 'b) stream
+<A NAME="line31"></A>val take        : int -&gt; 'a stream -&gt; 'a stream        (* raises Subscript *)
+<A NAME="line32"></A>val drop        : int -&gt; 'a stream -&gt; 'a stream        (* raises Subscript *)
+<A NAME="line33"></A>
+<A NAME="line34"></A>(* mlibStream versions of standard list operations: these might not terminate *)
+<A NAME="line35"></A>val length       : 'a stream -&gt; int
+<A NAME="line36"></A>val exists       : ('a -&gt; bool) -&gt; 'a stream -&gt; bool
+<A NAME="line37"></A>val all          : ('a -&gt; bool) -&gt; 'a stream -&gt; bool
+<A NAME="line38"></A>val filter       : ('a -&gt; bool) -&gt; 'a stream -&gt; 'a stream
+<A NAME="line39"></A>val foldl        : ('a * 's -&gt; 's) -&gt; 's -&gt; 'a stream -&gt; 's
+<A NAME="line40"></A>val flatten      : 'a stream stream -&gt; 'a stream
+<A NAME="line41"></A>val partial_map  : ('a -&gt; 'b option) -&gt; 'a stream -&gt; 'b stream
+<A NAME="line42"></A>val partial_maps : ('a -&gt; 's -&gt; 'b option * 's) -&gt; 's -&gt; 'a stream -&gt; 'b stream
+<A NAME="line43"></A>
+<A NAME="line44"></A>(* mlibStream operations *)
+<A NAME="line45"></A>val memoize       : 'a stream -&gt; 'a stream
+<A NAME="line46"></A>val to_list       : 'a stream -&gt; 'a list
+<A NAME="line47"></A>val from_list     : 'a list -&gt; 'a stream
+<A NAME="line48"></A>val to_textfile   : {filename : string} -&gt; string stream -&gt; unit
+<A NAME="line49"></A>val from_textfile : {filename : string} -&gt; string stream  (* line by line *)
+<A NAME="line50"></A>
+<A NAME="line51"></A>end
+<A NAME="line52"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/metis/mlibStream.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

@@ -1,0 +1,77 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure OmegaSimple</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure OmegaSimple</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/integer/OmegaSimple.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature OmegaSimple =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>
+<A NAME="line4"></A>  include Abbrev
+<A NAME="line5"></A>
+<A NAME="line6"></A>  val simple_CONV : conv
+<A NAME="line7"></A>
+<A NAME="line8"></A>  val verify_result : term -&gt; term list -&gt; term OmegaMLShadow.result -&gt; thm
+<A NAME="line9"></A>  val verify_satisfaction : term -&gt; term list -&gt; Arbint.int PIntMap.t -&gt; thm
+<A NAME="line10"></A>  val verify_derivation :
+<A NAME="line11"></A>      term -&gt; term list -&gt; term OmegaMLShadow.derivation -&gt; thm
+<A NAME="line12"></A>  val verify_contr : (thm * thm) -&gt; thm
+<A NAME="line13"></A>  val verify_gcd_check : thm -&gt; thm
+<A NAME="line14"></A>  val verify_combination : term -&gt; thm -&gt; thm -&gt; thm
+<A NAME="line15"></A>
+<A NAME="line16"></A>end;
+<A NAME="line17"></A>
+<A NAME="line18"></A>(*
+<A NAME="line19"></A>   This file turns the "external proofs" returned by the OmegaMLShadow
+<A NAME="line20"></A>   implementation into HOL kernel proofs.  It also performs the initial
+<A NAME="line21"></A>   translation from a HOL formula into a shadow proof state, so that the
+<A NAME="line22"></A>   simple_CONV function can do an entire proof.
+<A NAME="line23"></A>
+   [simple_CONV t] tries to prove t using the OmegaMLShadow approach.  The
+   input term must be of the form
+       ?x1..xn. body
+   with body being a conjunction of terms, all of the form
+       0 &lt;= c1 * v1 + .. cn * vn + c
+   with v1 &lt; v2 &lt; .. &lt; vn according to the standard Term ordering.  (The
+   ordering of x1..xn in the existential quantification isn't important.)
+   The final term constant c must always be present, even if it is zero.
+
+   [verify_result tm vars r] takes a term and a result from the
+   MLShadow and attempts to turn it into a theorem, where vars is the
+   list of variables occuring in tm, in order.
+
+   [verify_satisfaction tm vars vm] proves formula tm true by providing
+   witnesses for the variables.  vm maps indices from the list of vars
+   to the values that those variables should take on.
+
+   [verify_derivation tm vars d] takes a purported derivation of
+   false from the assumption tm, and uses it to equate tm to false.
+   vars is the list of variables in tm, in order.
+
+   [verify_contr (th1, th2)] returns [..] |- F, given the theorems th1
+   and th2, which between them say contradictory things.  They will
+   be of the form 0 &lt;= X + c and 0 &lt;= ~X + d and ~c is not &lt;= d.  X
+   may be the sum of multiple ci * vi pairs.
+
+   [verify_gcd_check th] eliminates a common divisor from the
+   coefficients of the variables in theorem th, which is of the
+   standard form.
+
+   [verify_combination v th1 th2] does variable elimination on v,
+   given a "lower-bound" theorem th1, and an "upper-bound" theorem
+   th2.  Both th1 and th2 are of the form
+     0 &lt;= c1 * v1 + ... + vn * cn + n
+   In th1, the coefficient of v will be positive, and in th2,
+   negative.
+
+*)
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/integer/OmegaSimple.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

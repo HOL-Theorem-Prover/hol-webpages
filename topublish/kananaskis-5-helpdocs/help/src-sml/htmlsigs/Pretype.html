@@ -1,0 +1,63 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure Pretype</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure Pretype</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/parse/Pretype.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature Pretype =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>
+<A NAME="line4"></A> datatype pretype
+<A NAME="line5"></A>    = Vartype of string
+<A NAME="line6"></A>    | Tyop of {Thy:string,Tyop:string, Args: pretype list}
+<A NAME="line7"></A>    | UVar of pretype option ref
+<A NAME="line8"></A>
+<A NAME="line9"></A>val tyvars : pretype -&gt; string list
+<A NAME="line10"></A>val new_uvar : unit -&gt; pretype
+<A NAME="line11"></A>val ref_occurs_in : pretype option ref * pretype -&gt; bool
+<A NAME="line12"></A>val ref_equiv : pretype option ref * pretype -&gt; bool
+<A NAME="line13"></A>
+<A NAME="line14"></A>(* first argument is a function which performs a binding between a
+<A NAME="line15"></A>   pretype reference and another pretype, updating some sort of environment
+<A NAME="line16"></A>   (the 'a), returning the new alpha and a unit option, SOME () for a
+<A NAME="line17"></A>   success, and a NONE, if not.
+<A NAME="line18"></A>
+<A NAME="line19"></A>   To further complicate things, the bind argument also gets a copy of
+<A NAME="line20"></A>   gen_unify to call, if it should choose.
+<A NAME="line21"></A>*)
+<A NAME="line22"></A>val gen_unify :
+<A NAME="line23"></A>  ((pretype -&gt; pretype -&gt; ('a -&gt; 'a * unit option)) -&gt;
+<A NAME="line24"></A>   (pretype option ref -&gt; (pretype -&gt; ('a -&gt; 'a * unit option)))) -&gt;
+<A NAME="line25"></A>  pretype -&gt; pretype -&gt; ('a -&gt; 'a * unit option)
+<A NAME="line26"></A>val unify : pretype -&gt; pretype -&gt; unit
+<A NAME="line27"></A>val can_unify : pretype -&gt; pretype -&gt; bool
+<A NAME="line28"></A>
+<A NAME="line29"></A>val safe_unify :
+<A NAME="line30"></A>  pretype -&gt; pretype -&gt;
+<A NAME="line31"></A>  ((pretype option ref * pretype) list -&gt;
+<A NAME="line32"></A>   (pretype option ref * pretype) list * unit option)
+<A NAME="line33"></A>val apply_subst : (pretype option ref * pretype) list -&gt; pretype -&gt; pretype
+<A NAME="line34"></A>
+<A NAME="line35"></A>val rename_typevars : string list -&gt; pretype -&gt; pretype
+<A NAME="line36"></A>val rename_tv : string list -&gt; pretype -&gt; (string * pretype option ref) list -&gt;
+<A NAME="line37"></A>                (string * pretype option ref) list * pretype option
+<A NAME="line38"></A>val fromType : Type.hol_type -&gt; pretype
+<A NAME="line39"></A>val remove_made_links : pretype -&gt; pretype
+<A NAME="line40"></A>val replace_null_links : pretype -&gt; (string list -&gt; string list * unit option)
+<A NAME="line41"></A>val clean : pretype -&gt; Type.hol_type
+<A NAME="line42"></A>val toType : pretype -&gt; Type.hol_type
+<A NAME="line43"></A>val chase : pretype -&gt; pretype
+<A NAME="line44"></A>
+<A NAME="line45"></A>val pp_pretype : ppstream -&gt; pretype -&gt; unit
+<A NAME="line46"></A>
+<A NAME="line47"></A>end
+<A NAME="line48"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/parse/Pretype.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

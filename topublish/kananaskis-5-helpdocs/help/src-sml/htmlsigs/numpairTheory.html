@@ -1,0 +1,294 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure numpairTheory</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure numpairTheory</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/num/extra_theories/numpairScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature numpairTheory =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  type thm = Thm.thm
+<A NAME="line4"></A>  
+<A NAME="line5"></A>  (*  Definitions  *)
+<A NAME="line6"></A>    val invtri0_curried_def : thm
+<A NAME="line7"></A>    val invtri0_tupled_primitive_def : thm
+<A NAME="line8"></A>    val invtri_def : thm
+<A NAME="line9"></A>    val ncons_def : thm
+<A NAME="line10"></A>    val nfoldl_def : thm
+<A NAME="line11"></A>    val nfst_def : thm
+<A NAME="line12"></A>    val nlen_def : thm
+<A NAME="line13"></A>    val nlistrec_curried_def : thm
+<A NAME="line14"></A>    val nlistrec_tupled_primitive_def : thm
+<A NAME="line15"></A>    val nmap_def : thm
+<A NAME="line16"></A>    val npair_def : thm
+<A NAME="line17"></A>    val nsnd_def : thm
+<A NAME="line18"></A>    val tri_def : thm
+<A NAME="line19"></A>  
+<A NAME="line20"></A>  (*  Theorems  *)
+<A NAME="line21"></A>    val SND_invtri0 : thm
+<A NAME="line22"></A>    val invtri0_def : thm
+<A NAME="line23"></A>    val invtri0_ind : thm
+<A NAME="line24"></A>    val invtri0_thm : thm
+<A NAME="line25"></A>    val invtri_le : thm
+<A NAME="line26"></A>    val invtri_linverse : thm
+<A NAME="line27"></A>    val invtri_linverse_r : thm
+<A NAME="line28"></A>    val invtri_lower : thm
+<A NAME="line29"></A>    val invtri_unique : thm
+<A NAME="line30"></A>    val invtri_upper : thm
+<A NAME="line31"></A>    val ncons_11 : thm
+<A NAME="line32"></A>    val ncons_not_nnil : thm
+<A NAME="line33"></A>    val nfoldl_thm : thm
+<A NAME="line34"></A>    val nfst_le : thm
+<A NAME="line35"></A>    val nfst_npair : thm
+<A NAME="line36"></A>    val nlen_thm : thm
+<A NAME="line37"></A>    val nlist_ind : thm
+<A NAME="line38"></A>    val nlistrec_thm : thm
+<A NAME="line39"></A>    val nmap_thm : thm
+<A NAME="line40"></A>    val npair : thm
+<A NAME="line41"></A>    val npair_11 : thm
+<A NAME="line42"></A>    val npair_cases : thm
+<A NAME="line43"></A>    val nsnd_le : thm
+<A NAME="line44"></A>    val nsnd_npair : thm
+<A NAME="line45"></A>    val tri_11 : thm
+<A NAME="line46"></A>    val tri_LE : thm
+<A NAME="line47"></A>    val tri_LT : thm
+<A NAME="line48"></A>    val tri_LT_I : thm
+<A NAME="line49"></A>    val tri_eq_0 : thm
+<A NAME="line50"></A>    val tri_formula : thm
+<A NAME="line51"></A>    val tri_le : thm
+<A NAME="line52"></A>    val twotri_formula : thm
+<A NAME="line53"></A>  
+<A NAME="line54"></A>  val numpair_grammars : type_grammar.grammar * term_grammar.grammar
+<A NAME="line55"></A>  
+<A NAME="line56"></A>  val numpair_rwts : simpLib.ssfrag
+<A NAME="line57"></A>(*
+   [basicSize] Parent theory of "numpair"
+   
+   [while] Parent theory of "numpair"
+   
+   [invtri0_curried_def]  Definition
+      
+      |- ∀x x1. invtri0 x x1 = invtri0_tupled (x,x1)
+   
+   [invtri0_tupled_primitive_def]  Definition
+      
+      |- invtri0_tupled =
+         WFREC
+           (@R.
+              WF R ∧
+              ∀a n. ¬(n &lt; a + 1) ⇒ R (n − (a + 1),a + 1) (n,a))
+           (λinvtri0_tupled a'.
+              case a' of
+                 (n,a) -&gt;
+                   I
+                     (if n &lt; a + 1 then
+                        (n,a)
+                      else
+                        invtri0_tupled (n − (a + 1),a + 1)))
+   
+   [invtri_def]  Definition
+      
+      |- ∀n. tri⁻¹ n = SND (invtri0 n 0)
+   
+   [ncons_def]  Definition
+      
+      |- ∀h t. ncons h t = h ⊗ t + 1
+   
+   [nfoldl_def]  Definition
+      
+      |- ∀f a l.
+           nfoldl f a l = nlistrec (λa. a) (λn t r a. r (f n a)) l a
+   
+   [nfst_def]  Definition
+      
+      |- ∀n. nfst n = tri (tri⁻¹ n) + tri⁻¹ n − n
+   
+   [nlen_def]  Definition
+      
+      |- nlen = nlistrec 0 (λn t r. r + 1)
+   
+   [nlistrec_curried_def]  Definition
+      
+      |- ∀x x1 x2. nlistrec x x1 x2 = nlistrec_tupled (x,x1,x2)
+   
+   [nlistrec_tupled_primitive_def]  Definition
+      
+      |- nlistrec_tupled =
+         WFREC
+           (@R.
+              WF R ∧
+              ∀f n l. l ≠ 0 ⇒ R (n,f,nsnd (l − 1)) (n,f,l))
+           (λnlistrec_tupled a.
+              case a of
+                 (n,f,l) -&gt;
+                   I
+                     (if l = 0 then
+                        n
+                      else
+                        f (nfst (l − 1)) (nsnd (l − 1))
+                          (nlistrec_tupled (n,f,nsnd (l − 1)))))
+   
+   [nmap_def]  Definition
+      
+      |- ∀f. nmap f = nlistrec 0 (λn t r. ncons (f n) r)
+   
+   [npair_def]  Definition
+      
+      |- ∀m n. m ⊗ n = tri (m + n) + n
+   
+   [nsnd_def]  Definition
+      
+      |- ∀n. nsnd n = n − tri (tri⁻¹ n)
+   
+   [tri_def]  Definition
+      
+      |- (tri 0 = 0) ∧ ∀n. tri (SUC n) = SUC n + tri n
+   
+   [SND_invtri0]  Theorem
+      
+      |- ∀n a. FST (invtri0 n a) &lt; SUC (SND (invtri0 n a))
+   
+   [invtri0_def]  Theorem
+      
+      |- ∀n a.
+           invtri0 n a =
+           if n &lt; a + 1 then (n,a) else invtri0 (n − (a + 1)) (a + 1)
+   
+   [invtri0_ind]  Theorem
+      
+      |- ∀P.
+           (∀n a.
+              (¬(n &lt; a + 1) ⇒ P (n − (a + 1)) (a + 1)) ⇒ P n a) ⇒
+           ∀v v1. P v v1
+   
+   [invtri0_thm]  Theorem
+      
+      |- ∀n a. tri (SND (invtri0 n a)) + FST (invtri0 n a) = n + tri a
+   
+   [invtri_le]  Theorem
+      
+      |- tri⁻¹ n ≤ n
+   
+   [invtri_linverse]  Theorem
+      
+      |- tri⁻¹ (tri n) = n
+   
+   [invtri_linverse_r]  Theorem
+      
+      |- y ≤ x ⇒ (tri⁻¹ (tri x + y) = x)
+   
+   [invtri_lower]  Theorem
+      
+      |- tri (tri⁻¹ n) ≤ n
+   
+   [invtri_unique]  Theorem
+      
+      |- tri y ≤ n ∧ n &lt; tri (y + 1) ⇒ (tri⁻¹ n = y)
+   
+   [invtri_upper]  Theorem
+      
+      |- n &lt; tri (tri⁻¹ n + 1)
+   
+   [ncons_11]  Theorem
+      
+      |- (ncons x y = ncons h t) ⇔ (x = h) ∧ (y = t)
+   
+   [ncons_not_nnil]  Theorem
+      
+      |- ncons x y ≠ 0
+   
+   [nfoldl_thm]  Theorem
+      
+      |- (nfoldl f a 0 = a) ∧
+         (nfoldl f a (ncons h t) = nfoldl f (f h a) t)
+   
+   [nfst_le]  Theorem
+      
+      |- nfst n ≤ n
+   
+   [nfst_npair]  Theorem
+      
+      |- nfst (x ⊗ y) = x
+   
+   [nlen_thm]  Theorem
+      
+      |- (nlen 0 = 0) ∧ (nlen (ncons h t) = nlen t + 1)
+   
+   [nlist_ind]  Theorem
+      
+      |- ∀P. P 0 ∧ (∀h t. P t ⇒ P (ncons h t)) ⇒ ∀n. P n
+   
+   [nlistrec_thm]  Theorem
+      
+      |- (nlistrec n f 0 = n) ∧
+         (nlistrec n f (ncons h t) = f h t (nlistrec n f t))
+   
+   [nmap_thm]  Theorem
+      
+      |- (nmap f 0 = 0) ∧ (nmap f (ncons h t) = ncons (f h) (nmap f t))
+   
+   [npair]  Theorem
+      
+      |- ∀n. nfst n ⊗ nsnd n = n
+   
+   [npair_11]  Theorem
+      
+      |- (x₁ ⊗ y₁ = x₂ ⊗ y₂) ⇔
+         (x₁ = x₂) ∧ (y₁ = y₂)
+   
+   [npair_cases]  Theorem
+      
+      |- ∀n. ∃x y. n = x ⊗ y
+   
+   [nsnd_le]  Theorem
+      
+      |- nsnd n ≤ n
+   
+   [nsnd_npair]  Theorem
+      
+      |- nsnd (x ⊗ y) = y
+   
+   [tri_11]  Theorem
+      
+      |- ∀m n. (tri m = tri n) ⇔ (m = n)
+   
+   [tri_LE]  Theorem
+      
+      |- ∀m n. tri m ≤ tri n ⇔ m ≤ n
+   
+   [tri_LT]  Theorem
+      
+      |- ∀n m. tri n &lt; tri m ⇔ n &lt; m
+   
+   [tri_LT_I]  Theorem
+      
+      |- ∀n m. n &lt; m ⇒ tri n &lt; tri m
+   
+   [tri_eq_0]  Theorem
+      
+      |- ((tri n = 0) ⇔ (n = 0)) ∧ ((0 = tri n) ⇔ (n = 0))
+   
+   [tri_formula]  Theorem
+      
+      |- tri n = n * (n + 1) DIV 2
+   
+   [tri_le]  Theorem
+      
+      |- n ≤ tri n
+   
+   [twotri_formula]  Theorem
+      
+      |- 2 * tri n = n * (n + 1)
+   
+   
+*)
+end
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/num/extra_theories/numpairScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

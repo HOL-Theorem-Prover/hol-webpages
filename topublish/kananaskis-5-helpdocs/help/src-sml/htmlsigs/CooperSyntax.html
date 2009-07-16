@@ -1,0 +1,102 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure CooperSyntax</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure CooperSyntax</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/integer/CooperSyntax.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature CooperSyntax = sig
+<A NAME="line2"></A>
+<A NAME="line3"></A>  include Abbrev
+<A NAME="line4"></A>  val not_tm  : term
+<A NAME="line5"></A>  val num_ty  : hol_type
+<A NAME="line6"></A>  val true_tm : term
+<A NAME="line7"></A>  val false_tm : term
+<A NAME="line8"></A>
+<A NAME="line9"></A>  val strip_exists : term -&gt; (term list * term)
+<A NAME="line10"></A>
+<A NAME="line11"></A>  val cpis_conj : term -&gt; bool
+<A NAME="line12"></A>  val cpis_disj : term -&gt; bool
+<A NAME="line13"></A>
+<A NAME="line14"></A>  val cpstrip_conj : term -&gt; term list
+<A NAME="line15"></A>  val cpstrip_disj : term -&gt; term list
+<A NAME="line16"></A>
+<A NAME="line17"></A>  val cpEVERY_CONJ_CONV : (term -&gt; Thm.thm) -&gt; (term -&gt; Thm.thm)
+<A NAME="line18"></A>  val cpEVERY_DISJ_CONV : (term -&gt; Thm.thm) -&gt; (term -&gt; Thm.thm)
+<A NAME="line19"></A>
+<A NAME="line20"></A>  val has_exists : term -&gt; bool
+<A NAME="line21"></A>  val has_forall : term -&gt; bool
+<A NAME="line22"></A>  val has_quant : term -&gt; bool
+<A NAME="line23"></A>
+<A NAME="line24"></A>  (* finds sub-terms satisfying given predicate that do not have any of their
+<A NAME="line25"></A>     free variables bound by binders higher in the same term *)
+<A NAME="line26"></A>  val find_free_terms : (term -&gt; bool) -&gt; term -&gt; term HOLset.set
+<A NAME="line27"></A>
+<A NAME="line28"></A>  datatype qstatus = EITHER | NEITHER | qsUNIV | qsEXISTS
+<A NAME="line29"></A>  datatype term_op = CONJN | DISJN | NEGN
+<A NAME="line30"></A>  datatype reltype = rEQ | rDIV | rLT
+<A NAME="line31"></A>
+<A NAME="line32"></A>
+<A NAME="line33"></A>  val goal_qtype : term -&gt; qstatus
+<A NAME="line34"></A>  val bop_characterise : term -&gt; term_op option
+<A NAME="line35"></A>  val categorise_leaf : term -&gt; reltype
+<A NAME="line36"></A>
+<A NAME="line37"></A>  val move_quants_up : term -&gt; Thm.thm
+<A NAME="line38"></A>  val flip_forall : term -&gt; Thm.thm
+<A NAME="line39"></A>  val flip_foralls : term -&gt; Thm.thm
+<A NAME="line40"></A>
+<A NAME="line41"></A>  val count_vars : term -&gt; (string * int) list
+<A NAME="line42"></A>
+<A NAME="line43"></A>  val move_conj_left : (term -&gt; bool) -&gt; term -&gt; Thm.thm
+<A NAME="line44"></A>
+<A NAME="line45"></A>  val mk_constraint : term * term -&gt; term
+<A NAME="line46"></A>  val is_constraint : term -&gt; bool
+<A NAME="line47"></A>  val is_vconstraint : term -&gt; term -&gt; bool
+<A NAME="line48"></A>  val constraint_var : term -&gt; term
+<A NAME="line49"></A>  val constraint_size : term -&gt; Arbint.int
+<A NAME="line50"></A>  val dest_constraint : term -&gt; (term * (term * term)) (*  (v, (lo, hi))  *)
+<A NAME="line51"></A>
+<A NAME="line52"></A>  val MK_CONSTRAINT : conv
+<A NAME="line53"></A>  val UNCONSTRAIN : conv
+<A NAME="line54"></A>  val IN_CONSTRAINT : conv -&gt; conv
+<A NAME="line55"></A>  val quick_cst_elim : conv
+<A NAME="line56"></A>
+<A NAME="line57"></A>  val reduce_if_ground : conv
+<A NAME="line58"></A>  val fixup_newvar : conv
+<A NAME="line59"></A>
+<A NAME="line60"></A>  (* with ?x. p \/ q \/ r...          (with or's right associated)
+<A NAME="line61"></A>     expand to (?x. p) \/ (?x.q) \/ (?x.r) ...
+<A NAME="line62"></A>  *)
+<A NAME="line63"></A>  val push_one_exists_over_many_disjs : conv
+<A NAME="line64"></A>  val push_in_exists : conv
+<A NAME="line65"></A>
+<A NAME="line66"></A>  val simple_divides : term -&gt; term -&gt; bool
+<A NAME="line67"></A>
+<A NAME="line68"></A>  (* a "resquan" term is of the form
+<A NAME="line69"></A>     low &lt; x /\ x &lt;= high
+<A NAME="line70"></A>  *)
+<A NAME="line71"></A>  val resquan_remove : conv
+<A NAME="line72"></A>  val resquan_onestep : conv
+<A NAME="line73"></A>
+<A NAME="line74"></A>  (* a "vacuous" existential is a term of the form ?x. x = e *)
+<A NAME="line75"></A>  val remove_vacuous_existential : conv
+<A NAME="line76"></A>
+<A NAME="line77"></A>  val push_in_exists_and_follow : conv -&gt; conv
+<A NAME="line78"></A>  val expand_right_and_over_or : conv
+<A NAME="line79"></A>
+<A NAME="line80"></A>  (* applies the argument conversion to all arguments of relational binary
+<A NAME="line81"></A>     operators in a standard Cooper formula (operators are =, &lt; or
+<A NAME="line82"></A>     int_divides).  Allows for the conv argument to be a QConv, and will
+<A NAME="line83"></A>     also raise QConv.UNCHANGED itself *)
+<A NAME="line84"></A>  val ADDITIVE_TERMS_CONV : conv -&gt; conv
+<A NAME="line85"></A>
+<A NAME="line86"></A>end
+<A NAME="line87"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/integer/CooperSyntax.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

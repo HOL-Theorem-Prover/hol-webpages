@@ -1,0 +1,105 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure CooperMath</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure CooperMath</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/integer/CooperMath.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature CooperMath = sig
+<A NAME="line2"></A>
+<A NAME="line3"></A>  include Abbrev
+<A NAME="line4"></A>  type num = Arbnum.num
+<A NAME="line5"></A>
+<A NAME="line6"></A>  val cooper_compset : computeLib.compset
+<A NAME="line7"></A>  val REDUCE_CONV    : term -&gt; thm
+<A NAME="line8"></A>  val gcd_t          : term
+<A NAME="line9"></A>
+<A NAME="line10"></A>  val gcd            : Arbint.int * Arbint.int -&gt; Arbint.int
+<A NAME="line11"></A>  val gcdl           : Arbint.int list -&gt; Arbint.int
+<A NAME="line12"></A>  val lcm            : Arbint.int * Arbint.int -&gt; Arbint.int
+<A NAME="line13"></A>  val lcml           : Arbint.int list -&gt; Arbint.int
+<A NAME="line14"></A>  val extended_gcd   : num * num -&gt; num * (Arbint.int * Arbint.int)
+<A NAME="line15"></A>  val sum_var_coeffs : term -&gt; term -&gt; Arbint.int
+<A NAME="line16"></A>
+<A NAME="line17"></A>  datatype dir = Left | Right
+<A NAME="line18"></A>  datatype termtype = EQ | LT
+<A NAME="line19"></A>
+<A NAME="line20"></A>  val dir_of_pair    : dir -&gt; ('a * 'a) -&gt; 'a
+<A NAME="line21"></A>  val term_at        : dir -&gt; term -&gt; term
+<A NAME="line22"></A>  val conv_at        : dir -&gt; (term -&gt; thm) -&gt; (term -&gt; thm)
+<A NAME="line23"></A>
+<A NAME="line24"></A>  val move_terms_from: termtype -&gt; dir -&gt; (term -&gt; bool) -&gt; (term -&gt; thm)
+<A NAME="line25"></A>  val collect_terms  : term -&gt; thm
+<A NAME="line26"></A>  val collect_in_sum : term -&gt; term -&gt; thm
+<A NAME="line27"></A>
+<A NAME="line28"></A>  val LINEAR_MULT    : conv
+<A NAME="line29"></A>
+<A NAME="line30"></A>  (* a useful simplification conversion for division terms *)
+<A NAME="line31"></A>  (* these must be in the form
+<A NAME="line32"></A>          c | n * x + m * y + p * z ... + d
+<A NAME="line33"></A>     where all variables have coefficients and c is a positive literal.
+<A NAME="line34"></A>     There is no order required of the summands on the right however. *)
+<A NAME="line35"></A>  (* Is a "QConv"; raises QConv.UNCHANGED if a term doesn't change *)
+<A NAME="line36"></A>  val check_divides  : term -&gt; thm
+<A NAME="line37"></A>
+<A NAME="line38"></A>
+<A NAME="line39"></A>  (* for terms of form c int_divides n * x + ... , minimises the coefficients
+<A NAME="line40"></A>     and any bare numeric literals to be their old value mod c.  c must be
+<A NAME="line41"></A>     positive *)
+<A NAME="line42"></A>  val minimise_divides : conv
+<A NAME="line43"></A>
+<A NAME="line44"></A>  (* replaces
+<A NAME="line45"></A>       m | a * x + b
+<A NAME="line46"></A>     with
+<A NAME="line47"></A>       d | b /\ ?t. x = ~p * (b/d) + t * (m/d)
+<A NAME="line48"></A>     where
+<A NAME="line49"></A>       d = gcd(a,m) and d = pa + qm
+<A NAME="line50"></A>  *)
+<A NAME="line51"></A>  val elim_sdivides  : term -&gt; thm
+<A NAME="line52"></A>
+<A NAME="line53"></A>  (* replaces
+<A NAME="line54"></A>       m | a * x + b /\ n | u * x + v
+<A NAME="line55"></A>     with
+<A NAME="line56"></A>       mn | d * x + v * m * p + b * n * q /\
+<A NAME="line57"></A>       d | a * v - u * b
+<A NAME="line58"></A>     where
+<A NAME="line59"></A>       d = gcd (an, um) = pum + qan
+<A NAME="line60"></A>  *)
+<A NAME="line61"></A>  val elim_paired_divides : term -&gt; thm
+<A NAME="line62"></A>
+<A NAME="line63"></A>
+<A NAME="line64"></A>  val simplify_constraints : term -&gt; thm
+<A NAME="line65"></A>
+<A NAME="line66"></A>  val simplify_constrained_disjunct : conv
+<A NAME="line67"></A>
+<A NAME="line68"></A>
+<A NAME="line69"></A>  (* These two functions both factor out integers from sums
+<A NAME="line70"></A>     Both take the factor as an arbint and as a term as the first two
+<A NAME="line71"></A>     arguments (experience suggests that you usually have both of these
+<A NAME="line72"></A>     values around when programming, so it seems wasteful to force the
+<A NAME="line73"></A>     function to have to re-call either term_of_int or int_of_term).  *)
+<A NAME="line74"></A>
+<A NAME="line75"></A>  (* factor_out only looks at summands of the form c * x, where c is a
+<A NAME="line76"></A>     numeral, and factor_out_lits only looks at summands that are literals
+<A NAME="line77"></A>     Both will do bogus things if given something to work on that doesn't
+<A NAME="line78"></A>     divide cleanly, e.g., factor_out_lits (Arbint.fromInt 2) ``5 + x`` *)
+<A NAME="line79"></A>  val factor_out : Arbint.int -&gt; term -&gt; term -&gt; thm
+<A NAME="line80"></A>  val factor_out_lits : Arbint.int -&gt; term -&gt; term -&gt; thm
+<A NAME="line81"></A>
+<A NAME="line82"></A>  val BLEAF_CONV : (conv * conv -&gt; conv) -&gt; conv -&gt; conv
+<A NAME="line83"></A>
+<A NAME="line84"></A>  (* initial phases of the procedure *)
+<A NAME="line85"></A>  val phase1_CONV : conv
+<A NAME="line86"></A>  val phase2_CONV : term -&gt; conv
+<A NAME="line87"></A>  val phase3_CONV : conv
+<A NAME="line88"></A>
+<A NAME="line89"></A>end
+<A NAME="line90"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/integer/CooperMath.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

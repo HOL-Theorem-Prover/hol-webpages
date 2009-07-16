@@ -1,0 +1,453 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure lbtreeTheory</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure lbtreeTheory</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/llist/lbtreeScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature lbtreeTheory =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  type thm = Thm.thm
+<A NAME="line4"></A>  
+<A NAME="line5"></A>  (*  Definitions  *)
+<A NAME="line6"></A>    val Lf_def : thm
+<A NAME="line7"></A>    val Lfrep_def : thm
+<A NAME="line8"></A>    val Nd_def : thm
+<A NAME="line9"></A>    val Ndrep_def : thm
+<A NAME="line10"></A>    val bf_flatten_def : thm
+<A NAME="line11"></A>    val depth : thm
+<A NAME="line12"></A>    val drop_while_def : thm
+<A NAME="line13"></A>    val finite : thm
+<A NAME="line14"></A>    val is_lbtree_def : thm
+<A NAME="line15"></A>    val is_mmindex_def : thm
+<A NAME="line16"></A>    val lbtree_TY_DEF : thm
+<A NAME="line17"></A>    val lbtree_absrep : thm
+<A NAME="line18"></A>    val lbtree_case_def : thm
+<A NAME="line19"></A>    val map_def : thm
+<A NAME="line20"></A>    val mem : thm
+<A NAME="line21"></A>    val mindepth_def : thm
+<A NAME="line22"></A>    val optmin_curried_def : thm
+<A NAME="line23"></A>    val optmin_tupled_primitive_def : thm
+<A NAME="line24"></A>    val path_follow_def : thm
+<A NAME="line25"></A>  
+<A NAME="line26"></A>  (*  Theorems  *)
+<A NAME="line27"></A>    val EXISTS_FIRST : thm
+<A NAME="line28"></A>    val Lf_NOT_Nd : thm
+<A NAME="line29"></A>    val Nd_11 : thm
+<A NAME="line30"></A>    val bf_flatten_append : thm
+<A NAME="line31"></A>    val bf_flatten_eq_lnil : thm
+<A NAME="line32"></A>    val depth_cases : thm
+<A NAME="line33"></A>    val depth_ind : thm
+<A NAME="line34"></A>    val depth_mem : thm
+<A NAME="line35"></A>    val depth_rules : thm
+<A NAME="line36"></A>    val exists_bf_flatten : thm
+<A NAME="line37"></A>    val finite_cases : thm
+<A NAME="line38"></A>    val finite_ind : thm
+<A NAME="line39"></A>    val finite_map : thm
+<A NAME="line40"></A>    val finite_rules : thm
+<A NAME="line41"></A>    val finite_thm : thm
+<A NAME="line42"></A>    val lbtree_bisimulation : thm
+<A NAME="line43"></A>    val lbtree_case_thm : thm
+<A NAME="line44"></A>    val lbtree_cases : thm
+<A NAME="line45"></A>    val lbtree_strong_bisimulation : thm
+<A NAME="line46"></A>    val lbtree_ue_Axiom : thm
+<A NAME="line47"></A>    val map_eq_Lf : thm
+<A NAME="line48"></A>    val map_eq_Nd : thm
+<A NAME="line49"></A>    val mem_bf_flatten : thm
+<A NAME="line50"></A>    val mem_cases : thm
+<A NAME="line51"></A>    val mem_depth : thm
+<A NAME="line52"></A>    val mem_ind : thm
+<A NAME="line53"></A>    val mem_mindepth : thm
+<A NAME="line54"></A>    val mem_rules : thm
+<A NAME="line55"></A>    val mem_thm : thm
+<A NAME="line56"></A>    val mindepth_depth : thm
+<A NAME="line57"></A>    val mindepth_thm : thm
+<A NAME="line58"></A>    val mmindex_EXISTS : thm
+<A NAME="line59"></A>    val mmindex_unique : thm
+<A NAME="line60"></A>    val optmin_def : thm
+<A NAME="line61"></A>    val optmin_ind : thm
+<A NAME="line62"></A>  
+<A NAME="line63"></A>  val lbtree_grammars : type_grammar.grammar * term_grammar.grammar
+<A NAME="line64"></A>  
+<A NAME="line65"></A>  val lbtree_rwts : simpLib.ssfrag
+<A NAME="line66"></A>(*
+   [llist] Parent theory of "lbtree"
+   
+   [Lf_def]  Definition
+      
+      |- Lf = lbtree_abs Lfrep
+   
+   [Lfrep_def]  Definition
+      
+      |- Lfrep = (\l. NONE)
+   
+   [Nd_def]  Definition
+      
+      |- !a t1 t2.
+           Nd a t1 t2 =
+           lbtree_abs (Ndrep a (lbtree_rep t1) (lbtree_rep t2))
+   
+   [Ndrep_def]  Definition
+      
+      |- !a t1 t2.
+           Ndrep a t1 t2 =
+           (\l. case l of [] -&gt; SOME a || T::xs -&gt; t1 xs || F::xs -&gt; t2 xs)
+   
+   [bf_flatten_def]  Definition
+      
+      |- (bf_flatten [] = [||]) /\
+         (!ts. bf_flatten (Lf::ts) = bf_flatten ts) /\
+         !a t1 t2 ts.
+           bf_flatten (Nd a t1 t2::ts) = a:::bf_flatten (ts ++ [t1; t2])
+   
+   [depth]  Definition
+      
+      |- lbtree$depth =
+         (\a0 a1 a2.
+            !depth'.
+              (!a0 a1 a2.
+                 (?t1 t2. (a1 = Nd a0 t1 t2) /\ (a2 = 0)) \/
+                 (?m a t1 t2.
+                    (a1 = Nd a t1 t2) /\ (a2 = SUC m) /\ depth' a0 t1 m) \/
+                 (?m a t1 t2.
+                    (a1 = Nd a t1 t2) /\ (a2 = SUC m) /\
+                    depth' a0 t2 m) ==&gt;
+                 depth' a0 a1 a2) ==&gt;
+              depth' a0 a1 a2)
+   
+   [drop_while_def]  Definition
+      
+      |- (!P. lbtree$drop_while P [] = []) /\
+         !P h t.
+           lbtree$drop_while P (h::t) =
+           if P h then lbtree$drop_while P t else h::t
+   
+   [finite]  Definition
+      
+      |- finite =
+         (\a0.
+            !finite'.
+              (!a0.
+                 (a0 = Lf) \/
+                 (?a t1 t2.
+                    (a0 = Nd a t1 t2) /\ finite' t1 /\ finite' t2) ==&gt;
+                 finite' a0) ==&gt;
+              finite' a0)
+   
+   [is_lbtree_def]  Definition
+      
+      |- !t.
+           is_lbtree t &lt;=&gt;
+           ?P.
+             (!t.
+                P t ==&gt;
+                (t = Lfrep) \/
+                ?a t1 t2. P t1 /\ P t2 /\ (t = Ndrep a t1 t2)) /\ P t
+   
+   [is_mmindex_def]  Definition
+      
+      |- !f l n d.
+           lbtree$is_mmindex f l n d &lt;=&gt;
+           n &lt; LENGTH l /\ (f (EL n l) = SOME d) /\
+           !i.
+             i &lt; LENGTH l ==&gt;
+             (f (EL i l) = NONE) \/
+             ?d'. (f (EL i l) = SOME d') /\ d &lt;= d' /\ (i &lt; n ==&gt; d &lt; d')
+   
+   [lbtree_TY_DEF]  Definition
+      
+      |- ?rep. TYPE_DEFINITION is_lbtree rep
+   
+   [lbtree_absrep]  Definition
+      
+      |- (!a. lbtree_abs (lbtree_rep a) = a) /\
+         !r. is_lbtree r &lt;=&gt; (lbtree_rep (lbtree_abs r) = r)
+   
+   [lbtree_case_def]  Definition
+      
+      |- !e f t.
+           lbtree_case e f t =
+           if t = Lf then
+             e
+           else
+             f (@a. ?t1 t2. t = Nd a t1 t2) (@t1. ?a t2. t = Nd a t1 t2)
+               (@t2. ?a t1. t = Nd a t1 t2)
+   
+   [map_def]  Definition
+      
+      |- !f.
+           (map f Lf = Lf) /\
+           !a t1 t2. map f (Nd a t1 t2) = Nd (f a) (map f t1) (map f t2)
+   
+   [mem]  Definition
+      
+      |- mem =
+         (\a0 a1.
+            !mem'.
+              (!a0 a1.
+                 (?t1 t2. a1 = Nd a0 t1 t2) \/
+                 (?b t1 t2. (a1 = Nd b t1 t2) /\ mem' a0 t1) \/
+                 (?b t1 t2. (a1 = Nd b t1 t2) /\ mem' a0 t2) ==&gt;
+                 mem' a0 a1) ==&gt;
+              mem' a0 a1)
+   
+   [mindepth_def]  Definition
+      
+      |- !x t.
+           lbtree$mindepth x t =
+           if mem x t then SOME (LEAST n. lbtree$depth x t n) else NONE
+   
+   [optmin_curried_def]  Definition
+      
+      |- !x x1. lbtree$optmin x x1 = optmin_tupled (x,x1)
+   
+   [optmin_tupled_primitive_def]  Definition
+      
+      |- optmin_tupled =
+         WFREC (@R. WF R)
+           (\optmin_tupled a.
+              case a of
+                 (NONE,NONE) -&gt; I NONE
+              || (NONE,SOME y) -&gt; I (SOME y)
+              || (SOME x,NONE) -&gt; I (SOME x)
+              || (SOME x,SOME y') -&gt; I (SOME (MIN x y')))
+   
+   [path_follow_def]  Definition
+      
+      |- (!g x. path_follow g x [] = OPTION_MAP FST (g x)) /\
+         !g x h t.
+           path_follow g x (h::t) =
+           case g x of
+              NONE -&gt; NONE
+           || SOME (a,y,z) -&gt; path_follow g (if h then y else z) t
+   
+   [EXISTS_FIRST]  Theorem
+      
+      |- !l.
+           EXISTS P l ==&gt;
+           ?l1 x l2. (l = l1 ++ x::l2) /\ EVERY ($~ o P) l1 /\ P x
+   
+   [Lf_NOT_Nd]  Theorem
+      
+      |- Lf &lt;&gt; Nd a t1 t2
+   
+   [Nd_11]  Theorem
+      
+      |- (Nd a1 t1 u1 = Nd a2 t2 u2) &lt;=&gt;
+         (a1 = a2) /\ (t1 = t2) /\ (u1 = u2)
+   
+   [bf_flatten_append]  Theorem
+      
+      |- !l1. EVERY ($= Lf) l1 ==&gt; (bf_flatten (l1 ++ l2) = bf_flatten l2)
+   
+   [bf_flatten_eq_lnil]  Theorem
+      
+      |- !l. (bf_flatten l = [||]) &lt;=&gt; EVERY ($= Lf) l
+   
+   [depth_cases]  Theorem
+      
+      |- !a0 a1 a2.
+           lbtree$depth a0 a1 a2 &lt;=&gt;
+           (?t1 t2. (a1 = Nd a0 t1 t2) /\ (a2 = 0)) \/
+           (?m a t1 t2.
+              (a1 = Nd a t1 t2) /\ (a2 = SUC m) /\ lbtree$depth a0 t1 m) \/
+           ?m a t1 t2.
+             (a1 = Nd a t1 t2) /\ (a2 = SUC m) /\ lbtree$depth a0 t2 m
+   
+   [depth_ind]  Theorem
+      
+      |- !depth'.
+           (!x t1 t2. depth' x (Nd x t1 t2) 0) /\
+           (!m x a t1 t2.
+              depth' x t1 m ==&gt; depth' x (Nd a t1 t2) (SUC m)) /\
+           (!m x a t1 t2.
+              depth' x t2 m ==&gt; depth' x (Nd a t1 t2) (SUC m)) ==&gt;
+           !a0 a1 a2. lbtree$depth a0 a1 a2 ==&gt; depth' a0 a1 a2
+   
+   [depth_mem]  Theorem
+      
+      |- !x t n. lbtree$depth x t n ==&gt; mem x t
+   
+   [depth_rules]  Theorem
+      
+      |- (!x t1 t2. lbtree$depth x (Nd x t1 t2) 0) /\
+         (!m x a t1 t2.
+            lbtree$depth x t1 m ==&gt; lbtree$depth x (Nd a t1 t2) (SUC m)) /\
+         !m x a t1 t2.
+           lbtree$depth x t2 m ==&gt; lbtree$depth x (Nd a t1 t2) (SUC m)
+   
+   [exists_bf_flatten]  Theorem
+      
+      |- exists ($= x) (bf_flatten tlist) ==&gt; EXISTS (mem x) tlist
+   
+   [finite_cases]  Theorem
+      
+      |- !a0.
+           finite a0 &lt;=&gt;
+           (a0 = Lf) \/
+           ?a t1 t2. (a0 = Nd a t1 t2) /\ finite t1 /\ finite t2
+   
+   [finite_ind]  Theorem
+      
+      |- !finite'.
+           finite' Lf /\
+           (!a t1 t2.
+              finite' t1 /\ finite' t2 ==&gt; finite' (Nd a t1 t2)) ==&gt;
+           !a0. finite a0 ==&gt; finite' a0
+   
+   [finite_map]  Theorem
+      
+      |- finite (map f t) &lt;=&gt; finite t
+   
+   [finite_rules]  Theorem
+      
+      |- finite Lf /\
+         !a t1 t2. finite t1 /\ finite t2 ==&gt; finite (Nd a t1 t2)
+   
+   [finite_thm]  Theorem
+      
+      |- (finite Lf &lt;=&gt; T) /\
+         (finite (Nd a t1 t2) &lt;=&gt; finite t1 /\ finite t2)
+   
+   [lbtree_bisimulation]  Theorem
+      
+      |- !t u.
+           (t = u) &lt;=&gt;
+           ?R.
+             R t u /\
+             !t u.
+               R t u ==&gt;
+               (t = Lf) /\ (u = Lf) \/
+               ?a t1 u1 t2 u2.
+                 R t1 u1 /\ R t2 u2 /\ (t = Nd a t1 t2) /\ (u = Nd a u1 u2)
+   
+   [lbtree_case_thm]  Theorem
+      
+      |- (lbtree_case e f Lf = e) /\
+         (lbtree_case e f (Nd a t1 t2) = f a t1 t2)
+   
+   [lbtree_cases]  Theorem
+      
+      |- !t. (t = Lf) \/ ?a t1 t2. t = Nd a t1 t2
+   
+   [lbtree_strong_bisimulation]  Theorem
+      
+      |- !t u.
+           (t = u) &lt;=&gt;
+           ?R.
+             R t u /\
+             !t u.
+               R t u ==&gt;
+               (t = u) \/
+               ?a t1 u1 t2 u2.
+                 R t1 u1 /\ R t2 u2 /\ (t = Nd a t1 t2) /\ (u = Nd a u1 u2)
+   
+   [lbtree_ue_Axiom]  Theorem
+      
+      |- !f.
+           ?!g.
+             !x.
+               g x =
+               case f x of NONE -&gt; Lf || SOME (b,y,z) -&gt; Nd b (g y) (g z)
+   
+   [map_eq_Lf]  Theorem
+      
+      |- ((map f t = Lf) &lt;=&gt; (t = Lf)) /\ ((Lf = map f t) &lt;=&gt; (t = Lf))
+   
+   [map_eq_Nd]  Theorem
+      
+      |- (map f t = Nd a t1 t2) &lt;=&gt;
+         ?a' t1' t2'.
+           (t = Nd a' t1' t2') /\ (a = f a') /\ (t1 = map f t1') /\
+           (t2 = map f t2')
+   
+   [mem_bf_flatten]  Theorem
+      
+      |- exists ($= x) (bf_flatten tlist) &lt;=&gt; EXISTS (mem x) tlist
+   
+   [mem_cases]  Theorem
+      
+      |- !a0 a1.
+           mem a0 a1 &lt;=&gt;
+           (?t1 t2. a1 = Nd a0 t1 t2) \/
+           (?b t1 t2. (a1 = Nd b t1 t2) /\ mem a0 t1) \/
+           ?b t1 t2. (a1 = Nd b t1 t2) /\ mem a0 t2
+   
+   [mem_depth]  Theorem
+      
+      |- !x t. mem x t ==&gt; ?n. lbtree$depth x t n
+   
+   [mem_ind]  Theorem
+      
+      |- !mem'.
+           (!a t1 t2. mem' a (Nd a t1 t2)) /\
+           (!a b t1 t2. mem' a t1 ==&gt; mem' a (Nd b t1 t2)) /\
+           (!a b t1 t2. mem' a t2 ==&gt; mem' a (Nd b t1 t2)) ==&gt;
+           !a0 a1. mem a0 a1 ==&gt; mem' a0 a1
+   
+   [mem_mindepth]  Theorem
+      
+      |- !x t. mem x t ==&gt; ?n. lbtree$mindepth x t = SOME n
+   
+   [mem_rules]  Theorem
+      
+      |- (!a t1 t2. mem a (Nd a t1 t2)) /\
+         (!a b t1 t2. mem a t1 ==&gt; mem a (Nd b t1 t2)) /\
+         !a b t1 t2. mem a t2 ==&gt; mem a (Nd b t1 t2)
+   
+   [mem_thm]  Theorem
+      
+      |- (mem a Lf &lt;=&gt; F) /\
+         (mem a (Nd b t1 t2) &lt;=&gt; (a = b) \/ mem a t1 \/ mem a t2)
+   
+   [mindepth_depth]  Theorem
+      
+      |- (lbtree$mindepth x t = SOME n) ==&gt; lbtree$depth x t n
+   
+   [mindepth_thm]  Theorem
+      
+      |- (lbtree$mindepth x Lf = NONE) /\
+         (lbtree$mindepth x (Nd a t1 t2) =
+          if x = a then
+            SOME 0
+          else
+            OPTION_MAP SUC
+              (lbtree$optmin (lbtree$mindepth x t1)
+                 (lbtree$mindepth x t2)))
+   
+   [mmindex_EXISTS]  Theorem
+      
+      |- EXISTS (\e. ?n. f e = SOME n) l ==&gt;
+         ?i m. lbtree$is_mmindex f l i m
+   
+   [mmindex_unique]  Theorem
+      
+      |- lbtree$is_mmindex f l i m ==&gt;
+         !j n. lbtree$is_mmindex f l j n &lt;=&gt; (j = i) /\ (n = m)
+   
+   [optmin_def]  Theorem
+      
+      |- (lbtree$optmin NONE NONE = NONE) /\
+         (lbtree$optmin (SOME x) NONE = SOME x) /\
+         (lbtree$optmin NONE (SOME y) = SOME y) /\
+         (lbtree$optmin (SOME x) (SOME y) = SOME (MIN x y))
+   
+   [optmin_ind]  Theorem
+      
+      |- !P.
+           P NONE NONE /\ (!x. P (SOME x) NONE) /\ (!y. P NONE (SOME y)) /\
+           (!x y. P (SOME x) (SOME y)) ==&gt;
+           !v v1. P v v1
+   
+   
+*)
+end
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/llist/lbtreeScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

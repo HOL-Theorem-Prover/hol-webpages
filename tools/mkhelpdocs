@@ -22,14 +22,17 @@ mkdir $release-helpdocs
 
 echo "Copying across help directory"
 cp -R $holdir/help $release-helpdocs
+cd $release-helpdocs
 
 # first deal with the help side of things
-pushd $release-helpdocs/help
+pushd help
 /bin/rm -r template HOL.Help
 
 # correct urls in HOLindex.html
 echo "Correcting URLs in HOLindex.html"
-perl -p -i -e 's|file:///.*help/src-sml/htmlsigs|src-sml/htmlsigs|g;' HOLindex.html
+perl -p -i -e 's|file:///.*help/src-sml/htmlsigs|src-sml/htmlsigs|g;
+               s|file:///.*help/theorygraph|theorygraph|g;
+               s|<head>|<head><link rel="icon" href="../../images/logo.ico" type="image/vnd.microsoft.icon">|i;' HOLindex.html
 
 # clean up src-sml a bit
 cd src-sml
@@ -38,24 +41,30 @@ echo "Cleaning out source code in src-sml"
 
 
 # correct urls in htmlsigs
-echo "Correcting htmlsigs URLs"
+echo "Correcting htmlsigs URLs and adding favicon link"
 cd htmlsigs
 perl -p -i -e 's|file:///.*?src/|../../../src/|g;
                s|file:///.*?help/Docfiles/|../../Docfiles/|g;
-               s|(<a href=".*\.sml")|\1 type="text/plain"|gi;' *.html
+               s|(<a href=".*\.sml")|\1 type="text/plain"|gi;
+               s|<head>|<head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">|i;' *.html
+
+echo "Adding favicon link to theorygraph HTML files"
+popd
+pushd help/theorygraph
+perl -p -i -e 's|<head>|<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon">|i;' *.html
+popd
 
 # clear up help/Docfiles
-cd ../../Docfiles
+pushd help/Docfiles
 rm *.doc *.adoc
 
 # now bring across src
 
 popd
 echo "Copying across src/"
-cp -R $holdir/src $release-helpdocs
+cp -R $holdir/src .
 
 echo "Purging copied directories"
-cd $release-helpdocs
 find . -regex '.*HOLMK\|.*\.svn' -exec /bin/rm -rf \{\} \; -prune
 find . -regex '.*\.u[oi]\|.*Theory\.sml\|.*\.exe\|.*svn.*tmp\|.*~\|.*Holmakefile' -delete
 find src -regex '.*Manual\|.*help\|.*examples' -execdir /bin/rm -rf \{\} \; -prune

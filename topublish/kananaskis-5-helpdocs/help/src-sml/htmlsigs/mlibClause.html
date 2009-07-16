@@ -1,0 +1,103 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure mlibClause</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure mlibClause</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/metis/mlibClause.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>(* ========================================================================= *)
+<A NAME="line2"></A>(* CLAUSE = ID + THEOREM + CONSTRAINTS                                       *)
+<A NAME="line3"></A>(* Copyright (c) 2002-2004 Joe Hurd.                                         *)
+<A NAME="line4"></A>(* ========================================================================= *)
+<A NAME="line5"></A>
+<A NAME="line6"></A>signature mlibClause =
+<A NAME="line7"></A>sig
+<A NAME="line8"></A>
+<A NAME="line9"></A>type ('a,'b) maplet = ('a,'b) mlibUseful.maplet
+<A NAME="line10"></A>type 'a pp          = 'a mlibUseful.pp
+<A NAME="line11"></A>type term           = mlibTerm.term
+<A NAME="line12"></A>type formula        = mlibTerm.formula
+<A NAME="line13"></A>type subst          = mlibSubst.subst
+<A NAME="line14"></A>type thm            = mlibThm.thm
+<A NAME="line15"></A>type termorder      = mlibTermorder.termorder
+<A NAME="line16"></A>
+<A NAME="line17"></A>type parameters =
+<A NAME="line18"></A>  {term_order       : bool,
+<A NAME="line19"></A>   literal_order    : bool,
+<A NAME="line20"></A>   order_stickiness : int,       (* Stickiness of ordering constraints: 0..3 *)
+<A NAME="line21"></A>   termorder_parm   : mlibTermorder.parameters}
+<A NAME="line22"></A>
+<A NAME="line23"></A>type 'a parmupdate = ('a -&gt; 'a) -&gt; parameters -&gt; parameters
+<A NAME="line24"></A>val defaults                : parameters
+<A NAME="line25"></A>val update_term_order       : bool parmupdate
+<A NAME="line26"></A>val update_literal_order    : bool parmupdate
+<A NAME="line27"></A>val update_order_stickiness : int parmupdate
+<A NAME="line28"></A>val update_termorder_parm   : mlibTermorder.parameters parmupdate
+<A NAME="line29"></A>
+<A NAME="line30"></A>type clause
+<A NAME="line31"></A>
+<A NAME="line32"></A>(* Basic operations *)
+<A NAME="line33"></A>type bits = {parm : parameters, id : int, thm : thm, order : termorder}
+<A NAME="line34"></A>val mk_clause   : parameters -&gt; thm -&gt; clause
+<A NAME="line35"></A>val dest_clause : clause -&gt; bits
+<A NAME="line36"></A>val literals    : clause -&gt; formula list
+<A NAME="line37"></A>val is_empty    : clause -&gt; bool
+<A NAME="line38"></A>val dest_rewr   : clause -&gt; int * thm
+<A NAME="line39"></A>val is_rewr     : clause -&gt; bool
+<A NAME="line40"></A>val rebrand     : parameters -&gt; clause -&gt; clause
+<A NAME="line41"></A>
+<A NAME="line42"></A>(* Using ordering constraints to cut down the set of possible inferences *)
+<A NAME="line43"></A>val largest_lits : clause -&gt; (clause * int, formula) maplet list
+<A NAME="line44"></A>val largest_eqs  : clause -&gt; (clause * int * bool, term) maplet list
+<A NAME="line45"></A>val largest_tms  : clause -&gt; (clause * int * int list, term) maplet list
+<A NAME="line46"></A>val drop_order   : clause -&gt; clause
+<A NAME="line47"></A>
+<A NAME="line48"></A>(* Subsumption *)
+<A NAME="line49"></A>val subsumes : clause -&gt; clause -&gt; bool
+<A NAME="line50"></A>
+<A NAME="line51"></A>(* mlibClause rewriting *)
+<A NAME="line52"></A>type rewrs
+<A NAME="line53"></A>val empty    : parameters -&gt; rewrs
+<A NAME="line54"></A>val size     : rewrs -&gt; int
+<A NAME="line55"></A>val peek     : rewrs -&gt; int -&gt; ((term * term) * mlibRewrite.orient) option
+<A NAME="line56"></A>val add      : clause -&gt; rewrs -&gt; rewrs
+<A NAME="line57"></A>val reduce   : rewrs -&gt; rewrs * int list
+<A NAME="line58"></A>val reduced  : rewrs -&gt; bool
+<A NAME="line59"></A>val pp_rewrs : rewrs pp
+<A NAME="line60"></A>
+<A NAME="line61"></A>(* Simplifying rules: these preserve the clause id *)
+<A NAME="line62"></A>val INST       : subst -&gt; clause -&gt; clause
+<A NAME="line63"></A>val FRESH_VARS : clause -&gt; clause
+<A NAME="line64"></A>val NEQ_VARS   : clause -&gt; clause
+<A NAME="line65"></A>val DEMODULATE : mlibUnits.units -&gt; clause -&gt; clause
+<A NAME="line66"></A>val QREWRITE   : rewrs -&gt; clause -&gt; clause
+<A NAME="line67"></A>val REWRITE    : rewrs -&gt; clause -&gt; clause
+<A NAME="line68"></A>
+<A NAME="line69"></A>(* Ordered resolution and paramodulation: these generate new clause ids *)
+<A NAME="line70"></A>val FACTOR       : clause -&gt; clause list
+<A NAME="line71"></A>val RESOLVE      : clause * int -&gt; clause * int -&gt; clause
+<A NAME="line72"></A>val PARAMODULATE : clause * int * bool -&gt; clause * int * int list -&gt; clause
+<A NAME="line73"></A>
+<A NAME="line74"></A>(* mlibClause derivations *)
+<A NAME="line75"></A>datatype derivation =
+<A NAME="line76"></A>  Axiom
+<A NAME="line77"></A>| mlibResolution of clause * clause
+<A NAME="line78"></A>| Paramodulation of clause * clause
+<A NAME="line79"></A>| Factor of clause
+<A NAME="line80"></A>val derivation : clause -&gt; derivation
+<A NAME="line81"></A>
+<A NAME="line82"></A>(* Pretty printing *)
+<A NAME="line83"></A>val show_id         : bool ref
+<A NAME="line84"></A>val show_constraint : bool ref
+<A NAME="line85"></A>val pp_clause       : clause pp
+<A NAME="line86"></A>
+<A NAME="line87"></A>end
+<A NAME="line88"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/metis/mlibClause.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

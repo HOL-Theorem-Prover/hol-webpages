@@ -1,0 +1,292 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure quantHeuristicsLib</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure quantHeuristicsLib</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/quantHeuristics/quantHeuristicsLib.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature quantHeuristicsLib =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  include Abbrev
+<A NAME="line4"></A>
+<A NAME="line5"></A>
+<A NAME="line6"></A>(*some general conversions, that might be useful
+<A NAME="line7"></A>  in other context as well *)
+<A NAME="line8"></A>  val TOP_ONCE_REWRITE_CONV        : thm list -&gt; conv;
+<A NAME="line9"></A>  val NEG_NEG_INTRO_CONV           : conv;
+<A NAME="line10"></A>  val NEG_NEG_ELIM_CONV            : conv;
+<A NAME="line11"></A>  val NOT_FORALL_LIST_CONV         : conv;
+<A NAME="line12"></A>  val NOT_EXISTS_LIST_CONV         : conv;
+<A NAME="line13"></A>  val STRIP_NUM_QUANT_CONV         : int -&gt; conv -&gt; conv;
+<A NAME="line14"></A>  val BOUNDED_NOT_EXISTS_LIST_CONV : int -&gt; conv;
+<A NAME="line15"></A>  val BOUNDED_REPEATC              : int -&gt; conv -&gt; conv;
+<A NAME="line16"></A>
+<A NAME="line17"></A>  val EXISTS_NOT_LIST_CONV         : conv;
+<A NAME="line18"></A>  val FORALL_NOT_LIST_CONV         : conv;
+<A NAME="line19"></A>  val QUANT_SIMP_CONV              : conv;
+<A NAME="line20"></A>
+<A NAME="line21"></A>  val NOT_OR_CONV                  : conv;
+<A NAME="line22"></A>  val NOT_AND_CONV                 : conv;
+<A NAME="line23"></A>  val AND_NOT_CONV                 : conv;
+<A NAME="line24"></A>  val OR_NOT_CONV                  : conv;
+<A NAME="line25"></A>
+<A NAME="line26"></A>
+<A NAME="line27"></A>  val DISCH_ASM_CONV_TAC           : conv -&gt; tactic;
+<A NAME="line28"></A>  val DISCH_ASM_CONSEQ_CONV_TAC    : ConseqConv.directed_conseq_conv -&gt; tactic;
+<A NAME="line29"></A>
+<A NAME="line30"></A>(*Guesses*)
+<A NAME="line31"></A>
+<A NAME="line32"></A>  datatype guess =
+<A NAME="line33"></A>    (*A guess with no particular reason at all, no justification. This
+<A NAME="line34"></A>      is for example used by EXISTS_TAC.
+<A NAME="line35"></A>
+<A NAME="line36"></A>      guess_general (i, [fv1,...,fvn])
+<A NAME="line37"></A>
+<A NAME="line38"></A>      can be used to proof
+<A NAME="line39"></A>
+<A NAME="line40"></A>      ?fv1 ... fvn. P i ==&gt; ?v. P v   and
+<A NAME="line41"></A>      !v. P v ==&gt; !fv1 ... fvn. P i
+<A NAME="line42"></A>
+<A NAME="line43"></A>      or if one want's to use equations 
+<A NAME="line44"></A>
+<A NAME="line45"></A>      ?v. P v = (?fv1 ... fvn. P i) \/ 
+<A NAME="line46"></A>                   ?v. (!fv1 ... fvn. ~(i = v)) /\ (P v)  and
+<A NAME="line47"></A>
+<A NAME="line48"></A>      !v. P v = (!fv1 ... fvn. P i) /\
+<A NAME="line49"></A>		   (!v. (?fv1 ... fvn. ~(i = v)) ==&gt; P v)
+<A NAME="line50"></A>
+<A NAME="line51"></A>
+<A NAME="line52"></A>      These two possibilies are always available and
+<A NAME="line53"></A>      choosen if the other guesses don't provide a theorem.
+<A NAME="line54"></A>    *)
+<A NAME="line55"></A>    guess_general of term * term list 
+<A NAME="line56"></A>
+<A NAME="line57"></A>    (*i makes P i false
+<A NAME="line58"></A>
+<A NAME="line59"></A>      This can be used to proof
+<A NAME="line60"></A>      !v. P v = F
+<A NAME="line61"></A>
+<A NAME="line62"></A>      If a theorem is provided it has to be of the form 
+<A NAME="line63"></A>      !fv1 ... fvn. ~(P i)
+<A NAME="line64"></A>    *)
+<A NAME="line65"></A>  | guess_false of term * term list * (unit -&gt; thm) option 
+<A NAME="line66"></A>
+<A NAME="line67"></A>    (*i makes P i true
+<A NAME="line68"></A>
+<A NAME="line69"></A>      This can be used to proof
+<A NAME="line70"></A>      ?v. P v = T
+<A NAME="line71"></A>
+<A NAME="line72"></A>      The theorem has to be of the form 
+<A NAME="line73"></A>      !fv1 ... fvn. P i
+<A NAME="line74"></A>    *)
+<A NAME="line75"></A>  | guess_true of term * term list * (unit -&gt; thm) option 
+<A NAME="line76"></A>
+<A NAME="line77"></A>    (*if i does satisfy P then all other i' as well
+<A NAME="line78"></A>
+<A NAME="line79"></A>      This can be used to proof
+<A NAME="line80"></A>      !v. P v = !fv1 ... fvn. P i
+<A NAME="line81"></A>
+<A NAME="line82"></A>
+<A NAME="line83"></A>      The theorem has to be of the form 
+<A NAME="line84"></A>      (!fv1 ... fvn. P i) ==&gt; !v. P v
+<A NAME="line85"></A>    *)
+<A NAME="line86"></A>  | guess_only_not_possible of term * term list * (unit -&gt; thm) option 
+<A NAME="line87"></A>
+<A NAME="line88"></A>    (*if i does not satisfy P then all other i' don't as well
+<A NAME="line89"></A>
+<A NAME="line90"></A>      This can be used to proof
+<A NAME="line91"></A>      ?v. P v = ?fv1 ... fvn. P i
+<A NAME="line92"></A>
+<A NAME="line93"></A>      The theorem has to be of the form 
+<A NAME="line94"></A>      (!fv1 ... fvn. ~(P i)) ==&gt; !v. ~(P v)
+<A NAME="line95"></A>    *)
+<A NAME="line96"></A>  | guess_only_possible of term * term list * (unit -&gt; thm) option
+<A NAME="line97"></A>
+<A NAME="line98"></A>    (*all instantiations except i do not satisfy P 
+<A NAME="line99"></A>
+<A NAME="line100"></A>      This can be used to proof
+<A NAME="line101"></A>      ?v. P v = ?fv1 ... fvn. P i
+<A NAME="line102"></A>
+<A NAME="line103"></A>      The theorem has to be of the form 
+<A NAME="line104"></A>      !v. (!fv1 ... fvn. ~(v = i)) ==&gt; ~P v
+<A NAME="line105"></A>    *)
+<A NAME="line106"></A>  | guess_others_not_possible of term * term list * (unit -&gt; thm) option 
+<A NAME="line107"></A>
+<A NAME="line108"></A>    (*all instantiations except i do not satisfy P 
+<A NAME="line109"></A>
+<A NAME="line110"></A>      This can be used to proof
+<A NAME="line111"></A>      !v. P v = !fv1 ... fvn. P i
+<A NAME="line112"></A>
+<A NAME="line113"></A>      The theorem has to be of the form 
+<A NAME="line114"></A>      !v. (!fv1 ... fvn. ~(v = i)) ==&gt; P v
+<A NAME="line115"></A>    *)
+<A NAME="line116"></A>  | guess_others_satisfied of term * term list * (unit -&gt; thm) option;
+<A NAME="line117"></A>
+<A NAME="line118"></A>
+<A NAME="line119"></A>  val is_guess_general             : guess -&gt; bool
+<A NAME="line120"></A>  val is_guess_true                : bool -&gt; guess -&gt; bool
+<A NAME="line121"></A>  val is_guess_false               : bool -&gt; guess -&gt; bool
+<A NAME="line122"></A>  val is_guess_only_possible       : bool -&gt; guess -&gt; bool
+<A NAME="line123"></A>  val is_guess_only_not_possible   : bool -&gt; guess -&gt; bool
+<A NAME="line124"></A>  val is_guess_others_not_possible : bool -&gt; guess -&gt; bool
+<A NAME="line125"></A>  val is_guess_others_satisfied    : bool -&gt; guess -&gt; bool
+<A NAME="line126"></A>
+<A NAME="line127"></A>  val guess_set_thm_opt            : (unit -&gt; thm) option -&gt; guess -&gt; guess
+<A NAME="line128"></A>  val guess_remove_thm             : guess -&gt; guess
+<A NAME="line129"></A>  val make_guess_thm_term          : term -&gt; term -&gt; guess -&gt; term option
+<A NAME="line130"></A>  val make_guess_thm_opt           : term -&gt; term -&gt; guess -&gt; conv -&gt; (unit -&gt; thm) option
+<A NAME="line131"></A>  val make_set_guess_thm_opt       : term -&gt; term -&gt; guess -&gt; conv -&gt; guess
+<A NAME="line132"></A>
+<A NAME="line133"></A>  (*Warning: this one is for debugging only. It uses mk_thm to
+<A NAME="line134"></A>    create the thm added to the guess*)
+<A NAME="line135"></A>  val make_guess_thm_opt___dummy : term -&gt; term -&gt; guess -&gt; (unit -&gt; thm) option
+<A NAME="line136"></A>  val make_set_guess_thm_opt___dummy : term -&gt; term -&gt; guess -&gt; guess
+<A NAME="line137"></A>
+<A NAME="line138"></A>
+<A NAME="line139"></A>  val guess_extract : guess -&gt; term * term list * (unit -&gt; thm) option
+<A NAME="line140"></A>  val guess_to_string : bool -&gt; guess -&gt; string
+<A NAME="line141"></A>
+<A NAME="line142"></A>
+<A NAME="line143"></A>  (*guesses are organised in collections. They are used to
+<A NAME="line144"></A>    store the different types of guesses separately. Moreover,
+<A NAME="line145"></A>    rewrite theorems, that might come in handy, are there as well.*)
+<A NAME="line146"></A>  type guess_collection = 
+<A NAME="line147"></A>   {rewrites            : thm list,
+<A NAME="line148"></A>    general             : guess list,
+<A NAME="line149"></A>    true                : guess list,
+<A NAME="line150"></A>    false               : guess list,
+<A NAME="line151"></A>    only_possible       : guess list,
+<A NAME="line152"></A>    only_not_possible   : guess list,
+<A NAME="line153"></A>    others_not_possible : guess list,
+<A NAME="line154"></A>    others_satisfied    : guess list}
+<A NAME="line155"></A>
+<A NAME="line156"></A>
+<A NAME="line157"></A>  val empty_guess_collection   : guess_collection;
+<A NAME="line158"></A>  val is_empty_guess_collection   : guess_collection -&gt; bool;
+<A NAME="line159"></A>  val guess_collection_append  : guess_collection -&gt; guess_collection -&gt; guess_collection;
+<A NAME="line160"></A>  val guess_collection_flatten : guess_collection list -&gt; guess_collection;
+<A NAME="line161"></A>  val guess_list2collection    : thm list * guess list -&gt; guess_collection;
+<A NAME="line162"></A>  val guess_collection2list    : guess_collection -&gt; thm list * guess list;
+<A NAME="line163"></A>  val guess_collection___get_only_possible_weaken : guess_collection -&gt; guess list;
+<A NAME="line164"></A>  val guess_collection___get_only_not_possible_weaken : guess_collection -&gt; guess list;
+<A NAME="line165"></A>
+<A NAME="line166"></A>  val check_guess        : term -&gt; term -&gt; guess -&gt; bool
+<A NAME="line167"></A>  val correct_guess      : term -&gt; term -&gt; guess -&gt; guess option
+<A NAME="line168"></A>  val correct_guess_list : term -&gt; term -&gt; guess list -&gt; guess list;
+<A NAME="line169"></A>  val correct_guess_collection :
+<A NAME="line170"></A>     term -&gt; term -&gt; guess_collection -&gt; guess_collection
+<A NAME="line171"></A>
+<A NAME="line172"></A>
+<A NAME="line173"></A>  val term_variant : term list -&gt; term list -&gt; term -&gt; term * term list
+<A NAME="line174"></A>
+<A NAME="line175"></A>
+<A NAME="line176"></A>
+<A NAME="line177"></A>  exception QUANT_INSTANTIATE_HEURISTIC___no_guess_exp;
+<A NAME="line178"></A>
+<A NAME="line179"></A>(*Some types*)
+<A NAME="line180"></A>  type quant_heuristic = term list -&gt; term -&gt; term -&gt; guess_collection;
+<A NAME="line181"></A>  type quant_heuristic_combine_argument = 
+<A NAME="line182"></A>     (thm list * thm list * thm list * conv list * (quant_heuristic -&gt; quant_heuristic) list);
+<A NAME="line183"></A>  type quant_heuristic_cache;
+<A NAME="line184"></A>
+<A NAME="line185"></A>
+<A NAME="line186"></A>  val mk_quant_heuristic_cache : unit -&gt; quant_heuristic_cache;
+<A NAME="line187"></A>
+<A NAME="line188"></A>
+<A NAME="line189"></A>
+<A NAME="line190"></A>(*Heuristics that might be useful to write own ones*)
+<A NAME="line191"></A>  val QUANT_INSTANTIATE_HEURISTIC___REWRITE :
+<A NAME="line192"></A>  quant_heuristic -&gt; term list -&gt; term -&gt; thm -&gt; guess_collection
+<A NAME="line193"></A>  val QUANT_INSTANTIATE_HEURISTIC___CONV :
+<A NAME="line194"></A>  conv -&gt; quant_heuristic -&gt; quant_heuristic;
+<A NAME="line195"></A>  val QUANT_INSTANTIATE_HEURISTIC___EQUATION_distinct : thm list -&gt; quant_heuristic -&gt; quant_heuristic;
+<A NAME="line196"></A>  val QUANT_INSTANTIATE_HEURISTIC___EQUATION_cases : thm -&gt; quant_heuristic -&gt; quant_heuristic;
+<A NAME="line197"></A>
+<A NAME="line198"></A>  val QUANT_INSTANTIATE_HEURISTIC___max_rec_depth : int ref
+<A NAME="line199"></A>
+<A NAME="line200"></A>  val QUANT_INSTANTIATE_HEURISTIC___COMBINE :    
+<A NAME="line201"></A>    ((quant_heuristic -&gt; quant_heuristic) list) -&gt; quant_heuristic_cache ref option -&gt; quant_heuristic;
+<A NAME="line202"></A>
+<A NAME="line203"></A>
+<A NAME="line204"></A>  val COMBINE_HEURISTIC_FUNS : (unit -&gt; guess_collection) list -&gt; guess_collection;
+<A NAME="line205"></A>
+<A NAME="line206"></A>
+<A NAME="line207"></A>  val HEURISTIC_QUANT_INSTANTIATE_CONV : bool -&gt; (term -&gt; bool) -&gt; quant_heuristic -&gt; bool -&gt; (term -&gt; thm);
+<A NAME="line208"></A>
+<A NAME="line209"></A>(*The most important functions *)
+<A NAME="line210"></A>
+<A NAME="line211"></A>  val PURE_QUANT_INSTANTIATE_CONV : conv;
+<A NAME="line212"></A>  val RESTRICTED_PURE_QUANT_INSTANTIATE_CONV : (term -&gt; bool) -&gt; conv;
+<A NAME="line213"></A>  val QUANT_INSTANTIATE_CONV      : conv;
+<A NAME="line214"></A>
+<A NAME="line215"></A>  val EXT_PURE_QUANT_INSTANTIATE_CONV : quant_heuristic_cache ref option -&gt;
+<A NAME="line216"></A>      bool -&gt; (term -&gt; bool) -&gt; bool -&gt; quant_heuristic_combine_argument list -&gt; conv;
+<A NAME="line217"></A>  val EXT_QUANT_INSTANTIATE_CONV : quant_heuristic_cache ref option -&gt;
+<A NAME="line218"></A>      bool -&gt; (term -&gt; bool) -&gt; bool -&gt; quant_heuristic_combine_argument list -&gt; conv;
+<A NAME="line219"></A>
+<A NAME="line220"></A>  val EXT_PURE_QUANT_INSTANTIATE_CONSEQ_CONV :  quant_heuristic_cache ref option -&gt;
+<A NAME="line221"></A>      bool -&gt; (term -&gt; bool) -&gt; quant_heuristic_combine_argument list -&gt; ConseqConv.directed_conseq_conv;
+<A NAME="line222"></A>  val EXT_QUANT_INSTANTIATE_CONSEQ_CONV :  quant_heuristic_cache ref option -&gt;
+<A NAME="line223"></A>      bool -&gt; (term -&gt; bool) -&gt; quant_heuristic_combine_argument list -&gt; ConseqConv.directed_conseq_conv;
+<A NAME="line224"></A>
+<A NAME="line225"></A>  val PURE_QUANT_INSTANTIATE_TAC      : tactic;
+<A NAME="line226"></A>  val QUANT_INSTANTIATE_TAC           : tactic;
+<A NAME="line227"></A>  val ASM_PURE_QUANT_INSTANTIATE_TAC  : tactic;
+<A NAME="line228"></A>  val ASM_QUANT_INSTANTIATE_TAC       : tactic;
+<A NAME="line229"></A>
+<A NAME="line230"></A>
+<A NAME="line231"></A>
+<A NAME="line232"></A>  val QUANT_CONV : (string * Parse.term Lib.frag list * Parse.term Parse.frag list list) list
+<A NAME="line233"></A>   -&gt; conv;
+<A NAME="line234"></A>  val QUANT_TAC  : (string * Parse.term Lib.frag list * Parse.term Parse.frag list list) list
+<A NAME="line235"></A>   -&gt; tactic;
+<A NAME="line236"></A>
+<A NAME="line237"></A>
+<A NAME="line238"></A>
+<A NAME="line239"></A>
+<A NAME="line240"></A>
+<A NAME="line241"></A>(*functions to add stuff to QUANT_INSTANTIATE_CONV*)
+<A NAME="line242"></A>
+<A NAME="line243"></A>
+<A NAME="line244"></A>  val quant_heuristic___get_combine_argument :
+<A NAME="line245"></A>     unit -&gt; quant_heuristic_combine_argument
+<A NAME="line246"></A>  val quant_heuristic___clear_combine_argument : 
+<A NAME="line247"></A>     unit -&gt; unit
+<A NAME="line248"></A>  val quant_heuristic___add_combine_argument :
+<A NAME="line249"></A>     quant_heuristic_combine_argument -&gt; unit;
+<A NAME="line250"></A>
+<A NAME="line251"></A>  val quant_heuristic___add_distinct_thms : thm list -&gt; unit;
+<A NAME="line252"></A>  val quant_heuristic___add_cases_thms    : thm list -&gt; unit;
+<A NAME="line253"></A>  val quant_heuristic___add_rewrite_thms  : thm list -&gt; unit;
+<A NAME="line254"></A>  val quant_heuristic___add_rewrite_convs : conv list -&gt; unit;
+<A NAME="line255"></A>  val quant_heuristic___add_heuristic     : (quant_heuristic -&gt; quant_heuristic) -&gt; unit;
+<A NAME="line256"></A>
+<A NAME="line257"></A>  val TypeBase___quant_heuristic_argument : hol_type list -&gt; quant_heuristic_combine_argument
+<A NAME="line258"></A>
+<A NAME="line259"></A>  val empty_quant_heuristic_combine_argument : quant_heuristic_combine_argument;
+<A NAME="line260"></A>
+<A NAME="line261"></A>  val COMBINE___QUANT_HEURISTIC_COMBINE_ARGUMENT :
+<A NAME="line262"></A>     quant_heuristic_combine_argument -&gt; quant_heuristic_combine_argument -&gt;
+<A NAME="line263"></A>     quant_heuristic_combine_argument;
+<A NAME="line264"></A>
+<A NAME="line265"></A>  val COMBINE___QUANT_HEURISTIC_COMBINE_ARGUMENTS :
+<A NAME="line266"></A>     quant_heuristic_combine_argument list -&gt; quant_heuristic_combine_argument;
+<A NAME="line267"></A>
+<A NAME="line268"></A>
+<A NAME="line269"></A>
+<A NAME="line270"></A>(* Traces *)
+<A NAME="line271"></A>(* "QUANT_INSTANTIATE_HEURISTIC" can be used to get debug information on
+<A NAME="line272"></A>   how guesses are obtained *)
+<A NAME="line273"></A>
+<A NAME="line274"></A>
+<A NAME="line275"></A>
+<A NAME="line276"></A>end
+<A NAME="line277"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/quantHeuristics/quantHeuristicsLib.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

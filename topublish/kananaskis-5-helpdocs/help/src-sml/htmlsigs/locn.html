@@ -1,0 +1,67 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure locn</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure locn</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/prekernel/locn.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature locn = sig
+<A NAME="line2"></A>
+<A NAME="line3"></A>  (* a type representing a point in the source file *)
+<A NAME="line4"></A>  datatype locn_point = LocP of int (* fragment  (0-origin) *)
+<A NAME="line5"></A>                              * int (* line      (0-origin) *)
+<A NAME="line6"></A>                              * int (* character (0-origin) *)
+<A NAME="line7"></A>                      | LocA of int (* absolute line number in file (0-origin) *)
+<A NAME="line8"></A>                              * int (* absolute column number in file (0-origin) *)
+<A NAME="line9"></A>                      | LocPBeg of int (* beginning of fragment *)
+<A NAME="line10"></A>                      | LocPEnd of int (* end of fragment *)
+<A NAME="line11"></A>
+<A NAME="line12"></A>  val locn_point_toString : locn_point -&gt; string
+<A NAME="line13"></A>
+<A NAME="line14"></A>  (* add a line,char pair to a relative location point *)
+<A NAME="line15"></A>  val rel_to_abs : int -&gt; int -&gt; locn_point -&gt; locn_point
+<A NAME="line16"></A>
+<A NAME="line17"></A>  (* a type representing a location (region) in the source file *)
+<A NAME="line18"></A>  datatype locn = Loc of locn_point * locn_point (* start and end character *)
+<A NAME="line19"></A>                | Loc_None                       (* compiler-generated *)
+<A NAME="line20"></A>                | Loc_Unknown
+<A NAME="line21"></A>                | Loc_Near of locn
+<A NAME="line22"></A>
+<A NAME="line23"></A>      (* if there are multiple QUOTE fragments in a row, they may be
+<A NAME="line24"></A>      concatenated and given the number of the first fragment; the
+<A NAME="line25"></A>      numbers of subsequent fragments do not change however. *)
+<A NAME="line26"></A>
+<A NAME="line27"></A>      (* an ANTIQUOTE fragment has no characters, so no start and end
+<A NAME="line28"></A>      positions *)
+<A NAME="line29"></A>
+<A NAME="line30"></A>      (* when a token is put back, eg with qbuf.replace_current, we
+<A NAME="line31"></A>      claim the new token is near where the old one was *)
+<A NAME="line32"></A>
+<A NAME="line33"></A>  val toString : locn -&gt; string
+<A NAME="line34"></A>  val toShortString : locn -&gt; string (* less verbose form *)
+<A NAME="line35"></A>
+<A NAME="line36"></A>  (* single-point region *)
+<A NAME="line37"></A>  val locp : locn_point -&gt; locn
+<A NAME="line38"></A>  (* whole fragment *)
+<A NAME="line39"></A>  val locfrag : int -&gt; locn
+<A NAME="line40"></A>
+<A NAME="line41"></A>  (* adjusting locations *)
+<A NAME="line42"></A>  val move_start : int -&gt; locn -&gt; locn
+<A NAME="line43"></A>  val split_at   : int -&gt; locn -&gt; (locn * locn)
+<A NAME="line44"></A>  val near       : locn -&gt; locn
+<A NAME="line45"></A>
+<A NAME="line46"></A>  (* merging locations *)
+<A NAME="line47"></A>  val between    : locn -&gt; locn -&gt; locn
+<A NAME="line48"></A>
+<A NAME="line49"></A>  type 'a located = 'a * locn
+<A NAME="line50"></A>
+<A NAME="line51"></A>end;
+<A NAME="line52"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/prekernel/locn.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

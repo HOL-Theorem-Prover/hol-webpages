@@ -1,0 +1,48 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure parse_term</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure parse_term</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/parse/parse_term.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature parse_term =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  type 'a PStack
+<A NAME="line4"></A>  type 'a qbuf= 'a qbuf.qbuf
+<A NAME="line5"></A>  type stack_terminal = term_grammar.stack_terminal
+<A NAME="line6"></A>  val initial_pstack : 'a PStack
+<A NAME="line7"></A>  val is_final_pstack : 'a PStack -&gt; bool
+<A NAME="line8"></A>  val top_nonterminal : Term.term PStack -&gt; Absyn.absyn
+<A NAME="line9"></A>
+<A NAME="line10"></A>  exception PrecConflict of stack_terminal * stack_terminal
+<A NAME="line11"></A>  exception ParseTermError of string locn.located
+<A NAME="line12"></A>
+<A NAME="line13"></A>  val parse_term :
+<A NAME="line14"></A>      term_grammar.grammar -&gt;
+<A NAME="line15"></A>      (''a qbuf -&gt; Pretype.pretype) -&gt;
+<A NAME="line16"></A>      (''a qbuf * ''a PStack) -&gt;
+<A NAME="line17"></A>      (''a qbuf * ''a PStack) * unit option
+<A NAME="line18"></A>
+<A NAME="line19"></A>  (* not used externally, but can be useful for debugging *)
+<A NAME="line20"></A>  datatype mx_src = Ifx | Pfx | MS_Other | MS_Multi
+<A NAME="line21"></A>  datatype mx_order = PM_LESS of mx_src
+<A NAME="line22"></A>                    | PM_GREATER of mx_src
+<A NAME="line23"></A>                    | PM_EQUAL
+<A NAME="line24"></A>                    | PM_LG of {pfx:order,ifx:order}
+<A NAME="line25"></A>
+<A NAME="line26"></A>  val mk_prec_matrix :
+<A NAME="line27"></A>      term_grammar.grammar -&gt;
+<A NAME="line28"></A>      ((stack_terminal * bool) * stack_terminal, mx_order) Binarymap.dict ref
+<A NAME="line29"></A>
+<A NAME="line30"></A>
+<A NAME="line31"></A>end
+<A NAME="line32"></A>
+<A NAME="line33"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/parse/parse_term.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

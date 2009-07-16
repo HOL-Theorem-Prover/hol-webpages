@@ -1,0 +1,112 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure Opening</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure Opening</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/simp/src/Opening.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature Opening = sig
+<A NAME="line2"></A>
+<A NAME="line3"></A>   (* ----------------------------------------------------------------------
+<A NAME="line4"></A>    * CONGPROC
+<A NAME="line5"></A>    *
+<A NAME="line6"></A>    * INPUTS
+<A NAME="line7"></A>    *    The first argument should be a function implementing reflexivity
+<A NAME="line8"></A>    * for the congruence relation (e.g. REFL for equality).  For any
+<A NAME="line9"></A>    * reflexivity theorem you can make this easily by:
+<A NAME="line10"></A>    *    fun refl x = SPEC x thm;
+<A NAME="line11"></A>    *
+<A NAME="line12"></A>    *    The second should be the congruence theorem for the relation
+<A NAME="line13"></A>    *    Providing these two returns a function which implements a
+<A NAME="line14"></A>    * congruence rule suitable for use with the TRAVERSE engine.
+<A NAME="line15"></A>    * Create a congruence procedure for a given congruence rule.
+<A NAME="line16"></A>    * 
+<A NAME="line17"></A>    * "CONGRUENCE" PROCEDURES
+<A NAME="line18"></A>    *   - Use the given continuation to derive simplified subterms
+<A NAME="line19"></A>    *   - Use the provided solver to solve side conditions (solver
+<A NAME="line20"></A>    * is normally just ASSUME)
+<A NAME="line21"></A>    *   - Rename abstractions to avoid certain variables. (only implemented
+<A NAME="line22"></A>    * for EQ_CONGPROC at present).
+<A NAME="line23"></A>    *
+<A NAME="line24"></A>    * NOTES FROM THE SIMPLIFIER DOCUMENTATION 
+<A NAME="line25"></A>    *
+<A NAME="line26"></A>    * Arbitrary extra contextual information can be introduced by
+<A NAME="line27"></A>    * using "congurence rules".  These are theorems of a particular
+<A NAME="line28"></A>    * shape.
+<A NAME="line29"></A>    * 
+<A NAME="line30"></A>    * The general form must be:
+<A NAME="line31"></A>    * \begin{verbatim}
+<A NAME="line32"></A>    * |- !x1 x1' ... xn xn'.
+<A NAME="line33"></A>    *      side-condition1 ==&gt;
+<A NAME="line34"></A>    *      side-condition2 ==&gt;
+<A NAME="line35"></A>    *      (!v11...v1m. x1 v11 ... v1m REL x1' v11 ... v1m) ==&gt;
+<A NAME="line36"></A>    *      (!v21...v2m. [P[x1',v21,...v2m] ==&gt;] x2 v21 ... v2m REL
+<A NAME="line37"></A>    *                                           x2' v21 ... v2m) ==&gt;
+<A NAME="line38"></A>    *      ...
+<A NAME="line39"></A>    *      F[x1,x2,..,xn] REL F[x1',x2',..,xn']
+<A NAME="line40"></A>    * \end{verbatim}
+<A NAME="line41"></A>    * That probably doesn't make much sense.  Think of F as the construct
+<A NAME="line42"></A>    * over which you are expressing the congruence.  Think of x1,x2,...xn
+<A NAME="line43"></A>    * as the sub-constructs which are being rewritten, some of them under
+<A NAME="line44"></A>    * additional assumptions.  The implications (one on each line in the 
+<A NAME="line45"></A>    * sample above) state the necessary results which need to be derived 
+<A NAME="line46"></A>    * about the subcomponents before the congruence can be deduced.  Some
+<A NAME="line47"></A>    * of these subcomponenets may be simplified with extra assumpions - this
+<A NAME="line48"></A>    * is indicated by P[x1] above.
+<A NAME="line49"></A>    * 
+<A NAME="line50"></A>    * Some subterms may be functions which we want
+<A NAME="line51"></A>    * to rewrite under application. See the rule for restricted 
+<A NAME="line52"></A>    * quantifiers for examples.
+<A NAME="line53"></A>    * The simplifier does a degree of higher order matching when
+<A NAME="line54"></A>    * these variables are specified.
+<A NAME="line55"></A>    * 
+<A NAME="line56"></A>    * Some examples (where REL is HOL equality)
+<A NAME="line57"></A>    * \begin{verbatim}
+<A NAME="line58"></A>    *  |- !g g' t t' e e'.
+<A NAME="line59"></A>    *        (g = g') ==&gt;
+<A NAME="line60"></A>    *        (g ==&gt; (t = t')) ==&gt;
+<A NAME="line61"></A>    *        (~g ==&gt; (e = e')) ==&gt;
+<A NAME="line62"></A>    *        ((g =&gt; t | e) = (g' =&gt; t' | e')) : thm
+<A NAME="line63"></A>    * 
+<A NAME="line64"></A>    *   |- !P P' Q Q'.
+<A NAME="line65"></A>    *        (!x. P x = P' x) ==&gt;
+<A NAME="line66"></A>    *        (!x. P x ==&gt; (Q x = Q' x)) ==&gt;
+<A NAME="line67"></A>    *        (RES_EXISTS P Q = RES_EXISTS P' Q') : thm
+<A NAME="line68"></A>    * \end{verbatim}
+<A NAME="line69"></A>    * 
+<A NAME="line70"></A>    * ---------------------------------------------------------------------*)
+<A NAME="line71"></A>
+<A NAME="line72"></A>   include Abbrev
+<A NAME="line73"></A>   type congproc = {relation: term,
+<A NAME="line74"></A>                    solver : term -&gt; thm,
+<A NAME="line75"></A>                    freevars: term list,
+<A NAME="line76"></A>		    depther : (thm list * term) -&gt; conv} -&gt; conv
+<A NAME="line77"></A>   val samerel            : term -&gt; term -&gt; bool
+<A NAME="line78"></A>   val CONGPROC           :  (term -&gt; conv) -&gt;  thm -&gt; congproc
+<A NAME="line79"></A>   val rel_of_congrule    : thm -&gt; term  
+<A NAME="line80"></A>   val nconds_of_congrule : thm -&gt; int
+<A NAME="line81"></A>  
+<A NAME="line82"></A>   (* ---------------------------------------------------------------------
+<A NAME="line83"></A>    * EQ_CONGPROC                                                       
+<A NAME="line84"></A>    *
+<A NAME="line85"></A>    * Optimized implementations of the HOL equality congruence rules using the
+<A NAME="line86"></A>    * built in operations AP_TERM, AP_THM, MK_ABS and MK_COMB.  These could
+<A NAME="line87"></A>    * conceivably be implemented by:
+<A NAME="line88"></A>    *     (x = x') ==&gt; (f = f') ==&gt; (f x = f' x')
+<A NAME="line89"></A>    *     (b = b') ==&gt; (\x. b) = (\x. b')
+<A NAME="line90"></A>    * ---------------------------------------------------------------------*)
+<A NAME="line91"></A>
+<A NAME="line92"></A>   val EQ_CONGPROC : congproc
+<A NAME="line93"></A>
+<A NAME="line94"></A>end (* sig *)
+<A NAME="line95"></A>
+<A NAME="line96"></A>
+<A NAME="line97"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/simp/src/Opening.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

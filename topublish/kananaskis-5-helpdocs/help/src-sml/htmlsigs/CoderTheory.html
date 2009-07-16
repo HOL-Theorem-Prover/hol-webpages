@@ -1,0 +1,200 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure CoderTheory</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure CoderTheory</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/Boolify/src/CoderScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature CoderTheory =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  type thm = Thm.thm
+<A NAME="line4"></A>  
+<A NAME="line5"></A>  (*  Definitions  *)
+<A NAME="line6"></A>    val <A HREF="#blist_coder_def-val">blist_coder_def</A> : thm
+<A NAME="line7"></A>    val <A HREF="#bnum_coder_def-val">bnum_coder_def</A> : thm
+<A NAME="line8"></A>    val <A HREF="#bool_coder_def-val">bool_coder_def</A> : thm
+<A NAME="line9"></A>    val <A HREF="#decode_def-val">decode_def</A> : thm
+<A NAME="line10"></A>    val <A HREF="#decoder_def-val">decoder_def</A> : thm
+<A NAME="line11"></A>    val <A HREF="#domain_def-val">domain_def</A> : thm
+<A NAME="line12"></A>    val <A HREF="#encoder_def-val">encoder_def</A> : thm
+<A NAME="line13"></A>    val <A HREF="#list_coder_def-val">list_coder_def</A> : thm
+<A NAME="line14"></A>    val <A HREF="#num_coder_def-val">num_coder_def</A> : thm
+<A NAME="line15"></A>    val <A HREF="#option_coder_def-val">option_coder_def</A> : thm
+<A NAME="line16"></A>    val <A HREF="#prod_coder_def-val">prod_coder_def</A> : thm
+<A NAME="line17"></A>    val <A HREF="#sum_coder_def-val">sum_coder_def</A> : thm
+<A NAME="line18"></A>    val <A HREF="#tree_coder_def-val">tree_coder_def</A> : thm
+<A NAME="line19"></A>    val <A HREF="#unit_coder_def-val">unit_coder_def</A> : thm
+<A NAME="line20"></A>    val <A HREF="#wf_coder_def-val">wf_coder_def</A> : thm
+<A NAME="line21"></A>  
+<A NAME="line22"></A>  (*  Theorems  *)
+<A NAME="line23"></A>    val <A HREF="#decode_encode-val">decode_encode</A> : thm
+<A NAME="line24"></A>    val <A HREF="#wf_coder-val">wf_coder</A> : thm
+<A NAME="line25"></A>    val <A HREF="#wf_coder_blist-val">wf_coder_blist</A> : thm
+<A NAME="line26"></A>    val <A HREF="#wf_coder_bnum-val">wf_coder_bnum</A> : thm
+<A NAME="line27"></A>    val <A HREF="#wf_coder_bool-val">wf_coder_bool</A> : thm
+<A NAME="line28"></A>    val <A HREF="#wf_coder_closed-val">wf_coder_closed</A> : thm
+<A NAME="line29"></A>    val <A HREF="#wf_coder_list-val">wf_coder_list</A> : thm
+<A NAME="line30"></A>    val <A HREF="#wf_coder_num-val">wf_coder_num</A> : thm
+<A NAME="line31"></A>    val <A HREF="#wf_coder_op-val">wf_coder_op</A> : thm
+<A NAME="line32"></A>    val <A HREF="#wf_coder_option-val">wf_coder_option</A> : thm
+<A NAME="line33"></A>    val <A HREF="#wf_coder_prod-val">wf_coder_prod</A> : thm
+<A NAME="line34"></A>    val <A HREF="#wf_coder_sum-val">wf_coder_sum</A> : thm
+<A NAME="line35"></A>    val <A HREF="#wf_coder_tree-val">wf_coder_tree</A> : thm
+<A NAME="line36"></A>    val <A HREF="#wf_coder_unit-val">wf_coder_unit</A> : thm
+<A NAME="line37"></A>  
+<A NAME="line38"></A>  val Coder_grammars : type_grammar.grammar * term_grammar.grammar
+<A NAME="line39"></A>  
+<A NAME="line40"></A>  
+<A NAME="line41"></A>(*
+   [Decode] Parent theory of "Coder"
+   
+   [<A NAME="blist_coder_def-val"><B>blist_coder_def</B></A>]  Definition
+      
+      |- !m p e d.
+           blist_coder m (p,e,d) =
+           (lift_blist m p,encode_blist m e,
+            decode_blist (lift_blist m p) m d)
+   
+   [<A NAME="bnum_coder_def-val"><B>bnum_coder_def</B></A>]  Definition
+      
+      |- !m p. bnum_coder m p = (p,encode_bnum m,decode_bnum m p)
+   
+   [<A NAME="bool_coder_def-val"><B>bool_coder_def</B></A>]  Definition
+      
+      |- !p. bool_coder p = (p,encode_bool,decode_bool p)
+   
+   [<A NAME="decode_def-val"><B>decode_def</B></A>]  Definition
+      
+      |- !p d l.
+           decode p d l = case d l of NONE -&gt; (@x. p x) || SOME (x,v2) -&gt; x
+   
+   [<A NAME="decoder_def-val"><B>decoder_def</B></A>]  Definition
+      
+      |- !p e d. decoder (p,e,d) = decode p d
+   
+   [<A NAME="domain_def-val"><B>domain_def</B></A>]  Definition
+      
+      |- !p e d. domain (p,e,d) = p
+   
+   [<A NAME="encoder_def-val"><B>encoder_def</B></A>]  Definition
+      
+      |- !p e d. encoder (p,e,d) = e
+   
+   [<A NAME="list_coder_def-val"><B>list_coder_def</B></A>]  Definition
+      
+      |- !p e d.
+           list_coder (p,e,d) =
+           (EVERY p,encode_list e,decode_list (EVERY p) d)
+   
+   [<A NAME="num_coder_def-val"><B>num_coder_def</B></A>]  Definition
+      
+      |- !p. num_coder p = (p,encode_num,decode_num p)
+   
+   [<A NAME="option_coder_def-val"><B>option_coder_def</B></A>]  Definition
+      
+      |- !p e d.
+           option_coder (p,e,d) =
+           (lift_option p,encode_option e,decode_option (lift_option p) d)
+   
+   [<A NAME="prod_coder_def-val"><B>prod_coder_def</B></A>]  Definition
+      
+      |- !p1 e1 d1 p2 e2 d2.
+           prod_coder (p1,e1,d1) (p2,e2,d2) =
+           (lift_prod p1 p2,encode_prod e1 e2,
+            decode_prod (lift_prod p1 p2) d1 d2)
+   
+   [<A NAME="sum_coder_def-val"><B>sum_coder_def</B></A>]  Definition
+      
+      |- !p1 e1 d1 p2 e2 d2.
+           sum_coder (p1,e1,d1) (p2,e2,d2) =
+           (lift_sum p1 p2,encode_sum e1 e2,
+            decode_sum (lift_sum p1 p2) d1 d2)
+   
+   [<A NAME="tree_coder_def-val"><B>tree_coder_def</B></A>]  Definition
+      
+      |- !p e d.
+           tree_coder (p,e,d) =
+           (lift_tree p,encode_tree e,decode_tree (lift_tree p) d)
+   
+   [<A NAME="unit_coder_def-val"><B>unit_coder_def</B></A>]  Definition
+      
+      |- !p. unit_coder p = (p,encode_unit,decode_unit p)
+   
+   [<A NAME="wf_coder_def-val"><B>wf_coder_def</B></A>]  Definition
+      
+      |- !p e d.
+           wf_coder (p,e,d) &lt;=&gt;
+           wf_pred p /\ wf_encoder p e /\ (d = enc2dec p e)
+   
+   [<A NAME="decode_encode-val"><B>decode_encode</B></A>]  Theorem
+      
+      |- !p e x.
+           wf_encoder p e /\ p x ==&gt; (decode p (enc2dec p e) (e x) = x)
+   
+   [<A NAME="wf_coder-val"><B>wf_coder</B></A>]  Theorem
+      
+      |- !c.
+           wf_coder c ==&gt; !x. domain c x ==&gt; (decoder c (encoder c x) = x)
+   
+   [<A NAME="wf_coder_blist-val"><B>wf_coder_blist</B></A>]  Theorem
+      
+      |- !m c. wf_coder c ==&gt; wf_coder (blist_coder m c)
+   
+   [<A NAME="wf_coder_bnum-val"><B>wf_coder_bnum</B></A>]  Theorem
+      
+      |- !m p. wf_pred_bnum m p ==&gt; wf_coder (bnum_coder m p)
+   
+   [<A NAME="wf_coder_bool-val"><B>wf_coder_bool</B></A>]  Theorem
+      
+      |- !p. wf_pred p ==&gt; wf_coder (bool_coder p)
+   
+   [<A NAME="wf_coder_closed-val"><B>wf_coder_closed</B></A>]  Theorem
+      
+      |- !c. wf_coder c ==&gt; !l. domain c (decoder c l)
+   
+   [<A NAME="wf_coder_list-val"><B>wf_coder_list</B></A>]  Theorem
+      
+      |- !c. wf_coder c ==&gt; wf_coder (list_coder c)
+   
+   [<A NAME="wf_coder_num-val"><B>wf_coder_num</B></A>]  Theorem
+      
+      |- !p. wf_pred p ==&gt; wf_coder (num_coder p)
+   
+   [<A NAME="wf_coder_op-val"><B>wf_coder_op</B></A>]  Theorem
+      
+      |- !p e f.
+           (?x. p x) /\ wf_encoder p e /\ (!x. p x ==&gt; (e x = f x)) ==&gt;
+           wf_coder (p,e,enc2dec p f)
+   
+   [<A NAME="wf_coder_option-val"><B>wf_coder_option</B></A>]  Theorem
+      
+      |- !c. wf_coder c ==&gt; wf_coder (option_coder c)
+   
+   [<A NAME="wf_coder_prod-val"><B>wf_coder_prod</B></A>]  Theorem
+      
+      |- !c1 c2. wf_coder c1 /\ wf_coder c2 ==&gt; wf_coder (prod_coder c1 c2)
+   
+   [<A NAME="wf_coder_sum-val"><B>wf_coder_sum</B></A>]  Theorem
+      
+      |- !c1 c2. wf_coder c1 /\ wf_coder c2 ==&gt; wf_coder (sum_coder c1 c2)
+   
+   [<A NAME="wf_coder_tree-val"><B>wf_coder_tree</B></A>]  Theorem
+      
+      |- !c. wf_coder c ==&gt; wf_coder (tree_coder c)
+   
+   [<A NAME="wf_coder_unit-val"><B>wf_coder_unit</B></A>]  Theorem
+      
+      |- !p. wf_pred p ==&gt; wf_coder (unit_coder p)
+   
+   
+*)
+end
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/Boolify/src/CoderScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

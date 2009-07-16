@@ -1,0 +1,195 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure simpLib</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure simpLib</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/simp/src/simpLib.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>(* =====================================================================
+<A NAME="line2"></A> * FILE        : simpLib.sig
+<A NAME="line3"></A> * DESCRIPTION : A programmable, contextual, conditional simplifier
+<A NAME="line4"></A> *
+<A NAME="line5"></A> * AUTHOR      : Donald Syme
+<A NAME="line6"></A> *               Based loosely on original HOL rewriting by
+<A NAME="line7"></A> *               Larry Paulson et al, and on the Isabelle simplifier.
+<A NAME="line8"></A> * =====================================================================*)
+<A NAME="line9"></A>
+<A NAME="line10"></A>
+<A NAME="line11"></A>signature simpLib =
+<A NAME="line12"></A>sig
+<A NAME="line13"></A> include Abbrev
+<A NAME="line14"></A>
+<A NAME="line15"></A>   (* ---------------------------------------------------------------------
+<A NAME="line16"></A>    * type simpset
+<A NAME="line17"></A>    *
+<A NAME="line18"></A>    * A simpset contains:
+<A NAME="line19"></A>    *    - a collection of rewrite rules
+<A NAME="line20"></A>    *    - a collection of equational conversions
+<A NAME="line21"></A>    *    - a traversal strategy for applying them
+<A NAME="line22"></A>    *
+<A NAME="line23"></A>    * The traversal strategy may include other actions, especially
+<A NAME="line24"></A>    * decision procedures, which can work cooperatively with
+<A NAME="line25"></A>    * rewriting during simplification.
+<A NAME="line26"></A>    *
+<A NAME="line27"></A>    * REWRITE RULES
+<A NAME="line28"></A>    *
+<A NAME="line29"></A>    * Simpsets are foremost a collection of rewrite theorems stored
+<A NAME="line30"></A>    * efficiently in a termnet.  These are made into conversions
+<A NAME="line31"></A>    * by using COND_REWR_CONV.
+<A NAME="line32"></A>    *
+<A NAME="line33"></A>    * CONVERSIONS IN SIMPSETS
+<A NAME="line34"></A>    *
+<A NAME="line35"></A>    * Simpsets can contain arbitrary user conversions, as well as
+<A NAME="line36"></A>    * rewrites and contextual-rewrites.  These conversions should
+<A NAME="line37"></A>    * be thought of as infinite families of rewrites.
+<A NAME="line38"></A>    *
+<A NAME="line39"></A>    * Conversions can be keyed by term patterns (implemented
+<A NAME="line40"></A>    * using termnets).  Thus a conversion won't even be called if
+<A NAME="line41"></A>    * the target term doesn't match (in the termnet sense of matching)
+<A NAME="line42"></A>    * its key.
+<A NAME="line43"></A>    * ---------------------------------------------------------------------*)
+<A NAME="line44"></A>
+<A NAME="line45"></A>  type convdata = { name: string,
+<A NAME="line46"></A>                     key: (term list * term) option,
+<A NAME="line47"></A>                   trace: int,
+<A NAME="line48"></A>                    conv: (term list -&gt; term -&gt; thm) -&gt; term list -&gt; conv}
+<A NAME="line49"></A>
+<A NAME="line50"></A>  datatype ssfrag = SSFRAG of
+<A NAME="line51"></A>    {name : string option,
+<A NAME="line52"></A>     convs: convdata list,
+<A NAME="line53"></A>     rewrs: thm list,
+<A NAME="line54"></A>        ac: (thm * thm) list,
+<A NAME="line55"></A>    filter: (thm -&gt; thm list) option,
+<A NAME="line56"></A>    dprocs: Traverse.reducer list,
+<A NAME="line57"></A>     congs: thm list}
+<A NAME="line58"></A>
+<A NAME="line59"></A>  (*------------------------------------------------------------------------*)
+<A NAME="line60"></A>  (* Easy building of common kinds of ssfrag objects                        *)
+<A NAME="line61"></A>  (*------------------------------------------------------------------------*)
+<A NAME="line62"></A>
+<A NAME="line63"></A>  val <A HREF="../../Docfiles/HTML/simpLib.Cong.html">Cong</A>        : thm -&gt; thm
+<A NAME="line64"></A>  val <A HREF="../../Docfiles/HTML/simpLib.AC.html">AC</A>          : thm -&gt; thm -&gt; thm
+<A NAME="line65"></A>
+<A NAME="line66"></A>  val named_rewrites : string -&gt; thm list -&gt; ssfrag
+<A NAME="line67"></A>  val <A HREF="../../Docfiles/HTML/simpLib.rewrites.html">rewrites</A>    : thm list -&gt; ssfrag
+<A NAME="line68"></A>  val dproc_ss    : Traverse.reducer -&gt; ssfrag
+<A NAME="line69"></A>  val ac_ss       : (thm * thm) list -&gt; ssfrag
+<A NAME="line70"></A>  val conv_ss     : convdata -&gt; ssfrag
+<A NAME="line71"></A>  val merge_ss    : ssfrag list -&gt; ssfrag
+<A NAME="line72"></A>  val <A HREF="../../Docfiles/HTML/simpLib.type_ssfrag.html">type_ssfrag</A> : hol_type -&gt; ssfrag
+<A NAME="line73"></A>
+<A NAME="line74"></A>   (* ---------------------------------------------------------------------
+<A NAME="line75"></A>    * mk_simpset: Joins several ssfrag fragments to make a simpset.
+<A NAME="line76"></A>    * This is a "runtime" object - the ssfrag can be thought of as the
+<A NAME="line77"></A>    * static, data objects.
+<A NAME="line78"></A>    * Beware of duplicating information - you should only
+<A NAME="line79"></A>    * merge distinct ssfrag fragments! (like BOOL_ss and PURE_ss).
+<A NAME="line80"></A>    * You cannot merge simpsets with lower-case names (like bool_ss).
+<A NAME="line81"></A>    *
+<A NAME="line82"></A>    * The order of the merge is significant w.r.t. congruence rules
+<A NAME="line83"></A>    * and rewrite makers.
+<A NAME="line84"></A>    * ---------------------------------------------------------------------*)
+<A NAME="line85"></A>
+<A NAME="line86"></A>  type simpset
+<A NAME="line87"></A>
+<A NAME="line88"></A>  val empty_ss     : simpset
+<A NAME="line89"></A>  val ssfrags_of   : simpset -&gt; ssfrag list
+<A NAME="line90"></A>  val <A HREF="../../Docfiles/HTML/simpLib.mk_simpset.html">mk_simpset</A>   : ssfrag list -&gt; simpset
+<A NAME="line91"></A>  val <A HREF="../../Docfiles/HTML/simpLib.plus2.html">++</A>           : simpset * ssfrag -&gt; simpset  (* infix *)
+<A NAME="line92"></A>  val &&           : simpset * thm list -&gt; simpset  (* infix *)
+<A NAME="line93"></A>  val limit        : int -&gt; simpset -&gt; simpset
+<A NAME="line94"></A>  val unlimit      : simpset -&gt; simpset
+<A NAME="line95"></A>  val add_weakener : (Travrules.preorder list * thm list * Traverse.reducer) -&gt;
+<A NAME="line96"></A>                     simpset -&gt; simpset
+<A NAME="line97"></A>  val add_relsimp  : {trans: thm, refl: thm, weakenings: thm list, 
+<A NAME="line98"></A>                      subsets: thm list, rewrs : thm list} -&gt; 
+<A NAME="line99"></A>                     simpset -&gt; simpset
+<A NAME="line100"></A>
+<A NAME="line101"></A>  val traversedata_for_ss: simpset -&gt; Traverse.traverse_data
+<A NAME="line102"></A>
+<A NAME="line103"></A>
+<A NAME="line104"></A>   (* ---------------------------------------------------------------------
+<A NAME="line105"></A>    * SIMP_CONV : simpset -&gt; conv
+<A NAME="line106"></A>    *
+<A NAME="line107"></A>    * SIMP_CONV makes a simplification conversion from the given simpset.  The
+<A NAME="line108"></A>    * conversion uses a top-depth strategy for rewriting.  It sets both
+<A NAME="line109"></A>    * the solver and the depther to be SIMP_CONV itself.
+<A NAME="line110"></A>    *
+<A NAME="line111"></A>    * FAILURE CONDITIONS
+<A NAME="line112"></A>    *
+<A NAME="line113"></A>    * SIMP_CONV never fails, though it may diverge.  Beware of
+<A NAME="line114"></A>    * divergence when trying to solve conditions to conditional rewrites.
+<A NAME="line115"></A>    * ---------------------------------------------------------------------*)
+<A NAME="line116"></A>
+<A NAME="line117"></A>   val <A HREF="../../Docfiles/HTML/simpLib.SIMP_PROVE.html">SIMP_PROVE</A> : simpset -&gt; thm list -&gt; term -&gt; thm
+<A NAME="line118"></A>   val <A HREF="../../Docfiles/HTML/simpLib.SIMP_CONV.html">SIMP_CONV</A>  : simpset -&gt; thm list -&gt; conv
+<A NAME="line119"></A>
+<A NAME="line120"></A>   (* ---------------------------------------------------------------------
+<A NAME="line121"></A>    * SIMP_TAC : simpset -&gt; tactic
+<A NAME="line122"></A>    * ASM_SIMP_TAC : simpset -&gt; tactic
+<A NAME="line123"></A>    * FULL_SIMP_TAC : simpset -&gt; tactic
+<A NAME="line124"></A>    *
+<A NAME="line125"></A>    * SIMP_TAC makes a simplification tactic from the given simpset.  The
+<A NAME="line126"></A>    * tactic uses a top-depth strategy for rewriting, and will be recursively
+<A NAME="line127"></A>    * reapplied when a simplification step makes a change to a term.
+<A NAME="line128"></A>    * This is done in the same way as similar to TOP_DEPTH_CONV.
+<A NAME="line129"></A>    *
+<A NAME="line130"></A>    * ASM_SIMP_TAC draws extra rewrites (conditional and unconditional)
+<A NAME="line131"></A>    * from the assumption list.  These are also added to the context that
+<A NAME="line132"></A>    * will be passed to conversions.
+<A NAME="line133"></A>    *
+<A NAME="line134"></A>    * FULL_SIMP_TAC simplifies the assumptions one by one, before
+<A NAME="line135"></A>    * simplifying the goal.  The assumptions are simplified in the order
+<A NAME="line136"></A>    * that they are found in the assumption list, and the simplification
+<A NAME="line137"></A>    * of each assumption is used when simplifying the next assumption.
+<A NAME="line138"></A>    *
+<A NAME="line139"></A>    * FAILURE CONDITIONS
+<A NAME="line140"></A>    *
+<A NAME="line141"></A>    * These tactics never fail, though they may diverge.
+<A NAME="line142"></A>    * ---------------------------------------------------------------------*)
+<A NAME="line143"></A>
+<A NAME="line144"></A>   val <A HREF="../../Docfiles/HTML/simpLib.SIMP_TAC.html">SIMP_TAC</A>      : simpset -&gt; thm list -&gt; tactic
+<A NAME="line145"></A>   val <A HREF="../../Docfiles/HTML/simpLib.ASM_SIMP_TAC.html">ASM_SIMP_TAC</A>  : simpset -&gt; thm list -&gt; tactic
+<A NAME="line146"></A>   val <A HREF="../../Docfiles/HTML/simpLib.FULL_SIMP_TAC.html">FULL_SIMP_TAC</A> : simpset -&gt; thm list -&gt; tactic
+<A NAME="line147"></A>
+<A NAME="line148"></A>   (* ---------------------------------------------------------------------
+<A NAME="line149"></A>    * SIMP_RULE : simpset -&gt; tactic
+<A NAME="line150"></A>    * ASM_SIMP_RULE : simpset -&gt; tactic
+<A NAME="line151"></A>    *
+<A NAME="line152"></A>    * Make a simplification rule from the given simpset.  The
+<A NAME="line153"></A>    * rule uses a top-depth strategy for rewriting.
+<A NAME="line154"></A>    *
+<A NAME="line155"></A>    * FAILURE CONDITIONS
+<A NAME="line156"></A>    *
+<A NAME="line157"></A>    * These rules never fail, though they may diverge.
+<A NAME="line158"></A>    * ---------------------------------------------------------------------*)
+<A NAME="line159"></A>
+<A NAME="line160"></A>   val <A HREF="../../Docfiles/HTML/simpLib.SIMP_RULE.html">SIMP_RULE</A>     : simpset -&gt; thm list -&gt; thm -&gt; thm
+<A NAME="line161"></A>   val <A HREF="../../Docfiles/HTML/simpLib.ASM_SIMP_RULE.html">ASM_SIMP_RULE</A> : simpset -&gt; thm list -&gt; thm -&gt; thm
+<A NAME="line162"></A>
+<A NAME="line163"></A>   (* ---------------------------------------------------------------------*)
+<A NAME="line164"></A>   (* Accumulating the rewrite rules that are actually used.               *)
+<A NAME="line165"></A>   (* ---------------------------------------------------------------------*)
+<A NAME="line166"></A>
+<A NAME="line167"></A>   val used_rewrites : thm list ref
+<A NAME="line168"></A>   val track_rewrites : bool ref
+<A NAME="line169"></A>
+<A NAME="line170"></A>   val track : ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<A NAME="line171"></A>
+<A NAME="line172"></A>   (* ---------------------------------------------------------------------*)
+<A NAME="line173"></A>   (* Prettyprinters for ssfrags and simpsets.                             *)
+<A NAME="line174"></A>   (* ---------------------------------------------------------------------*)
+<A NAME="line175"></A>
+<A NAME="line176"></A>   val pp_ssfrag : ppstream -&gt; ssfrag -&gt; unit
+<A NAME="line177"></A>   val pp_simpset : ppstream -&gt; simpset -&gt; unit
+<A NAME="line178"></A>
+<A NAME="line179"></A>end
+<A NAME="line180"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/simp/src/simpLib.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

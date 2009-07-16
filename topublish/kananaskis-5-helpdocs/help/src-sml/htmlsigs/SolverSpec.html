@@ -1,0 +1,75 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure SolverSpec</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure SolverSpec</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/HolSmt/SolverSpec.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>(* Copyright (c) 2009 Tjark Weber. All rights reserved. *)
+<A NAME="line2"></A>
+<A NAME="line3"></A>(* Specification of SMT solvers: name, command, etc. *)
+<A NAME="line4"></A>
+<A NAME="line5"></A>(* The main reason for having this as an opaque type is to give HolSmtLib a
+<A NAME="line6"></A>   stable signature. *)
+<A NAME="line7"></A>
+<A NAME="line8"></A>signature SolverSpec = sig
+<A NAME="line9"></A>
+<A NAME="line10"></A>  type T
+<A NAME="line11"></A>
+<A NAME="line12"></A>  (* see HolSmtLib.GENERIC_SMT for how the values below are used precisely, and
+<A NAME="line13"></A>     see Yices.sml for a concrete solver specification *)
+<A NAME="line14"></A>
+<A NAME="line15"></A>  (* name          : human-readable solver name
+<A NAME="line16"></A>     command       : system command to execute the solver
+<A NAME="line17"></A>     translation_fn: translation of HOL terms into the solver's input format;
+<A NAME="line18"></A>       a string list (rather than a single string) is returned solely to
+<A NAME="line19"></A>       circumvent String.maxSize, which may not be big enough for large SMT
+<A NAME="line20"></A>       problems
+<A NAME="line21"></A>     infile        : name of the solver's input file
+<A NAME="line22"></A>     outfiles      : name of the solver's output file(s)
+<A NAME="line23"></A>     is_sat_fn     : must return true (only) if the solver determined its input
+<A NAME="line24"></A>       to be satisfiable, false (only) if the solver determined its input to be
+<A NAME="line25"></A>       unsatisfiable, and raise HOL_ERR if neither (e.g., due to a timeout)
+<A NAME="line26"></A>     model_fn      : must return a satisfying model (provided is_sat_fn ()
+<A NAME="line27"></A>       returned true); NONE if the solver does not generate (or if we don't
+<A NAME="line28"></A>       care about) models
+<A NAME="line29"></A>     proof_fn      : must return a proof of unsatisfiability (provided
+<A NAME="line30"></A>       is_sat_fn () returned false); NONE if the solver does not generate (or
+<A NAME="line31"></A>       if we don't want to check) proofs of unsatisfiability *)
+<A NAME="line32"></A>
+<A NAME="line33"></A>  val get_name           : T -&gt; string
+<A NAME="line34"></A>  val get_command        : T -&gt; string
+<A NAME="line35"></A>  val get_translation_fn : T -&gt; Term.term -&gt; string list
+<A NAME="line36"></A>  val get_infile         : T -&gt; string
+<A NAME="line37"></A>  val get_outfiles       : T -&gt; string list
+<A NAME="line38"></A>  val get_is_sat_fn      : T -&gt; unit -&gt; bool
+<A NAME="line39"></A>  val get_model_fn       : T -&gt; (unit -&gt; string) option
+<A NAME="line40"></A>  val get_proof_fn       : T -&gt; (unit -&gt; string) option
+<A NAME="line41"></A>
+<A NAME="line42"></A>  val set_name           : T -&gt; string -&gt; T
+<A NAME="line43"></A>  val set_command        : T -&gt; string -&gt; T
+<A NAME="line44"></A>  val set_translation_fn : T -&gt; (Term.term -&gt; string list) -&gt; T
+<A NAME="line45"></A>  val set_infile         : T -&gt; string -&gt; T
+<A NAME="line46"></A>  val set_outfiles       : T -&gt; string list -&gt; T
+<A NAME="line47"></A>  val set_is_sat_fn      : T -&gt; (unit -&gt; bool) -&gt; T
+<A NAME="line48"></A>  val set_model_fn       : T -&gt; (unit -&gt; string) option -&gt; T
+<A NAME="line49"></A>  val set_proof_fn       : T -&gt; (unit -&gt; string) option -&gt; T
+<A NAME="line50"></A>
+<A NAME="line51"></A>  val make_solver : string * string * (Term.term -&gt; string list) * string *
+<A NAME="line52"></A>    string list * (unit -&gt; bool) * (unit -&gt; string) option *
+<A NAME="line53"></A>    (unit -&gt; string) option -&gt; T
+<A NAME="line54"></A>
+<A NAME="line55"></A>  val dest_solver : T -&gt; string * string * (Term.term -&gt; string list) * string *
+<A NAME="line56"></A>    string list * (unit -&gt; bool) * (unit -&gt; string) option *
+<A NAME="line57"></A>    (unit -&gt; string) option
+<A NAME="line58"></A>
+<A NAME="line59"></A>end
+<A NAME="line60"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/HolSmt/SolverSpec.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

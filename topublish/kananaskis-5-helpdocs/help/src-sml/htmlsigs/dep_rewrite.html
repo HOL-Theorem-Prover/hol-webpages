@@ -1,0 +1,263 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure dep_rewrite</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure dep_rewrite</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/bool/dep_rewrite.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>(* ===================================================================== *)
+<A NAME="line2"></A>(* FILE          : dep_rewrite.sig                                       *)
+<A NAME="line3"></A>(* VERSION       : 1.1                                                   *)
+<A NAME="line4"></A>(* DESCRIPTION   : Dependent Rewriting Tactics (general purpose)         *)
+<A NAME="line5"></A>(*                                                                       *)
+<A NAME="line6"></A>(* AUTHOR        : Peter Vincent Homeier                                 *)
+<A NAME="line7"></A>(* DATE          : May 7, 2002                                           *)
+<A NAME="line8"></A>(* COPYRIGHT     : Copyright (c) 2002 by Peter Vincent Homeier           *)
+<A NAME="line9"></A>(*                                                                       *)
+<A NAME="line10"></A>(* ===================================================================== *)
+<A NAME="line11"></A>
+<A NAME="line12"></A>(* ================================================================== *)
+<A NAME="line13"></A>(* ================================================================== *)
+<A NAME="line14"></A>(*                     DEPENDENT REWRITING TACTICS                    *)
+<A NAME="line15"></A>(* ================================================================== *)
+<A NAME="line16"></A>(* ================================================================== *)
+<A NAME="line17"></A>(*                                                                    *)
+<A NAME="line18"></A>(* This file contains new tactics for dependent rewriting,            *)
+<A NAME="line19"></A>(* a generalization of the rewriting tactics of standard HOL.         *)
+<A NAME="line20"></A>(*                                                                    *)
+<A NAME="line21"></A>(* The main tactics are named DEP_REWRITE_TAC[thm1,...], etc., with   *)
+<A NAME="line22"></A>(* the standard variations (PURE,ONCE,ASM).  In addition, tactics     *)
+<A NAME="line23"></A>(* with LIST instead of ONCE are provided, making 12 tactics in all.  *)
+<A NAME="line24"></A>(*                                                                    *)
+<A NAME="line25"></A>(* The argument theorems thm1,... are typically implications.         *)
+<A NAME="line26"></A>(* These tactics identify the consequents of the argument theorems,   *)
+<A NAME="line27"></A>(* and attempt to match these against the current goal.  If a match   *)
+<A NAME="line28"></A>(* is found, the goal is rewritten according to the matched instance  *)
+<A NAME="line29"></A>(* of the consequent, after which the corresponding hypotheses of     *)
+<A NAME="line30"></A>(* the argument theorems are added to the goal as new conjuncts on    *)
+<A NAME="line31"></A>(* the left.                                                          *)
+<A NAME="line32"></A>(*                                                                    *)
+<A NAME="line33"></A>(* Care needs to be taken that the implications will match the goal   *)
+<A NAME="line34"></A>(* properly, that is, instances where the hypotheses in fact can be   *)
+<A NAME="line35"></A>(* proven.  Also, even more commonly than with REWRITE_TAC,           *)
+<A NAME="line36"></A>(* the rewriting process may diverge.                                 *)
+<A NAME="line37"></A>(*                                                                    *)
+<A NAME="line38"></A>(* Each implication theorem for rewriting may have a number of layers *)
+<A NAME="line39"></A>(* of universal quantification and implications.  At the bottom of    *)
+<A NAME="line40"></A>(* these layers is the base, which will either be an equality, a      *)
+<A NAME="line41"></A>(* negation, or a general term.  The pattern for matching will be     *)
+<A NAME="line42"></A>(* the left-hand-side of an equality, the term negated of a negation, *)
+<A NAME="line43"></A>(* or the term itself in the third case.  The search is top-to-bottom,*)
+<A NAME="line44"></A>(* left-to-right, depending on the quantifications of variables.      *)
+<A NAME="line45"></A>(*                                                                    *)
+<A NAME="line46"></A>(* To assist in focusing the matching to useful cases, the goal is    *)
+<A NAME="line47"></A>(* searched for a subterm matching the pattern.  The matching of the  *)
+<A NAME="line48"></A>(* pattern to subterms is performed by higher-order matching, so for  *)
+<A NAME="line49"></A>(* example, ``!x. P x`` will match the term ``!n. (n+m) &lt; 4*n``.      *)
+<A NAME="line50"></A>(*                                                                    *)
+<A NAME="line51"></A>(* The argument theorems may each be either an implication or not.    *)
+<A NAME="line52"></A>(* For those which are implications, the hypotheses of the instance   *)
+<A NAME="line53"></A>(* of each theorem which matched the goal are added to the goal as    *)
+<A NAME="line54"></A>(* conjuncts on the left side.  For those argument theorems which     *)
+<A NAME="line55"></A>(* are not implications, the goal is simply rewritten with them.      *)
+<A NAME="line56"></A>(* This rewriting is also higher order.                               *)
+<A NAME="line57"></A>(*                                                                    *)
+<A NAME="line58"></A>(* Deep inner universal quantifications of consequents are supported. *)
+<A NAME="line59"></A>(* Thus, an argument theorem like EQ_LIST:                            *)
+<A NAME="line60"></A>(* |- !h1 h2. (h1 = h2) ==&gt; (!l1 l2. (l1 = l2) ==&gt;                    *)
+<A NAME="line61"></A>(*                  (CONS h1 l1 = CONS h2 l2))                        *)
+<A NAME="line62"></A>(* before it is used, is internally converted to appear as            *)
+<A NAME="line63"></A>(* |- !h1 h2 l1 l2. (h1 = h2) /\ (l1 = l2) ==&gt;                        *)
+<A NAME="line64"></A>(*                  (CONS h1 l1 = CONS h2 l2)                         *)
+<A NAME="line65"></A>(*                                                                    *)
+<A NAME="line66"></A>(* As much as possible, the newly added hypotheses are analyzed to    *)
+<A NAME="line67"></A>(* remove duplicates; thus, several theorems with the same            *)
+<A NAME="line68"></A>(* hypothesis, or several uses of the same theorem, will generate     *)
+<A NAME="line69"></A>(* a minimal additional proof burden.                                 *)
+<A NAME="line70"></A>(*                                                                    *)
+<A NAME="line71"></A>(* The new hypotheses are added as conjuncts rather than as a         *)
+<A NAME="line72"></A>(* separate subgoal to reduce the user's burden of subgoal splits     *)
+<A NAME="line73"></A>(* when creating tactics to prove theorems.  If a separate subgoal    *)
+<A NAME="line74"></A>(* is desired, simply use CONJ_TAC after the dependent rewriting to   *)
+<A NAME="line75"></A>(* split the goal into two, where the first contains the hypotheses   *)
+<A NAME="line76"></A>(* and the second contains the rewritten version of the original      *)
+<A NAME="line77"></A>(* goal.                                                              *)
+<A NAME="line78"></A>(*                                                                    *)
+<A NAME="line79"></A>(* The tactics including PURE in their name will only use the         *)
+<A NAME="line80"></A>(* listed theorems for all rewriting; otherwise, the standard         *)
+<A NAME="line81"></A>(* rewrites are used for normal rewriting, but they are not           *)
+<A NAME="line82"></A>(* considered for dependent rewriting.                                *)
+<A NAME="line83"></A>(*                                                                    *)
+<A NAME="line84"></A>(* The tactics including ONCE in their name attempt to use each       *)
+<A NAME="line85"></A>(* theorem in the list, only once, in order, left to right.           *)
+<A NAME="line86"></A>(* The hypotheses added in the process of dependent rewriting are     *)
+<A NAME="line87"></A>(* not rewritten by the ONCE tactics.  This gives a more restrained   *)
+<A NAME="line88"></A>(* version of dependent rewriting.                                    *)
+<A NAME="line89"></A>(*                                                                    *)
+<A NAME="line90"></A>(* The tactics with LIST take a list of lists of theorems, and        *)
+<A NAME="line91"></A>(* uses each list of theorems once in order, left-to-right.  For      *)
+<A NAME="line92"></A>(* each list of theorems, the goal is rewritten as much as possible,  *)
+<A NAME="line93"></A>(* until no further changes can be achieved in the goal.  Hypotheses  *)
+<A NAME="line94"></A>(* are collected from all rewriting and added to the goal, but they   *)
+<A NAME="line95"></A>(* are not themselves rewritten.                                      *)
+<A NAME="line96"></A>(*                                                                    *)
+<A NAME="line97"></A>(* The tactics without ONCE or LIST attempt to reuse all theorems     *)
+<A NAME="line98"></A>(* repeatedly, continuing to rewrite until no changes can be          *)
+<A NAME="line99"></A>(* achieved in the goal.  Hypotheses are rewritten as well, and       *)
+<A NAME="line100"></A>(* their hypotheses as well, ad infinitum.                            *)
+<A NAME="line101"></A>(*                                                                    *)
+<A NAME="line102"></A>(* The tactics with ASM in their name add the assumption list to      *)
+<A NAME="line103"></A>(* the list of theorems used for dependent rewriting.                 *)
+<A NAME="line104"></A>(*                                                                    *)
+<A NAME="line105"></A>(* There are also three more general tactics provided,                *)
+<A NAME="line106"></A>(* DEP_FIND_THEN, DEP_ONCE_FIND_THEN, and DEP_LIST_FIND_THEN,         *)
+<A NAME="line107"></A>(* from which the others are constructed.                             *)
+<A NAME="line108"></A>(*                                                                    *)
+<A NAME="line109"></A>(* The differences among these is that DEP_ONCE_FIND_THEN uses        *)
+<A NAME="line110"></A>(* each of its theorems only once, in order left-to-right as given,   *)
+<A NAME="line111"></A>(* whereas DEP_FIND_THEN continues to reuse its theorems repeatedly   *)
+<A NAME="line112"></A>(* as long as forward progress and change is possible.  In contrast   *)
+<A NAME="line113"></A>(* to the others, DEP_LIST_FIND_THEN takes as its argument a list     *)
+<A NAME="line114"></A>(* of lists of theorems, and processes these in order, left-to-right. *)
+<A NAME="line115"></A>(* For each list of theorems, the goal is rewritten as many times     *)
+<A NAME="line116"></A>(* as they apply.  The hypotheses for all these rewritings are        *)
+<A NAME="line117"></A>(* collected into one set, added to the goal after all rewritings.    *)
+<A NAME="line118"></A>(*                                                                    *)
+<A NAME="line119"></A>(* DEP_ONCE_FIND_THEN and DEP_LIST_FIND_THEN will not attack the      *)
+<A NAME="line120"></A>(* hypotheses generated as a byproduct of the dependent rewriting;    *)
+<A NAME="line121"></A>(* in contrast, DEP_FIND_THEN will.  DEP_ONCE_FIND_THEN and           *)
+<A NAME="line122"></A>(* DEP_LIST_FIND_THEN might be fruitfully applied again to their      *)
+<A NAME="line123"></A>(* results; DEP_FIND_THEN will complete any possible rewriting,       *)
+<A NAME="line124"></A>(* and need not be reapplied.                                         *)
+<A NAME="line125"></A>(*                                                                    *)
+<A NAME="line126"></A>(* These take as argument a thm_tactic, a function which takes a      *)
+<A NAME="line127"></A>(* theorem and yields a tactic.  It is this which is used to apply    *)
+<A NAME="line128"></A>(* the instantiated consequent of each successfully matched           *)
+<A NAME="line129"></A>(* implication to the current goal.  Usually this is something like   *)
+<A NAME="line130"></A>(* (fn th =&gt; REWRITE_TAC[th]), but the user is free to supply any     *)
+<A NAME="line131"></A>(* thm_tactic he wishes.                                              *)
+<A NAME="line132"></A>(*                                                                    *)
+<A NAME="line133"></A>(* One significant note: because of the strategy of adding new        *)
+<A NAME="line134"></A>(* hypotheses as conjuncts to the current goal, it is not fruitful    *)
+<A NAME="line135"></A>(* to add *any* new assumptions to the current goal, as one might     *)
+<A NAME="line136"></A>(* think would happen from using, say, ASSUME_TAC.                    *)
+<A NAME="line137"></A>(*                                                                    *)
+<A NAME="line138"></A>(* Rather, any such new assumptions introduced by thm_tactic are      *)
+<A NAME="line139"></A>(* specifically removed.  Instead, one might wish to try MP_TAC,      *)
+<A NAME="line140"></A>(* which will have the effect of ASSUME_TAC and then undischarging    *)
+<A NAME="line141"></A>(* that assumption to become an antecedent of the goal.  Other        *)
+<A NAME="line142"></A>(* thm_tactics may be used, and they may even convert the single      *)
+<A NAME="line143"></A>(* current subgoal into multiple subgoals.  If this happens, it is    *)
+<A NAME="line144"></A>(* fine, but note that the control strategy of DEP_FIND_THEN will     *)
+<A NAME="line145"></A>(* continue to attack only the first of the multiple subgoals.        *)
+<A NAME="line146"></A>(*                                                                    *)
+<A NAME="line147"></A>(* ================================================================== *)
+<A NAME="line148"></A>(* ================================================================== *)
+<A NAME="line149"></A>
+<A NAME="line150"></A>signature dep_rewrite =
+<A NAME="line151"></A>sig
+<A NAME="line152"></A>type term = Term.term
+<A NAME="line153"></A>type fixity = Parse.fixity
+<A NAME="line154"></A>type thm = Thm.thm
+<A NAME="line155"></A>type tactic  = Abbrev.tactic
+<A NAME="line156"></A>type conv = Abbrev.conv
+<A NAME="line157"></A>type thm_tactic = Abbrev.thm_tactic
+<A NAME="line158"></A>
+<A NAME="line159"></A>
+<A NAME="line160"></A>(* ================================================================== *)
+<A NAME="line161"></A>(*                                                                    *)
+<A NAME="line162"></A>(* The show_rewrites global flag determines whether information is    *)
+<A NAME="line163"></A>(* printed showing the details of the process of matching and         *)
+<A NAME="line164"></A>(* applying implication theorems against the current goal.  The       *)
+<A NAME="line165"></A>(* flag causes the following to be displayed:                         *)
+<A NAME="line166"></A>(*                                                                    *)
+<A NAME="line167"></A>(*   - Each implication theorem which is tried for matches against    *)
+<A NAME="line168"></A>(*       the current goal,                                            *)
+<A NAME="line169"></A>(*   - When a match is found, the matched version of the rewriting    *)
+<A NAME="line170"></A>(*       rule (just the base, not the hypotheses),                    *)
+<A NAME="line171"></A>(*   - The new burden of hypotheses justifying the matched rewrite,   *)
+<A NAME="line172"></A>(*   - The revised goal after the rewrite.                            *)
+<A NAME="line173"></A>(*                                                                    *)
+<A NAME="line174"></A>(* ================================================================== *)
+<A NAME="line175"></A>
+<A NAME="line176"></A>val show_rewrites : bool ref
+<A NAME="line177"></A>
+<A NAME="line178"></A>
+<A NAME="line179"></A>(* ================================================================== *)
+<A NAME="line180"></A>(*                                                                    *)
+<A NAME="line181"></A>(* The tactics including ONCE in their name attempt to use each       *)
+<A NAME="line182"></A>(* theorem in the list, only once, in order, left to right.           *)
+<A NAME="line183"></A>(* The hypotheses added in the process of dependent rewriting are     *)
+<A NAME="line184"></A>(* not rewritten by the ONCE tactics.  This gives the most fine-grain *)
+<A NAME="line185"></A>(* control of dependent rewriting.                                    *)
+<A NAME="line186"></A>(*                                                                    *)
+<A NAME="line187"></A>(* ================================================================== *)
+<A NAME="line188"></A>
+<A NAME="line189"></A>val DEP_ONCE_FIND_THEN : thm_tactic -&gt; thm list -&gt; tactic
+<A NAME="line190"></A>
+<A NAME="line191"></A>val DEP_PURE_ONCE_REWRITE_TAC : thm list -&gt; tactic
+<A NAME="line192"></A>val DEP_ONCE_REWRITE_TAC : thm list -&gt; tactic
+<A NAME="line193"></A>val DEP_PURE_ONCE_ASM_REWRITE_TAC : thm list -&gt; tactic
+<A NAME="line194"></A>val DEP_ONCE_ASM_REWRITE_TAC : thm list -&gt; tactic
+<A NAME="line195"></A>
+<A NAME="line196"></A>val DEP_PURE_ONCE_SUBST_TAC : thm list -&gt; tactic
+<A NAME="line197"></A>val DEP_ONCE_SUBST_TAC : thm list -&gt; tactic
+<A NAME="line198"></A>val DEP_PURE_ONCE_ASM_SUBST_TAC : thm list -&gt; tactic
+<A NAME="line199"></A>val DEP_ONCE_ASM_SUBST_TAC : thm list -&gt; tactic
+<A NAME="line200"></A>
+<A NAME="line201"></A>
+<A NAME="line202"></A>(* ================================================================== *)
+<A NAME="line203"></A>(*                                                                    *)
+<A NAME="line204"></A>(* The tactics including LIST in their name take a list of lists of   *)
+<A NAME="line205"></A>(* implication theorems, and attempt to use each list of theorems     *)
+<A NAME="line206"></A>(* once, in order, left to right.  Each list of theorems is applied   *)
+<A NAME="line207"></A>(* by rewriting with each theorem in it as many times as they apply.  *)
+<A NAME="line208"></A>(* The hypotheses added in the process of dependent rewriting are     *)
+<A NAME="line209"></A>(* collected from all rewritings, but they are not rewritten by the   *)
+<A NAME="line210"></A>(* LIST tactics.  This gives a moderate and more controlled degree    *)
+<A NAME="line211"></A>(* of dependent rewriting than provided by DEP_REWRITE_TAC.           *)
+<A NAME="line212"></A>(*                                                                    *)
+<A NAME="line213"></A>(* ================================================================== *)
+<A NAME="line214"></A>
+<A NAME="line215"></A>val DEP_LIST_FIND_THEN : thm_tactic -&gt; thm list list -&gt; tactic
+<A NAME="line216"></A>
+<A NAME="line217"></A>val DEP_PURE_LIST_REWRITE_TAC : thm list list -&gt; tactic
+<A NAME="line218"></A>val DEP_LIST_REWRITE_TAC : thm list list -&gt; tactic
+<A NAME="line219"></A>val DEP_PURE_LIST_ASM_REWRITE_TAC : thm list list -&gt; tactic
+<A NAME="line220"></A>val DEP_LIST_ASM_REWRITE_TAC : thm list list -&gt; tactic
+<A NAME="line221"></A>
+<A NAME="line222"></A>
+<A NAME="line223"></A>(* ================================================================== *)
+<A NAME="line224"></A>(*                                                                    *)
+<A NAME="line225"></A>(* The tactics without ONCE attept to reuse all theorems until no     *)
+<A NAME="line226"></A>(* changes can be achieved in the goal.  Hypotheses are rewritten     *)
+<A NAME="line227"></A>(* and new ones generated from them, continuing until no further      *)
+<A NAME="line228"></A>(* progress is possible.                                              *)
+<A NAME="line229"></A>(*                                                                    *)
+<A NAME="line230"></A>(* ================================================================== *)
+<A NAME="line231"></A>
+<A NAME="line232"></A>val DEP_FIND_THEN : thm_tactic -&gt; thm list -&gt;  tactic
+<A NAME="line233"></A>
+<A NAME="line234"></A>val DEP_PURE_REWRITE_TAC : thm list -&gt; tactic
+<A NAME="line235"></A>val DEP_REWRITE_TAC : thm list -&gt; tactic
+<A NAME="line236"></A>val DEP_PURE_ASM_REWRITE_TAC : thm list -&gt; tactic
+<A NAME="line237"></A>val DEP_ASM_REWRITE_TAC : thm list -&gt; tactic
+<A NAME="line238"></A>
+<A NAME="line239"></A>
+<A NAME="line240"></A>end;
+<A NAME="line241"></A>
+<A NAME="line242"></A>(* ================================================================== *)
+<A NAME="line243"></A>(* ================================================================== *)
+<A NAME="line244"></A>(*                 END OF DEPENDENT REWRITING TACTICS                 *)
+<A NAME="line245"></A>(* ================================================================== *)
+<A NAME="line246"></A>(* ================================================================== *)
+<A NAME="line247"></A>
+<A NAME="line248"></A>
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/bool/dep_rewrite.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

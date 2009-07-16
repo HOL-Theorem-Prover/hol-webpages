@@ -1,0 +1,229 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure logrootTheory</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure logrootTheory</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/num/extra_theories/logrootScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature logrootTheory =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  type thm = Thm.thm
+<A NAME="line4"></A>  
+<A NAME="line5"></A>  (*  Definitions  *)
+<A NAME="line6"></A>    val LOG : thm
+<A NAME="line7"></A>    val ROOT : thm
+<A NAME="line8"></A>    val SQRTd_def : thm
+<A NAME="line9"></A>    val iSQRT0_def : thm
+<A NAME="line10"></A>    val iSQRT1_def : thm
+<A NAME="line11"></A>    val iSQRT2_def : thm
+<A NAME="line12"></A>    val iSQRT3_def : thm
+<A NAME="line13"></A>    val iSQRTd_def : thm
+<A NAME="line14"></A>  
+<A NAME="line15"></A>  (*  Theorems  *)
+<A NAME="line16"></A>    val EXP_LE_ISO : thm
+<A NAME="line17"></A>    val EXP_LT_ISO : thm
+<A NAME="line18"></A>    val EXP_MUL : thm
+<A NAME="line19"></A>    val LE_EXP_ISO : thm
+<A NAME="line20"></A>    val LOG_1 : thm
+<A NAME="line21"></A>    val LOG_ADD : thm
+<A NAME="line22"></A>    val LOG_ADD1 : thm
+<A NAME="line23"></A>    val LOG_BASE : thm
+<A NAME="line24"></A>    val LOG_DIV : thm
+<A NAME="line25"></A>    val LOG_EXP : thm
+<A NAME="line26"></A>    val LOG_LE_MONO : thm
+<A NAME="line27"></A>    val LOG_MOD : thm
+<A NAME="line28"></A>    val LOG_ROOT : thm
+<A NAME="line29"></A>    val LOG_UNIQUE : thm
+<A NAME="line30"></A>    val LOG_exists : thm
+<A NAME="line31"></A>    val LT_EXP_ISO : thm
+<A NAME="line32"></A>    val ROOT_COMPUTE : thm
+<A NAME="line33"></A>    val ROOT_DIV : thm
+<A NAME="line34"></A>    val ROOT_LE_MONO : thm
+<A NAME="line35"></A>    val ROOT_UNIQUE : thm
+<A NAME="line36"></A>    val ROOT_exists : thm
+<A NAME="line37"></A>    val numeral_root2 : thm
+<A NAME="line38"></A>  
+<A NAME="line39"></A>  val logroot_grammars : type_grammar.grammar * term_grammar.grammar
+<A NAME="line40"></A>  
+<A NAME="line41"></A>  
+<A NAME="line42"></A>(*
+   [basicSize] Parent theory of "logroot"
+   
+   [while] Parent theory of "logroot"
+   
+   [LOG]  Definition
+      
+      |- !a n.
+           1 &lt; a /\ 0 &lt; n ==&gt; a ** LOG a n &lt;= n /\ n &lt; a ** SUC (LOG a n)
+   
+   [ROOT]  Definition
+      
+      |- !r n. 0 &lt; r ==&gt; ROOT r n ** r &lt;= n /\ n &lt; SUC (ROOT r n) ** r
+   
+   [SQRTd_def]  Definition
+      
+      |- !n. SQRTd n = (ROOT 2 n,n - ROOT 2 n * ROOT 2 n)
+   
+   [iSQRT0_def]  Definition
+      
+      |- !n.
+           iSQRT0 n =
+           (let p = SQRTd n in
+            let d = SND p - FST p in
+              if d = 0 then
+                (2 * FST p,4 * SND p)
+              else
+                (SUC (2 * FST p),4 * d - 1))
+   
+   [iSQRT1_def]  Definition
+      
+      |- !n.
+           iSQRT1 n =
+           (let p = SQRTd n in
+            let d = SUC (SND p) - FST p in
+              if d = 0 then
+                (2 * FST p,SUC (4 * SND p))
+              else
+                (SUC (2 * FST p),4 * (d - 1)))
+   
+   [iSQRT2_def]  Definition
+      
+      |- !n.
+           iSQRT2 n =
+           (let p = SQRTd n in
+            let d = 2 * FST p in
+            let c = SUC (2 * SND p) in
+            let e = c - d in
+              if e = 0 then (d,2 * c) else (SUC d,2 * e - 1))
+   
+   [iSQRT3_def]  Definition
+      
+      |- !n.
+           iSQRT3 n =
+           (let p = SQRTd n in
+            let d = 2 * FST p in
+            let c = SUC (2 * SND p) in
+            let e = SUC c - d in
+              if e = 0 then (d,SUC (2 * c)) else (SUC d,2 * (e - 1)))
+   
+   [iSQRTd_def]  Definition
+      
+      |- !x n.
+           iSQRTd (x,n) =
+           (let p = SQRTd n in
+            let next = 4 * SND p + x in
+            let ndiff = 4 * FST p + 1 in
+              if next &lt; ndiff then
+                (2 * FST p,next)
+              else
+                (2 * FST p + 1,next - ndiff))
+   
+   [EXP_LE_ISO]  Theorem
+      
+      |- !a b r. 0 &lt; r ==&gt; (a &lt;= b &lt;=&gt; a ** r &lt;= b ** r)
+   
+   [EXP_LT_ISO]  Theorem
+      
+      |- !a b r. 0 &lt; r ==&gt; (a &lt; b &lt;=&gt; a ** r &lt; b ** r)
+   
+   [EXP_MUL]  Theorem
+      
+      |- (a ** b) ** c = a ** (b * c)
+   
+   [LE_EXP_ISO]  Theorem
+      
+      |- !e a b. 1 &lt; e ==&gt; (a &lt;= b &lt;=&gt; e ** a &lt;= e ** b)
+   
+   [LOG_1]  Theorem
+      
+      |- !a. 1 &lt; a ==&gt; (LOG a 1 = 0)
+   
+   [LOG_ADD]  Theorem
+      
+      |- !a b c. 1 &lt; a /\ b &lt; a ** c ==&gt; (LOG a (b + a ** c) = c)
+   
+   [LOG_ADD1]  Theorem
+      
+      |- !n a b.
+           0 &lt; n /\ 1 &lt; a /\ 0 &lt; b ==&gt;
+           (LOG a (a ** SUC n * b) = SUC (LOG a (a ** n * b)))
+   
+   [LOG_BASE]  Theorem
+      
+      |- !a. 1 &lt; a ==&gt; (LOG a a = 1)
+   
+   [LOG_DIV]  Theorem
+      
+      |- !a x. 1 &lt; a /\ a &lt;= x ==&gt; (LOG a x = 1 + LOG a (x DIV a))
+   
+   [LOG_EXP]  Theorem
+      
+      |- !n a b. 1 &lt; a /\ 0 &lt; b ==&gt; (LOG a (a ** n * b) = n + LOG a b)
+   
+   [LOG_LE_MONO]  Theorem
+      
+      |- !a x y. 1 &lt; a /\ 0 &lt; x ==&gt; x &lt;= y ==&gt; LOG a x &lt;= LOG a y
+   
+   [LOG_MOD]  Theorem
+      
+      |- 0 &lt; n ==&gt; (n = 2 ** LOG 2 n + n MOD 2 ** LOG 2 n)
+   
+   [LOG_ROOT]  Theorem
+      
+      |- 1 &lt; a /\ 0 &lt; x /\ 0 &lt; r ==&gt; (LOG a (ROOT r x) = LOG a x DIV r)
+   
+   [LOG_UNIQUE]  Theorem
+      
+      |- !n p. a ** p &lt;= n /\ n &lt; a ** SUC p ==&gt; (LOG a n = p)
+   
+   [LOG_exists]  Theorem
+      
+      |- ?f.
+           !a n. 1 &lt; a /\ 0 &lt; n ==&gt; a ** f a n &lt;= n /\ n &lt; a ** SUC (f a n)
+   
+   [LT_EXP_ISO]  Theorem
+      
+      |- !e a b. 1 &lt; e ==&gt; (a &lt; b &lt;=&gt; e ** a &lt; e ** b)
+   
+   [ROOT_COMPUTE]  Theorem
+      
+      |- !r n.
+           0 &lt; r ==&gt;
+           (ROOT r 0 = 0) /\
+           (ROOT r n =
+            (let x = 2 * ROOT r (n DIV 2 ** r) in
+               if n &lt; SUC x ** r then x else SUC x))
+   
+   [ROOT_DIV]  Theorem
+      
+      |- !r x y.
+           0 &lt; r /\ 0 &lt; y ==&gt; (ROOT r x DIV y = ROOT r (x DIV y ** r))
+   
+   [ROOT_LE_MONO]  Theorem
+      
+      |- !r x y. 0 &lt; r ==&gt; x &lt;= y ==&gt; ROOT r x &lt;= ROOT r y
+   
+   [ROOT_UNIQUE]  Theorem
+      
+      |- !r n p. p ** r &lt;= n /\ n &lt; SUC p ** r ==&gt; (ROOT r n = p)
+   
+   [ROOT_exists]  Theorem
+      
+      |- !r n. 0 &lt; r ==&gt; ?rt. rt ** r &lt;= n /\ n &lt; SUC rt ** r
+   
+   [numeral_root2]  Theorem
+      
+      |- ROOT 2 (NUMERAL n) = FST (SQRTd n)
+   
+   
+*)
+end
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/num/extra_theories/logrootScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

@@ -1,0 +1,379 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure quotient_pred_setTheory</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure quotient_pred_setTheory</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/quotient/src/quotient_pred_setScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature quotient_pred_setTheory =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  type thm = Thm.thm
+<A NAME="line4"></A>  
+<A NAME="line5"></A>  (*  Definitions  *)
+<A NAME="line6"></A>    val DELETER_def : thm
+<A NAME="line7"></A>    val DISJOINTR_def : thm
+<A NAME="line8"></A>    val FINITER_def : thm
+<A NAME="line9"></A>    val GSPECR_def : thm
+<A NAME="line10"></A>    val IMAGER_def : thm
+<A NAME="line11"></A>    val INSERTR_def : thm
+<A NAME="line12"></A>    val PSUBSETR_def : thm
+<A NAME="line13"></A>    val SUBSETR_def : thm
+<A NAME="line14"></A>  
+<A NAME="line15"></A>  (*  Theorems  *)
+<A NAME="line16"></A>    val ABSORPTIONR : thm
+<A NAME="line17"></A>    val DELETER_RSP : thm
+<A NAME="line18"></A>    val DELETE_PRS : thm
+<A NAME="line19"></A>    val DIFF_PRS : thm
+<A NAME="line20"></A>    val DIFF_RSP : thm
+<A NAME="line21"></A>    val DISJOINTR_RSP : thm
+<A NAME="line22"></A>    val DISJOINT_PRS : thm
+<A NAME="line23"></A>    val EMPTY_PRS : thm
+<A NAME="line24"></A>    val EMPTY_RSP : thm
+<A NAME="line25"></A>    val FINITER_EMPTY : thm
+<A NAME="line26"></A>    val FINITER_EQ : thm
+<A NAME="line27"></A>    val FINITER_INDUCT : thm
+<A NAME="line28"></A>    val FINITER_INSERTR : thm
+<A NAME="line29"></A>    val FINITER_RSP : thm
+<A NAME="line30"></A>    val FINITE_PRS : thm
+<A NAME="line31"></A>    val GSPECR_RSP : thm
+<A NAME="line32"></A>    val GSPEC_PRS : thm
+<A NAME="line33"></A>    val IMAGER_RSP : thm
+<A NAME="line34"></A>    val IMAGE_PRS : thm
+<A NAME="line35"></A>    val INSERTR_RSP : thm
+<A NAME="line36"></A>    val INSERT_PRS : thm
+<A NAME="line37"></A>    val INTER_PRS : thm
+<A NAME="line38"></A>    val INTER_RSP : thm
+<A NAME="line39"></A>    val IN_DELETER : thm
+<A NAME="line40"></A>    val IN_GSPECR : thm
+<A NAME="line41"></A>    val IN_IMAGER : thm
+<A NAME="line42"></A>    val IN_INSERTR : thm
+<A NAME="line43"></A>    val IN_PRS : thm
+<A NAME="line44"></A>    val IN_RSP : thm
+<A NAME="line45"></A>    val IN_SET_MAP : thm
+<A NAME="line46"></A>    val PSUBSETR_RSP : thm
+<A NAME="line47"></A>    val PSUBSET_PRS : thm
+<A NAME="line48"></A>    val SET_REL : thm
+<A NAME="line49"></A>    val SET_REL_MP : thm
+<A NAME="line50"></A>    val SUBSETR_RSP : thm
+<A NAME="line51"></A>    val SUBSET_PRS : thm
+<A NAME="line52"></A>    val UNION_PRS : thm
+<A NAME="line53"></A>    val UNION_RSP : thm
+<A NAME="line54"></A>    val UNIV_PRS : thm
+<A NAME="line55"></A>    val UNIV_RSP : thm
+<A NAME="line56"></A>  
+<A NAME="line57"></A>  val quotient_pred_set_grammars : type_grammar.grammar * term_grammar.grammar
+<A NAME="line58"></A>  
+<A NAME="line59"></A>  
+<A NAME="line60"></A>(*
+   [quotient_pair] Parent theory of "quotient_pred_set"
+   
+   [DELETER_def]  Definition
+      
+      |- !R s x. DELETER R s x = {y | y IN s /\ ~R x y}
+   
+   [DISJOINTR_def]  Definition
+      
+      |- !R s t. DISJOINTR R s t &lt;=&gt; ~?x::respects R. x IN s /\ x IN t
+   
+   [FINITER_def]  Definition
+      
+      |- !R s.
+           FINITER R s &lt;=&gt;
+           !P::respects ((R ===&gt; $&lt;=&gt;) ===&gt; $&lt;=&gt;).
+             P {} /\
+             (!s::respects (R ===&gt; $&lt;=&gt;).
+                P s ==&gt; !e::respects R. P (INSERTR R e s)) ==&gt;
+             P s
+   
+   [GSPECR_def]  Definition
+      
+      |- !R1 R2 f v.
+           GSPECR R1 R2 f v &lt;=&gt; ?x::respects R1. (R2 ### $&lt;=&gt;) (v,T) (f x)
+   
+   [IMAGER_def]  Definition
+      
+      |- !R1 R2 f s.
+           IMAGER R1 R2 f s = {y | ?x::respects R1. R2 y (f x) /\ x IN s}
+   
+   [INSERTR_def]  Definition
+      
+      |- !R x s. INSERTR R x s = {y | R y x \/ y IN s}
+   
+   [PSUBSETR_def]  Definition
+      
+      |- !R s t. PSUBSETR R s t &lt;=&gt; SUBSETR R s t /\ ~(R ===&gt; $&lt;=&gt;) s t
+   
+   [SUBSETR_def]  Definition
+      
+      |- !R s t. SUBSETR R s t &lt;=&gt; !x::respects R. x IN s ==&gt; x IN t
+   
+   [ABSORPTIONR]  Theorem
+      
+      |- !R (x::respects R) (s::respects (R ===&gt; $&lt;=&gt;)).
+           x IN s &lt;=&gt; (R ===&gt; $&lt;=&gt;) (INSERTR R x s) s
+   
+   [DELETER_RSP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s1 s2 x1 x2.
+             (R ===&gt; $&lt;=&gt;) s1 s2 /\ R x1 x2 ==&gt;
+             (R ===&gt; $&lt;=&gt;) (DELETER R s1 x1) (DELETER R s2 x2)
+   
+   [DELETE_PRS]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s x.
+             s DELETE x = (rep --&gt; I) (DELETER R ((abs --&gt; I) s) (rep x))
+   
+   [DIFF_PRS]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s t. s DIFF t = (rep --&gt; I) ((abs --&gt; I) s DIFF (abs --&gt; I) t)
+   
+   [DIFF_RSP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s1 s2 t1 t2.
+             (R ===&gt; $&lt;=&gt;) s1 s2 /\ (R ===&gt; $&lt;=&gt;) t1 t2 ==&gt;
+             (R ===&gt; $&lt;=&gt;) (s1 DIFF t1) (s2 DIFF t2)
+   
+   [DISJOINTR_RSP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s1 s2 t1 t2.
+             (R ===&gt; $&lt;=&gt;) s1 s2 /\ (R ===&gt; $&lt;=&gt;) t1 t2 ==&gt;
+             (DISJOINTR R s1 t1 &lt;=&gt; DISJOINTR R s2 t2)
+   
+   [DISJOINT_PRS]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s t.
+             DISJOINT s t &lt;=&gt; DISJOINTR R ((abs --&gt; I) s) ((abs --&gt; I) t)
+   
+   [EMPTY_PRS]  Theorem
+      
+      |- !R abs rep. QUOTIENT R abs rep ==&gt; ({} = (rep --&gt; I) {})
+   
+   [EMPTY_RSP]  Theorem
+      
+      |- !R abs rep. QUOTIENT R abs rep ==&gt; (R ===&gt; $&lt;=&gt;) {} {}
+   
+   [FINITER_EMPTY]  Theorem
+      
+      |- !R. FINITER R {}
+   
+   [FINITER_EQ]  Theorem
+      
+      |- !R s1 s2. (R ===&gt; $&lt;=&gt;) s1 s2 ==&gt; (FINITER R s1 &lt;=&gt; FINITER R s2)
+   
+   [FINITER_INDUCT]  Theorem
+      
+      |- !R (P::respects ((R ===&gt; $&lt;=&gt;) ===&gt; $&lt;=&gt;)).
+           P {} /\
+           (!s::respects (R ===&gt; $&lt;=&gt;).
+              FINITER R s /\ P s ==&gt;
+              !e::respects R. e NOTIN s ==&gt; P (INSERTR R e s)) ==&gt;
+           !s::respects (R ===&gt; $&lt;=&gt;). FINITER R s ==&gt; P s
+   
+   [FINITER_INSERTR]  Theorem
+      
+      |- !R (s::respects (R ===&gt; $&lt;=&gt;)).
+           FINITER R s ==&gt; !x::respects R. FINITER R (INSERTR R x s)
+   
+   [FINITER_RSP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s1 s2. (R ===&gt; $&lt;=&gt;) s1 s2 ==&gt; (FINITER R s1 &lt;=&gt; FINITER R s2)
+   
+   [FINITE_PRS]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s. FINITE s &lt;=&gt; FINITER R ((abs --&gt; I) s)
+   
+   [GSPECR_RSP]  Theorem
+      
+      |- !R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ==&gt;
+           !R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ==&gt;
+             !f1 f2.
+               (R1 ===&gt; R2 ### $&lt;=&gt;) f1 f2 ==&gt;
+               (R2 ===&gt; $&lt;=&gt;) (GSPECR R1 R2 f1) (GSPECR R1 R2 f2)
+   
+   [GSPEC_PRS]  Theorem
+      
+      |- !R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ==&gt;
+           !R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ==&gt;
+             !f.
+               GSPEC f =
+               (rep2 --&gt; I) (GSPECR R1 R2 ((abs1 --&gt; rep2 ## I) f))
+   
+   [IMAGER_RSP]  Theorem
+      
+      |- !R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ==&gt;
+           !R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ==&gt;
+             !f1 f2 s1 s2.
+               (R1 ===&gt; R2) f1 f2 /\ (R1 ===&gt; $&lt;=&gt;) s1 s2 ==&gt;
+               (R2 ===&gt; $&lt;=&gt;) (IMAGER R1 R2 f1 s1) (IMAGER R1 R2 f2 s2)
+   
+   [IMAGE_PRS]  Theorem
+      
+      |- !R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ==&gt;
+           !R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ==&gt;
+             !f s.
+               IMAGE f s =
+               (rep2 --&gt; I)
+                 (IMAGER R1 R2 ((abs1 --&gt; rep2) f) ((abs1 --&gt; I) s))
+   
+   [INSERTR_RSP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !x1 x2 s1 s2.
+             R x1 x2 /\ (R ===&gt; $&lt;=&gt;) s1 s2 ==&gt;
+             (R ===&gt; $&lt;=&gt;) (INSERTR R x1 s1) (INSERTR R x2 s2)
+   
+   [INSERT_PRS]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s x.
+             x INSERT s = (rep --&gt; I) (INSERTR R (rep x) ((abs --&gt; I) s))
+   
+   [INTER_PRS]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s t.
+             s INTER t = (rep --&gt; I) ((abs --&gt; I) s INTER (abs --&gt; I) t)
+   
+   [INTER_RSP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s1 s2 t1 t2.
+             (R ===&gt; $&lt;=&gt;) s1 s2 /\ (R ===&gt; $&lt;=&gt;) t1 t2 ==&gt;
+             (R ===&gt; $&lt;=&gt;) (s1 INTER t1) (s2 INTER t2)
+   
+   [IN_DELETER]  Theorem
+      
+      |- !R s x y. y IN DELETER R s x &lt;=&gt; y IN s /\ ~R x y
+   
+   [IN_GSPECR]  Theorem
+      
+      |- !R1 R2 f v.
+           v IN GSPECR R1 R2 f &lt;=&gt;
+           ?x::respects R1. (R2 ### $&lt;=&gt;) (v,T) (f x)
+   
+   [IN_IMAGER]  Theorem
+      
+      |- !R1 R2 y f s.
+           y IN IMAGER R1 R2 f s &lt;=&gt; ?x::respects R1. R2 y (f x) /\ x IN s
+   
+   [IN_INSERTR]  Theorem
+      
+      |- !R x s y. y IN INSERTR R x s &lt;=&gt; R y x \/ y IN s
+   
+   [IN_PRS]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt; !x s. x IN s &lt;=&gt; rep x IN (abs --&gt; I) s
+   
+   [IN_RSP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !x1 x2 s1 s2.
+             R x1 x2 /\ (R ===&gt; $&lt;=&gt;) s1 s2 ==&gt; (x1 IN s1 &lt;=&gt; x2 IN s2)
+   
+   [IN_SET_MAP]  Theorem
+      
+      |- !f s x. x IN (f --&gt; I) s &lt;=&gt; f x IN s
+   
+   [PSUBSETR_RSP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s1 s2 t1 t2.
+             (R ===&gt; $&lt;=&gt;) s1 s2 /\ (R ===&gt; $&lt;=&gt;) t1 t2 ==&gt;
+             (PSUBSETR R s1 t1 &lt;=&gt; PSUBSETR R s2 t2)
+   
+   [PSUBSET_PRS]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s t. s PSUBSET t &lt;=&gt; PSUBSETR R ((abs --&gt; I) s) ((abs --&gt; I) t)
+   
+   [SET_REL]  Theorem
+      
+      |- !R s t. (R ===&gt; $&lt;=&gt;) s t &lt;=&gt; !x y. R x y ==&gt; (x IN s &lt;=&gt; y IN t)
+   
+   [SET_REL_MP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s t x y. (R ===&gt; $&lt;=&gt;) s t /\ R x y ==&gt; (x IN s &lt;=&gt; y IN t)
+   
+   [SUBSETR_RSP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s1 s2 t1 t2.
+             (R ===&gt; $&lt;=&gt;) s1 s2 /\ (R ===&gt; $&lt;=&gt;) t1 t2 ==&gt;
+             (SUBSETR R s1 t1 &lt;=&gt; SUBSETR R s2 t2)
+   
+   [SUBSET_PRS]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s t. s SUBSET t &lt;=&gt; SUBSETR R ((abs --&gt; I) s) ((abs --&gt; I) t)
+   
+   [UNION_PRS]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s t.
+             s UNION t = (rep --&gt; I) ((abs --&gt; I) s UNION (abs --&gt; I) t)
+   
+   [UNION_RSP]  Theorem
+      
+      |- !R abs rep.
+           QUOTIENT R abs rep ==&gt;
+           !s1 s2 t1 t2.
+             (R ===&gt; $&lt;=&gt;) s1 s2 /\ (R ===&gt; $&lt;=&gt;) t1 t2 ==&gt;
+             (R ===&gt; $&lt;=&gt;) (s1 UNION t1) (s2 UNION t2)
+   
+   [UNIV_PRS]  Theorem
+      
+      |- !R abs rep. QUOTIENT R abs rep ==&gt; (UNIV = (rep --&gt; I) UNIV)
+   
+   [UNIV_RSP]  Theorem
+      
+      |- !R abs rep. QUOTIENT R abs rep ==&gt; (R ===&gt; $&lt;=&gt;) UNIV UNIV
+   
+   
+*)
+end
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/quotient/src/quotient_pred_setScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

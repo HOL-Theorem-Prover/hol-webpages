@@ -1,0 +1,495 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure DeepSyntaxTheory</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure DeepSyntaxTheory</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/integer/DeepSyntaxScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature DeepSyntaxTheory =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  type thm = Thm.thm
+<A NAME="line4"></A>  
+<A NAME="line5"></A>  (*  Definitions  *)
+<A NAME="line6"></A>    val Aset_def : thm
+<A NAME="line7"></A>    val Bset_def : thm
+<A NAME="line8"></A>    val alldivide_def : thm
+<A NAME="line9"></A>    val deep_form_TY_DEF : thm
+<A NAME="line10"></A>    val deep_form_case_def : thm
+<A NAME="line11"></A>    val deep_form_repfns : thm
+<A NAME="line12"></A>    val deep_form_size_def : thm
+<A NAME="line13"></A>    val eval_form_def : thm
+<A NAME="line14"></A>    val neginf_def : thm
+<A NAME="line15"></A>    val posinf_def : thm
+<A NAME="line16"></A>  
+<A NAME="line17"></A>  (*  Theorems  *)
+<A NAME="line18"></A>    val add_d_neginf : thm
+<A NAME="line19"></A>    val add_d_posinf : thm
+<A NAME="line20"></A>    val datatype_deep_form : thm
+<A NAME="line21"></A>    val deep_form_11 : thm
+<A NAME="line22"></A>    val deep_form_Axiom : thm
+<A NAME="line23"></A>    val deep_form_case_cong : thm
+<A NAME="line24"></A>    val deep_form_distinct : thm
+<A NAME="line25"></A>    val deep_form_induction : thm
+<A NAME="line26"></A>    val deep_form_nchotomy : thm
+<A NAME="line27"></A>    val in_aset : thm
+<A NAME="line28"></A>    val in_bset : thm
+<A NAME="line29"></A>    val neginf_disj1_implies_exoriginal : thm
+<A NAME="line30"></A>    val neginf_exoriginal_eq_rhs : thm
+<A NAME="line31"></A>    val neginf_exoriginal_implies_rhs : thm
+<A NAME="line32"></A>    val neginf_ok : thm
+<A NAME="line33"></A>    val posinf_disj1_implies_exoriginal : thm
+<A NAME="line34"></A>    val posinf_exoriginal_eq_rhs : thm
+<A NAME="line35"></A>    val posinf_exoriginal_implies_rhs : thm
+<A NAME="line36"></A>    val posinf_ok : thm
+<A NAME="line37"></A>  
+<A NAME="line38"></A>  val DeepSyntax_grammars : type_grammar.grammar * term_grammar.grammar
+<A NAME="line39"></A>  
+<A NAME="line40"></A>  
+<A NAME="line41"></A>(*
+   [int_arith] Parent theory of "DeepSyntax"
+   
+   [Aset_def]  Definition
+      
+      |- (!pos f1 f2.
+            Aset pos (Conjn f1 f2) = Aset pos f1 UNION Aset pos f2) /\
+         (!pos f1 f2.
+            Aset pos (Disjn f1 f2) = Aset pos f1 UNION Aset pos f2) /\
+         (!pos f. Aset pos (Negn f) = Aset (~pos) f) /\
+         (!pos b. Aset pos (UnrelatedBool b) = {}) /\
+         (!pos i. Aset pos (xLT i) = if pos then {i} else {}) /\
+         (!pos i. Aset pos (LTx i) = if pos then {} else {i + 1}) /\
+         (!pos i. Aset pos (xEQ i) = if pos then {i + 1} else {i}) /\
+         !pos i1 i2. Aset pos (xDivided i1 i2) = {}
+   
+   [Bset_def]  Definition
+      
+      |- (!pos f1 f2.
+            Bset pos (Conjn f1 f2) = Bset pos f1 UNION Bset pos f2) /\
+         (!pos f1 f2.
+            Bset pos (Disjn f1 f2) = Bset pos f1 UNION Bset pos f2) /\
+         (!pos f. Bset pos (Negn f) = Bset (~pos) f) /\
+         (!pos b. Bset pos (UnrelatedBool b) = {}) /\
+         (!pos i. Bset pos (xLT i) = if pos then {} else {i + -1}) /\
+         (!pos i. Bset pos (LTx i) = if pos then {i} else {}) /\
+         (!pos i. Bset pos (xEQ i) = if pos then {i + -1} else {i}) /\
+         !pos i1 i2. Bset pos (xDivided i1 i2) = {}
+   
+   [alldivide_def]  Definition
+      
+      |- (!f1 f2 d.
+            alldivide (Conjn f1 f2) d &lt;=&gt;
+            alldivide f1 d /\ alldivide f2 d) /\
+         (!f1 f2 d.
+            alldivide (Disjn f1 f2) d &lt;=&gt;
+            alldivide f1 d /\ alldivide f2 d) /\
+         (!f d. alldivide (Negn f) d &lt;=&gt; alldivide f d) /\
+         (!b d. alldivide (UnrelatedBool b) d &lt;=&gt; T) /\
+         (!i d. alldivide (xLT i) d &lt;=&gt; T) /\
+         (!i d. alldivide (LTx i) d &lt;=&gt; T) /\
+         (!i d. alldivide (xEQ i) d &lt;=&gt; T) /\
+         !i1 i2 d. alldivide (xDivided i1 i2) d &lt;=&gt; i1 int_divides d
+   
+   [deep_form_TY_DEF]  Definition
+      
+      |- ?rep.
+           TYPE_DEFINITION
+             (\a0'.
+                !'deep_form' .
+                  (!a0'.
+                     (?a0 a1.
+                        (a0' =
+                         (\a0 a1.
+                            ind_type$CONSTR 0 (ARB,ARB,ARB)
+                              (ind_type$FCONS a0
+                                 (ind_type$FCONS a1
+                                    (\n. ind_type$BOTTOM)))) a0 a1) /\
+                        'deep_form' a0 /\ 'deep_form' a1) \/
+                     (?a0 a1.
+                        (a0' =
+                         (\a0 a1.
+                            ind_type$CONSTR (SUC 0) (ARB,ARB,ARB)
+                              (ind_type$FCONS a0
+                                 (ind_type$FCONS a1
+                                    (\n. ind_type$BOTTOM)))) a0 a1) /\
+                        'deep_form' a0 /\ 'deep_form' a1) \/
+                     (?a.
+                        (a0' =
+                         (\a.
+                            ind_type$CONSTR (SUC (SUC 0)) (ARB,ARB,ARB)
+                              (ind_type$FCONS a (\n. ind_type$BOTTOM)))
+                           a) /\ 'deep_form' a) \/
+                     (?a.
+                        a0' =
+                        (\a.
+                           ind_type$CONSTR (SUC (SUC (SUC 0))) (a,ARB,ARB)
+                             (\n. ind_type$BOTTOM)) a) \/
+                     (?a.
+                        a0' =
+                        (\a.
+                           ind_type$CONSTR (SUC (SUC (SUC (SUC 0))))
+                             (ARB,a,ARB) (\n. ind_type$BOTTOM)) a) \/
+                     (?a.
+                        a0' =
+                        (\a.
+                           ind_type$CONSTR (SUC (SUC (SUC (SUC (SUC 0)))))
+                             (ARB,a,ARB) (\n. ind_type$BOTTOM)) a) \/
+                     (?a.
+                        a0' =
+                        (\a.
+                           ind_type$CONSTR
+                             (SUC (SUC (SUC (SUC (SUC (SUC 0))))))
+                             (ARB,a,ARB) (\n. ind_type$BOTTOM)) a) \/
+                     (?a0 a1.
+                        a0' =
+                        (\a0 a1.
+                           ind_type$CONSTR
+                             (SUC (SUC (SUC (SUC (SUC (SUC (SUC 0)))))))
+                             (ARB,a0,a1) (\n. ind_type$BOTTOM)) a0 a1) ==&gt;
+                     'deep_form' a0') ==&gt;
+                  'deep_form' a0') rep
+   
+   [deep_form_case_def]  Definition
+      
+      |- (!f f1 f2 f3 f4 f5 f6 f7 a0 a1.
+            deep_form_case f f1 f2 f3 f4 f5 f6 f7 (Conjn a0 a1) =
+            f a0 a1) /\
+         (!f f1 f2 f3 f4 f5 f6 f7 a0 a1.
+            deep_form_case f f1 f2 f3 f4 f5 f6 f7 (Disjn a0 a1) =
+            f1 a0 a1) /\
+         (!f f1 f2 f3 f4 f5 f6 f7 a.
+            deep_form_case f f1 f2 f3 f4 f5 f6 f7 (Negn a) = f2 a) /\
+         (!f f1 f2 f3 f4 f5 f6 f7 a.
+            deep_form_case f f1 f2 f3 f4 f5 f6 f7 (UnrelatedBool a) =
+            f3 a) /\
+         (!f f1 f2 f3 f4 f5 f6 f7 a.
+            deep_form_case f f1 f2 f3 f4 f5 f6 f7 (xLT a) = f4 a) /\
+         (!f f1 f2 f3 f4 f5 f6 f7 a.
+            deep_form_case f f1 f2 f3 f4 f5 f6 f7 (LTx a) = f5 a) /\
+         (!f f1 f2 f3 f4 f5 f6 f7 a.
+            deep_form_case f f1 f2 f3 f4 f5 f6 f7 (xEQ a) = f6 a) /\
+         !f f1 f2 f3 f4 f5 f6 f7 a0 a1.
+           deep_form_case f f1 f2 f3 f4 f5 f6 f7 (xDivided a0 a1) =
+           f7 a0 a1
+   
+   [deep_form_repfns]  Definition
+      
+      |- (!a. mk_deep_form (dest_deep_form a) = a) /\
+         !r.
+           (\a0'.
+              !'deep_form' .
+                (!a0'.
+                   (?a0 a1.
+                      (a0' =
+                       (\a0 a1.
+                          ind_type$CONSTR 0 (ARB,ARB,ARB)
+                            (ind_type$FCONS a0
+                               (ind_type$FCONS a1 (\n. ind_type$BOTTOM))))
+                         a0 a1) /\ 'deep_form' a0 /\ 'deep_form' a1) \/
+                   (?a0 a1.
+                      (a0' =
+                       (\a0 a1.
+                          ind_type$CONSTR (SUC 0) (ARB,ARB,ARB)
+                            (ind_type$FCONS a0
+                               (ind_type$FCONS a1 (\n. ind_type$BOTTOM))))
+                         a0 a1) /\ 'deep_form' a0 /\ 'deep_form' a1) \/
+                   (?a.
+                      (a0' =
+                       (\a.
+                          ind_type$CONSTR (SUC (SUC 0)) (ARB,ARB,ARB)
+                            (ind_type$FCONS a (\n. ind_type$BOTTOM))) a) /\
+                      'deep_form' a) \/
+                   (?a.
+                      a0' =
+                      (\a.
+                         ind_type$CONSTR (SUC (SUC (SUC 0))) (a,ARB,ARB)
+                           (\n. ind_type$BOTTOM)) a) \/
+                   (?a.
+                      a0' =
+                      (\a.
+                         ind_type$CONSTR (SUC (SUC (SUC (SUC 0))))
+                           (ARB,a,ARB) (\n. ind_type$BOTTOM)) a) \/
+                   (?a.
+                      a0' =
+                      (\a.
+                         ind_type$CONSTR (SUC (SUC (SUC (SUC (SUC 0)))))
+                           (ARB,a,ARB) (\n. ind_type$BOTTOM)) a) \/
+                   (?a.
+                      a0' =
+                      (\a.
+                         ind_type$CONSTR
+                           (SUC (SUC (SUC (SUC (SUC (SUC 0))))))
+                           (ARB,a,ARB) (\n. ind_type$BOTTOM)) a) \/
+                   (?a0 a1.
+                      a0' =
+                      (\a0 a1.
+                         ind_type$CONSTR
+                           (SUC (SUC (SUC (SUC (SUC (SUC (SUC 0)))))))
+                           (ARB,a0,a1) (\n. ind_type$BOTTOM)) a0 a1) ==&gt;
+                   'deep_form' a0') ==&gt;
+                'deep_form' a0') r &lt;=&gt;
+           (dest_deep_form (mk_deep_form r) = r)
+   
+   [deep_form_size_def]  Definition
+      
+      |- (!a0 a1.
+            deep_form_size (Conjn a0 a1) =
+            1 + (deep_form_size a0 + deep_form_size a1)) /\
+         (!a0 a1.
+            deep_form_size (Disjn a0 a1) =
+            1 + (deep_form_size a0 + deep_form_size a1)) /\
+         (!a. deep_form_size (Negn a) = 1 + deep_form_size a) /\
+         (!a. deep_form_size (UnrelatedBool a) = 1 + bool_size a) /\
+         (!a. deep_form_size (xLT a) = 1) /\
+         (!a. deep_form_size (LTx a) = 1) /\
+         (!a. deep_form_size (xEQ a) = 1) /\
+         !a0 a1. deep_form_size (xDivided a0 a1) = 1
+   
+   [eval_form_def]  Definition
+      
+      |- (!f1 f2 x.
+            eval_form (Conjn f1 f2) x &lt;=&gt;
+            eval_form f1 x /\ eval_form f2 x) /\
+         (!f1 f2 x.
+            eval_form (Disjn f1 f2) x &lt;=&gt;
+            eval_form f1 x \/ eval_form f2 x) /\
+         (!f x. eval_form (Negn f) x &lt;=&gt; ~eval_form f x) /\
+         (!b x. eval_form (UnrelatedBool b) x &lt;=&gt; b) /\
+         (!i x. eval_form (xLT i) x &lt;=&gt; x &lt; i) /\
+         (!i x. eval_form (LTx i) x &lt;=&gt; i &lt; x) /\
+         (!i x. eval_form (xEQ i) x &lt;=&gt; (x = i)) /\
+         !i1 i2 x. eval_form (xDivided i1 i2) x &lt;=&gt; i1 int_divides x + i2
+   
+   [neginf_def]  Definition
+      
+      |- (!f1 f2. neginf (Conjn f1 f2) = Conjn (neginf f1) (neginf f2)) /\
+         (!f1 f2. neginf (Disjn f1 f2) = Disjn (neginf f1) (neginf f2)) /\
+         (!f. neginf (Negn f) = Negn (neginf f)) /\
+         (!b. neginf (UnrelatedBool b) = UnrelatedBool b) /\
+         (!i. neginf (xLT i) = UnrelatedBool T) /\
+         (!i. neginf (LTx i) = UnrelatedBool F) /\
+         (!i. neginf (xEQ i) = UnrelatedBool F) /\
+         !i1 i2. neginf (xDivided i1 i2) = xDivided i1 i2
+   
+   [posinf_def]  Definition
+      
+      |- (!f1 f2. posinf (Conjn f1 f2) = Conjn (posinf f1) (posinf f2)) /\
+         (!f1 f2. posinf (Disjn f1 f2) = Disjn (posinf f1) (posinf f2)) /\
+         (!f. posinf (Negn f) = Negn (posinf f)) /\
+         (!b. posinf (UnrelatedBool b) = UnrelatedBool b) /\
+         (!i. posinf (xLT i) = UnrelatedBool F) /\
+         (!i. posinf (LTx i) = UnrelatedBool T) /\
+         (!i. posinf (xEQ i) = UnrelatedBool F) /\
+         !i1 i2. posinf (xDivided i1 i2) = xDivided i1 i2
+   
+   [add_d_neginf]  Theorem
+      
+      |- !f x y d.
+           alldivide f d ==&gt;
+           (eval_form (neginf f) x &lt;=&gt; eval_form (neginf f) (x + y * d))
+   
+   [add_d_posinf]  Theorem
+      
+      |- !f x y d.
+           alldivide f d ==&gt;
+           (eval_form (posinf f) x &lt;=&gt; eval_form (posinf f) (x + y * d))
+   
+   [datatype_deep_form]  Theorem
+      
+      |- DATATYPE
+           (deep_form Conjn Disjn Negn UnrelatedBool xLT LTx xEQ xDivided)
+   
+   [deep_form_11]  Theorem
+      
+      |- (!a0 a1 a0' a1'.
+            (Conjn a0 a1 = Conjn a0' a1') &lt;=&gt; (a0 = a0') /\ (a1 = a1')) /\
+         (!a0 a1 a0' a1'.
+            (Disjn a0 a1 = Disjn a0' a1') &lt;=&gt; (a0 = a0') /\ (a1 = a1')) /\
+         (!a a'. (Negn a = Negn a') &lt;=&gt; (a = a')) /\
+         (!a a'. (UnrelatedBool a = UnrelatedBool a') &lt;=&gt; (a &lt;=&gt; a')) /\
+         (!a a'. (xLT a = xLT a') &lt;=&gt; (a = a')) /\
+         (!a a'. (LTx a = LTx a') &lt;=&gt; (a = a')) /\
+         (!a a'. (xEQ a = xEQ a') &lt;=&gt; (a = a')) /\
+         !a0 a1 a0' a1'.
+           (xDivided a0 a1 = xDivided a0' a1') &lt;=&gt; (a0 = a0') /\ (a1 = a1')
+   
+   [deep_form_Axiom]  Theorem
+      
+      |- !f0 f1 f2 f3 f4 f5 f6 f7.
+           ?fn.
+             (!a0 a1. fn (Conjn a0 a1) = f0 a0 a1 (fn a0) (fn a1)) /\
+             (!a0 a1. fn (Disjn a0 a1) = f1 a0 a1 (fn a0) (fn a1)) /\
+             (!a. fn (Negn a) = f2 a (fn a)) /\
+             (!a. fn (UnrelatedBool a) = f3 a) /\
+             (!a. fn (xLT a) = f4 a) /\ (!a. fn (LTx a) = f5 a) /\
+             (!a. fn (xEQ a) = f6 a) /\
+             !a0 a1. fn (xDivided a0 a1) = f7 a0 a1
+   
+   [deep_form_case_cong]  Theorem
+      
+      |- !M M' f f1 f2 f3 f4 f5 f6 f7.
+           (M = M') /\
+           (!a0 a1. (M' = Conjn a0 a1) ==&gt; (f a0 a1 = f' a0 a1)) /\
+           (!a0 a1. (M' = Disjn a0 a1) ==&gt; (f1 a0 a1 = f1' a0 a1)) /\
+           (!a. (M' = Negn a) ==&gt; (f2 a = f2' a)) /\
+           (!a. (M' = UnrelatedBool a) ==&gt; (f3 a = f3' a)) /\
+           (!a. (M' = xLT a) ==&gt; (f4 a = f4' a)) /\
+           (!a. (M' = LTx a) ==&gt; (f5 a = f5' a)) /\
+           (!a. (M' = xEQ a) ==&gt; (f6 a = f6' a)) /\
+           (!a0 a1. (M' = xDivided a0 a1) ==&gt; (f7 a0 a1 = f7' a0 a1)) ==&gt;
+           (deep_form_case f f1 f2 f3 f4 f5 f6 f7 M =
+            deep_form_case f' f1' f2' f3' f4' f5' f6' f7' M')
+   
+   [deep_form_distinct]  Theorem
+      
+      |- (!a1' a1 a0' a0. Conjn a0 a1 &lt;&gt; Disjn a0' a1') /\
+         (!a1 a0 a. Conjn a0 a1 &lt;&gt; Negn a) /\
+         (!a1 a0 a. Conjn a0 a1 &lt;&gt; UnrelatedBool a) /\
+         (!a1 a0 a. Conjn a0 a1 &lt;&gt; xLT a) /\
+         (!a1 a0 a. Conjn a0 a1 &lt;&gt; LTx a) /\
+         (!a1 a0 a. Conjn a0 a1 &lt;&gt; xEQ a) /\
+         (!a1' a1 a0' a0. Conjn a0 a1 &lt;&gt; xDivided a0' a1') /\
+         (!a1 a0 a. Disjn a0 a1 &lt;&gt; Negn a) /\
+         (!a1 a0 a. Disjn a0 a1 &lt;&gt; UnrelatedBool a) /\
+         (!a1 a0 a. Disjn a0 a1 &lt;&gt; xLT a) /\
+         (!a1 a0 a. Disjn a0 a1 &lt;&gt; LTx a) /\
+         (!a1 a0 a. Disjn a0 a1 &lt;&gt; xEQ a) /\
+         (!a1' a1 a0' a0. Disjn a0 a1 &lt;&gt; xDivided a0' a1') /\
+         (!a' a. Negn a &lt;&gt; UnrelatedBool a') /\
+         (!a' a. Negn a &lt;&gt; xLT a') /\ (!a' a. Negn a &lt;&gt; LTx a') /\
+         (!a' a. Negn a &lt;&gt; xEQ a') /\
+         (!a1 a0 a. Negn a &lt;&gt; xDivided a0 a1) /\
+         (!a' a. UnrelatedBool a &lt;&gt; xLT a') /\
+         (!a' a. UnrelatedBool a &lt;&gt; LTx a') /\
+         (!a' a. UnrelatedBool a &lt;&gt; xEQ a') /\
+         (!a1 a0 a. UnrelatedBool a &lt;&gt; xDivided a0 a1) /\
+         (!a' a. xLT a &lt;&gt; LTx a') /\ (!a' a. xLT a &lt;&gt; xEQ a') /\
+         (!a1 a0 a. xLT a &lt;&gt; xDivided a0 a1) /\ (!a' a. LTx a &lt;&gt; xEQ a') /\
+         (!a1 a0 a. LTx a &lt;&gt; xDivided a0 a1) /\
+         !a1 a0 a. xEQ a &lt;&gt; xDivided a0 a1
+   
+   [deep_form_induction]  Theorem
+      
+      |- !P.
+           (!d d0. P d /\ P d0 ==&gt; P (Conjn d d0)) /\
+           (!d d0. P d /\ P d0 ==&gt; P (Disjn d d0)) /\
+           (!d. P d ==&gt; P (Negn d)) /\ (!b. P (UnrelatedBool b)) /\
+           (!i. P (xLT i)) /\ (!i. P (LTx i)) /\ (!i. P (xEQ i)) /\
+           (!i i0. P (xDivided i i0)) ==&gt;
+           !d. P d
+   
+   [deep_form_nchotomy]  Theorem
+      
+      |- !dd.
+           (?d d0. dd = Conjn d d0) \/ (?d d0. dd = Disjn d d0) \/
+           (?d. dd = Negn d) \/ (?b. dd = UnrelatedBool b) \/
+           (?i. dd = xLT i) \/ (?i. dd = LTx i) \/ (?i. dd = xEQ i) \/
+           ?i i0. dd = xDivided i i0
+   
+   [in_aset]  Theorem
+      
+      |- ((?a. a IN Aset pos (Conjn f1 f2) /\ P a) &lt;=&gt;
+          (?a. a IN Aset pos f1 /\ P a) \/ ?a. a IN Aset pos f2 /\ P a) /\
+         ((?a. a IN Aset pos (Disjn f1 f2) /\ P a) &lt;=&gt;
+          (?a. a IN Aset pos f1 /\ P a) \/ ?a. a IN Aset pos f2 /\ P a) /\
+         ((?a. a IN Aset T (Negn f) /\ P a) &lt;=&gt;
+          ?a. a IN Aset F f /\ P a) /\
+         ((?a. a IN Aset F (Negn f) /\ P a) &lt;=&gt;
+          ?a. a IN Aset T f /\ P a) /\
+         ((?a. a IN Aset pos (UnrelatedBool a0) /\ P a) &lt;=&gt; F) /\
+         ((?a. a IN Aset T (xLT i) /\ P a) &lt;=&gt; P i) /\
+         ((?a. a IN Aset F (xLT i) /\ P a) &lt;=&gt; F) /\
+         ((?a. a IN Aset T (LTx i) /\ P a) &lt;=&gt; F) /\
+         ((?a. a IN Aset F (LTx i) /\ P a) &lt;=&gt; P (i + 1)) /\
+         ((?a. a IN Aset T (xEQ i) /\ P a) &lt;=&gt; P (i + 1)) /\
+         ((?a. a IN Aset F (xEQ i) /\ P a) &lt;=&gt; P i) /\
+         ((?a. a IN Aset pos (xDivided i1 i2) /\ P a) &lt;=&gt; F)
+   
+   [in_bset]  Theorem
+      
+      |- ((?b. b IN Bset pos (Conjn f1 f2) /\ P b) &lt;=&gt;
+          (?b. b IN Bset pos f1 /\ P b) \/ ?b. b IN Bset pos f2 /\ P b) /\
+         ((?b. b IN Bset pos (Disjn f1 f2) /\ P b) &lt;=&gt;
+          (?b. b IN Bset pos f1 /\ P b) \/ ?b. b IN Bset pos f2 /\ P b) /\
+         ((?b. b IN Bset T (Negn f) /\ P b) &lt;=&gt;
+          ?b. b IN Bset F f /\ P b) /\
+         ((?b. b IN Bset F (Negn f) /\ P b) &lt;=&gt;
+          ?b. b IN Bset T f /\ P b) /\
+         ((?b. b IN Bset pos (UnrelatedBool b0) /\ P b) &lt;=&gt; F) /\
+         ((?b. b IN Bset T (xLT i) /\ P b) &lt;=&gt; F) /\
+         ((?b. b IN Bset F (xLT i) /\ P b) &lt;=&gt; P (i + -1)) /\
+         ((?b. b IN Bset T (LTx i) /\ P b) &lt;=&gt; P i) /\
+         ((?b. b IN Bset F (LTx i) /\ P b) &lt;=&gt; F) /\
+         ((?b. b IN Bset T (xEQ i) /\ P b) &lt;=&gt; P (i + -1)) /\
+         ((?b. b IN Bset F (xEQ i) /\ P b) &lt;=&gt; P i) /\
+         ((?b. b IN Bset pos (xDivided i1 i2) /\ P b) &lt;=&gt; F)
+   
+   [neginf_disj1_implies_exoriginal]  Theorem
+      
+      |- !f d i.
+           alldivide f d ==&gt;
+           0 &lt; i /\ i &lt;= d /\ eval_form (neginf f) i ==&gt;
+           ?x. eval_form f x
+   
+   [neginf_exoriginal_eq_rhs]  Theorem
+      
+      |- !f d.
+           alldivide f d /\ 0 &lt; d ==&gt;
+           ((?x. eval_form f x) &lt;=&gt;
+            (?i. K (0 &lt; i /\ i &lt;= d) i /\ eval_form (neginf f) i) \/
+            ?b j.
+              (b IN Bset T f /\ K (0 &lt; j /\ j &lt;= d) j) /\
+              eval_form f (b + j))
+   
+   [neginf_exoriginal_implies_rhs]  Theorem
+      
+      |- !f d x.
+           alldivide f d /\ 0 &lt; d ==&gt;
+           eval_form f x ==&gt;
+           (?i. 0 &lt; i /\ i &lt;= d /\ eval_form (neginf f) i) \/
+           ?j b. 0 &lt; j /\ j &lt;= d /\ b IN Bset T f /\ eval_form f (b + j)
+   
+   [neginf_ok]  Theorem
+      
+      |- !f. ?y. !x. x &lt; y ==&gt; (eval_form f x &lt;=&gt; eval_form (neginf f) x)
+   
+   [posinf_disj1_implies_exoriginal]  Theorem
+      
+      |- !f d i.
+           alldivide f d ==&gt;
+           0 &lt; i /\ i &lt;= d /\ eval_form (posinf f) i ==&gt;
+           ?x. eval_form f x
+   
+   [posinf_exoriginal_eq_rhs]  Theorem
+      
+      |- !f d.
+           alldivide f d /\ 0 &lt; d ==&gt;
+           ((?x. eval_form f x) &lt;=&gt;
+            (?i. K (0 &lt; i /\ i &lt;= d) i /\ eval_form (posinf f) i) \/
+            ?b j.
+              (b IN Aset T f /\ K (0 &lt; j /\ j &lt;= d) j) /\
+              eval_form f (b + -1 * j))
+   
+   [posinf_exoriginal_implies_rhs]  Theorem
+      
+      |- !f d x.
+           alldivide f d /\ 0 &lt; d ==&gt;
+           eval_form f x ==&gt;
+           (?i. 0 &lt; i /\ i &lt;= d /\ eval_form (posinf f) i) \/
+           ?j b. 0 &lt; j /\ j &lt;= d /\ b IN Aset T f /\ eval_form f (b + -j)
+   
+   [posinf_ok]  Theorem
+      
+      |- !f. ?y. !x. y &lt; x ==&gt; (eval_form f x &lt;=&gt; eval_form (posinf f) x)
+   
+   
+*)
+end
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/integer/DeepSyntaxScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>

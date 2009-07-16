@@ -1,0 +1,274 @@
+<HTML><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Structure prob_uniformTheory</TITLE></HEAD>
+<BODY BGCOLOR="#fbf2e7">
+<H1>Structure prob_uniformTheory</H1>
+<HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/prob/prob_uniformScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<PRE>
+<A NAME="line1"></A>signature prob_uniformTheory =
+<A NAME="line2"></A>sig
+<A NAME="line3"></A>  type thm = Thm.thm
+<A NAME="line4"></A>  
+<A NAME="line5"></A>  (*  Definitions  *)
+<A NAME="line6"></A>    val <A HREF="#unif_bound_primitive_def-val">unif_bound_primitive_def</A> : thm
+<A NAME="line7"></A>    val <A HREF="#unif_curried_def-val">unif_curried_def</A> : thm
+<A NAME="line8"></A>    val <A HREF="#unif_tupled_primitive_def-val">unif_tupled_primitive_def</A> : thm
+<A NAME="line9"></A>    val <A HREF="#uniform_curried_def-val">uniform_curried_def</A> : thm
+<A NAME="line10"></A>    val <A HREF="#uniform_tupled_primitive_def-val">uniform_tupled_primitive_def</A> : thm
+<A NAME="line11"></A>  
+<A NAME="line12"></A>  (*  Theorems  *)
+<A NAME="line13"></A>    val <A HREF="#INDEP_UNIF-val">INDEP_UNIF</A> : thm
+<A NAME="line14"></A>    val <A HREF="#INDEP_UNIFORM-val">INDEP_UNIFORM</A> : thm
+<A NAME="line15"></A>    val <A HREF="#PROB_UNIF-val">PROB_UNIF</A> : thm
+<A NAME="line16"></A>    val <A HREF="#PROB_UNIFORM-val">PROB_UNIFORM</A> : thm
+<A NAME="line17"></A>    val <A HREF="#PROB_UNIFORM_LOWER_BOUND-val">PROB_UNIFORM_LOWER_BOUND</A> : thm
+<A NAME="line18"></A>    val <A HREF="#PROB_UNIFORM_PAIR_SUC-val">PROB_UNIFORM_PAIR_SUC</A> : thm
+<A NAME="line19"></A>    val <A HREF="#PROB_UNIFORM_SUC-val">PROB_UNIFORM_SUC</A> : thm
+<A NAME="line20"></A>    val <A HREF="#PROB_UNIFORM_UPPER_BOUND-val">PROB_UNIFORM_UPPER_BOUND</A> : thm
+<A NAME="line21"></A>    val <A HREF="#PROB_UNIF_BOUND-val">PROB_UNIF_BOUND</A> : thm
+<A NAME="line22"></A>    val <A HREF="#PROB_UNIF_GOOD-val">PROB_UNIF_GOOD</A> : thm
+<A NAME="line23"></A>    val <A HREF="#PROB_UNIF_PAIR-val">PROB_UNIF_PAIR</A> : thm
+<A NAME="line24"></A>    val <A HREF="#SUC_DIV_TWO_ZERO-val">SUC_DIV_TWO_ZERO</A> : thm
+<A NAME="line25"></A>    val <A HREF="#UNIFORM_DEF_MONAD-val">UNIFORM_DEF_MONAD</A> : thm
+<A NAME="line26"></A>    val <A HREF="#UNIFORM_RANGE-val">UNIFORM_RANGE</A> : thm
+<A NAME="line27"></A>    val <A HREF="#UNIF_BOUND_LOWER-val">UNIF_BOUND_LOWER</A> : thm
+<A NAME="line28"></A>    val <A HREF="#UNIF_BOUND_LOWER_SUC-val">UNIF_BOUND_LOWER_SUC</A> : thm
+<A NAME="line29"></A>    val <A HREF="#UNIF_BOUND_UPPER-val">UNIF_BOUND_UPPER</A> : thm
+<A NAME="line30"></A>    val <A HREF="#UNIF_BOUND_UPPER_SUC-val">UNIF_BOUND_UPPER_SUC</A> : thm
+<A NAME="line31"></A>    val <A HREF="#UNIF_DEF_MONAD-val">UNIF_DEF_MONAD</A> : thm
+<A NAME="line32"></A>    val <A HREF="#UNIF_RANGE-val">UNIF_RANGE</A> : thm
+<A NAME="line33"></A>    val <A HREF="#unif_bound_def-val">unif_bound_def</A> : thm
+<A NAME="line34"></A>    val <A HREF="#unif_bound_ind-val">unif_bound_ind</A> : thm
+<A NAME="line35"></A>    val <A HREF="#unif_def-val">unif_def</A> : thm
+<A NAME="line36"></A>    val <A HREF="#unif_ind-val">unif_ind</A> : thm
+<A NAME="line37"></A>    val <A HREF="#uniform_def-val">uniform_def</A> : thm
+<A NAME="line38"></A>    val <A HREF="#uniform_ind-val">uniform_ind</A> : thm
+<A NAME="line39"></A>  
+<A NAME="line40"></A>  val prob_uniform_grammars : type_grammar.grammar * term_grammar.grammar
+<A NAME="line41"></A>  
+<A NAME="line42"></A>  
+<A NAME="line43"></A>(*
+   [prob_indep] Parent theory of "prob_uniform"
+   
+   [<A NAME="unif_bound_primitive_def-val"><B>unif_bound_primitive_def</B></A>]  Definition
+      
+      |- unif_bound =
+         WFREC (@R. WF R /\ !v. R (SUC v DIV 2) (SUC v))
+           (\unif_bound a.
+              case a of
+                 0 -&gt; I 0
+              || SUC v1 -&gt; I (SUC (unif_bound (SUC v1 DIV 2))))
+   
+   [<A NAME="unif_curried_def-val"><B>unif_curried_def</B></A>]  Definition
+      
+      |- !x x1. unif x x1 = unif_tupled (x,x1)
+   
+   [<A NAME="unif_tupled_primitive_def-val"><B>unif_tupled_primitive_def</B></A>]  Definition
+      
+      |- unif_tupled =
+         WFREC (@R. WF R /\ !s v2. R (SUC v2 DIV 2,s) (SUC v2,s))
+           (\unif_tupled a.
+              case a of
+                 (0,s) -&gt; I (0,s)
+              || (SUC v3,s) -&gt;
+                   I
+                     (let (m,s') = unif_tupled (SUC v3 DIV 2,s) in
+                        (if SHD s' then 2 * m + 1 else 2 * m,STL s')))
+   
+   [<A NAME="uniform_curried_def-val"><B>uniform_curried_def</B></A>]  Definition
+      
+      |- !x x1 x2. uniform x x1 x2 = uniform_tupled (x,x1,x2)
+   
+   [<A NAME="uniform_tupled_primitive_def-val"><B>uniform_tupled_primitive_def</B></A>]  Definition
+      
+      |- uniform_tupled =
+         WFREC
+           (@R.
+              WF R /\
+              !t s n res s'.
+                ((res,s') = unif n s) /\ ~(res &lt; SUC n) ==&gt;
+                R (t,SUC n,s') (SUC t,SUC n,s))
+           (\uniform_tupled a.
+              case a of
+                 (0,0,s) -&gt; ARB
+              || (0,SUC n,s) -&gt; I (0,s)
+              || (SUC t,0,s') -&gt; ARB
+              || (SUC t,SUC n',s') -&gt;
+                   I
+                     (let (res,s') = unif n' s' in
+                        if res &lt; SUC n' then
+                          (res,s')
+                        else
+                          uniform_tupled (t,SUC n',s')))
+   
+   [<A NAME="INDEP_UNIF-val"><B>INDEP_UNIF</B></A>]  Theorem
+      
+      |- !n. indep (unif n)
+   
+   [<A NAME="INDEP_UNIFORM-val"><B>INDEP_UNIFORM</B></A>]  Theorem
+      
+      |- !t n. indep (uniform t (SUC n))
+   
+   [<A NAME="PROB_UNIF-val"><B>PROB_UNIF</B></A>]  Theorem
+      
+      |- !n k.
+           prob (\s. FST (unif n s) = k) =
+           if k &lt; 2 ** unif_bound n then (1 / 2) pow unif_bound n else 0
+   
+   [<A NAME="PROB_UNIFORM-val"><B>PROB_UNIFORM</B></A>]  Theorem
+      
+      |- !t n k.
+           k &lt; n ==&gt;
+           abs (prob (\s. FST (uniform t n s) = k) - 1 / &n) &lt;=
+           (1 / 2) pow t
+   
+   [<A NAME="PROB_UNIFORM_LOWER_BOUND-val"><B>PROB_UNIFORM_LOWER_BOUND</B></A>]  Theorem
+      
+      |- !b.
+           (!k.
+              k &lt; SUC n ==&gt;
+              prob (\s. FST (uniform t (SUC n) s) = k) &lt; b) ==&gt;
+           !m.
+             m &lt; SUC n ==&gt;
+             prob (\s. FST (uniform t (SUC n) s) &lt; SUC m) &lt; &SUC m * b
+   
+   [<A NAME="PROB_UNIFORM_PAIR_SUC-val"><B>PROB_UNIFORM_PAIR_SUC</B></A>]  Theorem
+      
+      |- !t n k k'.
+           k &lt; SUC n /\ k' &lt; SUC n ==&gt;
+           abs
+             (prob (\s. FST (uniform t (SUC n) s) = k) -
+              prob (\s. FST (uniform t (SUC n) s) = k')) &lt;= (1 / 2) pow t
+   
+   [<A NAME="PROB_UNIFORM_SUC-val"><B>PROB_UNIFORM_SUC</B></A>]  Theorem
+      
+      |- !t n k.
+           k &lt; SUC n ==&gt;
+           abs (prob (\s. FST (uniform t (SUC n) s) = k) - 1 / &SUC n) &lt;=
+           (1 / 2) pow t
+   
+   [<A NAME="PROB_UNIFORM_UPPER_BOUND-val"><B>PROB_UNIFORM_UPPER_BOUND</B></A>]  Theorem
+      
+      |- !b.
+           (!k.
+              k &lt; SUC n ==&gt;
+              b &lt; prob (\s. FST (uniform t (SUC n) s) = k)) ==&gt;
+           !m.
+             m &lt; SUC n ==&gt;
+             &SUC m * b &lt; prob (\s. FST (uniform t (SUC n) s) &lt; SUC m)
+   
+   [<A NAME="PROB_UNIF_BOUND-val"><B>PROB_UNIF_BOUND</B></A>]  Theorem
+      
+      |- !n k.
+           k &lt;= 2 ** unif_bound n ==&gt;
+           (prob (\s. FST (unif n s) &lt; k) = &k * (1 / 2) pow unif_bound n)
+   
+   [<A NAME="PROB_UNIF_GOOD-val"><B>PROB_UNIF_GOOD</B></A>]  Theorem
+      
+      |- !n. 1 / 2 &lt;= prob (\s. FST (unif n s) &lt; SUC n)
+   
+   [<A NAME="PROB_UNIF_PAIR-val"><B>PROB_UNIF_PAIR</B></A>]  Theorem
+      
+      |- !n k k'.
+           (prob (\s. FST (unif n s) = k) =
+            prob (\s. FST (unif n s) = k')) &lt;=&gt;
+           (k &lt; 2 ** unif_bound n &lt;=&gt; k' &lt; 2 ** unif_bound n)
+   
+   [<A NAME="SUC_DIV_TWO_ZERO-val"><B>SUC_DIV_TWO_ZERO</B></A>]  Theorem
+      
+      |- !n. (SUC n DIV 2 = 0) &lt;=&gt; (n = 0)
+   
+   [<A NAME="UNIFORM_DEF_MONAD-val"><B>UNIFORM_DEF_MONAD</B></A>]  Theorem
+      
+      |- (!n. uniform 0 (SUC n) = UNIT 0) /\
+         !t n.
+           uniform (SUC t) (SUC n) =
+           BIND (unif n)
+             (\m. if m &lt; SUC n then UNIT m else uniform t (SUC n))
+   
+   [<A NAME="UNIFORM_RANGE-val"><B>UNIFORM_RANGE</B></A>]  Theorem
+      
+      |- !t n s. FST (uniform t (SUC n) s) &lt; SUC n
+   
+   [<A NAME="UNIF_BOUND_LOWER-val"><B>UNIF_BOUND_LOWER</B></A>]  Theorem
+      
+      |- !n. n &lt; 2 ** unif_bound n
+   
+   [<A NAME="UNIF_BOUND_LOWER_SUC-val"><B>UNIF_BOUND_LOWER_SUC</B></A>]  Theorem
+      
+      |- !n. SUC n &lt;= 2 ** unif_bound n
+   
+   [<A NAME="UNIF_BOUND_UPPER-val"><B>UNIF_BOUND_UPPER</B></A>]  Theorem
+      
+      |- !n. n &lt;&gt; 0 ==&gt; 2 ** unif_bound n &lt;= 2 * n
+   
+   [<A NAME="UNIF_BOUND_UPPER_SUC-val"><B>UNIF_BOUND_UPPER_SUC</B></A>]  Theorem
+      
+      |- !n. 2 ** unif_bound n &lt;= SUC (2 * n)
+   
+   [<A NAME="UNIF_DEF_MONAD-val"><B>UNIF_DEF_MONAD</B></A>]  Theorem
+      
+      |- (unif 0 = UNIT 0) /\
+         !n.
+           unif (SUC n) =
+           BIND (unif (SUC n DIV 2))
+             (\m. BIND SDEST (\b. UNIT (if b then 2 * m + 1 else 2 * m)))
+   
+   [<A NAME="UNIF_RANGE-val"><B>UNIF_RANGE</B></A>]  Theorem
+      
+      |- !n s. FST (unif n s) &lt; 2 ** unif_bound n
+   
+   [<A NAME="unif_bound_def-val"><B>unif_bound_def</B></A>]  Theorem
+      
+      |- (unif_bound 0 = 0) /\
+         (unif_bound (SUC v) = SUC (unif_bound (SUC v DIV 2)))
+   
+   [<A NAME="unif_bound_ind-val"><B>unif_bound_ind</B></A>]  Theorem
+      
+      |- !P. P 0 /\ (!v. P (SUC v DIV 2) ==&gt; P (SUC v)) ==&gt; !v. P v
+   
+   [<A NAME="unif_def-val"><B>unif_def</B></A>]  Theorem
+      
+      |- (unif 0 s = (0,s)) /\
+         (unif (SUC v2) s =
+          (let (m,s') = unif (SUC v2 DIV 2) s in
+             (if SHD s' then 2 * m + 1 else 2 * m,STL s')))
+   
+   [<A NAME="unif_ind-val"><B>unif_ind</B></A>]  Theorem
+      
+      |- !P.
+           (!s. P 0 s) /\ (!v2 s. P (SUC v2 DIV 2) s ==&gt; P (SUC v2) s) ==&gt;
+           !v v1. P v v1
+   
+   [<A NAME="uniform_def-val"><B>uniform_def</B></A>]  Theorem
+      
+      |- (!s n. uniform 0 (SUC n) s = (0,s)) /\
+         !t s n.
+           uniform (SUC t) (SUC n) s =
+           (let (res,s') = unif n s in
+              if res &lt; SUC n then (res,s') else uniform t (SUC n) s')
+   
+   [<A NAME="uniform_ind-val"><B>uniform_ind</B></A>]  Theorem
+      
+      |- !P.
+           (!n s. P 0 (SUC n) s) /\
+           (!t n s.
+              (!res s'.
+                 ((res,s') = unif n s) /\ ~(res &lt; SUC n) ==&gt;
+                 P t (SUC n) s') ==&gt;
+              P (SUC t) (SUC n) s) /\ (!v6. P 0 0 v6) /\
+           (!t v10. P (SUC t) 0 v10) ==&gt;
+           !v v1 v2. P v v1 v2
+   
+   
+*)
+end
+
+</PRE><HR><TABLE WIDTH=100%><TR ALIGN = CENTER>
+<TH><A HREF="../../../src/prob/prob_uniformScript.sml" type="text/plain">Source File</A>
+<TH><A HREF="idIndex.html">Identifier index</A>
+<TH><A HREF="TheoryIndex.html">Theory binding index</A>
+</TABLE><HR>
+<BR><EM><A HREF="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-5</EM></BODY></HTML>
