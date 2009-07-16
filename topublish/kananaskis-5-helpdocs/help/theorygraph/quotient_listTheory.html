@@ -1,0 +1,350 @@
+<HTML>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Theory: quotient_list</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "quotient_list"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "rich_listTheory.html"><STRONG><font color="black">rich_list</font></STRONG></A>&nbsp;&nbsp;
+    <A HREF = "quotientTheory.html"><STRONG><font color="black">quotient</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">LIST_REL</font></STRONG>
+                                         <td>
+                                         :('a -> 'a -> bool) ->
+                                          'a list -> 'a list -> bool
+    <tr><td>
+        <STRONG><font color="black">LIST_REL_tupled</font></STRONG>
+        <td>
+        :('a -> 'a -> bool) # 'a list # 'a list -> bool
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">LIST_REL_tupled_primitive_def</font></STRONG>
+<DD>
+<PRE>
+|- LIST_REL_tupled =
+   WFREC (@R'. WF R' /\ !b a bs as R. R' (R,as,bs) (R,a::as,b::bs))
+     (\LIST_REL_tupled a'.
+        case a' of
+           (R,[],[]) -> I T
+        || (R,[],b::bs) -> I F
+        || (R,a::as,[]) -> I F
+        || (R,a::as,b'::bs') -> I (R a b' /\ LIST_REL_tupled (R,as,bs')))
+</PRE>
+
+<DT><STRONG><font color="black">LIST_REL_curried_def</font></STRONG>
+<DD>
+<PRE>
+|- !x x1 x2. LIST_REL x x1 x2 <=> LIST_REL_tupled (x,x1,x2)
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">LIST_MAP_I</font></STRONG>
+<DD>
+<PRE>
+|- MAP I = I
+</PRE>
+
+<DT><STRONG><font color="black">LIST_REL_ind</font></STRONG>
+<DD>
+<PRE>
+|- !P.
+     (!R. P R [] []) /\ (!R a as. P R (a::as) []) /\
+     (!R b bs. P R [] (b::bs)) /\
+     (!R a as b bs. P R as bs ==> P R (a::as) (b::bs)) ==>
+     !v v1 v2. P v v1 v2
+</PRE>
+
+<DT><STRONG><font color="black">LIST_REL_def</font></STRONG>
+<DD>
+<PRE>
+|- (!R. LIST_REL R [] [] <=> T) /\ (!as a R. LIST_REL R (a::as) [] <=> F) /\
+   (!bs b R. LIST_REL R [] (b::bs) <=> F) /\
+   !bs b as a R. LIST_REL R (a::as) (b::bs) <=> R a b /\ LIST_REL R as bs
+</PRE>
+
+<DT><STRONG><font color="black">LIST_REL_EQ</font></STRONG>
+<DD>
+<PRE>
+|- LIST_REL $= = $=
+</PRE>
+
+<DT><STRONG><font color="black">LIST_REL_REFL</font></STRONG>
+<DD>
+<PRE>
+|- !R. (!x y. R x y <=> (R x = R y)) ==> !x. LIST_REL R x x
+</PRE>
+
+<DT><STRONG><font color="black">LIST_EQUIV</font></STRONG>
+<DD>
+<PRE>
+|- !R. EQUIV R ==> EQUIV (LIST_REL R)
+</PRE>
+
+<DT><STRONG><font color="black">LIST_REL_REL</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !r s.
+       LIST_REL R r s <=>
+       LIST_REL R r r /\ LIST_REL R s s /\ (MAP abs r = MAP abs s)
+</PRE>
+
+<DT><STRONG><font color="black">LIST_QUOTIENT</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==> QUOTIENT (LIST_REL R) (MAP abs) (MAP rep)
+</PRE>
+
+<DT><STRONG><font color="black">CONS_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> !t h. h::t = MAP abs (rep h::MAP rep t)
+</PRE>
+
+<DT><STRONG><font color="black">CONS_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !t1 t2 h1 h2.
+       R h1 h2 /\ LIST_REL R t1 t2 ==> LIST_REL R (h1::t1) (h2::t2)
+</PRE>
+
+<DT><STRONG><font color="black">NIL_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> ([] = MAP abs [])
+</PRE>
+
+<DT><STRONG><font color="black">NIL_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> LIST_REL R [] []
+</PRE>
+
+<DT><STRONG><font color="black">MAP_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !l f. MAP f l = MAP abs2 (MAP ((abs1 --> rep2) f) (MAP rep1 l))
+</PRE>
+
+<DT><STRONG><font color="black">MAP_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !l1 l2 f1 f2.
+         (R1 ===> R2) f1 f2 /\ LIST_REL R1 l1 l2 ==>
+         LIST_REL R2 (MAP f1 l1) (MAP f2 l2)
+</PRE>
+
+<DT><STRONG><font color="black">LENGTH_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> !l. LENGTH l = LENGTH (MAP rep l)
+</PRE>
+
+<DT><STRONG><font color="black">LENGTH_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !l1 l2. LIST_REL R l1 l2 ==> (LENGTH l1 = LENGTH l2)
+</PRE>
+
+<DT><STRONG><font color="black">APPEND_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==> !l m. l ++ m = MAP abs (MAP rep l ++ MAP rep m)
+</PRE>
+
+<DT><STRONG><font color="black">APPEND_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !l1 l2 m1 m2.
+       LIST_REL R l1 l2 /\ LIST_REL R m1 m2 ==>
+       LIST_REL R (l1 ++ m1) (l2 ++ m2)
+</PRE>
+
+<DT><STRONG><font color="black">FLAT_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==> !l. FLAT l = MAP abs (FLAT (MAP (MAP rep) l))
+</PRE>
+
+<DT><STRONG><font color="black">FLAT_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !l1 l2. LIST_REL (LIST_REL R) l1 l2 ==> LIST_REL R (FLAT l1) (FLAT l2)
+</PRE>
+
+<DT><STRONG><font color="black">REVERSE_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==> !l. REVERSE l = MAP abs (REVERSE (MAP rep l))
+</PRE>
+
+<DT><STRONG><font color="black">REVERSE_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !l1 l2. LIST_REL R l1 l2 ==> LIST_REL R (REVERSE l1) (REVERSE l2)
+</PRE>
+
+<DT><STRONG><font color="black">FILTER_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !P l. FILTER P l = MAP abs (FILTER ((abs --> I) P) (MAP rep l))
+</PRE>
+
+<DT><STRONG><font color="black">FILTER_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !P1 P2 l1 l2.
+       (R ===> $<=>) P1 P2 /\ LIST_REL R l1 l2 ==>
+       LIST_REL R (FILTER P1 l1) (FILTER P2 l2)
+</PRE>
+
+<DT><STRONG><font color="black">NULL_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> !l. NULL l <=> NULL (MAP rep l)
+</PRE>
+
+<DT><STRONG><font color="black">NULL_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==> !l1 l2. LIST_REL R l1 l2 ==> (NULL l1 <=> NULL l2)
+</PRE>
+
+<DT><STRONG><font color="black">SOME_EL_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !l P. EXISTS P l <=> EXISTS ((abs --> I) P) (MAP rep l)
+</PRE>
+
+<DT><STRONG><font color="black">SOME_EL_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !l1 l2 P1 P2.
+       (R ===> $<=>) P1 P2 /\ LIST_REL R l1 l2 ==>
+       (EXISTS P1 l1 <=> EXISTS P2 l2)
+</PRE>
+
+<DT><STRONG><font color="black">ALL_EL_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !l P. EVERY P l <=> EVERY ((abs --> I) P) (MAP rep l)
+</PRE>
+
+<DT><STRONG><font color="black">ALL_EL_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !l1 l2 P1 P2.
+       (R ===> $<=>) P1 P2 /\ LIST_REL R l1 l2 ==>
+       (EVERY P1 l1 <=> EVERY P2 l2)
+</PRE>
+
+<DT><STRONG><font color="black">FOLDL_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !l f e.
+         FOLDL f e l =
+         abs1 (FOLDL ((abs1 --> abs2 --> rep1) f) (rep1 e) (MAP rep2 l))
+</PRE>
+
+<DT><STRONG><font color="black">FOLDL_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !l1 l2 f1 f2 e1 e2.
+         (R1 ===> R2 ===> R1) f1 f2 /\ R1 e1 e2 /\ LIST_REL R2 l1 l2 ==>
+         R1 (FOLDL f1 e1 l1) (FOLDL f2 e2 l2)
+</PRE>
+
+<DT><STRONG><font color="black">FOLDR_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !l f e.
+         FOLDR f e l =
+         abs2 (FOLDR ((abs1 --> abs2 --> rep2) f) (rep2 e) (MAP rep1 l))
+</PRE>
+
+<DT><STRONG><font color="black">FOLDR_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !l1 l2 f1 f2 e1 e2.
+         (R1 ===> R2 ===> R2) f1 f2 /\ R2 e1 e2 /\ LIST_REL R1 l1 l2 ==>
+         R2 (FOLDR f1 e1 l1) (FOLDR f2 e2 l2)
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>

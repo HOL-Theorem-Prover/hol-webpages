@@ -1,0 +1,917 @@
+<HTML>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Theory: llist</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "llist"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "listTheory.html"><STRONG><font color="black">list</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Type</font>
+    <th>
+    <font color="crimson">Arity</font><tr><td>
+                                          <STRONG><font color="black">llist</font></STRONG>
+                                          <td>
+                                          1
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">LAPPEND</font></STRONG>
+                                         <td>
+                                         :'a llist -> 'a llist -> 'a llist
+    <tr><td>
+        <STRONG><font color="black">LCONS</font></STRONG>
+        <td>
+        :'a -> 'a llist -> 'a llist
+    <tr><td>
+        <STRONG><font color="black">LDROP</font></STRONG>
+        <td>
+        :num -> 'a llist -> 'a llist option
+    <tr><td>
+        <STRONG><font color="black">LFILTER</font></STRONG>
+        <td>
+        :('a -> bool) -> 'a llist -> 'a llist
+    <tr><td>
+        <STRONG><font color="black">LFINITE</font></STRONG>
+        <td>
+        :'a llist -> bool
+    <tr><td>
+        <STRONG><font color="black">LFLATTEN</font></STRONG>
+        <td>
+        :'a llist llist -> 'a llist
+    <tr><td>
+        <STRONG><font color="black">LHD</font></STRONG>
+        <td>
+        :'a llist -> 'a option
+    <tr><td>
+        <STRONG><font color="black">LLENGTH</font></STRONG>
+        <td>
+        :'a llist -> num option
+    <tr><td>
+        <STRONG><font color="black">LMAP</font></STRONG>
+        <td>
+        :('a -> 'b) -> 'a llist -> 'b llist
+    <tr><td> <STRONG><font color="black">LNIL</font></STRONG> <td> :'a llist
+    <tr><td>
+        <STRONG><font color="black">LNTH</font></STRONG>
+        <td>
+        :num -> 'a llist -> 'a option
+    <tr><td>
+        <STRONG><font color="black">LTAKE</font></STRONG>
+        <td>
+        :num -> 'a llist -> 'a list option
+    <tr><td>
+        <STRONG><font color="black">LTL</font></STRONG>
+        <td>
+        :'a llist -> 'a llist option
+    <tr><td>
+        <STRONG><font color="black">LUNFOLD</font></STRONG>
+        <td>
+        :('a -> ('a # 'b) option) -> 'a -> 'b llist
+    <tr><td>
+        <STRONG><font color="black">LUNZIP</font></STRONG>
+        <td>
+        :('a # 'b) llist -> 'a llist # 'b llist
+    <tr><td>
+        <STRONG><font color="black">LZIP</font></STRONG>
+        <td>
+        :'a llist # 'b llist -> ('a # 'b) llist
+    <tr><td>
+        <STRONG><font color="black">every</font></STRONG>
+        <td>
+        :('a -> bool) -> 'a llist -> bool
+    <tr><td>
+        <STRONG><font color="black">exists</font></STRONG>
+        <td>
+        :('a -> bool) -> 'a llist -> bool
+    <tr><td>
+        <STRONG><font color="black">fromList</font></STRONG>
+        <td>
+        :'a list -> 'a llist
+    <tr><td>
+        <STRONG><font color="black">llength_rel</font></STRONG>
+        <td>
+        :'a llist -> num -> bool
+    <tr><td>
+        <STRONG><font color="black">llist_abs</font></STRONG>
+        <td>
+        :(num -> 'a option) -> 'a llist
+    <tr><td>
+        <STRONG><font color="black">llist_rep</font></STRONG>
+        <td>
+        :'a llist -> num -> 'a option
+    <tr><td>
+        <STRONG><font color="black">lrep_ok</font></STRONG>
+        <td>
+        :(num -> 'a option) -> bool
+    <tr><td>
+        <STRONG><font color="black">toList</font></STRONG>
+        <td>
+        :'a llist -> 'a list option
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">lrep_ok_def</font></STRONG>
+<DD>
+<PRE>
+|- !f.
+     lrep_ok f <=>
+     ?P.
+       (!g.
+          P g ==>
+          (g = (\n. NONE)) \/
+          ?h t. P t /\ (g = (\n. if n = 0 then SOME h else t (n - 1)))) /\ P f
+</PRE>
+
+<DT><STRONG><font color="black">llist_TY_DEF</font></STRONG>
+<DD>
+<PRE>
+|- ?rep. TYPE_DEFINITION lrep_ok rep
+</PRE>
+
+<DT><STRONG><font color="black">llist_absrep</font></STRONG>
+<DD>
+<PRE>
+|- (!a. llist_abs (llist_rep a) = a) /\
+   !r. lrep_ok r <=> (llist_rep (llist_abs r) = r)
+</PRE>
+
+<DT><STRONG><font color="black">LNIL</font></STRONG>
+<DD>
+<PRE>
+|- [||] = llist_abs (\n. NONE)
+</PRE>
+
+<DT><STRONG><font color="black">LCONS</font></STRONG>
+<DD>
+<PRE>
+|- !h t. h:::t = llist_abs (\n. if n = 0 then SOME h else llist_rep t (n - 1))
+</PRE>
+
+<DT><STRONG><font color="black">LHD</font></STRONG>
+<DD>
+<PRE>
+|- !ll. LHD ll = llist_rep ll 0
+</PRE>
+
+<DT><STRONG><font color="black">LTL</font></STRONG>
+<DD>
+<PRE>
+|- !ll.
+     LTL ll =
+     case LHD ll of
+        NONE -> NONE
+     || SOME v -> SOME (llist_abs (\n. llist_rep ll (n + 1)))
+</PRE>
+
+<DT><STRONG><font color="black">LNTH</font></STRONG>
+<DD>
+<PRE>
+|- (!ll. LNTH 0 ll = LHD ll) /\
+   !n ll. LNTH (SUC n) ll = OPTION_JOIN (OPTION_MAP (LNTH n) (LTL ll))
+</PRE>
+
+<DT><STRONG><font color="black">LUNFOLD</font></STRONG>
+<DD>
+<PRE>
+|- !f x.
+     LUNFOLD f x =
+     case f x of NONE -> [||] || SOME (v1,v2) -> v2:::LUNFOLD f v1
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE</font></STRONG>
+<DD>
+<PRE>
+|- (!ll. LTAKE 0 ll = SOME []) /\
+   !n ll.
+     LTAKE (SUC n) ll =
+     case LHD ll of
+        NONE -> NONE
+     || SOME hd ->
+          case LTAKE n (THE (LTL ll)) of
+             NONE -> NONE
+          || SOME tl -> SOME (hd::tl)
+</PRE>
+
+<DT><STRONG><font color="black">LMAP</font></STRONG>
+<DD>
+<PRE>
+|- (!f. LMAP f [||] = [||]) /\ !f h t. LMAP f (h:::t) = f h:::LMAP f t
+</PRE>
+
+<DT><STRONG><font color="black">LAPPEND</font></STRONG>
+<DD>
+<PRE>
+|- (!x. LAPPEND [||] x = x) /\ !h t x. LAPPEND (h:::t) x = h:::LAPPEND t x
+</PRE>
+
+<DT><STRONG><font color="black">llength_rel</font></STRONG>
+<DD>
+<PRE>
+|- llength_rel =
+   (\a0 a1.
+      !llength_rel'.
+        (!a0 a1.
+           (a0 = [||]) /\ (a1 = 0) \/
+           (?h n t. (a0 = h:::t) /\ (a1 = SUC n) /\ llength_rel' t n) ==>
+           llength_rel' a0 a1) ==>
+        llength_rel' a0 a1)
+</PRE>
+
+<DT><STRONG><font color="black">LLENGTH</font></STRONG>
+<DD>
+<PRE>
+|- !ll. LLENGTH ll = if LFINITE ll then SOME (@n. llength_rel ll n) else NONE
+</PRE>
+
+<DT><STRONG><font color="black">toList</font></STRONG>
+<DD>
+<PRE>
+|- !ll. toList ll = if LFINITE ll then LTAKE (THE (LLENGTH ll)) ll else NONE
+</PRE>
+
+<DT><STRONG><font color="black">fromList</font></STRONG>
+<DD>
+<PRE>
+|- (fromList [] = [||]) /\ !h t. fromList (h::t) = h:::fromList t
+</PRE>
+
+<DT><STRONG><font color="black">LDROP</font></STRONG>
+<DD>
+<PRE>
+|- (!ll. LDROP 0 ll = SOME ll) /\
+   !n ll. LDROP (SUC n) ll = OPTION_JOIN (OPTION_MAP (LDROP n) (LTL ll))
+</PRE>
+
+<DT><STRONG><font color="black">exists</font></STRONG>
+<DD>
+<PRE>
+|- exists =
+   (\P a0.
+      !exists'.
+        (!a0.
+           (?h t. (a0 = h:::t) /\ P h) \/
+           (?h t. (a0 = h:::t) /\ exists' t) ==>
+           exists' a0) ==>
+        exists' a0)
+</PRE>
+
+<DT><STRONG><font color="black">every_def</font></STRONG>
+<DD>
+<PRE>
+|- !P ll. every P ll <=> ~exists ($~ o P) ll
+</PRE>
+
+<DT><STRONG><font color="black">LFILTER</font></STRONG>
+<DD>
+<PRE>
+|- !P ll.
+     LFILTER P ll =
+     if ~exists P ll then
+       [||]
+     else
+       if P (THE (LHD ll)) then
+         THE (LHD ll):::LFILTER P (THE (LTL ll))
+       else
+         LFILTER P (THE (LTL ll))
+</PRE>
+
+<DT><STRONG><font color="black">LFLATTEN</font></STRONG>
+<DD>
+<PRE>
+|- !ll.
+     LFLATTEN ll =
+     if every ($= [||]) ll then
+       [||]
+     else
+       if THE (LHD ll) = [||] then
+         LFLATTEN (THE (LTL ll))
+       else
+         THE (LHD (THE (LHD ll))):::
+             LFLATTEN (THE (LTL (THE (LHD ll))):::THE (LTL ll))
+</PRE>
+
+<DT><STRONG><font color="black">LZIP_THM</font></STRONG>
+<DD>
+<PRE>
+|- (!l1. LZIP (l1,[||]) = [||]) /\ (!l2. LZIP ([||],l2) = [||]) /\
+   !h1 h2 t1 t2. LZIP (h1:::t1,h2:::t2) = (h1,h2):::LZIP (t1,t2)
+</PRE>
+
+<DT><STRONG><font color="black">LUNZIP_THM</font></STRONG>
+<DD>
+<PRE>
+|- (LUNZIP [||] = ([||],[||])) /\
+   !x y t.
+     LUNZIP ((x,y):::t) = (let (ll1,ll2) = LUNZIP t in (x:::ll1,y:::ll2))
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">LFINITE_THM</font></STRONG>
+<DD>
+<PRE>
+|- (LFINITE [||] <=> T) /\ !h t. LFINITE (h:::t) <=> LFINITE t
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_cases</font></STRONG>
+<DD>
+<PRE>
+|- !a0. LFINITE a0 <=> (a0 = [||]) \/ ?h t. (a0 = h:::t) /\ LFINITE t
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_ind</font></STRONG>
+<DD>
+<PRE>
+|- !LFINITE'.
+     LFINITE' [||] /\ (!h t. LFINITE' t ==> LFINITE' (h:::t)) ==>
+     !a0. LFINITE a0 ==> LFINITE' a0
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_rules</font></STRONG>
+<DD>
+<PRE>
+|- LFINITE [||] /\ !h t. LFINITE t ==> LFINITE (h:::t)
+</PRE>
+
+<DT><STRONG><font color="black">llist_rep_LCONS</font></STRONG>
+<DD>
+<PRE>
+|- llist_rep (h:::t) = (\n. if n = 0 then SOME h else llist_rep t (n - 1))
+</PRE>
+
+<DT><STRONG><font color="black">LHD_LCONS</font></STRONG>
+<DD>
+<PRE>
+|- LHD (h:::t) = SOME h
+</PRE>
+
+<DT><STRONG><font color="black">LTL_LCONS</font></STRONG>
+<DD>
+<PRE>
+|- LTL (h:::t) = SOME t
+</PRE>
+
+<DT><STRONG><font color="black">LHDTL_CONS_THM</font></STRONG>
+<DD>
+<PRE>
+|- !h t. (LHD (h:::t) = SOME h) /\ (LTL (h:::t) = SOME t)
+</PRE>
+
+<DT><STRONG><font color="black">llist_CASES</font></STRONG>
+<DD>
+<PRE>
+|- !l. (l = [||]) \/ ?h t. l = h:::t
+</PRE>
+
+<DT><STRONG><font color="black">LHD_THM</font></STRONG>
+<DD>
+<PRE>
+|- (LHD [||] = NONE) /\ !h t. LHD (h:::t) = SOME h
+</PRE>
+
+<DT><STRONG><font color="black">LTL_THM</font></STRONG>
+<DD>
+<PRE>
+|- (LTL [||] = NONE) /\ !h t. LTL (h:::t) = SOME t
+</PRE>
+
+<DT><STRONG><font color="black">LCONS_NOT_NIL</font></STRONG>
+<DD>
+<PRE>
+|- !h t. h:::t <> [||] /\ [||] <> h:::t
+</PRE>
+
+<DT><STRONG><font color="black">LCONS_11</font></STRONG>
+<DD>
+<PRE>
+|- !h1 t1 h2 t2. (h1:::t1 = h2:::t2) <=> (h1 = h2) /\ (t1 = t2)
+</PRE>
+
+<DT><STRONG><font color="black">LHD_EQ_NONE</font></STRONG>
+<DD>
+<PRE>
+|- !ll. ((LHD ll = NONE) <=> (ll = [||])) /\ ((NONE = LHD ll) <=> (ll = [||]))
+</PRE>
+
+<DT><STRONG><font color="black">LTL_EQ_NONE</font></STRONG>
+<DD>
+<PRE>
+|- !ll. ((LTL ll = NONE) <=> (ll = [||])) /\ ((NONE = LTL ll) <=> (ll = [||]))
+</PRE>
+
+<DT><STRONG><font color="black">LHDTL_EQ_SOME</font></STRONG>
+<DD>
+<PRE>
+|- !h t ll. (ll = h:::t) <=> (LHD ll = SOME h) /\ (LTL ll = SOME t)
+</PRE>
+
+<DT><STRONG><font color="black">LNTH_THM</font></STRONG>
+<DD>
+<PRE>
+|- (!n. LNTH n [||] = NONE) /\ (!h t. LNTH 0 (h:::t) = SOME h) /\
+   !n h t. LNTH (SUC n) (h:::t) = LNTH n t
+</PRE>
+
+<DT><STRONG><font color="black">llist_ue_Axiom</font></STRONG>
+<DD>
+<PRE>
+|- !f.
+     ?!g.
+       (!x. LHD (g x) = OPTION_MAP SND (f x)) /\
+       !x. LTL (g x) = OPTION_MAP (g o FST) (f x)
+</PRE>
+
+<DT><STRONG><font color="black">llist_Axiom</font></STRONG>
+<DD>
+<PRE>
+|- !f.
+     ?g.
+       (!x. LHD (g x) = OPTION_MAP SND (f x)) /\
+       !x. LTL (g x) = OPTION_MAP (g o FST) (f x)
+</PRE>
+
+<DT><STRONG><font color="black">llist_Axiom_1</font></STRONG>
+<DD>
+<PRE>
+|- !f. ?g. !x. g x = case f x of NONE -> [||] || SOME (a,b) -> b:::g a
+</PRE>
+
+<DT><STRONG><font color="black">llist_Axiom_1ue</font></STRONG>
+<DD>
+<PRE>
+|- !f. ?!g. !x. g x = case f x of NONE -> [||] || SOME (a,b) -> b:::g a
+</PRE>
+
+<DT><STRONG><font color="black">LLIST_BISIMULATION0</font></STRONG>
+<DD>
+<PRE>
+|- !ll1 ll2.
+     (ll1 = ll2) <=>
+     ?R.
+       R ll1 ll2 /\
+       !ll3 ll4.
+         R ll3 ll4 ==>
+         (ll3 = [||]) /\ (ll4 = [||]) \/
+         ?h t1 t2. (ll3 = h:::t1) /\ (ll4 = h:::t2) /\ R t1 t2
+</PRE>
+
+<DT><STRONG><font color="black">LLIST_BISIMULATION</font></STRONG>
+<DD>
+<PRE>
+|- !ll1 ll2.
+     (ll1 = ll2) <=>
+     ?R.
+       R ll1 ll2 /\
+       !ll3 ll4.
+         R ll3 ll4 ==>
+         (ll3 = [||]) /\ (ll4 = [||]) \/
+         (LHD ll3 = LHD ll4) /\ R (THE (LTL ll3)) (THE (LTL ll4))
+</PRE>
+
+<DT><STRONG><font color="black">LLIST_STRONG_BISIMULATION</font></STRONG>
+<DD>
+<PRE>
+|- !ll1 ll2.
+     (ll1 = ll2) <=>
+     ?R.
+       R ll1 ll2 /\
+       !ll3 ll4.
+         R ll3 ll4 ==>
+         (ll3 = ll4) \/ ?h t1 t2. (ll3 = h:::t1) /\ (ll4 = h:::t2) /\ R t1 t2
+</PRE>
+
+<DT><STRONG><font color="black">LNTH_EQ</font></STRONG>
+<DD>
+<PRE>
+|- !ll1 ll2. (ll1 = ll2) <=> !n. LNTH n ll1 = LNTH n ll2
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_THM</font></STRONG>
+<DD>
+<PRE>
+|- (!l. LTAKE 0 l = SOME []) /\ (!n. LTAKE (SUC n) [||] = NONE) /\
+   !n h t. LTAKE (SUC n) (h:::t) = OPTION_MAP (CONS h) (LTAKE n t)
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_SNOC_LNTH</font></STRONG>
+<DD>
+<PRE>
+|- !n ll.
+     LTAKE (SUC n) ll =
+     case LTAKE n ll of
+        NONE -> NONE
+     || SOME l -> case LNTH n ll of NONE -> NONE || SOME e -> SOME (l ++ [e])
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_LNTH</font></STRONG>
+<DD>
+<PRE>
+|- !n ll. (LTAKE n ll = NONE) ==> (LNTH n ll = NONE)
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_NIL_EQ_SOME</font></STRONG>
+<DD>
+<PRE>
+|- !l m. (LTAKE m [||] = SOME l) <=> (m = 0) /\ (l = [])
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_NIL_EQ_NONE</font></STRONG>
+<DD>
+<PRE>
+|- !m. (LTAKE m [||] = NONE) <=> 0 < m
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_EQ</font></STRONG>
+<DD>
+<PRE>
+|- !ll1 ll2. (ll1 = ll2) <=> !n. LTAKE n ll1 = LTAKE n ll2
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_CONS_EQ_NONE</font></STRONG>
+<DD>
+<PRE>
+|- !m h t. (LTAKE m (h:::t) = NONE) <=> ?n. (m = SUC n) /\ (LTAKE n t = NONE)
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_CONS_EQ_SOME</font></STRONG>
+<DD>
+<PRE>
+|- !m h t l.
+     (LTAKE m (h:::t) = SOME l) <=>
+     (m = 0) /\ (l = []) \/
+     ?n l'. (m = SUC n) /\ (LTAKE n t = SOME l') /\ (l = h::l')
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_EQ_SOME_CONS</font></STRONG>
+<DD>
+<PRE>
+|- !n l x. (LTAKE n l = SOME x) ==> !h. ?y. LTAKE n (h:::l) = SOME y
+</PRE>
+
+<DT><STRONG><font color="black">LMAP_APPEND</font></STRONG>
+<DD>
+<PRE>
+|- !f ll1 ll2. LMAP f (LAPPEND ll1 ll2) = LAPPEND (LMAP f ll1) (LMAP f ll2)
+</PRE>
+
+<DT><STRONG><font color="black">LAPPEND_EQ_LNIL</font></STRONG>
+<DD>
+<PRE>
+|- (LAPPEND l1 l2 = [||]) <=> (l1 = [||]) /\ (l2 = [||])
+</PRE>
+
+<DT><STRONG><font color="black">LAPPEND_ASSOC</font></STRONG>
+<DD>
+<PRE>
+|- !ll1 ll2 ll3. LAPPEND (LAPPEND ll1 ll2) ll3 = LAPPEND ll1 (LAPPEND ll2 ll3)
+</PRE>
+
+<DT><STRONG><font color="black">LMAP_MAP</font></STRONG>
+<DD>
+<PRE>
+|- !f g ll. LMAP f (LMAP g ll) = LMAP (f o g) ll
+</PRE>
+
+<DT><STRONG><font color="black">LAPPEND_NIL_2ND</font></STRONG>
+<DD>
+<PRE>
+|- !ll. LAPPEND ll [||] = ll
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE</font></STRONG>
+<DD>
+<PRE>
+|- LFINITE ll <=> ?n. LTAKE n ll = NONE
+</PRE>
+
+<DT><STRONG><font color="black">llength_rel_rules</font></STRONG>
+<DD>
+<PRE>
+|- llength_rel [||] 0 /\
+   !h n t. llength_rel t n ==> llength_rel (h:::t) (SUC n)
+</PRE>
+
+<DT><STRONG><font color="black">llength_rel_ind</font></STRONG>
+<DD>
+<PRE>
+|- !llength_rel'.
+     llength_rel' [||] 0 /\
+     (!h n t. llength_rel' t n ==> llength_rel' (h:::t) (SUC n)) ==>
+     !a0 a1. llength_rel a0 a1 ==> llength_rel' a0 a1
+</PRE>
+
+<DT><STRONG><font color="black">llength_rel_cases</font></STRONG>
+<DD>
+<PRE>
+|- !a0 a1.
+     llength_rel a0 a1 <=>
+     (a0 = [||]) /\ (a1 = 0) \/
+     ?h n t. (a0 = h:::t) /\ (a1 = SUC n) /\ llength_rel t n
+</PRE>
+
+<DT><STRONG><font color="black">LLENGTH_THM</font></STRONG>
+<DD>
+<PRE>
+|- (LLENGTH [||] = SOME 0) /\
+   !h t. LLENGTH (h:::t) = OPTION_MAP SUC (LLENGTH t)
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_HAS_LENGTH</font></STRONG>
+<DD>
+<PRE>
+|- !ll. LFINITE ll ==> ?n. LLENGTH ll = SOME n
+</PRE>
+
+<DT><STRONG><font color="black">NOT_LFINITE_NO_LENGTH</font></STRONG>
+<DD>
+<PRE>
+|- !ll. ~LFINITE ll ==> (LLENGTH ll = NONE)
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_INDUCTION</font></STRONG>
+<DD>
+<PRE>
+|- !P. P [||] /\ (!h t. P t ==> P (h:::t)) ==> !a0. LFINITE a0 ==> P a0
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_STRONG_INDUCTION</font></STRONG>
+<DD>
+<PRE>
+|- P [||] /\ (!h t. LFINITE t /\ P t ==> P (h:::t)) ==>
+   !a0. LFINITE a0 ==> P a0
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_MAP</font></STRONG>
+<DD>
+<PRE>
+|- !f ll. LFINITE (LMAP f ll) <=> LFINITE ll
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_APPEND</font></STRONG>
+<DD>
+<PRE>
+|- !ll1 ll2. LFINITE (LAPPEND ll1 ll2) <=> LFINITE ll1 /\ LFINITE ll2
+</PRE>
+
+<DT><STRONG><font color="black">NOT_LFINITE_APPEND</font></STRONG>
+<DD>
+<PRE>
+|- !ll1 ll2. ~LFINITE ll1 ==> (LAPPEND ll1 ll2 = ll1)
+</PRE>
+
+<DT><STRONG><font color="black">LLENGTH_MAP</font></STRONG>
+<DD>
+<PRE>
+|- !ll f. LLENGTH (LMAP f ll) = LLENGTH ll
+</PRE>
+
+<DT><STRONG><font color="black">LLENGTH_APPEND</font></STRONG>
+<DD>
+<PRE>
+|- !ll1 ll2.
+     LLENGTH (LAPPEND ll1 ll2) =
+     if LFINITE ll1 /\ LFINITE ll2 then
+       SOME (THE (LLENGTH ll1) + THE (LLENGTH ll2))
+     else
+       NONE
+</PRE>
+
+<DT><STRONG><font color="black">toList_THM</font></STRONG>
+<DD>
+<PRE>
+|- (toList [||] = SOME []) /\
+   !h t. toList (h:::t) = OPTION_MAP (CONS h) (toList t)
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_fromList</font></STRONG>
+<DD>
+<PRE>
+|- !l. LFINITE (fromList l)
+</PRE>
+
+<DT><STRONG><font color="black">LLENGTH_fromList</font></STRONG>
+<DD>
+<PRE>
+|- !l. LLENGTH (fromList l) = SOME (LENGTH l)
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_fromList</font></STRONG>
+<DD>
+<PRE>
+|- !l. LTAKE (LENGTH l) (fromList l) = SOME l
+</PRE>
+
+<DT><STRONG><font color="black">from_toList</font></STRONG>
+<DD>
+<PRE>
+|- !l. toList (fromList l) = SOME l
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_toList</font></STRONG>
+<DD>
+<PRE>
+|- !ll. LFINITE ll ==> ?l. toList ll = SOME l
+</PRE>
+
+<DT><STRONG><font color="black">to_fromList</font></STRONG>
+<DD>
+<PRE>
+|- !ll. LFINITE ll ==> (fromList (THE (toList ll)) = ll)
+</PRE>
+
+<DT><STRONG><font color="black">LDROP_THM</font></STRONG>
+<DD>
+<PRE>
+|- (!ll. LDROP 0 ll = SOME ll) /\ (!n. LDROP (SUC n) [||] = NONE) /\
+   !n h t. LDROP (SUC n) (h:::t) = LDROP n t
+</PRE>
+
+<DT><STRONG><font color="black">LDROP1_THM</font></STRONG>
+<DD>
+<PRE>
+|- LDROP 1 = LTL
+</PRE>
+
+<DT><STRONG><font color="black">NOT_LFINITE_TAKE</font></STRONG>
+<DD>
+<PRE>
+|- !ll. ~LFINITE ll ==> !n. ?y. LTAKE n ll = SOME y
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_TAKE</font></STRONG>
+<DD>
+<PRE>
+|- !n ll. LFINITE ll /\ n <= THE (LLENGTH ll) ==> ?y. LTAKE n ll = SOME y
+</PRE>
+
+<DT><STRONG><font color="black">NOT_LFINITE_DROP</font></STRONG>
+<DD>
+<PRE>
+|- !ll. ~LFINITE ll ==> !n. ?y. LDROP n ll = SOME y
+</PRE>
+
+<DT><STRONG><font color="black">LFINITE_DROP</font></STRONG>
+<DD>
+<PRE>
+|- !n ll. LFINITE ll /\ n <= THE (LLENGTH ll) ==> ?y. LDROP n ll = SOME y
+</PRE>
+
+<DT><STRONG><font color="black">LTAKE_DROP</font></STRONG>
+<DD>
+<PRE>
+|- (!n ll.
+      ~LFINITE ll ==>
+      (LAPPEND (fromList (THE (LTAKE n ll))) (THE (LDROP n ll)) = ll)) /\
+   !n ll.
+     LFINITE ll /\ n <= THE (LLENGTH ll) ==>
+     (LAPPEND (fromList (THE (LTAKE n ll))) (THE (LDROP n ll)) = ll)
+</PRE>
+
+<DT><STRONG><font color="black">exists_rules</font></STRONG>
+<DD>
+<PRE>
+|- !P.
+     (!h t. P h ==> exists P (h:::t)) /\ !h t. exists P t ==> exists P (h:::t)
+</PRE>
+
+<DT><STRONG><font color="black">exists_ind</font></STRONG>
+<DD>
+<PRE>
+|- !P exists'.
+     (!h t. P h ==> exists' (h:::t)) /\
+     (!h t. exists' t ==> exists' (h:::t)) ==>
+     !a0. exists P a0 ==> exists' a0
+</PRE>
+
+<DT><STRONG><font color="black">exists_cases</font></STRONG>
+<DD>
+<PRE>
+|- !P a0.
+     exists P a0 <=>
+     (?h t. (a0 = h:::t) /\ P h) \/ ?h t. (a0 = h:::t) /\ exists P t
+</PRE>
+
+<DT><STRONG><font color="black">exists_thm</font></STRONG>
+<DD>
+<PRE>
+|- (exists P [||] <=> F) /\ (exists P (h:::t) <=> P h \/ exists P t)
+</PRE>
+
+<DT><STRONG><font color="black">exists_LNTH</font></STRONG>
+<DD>
+<PRE>
+|- !l. exists P l <=> ?n e. (SOME e = LNTH n l) /\ P e
+</PRE>
+
+<DT><STRONG><font color="black">MONO_exists</font></STRONG>
+<DD>
+<PRE>
+|- (!x. P x ==> Q x) ==> exists P l ==> exists Q l
+</PRE>
+
+<DT><STRONG><font color="black">every_coind</font></STRONG>
+<DD>
+<PRE>
+|- !P Q. (!h t. Q (h:::t) ==> P h /\ Q t) ==> !ll. Q ll ==> every P ll
+</PRE>
+
+<DT><STRONG><font color="black">every_thm</font></STRONG>
+<DD>
+<PRE>
+|- (every P [||] <=> T) /\ (every P (h:::t) <=> P h /\ every P t)
+</PRE>
+
+<DT><STRONG><font color="black">LL_ALL_THM</font></STRONG>
+<DD>
+<PRE>
+|- (every P [||] <=> T) /\ (every P (h:::t) <=> P h /\ every P t)
+</PRE>
+
+<DT><STRONG><font color="black">MONO_every</font></STRONG>
+<DD>
+<PRE>
+|- (!x. P x ==> Q x) ==> every P l ==> every Q l
+</PRE>
+
+<DT><STRONG><font color="black">LFILTER_THM</font></STRONG>
+<DD>
+<PRE>
+|- (!P. LFILTER P [||] = [||]) /\
+   !P h t. LFILTER P (h:::t) = if P h then h:::LFILTER P t else LFILTER P t
+</PRE>
+
+<DT><STRONG><font color="black">LFILTER_NIL</font></STRONG>
+<DD>
+<PRE>
+|- !P ll. every ($~ o P) ll ==> (LFILTER P ll = [||])
+</PRE>
+
+<DT><STRONG><font color="black">LFILTER_EQ_NIL</font></STRONG>
+<DD>
+<PRE>
+|- !ll. (LFILTER P ll = [||]) <=> every ($~ o P) ll
+</PRE>
+
+<DT><STRONG><font color="black">LFILTER_APPEND</font></STRONG>
+<DD>
+<PRE>
+|- !P ll1 ll2.
+     LFINITE ll1 ==>
+     (LFILTER P (LAPPEND ll1 ll2) = LAPPEND (LFILTER P ll1) (LFILTER P ll2))
+</PRE>
+
+<DT><STRONG><font color="black">LFLATTEN_THM</font></STRONG>
+<DD>
+<PRE>
+|- (LFLATTEN [||] = [||]) /\ (!tl. LFLATTEN ([||]:::t) = LFLATTEN t) /\
+   !h t tl. LFLATTEN ((h:::t):::tl) = h:::LFLATTEN (t:::tl)
+</PRE>
+
+<DT><STRONG><font color="black">LFLATTEN_APPEND</font></STRONG>
+<DD>
+<PRE>
+|- !h t. LFLATTEN (h:::t) = LAPPEND h (LFLATTEN t)
+</PRE>
+
+<DT><STRONG><font color="black">LFLATTEN_EQ_NIL</font></STRONG>
+<DD>
+<PRE>
+|- !ll. (LFLATTEN ll = [||]) <=> every ($= [||]) ll
+</PRE>
+
+<DT><STRONG><font color="black">LFLATTEN_SINGLETON</font></STRONG>
+<DD>
+<PRE>
+|- !h. LFLATTEN [|h|] = h
+</PRE>
+
+<DT><STRONG><font color="black">LZIP_LUNZIP</font></STRONG>
+<DD>
+<PRE>
+|- !ll. LZIP (LUNZIP ll) = ll
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>

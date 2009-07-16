@@ -1,0 +1,452 @@
+<HTML>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Theory: quotient_pred_set</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "quotient_pred_set"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "quotient_pairTheory.html"><STRONG><font color="black">quotient_pair</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">DELETER</font></STRONG>
+                                         <td>
+                                         :('a -> 'a -> bool) ->
+                                          ('a -> bool) -> 'a -> 'a -> bool
+    <tr><td>
+        <STRONG><font color="black">DISJOINTR</font></STRONG>
+        <td>
+        :('a -> 'a -> bool) -> ('a -> bool) -> ('a -> bool) -> bool
+    <tr><td>
+        <STRONG><font color="black">FINITER</font></STRONG>
+        <td>
+        :('a -> 'a -> bool) -> ('a -> bool) -> bool
+    <tr><td>
+        <STRONG><font color="black">GSPECR</font></STRONG>
+        <td>
+        :('a -> 'a -> bool) ->
+         ('b -> 'b -> bool) -> ('a -> 'b # bool) -> 'b -> bool
+    <tr><td>
+        <STRONG><font color="black">IMAGER</font></STRONG>
+        <td>
+        :('a -> 'a -> bool) ->
+         ('b -> 'b -> bool) -> ('a -> 'b) -> ('a -> bool) -> 'b -> bool
+    <tr><td>
+        <STRONG><font color="black">INSERTR</font></STRONG>
+        <td>
+        :('a -> 'a -> bool) -> 'a -> ('a -> bool) -> 'a -> bool
+    <tr><td>
+        <STRONG><font color="black">PSUBSETR</font></STRONG>
+        <td>
+        :('a -> 'a -> bool) -> ('a -> bool) -> ('a -> bool) -> bool
+    <tr><td>
+        <STRONG><font color="black">SUBSETR</font></STRONG>
+        <td>
+        :('a -> 'a -> bool) -> ('a -> bool) -> ('a -> bool) -> bool
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">GSPECR_def</font></STRONG>
+<DD>
+<PRE>
+|- !R1 R2 f v. GSPECR R1 R2 f v <=> ?x::respects R1. (R2 ### $<=>) (v,T) (f x)
+</PRE>
+
+<DT><STRONG><font color="black">SUBSETR_def</font></STRONG>
+<DD>
+<PRE>
+|- !R s t. SUBSETR R s t <=> !x::respects R. x IN s ==> x IN t
+</PRE>
+
+<DT><STRONG><font color="black">PSUBSETR_def</font></STRONG>
+<DD>
+<PRE>
+|- !R s t. PSUBSETR R s t <=> SUBSETR R s t /\ ~(R ===> $<=>) s t
+</PRE>
+
+<DT><STRONG><font color="black">INSERTR_def</font></STRONG>
+<DD>
+<PRE>
+|- !R x s. INSERTR R x s = {y | R y x \/ y IN s}
+</PRE>
+
+<DT><STRONG><font color="black">DELETER_def</font></STRONG>
+<DD>
+<PRE>
+|- !R s x. DELETER R s x = {y | y IN s /\ ~R x y}
+</PRE>
+
+<DT><STRONG><font color="black">DISJOINTR_def</font></STRONG>
+<DD>
+<PRE>
+|- !R s t. DISJOINTR R s t <=> ~?x::respects R. x IN s /\ x IN t
+</PRE>
+
+<DT><STRONG><font color="black">FINITER_def</font></STRONG>
+<DD>
+<PRE>
+|- !R s.
+     FINITER R s <=>
+     !P::respects ((R ===> $<=>) ===> $<=>).
+       P {} /\
+       (!s::respects (R ===> $<=>).
+          P s ==> !e::respects R. P (INSERTR R e s)) ==>
+       P s
+</PRE>
+
+<DT><STRONG><font color="black">IMAGER_def</font></STRONG>
+<DD>
+<PRE>
+|- !R1 R2 f s. IMAGER R1 R2 f s = {y | ?x::respects R1. R2 y (f x) /\ x IN s}
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">IN_SET_MAP</font></STRONG>
+<DD>
+<PRE>
+|- !f s x. x IN (f --> I) s <=> f x IN s
+</PRE>
+
+<DT><STRONG><font color="black">SET_REL</font></STRONG>
+<DD>
+<PRE>
+|- !R s t. (R ===> $<=>) s t <=> !x y. R x y ==> (x IN s <=> y IN t)
+</PRE>
+
+<DT><STRONG><font color="black">SET_REL_MP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s t x y. (R ===> $<=>) s t /\ R x y ==> (x IN s <=> y IN t)
+</PRE>
+
+<DT><STRONG><font color="black">IN_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> !x s. x IN s <=> rep x IN (abs --> I) s
+</PRE>
+
+<DT><STRONG><font color="black">IN_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !x1 x2 s1 s2. R x1 x2 /\ (R ===> $<=>) s1 s2 ==> (x1 IN s1 <=> x2 IN s2)
+</PRE>
+
+<DT><STRONG><font color="black">IN_GSPECR</font></STRONG>
+<DD>
+<PRE>
+|- !R1 R2 f v.
+     v IN GSPECR R1 R2 f <=> ?x::respects R1. (R2 ### $<=>) (v,T) (f x)
+</PRE>
+
+<DT><STRONG><font color="black">GSPEC_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !f. GSPEC f = (rep2 --> I) (GSPECR R1 R2 ((abs1 --> (rep2 ## I)) f))
+</PRE>
+
+<DT><STRONG><font color="black">GSPECR_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !f1 f2.
+         (R1 ===> R2 ### $<=>) f1 f2 ==>
+         (R2 ===> $<=>) (GSPECR R1 R2 f1) (GSPECR R1 R2 f2)
+</PRE>
+
+<DT><STRONG><font color="black">EMPTY_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> ({} = (rep --> I) {})
+</PRE>
+
+<DT><STRONG><font color="black">EMPTY_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> (R ===> $<=>) {} {}
+</PRE>
+
+<DT><STRONG><font color="black">UNIV_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> (UNIV = (rep --> I) UNIV)
+</PRE>
+
+<DT><STRONG><font color="black">UNIV_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep. QUOTIENT R abs rep ==> (R ===> $<=>) UNIV UNIV
+</PRE>
+
+<DT><STRONG><font color="black">UNION_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s t. s UNION t = (rep --> I) ((abs --> I) s UNION (abs --> I) t)
+</PRE>
+
+<DT><STRONG><font color="black">UNION_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s1 s2 t1 t2.
+       (R ===> $<=>) s1 s2 /\ (R ===> $<=>) t1 t2 ==>
+       (R ===> $<=>) (s1 UNION t1) (s2 UNION t2)
+</PRE>
+
+<DT><STRONG><font color="black">INTER_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s t. s INTER t = (rep --> I) ((abs --> I) s INTER (abs --> I) t)
+</PRE>
+
+<DT><STRONG><font color="black">INTER_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s1 s2 t1 t2.
+       (R ===> $<=>) s1 s2 /\ (R ===> $<=>) t1 t2 ==>
+       (R ===> $<=>) (s1 INTER t1) (s2 INTER t2)
+</PRE>
+
+<DT><STRONG><font color="black">SUBSET_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s t. s SUBSET t <=> SUBSETR R ((abs --> I) s) ((abs --> I) t)
+</PRE>
+
+<DT><STRONG><font color="black">SUBSETR_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s1 s2 t1 t2.
+       (R ===> $<=>) s1 s2 /\ (R ===> $<=>) t1 t2 ==>
+       (SUBSETR R s1 t1 <=> SUBSETR R s2 t2)
+</PRE>
+
+<DT><STRONG><font color="black">PSUBSET_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s t. s PSUBSET t <=> PSUBSETR R ((abs --> I) s) ((abs --> I) t)
+</PRE>
+
+<DT><STRONG><font color="black">PSUBSETR_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s1 s2 t1 t2.
+       (R ===> $<=>) s1 s2 /\ (R ===> $<=>) t1 t2 ==>
+       (PSUBSETR R s1 t1 <=> PSUBSETR R s2 t2)
+</PRE>
+
+<DT><STRONG><font color="black">IN_INSERTR</font></STRONG>
+<DD>
+<PRE>
+|- !R x s y. y IN INSERTR R x s <=> R y x \/ y IN s
+</PRE>
+
+<DT><STRONG><font color="black">INSERT_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s x. x INSERT s = (rep --> I) (INSERTR R (rep x) ((abs --> I) s))
+</PRE>
+
+<DT><STRONG><font color="black">INSERTR_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !x1 x2 s1 s2.
+       R x1 x2 /\ (R ===> $<=>) s1 s2 ==>
+       (R ===> $<=>) (INSERTR R x1 s1) (INSERTR R x2 s2)
+</PRE>
+
+<DT><STRONG><font color="black">IN_DELETER</font></STRONG>
+<DD>
+<PRE>
+|- !R s x y. y IN DELETER R s x <=> y IN s /\ ~R x y
+</PRE>
+
+<DT><STRONG><font color="black">DELETE_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s x. s DELETE x = (rep --> I) (DELETER R ((abs --> I) s) (rep x))
+</PRE>
+
+<DT><STRONG><font color="black">DELETER_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s1 s2 x1 x2.
+       (R ===> $<=>) s1 s2 /\ R x1 x2 ==>
+       (R ===> $<=>) (DELETER R s1 x1) (DELETER R s2 x2)
+</PRE>
+
+<DT><STRONG><font color="black">DIFF_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s t. s DIFF t = (rep --> I) ((abs --> I) s DIFF (abs --> I) t)
+</PRE>
+
+<DT><STRONG><font color="black">DIFF_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s1 s2 t1 t2.
+       (R ===> $<=>) s1 s2 /\ (R ===> $<=>) t1 t2 ==>
+       (R ===> $<=>) (s1 DIFF t1) (s2 DIFF t2)
+</PRE>
+
+<DT><STRONG><font color="black">DISJOINT_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s t. DISJOINT s t <=> DISJOINTR R ((abs --> I) s) ((abs --> I) t)
+</PRE>
+
+<DT><STRONG><font color="black">DISJOINTR_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s1 s2 t1 t2.
+       (R ===> $<=>) s1 s2 /\ (R ===> $<=>) t1 t2 ==>
+       (DISJOINTR R s1 t1 <=> DISJOINTR R s2 t2)
+</PRE>
+
+<DT><STRONG><font color="black">FINITE_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==> !s. FINITE s <=> FINITER R ((abs --> I) s)
+</PRE>
+
+<DT><STRONG><font color="black">FINITER_EQ</font></STRONG>
+<DD>
+<PRE>
+|- !R s1 s2. (R ===> $<=>) s1 s2 ==> (FINITER R s1 <=> FINITER R s2)
+</PRE>
+
+<DT><STRONG><font color="black">FINITER_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R abs rep.
+     QUOTIENT R abs rep ==>
+     !s1 s2. (R ===> $<=>) s1 s2 ==> (FINITER R s1 <=> FINITER R s2)
+</PRE>
+
+<DT><STRONG><font color="black">FINITER_EMPTY</font></STRONG>
+<DD>
+<PRE>
+|- !R. FINITER R {}
+</PRE>
+
+<DT><STRONG><font color="black">FINITER_INSERTR</font></STRONG>
+<DD>
+<PRE>
+|- !R (s::respects (R ===> $<=>)).
+     FINITER R s ==> !x::respects R. FINITER R (INSERTR R x s)
+</PRE>
+
+<DT><STRONG><font color="black">ABSORPTIONR</font></STRONG>
+<DD>
+<PRE>
+|- !R (x::respects R) (s::respects (R ===> $<=>)).
+     x IN s <=> (R ===> $<=>) (INSERTR R x s) s
+</PRE>
+
+<DT><STRONG><font color="black">FINITER_INDUCT</font></STRONG>
+<DD>
+<PRE>
+|- !R (P::respects ((R ===> $<=>) ===> $<=>)).
+     P {} /\
+     (!s::respects (R ===> $<=>).
+        FINITER R s /\ P s ==>
+        !e::respects R. e NOTIN s ==> P (INSERTR R e s)) ==>
+     !s::respects (R ===> $<=>). FINITER R s ==> P s
+</PRE>
+
+<DT><STRONG><font color="black">IN_IMAGER</font></STRONG>
+<DD>
+<PRE>
+|- !R1 R2 y f s.
+     y IN IMAGER R1 R2 f s <=> ?x::respects R1. R2 y (f x) /\ x IN s
+</PRE>
+
+<DT><STRONG><font color="black">IMAGE_PRS</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !f s.
+         IMAGE f s =
+         (rep2 --> I) (IMAGER R1 R2 ((abs1 --> rep2) f) ((abs1 --> I) s))
+</PRE>
+
+<DT><STRONG><font color="black">IMAGER_RSP</font></STRONG>
+<DD>
+<PRE>
+|- !R1 abs1 rep1.
+     QUOTIENT R1 abs1 rep1 ==>
+     !R2 abs2 rep2.
+       QUOTIENT R2 abs2 rep2 ==>
+       !f1 f2 s1 s2.
+         (R1 ===> R2) f1 f2 /\ (R1 ===> $<=>) s1 s2 ==>
+         (R2 ===> $<=>) (IMAGER R1 R2 f1 s1) (IMAGER R1 R2 f2 s2)
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>

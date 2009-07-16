@@ -1,0 +1,96 @@
+<HTML>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Theory: bag_emit</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "bag_emit"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "set_emitTheory.html"><STRONG><font color="black">set_emit</font></STRONG></A>&nbsp;&nbsp;
+    <A HREF = "bagTheory.html"><STRONG><font color="black">bag</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Type</font>
+    <th>
+    <font color="crimson">Arity</font><tr><td>
+                                          <STRONG><font color="black">bag</font></STRONG>
+                                          <td>
+                                          1
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">BAG_VAL</font></STRONG>
+                                         <td>
+                                         :('b -> 'a) -> 'b -> 'a
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">BAG_VAL_DEF</font></STRONG>
+<DD>
+<PRE>
+|- !b x. BAG_VAL b x = b x
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">BAG_DIFF_EQNS</font></STRONG>
+<DD>
+<PRE>
+|- (!b. BAG_DIFF b {||} = b) /\ (!b. BAG_DIFF {||} b = {||}) /\
+   (!x b y.
+      BAG_DIFF (BAG_INSERT x b) {|y|} =
+      if x = y then b else BAG_INSERT x (BAG_DIFF b {|y|})) /\
+   !b1 y b2. BAG_DIFF b1 (BAG_INSERT y b2) = BAG_DIFF (BAG_DIFF b1 {|y|}) b2
+</PRE>
+
+<DT><STRONG><font color="black">BAG_INTER_EQNS</font></STRONG>
+<DD>
+<PRE>
+|- (!b. BAG_INTER {||} b = {||}) /\ (!b. BAG_INTER b {||} = {||}) /\
+   !x b1 b2.
+     BAG_INTER (BAG_INSERT x b1) b2 =
+     if BAG_IN x b2 then
+       BAG_INSERT x (BAG_INTER b1 (BAG_DIFF b2 {|x|}))
+     else
+       BAG_INTER b1 b2
+</PRE>
+
+<DT><STRONG><font color="black">BAG_MERGE_EQNS</font></STRONG>
+<DD>
+<PRE>
+|- (!b. BAG_MERGE {||} b = b) /\ (!b. BAG_MERGE b {||} = b) /\
+   !x b1 b2.
+     BAG_MERGE (BAG_INSERT x b1) b2 =
+     BAG_INSERT x (BAG_MERGE b1 (BAG_DIFF b2 {|x|}))
+</PRE>
+
+<DT><STRONG><font color="black">SUB_BAG_EQNS</font></STRONG>
+<DD>
+<PRE>
+|- (!b. SUB_BAG {||} b <=> T) /\
+   !x b1 b2.
+     SUB_BAG (BAG_INSERT x b1) b2 <=>
+     BAG_IN x b2 /\ SUB_BAG b1 (BAG_DIFF b2 {|x|})
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>

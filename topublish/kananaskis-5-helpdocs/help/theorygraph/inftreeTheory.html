@@ -1,0 +1,249 @@
+<HTML>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Theory: inftree</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "inftree"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "listTheory.html"><STRONG><font color="black">list</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Type</font>
+    <th>
+    <font color="crimson">Arity</font><tr><td>
+                                          <STRONG><font color="black">inftree</font></STRONG>
+                                          <td>
+                                          3
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">from_inftree</font></STRONG>
+                                         <td>
+                                         :('a, 'b, 'd) inftree ->
+                                          'd list -> 'a + 'b
+    <tr><td>
+        <STRONG><font color="black">iLf</font></STRONG>
+        <td>
+        :'a -> ('a, 'b, 'c) inftree
+    <tr><td>
+        <STRONG><font color="black">iNd</font></STRONG>
+        <td>
+        :'b -> ('c -> ('a, 'b, 'c) inftree) -> ('a, 'b, 'c) inftree
+    <tr><td>
+        <STRONG><font color="black">inftree_case</font></STRONG>
+        <td>
+        :('a -> 'd) ->
+         ('b -> ('c -> ('a, 'b, 'c) inftree) -> 'd) ->
+         ('a, 'b, 'c) inftree -> 'd
+    <tr><td>
+        <STRONG><font color="black">inftree_rec</font></STRONG>
+        <td>
+        :('b -> 'a) -> ('c -> ('d -> 'a) -> 'a) -> ('b, 'c, 'd) inftree -> 'a
+    <tr><td>
+        <STRONG><font color="black">is_tree</font></STRONG>
+        <td>
+        :('d list -> 'a + 'b) -> bool
+    <tr><td>
+        <STRONG><font color="black">relrec</font></STRONG>
+        <td>
+        :('a -> 'b) ->
+         ('c -> ('d -> 'b) -> 'b) -> ('a, 'c, 'd) inftree -> 'b -> bool
+    <tr><td>
+        <STRONG><font color="black">to_inftree</font></STRONG>
+        <td>
+        :('d list -> 'a + 'b) -> ('a, 'b, 'd) inftree
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">is_tree</font></STRONG>
+<DD>
+<PRE>
+|- is_tree =
+   (\a0.
+      !is_tree'.
+        (!a0.
+           (?a. a0 = (\p. INL a)) \/
+           (?f b.
+              (a0 = (\p. if p = [] then INR b else f (HD p) (TL p))) /\
+              !d. is_tree' (f d)) ==>
+           is_tree' a0) ==>
+        is_tree' a0)
+</PRE>
+
+<DT><STRONG><font color="black">inftree_TY_DEF</font></STRONG>
+<DD>
+<PRE>
+|- ?rep. TYPE_DEFINITION is_tree rep
+</PRE>
+
+<DT><STRONG><font color="black">inftree_bijections</font></STRONG>
+<DD>
+<PRE>
+|- (!a. to_inftree (from_inftree a) = a) /\
+   !r. is_tree r <=> (from_inftree (to_inftree r) = r)
+</PRE>
+
+<DT><STRONG><font color="black">iLf_def</font></STRONG>
+<DD>
+<PRE>
+|- !a. iLf a = to_inftree (\p. INL a)
+</PRE>
+
+<DT><STRONG><font color="black">iNd_def</font></STRONG>
+<DD>
+<PRE>
+|- !b f.
+     iNd b f =
+     to_inftree (\p. if p = [] then INR b else from_inftree (f (HD p)) (TL p))
+</PRE>
+
+<DT><STRONG><font color="black">relrec</font></STRONG>
+<DD>
+<PRE>
+|- relrec =
+   (\a0 a1 a2 a3.
+      !relrec'.
+        (!a0 a1 a2 a3.
+           (?a. (a2 = iLf a) /\ (a3 = a0 a)) \/
+           (?b df g.
+              (a2 = iNd b df) /\ (a3 = a1 b g) /\
+              !d. relrec' a0 a1 (df d) (g d)) ==>
+           relrec' a0 a1 a2 a3) ==>
+        relrec' a0 a1 a2 a3)
+</PRE>
+
+<DT><STRONG><font color="black">inftree_rec_def</font></STRONG>
+<DD>
+<PRE>
+|- !lf nd t. inftree_rec lf nd t = @r. relrec lf nd t r
+</PRE>
+
+<DT><STRONG><font color="black">inftree_case_def</font></STRONG>
+<DD>
+<PRE>
+|- (!lf nd a. inftree_case lf nd (iLf a) = lf a) /\
+   !lf nd b d. inftree_case lf nd (iNd b d) = nd b d
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">is_tree_rules</font></STRONG>
+<DD>
+<PRE>
+|- (!a. is_tree (\p. INL a)) /\
+   !f b.
+     (!d. is_tree (f d)) ==>
+     is_tree (\p. if p = [] then INR b else f (HD p) (TL p))
+</PRE>
+
+<DT><STRONG><font color="black">is_tree_ind</font></STRONG>
+<DD>
+<PRE>
+|- !is_tree'.
+     (!a. is_tree' (\p. INL a)) /\
+     (!f b.
+        (!d. is_tree' (f d)) ==>
+        is_tree' (\p. if p = [] then INR b else f (HD p) (TL p))) ==>
+     !a0. is_tree a0 ==> is_tree' a0
+</PRE>
+
+<DT><STRONG><font color="black">is_tree_cases</font></STRONG>
+<DD>
+<PRE>
+|- !a0.
+     is_tree a0 <=>
+     (?a. a0 = (\p. INL a)) \/
+     ?f b.
+       (a0 = (\p. if p = [] then INR b else f (HD p) (TL p))) /\
+       !d. is_tree (f d)
+</PRE>
+
+<DT><STRONG><font color="black">iNd_is_tree</font></STRONG>
+<DD>
+<PRE>
+|- !b f.
+     is_tree (\p. if p = [] then INR b else from_inftree (f (HD p)) (TL p))
+</PRE>
+
+<DT><STRONG><font color="black">inftree_11</font></STRONG>
+<DD>
+<PRE>
+|- ((iLf a1 = iLf a2) <=> (a1 = a2)) /\
+   ((iNd b1 f1 = iNd b2 f2) <=> (b1 = b2) /\ (f1 = f2))
+</PRE>
+
+<DT><STRONG><font color="black">inftree_distinct</font></STRONG>
+<DD>
+<PRE>
+|- iLf a <> iNd b f
+</PRE>
+
+<DT><STRONG><font color="black">inftree_ind</font></STRONG>
+<DD>
+<PRE>
+|- !P. (!a. P (iLf a)) /\ (!b f. (!d. P (f d)) ==> P (iNd b f)) ==> !t. P t
+</PRE>
+
+<DT><STRONG><font color="black">relrec_rules</font></STRONG>
+<DD>
+<PRE>
+|- (!lf nd a. relrec lf nd (iLf a) (lf a)) /\
+   !lf nd b df g.
+     (!d. relrec lf nd (df d) (g d)) ==> relrec lf nd (iNd b df) (nd b g)
+</PRE>
+
+<DT><STRONG><font color="black">relrec_ind</font></STRONG>
+<DD>
+<PRE>
+|- !relrec'.
+     (!lf nd a. relrec' lf nd (iLf a) (lf a)) /\
+     (!lf nd b df g.
+        (!d. relrec' lf nd (df d) (g d)) ==>
+        relrec' lf nd (iNd b df) (nd b g)) ==>
+     !a0 a1 a2 a3. relrec a0 a1 a2 a3 ==> relrec' a0 a1 a2 a3
+</PRE>
+
+<DT><STRONG><font color="black">relrec_cases</font></STRONG>
+<DD>
+<PRE>
+|- !a0 a1 a2 a3.
+     relrec a0 a1 a2 a3 <=>
+     (?a. (a2 = iLf a) /\ (a3 = a0 a)) \/
+     ?b df g.
+       (a2 = iNd b df) /\ (a3 = a1 b g) /\ !d. relrec a0 a1 (df d) (g d)
+</PRE>
+
+<DT><STRONG><font color="black">inftree_Axiom</font></STRONG>
+<DD>
+<PRE>
+|- !lf nd. ?f. (!a. f (iLf a) = lf a) /\ !b d. f (iNd b d) = nd b d (f o d)
+</PRE>
+
+<DT><STRONG><font color="black">inftree_nchotomy</font></STRONG>
+<DD>
+<PRE>
+|- !t. (?a. t = iLf a) \/ ?b d. t = iNd b d
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>

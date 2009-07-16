@@ -1,0 +1,439 @@
+<HTML>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Theory: hrat</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "hrat"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "quotient_sumTheory.html"><STRONG><font color="black">quotient_sum</font></STRONG></A>&nbsp;&nbsp;
+    <A HREF = "quotient_pairTheory.html"><STRONG><font color="black">quotient_pair</font></STRONG></A>&nbsp;&nbsp;
+    <A HREF = "quotient_optionTheory.html"><STRONG><font color="black">quotient_option</font></STRONG></A>&nbsp;&nbsp;
+    <A HREF = "quotient_listTheory.html"><STRONG><font color="black">quotient_list</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Type</font>
+    <th>
+    <font color="crimson">Arity</font><tr><td>
+                                          <STRONG><font color="black">hrat</font></STRONG>
+                                          <td>
+                                          0
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">hrat_1</font></STRONG>
+                                         <td>
+                                         :hrat
+    <tr><td>
+        <STRONG><font color="black">hrat_ABS</font></STRONG>
+        <td>
+        :num # num -> hrat
+    <tr><td>
+        <STRONG><font color="black">hrat_ABS_CLASS</font></STRONG>
+        <td>
+        :(num # num -> bool) -> hrat
+    <tr><td>
+        <STRONG><font color="black">hrat_REP</font></STRONG>
+        <td>
+        :hrat -> num # num
+    <tr><td>
+        <STRONG><font color="black">hrat_REP_CLASS</font></STRONG>
+        <td>
+        :hrat -> num # num -> bool
+    <tr><td>
+        <STRONG><font color="black">hrat_add</font></STRONG>
+        <td>
+        :hrat -> hrat -> hrat
+    <tr><td>
+        <STRONG><font color="black">hrat_inv</font></STRONG>
+        <td>
+        :hrat -> hrat
+    <tr><td>
+        <STRONG><font color="black">hrat_mul</font></STRONG>
+        <td>
+        :hrat -> hrat -> hrat
+    <tr><td>
+        <STRONG><font color="black">hrat_sucint</font></STRONG>
+        <td>
+        :num -> hrat
+    <tr><td>
+        <STRONG><font color="black">trat_1</font></STRONG>
+        <td>
+        :num # num
+    <tr><td>
+        <STRONG><font color="black">trat_add</font></STRONG>
+        <td>
+        :num # num -> num # num -> num # num
+    <tr><td>
+        <STRONG><font color="black">trat_eq</font></STRONG>
+        <td>
+        :num # num -> num # num -> bool
+    <tr><td>
+        <STRONG><font color="black">trat_inv</font></STRONG>
+        <td>
+        :num # num -> num # num
+    <tr><td>
+        <STRONG><font color="black">trat_mul</font></STRONG>
+        <td>
+        :num # num -> num # num -> num # num
+    <tr><td>
+        <STRONG><font color="black">trat_sucint</font></STRONG>
+        <td>
+        :num -> num # num
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">trat_1</font></STRONG>
+<DD>
+<PRE>
+|- trat_1 = (0,0)
+</PRE>
+
+<DT><STRONG><font color="black">trat_inv</font></STRONG>
+<DD>
+<PRE>
+|- !x y. trat_inv (x,y) = (y,x)
+</PRE>
+
+<DT><STRONG><font color="black">trat_add</font></STRONG>
+<DD>
+<PRE>
+|- !x y x' y'.
+     (x,y) trat_add (x',y') =
+     (PRE (SUC x * SUC y' + SUC x' * SUC y),PRE (SUC y * SUC y'))
+</PRE>
+
+<DT><STRONG><font color="black">trat_mul</font></STRONG>
+<DD>
+<PRE>
+|- !x y x' y'.
+     (x,y) trat_mul (x',y') = (PRE (SUC x * SUC x'),PRE (SUC y * SUC y'))
+</PRE>
+
+<DT><STRONG><font color="black">trat_sucint</font></STRONG>
+<DD>
+<PRE>
+|- (trat_sucint 0 = trat_1) /\
+   !n. trat_sucint (SUC n) = trat_sucint n trat_add trat_1
+</PRE>
+
+<DT><STRONG><font color="black">trat_eq</font></STRONG>
+<DD>
+<PRE>
+|- !x y x' y'. trat_eq (x,y) (x',y') <=> (SUC x * SUC y' = SUC x' * SUC y)
+</PRE>
+
+<DT><STRONG><font color="black">hrat_TY_DEF</font></STRONG>
+<DD>
+<PRE>
+|- ?rep. TYPE_DEFINITION (\c. ?r. trat_eq r r /\ (c = trat_eq r)) rep
+</PRE>
+
+<DT><STRONG><font color="black">hrat_bijections</font></STRONG>
+<DD>
+<PRE>
+|- (!a. hrat_ABS_CLASS (hrat_REP_CLASS a) = a) /\
+   !r.
+     (\c. ?r. trat_eq r r /\ (c = trat_eq r)) r <=>
+     (hrat_REP_CLASS (hrat_ABS_CLASS r) = r)
+</PRE>
+
+<DT><STRONG><font color="black">hrat_REP_def</font></STRONG>
+<DD>
+<PRE>
+|- !a. hrat_REP a = $@ (hrat_REP_CLASS a)
+</PRE>
+
+<DT><STRONG><font color="black">hrat_ABS_def</font></STRONG>
+<DD>
+<PRE>
+|- !r. hrat_ABS r = hrat_ABS_CLASS (trat_eq r)
+</PRE>
+
+<DT><STRONG><font color="black">hrat_1</font></STRONG>
+<DD>
+<PRE>
+|- hrat_1 = hrat_ABS trat_1
+</PRE>
+
+<DT><STRONG><font color="black">hrat_inv</font></STRONG>
+<DD>
+<PRE>
+|- !T1. hrat_inv T1 = hrat_ABS (trat_inv (hrat_REP T1))
+</PRE>
+
+<DT><STRONG><font color="black">hrat_add</font></STRONG>
+<DD>
+<PRE>
+|- !T1 T2. T1 hrat_add T2 = hrat_ABS (hrat_REP T1 trat_add hrat_REP T2)
+</PRE>
+
+<DT><STRONG><font color="black">hrat_mul</font></STRONG>
+<DD>
+<PRE>
+|- !T1 T2. T1 hrat_mul T2 = hrat_ABS (hrat_REP T1 trat_mul hrat_REP T2)
+</PRE>
+
+<DT><STRONG><font color="black">hrat_sucint</font></STRONG>
+<DD>
+<PRE>
+|- !T1. hrat_sucint T1 = hrat_ABS (trat_sucint T1)
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">TRAT_EQ_REFL</font></STRONG>
+<DD>
+<PRE>
+|- !p. trat_eq p p
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_EQ_SYM</font></STRONG>
+<DD>
+<PRE>
+|- !p q. trat_eq p q <=> trat_eq q p
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_EQ_TRANS</font></STRONG>
+<DD>
+<PRE>
+|- !p q r. trat_eq p q /\ trat_eq q r ==> trat_eq p r
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_EQ_AP</font></STRONG>
+<DD>
+<PRE>
+|- !p q. (p = q) ==> trat_eq p q
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_ADD_SYM_EQ</font></STRONG>
+<DD>
+<PRE>
+|- !h i. h trat_add i = i trat_add h
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_MUL_SYM_EQ</font></STRONG>
+<DD>
+<PRE>
+|- !h i. h trat_mul i = i trat_mul h
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_INV_WELLDEFINED</font></STRONG>
+<DD>
+<PRE>
+|- !p q. trat_eq p q ==> trat_eq (trat_inv p) (trat_inv q)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_ADD_WELLDEFINED</font></STRONG>
+<DD>
+<PRE>
+|- !p q r. trat_eq p q ==> trat_eq (p trat_add r) (q trat_add r)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_ADD_WELLDEFINED2</font></STRONG>
+<DD>
+<PRE>
+|- !p1 p2 q1 q2.
+     trat_eq p1 p2 /\ trat_eq q1 q2 ==>
+     trat_eq (p1 trat_add q1) (p2 trat_add q2)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_MUL_WELLDEFINED</font></STRONG>
+<DD>
+<PRE>
+|- !p q r. trat_eq p q ==> trat_eq (p trat_mul r) (q trat_mul r)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_MUL_WELLDEFINED2</font></STRONG>
+<DD>
+<PRE>
+|- !p1 p2 q1 q2.
+     trat_eq p1 p2 /\ trat_eq q1 q2 ==>
+     trat_eq (p1 trat_mul q1) (p2 trat_mul q2)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_ADD_SYM</font></STRONG>
+<DD>
+<PRE>
+|- !h i. trat_eq (h trat_add i) (i trat_add h)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_ADD_ASSOC</font></STRONG>
+<DD>
+<PRE>
+|- !h i j. trat_eq (h trat_add (i trat_add j)) (h trat_add i trat_add j)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_MUL_SYM</font></STRONG>
+<DD>
+<PRE>
+|- !h i. trat_eq (h trat_mul i) (i trat_mul h)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_MUL_ASSOC</font></STRONG>
+<DD>
+<PRE>
+|- !h i j. trat_eq (h trat_mul (i trat_mul j)) (h trat_mul i trat_mul j)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_LDISTRIB</font></STRONG>
+<DD>
+<PRE>
+|- !h i j.
+     trat_eq (h trat_mul (i trat_add j)) (h trat_mul i trat_add h trat_mul j)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_MUL_LID</font></STRONG>
+<DD>
+<PRE>
+|- !h. trat_eq (trat_1 trat_mul h) h
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_MUL_LINV</font></STRONG>
+<DD>
+<PRE>
+|- !h. trat_eq (trat_inv h trat_mul h) trat_1
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_NOZERO</font></STRONG>
+<DD>
+<PRE>
+|- !h i. ~trat_eq (h trat_add i) h
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_ADD_TOTAL</font></STRONG>
+<DD>
+<PRE>
+|- !h i.
+     trat_eq h i \/ (?d. trat_eq h (i trat_add d)) \/
+     ?d. trat_eq i (h trat_add d)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_SUCINT_0</font></STRONG>
+<DD>
+<PRE>
+|- !n. trat_eq (trat_sucint n) (n,0)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_ARCH</font></STRONG>
+<DD>
+<PRE>
+|- !h. ?n d. trat_eq (trat_sucint n) (h trat_add d)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_SUCINT</font></STRONG>
+<DD>
+<PRE>
+|- trat_eq (trat_sucint 0) trat_1 /\
+   !n. trat_eq (trat_sucint (SUC n)) (trat_sucint n trat_add trat_1)
+</PRE>
+
+<DT><STRONG><font color="black">TRAT_EQ_EQUIV</font></STRONG>
+<DD>
+<PRE>
+|- !p q. trat_eq p q <=> (trat_eq p = trat_eq q)
+</PRE>
+
+<DT><STRONG><font color="black">hrat_ABS_REP_CLASS</font></STRONG>
+<DD>
+<PRE>
+|- (!a. hrat_ABS_CLASS (hrat_REP_CLASS a) = a) /\
+   !c.
+     (?r. trat_eq r r /\ (c = trat_eq r)) <=>
+     (hrat_REP_CLASS (hrat_ABS_CLASS c) = c)
+</PRE>
+
+<DT><STRONG><font color="black">hrat_QUOTIENT</font></STRONG>
+<DD>
+<PRE>
+|- QUOTIENT trat_eq hrat_ABS hrat_REP
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_ADD_SYM</font></STRONG>
+<DD>
+<PRE>
+|- !h i. h hrat_add i = i hrat_add h
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_ADD_ASSOC</font></STRONG>
+<DD>
+<PRE>
+|- !h i j. h hrat_add (i hrat_add j) = h hrat_add i hrat_add j
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_MUL_SYM</font></STRONG>
+<DD>
+<PRE>
+|- !h i. h hrat_mul i = i hrat_mul h
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_MUL_ASSOC</font></STRONG>
+<DD>
+<PRE>
+|- !h i j. h hrat_mul (i hrat_mul j) = h hrat_mul i hrat_mul j
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_LDISTRIB</font></STRONG>
+<DD>
+<PRE>
+|- !h i j. h hrat_mul (i hrat_add j) = h hrat_mul i hrat_add h hrat_mul j
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_MUL_LID</font></STRONG>
+<DD>
+<PRE>
+|- !h. hrat_1 hrat_mul h = h
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_MUL_LINV</font></STRONG>
+<DD>
+<PRE>
+|- !h. hrat_inv h hrat_mul h = hrat_1
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_NOZERO</font></STRONG>
+<DD>
+<PRE>
+|- !h i. h hrat_add i <> h
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_ADD_TOTAL</font></STRONG>
+<DD>
+<PRE>
+|- !h i. (h = i) \/ (?d. h = i hrat_add d) \/ ?d. i = h hrat_add d
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_ARCH</font></STRONG>
+<DD>
+<PRE>
+|- !h. ?n d. hrat_sucint n = h hrat_add d
+</PRE>
+
+<DT><STRONG><font color="black">HRAT_SUCINT</font></STRONG>
+<DD>
+<PRE>
+|- (hrat_sucint 0 = hrat_1) /\
+   !n. hrat_sucint (SUC n) = hrat_sucint n hrat_add hrat_1
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>

@@ -1,0 +1,370 @@
+<HTML>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Theory: numpair</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "numpair"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "basicSizeTheory.html"><STRONG><font color="black">basicSize</font></STRONG></A>&nbsp;&nbsp;
+    <A HREF = "whileTheory.html"><STRONG><font color="black">while</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">invtri</font></STRONG>
+                                         <td>
+                                         :num -> num
+    <tr><td>
+        <STRONG><font color="black">invtri0</font></STRONG>
+        <td>
+        :num -> num -> num # num
+    <tr><td>
+        <STRONG><font color="black">invtri0_tupled</font></STRONG>
+        <td>
+        :num # num -> num # num
+    <tr><td>
+        <STRONG><font color="black">ncons</font></STRONG>
+        <td>
+        :num -> num -> num
+    <tr><td>
+        <STRONG><font color="black">nfoldl</font></STRONG>
+        <td>
+        :(num -> 'a -> 'a) -> 'a -> num -> 'a
+    <tr><td> <STRONG><font color="black">nfst</font></STRONG> <td> :num -> num
+    <tr><td> <STRONG><font color="black">nlen</font></STRONG> <td> :num -> num
+    <tr><td>
+        <STRONG><font color="black">nlistrec</font></STRONG>
+        <td>
+        :'a -> (num -> num -> 'a -> 'a) -> num -> 'a
+    <tr><td>
+        <STRONG><font color="black">nlistrec_tupled</font></STRONG>
+        <td>
+        :'a # (num -> num -> 'a -> 'a) # num -> 'a
+    <tr><td>
+        <STRONG><font color="black">nmap</font></STRONG>
+        <td>
+        :(num -> num) -> num -> num
+    <tr><td>
+        <STRONG><font color="black">npair</font></STRONG>
+        <td>
+        :num -> num -> num
+    <tr><td> <STRONG><font color="black">nsnd</font></STRONG> <td> :num -> num
+    <tr><td> <STRONG><font color="black">tri</font></STRONG> <td> :num -> num
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">tri_def</font></STRONG>
+<DD>
+<PRE>
+|- (tri 0 = 0) /\ !n. tri (SUC n) = SUC n + tri n
+</PRE>
+
+<DT><STRONG><font color="black">invtri0_tupled_primitive_def</font></STRONG>
+<DD>
+<PRE>
+|- invtri0_tupled =
+   WFREC (@R. WF R /\ !a n. ~(n < a + 1) ==> R (n - (a + 1),a + 1) (n,a))
+     (\invtri0_tupled a'.
+        case a' of
+           (n,a) ->
+             I
+               (if n < a + 1 then
+                  (n,a)
+                else
+                  invtri0_tupled (n - (a + 1),a + 1)))
+</PRE>
+
+<DT><STRONG><font color="black">invtri0_curried_def</font></STRONG>
+<DD>
+<PRE>
+|- !x x1. invtri0 x x1 = invtri0_tupled (x,x1)
+</PRE>
+
+<DT><STRONG><font color="black">invtri_def</font></STRONG>
+<DD>
+<PRE>
+|- !n. invtri n = SND (invtri0 n 0)
+</PRE>
+
+<DT><STRONG><font color="black">npair_def</font></STRONG>
+<DD>
+<PRE>
+|- !m n. m *, n = tri (m + n) + n
+</PRE>
+
+<DT><STRONG><font color="black">nfst_def</font></STRONG>
+<DD>
+<PRE>
+|- !n. nfst n = tri (invtri n) + invtri n - n
+</PRE>
+
+<DT><STRONG><font color="black">nsnd_def</font></STRONG>
+<DD>
+<PRE>
+|- !n. nsnd n = n - tri (invtri n)
+</PRE>
+
+<DT><STRONG><font color="black">ncons_def</font></STRONG>
+<DD>
+<PRE>
+|- !h t. ncons h t = h *, t + 1
+</PRE>
+
+<DT><STRONG><font color="black">nlistrec_tupled_primitive_def</font></STRONG>
+<DD>
+<PRE>
+|- nlistrec_tupled =
+   WFREC (@R. WF R /\ !f n l. l <> 0 ==> R (n,f,nsnd (l - 1)) (n,f,l))
+     (\nlistrec_tupled a.
+        case a of
+           (n,f,l) ->
+             I
+               (if l = 0 then
+                  n
+                else
+                  f (nfst (l - 1)) (nsnd (l - 1))
+                    (nlistrec_tupled (n,f,nsnd (l - 1)))))
+</PRE>
+
+<DT><STRONG><font color="black">nlistrec_curried_def</font></STRONG>
+<DD>
+<PRE>
+|- !x x1 x2. nlistrec x x1 x2 = nlistrec_tupled (x,x1,x2)
+</PRE>
+
+<DT><STRONG><font color="black">nlen_def</font></STRONG>
+<DD>
+<PRE>
+|- nlen = nlistrec 0 (\n t r. r + 1)
+</PRE>
+
+<DT><STRONG><font color="black">nmap_def</font></STRONG>
+<DD>
+<PRE>
+|- !f. nmap f = nlistrec 0 (\n t r. ncons (f n) r)
+</PRE>
+
+<DT><STRONG><font color="black">nfoldl_def</font></STRONG>
+<DD>
+<PRE>
+|- !f a l. nfoldl f a l = nlistrec (\a. a) (\n t r a. r (f n a)) l a
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">twotri_formula</font></STRONG>
+<DD>
+<PRE>
+|- 2 * tri n = n * (n + 1)
+</PRE>
+
+<DT><STRONG><font color="black">tri_formula</font></STRONG>
+<DD>
+<PRE>
+|- tri n = n * (n + 1) DIV 2
+</PRE>
+
+<DT><STRONG><font color="black">tri_eq_0</font></STRONG>
+<DD>
+<PRE>
+|- ((tri n = 0) <=> (n = 0)) /\ ((0 = tri n) <=> (n = 0))
+</PRE>
+
+<DT><STRONG><font color="black">tri_LT_I</font></STRONG>
+<DD>
+<PRE>
+|- !n m. n < m ==> tri n < tri m
+</PRE>
+
+<DT><STRONG><font color="black">tri_LT</font></STRONG>
+<DD>
+<PRE>
+|- !n m. tri n < tri m <=> n < m
+</PRE>
+
+<DT><STRONG><font color="black">tri_11</font></STRONG>
+<DD>
+<PRE>
+|- !m n. (tri m = tri n) <=> (m = n)
+</PRE>
+
+<DT><STRONG><font color="black">tri_LE</font></STRONG>
+<DD>
+<PRE>
+|- !m n. tri m <= tri n <=> m <= n
+</PRE>
+
+<DT><STRONG><font color="black">invtri0_ind</font></STRONG>
+<DD>
+<PRE>
+|- !P.
+     (!n a. (~(n < a + 1) ==> P (n - (a + 1)) (a + 1)) ==> P n a) ==>
+     !v v1. P v v1
+</PRE>
+
+<DT><STRONG><font color="black">invtri0_def</font></STRONG>
+<DD>
+<PRE>
+|- !n a.
+     invtri0 n a = if n < a + 1 then (n,a) else invtri0 (n - (a + 1)) (a + 1)
+</PRE>
+
+<DT><STRONG><font color="black">invtri0_thm</font></STRONG>
+<DD>
+<PRE>
+|- !n a. tri (SND (invtri0 n a)) + FST (invtri0 n a) = n + tri a
+</PRE>
+
+<DT><STRONG><font color="black">SND_invtri0</font></STRONG>
+<DD>
+<PRE>
+|- !n a. FST (invtri0 n a) < SUC (SND (invtri0 n a))
+</PRE>
+
+<DT><STRONG><font color="black">invtri_lower</font></STRONG>
+<DD>
+<PRE>
+|- tri (invtri n) <= n
+</PRE>
+
+<DT><STRONG><font color="black">invtri_upper</font></STRONG>
+<DD>
+<PRE>
+|- n < tri (invtri n + 1)
+</PRE>
+
+<DT><STRONG><font color="black">invtri_linverse</font></STRONG>
+<DD>
+<PRE>
+|- invtri (tri n) = n
+</PRE>
+
+<DT><STRONG><font color="black">invtri_unique</font></STRONG>
+<DD>
+<PRE>
+|- tri y <= n /\ n < tri (y + 1) ==> (invtri n = y)
+</PRE>
+
+<DT><STRONG><font color="black">invtri_linverse_r</font></STRONG>
+<DD>
+<PRE>
+|- y <= x ==> (invtri (tri x + y) = x)
+</PRE>
+
+<DT><STRONG><font color="black">tri_le</font></STRONG>
+<DD>
+<PRE>
+|- n <= tri n
+</PRE>
+
+<DT><STRONG><font color="black">invtri_le</font></STRONG>
+<DD>
+<PRE>
+|- invtri n <= n
+</PRE>
+
+<DT><STRONG><font color="black">nfst_npair</font></STRONG>
+<DD>
+<PRE>
+|- nfst (x *, y) = x
+</PRE>
+
+<DT><STRONG><font color="black">nsnd_npair</font></STRONG>
+<DD>
+<PRE>
+|- nsnd (x *, y) = y
+</PRE>
+
+<DT><STRONG><font color="black">npair_cases</font></STRONG>
+<DD>
+<PRE>
+|- !n. ?x y. n = x *, y
+</PRE>
+
+<DT><STRONG><font color="black">npair</font></STRONG>
+<DD>
+<PRE>
+|- !n. nfst n *, nsnd n = n
+</PRE>
+
+<DT><STRONG><font color="black">npair_11</font></STRONG>
+<DD>
+<PRE>
+|- (x₁ *, y₁ = x₂ *, y₂) <=> (x₁ = x₂) /\ (y₁ = y₂)
+</PRE>
+
+<DT><STRONG><font color="black">nfst_le</font></STRONG>
+<DD>
+<PRE>
+|- nfst n <= n
+</PRE>
+
+<DT><STRONG><font color="black">nsnd_le</font></STRONG>
+<DD>
+<PRE>
+|- nsnd n <= n
+</PRE>
+
+<DT><STRONG><font color="black">ncons_11</font></STRONG>
+<DD>
+<PRE>
+|- (ncons x y = ncons h t) <=> (x = h) /\ (y = t)
+</PRE>
+
+<DT><STRONG><font color="black">ncons_not_nnil</font></STRONG>
+<DD>
+<PRE>
+|- ncons x y <> 0
+</PRE>
+
+<DT><STRONG><font color="black">nlistrec_thm</font></STRONG>
+<DD>
+<PRE>
+|- (nlistrec n f 0 = n) /\ (nlistrec n f (ncons h t) = f h t (nlistrec n f t))
+</PRE>
+
+<DT><STRONG><font color="black">nlist_ind</font></STRONG>
+<DD>
+<PRE>
+|- !P. P 0 /\ (!h t. P t ==> P (ncons h t)) ==> !n. P n
+</PRE>
+
+<DT><STRONG><font color="black">nlen_thm</font></STRONG>
+<DD>
+<PRE>
+|- (nlen 0 = 0) /\ (nlen (ncons h t) = nlen t + 1)
+</PRE>
+
+<DT><STRONG><font color="black">nmap_thm</font></STRONG>
+<DD>
+<PRE>
+|- (nmap f 0 = 0) /\ (nmap f (ncons h t) = ncons (f h) (nmap f t))
+</PRE>
+
+<DT><STRONG><font color="black">nfoldl_thm</font></STRONG>
+<DD>
+<PRE>
+|- (nfoldl f a 0 = a) /\ (nfoldl f a (ncons h t) = nfoldl f (f h a) t)
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>

@@ -1,0 +1,638 @@
+<HTML>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Theory: Encode</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "Encode"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "rich_listTheory.html"><STRONG><font color="black">rich_list</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Type</font>
+    <th>
+    <font color="crimson">Arity</font><tr><td>
+                                          <STRONG><font color="black">tree</font></STRONG>
+                                          <td>
+                                          1
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">Node</font></STRONG>
+                                         <td>
+                                         :'a -> 'a tree list -> 'a tree
+    <tr><td>
+        <STRONG><font color="black">biprefix</font></STRONG>
+        <td>
+        :'a list -> 'a list -> bool
+    <tr><td>
+        <STRONG><font color="black">collision_free</font></STRONG>
+        <td>
+        :num -> (num -> bool) -> bool
+    <tr><td>
+        <STRONG><font color="black">dest_tree</font></STRONG>
+        <td>
+        :'a tree -> 'a recspace
+    <tr><td>
+        <STRONG><font color="black">encode_blist</font></STRONG>
+        <td>
+        :num -> ('b -> 'a list) -> 'b list -> 'a list
+    <tr><td>
+        <STRONG><font color="black">encode_bnum</font></STRONG>
+        <td>
+        :num -> num -> bool list
+    <tr><td>
+        <STRONG><font color="black">encode_bool</font></STRONG>
+        <td>
+        :bool -> bool list
+    <tr><td>
+        <STRONG><font color="black">encode_list</font></STRONG>
+        <td>
+        :('a -> bool list) -> 'a list -> bool list
+    <tr><td>
+        <STRONG><font color="black">encode_num</font></STRONG>
+        <td>
+        :num -> bool list
+    <tr><td>
+        <STRONG><font color="black">encode_option</font></STRONG>
+        <td>
+        :('a -> bool list) -> 'a option -> bool list
+    <tr><td>
+        <STRONG><font color="black">encode_prod</font></STRONG>
+        <td>
+        :('a -> bool list) -> ('b -> bool list) -> 'a # 'b -> bool list
+    <tr><td>
+        <STRONG><font color="black">encode_sum</font></STRONG>
+        <td>
+        :('a -> bool list) -> ('b -> bool list) -> 'a + 'b -> bool list
+    <tr><td>
+        <STRONG><font color="black">encode_tree</font></STRONG>
+        <td>
+        :('a -> bool list) -> 'a tree -> bool list
+    <tr><td>
+        <STRONG><font color="black">encode_tree_tupled</font></STRONG>
+        <td>
+        :('a -> bool list) # 'a tree -> bool list
+    <tr><td>
+        <STRONG><font color="black">encode_unit</font></STRONG>
+        <td>
+        :unit -> bool list
+    <tr><td>
+        <STRONG><font color="black">lift_blist</font></STRONG>
+        <td>
+        :num -> ('a -> bool) -> 'a list -> bool
+    <tr><td>
+        <STRONG><font color="black">lift_option</font></STRONG>
+        <td>
+        :('a -> bool) -> 'a option -> bool
+    <tr><td>
+        <STRONG><font color="black">lift_prod</font></STRONG>
+        <td>
+        :('a -> bool) -> ('b -> bool) -> 'a # 'b -> bool
+    <tr><td>
+        <STRONG><font color="black">lift_sum</font></STRONG>
+        <td>
+        :('a -> bool) -> ('b -> bool) -> 'a + 'b -> bool
+    <tr><td>
+        <STRONG><font color="black">lift_tree</font></STRONG>
+        <td>
+        :('a -> bool) -> 'a tree -> bool
+    <tr><td>
+        <STRONG><font color="black">lift_tree_tupled</font></STRONG>
+        <td>
+        :('a -> bool) # 'a tree -> bool
+    <tr><td>
+        <STRONG><font color="black">mk_tree</font></STRONG>
+        <td>
+        :'a recspace -> 'a tree
+    <tr><td>
+        <STRONG><font color="black">tree1_size</font></STRONG>
+        <td>
+        :('a -> num) -> 'a tree list -> num
+    <tr><td>
+        <STRONG><font color="black">tree_case</font></STRONG>
+        <td>
+        :('a -> 'a tree list -> 'b) -> 'a tree -> 'b
+    <tr><td>
+        <STRONG><font color="black">tree_size</font></STRONG>
+        <td>
+        :('a -> num) -> 'a tree -> num
+    <tr><td>
+        <STRONG><font color="black">wf_encoder</font></STRONG>
+        <td>
+        :('a -> bool) -> ('a -> bool list) -> bool
+    <tr><td>
+        <STRONG><font color="black">wf_pred</font></STRONG>
+        <td>
+        :('a -> bool) -> bool
+    <tr><td>
+        <STRONG><font color="black">wf_pred_bnum</font></STRONG>
+        <td>
+        :num -> (num -> bool) -> bool
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">biprefix_def</font></STRONG>
+<DD>
+<PRE>
+|- !a b. biprefix a b <=> b <<= a \/ a <<= b
+</PRE>
+
+<DT><STRONG><font color="black">wf_pred_def</font></STRONG>
+<DD>
+<PRE>
+|- !p. wf_pred p <=> ?x. p x
+</PRE>
+
+<DT><STRONG><font color="black">wf_encoder_def</font></STRONG>
+<DD>
+<PRE>
+|- !p e. wf_encoder p e <=> !x y. p x /\ p y /\ e y <<= e x ==> (x = y)
+</PRE>
+
+<DT><STRONG><font color="black">encode_unit_def</font></STRONG>
+<DD>
+<PRE>
+|- !v0. encode_unit v0 = []
+</PRE>
+
+<DT><STRONG><font color="black">encode_bool_def</font></STRONG>
+<DD>
+<PRE>
+|- !x. encode_bool x = [x]
+</PRE>
+
+<DT><STRONG><font color="black">encode_prod_def</font></STRONG>
+<DD>
+<PRE>
+|- !xb yb x y. encode_prod xb yb (x,y) = xb x ++ yb y
+</PRE>
+
+<DT><STRONG><font color="black">lift_prod_def</font></STRONG>
+<DD>
+<PRE>
+|- !p1 p2 x. lift_prod p1 p2 x <=> p1 (FST x) /\ p2 (SND x)
+</PRE>
+
+<DT><STRONG><font color="black">encode_sum_def</font></STRONG>
+<DD>
+<PRE>
+|- (!xb yb x. encode_sum xb yb (INL x) = T::xb x) /\
+   !xb yb y. encode_sum xb yb (INR y) = F::yb y
+</PRE>
+
+<DT><STRONG><font color="black">lift_sum_def</font></STRONG>
+<DD>
+<PRE>
+|- !p1 p2 x. lift_sum p1 p2 x <=> case x of INL x1 -> p1 x1 || INR x2 -> p2 x2
+</PRE>
+
+<DT><STRONG><font color="black">encode_option_def</font></STRONG>
+<DD>
+<PRE>
+|- (!xb. encode_option xb NONE = [F]) /\
+   !xb x. encode_option xb (SOME x) = T::xb x
+</PRE>
+
+<DT><STRONG><font color="black">lift_option_def</font></STRONG>
+<DD>
+<PRE>
+|- !p x. lift_option p x <=> case x of NONE -> T || SOME y -> p y
+</PRE>
+
+<DT><STRONG><font color="black">encode_list_def</font></STRONG>
+<DD>
+<PRE>
+|- (!xb. encode_list xb [] = [F]) /\
+   !xb x xs. encode_list xb (x::xs) = T::(xb x ++ encode_list xb xs)
+</PRE>
+
+<DT><STRONG><font color="black">encode_blist_def</font></STRONG>
+<DD>
+<PRE>
+|- (!e l. encode_blist 0 e l = []) /\
+   !m e l. encode_blist (SUC m) e l = e (HD l) ++ encode_blist m e (TL l)
+</PRE>
+
+<DT><STRONG><font color="black">lift_blist_def</font></STRONG>
+<DD>
+<PRE>
+|- !m p x. lift_blist m p x <=> EVERY p x /\ (LENGTH x = m)
+</PRE>
+
+<DT><STRONG><font color="black">encode_num_primitive_def</font></STRONG>
+<DD>
+<PRE>
+|- encode_num =
+   WFREC
+     (@R.
+        WF R /\ (!n. n <> 0 /\ EVEN n ==> R ((n - 2) DIV 2) n) /\
+        !n. n <> 0 /\ ~EVEN n ==> R ((n - 1) DIV 2) n)
+     (\encode_num n.
+        I
+          (if n = 0 then
+             [T; T]
+           else
+             if EVEN n then
+               F::encode_num ((n - 2) DIV 2)
+             else
+               T::F::encode_num ((n - 1) DIV 2)))
+</PRE>
+
+<DT><STRONG><font color="black">encode_bnum_def</font></STRONG>
+<DD>
+<PRE>
+|- (!n. encode_bnum 0 n = []) /\
+   !m n. encode_bnum (SUC m) n = ~EVEN n::encode_bnum m (n DIV 2)
+</PRE>
+
+<DT><STRONG><font color="black">collision_free_def</font></STRONG>
+<DD>
+<PRE>
+|- !m p.
+     collision_free m p <=>
+     !x y. p x /\ p y /\ (x MOD 2 ** m = y MOD 2 ** m) ==> (x = y)
+</PRE>
+
+<DT><STRONG><font color="black">wf_pred_bnum_def</font></STRONG>
+<DD>
+<PRE>
+|- !m p. wf_pred_bnum m p <=> wf_pred p /\ !x. p x ==> x < 2 ** m
+</PRE>
+
+<DT><STRONG><font color="black">tree_TY_DEF</font></STRONG>
+<DD>
+<PRE>
+|- ?rep.
+     TYPE_DEFINITION
+       (\a0'.
+          !'tree' 'list @ind_typeEncode0' .
+            (!a0'.
+               (?a0 a1.
+                  (a0' =
+                   (\a0 a1.
+                      ind_type$CONSTR 0 a0
+                        (ind_type$FCONS a1 (\n. ind_type$BOTTOM))) a0 a1) /\
+                  'list @ind_typeEncode0' a1) ==>
+               'tree' a0') /\
+            (!a1'.
+               (a1' = ind_type$CONSTR (SUC 0) ARB (\n. ind_type$BOTTOM)) \/
+               (?a0 a1.
+                  (a1' =
+                   (\a0 a1.
+                      ind_type$CONSTR (SUC (SUC 0)) ARB
+                        (ind_type$FCONS a0
+                           (ind_type$FCONS a1 (\n. ind_type$BOTTOM)))) a0
+                     a1) /\ 'tree' a0 /\ 'list @ind_typeEncode0' a1) ==>
+               'list @ind_typeEncode0' a1') ==>
+            'tree' a0') rep
+</PRE>
+
+<DT><STRONG><font color="black">tree_repfns</font></STRONG>
+<DD>
+<PRE>
+|- (!a. mk_tree (dest_tree a) = a) /\
+   !r.
+     (\a0'.
+        !'tree' 'list @ind_typeEncode0' .
+          (!a0'.
+             (?a0 a1.
+                (a0' =
+                 (\a0 a1.
+                    ind_type$CONSTR 0 a0
+                      (ind_type$FCONS a1 (\n. ind_type$BOTTOM))) a0 a1) /\
+                'list @ind_typeEncode0' a1) ==>
+             'tree' a0') /\
+          (!a1'.
+             (a1' = ind_type$CONSTR (SUC 0) ARB (\n. ind_type$BOTTOM)) \/
+             (?a0 a1.
+                (a1' =
+                 (\a0 a1.
+                    ind_type$CONSTR (SUC (SUC 0)) ARB
+                      (ind_type$FCONS a0
+                         (ind_type$FCONS a1 (\n. ind_type$BOTTOM)))) a0 a1) /\
+                'tree' a0 /\ 'list @ind_typeEncode0' a1) ==>
+             'list @ind_typeEncode0' a1') ==>
+          'tree' a0') r <=> (dest_tree (mk_tree r) = r)
+</PRE>
+
+<DT><STRONG><font color="black">tree_case_def</font></STRONG>
+<DD>
+<PRE>
+|- !f a0 a1. tree_case f (Node a0 a1) = f a0 a1
+</PRE>
+
+<DT><STRONG><font color="black">tree_size_def</font></STRONG>
+<DD>
+<PRE>
+|- (!f a0 a1. tree_size f (Node a0 a1) = 1 + (f a0 + tree1_size f a1)) /\
+   (!f. tree1_size f [] = 0) /\
+   !f a0 a1. tree1_size f (a0::a1) = 1 + (tree_size f a0 + tree1_size f a1)
+</PRE>
+
+<DT><STRONG><font color="black">encode_tree_tupled_primitive_def</font></STRONG>
+<DD>
+<PRE>
+|- encode_tree_tupled =
+   WFREC (@R. WF R /\ !a e ts a'. MEM a' ts ==> R (e,a') (e,Node a ts))
+     (\encode_tree_tupled a'.
+        case a' of
+           (e,Node a ts) ->
+             I (e a ++ encode_list (\a. encode_tree_tupled (e,a)) ts))
+</PRE>
+
+<DT><STRONG><font color="black">encode_tree_curried_def</font></STRONG>
+<DD>
+<PRE>
+|- !x x1. encode_tree x x1 = encode_tree_tupled (x,x1)
+</PRE>
+
+<DT><STRONG><font color="black">lift_tree_tupled_primitive_def</font></STRONG>
+<DD>
+<PRE>
+|- lift_tree_tupled =
+   WFREC (@R. WF R /\ !a p ts a'. MEM a' ts ==> R (p,a') (p,Node a ts))
+     (\lift_tree_tupled a'.
+        case a' of
+           (p,Node a ts) -> I (p a /\ EVERY (\a. lift_tree_tupled (p,a)) ts))
+</PRE>
+
+<DT><STRONG><font color="black">lift_tree_curried_def</font></STRONG>
+<DD>
+<PRE>
+|- !x x1. lift_tree x x1 <=> lift_tree_tupled (x,x1)
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">biprefix_refl</font></STRONG>
+<DD>
+<PRE>
+|- !x. biprefix x x
+</PRE>
+
+<DT><STRONG><font color="black">biprefix_sym</font></STRONG>
+<DD>
+<PRE>
+|- !x y. biprefix x y ==> biprefix y x
+</PRE>
+
+<DT><STRONG><font color="black">biprefix_append</font></STRONG>
+<DD>
+<PRE>
+|- !a b c d. biprefix (a ++ b) (c ++ d) ==> biprefix a c
+</PRE>
+
+<DT><STRONG><font color="black">biprefix_cons</font></STRONG>
+<DD>
+<PRE>
+|- !a b c d. biprefix (a::b) (c::d) <=> (a = c) /\ biprefix b d
+</PRE>
+
+<DT><STRONG><font color="black">biprefix_appends</font></STRONG>
+<DD>
+<PRE>
+|- !a b c. biprefix (a ++ b) (a ++ c) <=> biprefix b c
+</PRE>
+
+<DT><STRONG><font color="black">wf_encoder_alt</font></STRONG>
+<DD>
+<PRE>
+|- wf_encoder p e <=> !x y. p x /\ p y /\ biprefix (e x) (e y) ==> (x = y)
+</PRE>
+
+<DT><STRONG><font color="black">wf_encoder_eq</font></STRONG>
+<DD>
+<PRE>
+|- !p e f. wf_encoder p e /\ (!x. p x ==> (e x = f x)) ==> wf_encoder p f
+</PRE>
+
+<DT><STRONG><font color="black">wf_encoder_total</font></STRONG>
+<DD>
+<PRE>
+|- !p e. wf_encoder (K T) e ==> wf_encoder p e
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_unit</font></STRONG>
+<DD>
+<PRE>
+|- !p. wf_encoder p encode_unit
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_bool</font></STRONG>
+<DD>
+<PRE>
+|- !p. wf_encoder p encode_bool
+</PRE>
+
+<DT><STRONG><font color="black">encode_prod_alt</font></STRONG>
+<DD>
+<PRE>
+|- !xb yb p. encode_prod xb yb p = xb (FST p) ++ yb (SND p)
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_prod</font></STRONG>
+<DD>
+<PRE>
+|- !p1 p2 e1 e2.
+     wf_encoder p1 e1 /\ wf_encoder p2 e2 ==>
+     wf_encoder (lift_prod p1 p2) (encode_prod e1 e2)
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_sum</font></STRONG>
+<DD>
+<PRE>
+|- !p1 p2 e1 e2.
+     wf_encoder p1 e1 /\ wf_encoder p2 e2 ==>
+     wf_encoder (lift_sum p1 p2) (encode_sum e1 e2)
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_option</font></STRONG>
+<DD>
+<PRE>
+|- !p e. wf_encoder p e ==> wf_encoder (lift_option p) (encode_option e)
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_list</font></STRONG>
+<DD>
+<PRE>
+|- !p e. wf_encoder p e ==> wf_encoder (EVERY p) (encode_list e)
+</PRE>
+
+<DT><STRONG><font color="black">encode_list_cong</font></STRONG>
+<DD>
+<PRE>
+|- !l1 l2 f1 f2.
+     (l1 = l2) /\ (!x. MEM x l2 ==> (f1 x = f2 x)) ==>
+     (encode_list f1 l1 = encode_list f2 l2)
+</PRE>
+
+<DT><STRONG><font color="black">lift_blist_suc</font></STRONG>
+<DD>
+<PRE>
+|- !n p h t. lift_blist (SUC n) p (h::t) <=> p h /\ lift_blist n p t
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_blist</font></STRONG>
+<DD>
+<PRE>
+|- !m p e. wf_encoder p e ==> wf_encoder (lift_blist m p) (encode_blist m e)
+</PRE>
+
+<DT><STRONG><font color="black">encode_num_def</font></STRONG>
+<DD>
+<PRE>
+|- encode_num n =
+   if n = 0 then
+     [T; T]
+   else
+     if EVEN n then
+       F::encode_num ((n - 2) DIV 2)
+     else
+       T::F::encode_num ((n - 1) DIV 2)
+</PRE>
+
+<DT><STRONG><font color="black">encode_num_ind</font></STRONG>
+<DD>
+<PRE>
+|- !P.
+     (!n.
+        (n <> 0 /\ EVEN n ==> P ((n - 2) DIV 2)) /\
+        (n <> 0 /\ ~EVEN n ==> P ((n - 1) DIV 2)) ==>
+        P n) ==>
+     !v. P v
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_num</font></STRONG>
+<DD>
+<PRE>
+|- !p. wf_encoder p encode_num
+</PRE>
+
+<DT><STRONG><font color="black">wf_pred_bnum_total</font></STRONG>
+<DD>
+<PRE>
+|- !m. wf_pred_bnum m (\x. x < 2 ** m)
+</PRE>
+
+<DT><STRONG><font color="black">wf_pred_bnum</font></STRONG>
+<DD>
+<PRE>
+|- !m p. wf_pred_bnum m p ==> collision_free m p
+</PRE>
+
+<DT><STRONG><font color="black">encode_bnum_length</font></STRONG>
+<DD>
+<PRE>
+|- !m n. LENGTH (encode_bnum m n) = m
+</PRE>
+
+<DT><STRONG><font color="black">encode_bnum_inj</font></STRONG>
+<DD>
+<PRE>
+|- !m x y.
+     x < 2 ** m /\ y < 2 ** m /\ (encode_bnum m x = encode_bnum m y) ==>
+     (x = y)
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_bnum_collision_free</font></STRONG>
+<DD>
+<PRE>
+|- !m p. wf_encoder p (encode_bnum m) <=> collision_free m p
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_bnum</font></STRONG>
+<DD>
+<PRE>
+|- !m p. wf_pred_bnum m p ==> wf_encoder p (encode_bnum m)
+</PRE>
+
+<DT><STRONG><font color="black">datatype_tree</font></STRONG>
+<DD>
+<PRE>
+|- DATATYPE (tree Node)
+</PRE>
+
+<DT><STRONG><font color="black">tree_11</font></STRONG>
+<DD>
+<PRE>
+|- !a0 a1 a0' a1'. (Node a0 a1 = Node a0' a1') <=> (a0 = a0') /\ (a1 = a1')
+</PRE>
+
+<DT><STRONG><font color="black">tree_case_cong</font></STRONG>
+<DD>
+<PRE>
+|- !M M' f.
+     (M = M') /\ (!a0 a1. (M' = Node a0 a1) ==> (f a0 a1 = f' a0 a1)) ==>
+     (tree_case f M = tree_case f' M')
+</PRE>
+
+<DT><STRONG><font color="black">tree_nchotomy</font></STRONG>
+<DD>
+<PRE>
+|- !tt. ?a l. tt = Node a l
+</PRE>
+
+<DT><STRONG><font color="black">tree_Axiom</font></STRONG>
+<DD>
+<PRE>
+|- !f0 f1 f2.
+     ?fn0 fn1.
+       (!a0 a1. fn0 (Node a0 a1) = f0 a0 a1 (fn1 a1)) /\ (fn1 [] = f1) /\
+       !a0 a1. fn1 (a0::a1) = f2 a0 a1 (fn0 a0) (fn1 a1)
+</PRE>
+
+<DT><STRONG><font color="black">tree_induction</font></STRONG>
+<DD>
+<PRE>
+|- !P0 P1.
+     (!l. P1 l ==> !a. P0 (Node a l)) /\ P1 [] /\
+     (!t l. P0 t /\ P1 l ==> P1 (t::l)) ==>
+     (!t. P0 t) /\ !l. P1 l
+</PRE>
+
+<DT><STRONG><font color="black">tree_ind</font></STRONG>
+<DD>
+<PRE>
+|- !p. (!a ts. (!t. MEM t ts ==> p t) ==> p (Node a ts)) ==> !t. p t
+</PRE>
+
+<DT><STRONG><font color="black">encode_tree_def</font></STRONG>
+<DD>
+<PRE>
+|- encode_tree e (Node a ts) = e a ++ encode_list (encode_tree e) ts
+</PRE>
+
+<DT><STRONG><font color="black">lift_tree_def</font></STRONG>
+<DD>
+<PRE>
+|- lift_tree p (Node a ts) <=> p a /\ EVERY (lift_tree p) ts
+</PRE>
+
+<DT><STRONG><font color="black">wf_encode_tree</font></STRONG>
+<DD>
+<PRE>
+|- !p e. wf_encoder p e ==> wf_encoder (lift_tree p) (encode_tree e)
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>

@@ -1,0 +1,135 @@
+<HTML>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Theory: EncodeVar</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "EncodeVar"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "CoderTheory.html"><STRONG><font color="black">Coder</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">fixed_width</font></STRONG>
+                                         <td>
+                                         :num ->
+                                          ('a -> bool) #
+                                          ('a -> bool list) #
+                                          (bool list ->
+                                           ('a # bool list) option) -> bool
+    <tr><td>
+        <STRONG><font color="black">of_length</font></STRONG>
+        <td>
+        :num -> 'a list -> bool
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">fixed_width_def</font></STRONG>
+<DD>
+<PRE>
+|- !n c. fixed_width n c <=> !x. domain c x ==> (LENGTH (encoder c x) = n)
+</PRE>
+
+<DT><STRONG><font color="black">of_length_def</font></STRONG>
+<DD>
+<PRE>
+|- !l n. l IN of_length n <=> (LENGTH l = n)
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">fixed_width_univ</font></STRONG>
+<DD>
+<PRE>
+|- !phi c n.
+     wf_coder c /\ fixed_width n c ==>
+     ((!x. domain c x ==> phi x) <=> !w::of_length n. phi (decoder c w))
+</PRE>
+
+<DT><STRONG><font color="black">of_length_univ_suc</font></STRONG>
+<DD>
+<PRE>
+|- !phi n. (!w::of_length (SUC n). phi w) <=> !x (w::of_length n). phi (x::w)
+</PRE>
+
+<DT><STRONG><font color="black">of_length_univ_zero</font></STRONG>
+<DD>
+<PRE>
+|- !phi. (!w::of_length 0. phi w) <=> phi []
+</PRE>
+
+<DT><STRONG><font color="black">fixed_width_exists</font></STRONG>
+<DD>
+<PRE>
+|- !phi c n.
+     wf_coder c /\ fixed_width n c ==>
+     ((?x. domain c x /\ phi x) <=> ?w::of_length n. phi (decoder c w))
+</PRE>
+
+<DT><STRONG><font color="black">of_length_exists_suc</font></STRONG>
+<DD>
+<PRE>
+|- !phi n. (?w::of_length (SUC n). phi w) <=> ?x (w::of_length n). phi (x::w)
+</PRE>
+
+<DT><STRONG><font color="black">of_length_exists_zero</font></STRONG>
+<DD>
+<PRE>
+|- !phi. (?w::of_length 0. phi w) <=> phi []
+</PRE>
+
+<DT><STRONG><font color="black">fixed_width_unit</font></STRONG>
+<DD>
+<PRE>
+|- !p. fixed_width 0 (unit_coder p)
+</PRE>
+
+<DT><STRONG><font color="black">fixed_width_bool</font></STRONG>
+<DD>
+<PRE>
+|- !p. fixed_width 1 (bool_coder p)
+</PRE>
+
+<DT><STRONG><font color="black">fixed_width_prod</font></STRONG>
+<DD>
+<PRE>
+|- !c1 c2 n1 n2.
+     fixed_width n1 c1 /\ fixed_width n2 c2 ==>
+     fixed_width (n1 + n2) (prod_coder c1 c2)
+</PRE>
+
+<DT><STRONG><font color="black">fixed_width_sum</font></STRONG>
+<DD>
+<PRE>
+|- !c1 c2 n.
+     fixed_width n c1 /\ fixed_width n c2 ==>
+     fixed_width (SUC n) (sum_coder c1 c2)
+</PRE>
+
+<DT><STRONG><font color="black">fixed_width_bnum</font></STRONG>
+<DD>
+<PRE>
+|- !m p. fixed_width m (bnum_coder m p)
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>

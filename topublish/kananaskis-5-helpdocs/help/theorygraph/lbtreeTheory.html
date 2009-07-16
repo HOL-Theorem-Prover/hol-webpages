@@ -1,0 +1,571 @@
+<HTML>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><TITLE>Theory: lbtree</TITLE><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+</HEAD>
+<BODY bgcolor=linen text=midnightblue>
+<H1><font color="black">Theory "lbtree"</font></H1>
+<STRONG><font size=+3 color="black">Parents</font></STRONG>&nbsp;&nbsp;&nbsp;&nbsp;
+    <A HREF = "llistTheory.html"><STRONG><font color="black">llist</font></STRONG></A>
+
+<H1><font color="black">Signature</font></H1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    <font color="crimson">Type</font>
+    <th>
+    <font color="crimson">Arity</font><tr><td>
+                                          <STRONG><font color="black">lbtree</font></STRONG>
+                                          <td>
+                                          1
+    <tr>
+    <th>
+    <font color="crimson">Constant</font>
+    <th>
+    <font color="crimson">Type</font><tr><td>
+                                         <STRONG><font color="black">Lf</font></STRONG>
+                                         <td>
+                                         :'a lbtree
+    <tr><td>
+        <STRONG><font color="black">Lfrep</font></STRONG>
+        <td>
+        :'a -> 'b option
+    <tr><td>
+        <STRONG><font color="black">Nd</font></STRONG>
+        <td>
+        :'a -> 'a lbtree -> 'a lbtree -> 'a lbtree
+    <tr><td>
+        <STRONG><font color="black">Ndrep</font></STRONG>
+        <td>
+        :'a ->
+         (bool list -> 'a option) ->
+         (bool list -> 'a option) -> bool list -> 'a option
+    <tr><td>
+        <STRONG><font color="black">bf_flatten</font></STRONG>
+        <td>
+        :'a lbtree list -> 'a llist
+    <tr><td>
+        <STRONG><font color="black">depth</font></STRONG>
+        <td>
+        :'a -> 'a lbtree -> num -> bool
+    <tr><td>
+        <STRONG><font color="black">drop_while</font></STRONG>
+        <td>
+        :('a -> bool) -> 'a list -> 'a list
+    <tr><td>
+        <STRONG><font color="black">finite</font></STRONG>
+        <td>
+        :'a lbtree -> bool
+    <tr><td>
+        <STRONG><font color="black">is_lbtree</font></STRONG>
+        <td>
+        :(bool list -> 'a option) -> bool
+    <tr><td>
+        <STRONG><font color="black">is_mmindex</font></STRONG>
+        <td>
+        :('a -> num option) -> 'a list -> num -> num -> bool
+    <tr><td>
+        <STRONG><font color="black">lbtree_abs</font></STRONG>
+        <td>
+        :(bool list -> 'a option) -> 'a lbtree
+    <tr><td>
+        <STRONG><font color="black">lbtree_case</font></STRONG>
+        <td>
+        :'a -> ('b -> 'b lbtree -> 'b lbtree -> 'a) -> 'b lbtree -> 'a
+    <tr><td>
+        <STRONG><font color="black">lbtree_rep</font></STRONG>
+        <td>
+        :'a lbtree -> bool list -> 'a option
+    <tr><td>
+        <STRONG><font color="black">map</font></STRONG>
+        <td>
+        :('a -> 'b) -> 'a lbtree -> 'b lbtree
+    <tr><td>
+        <STRONG><font color="black">mem</font></STRONG>
+        <td>
+        :'a -> 'a lbtree -> bool
+    <tr><td>
+        <STRONG><font color="black">mindepth</font></STRONG>
+        <td>
+        :'a -> 'a lbtree -> num option
+    <tr><td>
+        <STRONG><font color="black">optmin</font></STRONG>
+        <td>
+        :num option -> num option -> num option
+    <tr><td>
+        <STRONG><font color="black">optmin_tupled</font></STRONG>
+        <td>
+        :num option # num option -> num option
+    <tr><td>
+        <STRONG><font color="black">path_follow</font></STRONG>
+        <td>
+        :('b -> ('a # 'b # 'b) option) -> 'b -> bool list -> 'a option
+    
+</table>
+</center>
+
+<H1><font color="black">Definitions</font></H1>
+<DL>
+<DT><STRONG><font color="black">Lfrep_def</font></STRONG>
+<DD>
+<PRE>
+|- Lfrep = (\l. NONE)
+</PRE>
+
+<DT><STRONG><font color="black">Ndrep_def</font></STRONG>
+<DD>
+<PRE>
+|- !a t1 t2.
+     Ndrep a t1 t2 =
+     (\l. case l of [] -> SOME a || T::xs -> t1 xs || F::xs -> t2 xs)
+</PRE>
+
+<DT><STRONG><font color="black">is_lbtree_def</font></STRONG>
+<DD>
+<PRE>
+|- !t.
+     is_lbtree t <=>
+     ?P.
+       (!t.
+          P t ==>
+          (t = Lfrep) \/ ?a t1 t2. P t1 /\ P t2 /\ (t = Ndrep a t1 t2)) /\ P t
+</PRE>
+
+<DT><STRONG><font color="black">lbtree_TY_DEF</font></STRONG>
+<DD>
+<PRE>
+|- ?rep. TYPE_DEFINITION is_lbtree rep
+</PRE>
+
+<DT><STRONG><font color="black">lbtree_absrep</font></STRONG>
+<DD>
+<PRE>
+|- (!a. lbtree_abs (lbtree_rep a) = a) /\
+   !r. is_lbtree r <=> (lbtree_rep (lbtree_abs r) = r)
+</PRE>
+
+<DT><STRONG><font color="black">path_follow_def</font></STRONG>
+<DD>
+<PRE>
+|- (!g x. path_follow g x [] = OPTION_MAP FST (g x)) /\
+   !g x h t.
+     path_follow g x (h::t) =
+     case g x of
+        NONE -> NONE
+     || SOME (a,y,z) -> path_follow g (if h then y else z) t
+</PRE>
+
+<DT><STRONG><font color="black">Lf_def</font></STRONG>
+<DD>
+<PRE>
+|- Lf = lbtree_abs Lfrep
+</PRE>
+
+<DT><STRONG><font color="black">Nd_def</font></STRONG>
+<DD>
+<PRE>
+|- !a t1 t2. Nd a t1 t2 = lbtree_abs (Ndrep a (lbtree_rep t1) (lbtree_rep t2))
+</PRE>
+
+<DT><STRONG><font color="black">lbtree_case_def</font></STRONG>
+<DD>
+<PRE>
+|- !e f t.
+     lbtree_case e f t =
+     if t = Lf then
+       e
+     else
+       f (@a. ?t1 t2. t = Nd a t1 t2) (@t1. ?a t2. t = Nd a t1 t2)
+         (@t2. ?a t1. t = Nd a t1 t2)
+</PRE>
+
+<DT><STRONG><font color="black">mem</font></STRONG>
+<DD>
+<PRE>
+|- mem =
+   (\a0 a1.
+      !mem'.
+        (!a0 a1.
+           (?t1 t2. a1 = Nd a0 t1 t2) \/
+           (?b t1 t2. (a1 = Nd b t1 t2) /\ mem' a0 t1) \/
+           (?b t1 t2. (a1 = Nd b t1 t2) /\ mem' a0 t2) ==>
+           mem' a0 a1) ==>
+        mem' a0 a1)
+</PRE>
+
+<DT><STRONG><font color="black">map_def</font></STRONG>
+<DD>
+<PRE>
+|- !f.
+     (map f Lf = Lf) /\
+     !a t1 t2. map f (Nd a t1 t2) = Nd (f a) (map f t1) (map f t2)
+</PRE>
+
+<DT><STRONG><font color="black">finite</font></STRONG>
+<DD>
+<PRE>
+|- finite =
+   (\a0.
+      !finite'.
+        (!a0.
+           (a0 = Lf) \/
+           (?a t1 t2. (a0 = Nd a t1 t2) /\ finite' t1 /\ finite' t2) ==>
+           finite' a0) ==>
+        finite' a0)
+</PRE>
+
+<DT><STRONG><font color="black">drop_while_def</font></STRONG>
+<DD>
+<PRE>
+|- (!P. lbtree$drop_while P [] = []) /\
+   !P h t.
+     lbtree$drop_while P (h::t) = if P h then lbtree$drop_while P t else h::t
+</PRE>
+
+<DT><STRONG><font color="black">bf_flatten_def</font></STRONG>
+<DD>
+<PRE>
+|- (bf_flatten [] = [||]) /\ (!ts. bf_flatten (Lf::ts) = bf_flatten ts) /\
+   !a t1 t2 ts. bf_flatten (Nd a t1 t2::ts) = a:::bf_flatten (ts ++ [t1; t2])
+</PRE>
+
+<DT><STRONG><font color="black">depth</font></STRONG>
+<DD>
+<PRE>
+|- lbtree$depth =
+   (\a0 a1 a2.
+      !depth'.
+        (!a0 a1 a2.
+           (?t1 t2. (a1 = Nd a0 t1 t2) /\ (a2 = 0)) \/
+           (?m a t1 t2.
+              (a1 = Nd a t1 t2) /\ (a2 = SUC m) /\ depth' a0 t1 m) \/
+           (?m a t1 t2.
+              (a1 = Nd a t1 t2) /\ (a2 = SUC m) /\ depth' a0 t2 m) ==>
+           depth' a0 a1 a2) ==>
+        depth' a0 a1 a2)
+</PRE>
+
+<DT><STRONG><font color="black">mindepth_def</font></STRONG>
+<DD>
+<PRE>
+|- !x t.
+     lbtree$mindepth x t =
+     if mem x t then SOME (LEAST n. lbtree$depth x t n) else NONE
+</PRE>
+
+<DT><STRONG><font color="black">optmin_tupled_primitive_def</font></STRONG>
+<DD>
+<PRE>
+|- optmin_tupled =
+   WFREC (@R. WF R)
+     (\optmin_tupled a.
+        case a of
+           (NONE,NONE) -> I NONE
+        || (NONE,SOME y) -> I (SOME y)
+        || (SOME x,NONE) -> I (SOME x)
+        || (SOME x,SOME y') -> I (SOME (MIN x y')))
+</PRE>
+
+<DT><STRONG><font color="black">optmin_curried_def</font></STRONG>
+<DD>
+<PRE>
+|- !x x1. lbtree$optmin x x1 = optmin_tupled (x,x1)
+</PRE>
+
+<DT><STRONG><font color="black">is_mmindex_def</font></STRONG>
+<DD>
+<PRE>
+|- !f l n d.
+     lbtree$is_mmindex f l n d <=>
+     n < LENGTH l /\ (f (EL n l) = SOME d) /\
+     !i.
+       i < LENGTH l ==>
+       (f (EL i l) = NONE) \/
+       ?d'. (f (EL i l) = SOME d') /\ d <= d' /\ (i < n ==> d < d')
+</PRE>
+
+</DL>
+
+
+<HR>
+
+<HR>
+<H1><font color="black">Theorems</font></H1>
+<DL>
+<DT><STRONG><font color="black">lbtree_cases</font></STRONG>
+<DD>
+<PRE>
+|- !t. (t = Lf) \/ ?a t1 t2. t = Nd a t1 t2
+</PRE>
+
+<DT><STRONG><font color="black">Lf_NOT_Nd</font></STRONG>
+<DD>
+<PRE>
+|- Lf <> Nd a t1 t2
+</PRE>
+
+<DT><STRONG><font color="black">Nd_11</font></STRONG>
+<DD>
+<PRE>
+|- (Nd a1 t1 u1 = Nd a2 t2 u2) <=> (a1 = a2) /\ (t1 = t2) /\ (u1 = u2)
+</PRE>
+
+<DT><STRONG><font color="black">lbtree_ue_Axiom</font></STRONG>
+<DD>
+<PRE>
+|- !f.
+     ?!g. !x. g x = case f x of NONE -> Lf || SOME (b,y,z) -> Nd b (g y) (g z)
+</PRE>
+
+<DT><STRONG><font color="black">lbtree_case_thm</font></STRONG>
+<DD>
+<PRE>
+|- (lbtree_case e f Lf = e) /\ (lbtree_case e f (Nd a t1 t2) = f a t1 t2)
+</PRE>
+
+<DT><STRONG><font color="black">lbtree_bisimulation</font></STRONG>
+<DD>
+<PRE>
+|- !t u.
+     (t = u) <=>
+     ?R.
+       R t u /\
+       !t u.
+         R t u ==>
+         (t = Lf) /\ (u = Lf) \/
+         ?a t1 u1 t2 u2.
+           R t1 u1 /\ R t2 u2 /\ (t = Nd a t1 t2) /\ (u = Nd a u1 u2)
+</PRE>
+
+<DT><STRONG><font color="black">lbtree_strong_bisimulation</font></STRONG>
+<DD>
+<PRE>
+|- !t u.
+     (t = u) <=>
+     ?R.
+       R t u /\
+       !t u.
+         R t u ==>
+         (t = u) \/
+         ?a t1 u1 t2 u2.
+           R t1 u1 /\ R t2 u2 /\ (t = Nd a t1 t2) /\ (u = Nd a u1 u2)
+</PRE>
+
+<DT><STRONG><font color="black">mem_rules</font></STRONG>
+<DD>
+<PRE>
+|- (!a t1 t2. mem a (Nd a t1 t2)) /\
+   (!a b t1 t2. mem a t1 ==> mem a (Nd b t1 t2)) /\
+   !a b t1 t2. mem a t2 ==> mem a (Nd b t1 t2)
+</PRE>
+
+<DT><STRONG><font color="black">mem_ind</font></STRONG>
+<DD>
+<PRE>
+|- !mem'.
+     (!a t1 t2. mem' a (Nd a t1 t2)) /\
+     (!a b t1 t2. mem' a t1 ==> mem' a (Nd b t1 t2)) /\
+     (!a b t1 t2. mem' a t2 ==> mem' a (Nd b t1 t2)) ==>
+     !a0 a1. mem a0 a1 ==> mem' a0 a1
+</PRE>
+
+<DT><STRONG><font color="black">mem_cases</font></STRONG>
+<DD>
+<PRE>
+|- !a0 a1.
+     mem a0 a1 <=>
+     (?t1 t2. a1 = Nd a0 t1 t2) \/
+     (?b t1 t2. (a1 = Nd b t1 t2) /\ mem a0 t1) \/
+     ?b t1 t2. (a1 = Nd b t1 t2) /\ mem a0 t2
+</PRE>
+
+<DT><STRONG><font color="black">mem_thm</font></STRONG>
+<DD>
+<PRE>
+|- (mem a Lf <=> F) /\
+   (mem a (Nd b t1 t2) <=> (a = b) \/ mem a t1 \/ mem a t2)
+</PRE>
+
+<DT><STRONG><font color="black">map_eq_Lf</font></STRONG>
+<DD>
+<PRE>
+|- ((map f t = Lf) <=> (t = Lf)) /\ ((Lf = map f t) <=> (t = Lf))
+</PRE>
+
+<DT><STRONG><font color="black">map_eq_Nd</font></STRONG>
+<DD>
+<PRE>
+|- (map f t = Nd a t1 t2) <=>
+   ?a' t1' t2'.
+     (t = Nd a' t1' t2') /\ (a = f a') /\ (t1 = map f t1') /\ (t2 = map f t2')
+</PRE>
+
+<DT><STRONG><font color="black">finite_rules</font></STRONG>
+<DD>
+<PRE>
+|- finite Lf /\ !a t1 t2. finite t1 /\ finite t2 ==> finite (Nd a t1 t2)
+</PRE>
+
+<DT><STRONG><font color="black">finite_ind</font></STRONG>
+<DD>
+<PRE>
+|- !finite'.
+     finite' Lf /\
+     (!a t1 t2. finite' t1 /\ finite' t2 ==> finite' (Nd a t1 t2)) ==>
+     !a0. finite a0 ==> finite' a0
+</PRE>
+
+<DT><STRONG><font color="black">finite_cases</font></STRONG>
+<DD>
+<PRE>
+|- !a0.
+     finite a0 <=>
+     (a0 = Lf) \/ ?a t1 t2. (a0 = Nd a t1 t2) /\ finite t1 /\ finite t2
+</PRE>
+
+<DT><STRONG><font color="black">finite_thm</font></STRONG>
+<DD>
+<PRE>
+|- (finite Lf <=> T) /\ (finite (Nd a t1 t2) <=> finite t1 /\ finite t2)
+</PRE>
+
+<DT><STRONG><font color="black">finite_map</font></STRONG>
+<DD>
+<PRE>
+|- finite (map f t) <=> finite t
+</PRE>
+
+<DT><STRONG><font color="black">bf_flatten_eq_lnil</font></STRONG>
+<DD>
+<PRE>
+|- !l. (bf_flatten l = [||]) <=> EVERY ($= Lf) l
+</PRE>
+
+<DT><STRONG><font color="black">bf_flatten_append</font></STRONG>
+<DD>
+<PRE>
+|- !l1. EVERY ($= Lf) l1 ==> (bf_flatten (l1 ++ l2) = bf_flatten l2)
+</PRE>
+
+<DT><STRONG><font color="black">EXISTS_FIRST</font></STRONG>
+<DD>
+<PRE>
+|- !l. EXISTS P l ==> ?l1 x l2. (l = l1 ++ x::l2) /\ EVERY ($~ o P) l1 /\ P x
+</PRE>
+
+<DT><STRONG><font color="black">exists_bf_flatten</font></STRONG>
+<DD>
+<PRE>
+|- exists ($= x) (bf_flatten tlist) ==> EXISTS (mem x) tlist
+</PRE>
+
+<DT><STRONG><font color="black">depth_rules</font></STRONG>
+<DD>
+<PRE>
+|- (!x t1 t2. lbtree$depth x (Nd x t1 t2) 0) /\
+   (!m x a t1 t2.
+      lbtree$depth x t1 m ==> lbtree$depth x (Nd a t1 t2) (SUC m)) /\
+   !m x a t1 t2. lbtree$depth x t2 m ==> lbtree$depth x (Nd a t1 t2) (SUC m)
+</PRE>
+
+<DT><STRONG><font color="black">depth_ind</font></STRONG>
+<DD>
+<PRE>
+|- !depth'.
+     (!x t1 t2. depth' x (Nd x t1 t2) 0) /\
+     (!m x a t1 t2. depth' x t1 m ==> depth' x (Nd a t1 t2) (SUC m)) /\
+     (!m x a t1 t2. depth' x t2 m ==> depth' x (Nd a t1 t2) (SUC m)) ==>
+     !a0 a1 a2. lbtree$depth a0 a1 a2 ==> depth' a0 a1 a2
+</PRE>
+
+<DT><STRONG><font color="black">depth_cases</font></STRONG>
+<DD>
+<PRE>
+|- !a0 a1 a2.
+     lbtree$depth a0 a1 a2 <=>
+     (?t1 t2. (a1 = Nd a0 t1 t2) /\ (a2 = 0)) \/
+     (?m a t1 t2.
+        (a1 = Nd a t1 t2) /\ (a2 = SUC m) /\ lbtree$depth a0 t1 m) \/
+     ?m a t1 t2. (a1 = Nd a t1 t2) /\ (a2 = SUC m) /\ lbtree$depth a0 t2 m
+</PRE>
+
+<DT><STRONG><font color="black">mem_depth</font></STRONG>
+<DD>
+<PRE>
+|- !x t. mem x t ==> ?n. lbtree$depth x t n
+</PRE>
+
+<DT><STRONG><font color="black">depth_mem</font></STRONG>
+<DD>
+<PRE>
+|- !x t n. lbtree$depth x t n ==> mem x t
+</PRE>
+
+<DT><STRONG><font color="black">optmin_ind</font></STRONG>
+<DD>
+<PRE>
+|- !P.
+     P NONE NONE /\ (!x. P (SOME x) NONE) /\ (!y. P NONE (SOME y)) /\
+     (!x y. P (SOME x) (SOME y)) ==>
+     !v v1. P v v1
+</PRE>
+
+<DT><STRONG><font color="black">optmin_def</font></STRONG>
+<DD>
+<PRE>
+|- (lbtree$optmin NONE NONE = NONE) /\
+   (lbtree$optmin (SOME x) NONE = SOME x) /\
+   (lbtree$optmin NONE (SOME y) = SOME y) /\
+   (lbtree$optmin (SOME x) (SOME y) = SOME (MIN x y))
+</PRE>
+
+<DT><STRONG><font color="black">mindepth_thm</font></STRONG>
+<DD>
+<PRE>
+|- (lbtree$mindepth x Lf = NONE) /\
+   (lbtree$mindepth x (Nd a t1 t2) =
+    if x = a then
+      SOME 0
+    else
+      OPTION_MAP SUC
+        (lbtree$optmin (lbtree$mindepth x t1) (lbtree$mindepth x t2)))
+</PRE>
+
+<DT><STRONG><font color="black">mem_mindepth</font></STRONG>
+<DD>
+<PRE>
+|- !x t. mem x t ==> ?n. lbtree$mindepth x t = SOME n
+</PRE>
+
+<DT><STRONG><font color="black">mindepth_depth</font></STRONG>
+<DD>
+<PRE>
+|- (lbtree$mindepth x t = SOME n) ==> lbtree$depth x t n
+</PRE>
+
+<DT><STRONG><font color="black">mmindex_EXISTS</font></STRONG>
+<DD>
+<PRE>
+|- EXISTS (\e. ?n. f e = SOME n) l ==> ?i m. lbtree$is_mmindex f l i m
+</PRE>
+
+<DT><STRONG><font color="black">mmindex_unique</font></STRONG>
+<DD>
+<PRE>
+|- lbtree$is_mmindex f l i m ==>
+   !j n. lbtree$is_mmindex f l j n <=> (j = i) /\ (n = m)
+</PRE>
+
+<DT><STRONG><font color="black">mem_bf_flatten</font></STRONG>
+<DD>
+<PRE>
+|- exists ($= x) (bf_flatten tlist) <=> EXISTS (mem x) tlist
+</PRE>
+
+</DL>
+
+
+
+<HR>
+</BODY>
+</HTML>
