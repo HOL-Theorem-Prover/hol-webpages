@@ -11,13 +11,16 @@
 <h2>Contents</h2>
 
 <ul>
-<li> <a href = "#Build">Build failures and warnings</a>
-<li> <a href = "#Quotes">Quotes and Antiquotes</a>
-<li> <a href = "#Parsing">Parsing and printing</a>
-<li> <a href = "#Assumptions">Manipulating Hypotheses</a>
-<li> <a href = "#HOL_ERR"><code>HOL_ERR</code></a>
-<li> <a href = "#Locating">Locating things</a>
-<li> <a href = "#Misc">Miscellaneous</a>
+  <li> <a href = "#Build">Build Failures and Warnings</a>
+  <li> <a href = "#Parsing">Parsing and Printing</a>
+    <ul>
+      <li> <a href = "#Quotes">Quotes and Antiquotes</a>
+    </ul>
+  <li> <a href = "#Tactics">Tactics</a>
+    <ul><li> <a href = "#Assumptions">Manipulating Hypotheses</a>
+    </ul>
+  <li> <a href = "#Locating">Locating Things</a>
+  <li> <a href = "#Misc">Miscellaneous</a>
 </ul>
 
 <hr>
@@ -53,7 +56,7 @@ you will need to write a <code>config-override</code> file in the
 trying to build my (large) theories!</strong></dt>
 <dd>
 <p> This is a known problem in Moscow&nbsp;ML&nbsp;2.01.  There is a
-patch, and <a href="http://hol.sf.net/mosml-chr-instructions.html">some
+patch, and <a href="mosml-chr-instructions.html">some
 instructions on how to apply it</a>.
 </dd>
 
@@ -153,72 +156,6 @@ a <code>Holmakefile</code>.</p></dd>
 </dl>
 
 <hr>
-<h2 id= "Quotes">Quotes and Antiquotes</h2>
-
-<dl>
-<dt><strong>How do I antiquote types?</strong>
-
-<dd> Antiquoting types works as you would expect when parsing types,
-     so that it is fine to write:
-<pre>
-    - val ty = Type`:bool`;
-</pre>
-     and then
-<pre>
-    - Type`:num -&gt; ^ty`;
-</pre>
-     However, you may wish to also introduce type antiquotations into
-     term parses (as a type constraint on a variable for example).
-     The problem is that you can't just write <code>^ty</code> in this
-     context, because the parsing function's type insists that all
-     antiquotes be of type term.  You must use the
-     <code>ty_antiq</code> function, which magically makes a type
-     appear as a term:
-<pre>
-    - val antity = ty_antiq ty;
-    &gt; val antity = `(ty_antiq(`:bool`))` : term
-</pre>
-     Then:
-<pre>
-    - val x = Term `x:^antity`;
-</pre>
-     It's quite easy to figure out when and why <code>ty_antiq</code>
-     is required if one understands the type of the parsing functions.
-     For example, <code>Term</code> and <code>(fn q =&gt; -- q --)</code>
-     have type
-<pre>
-    term frag list -&gt; term
-</pre>
-     While <code>Type</code> and <code>(fn q =&gt; == q ==)</code> have type
-<pre>
-    hol_type frag list -&gt; hol_type
-</pre>
-     The <code>frag list</code> refers to the fact that there is a
-     quotation being consumed.  A quotation is something that appears
-     between back-quotes.  A quotation consists of strings and
-     antiquotations.  A <code>term frag list</code> must have
-     antiquotations that are of type <code>term</code>.  A
-     <code>hol_type frag list</code> must have antiquotations that are
-     of type <code>hol_type</code>.  Thus, if you use
-     <code>Term</code> to parse a term, you can't directly antiquote
-     in types, because this would violate the typing rules (you can
-     only antiquote in terms if you call <code>Term</code>, because it
-     requires a <code>term frag list</code>).
-<p>
-     So, in order to antiquote types into terms there is a bit of
-     magic called <code>ty_antiq</code>, which if you look at its type
-     (<code>hol_type -&gt; term</code>) turns a type into a term.  The
-     term formed is completely bogus in a logical sense (it's actually
-     a variable with a special name and the given type), but can be
-     pushed into the parsing function <code>Term</code> so as to give
-     the effect of antiquoting a type.
-</p><p>
-     The function <code>Hol_datatype</code> takes a <code>hol_type
-     frag list</code>, so if you want to antiquote a type into the
-     quotations it takes, you will not need to use
-     <code>ty_antiq</code>.
-</dl>
-<hr>
 <h2 id = "Parsing">Parsing and Printing</h2>
 
 <dl>
@@ -232,7 +169,7 @@ difference between the uses to me ...</strong></dt>
 <p>The <code>``...``</code> form is really the application of the
 function <code>Parse.Term</code> to the quotation <code>`...`</code>.
 A quotation is really just a string (except it also supports
-anti-quotations, see <a href="#Quotes">above</a>).  The reason it
+anti-quotations, see <a href="#Quotes">below</a>).  The reason it
 isn’t just a string is that SML strings require you to backslash quote
 backslashes, and to backslash quote newlines.  Both of these would
 interfere with HOL syntax (and, or and lambda in our ASCII notation
@@ -464,8 +401,147 @@ So all you are doing is inserting an extra phase into the process
 after calling <code>Absyn</code>, but before calling
 <code>absyn_to_term</code>.
 </dl>
-<p><hr><p>
-<h2 id = "Assumptions">Manipulating Hypotheses</h2>
+<h3 id= "Quotes">Quotes and Antiquotes</h2>
+
+<dl>
+<dt><strong>How do I antiquote types?</strong>
+
+<dd> Antiquoting types works as you would expect when parsing types,
+     so that it is fine to write:
+<pre>
+    - val ty = Type`:bool`;
+</pre>
+     and then
+<pre>
+    - Type`:num -&gt; ^ty`;
+</pre>
+     However, you may wish to also introduce type antiquotations into
+     term parses (as a type constraint on a variable for example).
+     The problem is that you can't just write <code>^ty</code> in this
+     context, because the parsing function's type insists that all
+     antiquotes be of type term.  You must use the
+     <code>ty_antiq</code> function, which magically makes a type
+     appear as a term:
+<pre>
+    - val antity = ty_antiq ty;
+    &gt; val antity = `(ty_antiq(`:bool`))` : term
+</pre>
+     Then:
+<pre>
+    - val x = Term `x:^antity`;
+</pre>
+     It's quite easy to figure out when and why <code>ty_antiq</code>
+     is required if one understands the type of the parsing functions.
+     For example, <code>Term</code> and <code>(fn q =&gt; -- q --)</code>
+     have type
+<pre>
+    term frag list -&gt; term
+</pre>
+     While <code>Type</code> and <code>(fn q =&gt; == q ==)</code> have type
+<pre>
+    hol_type frag list -&gt; hol_type
+</pre>
+     The <code>frag list</code> refers to the fact that there is a
+     quotation being consumed.  A quotation is something that appears
+     between back-quotes.  A quotation consists of strings and
+     antiquotations.  A <code>term frag list</code> must have
+     antiquotations that are of type <code>term</code>.  A
+     <code>hol_type frag list</code> must have antiquotations that are
+     of type <code>hol_type</code>.  Thus, if you use
+     <code>Term</code> to parse a term, you can't directly antiquote
+     in types, because this would violate the typing rules (you can
+     only antiquote in terms if you call <code>Term</code>, because it
+     requires a <code>term frag list</code>).
+<p>
+     So, in order to antiquote types into terms there is a bit of
+     magic called <code>ty_antiq</code>, which if you look at its type
+     (<code>hol_type -&gt; term</code>) turns a type into a term.  The
+     term formed is completely bogus in a logical sense (it's actually
+     a variable with a special name and the given type), but can be
+     pushed into the parsing function <code>Term</code> so as to give
+     the effect of antiquoting a type.
+</p><p>
+     The function <code>Hol_datatype</code> takes a <code>hol_type
+     frag list</code>, so if you want to antiquote a type into the
+     quotations it takes, you will not need to use
+     <code>ty_antiq</code>.
+</dl>
+<hr>
+
+<h2 id= "Tactics">Tactics</h2>
+
+<dl>
+<dt>I want to just
+write <code>tac1&nbsp;THEN&nbsp;tac2</code> instead
+of <code>tac1&nbsp;THENL&nbsp;((fn&nbsp;<i>t</i>&nbsp;=>&nbsp;[<i>t</i>,<i>t</i>])&nbsp;tac2)</code>
+but when I tried the version with <code>THEN</code> I got an error</dt>
+<dd>
+
+<p>The fact that the infixes <code>THEN</code>, <code>THEN1</code> (a
+version of <code>THENL</code>) are left-associative occasionally
+causes problems.  (That there is a problem relies on the fact that the
+<code>THEN</code>/<code>THENL</code> combination is not associative.)
+You can usually get around this problem by bracketing your tactics
+differently.</p>
+
+<p>The typical problem is when you apply <code>tac1</code>, generating
+two goals.  You then apply <code>tac2</code> to one of these
+generating a further two goals.  You construct <code>tac3</code>
+and <code>tac4</code> to handle these.  Then you realise that</p>
+<pre>
+    tac2 THENL [tac3, tac4]
+</pre>
+<p>
+would correctly handle the second goal that was generated
+by <code>tac1</code> as well. So, you write</p>
+<pre>
+    tac1 THEN tac2 THENL [tac3, tac4]
+</pre>
+<p>
+and are annoyed when it fails with a <code>THENL</code> error.  The
+reason is that at the point when the <code>THENL</code> gets applied,
+there are actually four goals to work with, not just two.  The same
+sort of thing happens with <code>THEN1</code> instead
+of <code>THENL</code>.  You can solve the problem by writing</p>
+<pre>
+    tac1 THEN (tac2 THENL [tac3, tac4])
+</pre>
+<p>
+But your problem is superficially slightly different.
+You say that</p>
+<pre>
+    tac1 THENL (fn t => [t,t]) tac2
+</pre>
+<p>
+works, but</p>
+<pre>
+    tac1 THEN tac2
+</pre>
+<p>doesn’t.  This will be because <code>tac2</code> involves
+a <code>THENL</code> or a <code>THEN1</code>.  Say, it is
+<pre>
+    tac21 THEN1 tac22 THEN tac23
+</pre>
+<p>
+When inside a <code>THENL</code> branch, the two copies of this tactic
+do the right thing.  When you use <code>THEN</code>, you have</p>
+<pre>
+    tac1 THEN tac21 THEN1 tac22 THEN tac23
+</pre>
+<p>After <code>tac1</code> has been applied you have two goals.  After
+<code>tac21</code> you have four goals.  After <code>tac22</code>, you
+have three goals, the second of which you wanted to be solved
+by <code>tac22</code>.  From that point on, the tactics behave
+differently.  In particular, <code>tac23</code> may well do the wrong
+thing when applied to the goal that <code>tac22</code> was supposed
+to see but didn’t.</p>
+
+<p>The fix: write</p>
+<pre>
+    tac1 THEN (tac21 THEN1 tac22 THEN tac23)
+</pre>
+</dl>
+<h3 id = "Assumptions">Manipulating Hypotheses</h2>
 <dl>
 <dt><strong>How do I put HOL in a state so that theorem assumptions are
    printed?</strong>
@@ -522,30 +598,9 @@ converts it to a theorem <em>thk</em>, and applies <em>ttac</em> to
 </pre>
 </dl>
 
+
+
 <hr>
-
-<h2 id = "HOL_ERR">HOL_ERR</h2>
-
-<dl>
-<dt><strong> How can I find out more information about a HOL_ERR
-exception?</strong>
-
-<dd> If expression <code>M</code> is causing the grief, then write
-<pre>
-    (M) handle e =&gt; Raise e
-</pre>
-Often the parentheses around <code>M</code> will not be required.
-<P>
-It is sometimes convenient to use the <code>try</code> function as
-well. It takes a function and an argument, applies the function to the
-argument, and (on success) returns the result or (on failure) prints the
-exception. Note however, that <code>try f x</code> will not catch errors
-arising from the evaluations that lead to <code>f</code> or
-<code>x</code>.
-
-</dl>
-
-<HR>
 
 <h2 id = "Locating">Locating Things</h2>
 
@@ -604,6 +659,22 @@ have the given name.
 <h2 id = "Misc">Miscellaneous</h2>
 
 <dl>
+<dt><strong> How can I find out more information about a HOL_ERR
+exception?</strong>
+
+<dd> If expression <code>M</code> is causing the grief, then write
+<pre>
+    (M) handle e =&gt; Raise e
+</pre>
+Often the parentheses around <code>M</code> will not be required.
+<P>
+It is sometimes convenient to use the <code>try</code> function as
+well. It takes a function and an argument, applies the function to the
+argument, and (on success) returns the result or (on failure) prints the
+exception. Note however, that <code>try f x</code> will not catch errors
+arising from the evaluations that lead to <code>f</code> or
+<code>x</code>.
+
 <dt><strong>How do I quit?  (The system hangs when I type <code>quit()</code>)</strong></dt>
 
 <dd><p>This arises because the quotation-filter, which handles the
@@ -668,7 +739,7 @@ could write:</p>
 <p>
 <div class="timestamp">
 <p>
-Time-stamp: "Thursday, 16 July 2009; 00:51 UTC (Michael Norrish)"
+Time-stamp: "Thursday, 23 July 2009; 00:39 UTC (Michael Norrish)"
 </p></div>
 
 
