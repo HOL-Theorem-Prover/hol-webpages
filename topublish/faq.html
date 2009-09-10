@@ -172,9 +172,9 @@ A quotation is really just a string (except it also supports
 anti-quotations, see <a href="#Quotes">below</a>).  The reason it
 isn’t just a string is that SML strings require you to backslash quote
 backslashes, and to backslash quote newlines.  Both of these would
-interfere with HOL syntax (and, or and lambda in our ASCII notation
-all involve backslashes; we often want to input goals over multiple
-lines).</p>
+interfere with HOL syntax (conjunction, disjunction, and lambda in our
+ASCII notation all involve backslashes; we often want to input goals
+over multiple lines).</p>
 
 <p>The <code>Term</code> function turns a quotation into a term.  It’s
 the system's parser.</p>
@@ -210,7 +210,90 @@ type on what is parsed (goals must be of type <code>:bool</code>).
 They also reduce screen-clutter. </p>
 </dd>
 
+<dt>
+<strong><code>$≠</code> isn’t recognised as the inequality term,
+but <code>$&lt;&gt;</code> is. </strong>
+</dt>
+<dd>
+<p>The following session seems to exhibit a strange behaviour:</p>
+<pre>
+         - set_trace "Unicode" 1;
+         &gt; val it = () : unit
 
+         - type_of ``$&lt;&gt;``;
+         &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
+         &gt; val it = ``:'a -> 'a -> bool`` : hol_type
+
+         - type_of ``$≠``;
+         &gt; val it = ``:'a`` : hol_type
+
+         - dest_term ``$≠``;
+         &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
+         &gt; val it = VAR ("≠", ``:'a``) : lambda
+</pre>
+<p>In fact, this is a known consequence of the design.
+The <code>$</code>-quoting of symbols turns them into things that
+aren’t treated specially by the surface syntax parsing (which handles
+infix operators <i>etc</i>).  Thus, when dollar-quoted,
+the <code>≠</code> gets passed through to the name resolution phase
+unchanged.  The name resolution phase then decides that <code>≠</code>
+is not a name it knows anything about, so it passes through that phase
+and becomes a variable.</p>
+
+<p> Name resolution doesn't know anything about <code>≠</code> because
+the system is set up so that the surface syntax phase turns it into
+the name <code>&lt&gt;</code>.  You can see this by examining the
+output of <code>term_grammar()</code>:</p>
+
+<pre>
+         - term_grammar();
+         &gt; val it =
+               ...
+               (450) TM  ::=  ... | TM "≠" TM [&lt;&gt;] | ...
+               ...
+</pre>
+<p> The presence of <code>&lt;&gt;</code> in the square brackets
+indicates that this rule maps the form with <code>≠</code> into the
+name <code>&lt;&gt;</code>.</p>
+
+<p> A similar mapping from surface syntax to name happens to turn
+<code>if-then-else</code> into <code>COND</code>.  If you
+write <code>$if</code>, you get a variable called <code>if</code>, not
+the constant <code>COND</code>.</p>
+
+</dd>
+
+<dt>
+<strong>How do I add a new symbol <code>&lt;-&gt;</code>?</strong>
+</dt>
+
+<dd>
+<p>The problem looks like this:</p>
+<pre>
+         - ``&lt;-&gt;``;
+         Don't expect to find a -&gt; in this position after a &lt;
+         on line 1318, characters 3-4 and at line 1318, character 2.
+         ! Uncaught exception:
+         ! HOL_ERR
+</pre>
+<p>
+The treatment of <code>-</code> changed to support unary minus, and so
+you get this odd splitting behaviour if you give the
+parser <code>&lt;-&gt;</code> when it’s “unprepared”.  You can
+“prepare” it by making calls to <code>set_fixity</code>
+and/or <code>overload_on</code>.</p>
+
+<p>Thus:</p>
+<pre>
+         val _ = set_fixity "&lt;-&gt;" (Infixl 500);
+
+         val _ = overload_on ("&lt;-&gt;", ``myconst``);
+</pre>
+<p>
+Either of these will do the trick; doing both (a common use-case) is
+also fine. </p>
+
+</dd>
 
 <dt>
   <strong>
@@ -401,7 +484,7 @@ So all you are doing is inserting an extra phase into the process
 after calling <code>Absyn</code>, but before calling
 <code>absyn_to_term</code>.
 </dl>
-<h3 id= "Quotes">Quotes and Antiquotes</h2>
+<h3 id= "Quotes">Quotes and Antiquotes</h3>
 
 <dl>
 <dt><strong>How do I antiquote types?</strong>
@@ -541,7 +624,7 @@ to see but didn’t.</p>
     tac1 THEN (tac21 THEN1 tac22 THEN tac23)
 </pre>
 </dl>
-<h3 id = "Assumptions">Manipulating Hypotheses</h2>
+<h3 id = "Assumptions">Manipulating Hypotheses</h3>
 <dl>
 <dt><strong>How do I put HOL in a state so that theorem assumptions are
    printed?</strong>
@@ -739,7 +822,7 @@ could write:</p>
 <p>
 <div class="timestamp">
 <p>
-Time-stamp: "Thursday, 23 July 2009; 00:39 UTC (Michael Norrish)"
+Time-stamp: "Thursday, 10 September 2009; 00:40 UTC (Michael Norrish)"
 </p></div>
 
 
