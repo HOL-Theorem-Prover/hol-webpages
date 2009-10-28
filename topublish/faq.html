@@ -63,9 +63,9 @@ instructions on how to apply it</a>.
 <dt>
 <strong>HOL is failing to complete the build process.  It stops when trying
  to create the HolBdd theory.  Why is this, and what should I do?</strong></dt>
-<dd> <p> The problem is almost certainly that your copy of MoscowML hasn't
+<dd> <p> The problem is almost certainly that your copy of MoscowML hasn’t
      been built with dynamic linking correctly enabled.  This in turn
-     means that the Muddy BDD package that HolBdd uses can't load.
+     means that the Muddy BDD package that HolBdd uses can’t load.
      You can test that this is the problem by running hol, and then
      trying</p>
 <pre>
@@ -77,7 +77,7 @@ instructions on how to apply it</a>.
     <p>If you decide you do want HolBdd (there is nothing else in HOL
      that depends on dynamic linking) you will probably need to build
      Moscow ML yourself.  Binaries from the central site in Denmark
-     don't seem to work.  However the install.txt file in the
+     don’t seem to work.  However the install.txt file in the
      distribution does talk about things you need to do to binaries in
      order to get dynamic linking to work for them, and it would be
      interesting to hear that someone had got this to work.  In any
@@ -86,7 +86,7 @@ instructions on how to apply it</a>.
      the instructions in the comments there.</p>
 <p>
      This advice seems to solve this problem for 90% of the people
-     reporting it.  If it doesn't in your case, please get back to us.
+     reporting it.  If it doesn’t in your case, please get back to us.
 </p></dd>
 <dt>
 <strong> Should I be concerned by error messages during the build process? </strong></dt>
@@ -177,7 +177,7 @@ ASCII notation all involve backslashes; we often want to input goals
 over multiple lines).</p>
 
 <p>The <code>Term</code> function turns a quotation into a term.  It’s
-the system's parser.</p>
+the system’s parser.</p>
 
 <p>If you write something like</p>
 <pre>
@@ -211,50 +211,47 @@ They also reduce screen-clutter. </p>
 </dd>
 
 <dt>
-<strong><code>$≠</code> isn’t recognised as the inequality term,
-but <code>$&lt;&gt;</code> is. </strong>
+<strong><code>$∉</code> isn’t recognised as the “not-an-element” term,
+but <code>$NOTIN</code> is. </strong>
 </dt>
 <dd>
 <p>The following session seems to exhibit a strange behaviour:</p>
 <pre>
-         - set_trace "Unicode" 1;
-         &gt; val it = () : unit
-
-         - type_of ``$&lt;&gt;``;
+         - type_of ``$NOTIN``;
          &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
-         &gt; val it = ``:'a -> 'a -> bool`` : hol_type
+         &gt; val it = ``:α -> (α -> bool) -> bool`` : hol_type
 
-         - type_of ``$≠``;
-         &gt; val it = ``:'a`` : hol_type
+         - type_of ``$∉``;
+         &gt; val it = ``:α`` : hol_type
 
-         - dest_term ``$≠``;
+         - dest_term ``$∉``;
          &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
-         &gt; val it = VAR ("≠", ``:'a``) : lambda
+         &gt; val it = VAR ("∉", ``:'a``) : lambda
 </pre>
 <p>In fact, this is a known consequence of the design.
 The <code>$</code>-quoting of symbols turns them into things that
 aren’t treated specially by the surface syntax parsing (which handles
 infix operators <i>etc</i>).  Thus, when dollar-quoted,
-the <code>≠</code> gets passed through to the name resolution phase
-unchanged.  The name resolution phase then decides that <code>≠</code>
+the <code>∉</code> gets passed through to the name resolution phase
+unchanged.  The name resolution phase then decides that <code>∉</code>
 is not a name it knows anything about, so it passes through that phase
 and becomes a variable.</p>
 
-<p> Name resolution doesn't know anything about <code>≠</code> because
+<p> Name resolution doesn’t know anything about <code>∉</code> because
 the system is set up so that the surface syntax phase turns it into
-the name <code>&lt&gt;</code>.  You can see this by examining the
+the name <code>NOTIN</code>.  You can see this by examining the
 output of <code>term_grammar()</code>:</p>
 
 <pre>
          - term_grammar();
          &gt; val it =
                ...
-               (450) TM  ::=  ... | TM "≠" TM [&lt;&gt;] | ...
+               (425) TM  ::=  ... | TM "∉" TM [NOTIN] | ...
                ...
 </pre>
-<p> The presence of <code>&lt;&gt;</code> in the square brackets
-indicates that this rule maps the form with <code>≠</code> into the
-name <code>&lt;&gt;</code>.</p>
+<p> The presence of <code>NOTIN</code> in the square brackets
+indicates that this rule maps the form with <code>∉</code> into the
+name <code>NOTIN</code>.</p>
 
 <p> A similar mapping from surface syntax to name happens to turn
 <code>if-then-else</code> into <code>COND</code>.  If you
@@ -299,7 +296,7 @@ also fine. </p>
   <strong>
     I defined an infix “and”. This works OK, but it seems to
     not get the precedence I gave it. Is this an interaction
-    with <code>let-and</code> declaration syntax? I don't
+    with <code>let-and</code> declaration syntax? I don’t
     use <code>let-and</code> much, so is there a way to remove
     the <code>let-and</code> treatment of “and” from the term
     grammar?
@@ -316,20 +313,20 @@ also fine. </p>
 </pre>
 </dd>
 
-<dt><strong>Why can't I write <code>``MAP ~ x``</code>?</strong>
+<dt><strong>Why can’t I write <code>``MAP ~ x``</code>?</strong>
 <dd> When you attempt this, you will get the error message
 <pre>
     No rule for [~]
 </pre>
      meaning that the parser wants to do a reduction involving just
-     the special symbol <code>~</code>, and it can't find a rule that
+     the special symbol <code>~</code>, and it can’t find a rule that
      allows this. The rule in the grammar is
 <pre>
     TM ::= ~ TM
 </pre>
 <p>
      <code>~</code> is treated specially, and not just as a function
-     that you'd apply to arguments normally, for two reasons:
+     that you’d apply to arguments normally, for two reasons:
 <p>
 <ul>
 <li> it can have precedence weaker than just function
@@ -337,7 +334,7 @@ also fine. </p>
           x</code>, this is parsed as <code>~(f x)</code>.
 <p>
 <li> it can group without needing extra parentheses, so you can
-          write <code>~~b</code>; you don't need to write
+          write <code>~~b</code>; you don’t need to write
           <code>~(~b)</code>.
 </ul>
 <p>
@@ -347,7 +344,7 @@ also fine. </p>
      list</code>.
 <p>
 
-<dt><strong> I'd like to use MEM as an infix, not a Prefix.</strong></dt>
+<dt><strong> I’d like to use MEM as an infix, not a Prefix.</strong></dt>
 <dd> <p> Use grammar manipulation functions such as
      <code>set_fixity</code> to alter its parsing information.
      These changes can be made to persist when the current
@@ -413,11 +410,11 @@ form, try</p>
 
 <dd>
 <p> First a warning: this is not likely to do  what you want. For example,
-you wouldn't get any nice way of stating the Hoare assignment axiom.
+you wouldn’t get any nice way of stating the Hoare assignment axiom.
 <pre>
     { P[e/v] } v := e { P }
 </pre>
-In order to state the above, you'd need to actually write
+In order to state the above, you’d need to actually write
 <pre>
     { (P v)[e/v] } v := e { P v }
 </pre>
@@ -435,7 +432,7 @@ In order to state the above, you'd need to actually write
 where P is a variable, reduces under beta-conversion to <code>P</code>.)<p>
 
 Incidentally, if this is the sort of thing you are doing, you might be
-interested in looking at Peter Homeier's Sunrise system which
+interested in looking at Peter Homeier’s Sunrise system which
 implements a VCG in HOL.  This is available
 <a href="http://www.cis.upenn.edu/%7Ehol/sunrise/index.html">here</a>.
 <p>
@@ -443,7 +440,7 @@ If you really do want to implement your parsing trick above (turning
 <code>``P[e/v]``</code> into <code>``(\v. P) e``</code>), you could do
 this by implementing your own parser.  Moreover, this might not be
 impossibly difficult, because the various phases of the existing
-parser can be called independently.  Here's a sketch of what you'd
+parser can be called independently.  Here’s a sketch of what you’d
 need to do:
 
 </p><ol>
@@ -455,7 +452,7 @@ need to do:
       lists and integers.  The best way around these problems is to
       explicitly load these theories, remove their syntax (see
       <code>remove_termtok</code>), and then install your own. This
-      will ensure that things won't break if someone loads your
+      will ensure that things won’t break if someone loads your
       theory/library and then later loads lists and/or integers.
 
 </li><li> The first phase of your new parser will be to call
@@ -465,7 +462,7 @@ need to do:
         <blockquote><p><code>``foo P e v``</code></p></blockquote>
       You then traverse the term looking for this pattern and turning
       it into <code>(\v. P) e</code>.  You would also raise an error
-      at this stage if <code>v</code> wasn't a variable.
+      at this stage if <code>v</code> wasn’t a variable.
 
 </li><li>  You would then pass your modified abstract syntax "term" onto
       the next stages of the built-in parser (type-checking etc).  To
@@ -500,8 +497,8 @@ after calling <code>Absyn</code>, but before calling
 </pre>
      However, you may wish to also introduce type antiquotations into
      term parses (as a type constraint on a variable for example).
-     The problem is that you can't just write <code>^ty</code> in this
-     context, because the parsing function's type insists that all
+     The problem is that you can’t just write <code>^ty</code> in this
+     context, because the parsing function’s type insists that all
      antiquotes be of type term.  You must use the
      <code>ty_antiq</code> function, which magically makes a type
      appear as a term:
@@ -513,7 +510,7 @@ after calling <code>Absyn</code>, but before calling
 <pre>
     - val x = Term `x:^antity`;
 </pre>
-     It's quite easy to figure out when and why <code>ty_antiq</code>
+     It’s quite easy to figure out when and why <code>ty_antiq</code>
      is required if one understands the type of the parsing functions.
      For example, <code>Term</code> and <code>(fn q =&gt; -- q --)</code>
      have type
@@ -531,7 +528,7 @@ after calling <code>Absyn</code>, but before calling
      antiquotations that are of type <code>term</code>.  A
      <code>hol_type frag list</code> must have antiquotations that are
      of type <code>hol_type</code>.  Thus, if you use
-     <code>Term</code> to parse a term, you can't directly antiquote
+     <code>Term</code> to parse a term, you can’t directly antiquote
      in types, because this would violate the typing rules (you can
      only antiquote in terms if you call <code>Term</code>, because it
      requires a <code>term frag list</code>).
@@ -539,7 +536,7 @@ after calling <code>Absyn</code>, but before calling
      So, in order to antiquote types into terms there is a bit of
      magic called <code>ty_antiq</code>, which if you look at its type
      (<code>hol_type -&gt; term</code>) turns a type into a term.  The
-     term formed is completely bogus in a logical sense (it's actually
+     term formed is completely bogus in a logical sense (it’s actually
      a variable with a special name and the given type), but can be
      pushed into the parsing function <code>Term</code> so as to give
      the effect of antiquoting a type.
@@ -674,7 +671,7 @@ having type
 
 <code>UNDISCH_NTH k ttac</code> grabs the <em>k</em>th assumption,
 converts it to a theorem <em>thk</em>, and applies <em>ttac</em> to
-<em>thk</em> to get the desired tactic.  Here's one way to define it:
+<em>thk</em> to get the desired tactic.  Here’s one way to define it:
 <pre>
     fun UNDISCH_NTH k ttac (g as (asl,_)) =
         UNDISCH_THEN (Lib.el (k+1)(rev asl)) ttac g;
@@ -688,14 +685,14 @@ converts it to a theorem <em>thk</em>, and applies <em>ttac</em> to
 <h2 id = "Locating">Locating Things</h2>
 
 <dl>
-<dt><strong> How do I get a datatype's axiom after using
+<dt><strong> How do I get a datatype’s axiom after using
              Hol_datatype?</strong>
 
 <dd>
 Use
 <pre>
     TypeBase.axiom_of ``:mytypename``
-</pre> Hopefully you won't need to do this very much because many of the
+</pre> Hopefully you won’t need to do this very much because many of the
      contexts in which you previously needed the axiom are dealt with
      more smoothly.  For example, cases, induction, one-one and
      distinctness theorems are now proved automatically, and are
@@ -721,11 +718,11 @@ means (roughly):
     arguments), apply conversion <em>c</em> </p></blockquote>
 
 <p>
-<dt><strong> I can't find help on <code>IN</code>. What theory defined
+<dt><strong> I can’t find help on <code>IN</code>. What theory defined
 is it defined in?</strong>
 <dd>
 <code>IN</code> is declared in <code>boolTheory</code>. <code>IN</code>
-is not an ML identifier, so we don't index it. Perhaps we could index
+is not an ML identifier, so we don’t index it. Perhaps we could index
 constants to their place of definition though.
 <p>
 You can always figure out the originating theory by
@@ -761,7 +758,7 @@ arising from the evaluations that lead to <code>f</code> or
 <dt><strong>How do I quit?  (The system hangs when I type <code>quit()</code>)</strong></dt>
 
 <dd><p>This arises because the quotation-filter, which handles the
-<code>``...``</code> and <code>``:...``</code> syntax, doesn't
+<code>``...``</code> and <code>``:...``</code> syntax, doesn’t
 understand the <code>quit</code> command&rsquo;s significance.  Rather than use <code>quit()</code>, end your interactive
 process by sending an <code>EOF</code> signal.  On Unix, type
 <code>Control-D</code>; on Windows, type <code>Control-Z</code>,
@@ -822,7 +819,7 @@ could write:</p>
 <p>
 <div class="timestamp">
 <p>
-Time-stamp: "Thursday, 10 September 2009; 00:40 UTC (Michael Norrish)"
+Time-stamp: "Wednesday, 28 October 2009; 03:59 UTC (Michael Norrish)"
 </p></div>
 
 
