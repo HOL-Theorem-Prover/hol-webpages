@@ -41,7 +41,7 @@ you will need to write a <code>config-override</code> file in the
 </pre>
 <p>You should then be able to run </p>
 <pre>
-    $ mosml < tools/smart-configure.sml
+    $ mosml &lt; tools/smart-configure.sml
 </pre>
 <p>and</p>
 <pre>
@@ -168,6 +168,130 @@ a <code>Holmakefile</code>.</p></dd>
 your home directory in Kananaskis-6 and later.</p>
 </dd>
 
+<dt><strong>How do I understand the output
+of <code>term_grammar()</code>?</strong></dt>
+<dd><p>The <code>term_grammar()</code> function returns the grammar
+controlling the parsing and printing of HOL terms.  Its printed form
+doesn’t capture everything inside the grammar, but does provide a
+pretty good picture of what happens to your string when it’s
+parsed, and what happens to your term when it’s printed.
+
+<p>The first part of the grammar output is something that looks like:
+<pre>
+   (0)    TM  ::=  "LEAST" &lt;..binders..&gt; "." TM |
+                   "?!" &lt;..binders..&gt; "." TM | "?" &lt;..binders..&gt; "." TM |
+                   "!" &lt;..binders..&gt; "." TM | "@" &lt;..binders..&gt; "." TM |
+                   "\" &lt;..binders..&gt; "." TM
+   (2)    TM  ::=  "let" TM "in" TM  [ _ let]
+   (4)    TM  ::=  TM "::" TM (restricted quantification operator)
+   (5)    TM  ::=  TM TM  (binder argument concatenation)
+   (7)    TM  ::=  "case" TM "of" TM  [case__magic]
+...
+   (50)   TM  ::=  TM "," TM   (R-associative)
+   (70)   TM  ::=  "if" TM "then" TM "else" TM  [COND]
+   (80)   TM  ::=  TM ":-" TM   (non-associative)
+   (100)  TM  ::=  TM "&lt;=/=&gt;" TM | TM "&lt;=&gt;" TM | TM "=" TM
+                   (non-associative)
+   (200)  TM  ::=  TM "==&gt;" TM   (R-associative)
+...
+   (450)  TM  ::=  TM "&lt;&lt;=" TM | TM "PSUBSET" TM | TM "SUBSET" TM |
+                   TM "&gt;=" TM | TM "&lt;=" TM | TM "&gt;" TM | TM "&lt;" TM |
+                   TM "RSUBSET" TM | TM "&lt;&gt;" TM (non-associative)
+   (460)  TM  ::=  TM "with" TM  [record update] | ... (R-associative)
+   (480)  TM  ::=  TM "++" TM   (L-associative)
+   (490)  TM  ::=  TM "::" TM  [CONS] | TM "INSERT" TM | TM "LEX" TM |
+                   TM "##" TM (R-associative)
+   (500)  TM  ::=  TM "DELETE" TM | TM "DIFF" TM | TM "UNION" TM |
+                   TM "-" TM | TM "+" TM | TM "RUNION" TM
+                   (L-associative)
+...
+</pre>
+<p> This is a description of the way in which terms can be constructed
+from tokens and recursive invocations.  For example, the rule at
+precedence level 70 is
+<pre>
+   TM  ::=  "if" TM "then" TM "else" TM  [COND]
+</pre>
+<p> This rule is saying that if you input <code>``if P then Q else
+R``</code>, the concrete syntax phase treatment of this phrase will turn
+it into <code>COND&nbsp;P&nbsp;Q&nbsp;R</code>.  If there is no name
+in square brackets after a rule, then the head operator name is the
+same as the (one) token in the rule.  Thus the rule for <code>+</code>
+is
+just <code>TM&nbsp;&nbsp;::=&nbsp;&nbsp;TM&nbsp;"+"&nbsp;TM</code>.</p>
+
+<p> The numbers associated with rules indicate their precedence.  The
+higher the number, the more tightly the operators “pull
+at” <code>TM</code>s to their left or right.  Because <code>+</code>
+is at level 500, and <code>*</code> is at 600, arithmetic expressions
+such as <code>``2 * x + 1``</code> parse as you’d expect.  Rules that
+can pull in both directions at once (“infixes”, such as <code>+</code>
+and <code>&lt;=</code>) are also given <em>associativities</em>.
+Because <code>/\</code> is
+right-associative, <code>``p&nbsp;/\&nbsp;q&nbsp;r``</code> parses
+to <code>(/\&nbsp;p&nbsp;(/\&nbsp;q&nbsp;r))</code>.
+
+<p>The next section of the <code>term_grammar()</code> output is the
+list of known constants.  For example:
+<pre>
+   Known constants:
+     ! ## & () * ** *, + ++ , - /\ 0 :- :&gt; &lt; &lt;&lt;= &lt;= &lt;=/=&gt; &lt;=&gt; &lt;&gt; = =+ ==&gt; &gt;
+     &gt;= ? ?! @ ABS_num ABS_prod ABS_sum AC ALL_DISTINCT APPEND ARB ASSOC
+     Abbrev BIGINTER BIGUNION BIJ BIT1 BIT2 BOUNDED CARD CHOICE COMM COMPL
+     COND CONS CR CROSS CURRY Cong DATATYPE DELETE DIFF DISJOINT DIV DIV2
+     DIVMOD DIV_2EXP DROP EL EMPTY EMPTY_REL EQC EVEN EVERY EXISTS EXP
+...
+     stmarker sum_case sum_size symmetric the_fun the_value total
+     transitive tri trichotomous unint wellfounded ~
+</pre>
+
+<p>This is the list of names that cannot be used to name free
+variables.  Instead, if this name occurs (after concrete syntax has
+been processed away), it will turn into a constant (or a pattern form,
+see below).  Thus, you cannot write <code>``EQC + 6``</code>
+(when <code>relationTheory</code> is loaded) because
+the <code>EQC</code> is the name of a constant, and it does not have a
+numeric type.  If a name appears in a binding position, it can be
+anything.  So you <em>can</em> write <code>``λEQC. EQC + 6``</code>.
+I wouldn’t recommend it, but it’s allowed.
+
+<p> The final section is a list of mappings from constant “names” (in
+the sense of the previous paragraph) to actual term values.  Not every
+such binding is listed.  In particular, if a string maps to one constant
+that has the same name, then this listing will not appear.  Each line
+is of the form
+<pre>
+    &lt;name&gt;        -&gt;  &lt;constant1&gt; ... &lt;constantn&gt;
+</pre>
+<p> For example, there is a line
+<pre>
+    **            -&gt;  EXP
+</pre>
+<p>meaning that the name <code>**</code> will map to the
+constant <code>EXP</code> (from <code>arithmeticTheory</code>).  Note
+that there is also a mapping from the string <code>EXP</code> to the
+same constant.  This mapping <em>isn’t</em> listed because there is
+less cause for confusion there.
+
+<p> Another sort of situation is illustrated with the line
+<pre>
+    ++            -&gt;  APPEND ++
+</pre>
+<p> which means that the name <code>++</code> can map to either the
+list constant <code>APPEND</code> or the constant <code>++</code>.
+(How do you find out which constant that last one is?
+Try <code>map&nbsp;dest_thy_const&nbsp;(decls&nbsp;"++")</code>.)
+
+<p> Finally, an overloading mapping may also take a string to a
+pattern, which is a λ-expression.  This is illustrated by the line
+for <code>&lt;&gt;</code>:
+<pre>
+    &lt;&gt;            -&gt;  (\(x :'a) (y :'a). bool$~ (min$= x y))
+</pre>
+<p>This means that the name <code>&lt;&gt;</code> maps to a pattern
+taking two arguments and turning them into a negated equality.
+
+</dd>
 <dt> <strong>
     What’s the difference between <code>`...`</code>
     and <code>``...``</code> — it seems like some
@@ -228,7 +352,7 @@ but <code>$NOTIN</code> is. </strong>
 <pre>
          - type_of ``$NOTIN``;
          &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
-         &gt; val it = ``:α -> (α -> bool) -> bool`` : hol_type
+         &gt; val it = ``:α -&gt; (α -&gt; bool) -&gt; bool`` : hol_type
 
          - type_of ``$∉``;
          &gt; val it = ``:α`` : hol_type
@@ -391,7 +515,7 @@ form, try</p>
           (bool$/\ (bool$/\ t bool$T = t)
              (bool$/\ (bool$/\ bool$F t = bool$F)
                 (bool$/\ (bool$/\ t bool$F = bool$F) (bool$/\ t t = t)))))
-   > val it = () : unit
+   &gt; val it = () : unit
 </pre><p> and </p>
 <pre>
    - print_term_by_grammar min_grammars  (concl COND_CLAUSES);
@@ -401,11 +525,11 @@ form, try</p>
           (\t2.
              bool$/\ (bool$COND bool$T t1 t2 = t1)
                (bool$COND bool$F t1 t2 = t2)))
-   > val it = () : unit
+   &gt; val it = () : unit
 </pre>
 <p>
     Note that even in <code>min_grammars</code>, <code>=</code>,
-    <code>@</code> and <code>==></code> are treated
+    <code>@</code> and <code>==&gt;</code> are treated
     specially.</p></dd>
 
 
@@ -562,7 +686,7 @@ after calling <code>Absyn</code>, but before calling
 <dl>
 <dt>I want to just
 write <code>tac1&nbsp;THEN&nbsp;tac2</code> instead
-of <code>tac1&nbsp;THENL&nbsp;((fn&nbsp;<i>t</i>&nbsp;=>&nbsp;[<i>t</i>,<i>t</i>])&nbsp;tac2)</code>
+of <code>tac1&nbsp;THENL&nbsp;((fn&nbsp;<i>t</i>&nbsp;=&gt;&nbsp;[<i>t</i>,<i>t</i>])&nbsp;tac2)</code>
 but when I tried the version with <code>THEN</code> I got an error</dt>
 <dd>
 
@@ -599,7 +723,7 @@ of <code>THENL</code>.  You can solve the problem by writing</p>
 But your problem is superficially slightly different.
 You say that</p>
 <pre>
-    tac1 THENL (fn t => [t,t]) tac2
+    tac1 THENL (fn t =&gt; [t,t]) tac2
 </pre>
 <p>
 works, but</p>
@@ -675,7 +799,7 @@ numbered (or named) assumptions can be added in a number of ways. Perhaps
 the simplest is to write a version of UNDISCH_THEN, call it UNDISCH_NTH
 having type
 <pre>
-    int -> (thm -> tactic) -> tactic
+    int -&gt; (thm -&gt; tactic) -&gt; tactic
 </pre>
 
 <code>UNDISCH_NTH k ttac</code> grabs the <em>k</em>th assumption,
@@ -828,7 +952,7 @@ could write:</p>
 <p>
 <div class="timestamp">
 <p>
-Time-stamp: "Friday, 12 March 2010; 01:11 UTC (Michael Norrish)"
+Time-stamp: "Friday, 19 March 2010; 05:26 UTC (Michael Norrish)"
 </p></div>
 
 
