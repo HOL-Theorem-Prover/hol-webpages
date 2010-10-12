@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure markerLib</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure markerLib</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/marker/markerLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature markerLib =
+<a name="line2"></a>sig
+<a name="line3"></a>  include Abbrev
+<a name="line4"></a>  type 'a set = 'a HOLset.set
+<a name="line5"></a>
+<a name="line6"></a>  val <a href="#stmark_term-val">stmark_term</a>     : conv
+<a name="line7"></a>  val <a href="#stmark_conjunct-val">stmark_conjunct</a> : (term -&gt; bool) -&gt; conv
+<a name="line8"></a>  val <a href="#stmark_disjunct-val">stmark_disjunct</a> : (term -&gt; bool) -&gt; conv
+<a name="line9"></a>
+<a name="line10"></a>  val <a href="#move_stmarked_conj_left-val">move_stmarked_conj_left</a>  : conv
+<a name="line11"></a>  val <a href="#move_stmarked_conj_right-val">move_stmarked_conj_right</a> : conv
+<a name="line12"></a>  val <a href="#move_stmarked_disj_left-val">move_stmarked_disj_left</a>  : conv
+<a name="line13"></a>  val <a href="#move_stmarked_disj_right-val">move_stmarked_disj_right</a> : conv
+<a name="line14"></a>
+<a name="line15"></a>  val <a href="#move_conj_left-val">move_conj_left</a>  : (term -&gt; bool) -&gt; conv
+<a name="line16"></a>  val <a href="#move_conj_right-val">move_conj_right</a> : (term -&gt; bool) -&gt; conv
+<a name="line17"></a>  val <a href="#move_disj_left-val">move_disj_left</a>  : (term -&gt; bool) -&gt; conv
+<a name="line18"></a>  val <a href="#move_disj_right-val">move_disj_right</a> : (term -&gt; bool) -&gt; conv
+<a name="line19"></a>
+<a name="line20"></a>  val AC     : thm -&gt; thm -&gt; thm
+<a name="line21"></a>  val unAC   : thm -&gt; thm * thm
+<a name="line22"></a>  val Cong   : thm -&gt; thm
+<a name="line23"></a>  val unCong : thm -&gt; thm
+<a name="line24"></a>
+<a name="line25"></a>  val ABB                 : term -&gt; term -&gt; tactic
+<a name="line26"></a>  val ABBREV_TAC          : term -&gt; tactic
+<a name="line27"></a>  val PAT_ABBREV_TAC      : term set -&gt; term -&gt; tactic
+<a name="line28"></a>  val MATCH_ABBREV_TAC    : term set -&gt; term -&gt; tactic
+<a name="line29"></a>  val MATCH_ASSUM_ABBREV_TAC : term set -&gt; term -&gt; tactic
+<a name="line30"></a>  val HO_MATCH_ABBREV_TAC : term set -&gt; term -&gt; tactic
+<a name="line31"></a>  val UNABBREV_TAC        : string -&gt; tactic
+<a name="line32"></a>  val UNABBREV_ALL_TAC    : tactic
+<a name="line33"></a>  val CNTXT_REABBREV_TAC  : term list -&gt; tactic
+<a name="line34"></a>  val REABBREV_TAC        : tactic
+<a name="line35"></a>  val WITHOUT_ABBREVS     : tactic -&gt; tactic
+<a name="line36"></a>  val RM_ABBREV_TAC       : string -&gt; tactic
+<a name="line37"></a>  val RM_ALL_ABBREVS_TAC  : tactic
+<a name="line38"></a>  val ABBRS_THEN          : (thm list -&gt; tactic) -&gt; thm list -&gt; tactic
+<a name="line39"></a>  val Abbr                : term quotation -&gt; thm
+<a name="line40"></a>
+<a name="line41"></a>  val MK_LABEL         : string * thm -&gt; thm
+<a name="line42"></a>  val DEST_LABEL       : thm -&gt; thm
+<a name="line43"></a>  val DEST_LABELS      : thm -&gt; thm
+<a name="line44"></a>  val DEST_LABEL_CONV  : conv
+<a name="line45"></a>  val DEST_LABELS_CONV : conv
+<a name="line46"></a>  val DEST_LABELS_TAC  : tactic
+<a name="line47"></a>
+<a name="line48"></a>  val find_labelled_assumption : thm -&gt; term list -&gt; thm
+<a name="line49"></a>
+<a name="line50"></a>  val ASSUME_NAMED_TAC : string -&gt; thm -&gt; tactic
+<a name="line51"></a>  val LABEL_ASSUM      : string -&gt; thm_tactic -&gt; tactic
+<a name="line52"></a>  val LABEL_X_ASSUM    : string -&gt; thm_tactic -&gt; tactic
+<a name="line53"></a>  val LLABEL_RESOLVE   : thm list -&gt; term list -&gt; thm list
+<a name="line54"></a>
+<a name="line55"></a>end
+<a name="line56"></a>
+<a name="line57"></a>(*
+   [<a name="stmark_term-val"><b>stmark_term</b></a> t] wraps term t in a "short term marker".
+
+   [<a name="stmark_conjunct-val"><b>stmark_conjunct</b></a> P t] finds the first conjunct c amongst the
+   conjuncts of term t (conjuncts as returned by strip_conj), for which
+   P c returns true and marks it as per stmark_term.  The traversal is
+   from left to right.
+
+   [<a name="stmark_disjunct-val"><b>stmark_disjunct</b></a> P t] finds the first disjunct d amongst the
+   disjuncts of term t (disjuncts as returned by strip_disj), for which
+   P d returns true and marks it as per stmark_term.  The traversal is
+   from left to right.
+
+   [<a name="move_stmarked_conj_left-val"><b>move_stmarked_conj_left</b></a> t] moves the st-marked conjunct in t to
+   the left, so that if t is of the form ... /\ stmark c /\ ..., then
+   the returned theorem is of the form
+      |- t = c /\ ...
+   where c has lost its marker.   The behaviour is undefined if there
+   is not exactly one marked conjunct.
+
+   [<a name="move_stmarked_conj_right-val"><b>move_stmarked_conj_right</b></a> t] moves the st-marked conjunct to the
+   right.  Analogous to move_stmarked_conj_left.
+
+   [<a name="move_stmarked_disj_left-val"><b>move_stmarked_disj_left</b></a> t] moves the st-marked disjunct to the
+   left.  Analogous to move_stmarked_conj_left.
+
+   [<a name="move_stmarked_disj_right-val"><b>move_stmarked_disj_right</b></a> t] moves the st-marked disjunct to the
+   right.  Analogous to move_stmarked_conj_left.
+
+   [<a name="move_conj_left-val"><b>move_conj_left</b></a> P t] first looks for a conjunct satisfying P, marks it,
+   and then moves it to the left.  Is a composition of stmark_conjunct and
+   move_stmarked_conj_left.
+
+   [<a name="move_conj_right-val"><b>move_conj_right</b></a> P t] moves a conjunct satisfying P to the right.
+   Analogous to move_conj_left.
+
+   [<a name="move_disj_left-val"><b>move_disj_left</b></a> P t] moves a disjunct satisfying P to the left.
+   Analogous to move_conj_left.
+
+   [<a name="move_disj_right-val"><b>move_disj_right</b></a> P t] moves a disjunct satisfying P to the right.
+   Analogous to move_conj_left.
+
+*)
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/marker/markerLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-6</a></em></p></body></html>

@@ -1,0 +1,1314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: bit</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "bit"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "stringTheory.html"><span class="strong">string</span></a>&nbsp;&nbsp;
+    <a href = "logrootTheory.html"><span class="strong">logroot</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">BIT</span> <td> :num -> num -> bool
+    <tr><td> <span class="strong">BITS</span> <td> :num -> num -> num -> num
+    <tr><td> <span class="strong">BITV</span> <td> :num -> num -> num
+    <tr><td>
+        <span class="strong">BITWISE</span>
+        <td>
+        :num -> (bool -> bool -> bool) -> num -> num -> num
+    <tr><td>
+        <span class="strong">BIT_MODIFY</span>
+        <td>
+        :num -> (num -> bool -> bool) -> num -> num
+    <tr><td> <span class="strong">BIT_REVERSE</span> <td> :num -> num -> num
+    <tr><td>
+        <span class="strong">BOOLIFY</span>
+        <td>
+        :num -> num -> bool list -> bool list
+    <tr><td>
+        <span class="strong">DIVMOD_2EXP</span>
+        <td>
+        :num -> num -> num # num
+    <tr><td> <span class="strong">HEX</span> <td> :num -> char
+    <tr><td> <span class="strong">LOG2</span> <td> :num -> num
+    <tr><td> <span class="strong">LOWEST_SET_BIT</span> <td> :num -> num
+    <tr><td> <span class="strong">LSB</span> <td> :num -> bool
+    <tr><td>
+        <span class="strong">MOD_2EXP_EQ</span>
+        <td>
+        :num -> num -> num -> bool
+    <tr><td> <span class="strong">MOD_2EXP_MAX</span> <td> :num -> num -> bool
+    <tr><td> <span class="strong">SBIT</span> <td> :bool -> num -> num
+    <tr><td>
+        <span class="strong">SIGN_EXTEND</span>
+        <td>
+        :num -> num -> num -> num
+    <tr><td> <span class="strong">SLICE</span> <td> :num -> num -> num -> num
+    <tr><td> <span class="strong">TIMES_2EXP</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">UNHEX</span> <td> :char -> num
+    <tr><td> <span class="strong">l2n</span> <td> :num -> num list -> num
+    <tr><td> <span class="strong">n2l</span> <td> :num -> num -> num list
+    <tr><td>
+        <span class="strong">n2l_tupled</span>
+        <td>
+        :num # num -> num list
+    <tr><td>
+        <span class="strong">n2s</span>
+        <td>
+        :num -> (num -> char) -> num -> string
+    <tr><td>
+        <span class="strong">num_from_bin_list</span>
+        <td>
+        :num list -> num
+    <tr><td>
+        <span class="strong">num_from_bin_string</span>
+        <td>
+        :string -> num
+    <tr><td>
+        <span class="strong">num_from_dec_list</span>
+        <td>
+        :num list -> num
+    <tr><td>
+        <span class="strong">num_from_dec_string</span>
+        <td>
+        :string -> num
+    <tr><td>
+        <span class="strong">num_from_hex_list</span>
+        <td>
+        :num list -> num
+    <tr><td>
+        <span class="strong">num_from_hex_string</span>
+        <td>
+        :string -> num
+    <tr><td>
+        <span class="strong">num_from_oct_list</span>
+        <td>
+        :num list -> num
+    <tr><td>
+        <span class="strong">num_from_oct_string</span>
+        <td>
+        :string -> num
+    <tr><td> <span class="strong">num_to_bin_list</span> <td> :num -> num list
+    <tr><td> <span class="strong">num_to_bin_string</span> <td> :num -> string
+    <tr><td> <span class="strong">num_to_dec_list</span> <td> :num -> num list
+    <tr><td> <span class="strong">num_to_dec_string</span> <td> :num -> string
+    <tr><td> <span class="strong">num_to_hex_list</span> <td> :num -> num list
+    <tr><td> <span class="strong">num_to_hex_string</span> <td> :num -> string
+    <tr><td> <span class="strong">num_to_oct_list</span> <td> :num -> num list
+    <tr><td> <span class="strong">num_to_oct_string</span> <td> :num -> string
+    <tr><td>
+        <span class="strong">s2n</span>
+        <td>
+        :num -> (char -> num) -> string -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">TIMES_2EXP_def</span>
+<DD>
+<pre>
+|- ∀x n. TIMES_2EXP x n = n * 2 ** x
+</pre>
+
+<DT><span class="strong">DIVMOD_2EXP_def</span>
+<DD>
+<pre>
+|- ∀x n. DIVMOD_2EXP x n = (n DIV 2 ** x,n MOD 2 ** x)
+</pre>
+
+<DT><span class="strong">SBIT_def</span>
+<DD>
+<pre>
+|- ∀b n. SBIT b n = if b then 2 ** n else 0
+</pre>
+
+<DT><span class="strong">BITS_def</span>
+<DD>
+<pre>
+|- ∀h l n. BITS h l n = MOD_2EXP (SUC h − l) (DIV_2EXP l n)
+</pre>
+
+<DT><span class="strong">BITV_def</span>
+<DD>
+<pre>
+|- ∀n b. BITV n b = BITS b b n
+</pre>
+
+<DT><span class="strong">BIT_def</span>
+<DD>
+<pre>
+|- ∀b n. BIT b n ⇔ (BITS b b n = 1)
+</pre>
+
+<DT><span class="strong">SLICE_def</span>
+<DD>
+<pre>
+|- ∀h l n. SLICE h l n = MOD_2EXP (SUC h) n − MOD_2EXP l n
+</pre>
+
+<DT><span class="strong">LSB_def</span>
+<DD>
+<pre>
+|- LSB = BIT 0
+</pre>
+
+<DT><span class="strong">LOG2_def</span>
+<DD>
+<pre>
+|- LOG2 = LOG 2
+</pre>
+
+<DT><span class="strong">LOWEST_SET_BIT_def</span>
+<DD>
+<pre>
+|- ∀n. LOWEST_SET_BIT n = LEAST i. BIT i n
+</pre>
+
+<DT><span class="strong">BIT_REVERSE_def</span>
+<DD>
+<pre>
+|- (∀x. BIT_REVERSE 0 x = 0) ∧
+   ∀n x. BIT_REVERSE (SUC n) x = BIT_REVERSE n x * 2 + SBIT (BIT n x) 0
+</pre>
+
+<DT><span class="strong">BITWISE_def</span>
+<DD>
+<pre>
+|- (∀op x y. BITWISE 0 op x y = 0) ∧
+   ∀n op x y.
+     BITWISE (SUC n) op x y =
+     BITWISE n op x y + SBIT (op (BIT n x) (BIT n y)) n
+</pre>
+
+<DT><span class="strong">BIT_MODIFY_def</span>
+<DD>
+<pre>
+|- (∀f x. BIT_MODIFY 0 f x = 0) ∧
+   ∀n f x. BIT_MODIFY (SUC n) f x = BIT_MODIFY n f x + SBIT (f n (BIT n x)) n
+</pre>
+
+<DT><span class="strong">SIGN_EXTEND_def</span>
+<DD>
+<pre>
+|- ∀l h n.
+     SIGN_EXTEND l h n =
+     (let m = n MOD 2 ** l
+      in
+        if BIT (l − 1) n then 2 ** h − 2 ** l + m else m)
+</pre>
+
+<DT><span class="strong">MOD_2EXP_EQ_def</span>
+<DD>
+<pre>
+|- ∀n a b. MOD_2EXP_EQ n a b ⇔ (MOD_2EXP n a = MOD_2EXP n b)
+</pre>
+
+<DT><span class="strong">MOD_2EXP_MAX_def</span>
+<DD>
+<pre>
+|- ∀n a. MOD_2EXP_MAX n a ⇔ (MOD_2EXP n a = 2 ** n − 1)
+</pre>
+
+<DT><span class="strong">BOOLIFY_def</span>
+<DD>
+<pre>
+|- (∀m a. BOOLIFY 0 m a = a) ∧
+   ∀n m a. BOOLIFY (SUC n) m a = BOOLIFY n (DIV2 m) (ODD m::a)
+</pre>
+
+<DT><span class="strong">l2n_def</span>
+<DD>
+<pre>
+|- (∀b. l2n b [] = 0) ∧ ∀b h t. l2n b (h::t) = h MOD b + b * l2n b t
+</pre>
+
+<DT><span class="strong">n2l_tupled_primitive_def</span>
+<DD>
+<pre>
+|- n2l_tupled =
+   WFREC (@R. WF R ∧ ∀b n. ¬(n < b ∨ b < 2) ⇒ R (b,n DIV b) (b,n))
+     (λn2l_tupled a.
+        case a of
+           (b,n) ->
+             I
+               (if n < b ∨ b < 2 then
+                  [n MOD b]
+                else
+                  n MOD b::n2l_tupled (b,n DIV b)))
+</pre>
+
+<DT><span class="strong">n2l_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1. n2l x x1 = n2l_tupled (x,x1)
+</pre>
+
+<DT><span class="strong">s2n_def</span>
+<DD>
+<pre>
+|- ∀b f s. s2n b f s = l2n b (MAP f (REVERSE s))
+</pre>
+
+<DT><span class="strong">n2s_def</span>
+<DD>
+<pre>
+|- ∀b f n. n2s b f n = REVERSE (MAP f (n2l b n))
+</pre>
+
+<DT><span class="strong">HEX_primitive_def</span>
+<DD>
+<pre>
+|- HEX =
+   WFREC (@R. WF R)
+     (λHEX a.
+        case a of
+           0 -> I #"0"
+        || 1 -> I #"1"
+        || 2 -> I #"2"
+        || 3 -> I #"3"
+        || 4 -> I #"4"
+        || 5 -> I #"5"
+        || 6 -> I #"6"
+        || 7 -> I #"7"
+        || 8 -> I #"8"
+        || 9 -> I #"9"
+        || 10 -> I #"A"
+        || 11 -> I #"B"
+        || 12 -> I #"C"
+        || 13 -> I #"D"
+        || 14 -> I #"E"
+        || 15 -> I #"F"
+        || v -> ARB)
+</pre>
+
+<DT><span class="strong">UNHEX_primitive_def</span>
+<DD>
+<pre>
+|- UNHEX =
+   WFREC (@R. WF R)
+     (λUNHEX a.
+        case a of
+           #"0" -> I 0
+        || #"1" -> I 1
+        || #"2" -> I 2
+        || #"3" -> I 3
+        || #"4" -> I 4
+        || #"5" -> I 5
+        || #"6" -> I 6
+        || #"7" -> I 7
+        || #"8" -> I 8
+        || #"9" -> I 9
+        || #"a" -> I 10
+        || #"b" -> I 11
+        || #"c" -> I 12
+        || #"d" -> I 13
+        || #"e" -> I 14
+        || #"f" -> I 15
+        || #"A" -> I 10
+        || #"B" -> I 11
+        || #"C" -> I 12
+        || #"D" -> I 13
+        || #"E" -> I 14
+        || #"F" -> I 15
+        || v -> ARB)
+</pre>
+
+<DT><span class="strong">num_from_bin_list_def</span>
+<DD>
+<pre>
+|- num_from_bin_list = l2n 2
+</pre>
+
+<DT><span class="strong">num_from_oct_list_def</span>
+<DD>
+<pre>
+|- num_from_oct_list = l2n 8
+</pre>
+
+<DT><span class="strong">num_from_dec_list_def</span>
+<DD>
+<pre>
+|- num_from_dec_list = l2n 10
+</pre>
+
+<DT><span class="strong">num_from_hex_list_def</span>
+<DD>
+<pre>
+|- num_from_hex_list = l2n 16
+</pre>
+
+<DT><span class="strong">num_to_bin_list_def</span>
+<DD>
+<pre>
+|- num_to_bin_list = n2l 2
+</pre>
+
+<DT><span class="strong">num_to_oct_list_def</span>
+<DD>
+<pre>
+|- num_to_oct_list = n2l 8
+</pre>
+
+<DT><span class="strong">num_to_dec_list_def</span>
+<DD>
+<pre>
+|- num_to_dec_list = n2l 10
+</pre>
+
+<DT><span class="strong">num_to_hex_list_def</span>
+<DD>
+<pre>
+|- num_to_hex_list = n2l 16
+</pre>
+
+<DT><span class="strong">num_from_bin_string_def</span>
+<DD>
+<pre>
+|- num_from_bin_string = s2n 2 UNHEX
+</pre>
+
+<DT><span class="strong">num_from_oct_string_def</span>
+<DD>
+<pre>
+|- num_from_oct_string = s2n 8 UNHEX
+</pre>
+
+<DT><span class="strong">num_from_dec_string_def</span>
+<DD>
+<pre>
+|- num_from_dec_string = s2n 10 UNHEX
+</pre>
+
+<DT><span class="strong">num_from_hex_string_def</span>
+<DD>
+<pre>
+|- num_from_hex_string = s2n 16 UNHEX
+</pre>
+
+<DT><span class="strong">num_to_bin_string_def</span>
+<DD>
+<pre>
+|- num_to_bin_string = n2s 2 HEX
+</pre>
+
+<DT><span class="strong">num_to_oct_string_def</span>
+<DD>
+<pre>
+|- num_to_oct_string = n2s 8 HEX
+</pre>
+
+<DT><span class="strong">num_to_dec_string_def</span>
+<DD>
+<pre>
+|- num_to_dec_string = n2s 10 HEX
+</pre>
+
+<DT><span class="strong">num_to_hex_string_def</span>
+<DD>
+<pre>
+|- num_to_hex_string = n2s 16 HEX
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">n2l_ind</span>
+<DD>
+<pre>
+|- ∀P. (∀b n. (¬(n < b ∨ b < 2) ⇒ P b (n DIV b)) ⇒ P b n) ⇒ ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">n2l_def</span>
+<DD>
+<pre>
+|- ∀n b.
+     n2l b n = if n < b ∨ b < 2 then [n MOD b] else n MOD b::n2l b (n DIV b)
+</pre>
+
+<DT><span class="strong">s2n_compute</span>
+<DD>
+<pre>
+|- s2n b f s = l2n b (MAP f (REVERSE (EXPLODE s)))
+</pre>
+
+<DT><span class="strong">n2s_compute</span>
+<DD>
+<pre>
+|- n2s b f n = IMPLODE (REVERSE (MAP f (n2l b n)))
+</pre>
+
+<DT><span class="strong">HEX_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     P 0 ∧ P 1 ∧ P 2 ∧ P 3 ∧ P 4 ∧ P 5 ∧ P 6 ∧ P 7 ∧ P 8 ∧ P 9 ∧ P 10 ∧ P 11 ∧
+     P 12 ∧ P 13 ∧ P 14 ∧ P 15 ∧ (∀v18. P v18) ⇒
+     ∀v. P v
+</pre>
+
+<DT><span class="strong">HEX_def</span>
+<DD>
+<pre>
+|- (HEX 0 = #"0") ∧ (HEX 1 = #"1") ∧ (HEX 2 = #"2") ∧ (HEX 3 = #"3") ∧
+   (HEX 4 = #"4") ∧ (HEX 5 = #"5") ∧ (HEX 6 = #"6") ∧ (HEX 7 = #"7") ∧
+   (HEX 8 = #"8") ∧ (HEX 9 = #"9") ∧ (HEX 10 = #"A") ∧ (HEX 11 = #"B") ∧
+   (HEX 12 = #"C") ∧ (HEX 13 = #"D") ∧ (HEX 14 = #"E") ∧ (HEX 15 = #"F")
+</pre>
+
+<DT><span class="strong">UNHEX_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     P #"0" ∧ P #"1" ∧ P #"2" ∧ P #"3" ∧ P #"4" ∧ P #"5" ∧ P #"6" ∧ P #"7" ∧
+     P #"8" ∧ P #"9" ∧ P #"a" ∧ P #"b" ∧ P #"c" ∧ P #"d" ∧ P #"e" ∧ P #"f" ∧
+     P #"A" ∧ P #"B" ∧ P #"C" ∧ P #"D" ∧ P #"E" ∧ P #"F" ∧ (∀v24. P v24) ⇒
+     ∀v. P v
+</pre>
+
+<DT><span class="strong">UNHEX_def</span>
+<DD>
+<pre>
+|- (UNHEX #"0" = 0) ∧ (UNHEX #"1" = 1) ∧ (UNHEX #"2" = 2) ∧ (UNHEX #"3" = 3) ∧
+   (UNHEX #"4" = 4) ∧ (UNHEX #"5" = 5) ∧ (UNHEX #"6" = 6) ∧ (UNHEX #"7" = 7) ∧
+   (UNHEX #"8" = 8) ∧ (UNHEX #"9" = 9) ∧ (UNHEX #"a" = 10) ∧
+   (UNHEX #"b" = 11) ∧ (UNHEX #"c" = 12) ∧ (UNHEX #"d" = 13) ∧
+   (UNHEX #"e" = 14) ∧ (UNHEX #"f" = 15) ∧ (UNHEX #"A" = 10) ∧
+   (UNHEX #"B" = 11) ∧ (UNHEX #"C" = 12) ∧ (UNHEX #"D" = 13) ∧
+   (UNHEX #"E" = 14) ∧ (UNHEX #"F" = 15)
+</pre>
+
+<DT><span class="strong">LOG_RWT</span>
+<DD>
+<pre>
+|- ∀m n.
+     1 < m ∧ 0 < n ⇒ (LOG m n = if n < m then 0 else SUC (LOG m (n DIV m)))
+</pre>
+
+<DT><span class="strong">LOG2_UNIQUE</span>
+<DD>
+<pre>
+|- ∀n p. 2 ** p ≤ n ∧ n < 2 ** SUC p ⇒ (LOG2 n = p)
+</pre>
+
+<DT><span class="strong">DIVMOD_2EXP</span>
+<DD>
+<pre>
+|- ∀x n. DIVMOD_2EXP x n = (DIV_2EXP x n,MOD_2EXP x n)
+</pre>
+
+<DT><span class="strong">SUC_SUB</span>
+<DD>
+<pre>
+|- SUC a − a = 1
+</pre>
+
+<DT><span class="strong">DIV_MULT_1</span>
+<DD>
+<pre>
+|- ∀r n. r < n ⇒ ((n + r) DIV n = 1)
+</pre>
+
+<DT><span class="strong">NOT_ZERO_ADD1</span>
+<DD>
+<pre>
+|- ∀m. m ≠ 0 ⇒ ∃p. m = SUC p
+</pre>
+
+<DT><span class="strong">ZERO_LT_TWOEXP</span>
+<DD>
+<pre>
+|- ∀n. 0 < 2 ** n
+</pre>
+
+<DT><span class="strong">TWOEXP_NOT_ZERO</span>
+<DD>
+<pre>
+|- ∀n. 2 ** n ≠ 0
+</pre>
+
+<DT><span class="strong">MOD_2EXP_LT</span>
+<DD>
+<pre>
+|- ∀n k. k MOD 2 ** n < 2 ** n
+</pre>
+
+<DT><span class="strong">TWOEXP_DIVISION</span>
+<DD>
+<pre>
+|- ∀n k. k = k DIV 2 ** n * 2 ** n + k MOD 2 ** n
+</pre>
+
+<DT><span class="strong">TWOEXP_MONO</span>
+<DD>
+<pre>
+|- ∀a b. a < b ⇒ 2 ** a < 2 ** b
+</pre>
+
+<DT><span class="strong">TWOEXP_MONO2</span>
+<DD>
+<pre>
+|- ∀a b. a ≤ b ⇒ 2 ** a ≤ 2 ** b
+</pre>
+
+<DT><span class="strong">EXP_SUB_LESS_EQ</span>
+<DD>
+<pre>
+|- ∀a b. 2 ** (a − b) ≤ 2 ** a
+</pre>
+
+<DT><span class="strong">MOD_LEQ</span>
+<DD>
+<pre>
+|- ∀a b. 0 < b ⇒ a MOD b ≤ a
+</pre>
+
+<DT><span class="strong">BITS_THM</span>
+<DD>
+<pre>
+|- ∀h l n. BITS h l n = (n DIV 2 ** l) MOD 2 ** (SUC h − l)
+</pre>
+
+<DT><span class="strong">BITSLT_THM</span>
+<DD>
+<pre>
+|- ∀h l n. BITS h l n < 2 ** (SUC h − l)
+</pre>
+
+<DT><span class="strong">BITS_THM2</span>
+<DD>
+<pre>
+|- ∀h l n. BITS h l n = n MOD 2 ** SUC h DIV 2 ** l
+</pre>
+
+<DT><span class="strong">BITS_LEQ</span>
+<DD>
+<pre>
+|- ∀h l n. BITS h l n ≤ n
+</pre>
+
+<DT><span class="strong">BITS_COMP_THM</span>
+<DD>
+<pre>
+|- ∀h1 l1 h2 l2 n.
+     h2 + l1 ≤ h1 ⇒ (BITS h2 l2 (BITS h1 l1 n) = BITS (h2 + l1) (l2 + l1) n)
+</pre>
+
+<DT><span class="strong">BITS_DIV_THM</span>
+<DD>
+<pre>
+|- ∀h l x n. BITS h l x DIV 2 ** n = BITS h (l + n) x
+</pre>
+
+<DT><span class="strong">BITS_LT_HIGH</span>
+<DD>
+<pre>
+|- ∀h l n. n < 2 ** SUC h ⇒ (BITS h l n = n DIV 2 ** l)
+</pre>
+
+<DT><span class="strong">BITS_ZERO</span>
+<DD>
+<pre>
+|- ∀h l n. h < l ⇒ (BITS h l n = 0)
+</pre>
+
+<DT><span class="strong">BITS_ZERO2</span>
+<DD>
+<pre>
+|- ∀h l. BITS h l 0 = 0
+</pre>
+
+<DT><span class="strong">BITS_ZERO3</span>
+<DD>
+<pre>
+|- ∀h n. BITS h 0 n = n MOD 2 ** SUC h
+</pre>
+
+<DT><span class="strong">BITS_ZERO4</span>
+<DD>
+<pre>
+|- ∀h l a. l ≤ h ⇒ (BITS h l (a * 2 ** l) = BITS (h − l) 0 a)
+</pre>
+
+<DT><span class="strong">BITS_ZEROL</span>
+<DD>
+<pre>
+|- ∀h a. a < 2 ** SUC h ⇒ (BITS h 0 a = a)
+</pre>
+
+<DT><span class="strong">BITS_LT_LOW</span>
+<DD>
+<pre>
+|- ∀h l n. n < 2 ** l ⇒ (BITS h l n = 0)
+</pre>
+
+<DT><span class="strong">BIT_ZERO</span>
+<DD>
+<pre>
+|- ∀b. ¬BIT b 0
+</pre>
+
+<DT><span class="strong">BIT_B</span>
+<DD>
+<pre>
+|- ∀b. BIT b (2 ** b)
+</pre>
+
+<DT><span class="strong">BIT_B_NEQ</span>
+<DD>
+<pre>
+|- ∀a b. a ≠ b ⇒ ¬BIT a (2 ** b)
+</pre>
+
+<DT><span class="strong">BITS_COMP_THM2</span>
+<DD>
+<pre>
+|- ∀h1 l1 h2 l2 n.
+     BITS h2 l2 (BITS h1 l1 n) = BITS (MIN h1 (h2 + l1)) (l2 + l1) n
+</pre>
+
+<DT><span class="strong">NOT_MOD2_LEM</span>
+<DD>
+<pre>
+|- ∀n. n MOD 2 ≠ 0 ⇔ (n MOD 2 = 1)
+</pre>
+
+<DT><span class="strong">NOT_MOD2_LEM2</span>
+<DD>
+<pre>
+|- ∀n. n MOD 2 ≠ 1 ⇔ (n MOD 2 = 0)
+</pre>
+
+<DT><span class="strong">ODD_MOD2_LEM</span>
+<DD>
+<pre>
+|- ∀n. ODD n ⇔ (n MOD 2 = 1)
+</pre>
+
+<DT><span class="strong">BIT_OF_BITS_THM</span>
+<DD>
+<pre>
+|- ∀n h l a. l + n ≤ h ⇒ (BIT n (BITS h l a) ⇔ BIT (l + n) a)
+</pre>
+
+<DT><span class="strong">BIT_SHIFT_THM</span>
+<DD>
+<pre>
+|- ∀n a s. BIT (n + s) (a * 2 ** s) ⇔ BIT n a
+</pre>
+
+<DT><span class="strong">BIT_SHIFT_THM2</span>
+<DD>
+<pre>
+|- ∀n a s. s ≤ n ⇒ (BIT n (a * 2 ** s) ⇔ BIT (n − s) a)
+</pre>
+
+<DT><span class="strong">BIT_SHIFT_THM3</span>
+<DD>
+<pre>
+|- ∀n a s. n < s ⇒ ¬BIT n (a * 2 ** s)
+</pre>
+
+<DT><span class="strong">BIT_OF_BITS_THM2</span>
+<DD>
+<pre>
+|- ∀h l x n. h < l + x ⇒ ¬BIT x (BITS h l n)
+</pre>
+
+<DT><span class="strong">DIV_MULT_THM</span>
+<DD>
+<pre>
+|- ∀x n. n DIV 2 ** x * 2 ** x = n − n MOD 2 ** x
+</pre>
+
+<DT><span class="strong">DIV_MULT_THM2</span>
+<DD>
+<pre>
+|- ∀n. 2 * (n DIV 2) = n − n MOD 2
+</pre>
+
+<DT><span class="strong">LESS_EQ_EXP_MULT</span>
+<DD>
+<pre>
+|- ∀a b. a ≤ b ⇒ ∃p. 2 ** b = p * 2 ** a
+</pre>
+
+<DT><span class="strong">SLICE_THM</span>
+<DD>
+<pre>
+|- ∀n h l. SLICE h l n = BITS h l n * 2 ** l
+</pre>
+
+<DT><span class="strong">SLICELT_THM</span>
+<DD>
+<pre>
+|- ∀h l n. SLICE h l n < 2 ** SUC h
+</pre>
+
+<DT><span class="strong">BITS_SLICE_THM</span>
+<DD>
+<pre>
+|- ∀h l n. BITS h l (SLICE h l n) = BITS h l n
+</pre>
+
+<DT><span class="strong">BITS_SLICE_THM2</span>
+<DD>
+<pre>
+|- ∀h h2 l n. h ≤ h2 ⇒ (BITS h2 l (SLICE h l n) = BITS h l n)
+</pre>
+
+<DT><span class="strong">SLICE_ZERO_THM</span>
+<DD>
+<pre>
+|- ∀n h. SLICE h 0 n = BITS h 0 n
+</pre>
+
+<DT><span class="strong">MOD_2EXP_MONO</span>
+<DD>
+<pre>
+|- ∀n h l. l ≤ h ⇒ n MOD 2 ** l ≤ n MOD 2 ** SUC h
+</pre>
+
+<DT><span class="strong">SLICE_COMP_THM</span>
+<DD>
+<pre>
+|- ∀h m l n.
+     SUC m ≤ h ∧ l ≤ m ⇒ (SLICE h (SUC m) n + SLICE m l n = SLICE h l n)
+</pre>
+
+<DT><span class="strong">SLICE_COMP_RWT</span>
+<DD>
+<pre>
+|- ∀h m' m l n.
+     l ≤ m ∧ (m' = m + 1) ∧ m < h ⇒ (SLICE h m' n + SLICE m l n = SLICE h l n)
+</pre>
+
+<DT><span class="strong">SLICE_ZERO</span>
+<DD>
+<pre>
+|- ∀h l n. h < l ⇒ (SLICE h l n = 0)
+</pre>
+
+<DT><span class="strong">SLICE_ZERO2</span>
+<DD>
+<pre>
+|- ∀l h. SLICE h l 0 = 0
+</pre>
+
+<DT><span class="strong">BITS_SUM</span>
+<DD>
+<pre>
+|- ∀h l a b. b < 2 ** l ⇒ (BITS h l (a * 2 ** l + b) = BITS h l (a * 2 ** l))
+</pre>
+
+<DT><span class="strong">BITS_SUM2</span>
+<DD>
+<pre>
+|- ∀h l a b. BITS h l (a * 2 ** SUC h + b) = BITS h l b
+</pre>
+
+<DT><span class="strong">SLICE_COMP_THM2</span>
+<DD>
+<pre>
+|- ∀h l x y n. h ≤ x ∧ y ≤ l ⇒ (SLICE h l (SLICE x y n) = SLICE h l n)
+</pre>
+
+<DT><span class="strong">BITS_SUM3</span>
+<DD>
+<pre>
+|- ∀h a b. BITS h 0 (BITS h 0 a + BITS h 0 b) = BITS h 0 (a + b)
+</pre>
+
+<DT><span class="strong">BITS_MUL</span>
+<DD>
+<pre>
+|- ∀h a b. BITS h 0 (BITS h 0 a * BITS h 0 b) = BITS h 0 (a * b)
+</pre>
+
+<DT><span class="strong">BIT_COMP_THM3</span>
+<DD>
+<pre>
+|- ∀h m l n.
+     SUC m ≤ h ∧ l ≤ m ⇒
+     (BITS h (SUC m) n * 2 ** (SUC m − l) + BITS m l n = BITS h l n)
+</pre>
+
+<DT><span class="strong">NOT_BIT</span>
+<DD>
+<pre>
+|- ∀n a. ¬BIT n a ⇔ (BITS n n a = 0)
+</pre>
+
+<DT><span class="strong">NOT_BITS</span>
+<DD>
+<pre>
+|- ∀n a. BITS n n a ≠ 0 ⇔ (BITS n n a = 1)
+</pre>
+
+<DT><span class="strong">NOT_BITS2</span>
+<DD>
+<pre>
+|- ∀n a. BITS n n a ≠ 1 ⇔ (BITS n n a = 0)
+</pre>
+
+<DT><span class="strong">BIT_SLICE</span>
+<DD>
+<pre>
+|- ∀n a b. (BIT n a ⇔ BIT n b) ⇔ (SLICE n n a = SLICE n n b)
+</pre>
+
+<DT><span class="strong">BIT_SLICE_LEM</span>
+<DD>
+<pre>
+|- ∀y x n. SBIT (BIT x n) (x + y) = SLICE x x n * 2 ** y
+</pre>
+
+<DT><span class="strong">BIT_SLICE_THM</span>
+<DD>
+<pre>
+|- ∀x n. SBIT (BIT x n) x = SLICE x x n
+</pre>
+
+<DT><span class="strong">BIT_SLICE_THM2</span>
+<DD>
+<pre>
+|- ∀b n. BIT b n ⇔ (SLICE b b n = 2 ** b)
+</pre>
+
+<DT><span class="strong">BIT_SLICE_THM3</span>
+<DD>
+<pre>
+|- ∀b n. ¬BIT b n ⇔ (SLICE b b n = 0)
+</pre>
+
+<DT><span class="strong">BIT_SLICE_THM4</span>
+<DD>
+<pre>
+|- ∀b h l n. BIT b (SLICE h l n) ⇔ l ≤ b ∧ b ≤ h ∧ BIT b n
+</pre>
+
+<DT><span class="strong">SBIT_DIV</span>
+<DD>
+<pre>
+|- ∀b m n. n < m ⇒ (SBIT b (m − n) = SBIT b m DIV 2 ** n)
+</pre>
+
+<DT><span class="strong">BITS_SUC</span>
+<DD>
+<pre>
+|- ∀h l n.
+     l ≤ SUC h ⇒
+     (SBIT (BIT (SUC h) n) (SUC h − l) + BITS h l n = BITS (SUC h) l n)
+</pre>
+
+<DT><span class="strong">BITS_SUC_THM</span>
+<DD>
+<pre>
+|- ∀h l n.
+     BITS (SUC h) l n =
+     if SUC h < l then 0 else SBIT (BIT (SUC h) n) (SUC h − l) + BITS h l n
+</pre>
+
+<DT><span class="strong">BIT_BITS_THM</span>
+<DD>
+<pre>
+|- ∀h l a b.
+     (∀x. l ≤ x ∧ x ≤ h ⇒ (BIT x a ⇔ BIT x b)) ⇔ (BITS h l a = BITS h l b)
+</pre>
+
+<DT><span class="strong">LSB_ODD</span>
+<DD>
+<pre>
+|- LSB = ODD
+</pre>
+
+<DT><span class="strong">BITV_THM</span>
+<DD>
+<pre>
+|- ∀b n. BITV n b = SBIT (BIT b n) 0
+</pre>
+
+<DT><span class="strong">ADD_BIT0</span>
+<DD>
+<pre>
+|- ∀m n. BIT 0 (m + n) ⇔ (BIT 0 m ⇎ BIT 0 n)
+</pre>
+
+<DT><span class="strong">ADD_BITS_SUC</span>
+<DD>
+<pre>
+|- ∀n a b.
+     BITS (SUC n) (SUC n) (a + b) =
+     (BITS (SUC n) (SUC n) a + BITS (SUC n) (SUC n) b +
+      BITS (SUC n) (SUC n) (BITS n 0 a + BITS n 0 b)) MOD 2
+</pre>
+
+<DT><span class="strong">ADD_BIT_SUC</span>
+<DD>
+<pre>
+|- ∀n a b.
+     BIT (SUC n) (a + b) ⇔
+     if BIT (SUC n) (BITS n 0 a + BITS n 0 b) then
+       BIT (SUC n) a ⇔ BIT (SUC n) b
+     else
+       BIT (SUC n) a ⇎ BIT (SUC n) b
+</pre>
+
+<DT><span class="strong">BITWISE_LT_2EXP</span>
+<DD>
+<pre>
+|- ∀n op a b. BITWISE n op a b < 2 ** n
+</pre>
+
+<DT><span class="strong">BITWISE_THM</span>
+<DD>
+<pre>
+|- ∀x n op a b. x < n ⇒ (BIT x (BITWISE n op a b) ⇔ op (BIT x a) (BIT x b))
+</pre>
+
+<DT><span class="strong">BITWISE_COR</span>
+<DD>
+<pre>
+|- ∀x n op a b.
+     x < n ⇒
+     op (BIT x a) (BIT x b) ⇒
+     ((BITWISE n op a b DIV 2 ** x) MOD 2 = 1)
+</pre>
+
+<DT><span class="strong">BITWISE_NOT_COR</span>
+<DD>
+<pre>
+|- ∀x n op a b.
+     x < n ⇒
+     ¬op (BIT x a) (BIT x b) ⇒
+     ((BITWISE n op a b DIV 2 ** x) MOD 2 = 0)
+</pre>
+
+<DT><span class="strong">BITWISE_BITS</span>
+<DD>
+<pre>
+|- ∀wl op a b.
+     BITWISE (SUC wl) op (BITS wl 0 a) (BITS wl 0 b) = BITWISE (SUC wl) op a b
+</pre>
+
+<DT><span class="strong">BITWISE_ONE_COMP_LEM</span>
+<DD>
+<pre>
+|- ∀n a b. BITWISE (SUC n) (λx y. ¬x) a b = 2 ** SUC n − 1 − BITS n 0 a
+</pre>
+
+<DT><span class="strong">BIT_EXP_SUB1</span>
+<DD>
+<pre>
+|- ∀b n. BIT b (2 ** n − 1) ⇔ b < n
+</pre>
+
+<DT><span class="strong">BIT_DIV2</span>
+<DD>
+<pre>
+|- ∀n i. BIT n (i DIV 2) ⇔ BIT (SUC n) i
+</pre>
+
+<DT><span class="strong">SBIT_MULT</span>
+<DD>
+<pre>
+|- ∀b m n. SBIT b n * 2 ** m = SBIT b (n + m)
+</pre>
+
+<DT><span class="strong">BITWISE_EVAL</span>
+<DD>
+<pre>
+|- ∀n op a b.
+     BITWISE (SUC n) op a b =
+     2 * BITWISE n op (a DIV 2) (b DIV 2) + SBIT (op (LSB a) (LSB b)) 0
+</pre>
+
+<DT><span class="strong">MOD_PLUS_RIGHT</span>
+<DD>
+<pre>
+|- ∀n. 0 < n ⇒ ∀j k. (j + k MOD n) MOD n = (j + k) MOD n
+</pre>
+
+<DT><span class="strong">MOD_PLUS_1</span>
+<DD>
+<pre>
+|- ∀n. 0 < n ⇒ ∀x. ((x + 1) MOD n = 0) ⇔ (x MOD n + 1 = n)
+</pre>
+
+<DT><span class="strong">MOD_ADD_1</span>
+<DD>
+<pre>
+|- ∀n. 0 < n ⇒ ∀x. (x + 1) MOD n ≠ 0 ⇒ ((x + 1) MOD n = x MOD n + 1)
+</pre>
+
+<DT><span class="strong">BIT_REVERSE_THM</span>
+<DD>
+<pre>
+|- ∀x n a. x < n ⇒ (BIT x (BIT_REVERSE n a) ⇔ BIT (n − 1 − x) a)
+</pre>
+
+<DT><span class="strong">NOT_BIT_GT_TWOEXP</span>
+<DD>
+<pre>
+|- ∀i n. n < 2 ** i ⇒ ¬BIT i n
+</pre>
+
+<DT><span class="strong">NOT_BIT_GT_LOG2</span>
+<DD>
+<pre>
+|- ∀i n. LOG2 n < i ⇒ ¬BIT i n
+</pre>
+
+<DT><span class="strong">NOT_BIT_GT_BITWISE</span>
+<DD>
+<pre>
+|- ∀i n op a b. n ≤ i ⇒ ¬BIT i (BITWISE n op a b)
+</pre>
+
+<DT><span class="strong">LT_TWOEXP</span>
+<DD>
+<pre>
+|- ∀x n. x < 2 ** n ⇔ (x = 0) ∨ LOG2 x < n
+</pre>
+
+<DT><span class="strong">BIT_MODIFY_THM</span>
+<DD>
+<pre>
+|- ∀x n f a. x < n ⇒ (BIT x (BIT_MODIFY n f a) ⇔ f x (BIT x a))
+</pre>
+
+<DT><span class="strong">BIT_SIGN_EXTEND</span>
+<DD>
+<pre>
+|- ∀l h n i.
+     l ≠ 0 ⇒
+     (BIT i (SIGN_EXTEND l h n) ⇔
+      if l ≤ h ⇒ i < l then BIT i (n MOD 2 ** l) else i < h ∧ BIT (l − 1) n)
+</pre>
+
+<DT><span class="strong">BIT_LOG2</span>
+<DD>
+<pre>
+|- ∀n. n ≠ 0 ⇒ BIT (LOG2 n) n
+</pre>
+
+<DT><span class="strong">LEAST_THM</span>
+<DD>
+<pre>
+|- ∀n P. (∀m. m < n ⇒ ¬P m) ∧ P n ⇒ ($LEAST P = n)
+</pre>
+
+<DT><span class="strong">LENGTH_n2l</span>
+<DD>
+<pre>
+|- ∀b n. 1 < b ⇒ (LENGTH (n2l b n) = if n = 0 then 1 else SUC (LOG b n))
+</pre>
+
+<DT><span class="strong">l2n_n2l</span>
+<DD>
+<pre>
+|- ∀b n. 1 < b ⇒ (l2n b (n2l b n) = n)
+</pre>
+
+<DT><span class="strong">LENGTH_l2n</span>
+<DD>
+<pre>
+|- ∀b l.
+     1 < b ∧ EVERY ($> b) l ∧ l2n b l ≠ 0 ⇒ SUC (LOG b (l2n b l)) ≤ LENGTH l
+</pre>
+
+<DT><span class="strong">EL_TAKE</span>
+<DD>
+<pre>
+|- ∀x n l. x < n ∧ n ≤ LENGTH l ⇒ (EL x (TAKE n l) = EL x l)
+</pre>
+
+<DT><span class="strong">l2n_DIGIT</span>
+<DD>
+<pre>
+|- ∀b l x.
+     1 < b ∧ EVERY ($> b) l ∧ x < LENGTH l ⇒
+     ((l2n b l DIV b ** x) MOD b = EL x l)
+</pre>
+
+<DT><span class="strong">DIV_0_IMP_LT</span>
+<DD>
+<pre>
+|- ∀b n. 1 < b ∧ (n DIV b = 0) ⇒ n < b
+</pre>
+
+<DT><span class="strong">EL_n2l</span>
+<DD>
+<pre>
+|- ∀b x n.
+     1 < b ∧ x < LENGTH (n2l b n) ⇒ (EL x (n2l b n) = (n DIV b ** x) MOD b)
+</pre>
+
+<DT><span class="strong">n2l_l2n</span>
+<DD>
+<pre>
+|- ∀b l.
+     1 < b ∧ EVERY ($> b) l ⇒
+     (n2l b (l2n b l) =
+      if l2n b l = 0 then [0] else TAKE (SUC (LOG b (l2n b l))) l)
+</pre>
+
+<DT><span class="strong">n2l_BOUND</span>
+<DD>
+<pre>
+|- ∀b n. 0 < b ⇒ EVERY ($> b) (n2l b n)
+</pre>
+
+<DT><span class="strong">s2n_n2s</span>
+<DD>
+<pre>
+|- ∀c2n n2c b n.
+     1 < b ∧ (∀x. x < b ⇒ (c2n (n2c x) = x)) ⇒ (s2n b c2n (n2s b n2c n) = n)
+</pre>
+
+<DT><span class="strong">n2s_s2n</span>
+<DD>
+<pre>
+|- ∀c2n n2c b s.
+     1 < b ∧ EVERY ($> b o c2n) s ⇒
+     (n2s b n2c (s2n b c2n s) =
+      if s2n b c2n s = 0 then
+        STRING (n2c 0) ""
+      else
+        MAP (n2c o c2n) (LASTN (SUC (LOG b (s2n b c2n s))) s))
+</pre>
+
+<DT><span class="strong">BIT_num_from_bin_list</span>
+<DD>
+<pre>
+|- ∀x l.
+     EVERY ($> 2) l ∧ x < LENGTH l ⇒
+     (BIT x (num_from_bin_list l) ⇔ (EL x l = 1))
+</pre>
+
+<DT><span class="strong">BIT_num_from_bin_string</span>
+<DD>
+<pre>
+|- ∀x s.
+     EVERY ($> 2 o UNHEX) s ∧ x < STRLEN s ⇒
+     (BIT x (num_from_bin_string s) ⇔
+      (UNHEX (SUB (s,PRE (STRLEN s − x))) = 1))
+</pre>
+
+<DT><span class="strong">EL_num_to_bin_list</span>
+<DD>
+<pre>
+|- ∀x n.
+     x < LENGTH (num_to_bin_list n) ⇒ (EL x (num_to_bin_list n) = BITV n x)
+</pre>
+
+<DT><span class="strong">SUB_num_to_bin_string</span>
+<DD>
+<pre>
+|- ∀x n.
+     x < STRLEN (num_to_bin_string n) ⇒
+     (SUB (num_to_bin_string n,x) =
+      HEX (BITV n (PRE (STRLEN (num_to_bin_string n) − x))))
+</pre>
+
+<DT><span class="strong">UNHEX_HEX</span>
+<DD>
+<pre>
+|- ∀n. n < 16 ⇒ (UNHEX (HEX n) = n)
+</pre>
+
+<DT><span class="strong">HEX_UNHEX</span>
+<DD>
+<pre>
+|- ∀c. isHexDigit c ⇒ (HEX (UNHEX c) = toUpper c)
+</pre>
+
+<DT><span class="strong">DEC_UNDEC</span>
+<DD>
+<pre>
+|- ∀c. isDigit c ⇒ (HEX (UNHEX c) = c)
+</pre>
+
+<DT><span class="strong">num_bin_list</span>
+<DD>
+<pre>
+|- num_from_bin_list o num_to_bin_list = I
+</pre>
+
+<DT><span class="strong">num_oct_list</span>
+<DD>
+<pre>
+|- num_from_oct_list o num_to_oct_list = I
+</pre>
+
+<DT><span class="strong">num_dec_list</span>
+<DD>
+<pre>
+|- num_from_dec_list o num_to_dec_list = I
+</pre>
+
+<DT><span class="strong">num_hex_list</span>
+<DD>
+<pre>
+|- num_from_hex_list o num_to_hex_list = I
+</pre>
+
+<DT><span class="strong">num_bin_string</span>
+<DD>
+<pre>
+|- num_from_bin_string o num_to_bin_string = I
+</pre>
+
+<DT><span class="strong">num_oct_string</span>
+<DD>
+<pre>
+|- num_from_oct_string o num_to_oct_string = I
+</pre>
+
+<DT><span class="strong">num_dec_string</span>
+<DD>
+<pre>
+|- num_from_dec_string o num_to_dec_string = I
+</pre>
+
+<DT><span class="strong">num_hex_string</span>
+<DD>
+<pre>
+|- num_from_hex_string o num_to_hex_string = I
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

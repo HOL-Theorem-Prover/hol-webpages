@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>bossLib.arith_ss</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>arith_ss : simpset</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Simplification set for arithmetic.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The simplification set </SPAN><SPAN class = "BRKT">arith_ss</SPAN><SPAN class = "TEXT"> is a version of </SPAN><SPAN class = "BRKT">std_ss</SPAN><SPAN class = "TEXT"> enhanced for 
+arithmetic. It includes many arithmetic rewrites, an evaluation mechanism for
+ground arithmetic terms, and a decision procedure for linear arithmetic.
+It also incorporates a cache of successfully solved conditions proved when
+conditional rewrite rules are successfully applied.</SPAN>
+<P>
+<SPAN class = "TEXT">The following rewrites are currently used to augment those already present
+from </SPAN><SPAN class = "BRKT">std_ss</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   |- !m n. (m * n = 0) = (m = 0) \/ (n = 0)
+   |- !m n. (0 = m * n) = (m = 0) \/ (n = 0)
+   |- !m n. (m + n = 0) = (m = 0) /\ (n = 0)
+   |- !m n. (0 = m + n) = (m = 0) /\ (n = 0)
+   |- !x y. (x * y = 1) = (x = 1) /\ (y = 1)
+   |- !x y. (1 = x * y) = (x = 1) /\ (y = 1)
+   |- !m. m * 0 = 0 
+   |- !m. 0 * m = 0
+   |- !x y. (x * y = SUC 0) = (x = SUC 0) /\ (y = SUC 0)
+   |- !x y. (SUC 0 = x * y) = (x = SUC 0) /\ (y = SUC 0)
+   |- !m. m * 1 = m 
+   |- !m. 1 * m = m
+   |- !x.((SUC x = 1) = (x = 0)) /\ ((1 = SUC x) = (x = 0))
+   |- !x.((SUC x = 2) = (x = 1)) /\ ((2 = SUC x) = (x = 1))
+   |- !m n. (m + n = m) = (n = 0)
+   |- !m n. (n + m = m) = (n = 0) 
+   |- !c. c - c = 0
+   |- !m. SUC m - 1 = m 
+   |- !m. (0 - m = 0) /\ (m - 0 = m)
+   |- !a c. a + c - c = a 
+   |- !m n. (m - n = 0) = m &lt;= n
+   |- !m n. (0 = m - n) = m &lt;= n 
+   |- !n m. n - m &lt;= n
+   |- !n m. SUC n - SUC m = n - m
+   |- !m n p. m - n &gt; p = m &gt; n + p
+   |- !m n p. m - n &lt; p = m &lt; n + p /\ 0 &lt; p
+   |- !m n p. m - n &gt;= p = m &gt;= n + p \/ 0 &gt;= p
+   |- !m n p. m - n &lt;= p = m &lt;= n + p
+   |- !n. n &lt;= 0 = (n = 0)
+   |- !m n p. m + p &lt; n + p = m &lt; n
+   |- !m n p. p + m &lt; p + n = m &lt; n
+   |- !m n p. m + n &lt;= m + p = n &lt;= p
+   |- !m n p. n + m &lt;= p + m = n &lt;= p
+   |- !m n p. (m + p = n + p) = (m = n)
+   |- !m n p. (p + m = p + n) = (m = n)
+   |- !x y w. x + y &lt; w + x = y &lt; w
+   |- !x y w. y + x &lt; x + w = y &lt; w
+   |- !m n. (SUC m = SUC n) = (m = n)
+   |- !m n. SUC m &lt; SUC n = m &lt; n
+   |- !n m. SUC n &lt;= SUC m = n &lt;= m
+   |- !m i n. SUC n * m &lt; SUC n * i = m &lt; i
+   |- !p m n. (n * SUC p = m * SUC p) = (n = m)
+   |- !m i n. (SUC n * m = SUC n * i) = (m = i)
+   |- !n m. ~(SUC n &lt;= m) = m &lt;= n
+   |- !p q n m. (n * SUC q ** p = m * SUC q ** p) = (n = m)
+   |- !m n. ~(SUC n ** m = 0)
+   |- !n m. ~(SUC (n + n) = m + m)
+   |- !m n. ~(SUC (m + n) &lt;= m) 
+   |- !n. ~(SUC n &lt;= 0)
+   |- !n. ~(n &lt; 0) 
+   |- !n. (MIN n 0 = 0) /\ (MIN 0 n = 0)
+   |- !n. (MAX n 0 = n) /\ (MAX 0 n = n)
+   |- !n. MIN n n = n 
+   |- !n. MAX n n = n
+   |- !n m. MIN m n &lt;= m /\ MIN m n &lt;= n
+   |- !n m. m &lt;= MAX m n /\ n &lt;= MAX m n
+   |- !n m. (MIN m n &lt; m = ~(m = n) /\ (MIN m n = n)) /\
+            (MIN m n &lt; n = ~(m = n) /\ (MIN m n = m)) /\
+            (m &lt; MIN m n = F) /\ (n &lt; MIN m n = F)
+   |- !n m. (m &lt; MAX m n = ~(m = n) /\ (MAX m n = n)) /\
+            (n &lt; MAX m n = ~(m = n) /\ (MAX m n = m)) /\
+            (MAX m n &lt; m = F) /\ (MAX m n &lt; n = F)
+   |- !m n. (MIN m n = MAX m n) = (m = n)
+   |- !m n. MIN m n &lt; MAX m n = ~(m = n)
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">The decision procedure proves valid purely univeral formulas 
+constructed using variables and the operators </SPAN><SPAN class = "BRKT">SUC,PRE,+,-,&lt;,&gt;,&lt;=,&gt;=</SPAN><SPAN class = "TEXT">. 
+Multiplication by constants is accomodated by translation to repeated 
+addition. An attempt is made to generalize sub-formulas of type </SPAN><SPAN class = "BRKT">num</SPAN><SPAN class = "TEXT"> 
+not fitting into this syntax.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The philosophy behind this simpset is fairly conservative. For example, 
+some potential rewrite rules, e.g., the recursive clauses for addition 
+and multiplication, are not included, since it was felt that their 
+incorporation too often resulted in formulas becoming more complex 
+rather than simpler. Also, transitivity theorems are avoided because 
+they tend to make simplification diverge.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "BasicProvers.RW_TAC.html">RW_TAC</A>,
+<A HREF = "BasicProvers.SRW_TAC.html">SRW_TAC</A>,
+<A HREF = "simpLib.SIMP_TAC.html">SIMP_TAC</A>,
+<A HREF = "simpLib.SIMP_CONV.html">SIMP_CONV</A>,
+<A HREF = "simpLib.SIMP_RULE.html">SIMP_RULE</A>,
+<A HREF = "BasicProvers.bool_ss.html">bool_ss</A>,
+<A HREF = "bossLib.std_ss.html">std_ss</A>,
+<A HREF = "bossLib.list_ss.html">list_ss</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-6</div></BODY></HTML>

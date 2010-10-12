@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>computeLib.CBV_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>CBV_CONV : compset -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/computeLib.html">computeLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Call by value rewriting.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">compute</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The conversion </SPAN><SPAN class = "BRKT">CBV_CONV</SPAN><SPAN class = "TEXT"> expects an simplification set and a
+term. Its term argument is rewritten using the equations added in the
+simplification set. The strategy used is somewhat similar to ML&rsquo;s,
+that is call-by-value (arguments of constants are completely reduced
+before the rewrites associated to the constant are applied) with weak
+reduction (no reduction of the function body before the function is
+applied). The main differences are that beta-redexes are reduced with
+a call-by-name strategy (the argument is not reduced), and reduction
+under binders is done when it occurs in a position where it cannot be
+substituted.</SPAN>
+<P>
+<SPAN class = "TEXT">The simplification sets are mutable objects, this means they are
+extended by side-effect. The function </SPAN><SPAN class = "BRKT">new_compset</SPAN><SPAN class = "TEXT"> will create 
+a new set containing reflexivity (</SPAN><SPAN class = "BRKT">REFL_CLAUSE</SPAN><SPAN class = "TEXT">), plus the supplied rewrites.
+Theorems can be added to an existing compset with the function </SPAN><SPAN class = "BRKT">add_thms</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">It is also possible to add conversions to a simplification set with
+</SPAN><SPAN class = "BRKT">add_conv</SPAN><SPAN class = "TEXT">. The only restriction is that a constant (</SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">) and an arity
+(</SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">) must be provided. The conversion will be called only on terms in
+which </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> is applied to </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> arguments.</SPAN>
+<P>
+<SPAN class = "TEXT">Two theorem &ldquo;preprocessors&rdquo; are provided to control the strictness
+of the arguments of a constant. </SPAN><SPAN class = "BRKT">lazyfy_thm</SPAN><SPAN class = "TEXT"> has pattern variables on
+the left hand side turned into abstractions on the right hand
+side. This transformation is applied on every conjunct, and removes
+prenex universal quantifications. A typical example is </SPAN><SPAN class = "BRKT">COND_CLAUSES</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+  (COND T a b = a) /\ (COND F a b = b)
+</pre></DIV>
+<SPAN class = "TEXT">
+Using these equations is very inefficient because both </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT">
+and </SPAN><SPAN class = "BRKT">b</SPAN><SPAN class = "TEXT"> are evaluated, regardless of the value of the boolean
+expression. It is better to use </SPAN><SPAN class = "BRKT">COND_CLAUSES</SPAN><SPAN class = "TEXT"> with the form above
+</SPAN><DIV class = "XMPL"><pre>
+  (COND T = \a b. a) /\ (COND F = \a b. b)
+</pre></DIV>
+<SPAN class = "TEXT">
+The call-by-name evaluation of beta redexes avoids computing
+the unused branch of the conditional.</SPAN>
+<P>
+<SPAN class = "TEXT">Conversely, </SPAN><SPAN class = "BRKT">strictify_thm</SPAN><SPAN class = "TEXT"> does the reverse transformation. This is
+particularly relevant for </SPAN><SPAN class = "BRKT">LET_DEF</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+  LET = \f x. f x   --&gt;   LET f x = f x
+</pre></DIV>
+<SPAN class = "TEXT">
+This forces the evaluation of the argument before reducing the
+beta-redex. Hence the usual behaviour of </SPAN><SPAN class = "BRKT">LET</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">It is necessary to provide rules for all the constants appearing in the
+expression to reduce (all also for those that appear in the right hand
+side of a rule), unless the given constant is considered as a
+constructor of the representation chosen. As an example,
+</SPAN><SPAN class = "BRKT">reduceLib.num_compset</SPAN><SPAN class = "TEXT"> creates a new simplification set with all the
+rules needed for basic boolean and arithmetical calculations built in.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+   - val rws = new_compset [lazyfy_thm COND_CLAUSES];
+   &gt; val rws = &lt;compset&gt; : compset
+
+   - CBV_CONV rws (--`(\x.x) ((\x.x) if T then 0+0 else 10)`--);
+   &gt; val it = |- (\x. x) ((\x. x) (if T then 0 + 0 else 10)) = 0 + 0 : thm
+
+   - CBV_CONV (reduceLib.num_compset())
+              (--`if 100 - 5 * 5 &lt; 80  then 2 EXP 16 else 3`--);
+   &gt; val it = |- (if 100 - 5 * 5 &lt; 80 then 2 ** 16 else 3) = 65536 : thm
+
+</pre></DIV>
+<SPAN class = "TEXT">
+Failing to give enough rules may make </SPAN><SPAN class = "BRKT">CBV_CONV</SPAN><SPAN class = "TEXT"> build a
+huge result, or even loop. The same may occur if the initial term to
+reduce contains free variables.
+</SPAN><DIV class = "XMPL"><pre>
+   val eqn = bossLib.Define `exp n p = if p=0 then 1 else n * (exp n (p-1))`;
+   val _ = add_thms [eqn] computeLib.the_compset;
+
+   - CBV_CONV rws (--`exp 2 n`--);
+   &gt; Interrupted.
+
+   - set_skip rws "COND" (SOME 1);
+   &gt; val it = () : unit
+
+   - CBV_CONV rws (--`exp 2 n`--);
+   &gt; val it = |- exp 2 n = (if n = 0 then 1 else 2 * exp 2 (n - 1)) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The first invocation of </SPAN><SPAN class = "BRKT">CBV_CONV</SPAN><SPAN class = "TEXT"> loops since the exponent
+never reduces to 0.  Below the first steps are computed:
+</SPAN><DIV class = "XMPL"><pre>
+    exp 2 n
+    if n = 0 then 1 else 2 * exp 2 (n-1)
+    if n = 0 then 1 else 2 * if (n-1) = 0 then 1 else 2 * exp 2 (n-1-1)
+    ...
+</pre></DIV>
+<SPAN class = "TEXT">
+The call to </SPAN><SPAN class = "BRKT">set_skip</SPAN><SPAN class = "TEXT"> means that if the constants </SPAN><SPAN class = "BRKT">COND</SPAN><SPAN class = "TEXT">
+appears applied to one argument and does not create a redex (in the
+example, if the condition does not reduce to </SPAN><SPAN class = "BRKT">T</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">F</SPAN><SPAN class = "TEXT">), then the
+forthcoming arguments (the two branches of the conditional) are not
+reduced at all.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Should never fail. Nonetheless, using rewrites with assumptions may
+cause problems when rewriting under abstractions. The following
+example illustrates that issue.
+</SPAN><DIV class = "XMPL"><pre>
+   - val th = ASSUME (--`0 = x`--);
+   - val tm = Term`\(x:num). x = 0`;
+   - val rws = from_list [th];
+   - CBV_CONV rws tm;
+</pre></DIV>
+<SPAN class = "TEXT">
+This fails because the 0 is replaced by </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT">, making the assumption 
+</SPAN><SPAN class = "BRKT">0&nbsp;=&nbsp;x</SPAN><SPAN class = "TEXT">. Then, the abstraction cannot be rebuilt since </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> appears
+free in the assumptions.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "numLib.REDUCE_CONV.html">REDUCE_CONV</A>,
+<A HREF = "computeLib.bool_compset.html">bool_compset</A>,
+<A HREF = "bossLib.EVAL.html">EVAL</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-6</div></BODY></HTML>

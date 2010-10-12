@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Drule.SUBST_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>SUBST_CONV : {redex :term, residue :thm} list -&gt; term -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Drule.html">Drule</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Makes substitutions in a term at selected occurrences of subterms, using a list
+of theorems.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_CONV</SPAN><SPAN class = "TEXT"> implements the following rule of simultaneous substitution
+</SPAN><DIV class = "XMPL"><pre>
+                    A1 |- t1 = v1 ... An |- tn = vn
+   ------------------------------------------------------------------
+    A1 u ... u An |- t[t1,...,tn/x1,...,xn] = t[v1,...,vn/x1,...,xn]
+</pre></DIV>
+<SPAN class = "TEXT">
+The first argument to </SPAN><SPAN class = "BRKT">SUBST_CONV</SPAN><SPAN class = "TEXT"> is a list
+</SPAN><SPAN class = "BRKT">[{redex=x1,&nbsp;residue&nbsp;=&nbsp;A1|-t1=v1},...,{redex&nbsp;=&nbsp;xn,&nbsp;residue&nbsp;=&nbsp;An|-tn=vn}]</SPAN><SPAN class = "TEXT">.
+The second argument is a template term </SPAN><SPAN class = "BRKT">t[x1,...,xn]</SPAN><SPAN class = "TEXT">, in which
+the variables </SPAN><SPAN class = "BRKT">x1,...,xn</SPAN><SPAN class = "TEXT"> are used to mark those places where
+occurrences of </SPAN><SPAN class = "BRKT">t1,...,tn</SPAN><SPAN class = "TEXT"> are to be replaced with the terms
+</SPAN><SPAN class = "BRKT">v1,...,vn</SPAN><SPAN class = "TEXT">, respectively.
+Thus, evaluating
+</SPAN><DIV class = "XMPL"><pre>
+   SUBST_CONV [{redex = x1, residue = A1|-t1=v1},...,
+               {redex = xn, residue = An|-tn=vn}]
+              t[x1,...,xn]
+              t[t1,...,tn/x1,...,xn]
+</pre></DIV>
+<SPAN class = "TEXT">
+returns the theorem
+</SPAN><DIV class = "XMPL"><pre>
+   A1 u ... u An |- t[t1,...,tn/x1,...,xn] = t[v1,...,vn/x1,...,xn]
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">The occurrence of </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> at the places marked by the variable
+</SPAN><SPAN class = "BRKT">xi</SPAN><SPAN class = "TEXT"> must be free (i.e. </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> must not contain any bound variables).
+</SPAN><SPAN class = "BRKT">SUBST_CONV</SPAN><SPAN class = "TEXT"> automatically renames bound variables to prevent free
+variables in </SPAN><SPAN class = "BRKT">vi</SPAN><SPAN class = "TEXT"> becoming bound after substitution.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_CONV&nbsp;[{redex=x1,residue=th1},...,{redex=xn,residue=thn}]&nbsp;t[x1,...,xn]&nbsp;t'</SPAN><SPAN class = "TEXT"> fails
+if the conclusion of any theorem </SPAN><SPAN class = "BRKT">thi</SPAN><SPAN class = "TEXT"> in the list is not an equation; or if
+the template </SPAN><SPAN class = "BRKT">t[x1,...,xn]</SPAN><SPAN class = "TEXT"> does not match the term </SPAN><SPAN class = "BRKT">t'</SPAN><SPAN class = "TEXT">; or if and term </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> 
+in </SPAN><SPAN class = "BRKT">t'</SPAN><SPAN class = "TEXT"> marked by the variable </SPAN><SPAN class = "BRKT">xi</SPAN><SPAN class = "TEXT"> in the template, is not identical to the 
+left-hand side of the conclusion of the theorem </SPAN><SPAN class = "BRKT">thi</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The values
+</SPAN><DIV class = "XMPL"><pre>
+   - val thm0 = SPEC (Term`0`) ADD1 
+     and thm1 = SPEC (Term`1`) ADD1
+     and x = Term`x:num` and y = Term`y:num`;
+
+   &gt; val thm0 = |- SUC 0 = 0 + 1 : thm
+     val thm1 = |- SUC 1 = 1 + 1 : thm
+     val x = `x` : term
+     val y = `y` : term
+</pre></DIV>
+<SPAN class = "TEXT">
+can be used to substitute selected occurrences of the terms </SPAN><SPAN class = "BRKT">SUC&nbsp;0</SPAN><SPAN class = "TEXT">
+and </SPAN><SPAN class = "BRKT">SUC&nbsp;1</SPAN><SPAN class = "TEXT">
+</SPAN><DIV class = "XMPL"><pre>
+- SUBST_CONV [{redex=x, residue=thm0},{redex=y,residue=thm1}]
+             (Term`(x + y) &gt; SUC 1`)
+             (Term`(SUC 0 + SUC 1) &gt; SUC 1`);
+&gt; val it = |- SUC 0 + SUC 1 &gt; SUC 1 = (0 + 1) + 1 + 1 &gt; SUC 1 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The </SPAN><SPAN class = "BRKT">|-&gt;</SPAN><SPAN class = "TEXT"> syntax can also be used:
+</SPAN><DIV class = "XMPL"><pre>
+- SUBST_CONV [x |-&gt; thm0, y |-&gt; thm1]
+             (Term`(x + y) &gt; SUC 1`)
+             (Term`(SUC 0 + SUC 1) &gt; SUC 1`);
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_CONV</SPAN><SPAN class = "TEXT"> is used when substituting at selected occurrences of terms
+and using rewriting rules/conversions is too extensive.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Conv.REWR_CONV.html">REWR_CONV</A>,
+<A HREF = "Drule.SUBS.html">SUBS</A>,
+<A HREF = "Thm.SUBST.html">SUBST</A>,
+<A HREF = "Drule.SUBS_OCCS.html">SUBS_OCCS</A>,
+<A HREF = "Lib.maplet.html">|-></A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-6</div></BODY></HTML>

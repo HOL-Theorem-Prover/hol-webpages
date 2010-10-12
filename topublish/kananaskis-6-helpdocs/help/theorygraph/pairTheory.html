@@ -1,0 +1,401 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: pair</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "pair"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "relationTheory.html"><span class="strong">relation</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">prod</span> <td> 2
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">##</span>
+            <td>
+            :(α -> γ) -> (β -> δ) -> α # β -> γ # δ
+    <tr><td> <span class="strong">,</span> <td> :α -> β -> α # β
+    <tr><td>
+        <span class="strong">ABS_prod</span>
+        <td>
+        :(α -> β -> bool) -> α # β
+    <tr><td>
+        <span class="strong">CURRY</span>
+        <td>
+        :(α # β -> γ) -> α -> β -> γ
+    <tr><td> <span class="strong">FST</span> <td> :α # β -> α
+    <tr><td>
+        <span class="strong">LEX</span>
+        <td>
+        :(α -> α -> bool) -> (β -> β -> bool) -> α # β -> α # β -> bool
+    <tr><td>
+        <span class="strong">REP_prod</span>
+        <td>
+        :α # β -> α -> β -> bool
+    <tr><td>
+        <span class="strong">RPROD</span>
+        <td>
+        :(α -> α -> bool) -> (β -> β -> bool) -> α # β -> α # β -> bool
+    <tr><td> <span class="strong">SND</span> <td> :α # β -> β
+    <tr><td>
+        <span class="strong">UNCURRY</span>
+        <td>
+        :(α -> β -> γ) -> α # β -> γ
+    <tr><td>
+        <span class="strong">pair_case</span>
+        <td>
+        :(α -> β -> γ) -> α # β -> γ
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">prod_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep. TYPE_DEFINITION (λp. ∃x y. p = (λa b. (a = x) ∧ (b = y))) rep
+</pre>
+
+<DT><span class="strong">ABS_REP_prod</span>
+<DD>
+<pre>
+|- (∀a. ABS_prod (REP_prod a) = a) ∧
+   ∀r.
+     (λp. ∃x y. p = (λa b. (a = x) ∧ (b = y))) r ⇔ (REP_prod (ABS_prod r) = r)
+</pre>
+
+<DT><span class="strong">COMMA_DEF</span>
+<DD>
+<pre>
+|- ∀x y. (x,y) = ABS_prod (λa b. (a = x) ∧ (b = y))
+</pre>
+
+<DT><span class="strong">PAIR</span>
+<DD>
+<pre>
+|- ∀x. (FST x,SND x) = x
+</pre>
+
+<DT><span class="strong">CURRY_DEF</span>
+<DD>
+<pre>
+|- ∀f x y. CURRY f x y = f (x,y)
+</pre>
+
+<DT><span class="strong">UNCURRY</span>
+<DD>
+<pre>
+|- ∀f v. UNCURRY f v = f (FST v) (SND v)
+</pre>
+
+<DT><span class="strong">PAIR_MAP</span>
+<DD>
+<pre>
+|- ∀f g p. (f ## g) p = (f (FST p),g (SND p))
+</pre>
+
+<DT><span class="strong">pair_case_def</span>
+<DD>
+<pre>
+|- pair_case = UNCURRY
+</pre>
+
+<DT><span class="strong">LEX_DEF</span>
+<DD>
+<pre>
+|- ∀R1 R2. R1 LEX R2 = (λ(s,t) (u,v). R1 s u ∨ (s = u) ∧ R2 t v)
+</pre>
+
+<DT><span class="strong">RPROD_DEF</span>
+<DD>
+<pre>
+|- ∀R1 R2. RPROD R1 R2 = (λ(s,t) (u,v). R1 s u ∧ R2 t v)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">PAIR_EQ</span>
+<DD>
+<pre>
+|- ((x,y) = (a,b)) ⇔ (x = a) ∧ (y = b)
+</pre>
+
+<DT><span class="strong">CLOSED_PAIR_EQ</span>
+<DD>
+<pre>
+|- ∀x y a b. ((x,y) = (a,b)) ⇔ (x = a) ∧ (y = b)
+</pre>
+
+<DT><span class="strong">ABS_PAIR_THM</span>
+<DD>
+<pre>
+|- ∀x. ∃q r. x = (q,r)
+</pre>
+
+<DT><span class="strong">pair_CASES</span>
+<DD>
+<pre>
+|- ∀x. ∃q r. x = (q,r)
+</pre>
+
+<DT><span class="strong">FST</span>
+<DD>
+<pre>
+|- ∀x y. FST (x,y) = x
+</pre>
+
+<DT><span class="strong">SND</span>
+<DD>
+<pre>
+|- ∀x y. SND (x,y) = y
+</pre>
+
+<DT><span class="strong">PAIR_FST_SND_EQ</span>
+<DD>
+<pre>
+|- ∀p q. (p = q) ⇔ (FST p = FST q) ∧ (SND p = SND q)
+</pre>
+
+<DT><span class="strong">UNCURRY_VAR</span>
+<DD>
+<pre>
+|- ∀f v. UNCURRY f v = f (FST v) (SND v)
+</pre>
+
+<DT><span class="strong">ELIM_UNCURRY</span>
+<DD>
+<pre>
+|- ∀f. UNCURRY f = (λx. f (FST x) (SND x))
+</pre>
+
+<DT><span class="strong">UNCURRY_DEF</span>
+<DD>
+<pre>
+|- ∀f x y. UNCURRY f (x,y) = f x y
+</pre>
+
+<DT><span class="strong">CURRY_UNCURRY_THM</span>
+<DD>
+<pre>
+|- ∀f. CURRY (UNCURRY f) = f
+</pre>
+
+<DT><span class="strong">UNCURRY_CURRY_THM</span>
+<DD>
+<pre>
+|- ∀f. UNCURRY (CURRY f) = f
+</pre>
+
+<DT><span class="strong">CURRY_ONE_ONE_THM</span>
+<DD>
+<pre>
+|- (CURRY f = CURRY g) ⇔ (f = g)
+</pre>
+
+<DT><span class="strong">UNCURRY_ONE_ONE_THM</span>
+<DD>
+<pre>
+|- (UNCURRY f = UNCURRY g) ⇔ (f = g)
+</pre>
+
+<DT><span class="strong">pair_Axiom</span>
+<DD>
+<pre>
+|- ∀f. ∃fn. ∀x y. fn (x,y) = f x y
+</pre>
+
+<DT><span class="strong">UNCURRY_CONG</span>
+<DD>
+<pre>
+|- ∀M M' f.
+     (M = M') ∧ (∀x y. (M' = (x,y)) ⇒ (f x y = f' x y)) ⇒
+     (UNCURRY f M = UNCURRY f' M')
+</pre>
+
+<DT><span class="strong">LAMBDA_PROD</span>
+<DD>
+<pre>
+|- ∀P. (λp. P p) = (λ(p1,p2). P (p1,p2))
+</pre>
+
+<DT><span class="strong">EXISTS_PROD</span>
+<DD>
+<pre>
+|- (∃p. P p) ⇔ ∃p_1 p_2. P (p_1,p_2)
+</pre>
+
+<DT><span class="strong">FORALL_PROD</span>
+<DD>
+<pre>
+|- (∀p. P p) ⇔ ∀p_1 p_2. P (p_1,p_2)
+</pre>
+
+<DT><span class="strong">pair_induction</span>
+<DD>
+<pre>
+|- (∀p_1 p_2. P (p_1,p_2)) ⇒ ∀p. P p
+</pre>
+
+<DT><span class="strong">ELIM_PEXISTS</span>
+<DD>
+<pre>
+|- (∃p. P (FST p) (SND p)) ⇔ ∃p1 p2. P p1 p2
+</pre>
+
+<DT><span class="strong">ELIM_PFORALL</span>
+<DD>
+<pre>
+|- (∀p. P (FST p) (SND p)) ⇔ ∀p1 p2. P p1 p2
+</pre>
+
+<DT><span class="strong">PFORALL_THM</span>
+<DD>
+<pre>
+|- ∀P. (∀x y. P x y) ⇔ ∀(x,y). P x y
+</pre>
+
+<DT><span class="strong">PEXISTS_THM</span>
+<DD>
+<pre>
+|- ∀P. (∃x y. P x y) ⇔ ∃(x,y). P x y
+</pre>
+
+<DT><span class="strong">ELIM_PEXISTS_EVAL</span>
+<DD>
+<pre>
+|- $? (UNCURRY (λx. P x)) ⇔ ∃x. $? (P x)
+</pre>
+
+<DT><span class="strong">ELIM_PFORALL_EVAL</span>
+<DD>
+<pre>
+|- $! (UNCURRY (λx. P x)) ⇔ ∀x. $! (P x)
+</pre>
+
+<DT><span class="strong">PAIR_MAP_THM</span>
+<DD>
+<pre>
+|- ∀f g x y. (f ## g) (x,y) = (f x,g y)
+</pre>
+
+<DT><span class="strong">FST_PAIR_MAP</span>
+<DD>
+<pre>
+|- ∀p f g. FST ((f ## g) p) = f (FST p)
+</pre>
+
+<DT><span class="strong">SND_PAIR_MAP</span>
+<DD>
+<pre>
+|- ∀p f g. SND ((f ## g) p) = g (SND p)
+</pre>
+
+<DT><span class="strong">LET2_RAND</span>
+<DD>
+<pre>
+|- ∀P M N. P (let (x,y) = M in N x y) = (let (x,y) = M in P (N x y))
+</pre>
+
+<DT><span class="strong">LET2_RATOR</span>
+<DD>
+<pre>
+|- ∀M N b. (let (x,y) = M in N x y) b = (let (x,y) = M in N x y b)
+</pre>
+
+<DT><span class="strong">o_UNCURRY_R</span>
+<DD>
+<pre>
+|- f o UNCURRY g = UNCURRY ($o f o g)
+</pre>
+
+<DT><span class="strong">C_UNCURRY_L</span>
+<DD>
+<pre>
+|- combin$C (UNCURRY f) x = UNCURRY (combin$C (combin$C o f) x)
+</pre>
+
+<DT><span class="strong">S_UNCURRY_R</span>
+<DD>
+<pre>
+|- S f (UNCURRY g) = UNCURRY (S (S o $o f o $,) g)
+</pre>
+
+<DT><span class="strong">FORALL_UNCURRY</span>
+<DD>
+<pre>
+|- $! (UNCURRY f) ⇔ $! ($! o f)
+</pre>
+
+<DT><span class="strong">PAIR_FUN_THM</span>
+<DD>
+<pre>
+|- ∀P. (∃!f. P f) ⇔ ∃!p. P (λa. (FST p a,SND p a))
+</pre>
+
+<DT><span class="strong">pair_case_thm</span>
+<DD>
+<pre>
+|- pair_case f (x,y) = f x y
+</pre>
+
+<DT><span class="strong">pair_case_cong</span>
+<DD>
+<pre>
+|- ∀M M' f.
+     (M = M') ∧ (∀x y. (M' = (x,y)) ⇒ (f x y = f' x y)) ⇒
+     (pair_case f M = pair_case f' M')
+</pre>
+
+<DT><span class="strong">LEX_DEF_THM</span>
+<DD>
+<pre>
+|- (R1 LEX R2) (a,b) (c,d) ⇔ R1 a c ∨ (a = c) ∧ R2 b d
+</pre>
+
+<DT><span class="strong">WF_LEX</span>
+<DD>
+<pre>
+|- ∀R Q. WF R ∧ WF Q ⇒ WF (R LEX Q)
+</pre>
+
+<DT><span class="strong">WF_RPROD</span>
+<DD>
+<pre>
+|- ∀R Q. WF R ∧ WF Q ⇒ WF (RPROD R Q)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

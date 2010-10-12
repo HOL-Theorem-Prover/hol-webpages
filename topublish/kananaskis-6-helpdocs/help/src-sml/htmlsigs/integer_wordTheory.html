@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure integer_wordTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure integer_wordTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/integer/integer_wordScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature integer_wordTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#INT_MAX_def-val">INT_MAX_def</a> : thm
+<a name="line7"></a>    val <a href="#INT_MIN_def-val">INT_MIN_def</a> : thm
+<a name="line8"></a>    val <a href="#UINT_MAX_def-val">UINT_MAX_def</a> : thm
+<a name="line9"></a>    val <a href="#i2w_def-val">i2w_def</a> : thm
+<a name="line10"></a>    val <a href="#w2i_def-val">w2i_def</a> : thm
+<a name="line11"></a>  
+<a name="line12"></a>  (*  Theorems  *)
+<a name="line13"></a>    val <a href="#INT_MAX_32-val">INT_MAX_32</a> : thm
+<a name="line14"></a>    val <a href="#INT_MIN_32-val">INT_MIN_32</a> : thm
+<a name="line15"></a>    val <a href="#ONE_LE_TWOEXP-val">ONE_LE_TWOEXP</a> : thm
+<a name="line16"></a>    val <a href="#UINT_MAX_32-val">UINT_MAX_32</a> : thm
+<a name="line17"></a>    val <a href="#WORD_GEi-val">WORD_GEi</a> : thm
+<a name="line18"></a>    val <a href="#WORD_GTi-val">WORD_GTi</a> : thm
+<a name="line19"></a>    val <a href="#WORD_LEi-val">WORD_LEi</a> : thm
+<a name="line20"></a>    val <a href="#WORD_LTi-val">WORD_LTi</a> : thm
+<a name="line21"></a>    val <a href="#i2w_w2i-val">i2w_w2i</a> : thm
+<a name="line22"></a>    val <a href="#w2i_11-val">w2i_11</a> : thm
+<a name="line23"></a>    val <a href="#w2i_i2w-val">w2i_i2w</a> : thm
+<a name="line24"></a>    val <a href="#w2i_n2w_neg-val">w2i_n2w_neg</a> : thm
+<a name="line25"></a>    val <a href="#w2i_n2w_pos-val">w2i_n2w_pos</a> : thm
+<a name="line26"></a>    val <a href="#word_add_i2w-val">word_add_i2w</a> : thm
+<a name="line27"></a>    val <a href="#word_add_i2w_w2n-val">word_add_i2w_w2n</a> : thm
+<a name="line28"></a>    val <a href="#word_msb_i2w-val">word_msb_i2w</a> : thm
+<a name="line29"></a>    val <a href="#word_sub_i2w-val">word_sub_i2w</a> : thm
+<a name="line30"></a>    val <a href="#word_sub_i2w_w2n-val">word_sub_i2w_w2n</a> : thm
+<a name="line31"></a>  
+<a name="line32"></a>  val integer_word_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line33"></a>(*
+   [Omega] Parent theory of "integer_word"
+   
+   [int_arith] Parent theory of "integer_word"
+   
+   [words] Parent theory of "integer_word"
+   
+   [<a name="INT_MAX_def-val"><b>INT_MAX_def</b></a>]  Definition
+      
+      |- INT_MAX (:α) = &INT_MIN (:α) − 1
+   
+   [<a name="INT_MIN_def-val"><b>INT_MIN_def</b></a>]  Definition
+      
+      |- INT_MIN (:α) = -INT_MAX (:α) − 1
+   
+   [<a name="UINT_MAX_def-val"><b>UINT_MAX_def</b></a>]  Definition
+      
+      |- UINT_MAX (:α) = &dimword (:α) − 1
+   
+   [<a name="i2w_def-val"><b>i2w_def</b></a>]  Definition
+      
+      |- ∀i. i2w i = if i &lt; 0 then -n2w (Num (-i)) else n2w (Num i)
+   
+   [<a name="w2i_def-val"><b>w2i_def</b></a>]  Definition
+      
+      |- ∀w. w2i w = if word_msb w then -&w2n (-w) else &w2n w
+   
+   [<a name="INT_MAX_32-val"><b>INT_MAX_32</b></a>]  Theorem
+      
+      |- INT_MAX (:32) = 2147483647
+   
+   [<a name="INT_MIN_32-val"><b>INT_MIN_32</b></a>]  Theorem
+      
+      |- INT_MIN (:32) = -2147483648
+   
+   [<a name="ONE_LE_TWOEXP-val"><b>ONE_LE_TWOEXP</b></a>]  Theorem
+      
+      |- 1 ≤ 2 ** m
+   
+   [<a name="UINT_MAX_32-val"><b>UINT_MAX_32</b></a>]  Theorem
+      
+      |- UINT_MAX (:32) = 4294967295
+   
+   [<a name="WORD_GEi-val"><b>WORD_GEi</b></a>]  Theorem
+      
+      |- ∀a b. a ≥ b ⇔ w2i a ≥ w2i b
+   
+   [<a name="WORD_GTi-val"><b>WORD_GTi</b></a>]  Theorem
+      
+      |- ∀a b. a &gt; b ⇔ w2i a &gt; w2i b
+   
+   [<a name="WORD_LEi-val"><b>WORD_LEi</b></a>]  Theorem
+      
+      |- ∀a b. a ≤ b ⇔ w2i a ≤ w2i b
+   
+   [<a name="WORD_LTi-val"><b>WORD_LTi</b></a>]  Theorem
+      
+      |- ∀a b. a &lt; b ⇔ w2i a &lt; w2i b
+   
+   [<a name="i2w_w2i-val"><b>i2w_w2i</b></a>]  Theorem
+      
+      |- i2w (w2i w) = w
+   
+   [<a name="w2i_11-val"><b>w2i_11</b></a>]  Theorem
+      
+      |- ∀v w. (w2i v = w2i w) ⇔ (v = w)
+   
+   [<a name="w2i_i2w-val"><b>w2i_i2w</b></a>]  Theorem
+      
+      |- INT_MIN (:α) ≤ i ∧ i ≤ INT_MAX (:α) ⇒ (w2i (i2w i) = i)
+   
+   [<a name="w2i_n2w_neg-val"><b>w2i_n2w_neg</b></a>]  Theorem
+      
+      |- INT_MIN (:α) ≤ n ∧ n &lt; dimword (:α) ⇒ (w2i (n2w n) = -&(dimword (:α) − n))
+   
+   [<a name="w2i_n2w_pos-val"><b>w2i_n2w_pos</b></a>]  Theorem
+      
+      |- n &lt; INT_MIN (:α) ⇒ (w2i (n2w n) = &n)
+   
+   [<a name="word_add_i2w-val"><b>word_add_i2w</b></a>]  Theorem
+      
+      |- ∀a b. i2w (w2i a + w2i b) = a + b
+   
+   [<a name="word_add_i2w_w2n-val"><b>word_add_i2w_w2n</b></a>]  Theorem
+      
+      |- ∀a b. i2w (&w2n a + &w2n b) = a + b
+   
+   [<a name="word_msb_i2w-val"><b>word_msb_i2w</b></a>]  Theorem
+      
+      |- word_msb (i2w i) ⇔ &INT_MIN (:α) ≤ i % &dimword (:α)
+   
+   [<a name="word_sub_i2w-val"><b>word_sub_i2w</b></a>]  Theorem
+      
+      |- ∀a b. i2w (w2i a − w2i b) = a − b
+   
+   [<a name="word_sub_i2w_w2n-val"><b>word_sub_i2w_w2n</b></a>]  Theorem
+      
+      |- ∀a b. i2w (&w2n a − &w2n b) = a − b
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/integer/integer_wordScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-6</a></em></p></body></html>

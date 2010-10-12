@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>boolSyntax.new_infix</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>new_infix : string * hol_type * int -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/boolSyntax.html">boolSyntax</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Declares a new infix constant in the current theory.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call </SPAN><SPAN class = "BRKT">new_infix&nbsp;("i",&nbsp;ty,&nbsp;n)</SPAN><SPAN class = "TEXT"> makes </SPAN><SPAN class = "BRKT">i</SPAN><SPAN class = "TEXT"> a right associative infix
+constant in the current theory. It has binding strength of </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">, the
+larger this number, the more tightly the infix will attempt to
+&ldquo;grab&rdquo; arguments to its left and right. Note that the call to
+</SPAN><SPAN class = "BRKT">new_infix</SPAN><SPAN class = "TEXT"> does not specify the value of the constant. The constant
+may have a polymorphic type, which may be arbitrarily
+instantiated. Like any other infix or binder, its special parse status
+may be suppressed by preceding it with a dollar sign.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Infixes defined with </SPAN><SPAN class = "BRKT">new_infix</SPAN><SPAN class = "TEXT"> associate to the right,
+i.e., </SPAN><SPAN class = "BRKT">A&nbsp;&lt;op&gt;&nbsp;B&nbsp;&lt;op&gt;&nbsp;C</SPAN><SPAN class = "TEXT"> is equivalent to </SPAN><SPAN class = "BRKT">A&nbsp;op&nbsp;(B&nbsp;&lt;op&gt;&nbsp;C)</SPAN><SPAN class = "TEXT">.  Some
+standard infixes, with their precedences and associativities in the
+system are:
+</SPAN><DIV class = "XMPL"><pre>
+          $,  ---&gt; 50     RIGHT
+          $=  ---&gt; 100    NONASSOC
+        $==&gt;  ---&gt; 200    RIGHT
+         $\/  ---&gt; 300    RIGHT
+         $/\  ---&gt; 400    RIGHT
+      $&gt;, $&lt;  ---&gt; 450    RIGHT
+    $&gt;=, $&lt;=  ---&gt; 450    RIGHT
+      $+, $-  ---&gt; 500    LEFT
+    $*, $DIV  ---&gt; 600    LEFT
+        $MOD  ---&gt; 650    LEFT
+        $EXP  ---&gt; 700    RIGHT
+        $o    ---&gt; 800    RIGHT
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">Note that the arithmetic operators </SPAN><SPAN class = "BRKT">+</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">-</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">*</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">DIV</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">MOD</SPAN><SPAN class = "TEXT"> are
+left associative in hol98 releases from Taupo onwards.
+Non-associative infixes (</SPAN><SPAN class = "BRKT">=</SPAN><SPAN class = "TEXT"> above, for example) will cause parse
+errors if an attempt is made to group them (e.g., </SPAN><SPAN class = "BRKT">x&nbsp;=&nbsp;y&nbsp;=&nbsp;z</SPAN><SPAN class = "TEXT">).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the name is not a valid constant name.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following shows the use of the infix and the prefix form of an infix
+constant. It also shows binding resolution between infixes of different
+precedence.
+</SPAN><DIV class = "XMPL"><pre>
+   - new_infix("orelse", Type`:bool-&gt;bool-&gt;bool`, 50);
+   val it = () : unit
+
+   - Term`T \/ T orelse F`;
+   val it = `T \/ T orelse F` : term
+
+   - --`$orelse T F`--;
+   val it = `T orelse F` : term
+
+   - dest_comb (--`T \/ T orelse F`--);
+   &gt; val it = (`$orelse (T \/ T)`,  `F`) : term * term
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.add_infix.html">add_infix</A>,
+<A HREF = "precedence.html">precedence</A>,
+<A HREF = "Theory.constants.html">constants</A>,
+<A HREF = "infixes.html">infixes</A>,
+<A HREF = "binders.html">binders</A>,
+<A HREF = "is_constant.html">is_constant</A>,
+<A HREF = "Theory.new_constant.html">new_constant</A>,
+<A HREF = "boolSyntax.new_binder.html">new_binder</A>,
+<A HREF = "Definition.new_definition.html">new_definition</A>,
+<A HREF = "new_infix_definition.html">new_infix_definition</A>,
+<A HREF = "boolSyntax.new_binder_definition.html">new_binder_definition</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-6</div></BODY></HTML>

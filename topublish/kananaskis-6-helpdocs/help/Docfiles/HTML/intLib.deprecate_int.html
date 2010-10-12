@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>intLib.deprecate_int</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>intLib.deprecate_int : unit -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/intLib.html">intLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Makes the parser never consider integers as a numeric possibility.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Calling </SPAN><SPAN class = "BRKT">deprecate_int()</SPAN><SPAN class = "TEXT"> causes the parser to remove all of the
+standard numeric constants over the integers from consideration.  In
+addition to the standard operators (</SPAN><SPAN class = "BRKT">+</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">-</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">*</SPAN><SPAN class = "TEXT"> and others), this
+also affects numerals; after the call to </SPAN><SPAN class = "BRKT">deprecate_int</SPAN><SPAN class = "TEXT"> these will
+never be parsed as integers.</SPAN>
+<P>
+<SPAN class = "TEXT">This function, by affecting the global grammar, also affects the
+behaviour of the pretty-printer.  A term that includes affected
+constants will print with those constants in &ldquo;fully qualified form&rdquo;,
+typically as </SPAN><SPAN class = "BRKT">integer$op</SPAN><SPAN class = "TEXT">, and numerals will print with a trailing
+</SPAN><SPAN class = "BRKT">i</SPAN><SPAN class = "TEXT">.  (Incidentally, the parser will always read integer terms if they
+are presented to it in this form.)</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">First we load the integer library, ensuring that integers and natural
+numbers both are possible when we type numeric expressions:
+</SPAN><DIV class = "XMPL"><pre>
+   - load "intLib";
+   &gt; val it = () : unit
+</pre></DIV>
+<SPAN class = "TEXT">
+Then, when we type such an expression, we&rsquo;re warned that this is
+strictly ambiguous, and a type is silently chosen for us:
+</SPAN><DIV class = "XMPL"><pre>
+   - val t = ``2 + x``;
+   &lt;&lt;HOL message: more than one resolution of overloading was possible&gt;&gt;
+   &gt; val t = ``2 + x`` : term
+
+   - type_of t;
+   &gt; val it = ``:int`` : hol_type
+</pre></DIV>
+<SPAN class = "TEXT">
+Now we can use </SPAN><SPAN class = "BRKT">deprecate_int</SPAN><SPAN class = "TEXT"> to stop this happening, and make sure
+that we just get natural numbers:
+</SPAN><DIV class = "XMPL"><pre>
+   - intLib.deprecate_int();
+   &gt; val it = () : unit
+
+   - ``2 + x``;
+   &gt; val it = ``2 + x`` : term
+
+   - type_of it;
+   &gt; val it = ``:num`` : hol_type
+</pre></DIV>
+<SPAN class = "TEXT">
+The term we started out with is now printed in rather ugly fashion:
+</SPAN><DIV class = "XMPL"><pre>
+   - t;
+   &gt; val it = ``integer$int_add 2i x`` : term
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If one wishes to simply prefer the natural numbers, say, to the
+integers, and yet still retain integers as a possibility, use
+</SPAN><SPAN class = "BRKT">numLib.prefer_num</SPAN><SPAN class = "TEXT"> rather than this function.  This function only
+brings about a &ldquo;temporary&rdquo; effect; it does not cause the change to
+be exported with the current theory.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "numLib.deprecate_num.html">deprecate_num</A>,
+<A HREF = "intLib.prefer_int.html">prefer_int</A>,
+<A HREF = "numLib.prefer_num.html">prefer_num</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-6</div></BODY></HTML>

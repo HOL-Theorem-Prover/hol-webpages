@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure congLib</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure congLib</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/congLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ========================================================================= *)
+<a name="line2"></a>(* Simplification of terms similar to SIMP_CONV but regarding arbitrary      *)
+<a name="line3"></a>(* preorders instead of just equality                                        *)
+<a name="line4"></a>(* Created by Thomas Tuerk, March 2006                                       *)
+<a name="line5"></a>(* ========================================================================= *)
+<a name="line6"></a>
+<a name="line7"></a>signature congLib =
+<a name="line8"></a>sig
+<a name="line9"></a>  include Abbrev
+<a name="line10"></a>
+<a name="line11"></a>  (* ---------------------------------------------------------------------
+<a name="line12"></a>  * congLib
+<a name="line13"></a>  *
+<a name="line14"></a>  * SIMP_CONV as defined in simpLib is a very useful tool. However,
+<a name="line15"></a>  * it is limited to simplify a term t1 to a term t2 which is equivalent
+<a name="line16"></a>  * according to the congruence =. The underlying traverser (TRAVERSER.sml)
+<a name="line17"></a>  * however is able to handle arbitrary congruences.
+<a name="line18"></a>  *
+<a name="line19"></a>  * This lib tries to provide this ability of the traverser to handle arbitrary
+<a name="line20"></a>  * congruences (or in fact preorders) to the the end user. Therefore, an
+<a name="line21"></a>  * interface similar to the interface of SimpLib is provided.
+<a name="line22"></a>  *)
+<a name="line23"></a>
+<a name="line24"></a>
+<a name="line25"></a>  (* ---------------------------------------------------------------------
+<a name="line26"></a>  * congsetfrag
+<a name="line27"></a>  *
+<a name="line28"></a>  * Similar to ssfrag the datatype congsetfrag is a type used to construct
+<a name="line29"></a>  * congsets. It contains:
+<a name="line30"></a>  *    relations: a list of preorders, that may be used for simplification
+<a name="line31"></a>  *               a preorder is defined as in travrules. You may use mk_preorder from
+<a name="line32"></a>  *               to create preorders
+<a name="line33"></a>  *    rewrs:     a set of rewrite theorems
+<a name="line34"></a>  *               unlike simpLib conditional and ordered rewriting is not supported
+<a name="line35"></a>  *               ad the moment. Therefore rewrite thms have to be of the form
+<a name="line36"></a>  *               (R x y) where R is a preorder contained in relations or the equality.
+<a name="line37"></a>  *               Additionally it is possible to provide theorems that use
+<a name="line38"></a>  *               allquantification and that are conjunctions of such theorems.
+<a name="line39"></a>  *               Notice, that providing rewrites like (x + y = y + x) will cause the
+<a name="line40"></a>  *               simplification to loop, because no ordered rewriting is provided.
+<a name="line41"></a>  *    congs:     The congruence rules for the preorders. These rules are just defined
+<a name="line42"></a>  *               as congruence rules, for the simplifier, since both are in fact
+<a name="line43"></a>  *               congruence rules for the traverser. This means a congruence Rule is of
+<a name="line44"></a>  *               the form
+<a name="line45"></a>  *               R1 x1 y1 ==&gt; R2 x2 y2 ==&gt; ... Rn xn yn ==&gt; R x y
+<a name="line46"></a>  *               When simplifing a term t that matches x, where x contains x1, ... xn, *               it first simplifies (x1 to y1 according to R1) then
+<a name="line47"></a>  *               (x2 to y2 according to R2)... and finally return R x y where
+<a name="line48"></a>  *               (y is instanciated by the match and the values for y1 ... yn.
+<a name="line49"></a>  *    dprocs:    a list of decision procedures as used by the traverser
+<a name="line50"></a>  *               normally, you won't need dprocs. However, it provides some interface *               to convert terms much more intelligent as rewrs do.
+<a name="line51"></a>  *)
+<a name="line52"></a>  datatype congsetfrag = CSFRAG of
+<a name="line53"></a>    {relations : Travrules.preorder list,
+<a name="line54"></a>     rewrs  : thm list,
+<a name="line55"></a>     congs  : thm list,
+<a name="line56"></a>     dprocs : Traverse.reducer list
+<a name="line57"></a>     };
+<a name="line58"></a>
+<a name="line59"></a>  (* ---------------------------------------------------------------------
+<a name="line60"></a>  * congset
+<a name="line61"></a>  *
+<a name="line62"></a>  * The real datastructure. It contains processed informations of consetfrags
+<a name="line63"></a>  *)
+<a name="line64"></a>  type congset;
+<a name="line65"></a>
+<a name="line66"></a>
+<a name="line67"></a>  (*Some elemantary functions to handle congsets and congsetfrags*)
+<a name="line68"></a>
+<a name="line69"></a>  (*The empty congset, containing just equality*)
+<a name="line70"></a>  val empty_congset : congset;
+<a name="line71"></a>
+<a name="line72"></a>  (*Creates a congset out of a list of congsetfrags*)
+<a name="line73"></a>  val mk_congset : congsetfrag list -&gt; congset
+<a name="line74"></a>
+<a name="line75"></a>  (*Adds a congsetfrag to a congset*)
+<a name="line76"></a>  val cs_addfrag : congset -&gt; congsetfrag -&gt; congset
+<a name="line77"></a>
+<a name="line78"></a>  (*Merges several congsetfrags*)
+<a name="line79"></a>  val merge_cs : congsetfrag list -&gt; congsetfrag
+<a name="line80"></a>
+<a name="line81"></a>  (*creates a congsetfrag just containing rewrites*)
+<a name="line82"></a>  val csfrag_rewrites : thm list -&gt; congsetfrag
+<a name="line83"></a>
+<a name="line84"></a>  (*adds rewrites to a congsetfrag*)
+<a name="line85"></a>  val add_csfrag_rewrites : congsetfrag -&gt; thm list -&gt; congsetfrag
+<a name="line86"></a>
+<a name="line87"></a>
+<a name="line88"></a>
+<a name="line89"></a>  (* ---------------------------------------------------------------------
+<a name="line90"></a>  * CONGRUENCE_SIMP_CONV
+<a name="line91"></a>  *
+<a name="line92"></a>  * This is the main function. It is quite similar to SIMP_CONV. Additionally to
+<a name="line93"></a>  * SIMP_CONV, it takes as the first argument the relation it
+<a name="line94"></a>  * should simplify according to and as the second argument a congset.
+<a name="line95"></a>  * The other parameters are just like the parameters of SIMP_CONV.
+<a name="line96"></a>  * Notice, that CONGRUENCE_SIMP_CONV ``$=`` empty_congset shoult behave
+<a name="line97"></a>  * exactly like SIMP_CONV.
+<a name="line98"></a>  * ---------------------------------------------------------------------*)
+<a name="line99"></a>
+<a name="line100"></a>  val CONGRUENCE_SIMP_CONV: term -&gt; congset -&gt; simpLib.simpset -&gt; thm list -&gt; term -&gt; thm
+<a name="line101"></a>
+<a name="line102"></a>
+<a name="line103"></a>  (*
+<a name="line104"></a>  * CONGRUENCE_SIMP_QCONV
+<a name="line105"></a>  *
+<a name="line106"></a>  * Similar to CONGRUENCE_SIMP_CONV. However, CONGRUENCE_SIMP_CONV returns R x x, if
+<a name="line107"></a>  * it can not simplify x. CONGRUENCE_SIMP_QCONV will fail in this case.
+<a name="line108"></a>  *)
+<a name="line109"></a>  val CONGRUENCE_SIMP_QCONV: term -&gt; congset -&gt; simpLib.simpset -&gt; thm list -&gt; term -&gt; thm
+<a name="line110"></a>
+<a name="line111"></a>
+<a name="line112"></a>  (* ---------------------------------------------------------------------
+<a name="line113"></a>  * CONGRUENCE_EQ_SIMP_CONV
+<a name="line114"></a>  *
+<a name="line115"></a>  * CONGRUENCE_SIMP_CONV with the equality relation, i.e. CONGRUENCE_SIMP_CONV ``$=``
+<a name="line116"></a>  * ---------------------------------------------------------------------*)
+<a name="line117"></a>  val CONGRUENCE_EQ_SIMP_CONV: congset -&gt; simpLib.simpset -&gt; thm list -&gt; term -&gt; thm
+<a name="line118"></a>
+<a name="line119"></a>
+<a name="line120"></a>  (* ---------------------------------------------------------------------
+<a name="line121"></a>  * Tactics and rule similar to simpLib. They all use the equality relation as
+<a name="line122"></a>  * starting relation. However, by congruence rules, some other relations may be used
+<a name="line123"></a>  * for subterms
+<a name="line124"></a>  * ---------------------------------------------------------------------*)
+<a name="line125"></a>
+<a name="line126"></a>  val CONGRUENCE_SIMP_RULE : congset -&gt; simpLib.simpset -&gt; thm list -&gt; thm -&gt; thm
+<a name="line127"></a>  val CONGRUENCE_SIMP_TAC : congset -&gt; simpLib.simpset -&gt; thm list -&gt; tactic
+<a name="line128"></a>  val ASM_CONGRUENCE_SIMP_TAC : congset -&gt; simpLib.simpset -&gt; thm list -&gt; tactic
+<a name="line129"></a>  val FULL_CONGRUENCE_SIMP_TAC : congset -&gt; simpLib.simpset -&gt; thm list -&gt; tactic
+<a name="line130"></a>
+<a name="line131"></a>
+<a name="line132"></a>end
+<a name="line133"></a>
+<a name="line134"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/congLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-6</a></em></p></body></html>

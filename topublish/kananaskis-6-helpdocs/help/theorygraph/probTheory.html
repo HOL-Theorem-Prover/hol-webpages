@@ -1,0 +1,349 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: prob</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "prob"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "prob_algebraTheory.html"><span class="strong">prob_algebra</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">alg_measure</span>
+            <td>
+            :bool list list -> real
+    <tr><td>
+        <span class="strong">algebra_measure</span>
+        <td>
+        :bool list list -> real
+    <tr><td>
+        <span class="strong">prob</span>
+        <td>
+        :((num -> bool) -> bool) -> real
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">alg_measure_def</span>
+<DD>
+<pre>
+|- (alg_measure [] = 0) ∧
+   ∀l rest. alg_measure (l::rest) = (1 / 2) pow LENGTH l + alg_measure rest
+</pre>
+
+<DT><span class="strong">algebra_measure_def</span>
+<DD>
+<pre>
+|- ∀b.
+     algebra_measure b =
+     inf (λr. ∃c. (algebra_embed b = algebra_embed c) ∧ (alg_measure c = r))
+</pre>
+
+<DT><span class="strong">prob_def</span>
+<DD>
+<pre>
+|- ∀s. prob s = sup (λr. ∃b. (algebra_measure b = r) ∧ algebra_embed b ⊆ s)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ALG_TWINS_MEASURE</span>
+<DD>
+<pre>
+|- ∀l.
+     (1 / 2) pow LENGTH (SNOC T l) + (1 / 2) pow LENGTH (SNOC F l) =
+     (1 / 2) pow LENGTH l
+</pre>
+
+<DT><span class="strong">ALG_MEASURE_BASIC</span>
+<DD>
+<pre>
+|- (alg_measure [] = 0) ∧ (alg_measure [[]] = 1) ∧
+   ∀b. alg_measure [[b]] = 1 / 2
+</pre>
+
+<DT><span class="strong">ALG_MEASURE_POS</span>
+<DD>
+<pre>
+|- ∀l. 0 ≤ alg_measure l
+</pre>
+
+<DT><span class="strong">ALG_MEASURE_APPEND</span>
+<DD>
+<pre>
+|- ∀l1 l2. alg_measure (l1 ++ l2) = alg_measure l1 + alg_measure l2
+</pre>
+
+<DT><span class="strong">ALG_MEASURE_TLS</span>
+<DD>
+<pre>
+|- ∀l b. 2 * alg_measure (MAP (CONS b) l) = alg_measure l
+</pre>
+
+<DT><span class="strong">ALG_CANON_PREFS_MONO</span>
+<DD>
+<pre>
+|- ∀l b. alg_measure (alg_canon_prefs l b) ≤ alg_measure (l::b)
+</pre>
+
+<DT><span class="strong">ALG_CANON_FIND_MONO</span>
+<DD>
+<pre>
+|- ∀l b. alg_measure (alg_canon_find l b) ≤ alg_measure (l::b)
+</pre>
+
+<DT><span class="strong">ALG_CANON1_MONO</span>
+<DD>
+<pre>
+|- ∀l. alg_measure (alg_canon1 l) ≤ alg_measure l
+</pre>
+
+<DT><span class="strong">ALG_CANON_MERGE_MONO</span>
+<DD>
+<pre>
+|- ∀l b. alg_measure (alg_canon_merge l b) ≤ alg_measure (l::b)
+</pre>
+
+<DT><span class="strong">ALG_CANON2_MONO</span>
+<DD>
+<pre>
+|- ∀l. alg_measure (alg_canon2 l) ≤ alg_measure l
+</pre>
+
+<DT><span class="strong">ALG_CANON_MONO</span>
+<DD>
+<pre>
+|- ∀l. alg_measure (alg_canon l) ≤ alg_measure l
+</pre>
+
+<DT><span class="strong">ALGEBRA_MEASURE_DEF_ALT</span>
+<DD>
+<pre>
+|- ∀l. algebra_measure l = alg_measure (alg_canon l)
+</pre>
+
+<DT><span class="strong">ALGEBRA_MEASURE_BASIC</span>
+<DD>
+<pre>
+|- (algebra_measure [] = 0) ∧ (algebra_measure [[]] = 1) ∧
+   ∀b. algebra_measure [[b]] = 1 / 2
+</pre>
+
+<DT><span class="strong">ALGEBRA_CANON_MEASURE_MAX</span>
+<DD>
+<pre>
+|- ∀l. algebra_canon l ⇒ alg_measure l ≤ 1
+</pre>
+
+<DT><span class="strong">ALGEBRA_MEASURE_MAX</span>
+<DD>
+<pre>
+|- ∀l. algebra_measure l ≤ 1
+</pre>
+
+<DT><span class="strong">ALGEBRA_MEASURE_MONO_EMBED</span>
+<DD>
+<pre>
+|- ∀b c.
+     algebra_embed b ⊆ algebra_embed c ⇒ algebra_measure b ≤ algebra_measure c
+</pre>
+
+<DT><span class="strong">ALG_MEASURE_COMPL</span>
+<DD>
+<pre>
+|- ∀b.
+     algebra_canon b ⇒
+     ∀c.
+       algebra_canon c ⇒
+       (COMPL (algebra_embed b) = algebra_embed c) ⇒
+       (alg_measure b + alg_measure c = 1)
+</pre>
+
+<DT><span class="strong">ALG_MEASURE_ADDITIVE</span>
+<DD>
+<pre>
+|- ∀b.
+     algebra_canon b ⇒
+     ∀c.
+       algebra_canon c ⇒
+       ∀d.
+         algebra_canon d ⇒
+         (algebra_embed c ∩ algebra_embed d = ∅) ∧
+         (algebra_embed b = algebra_embed c ∪ algebra_embed d) ⇒
+         (alg_measure b = alg_measure c + alg_measure d)
+</pre>
+
+<DT><span class="strong">PROB_ALGEBRA</span>
+<DD>
+<pre>
+|- ∀l. prob (algebra_embed l) = algebra_measure l
+</pre>
+
+<DT><span class="strong">PROB_BASIC</span>
+<DD>
+<pre>
+|- (prob ∅ = 0) ∧ (prob 𝕌(:num -> bool) = 1) ∧
+   ∀b. prob (λs. SHD s ⇔ b) = 1 / 2
+</pre>
+
+<DT><span class="strong">PROB_ADDITIVE</span>
+<DD>
+<pre>
+|- ∀s t.
+     measurable s ∧ measurable t ∧ (s ∩ t = ∅) ⇒
+     (prob (s ∪ t) = prob s + prob t)
+</pre>
+
+<DT><span class="strong">PROB_COMPL</span>
+<DD>
+<pre>
+|- ∀s. measurable s ⇒ (prob (COMPL s) = 1 − prob s)
+</pre>
+
+<DT><span class="strong">PROB_SUP_EXISTS1</span>
+<DD>
+<pre>
+|- ∀s. ∃r b. (algebra_measure b = r) ∧ algebra_embed b ⊆ s
+</pre>
+
+<DT><span class="strong">PROB_SUP_EXISTS2</span>
+<DD>
+<pre>
+|- ∀s. ∃z. ∀r. (∃b. (algebra_measure b = r) ∧ algebra_embed b ⊆ s) ⇒ r ≤ z
+</pre>
+
+<DT><span class="strong">PROB_LE_X</span>
+<DD>
+<pre>
+|- ∀s x. (∀s'. measurable s' ∧ s' ⊆ s ⇒ prob s' ≤ x) ⇒ prob s ≤ x
+</pre>
+
+<DT><span class="strong">X_LE_PROB</span>
+<DD>
+<pre>
+|- ∀s x. (∃s'. measurable s' ∧ s' ⊆ s ∧ x ≤ prob s') ⇒ x ≤ prob s
+</pre>
+
+<DT><span class="strong">PROB_SUBSET_MONO</span>
+<DD>
+<pre>
+|- ∀s t. s ⊆ t ⇒ prob s ≤ prob t
+</pre>
+
+<DT><span class="strong">PROB_ALG</span>
+<DD>
+<pre>
+|- ∀x. prob (alg_embed x) = (1 / 2) pow LENGTH x
+</pre>
+
+<DT><span class="strong">PROB_STL</span>
+<DD>
+<pre>
+|- ∀p. measurable p ⇒ (prob (p o STL) = prob p)
+</pre>
+
+<DT><span class="strong">PROB_SDROP</span>
+<DD>
+<pre>
+|- ∀n p. measurable p ⇒ (prob (p o SDROP n) = prob p)
+</pre>
+
+<DT><span class="strong">PROB_INTER_HALVES</span>
+<DD>
+<pre>
+|- ∀p.
+     measurable p ⇒
+     (prob ((λx. SHD x ⇔ T) ∩ p) + prob ((λx. SHD x ⇔ F) ∩ p) = prob p)
+</pre>
+
+<DT><span class="strong">PROB_INTER_SHD</span>
+<DD>
+<pre>
+|- ∀b p. measurable p ⇒ (prob ((λx. SHD x ⇔ b) ∩ p o STL) = 1 / 2 * prob p)
+</pre>
+
+<DT><span class="strong">ALGEBRA_MEASURE_POS</span>
+<DD>
+<pre>
+|- ∀l. 0 ≤ algebra_measure l
+</pre>
+
+<DT><span class="strong">ALGEBRA_MEASURE_RANGE</span>
+<DD>
+<pre>
+|- ∀l. 0 ≤ algebra_measure l ∧ algebra_measure l ≤ 1
+</pre>
+
+<DT><span class="strong">PROB_POS</span>
+<DD>
+<pre>
+|- ∀p. 0 ≤ prob p
+</pre>
+
+<DT><span class="strong">PROB_MAX</span>
+<DD>
+<pre>
+|- ∀p. prob p ≤ 1
+</pre>
+
+<DT><span class="strong">PROB_RANGE</span>
+<DD>
+<pre>
+|- ∀p. 0 ≤ prob p ∧ prob p ≤ 1
+</pre>
+
+<DT><span class="strong">ABS_PROB</span>
+<DD>
+<pre>
+|- ∀p. abs (prob p) = prob p
+</pre>
+
+<DT><span class="strong">PROB_SHD</span>
+<DD>
+<pre>
+|- ∀b. prob (λs. SHD s ⇔ b) = 1 / 2
+</pre>
+
+<DT><span class="strong">PROB_COMPL_LE1</span>
+<DD>
+<pre>
+|- ∀p r. measurable p ⇒ (prob (COMPL p) ≤ r ⇔ 1 − r ≤ prob p)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

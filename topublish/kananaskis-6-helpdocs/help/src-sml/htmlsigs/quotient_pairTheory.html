@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure quotient_pairTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure quotient_pairTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quotient/src/quotient_pairScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature quotient_pairTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val PAIR_REL : thm
+<a name="line7"></a>  
+<a name="line8"></a>  (*  Theorems  *)
+<a name="line9"></a>    val COMMA_PRS : thm
+<a name="line10"></a>    val COMMA_RSP : thm
+<a name="line11"></a>    val CURRY_PRS : thm
+<a name="line12"></a>    val CURRY_RSP : thm
+<a name="line13"></a>    val FST_PRS : thm
+<a name="line14"></a>    val FST_RSP : thm
+<a name="line15"></a>    val PAIR_EQUIV : thm
+<a name="line16"></a>    val PAIR_MAP_I : thm
+<a name="line17"></a>    val PAIR_MAP_PRS : thm
+<a name="line18"></a>    val PAIR_MAP_RSP : thm
+<a name="line19"></a>    val PAIR_QUOTIENT : thm
+<a name="line20"></a>    val PAIR_REL_EQ : thm
+<a name="line21"></a>    val PAIR_REL_REFL : thm
+<a name="line22"></a>    val PAIR_REL_THM : thm
+<a name="line23"></a>    val SND_PRS : thm
+<a name="line24"></a>    val SND_RSP : thm
+<a name="line25"></a>    val UNCURRY_PRS : thm
+<a name="line26"></a>    val UNCURRY_RSP : thm
+<a name="line27"></a>  
+<a name="line28"></a>  val quotient_pair_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line29"></a>(*
+   [quotient] Parent theory of "quotient_pair"
+   
+   [PAIR_REL]  Definition
+      
+      |- ∀R1 R2. R1 ### R2 = (λ(a,b) (c,d). R1 a c ∧ R2 b d)
+   
+   [COMMA_PRS]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒ ∀a b. (a,b) = (abs1 ## abs2) (rep1 a,rep2 b)
+   
+   [COMMA_RSP]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀a1 a2 b1 b2. R1 a1 b1 ∧ R2 a2 b2 ⇒ (R1 ### R2) (a1,a2) (b1,b2)
+   
+   [CURRY_PRS]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀R3 abs3 rep3.
+               QUOTIENT R3 abs3 rep3 ⇒
+               ∀f a b.
+                 CURRY f a b =
+                 abs3 (CURRY (((abs1 ## abs2) --&gt; rep3) f) (rep1 a) (rep2 b))
+   
+   [CURRY_RSP]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀R3 abs3 rep3.
+               QUOTIENT R3 abs3 rep3 ⇒
+               ∀f1 f2.
+                 ((R1 ### R2) ===&gt; R3) f1 f2 ⇒
+                 (R1 ===&gt; R2 ===&gt; R3) (CURRY f1) (CURRY f2)
+   
+   [FST_PRS]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒ ∀p. FST p = abs1 (FST ((rep1 ## rep2) p))
+   
+   [FST_RSP]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒ ∀p1 p2. (R1 ### R2) p1 p2 ⇒ R1 (FST p1) (FST p2)
+   
+   [PAIR_EQUIV]  Theorem
+      
+      |- ∀R1 R2. EQUIV R1 ⇒ EQUIV R2 ⇒ EQUIV (R1 ### R2)
+   
+   [PAIR_MAP_I]  Theorem
+      
+      |- I ## I = I
+   
+   [PAIR_MAP_PRS]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀R3 abs3 rep3.
+               QUOTIENT R3 abs3 rep3 ⇒
+               ∀R4 abs4 rep4.
+                 QUOTIENT R4 abs4 rep4 ⇒
+                 ∀f g.
+                   f ## g =
+                   ((rep1 ## rep3) --&gt; abs2 ## abs4)
+                     ((abs1 --&gt; rep2) f ## (abs3 --&gt; rep4) g)
+   
+   [PAIR_MAP_RSP]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀R3 abs3 rep3.
+               QUOTIENT R3 abs3 rep3 ⇒
+               ∀R4 abs4 rep4.
+                 QUOTIENT R4 abs4 rep4 ⇒
+                 ∀f1 f2 g1 g2.
+                   (R1 ===&gt; R2) f1 f2 ∧ (R3 ===&gt; R4) g1 g2 ⇒
+                   ((R1 ### R3) ===&gt; R2 ### R4) (f1 ## g1) (f2 ## g2)
+   
+   [PAIR_QUOTIENT]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             QUOTIENT (R1 ### R2) (abs1 ## abs2) (rep1 ## rep2)
+   
+   [PAIR_REL_EQ]  Theorem
+      
+      |- $= ### $= = $=
+   
+   [PAIR_REL_REFL]  Theorem
+      
+      |- ∀R1 R2.
+           (∀x y. R1 x y ⇔ (R1 x = R1 y)) ∧ (∀x y. R2 x y ⇔ (R2 x = R2 y)) ⇒
+           ∀x. (R1 ### R2) x x
+   
+   [PAIR_REL_THM]  Theorem
+      
+      |- ∀R1 R2 a b c d. (R1 ### R2) (a,b) (c,d) ⇔ R1 a c ∧ R2 b d
+   
+   [SND_PRS]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒ ∀p. SND p = abs2 (SND ((rep1 ## rep2) p))
+   
+   [SND_RSP]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒ ∀p1 p2. (R1 ### R2) p1 p2 ⇒ R2 (SND p1) (SND p2)
+   
+   [UNCURRY_PRS]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀R3 abs3 rep3.
+               QUOTIENT R3 abs3 rep3 ⇒
+               ∀f p.
+                 UNCURRY f p =
+                 abs3 (UNCURRY ((abs1 --&gt; abs2 --&gt; rep3) f) ((rep1 ## rep2) p))
+   
+   [UNCURRY_RSP]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀R3 abs3 rep3.
+               QUOTIENT R3 abs3 rep3 ⇒
+               ∀f1 f2.
+                 (R1 ===&gt; R2 ===&gt; R3) f1 f2 ⇒
+                 ((R1 ### R2) ===&gt; R3) (UNCURRY f1) (UNCURRY f2)
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quotient/src/quotient_pairScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-6</a></em></p></body></html>

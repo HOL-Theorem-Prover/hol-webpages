@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure mlibParser</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure mlibParser</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibParser.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ========================================================================= *)
+<a name="line2"></a>(* PARSER COMBINATORS                                                        *)
+<a name="line3"></a>(* Copyright (c) 2001-2004 Joe Hurd.                                         *)
+<a name="line4"></a>(* ========================================================================= *)
+<a name="line5"></a>
+<a name="line6"></a>signature mlibParser =
+<a name="line7"></a>sig
+<a name="line8"></a>
+<a name="line9"></a>(* Recommended fixities
+<a name="line10"></a>  infixr 9 &gt;&gt;++
+<a name="line11"></a>  infixr 8 ++
+<a name="line12"></a>  infixr 7 &gt;&gt;
+<a name="line13"></a>  infixr 6 ||
+<a name="line14"></a>*)
+<a name="line15"></a>
+<a name="line16"></a>type 'a pp = 'a mlibUseful.pp
+<a name="line17"></a>type 'a stream = 'a mlibStream.stream
+<a name="line18"></a>
+<a name="line19"></a>(* Generic *)
+<a name="line20"></a>exception Noparse
+<a name="line21"></a>val ++         : ('a -&gt; 'b * 'a) * ('a -&gt; 'c * 'a) -&gt; 'a -&gt; ('b * 'c) * 'a
+<a name="line22"></a>val >>         : ('a -&gt; 'b * 'a) * ('b -&gt; 'c) -&gt; 'a -&gt; 'c * 'a
+<a name="line23"></a>val >>++       : ('a -&gt; 'b * 'a) * ('b -&gt; 'a -&gt; 'c * 'a) -&gt; 'a -&gt; 'c * 'a
+<a name="line24"></a>val ||         : ('a -&gt; 'b * 'a) * ('a -&gt; 'b * 'a) -&gt; 'a -&gt; 'b * 'a
+<a name="line25"></a>val smany      : ('s -&gt; 'a -&gt; 's * 'a) -&gt; 's -&gt; 'a -&gt; 's * 'a
+<a name="line26"></a>val many       : ('a -&gt; 'b * 'a) -&gt; 'a -&gt; 'b list * 'a
+<a name="line27"></a>val atleastone : ('a -&gt; 'b * 'a) -&gt; 'a -&gt; 'b list * 'a
+<a name="line28"></a>val nothing    : 'a -&gt; unit * 'a
+<a name="line29"></a>val optional   : ('a -&gt; 'b * 'a) -&gt; 'a -&gt; 'b option * 'a
+<a name="line30"></a>
+<a name="line31"></a>(* mlibStream-based *)
+<a name="line32"></a>type ('a,'b) parser = 'a stream -&gt; 'b * 'a stream
+<a name="line33"></a>val everything : ('a, 'b list) parser -&gt; 'a stream -&gt; 'b stream
+<a name="line34"></a>val maybe      : ('a -&gt; 'b option) -&gt; ('a,'b) parser
+<a name="line35"></a>val finished   : ('a,unit) parser
+<a name="line36"></a>val some       : ('a -&gt; bool) -&gt; ('a,'a) parser
+<a name="line37"></a>val any        : ('a,'a) parser
+<a name="line38"></a>val exact      : ''a -&gt; (''a,''a) parser
+<a name="line39"></a>
+<a name="line40"></a>(* Parsing and pretty-printing for infix operators *)
+<a name="line41"></a>type infixities  = {tok : string, prec : int, left_assoc : bool} list
+<a name="line42"></a>type 'a con = string * 'a * 'a -&gt; 'a
+<a name="line43"></a>type 'a des = 'a -&gt; (string * 'a * 'a) option
+<a name="line44"></a>type 'a iparser = (string,'a) parser
+<a name="line45"></a>type 'a iprinter = ('a * bool) pp
+<a name="line46"></a>val optoks            : infixities -&gt; string list
+<a name="line47"></a>val parse_left_infix  : string list -&gt; 'a con -&gt; 'a iparser -&gt; 'a iparser
+<a name="line48"></a>val parse_right_infix : string list -&gt; 'a con -&gt; 'a iparser -&gt; 'a iparser
+<a name="line49"></a>val parse_infixes     : infixities  -&gt; 'a con -&gt; 'a iparser -&gt; 'a iparser
+<a name="line50"></a>val pp_left_infix     : string list -&gt; 'a des -&gt; 'a iprinter -&gt; 'a iprinter
+<a name="line51"></a>val pp_right_infix    : string list -&gt; 'a des -&gt; 'a iprinter -&gt; 'a iprinter
+<a name="line52"></a>val pp_infixes        : infixities  -&gt; 'a des -&gt; 'a iprinter -&gt; 'a iprinter
+<a name="line53"></a>
+<a name="line54"></a>(* Lexing *)
+<a name="line55"></a>val space    : char -&gt; bool
+<a name="line56"></a>val digit    : char -&gt; bool
+<a name="line57"></a>val lower    : char -&gt; bool
+<a name="line58"></a>val upper    : char -&gt; bool
+<a name="line59"></a>val alpha    : char -&gt; bool
+<a name="line60"></a>val alphanum : char -&gt; bool             (* alpha + digit + _ + ' *)
+<a name="line61"></a>val symbol   : char -&gt; bool             (* &lt;&gt;=-*+/\?@|!$%&~#^: *)
+<a name="line62"></a>val punct    : char -&gt; bool             (* ()[]{}.,; *)
+<a name="line63"></a>
+<a name="line64"></a>(* Quotations *)
+<a name="line65"></a>type 'a quotation = 'a frag list
+<a name="line66"></a>val quotation_parser : (string -&gt; 'a) -&gt; 'b pp -&gt; 'b quotation -&gt; 'a
+<a name="line67"></a>
+<a name="line68"></a>end
+<a name="line69"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibParser.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-6</a></em></p></body></html>

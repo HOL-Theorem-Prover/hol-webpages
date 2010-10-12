@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Drule.Ntimes</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Ntimes : thm -&gt; int -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Drule.html">Drule</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Rewriting control</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When used as an argument to the rewriter or simplifier, </SPAN><SPAN class = "BRKT">Ntimes&nbsp;th&nbsp;n</SPAN><SPAN class = "TEXT"> is 
+a directive saying that </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> should be used at most </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> times in the 
+rewriting process. This is useful for controlling looping rewrites.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Suppose factorial was defined as follows:
+</SPAN><DIV class = "XMPL"><pre>
+   - val fact_def = Define `fact n = if n=0 then 1 else n * fact (n-1)`;
+   Equations stored under "fact_def".
+   Induction stored under "fact_ind".
+   &gt; val fact_def = |- fact n = (if n = 0 then 1 else n * fact (n - 1)) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The theorem </SPAN><SPAN class = "BRKT">fact_def</SPAN><SPAN class = "TEXT"> is a looping rewrite since the recursive call
+</SPAN><SPAN class = "BRKT">fac&nbsp;(n-1)</SPAN><SPAN class = "TEXT"> matches the left-hand side of </SPAN><SPAN class = "BRKT">fact_def</SPAN><SPAN class = "TEXT">. Thus, a naive
+application of the simplifier will loop:
+</SPAN><DIV class = "XMPL"><pre>
+   - SIMP_CONV arith_ss [fact_def] ``fact 6``;
+   (* looping *)
+   &gt; Interrupted.
+</pre></DIV>
+<SPAN class = "TEXT">
+In order to expand the definition of </SPAN><SPAN class = "BRKT">fact_def</SPAN><SPAN class = "TEXT"> three times, the 
+following invocation can be made
+</SPAN><DIV class = "XMPL"><pre>
+   - SIMP_CONV arith_ss [Ntimes Fact_def 3] ``fact 6``;
+   &gt; val it = |- fact 6 = 6 * (5 * (4 * fact 3)) : thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Use of </SPAN><SPAN class = "BRKT">Ntimes</SPAN><SPAN class = "TEXT"> does not compose well. For example,
+</SPAN><DIV class = "XMPL"><pre>
+   tac1 THENL [SIMP_TAC std_ss [Ntimes th 1], 
+               SIMP_TAC std_ss [Ntimes th 1]]
+</pre></DIV>
+<SPAN class = "TEXT">
+is not equivalent in behaviour to 
+</SPAN><DIV class = "XMPL"><pre>
+   tac1 THEN SIMP_TAC std_ss [Ntimes th 1].
+</pre></DIV>
+<SPAN class = "TEXT"> 
+In the first call two rewrites using </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> can occur; in the second, 
+only one can occur.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Drule.Once.html">Once</A>,
+<A HREF = "Tactical.THEN.html">THEN</A>,
+<A HREF = "simpLib.SIMP_TAC.html">SIMP_TAC</A>,
+<A HREF = "bossLib.RW_TAC.html">RW_TAC</A>,
+<A HREF = "Rewrite.REWRITE_TAC.html">REWRITE_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-6</div></BODY></HTML>

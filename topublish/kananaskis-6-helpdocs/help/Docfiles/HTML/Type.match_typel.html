@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Type.match_typel</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>match_typel : hol_type list -&gt; hol_type -&gt; hol_type 
+        -&gt; (hol_type, hol_type) subst</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Type.html">Type</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Match types with restrictions.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An invocation </SPAN><SPAN class = "BRKT">match_typel&nbsp;away&nbsp;pat&nbsp;ty</SPAN><SPAN class = "TEXT"> matches </SPAN><SPAN class = "BRKT">pat</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> in the
+same way as </SPAN><SPAN class = "BRKT">match_type</SPAN><SPAN class = "TEXT">, but prohibits any of the type variables in </SPAN><SPAN class = "BRKT">away</SPAN><SPAN class = "TEXT">
+from being instantiated. In effect, the elements of </SPAN><SPAN class = "BRKT">away</SPAN><SPAN class = "TEXT">, although
+type variables, are treated as constants in </SPAN><SPAN class = "BRKT">pat</SPAN><SPAN class = "TEXT"> during the matching
+process.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An invocation of </SPAN><SPAN class = "BRKT">match_typel&nbsp;away&nbsp;pat&nbsp;ty</SPAN><SPAN class = "TEXT"> will fail 
+if </SPAN><SPAN class = "BRKT">match_type&nbsp;pat&nbsp;ty</SPAN><SPAN class = "TEXT"> would fail. It will also fail if </SPAN><SPAN class = "BRKT">match_type&nbsp;pat&nbsp;ty</SPAN><SPAN class = "TEXT"> 
+would succeed giving a substitution 
+</SPAN><SPAN class = "BRKT">[{redex_1,residue_1},...,{redex_n,residue_n}]</SPAN><SPAN class = "TEXT"> where one or more of the
+</SPAN><SPAN class = "BRKT">redex_i</SPAN><SPAN class = "TEXT"> are members of </SPAN><SPAN class = "BRKT">away</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In the first example, we perform a normal match operation
+</SPAN><DIV class = "XMPL"><pre>
+   - match_typel [] (alpha --&gt; beta --&gt; gamma)
+                    (bool --&gt; ind --&gt; delta);
+   &gt; val it = [{redex = `:'c`, residue = `:'d`}, 
+               {redex = `:'b`, residue = `:ind`},
+               {redex = `:'a`, residue = `:bool`}] : ...
+</pre></DIV>
+<SPAN class = "TEXT">
+Now we require that </SPAN><SPAN class = "BRKT">gamma</SPAN><SPAN class = "TEXT">, although a type variable in the
+pattern, not be instantiable. In the first try, the match succeeds because
+</SPAN><SPAN class = "BRKT">'c</SPAN><SPAN class = "TEXT"> is mapped only to itself. In the second, it fails because an
+association is made between </SPAN><SPAN class = "BRKT">'c</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">'d</SPAN><SPAN class = "TEXT">.
+</SPAN><DIV class = "XMPL"><pre>
+   - match_typel [gamma] (alpha --&gt; beta --&gt; gamma)
+                         (bool --&gt; ind --&gt; gamma);
+   &gt; val it = [{redex = `:'b`, residue = `:ind`},
+               {redex = `:'a`, residue = `:bool`}] : ...
+
+   - match_typel [gamma] (alpha --&gt; beta --&gt; gamma)
+                         (bool --&gt; ind --&gt; delta);
+   ! Uncaught exception: 
+   ! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The use of </SPAN><SPAN class = "BRKT">away</SPAN><SPAN class = "TEXT"> allows matching to take account of type variables that
+are &rsquo;frozen&rsquo; (by occurring in the hypotheses of a theorem, for example).
+This allows certain fruitless proof attempts to be avoided at the matching
+stage.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Type.match_type.html">match_type</A>,
+<A HREF = "Term.match_term..html">match_term</A>,
+<A HREF = "HolKernel.ho_match_term.html">ho_match_term</A>,
+<A HREF = "Type.type_subst.html">type_subst</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-6</div></BODY></HTML>

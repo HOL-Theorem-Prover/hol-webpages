@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Satisfy</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Satisfy</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/Satisfy.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(*------------------------------------------------------------------------
+<a name="line2"></a> * Satisfy
+<a name="line3"></a> *
+<a name="line4"></a> * depth-1 prolog unification for finding existential variables.
+<a name="line5"></a> * Still needs a little more work.
+<a name="line6"></a> *
+<a name="line7"></a> * Try to satisfy a set of goals by unifying against a set of facts.
+<a name="line8"></a> *
+<a name="line9"></a> * EXAMPLES
+<a name="line10"></a> *
+<a name="line11"></a> * val tac = VALID (SATISFY_THEN ALL_TAC);
+<a name="line12"></a> * tac ([`3 + 1 = 6`], --`?a b. a + 1 = b` ;
+<a name="line13"></a> * tac ([`!x. x + 1 = 6`], --`?a b. a + 1 = b` ;
+<a name="line14"></a> * tac ([`!P:'b. P = b`], --`?a b. Q (a:'a) = (b:'b)` ;
+<a name="line15"></a> * tac ([`!P. P`], --`?a b. a + 1 = b` ;
+<a name="line16"></a> * new_constant {Name="KKK",Ty=(==`:'a-&gt;'a-&gt;bool`==)} handle _ =&gt; ();
+<a name="line17"></a> * tac ([`!a:'a. KKK a a`], --`?(x:'a). KKK x x` ;
+<a name="line18"></a> * tac ([`!a:'a. KKK a a`,`(Q:'a -&gt; 'a -&gt; bool) n m`],
+<a name="line19"></a> *        --`?x y. KKK x x /\ (Q:'a-&gt;'a-&gt;bool) x y` ;
+<a name="line20"></a> * tac ([`(P1:num-&gt;num-&gt;bool) e f`,
+<a name="line21"></a> `(P2:num-&gt;num-&gt;bool) f g`,
+<a name="line22"></a> `!g. (P3:num-&gt;num-&gt;bool) e g`],
+<a name="line23"></a> --`?a b c. (P1:num-&gt;num-&gt;bool) a b /\
+<a name="line24"></a> (P2:num-&gt;num-&gt;bool) b c /\
+<a name="line25"></a> (P3:num-&gt;num-&gt;bool) a b`;
+<a name="line26"></a> *
+<a name="line27"></a> * SATISFY_PROVE [ASSUME `(T /\ F) = T`] `?a b. (a /\ F) = b` ;
+<a name="line28"></a> * SATISFY_PROVE [`!x. x + 1 = 6`] `?a b. a + 1 = b` ;
+<a name="line29"></a> * SATISFY_PROVE [`!P:'b. P = b`] `?a b. Q (a:'a) = (b:'b)` ;
+<a name="line30"></a> * SATISFY_PROVE [`!P. P`] `?a b. a + 1 = b` ;
+<a name="line31"></a> * SATISFY_PROVE [`!a:num. KKK a a`] `?(x:num). KKK x x` ;
+<a name="line32"></a> * SATISFY_PROVE [`!a:'a. KKK a a`,`(Q:'a -&gt; 'a -&gt; bool) n m`]
+<a name="line33"></a> *              `?x y. KKK x x /\ (Q:'a-&gt;'a-&gt;bool) x y` ;
+<a name="line34"></a> * SATISFY_PROVE (map ASSUME [--`KKK 3 4`--]) `?y. KKK 3 y` ;
+<a name="line35"></a> * SATISFY_CONV (map ASSUME [--`KKK 3 4`--]) `?y. KKK 3 y` ;
+<a name="line36"></a> * ASM_SIMP_RULE SATISFY_ss (mk_thm([--`KKK 3 4`--],--`?y. KKK 3 y`);
+<a name="line37"></a> *
+<a name="line38"></a> *--------------------------------------------------------------------*)
+<a name="line39"></a>
+<a name="line40"></a>signature Satisfy = sig
+<a name="line41"></a>  type term = Term.term
+<a name="line42"></a>  type thm = Thm.thm
+<a name="line43"></a>  type conv = Abbrev.conv
+<a name="line44"></a>  type tactic = Abbrev.tactic
+<a name="line45"></a>  type factdb = term list * thm list
+<a name="line46"></a>               (* this may be hidden in the future *)
+<a name="line47"></a>   val SATISFY : factdb -&gt; term -&gt; thm
+<a name="line48"></a>   val SATISFY_CONV : factdb -&gt; conv
+<a name="line49"></a>   val SATISFY_TAC : tactic
+<a name="line50"></a>   val add_facts : factdb -&gt; thm list -&gt; factdb
+<a name="line51"></a>end (* sig *)
+<a name="line52"></a>
+<a name="line53"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/Satisfy.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-6</a></em></p></body></html>
