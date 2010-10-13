@@ -1,4 +1,0 @@
-signature monadsyntax =
-sig
-
-end;
