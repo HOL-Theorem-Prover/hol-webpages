@@ -1,1 +1,0 @@
-val _ = mkmunger.munger()
