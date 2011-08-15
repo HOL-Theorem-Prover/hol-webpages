@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Q.MATCH_ABBREV_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Q.MATCH_ABBREV_TAC : term quotation -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Q.html">Q</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Introduces abbreviations by matching a pattern against the goal statement.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to the goal </SPAN><SPAN class = "BRKT">(asl,&nbsp;w)</SPAN><SPAN class = "TEXT">, the tactic </SPAN><SPAN class = "BRKT">Q.MATCH_ABBREV_TAC&nbsp;q</SPAN><SPAN class = "TEXT">
+parses the quotation </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> in the context of the goal, producing a term
+to use as a pattern.  The tactic then attempts a (first order) match
+of the pattern against the term </SPAN><SPAN class = "BRKT">w</SPAN><SPAN class = "TEXT">.  Variables that occur in both the
+pattern and the goal are treated as &ldquo;local constants&rdquo;, and will not
+acquire instantiations.</SPAN>
+<P>
+<SPAN class = "TEXT">For each variable </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> in the pattern that has not been treated as a
+local constant, there will be a instantiation term </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">, such that the
+substitution </SPAN><SPAN class = "BRKT">pattern[v1&nbsp;|-&gt;&nbsp;t1,&nbsp;v2&nbsp;|-&gt;&nbsp;t2,&nbsp;...]</SPAN><SPAN class = "TEXT"> produces </SPAN><SPAN class = "BRKT">w</SPAN><SPAN class = "TEXT">.  The
+effect of the tactic is to then perform abbreviations in the goal,
+replacing each </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> with the corresponding </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT">, and adding assumptions
+of the form </SPAN><SPAN class = "BRKT">Abbrev(v&nbsp;=&nbsp;t)</SPAN><SPAN class = "TEXT"> to the goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">MATCH_ABBREV_TAC</SPAN><SPAN class = "TEXT"> fails if the pattern provided does not match the
+goal, or if variables from the goal are used in the pattern in ways
+that make the pattern fail to type-check.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If the current goal is
+</SPAN><DIV class = "XMPL"><pre>
+   ?- (n + 10) * y &lt;= 42315 /\ (!x y. x &lt; y ==&gt; f x &lt; f y)
+</pre></DIV>
+<SPAN class = "TEXT">
+then applying the tactic </SPAN><SPAN class = "BRKT">Q.MATCH_ABBREV_TAC&nbsp;`X&nbsp;&lt;=&nbsp;Y&nbsp;/\&nbsp;P`</SPAN><SPAN class = "TEXT"> results in
+the goal
+</SPAN><DIV class = "XMPL"><pre>
+   Abbrev(X = (n + 10) * y),
+   Abbrev(Y = 42315),
+   Abbrev(P = !x y. x &lt; y ==&gt; f x &lt; f y)
+      ?-
+   X &lt;= Y /\ P
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Q.ABBREV_TAC.html">ABBREV_TAC</A>,
+<A HREF = "Q.HO_MATCH_ABBREV_TAC.html">HO_MATCH_ABBREV_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

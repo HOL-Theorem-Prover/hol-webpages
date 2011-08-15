@@ -1,0 +1,499 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure quotient</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure quotient</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quotient/src/quotient.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ===================================================================== *)
+<a name="line2"></a>(*                                                                       *)
+<a name="line3"></a>(* FILE          : quotient.sig                                          *)
+<a name="line4"></a>(* VERSION       : 2.2                                                   *)
+<a name="line5"></a>(* DESCRIPTION   : Functions for creating a quotient type.               *)
+<a name="line6"></a>(*                                                                       *)
+<a name="line7"></a>(* AUTHOR        : Peter Vincent Homeier                                 *)
+<a name="line8"></a>(* DATE          : April 15, 2005                                        *)
+<a name="line9"></a>(* COPYRIGHT     : Copyright (c) 2005 by Peter Vincent Homeier           *)
+<a name="line10"></a>(*                                                                       *)
+<a name="line11"></a>(* ===================================================================== *)
+<a name="line12"></a>
+<a name="line13"></a>
+<a name="line14"></a>signature quotient =
+<a name="line15"></a>sig
+<a name="line16"></a>
+<a name="line17"></a>(* =================================================================== *)
+<a name="line18"></a>(*           Q U O T I E N T   T Y P E S   D E F I N E D               *)
+<a name="line19"></a>(* =================================================================== *)
+<a name="line20"></a>
+<a name="line21"></a>(* ------------------------------------------------------------------- *)
+<a name="line22"></a>(* This file defines the function "define_quotient_type", which takes  *)
+<a name="line23"></a>(* an existing type and theorems about it, along with a theorem about  *)
+<a name="line24"></a>(* an equivalence relation on the type, and creates a new type which   *)
+<a name="line25"></a>(* is isomorphic to the equivalence classes of the old type.           *)
+<a name="line26"></a>(* In addition to creating the new type, functions are defined in the  *)
+<a name="line27"></a>(* HOL logic to translate between the old and new types in both        *)
+<a name="line28"></a>(* directions.                                                         *)
+<a name="line29"></a>(*                                                                     *)
+<a name="line30"></a>(* The arguments to "define_quotient_type" includes a theorem which    *)
+<a name="line31"></a>(* -&gt;implies&lt;- that the equivalence relation is in fact reflexive,     *)
+<a name="line32"></a>(* symmetric, and transitive.  These properties all follow from        *)
+<a name="line33"></a>(*      |- !x y. EQUIV x y = (EQUIV x = EQUIV y)                       *)
+<a name="line34"></a>(*                                                                     *)
+<a name="line35"></a>(* The "define_quotient_type" function returns a theorem of the form   *)
+<a name="line36"></a>(*      |- (!a. abs(rep a) = a) /\                                     *)
+<a name="line37"></a>(*         (!r r'. EQUIV r r' = (abs r = abs r'))                      *)
+<a name="line38"></a>(*                                                                     *)
+<a name="line39"></a>(* We call theorems of this form "quotient theorems"; they are used    *)
+<a name="line40"></a>(* a good deal as inputs to or results from other functions in this    *)
+<a name="line41"></a>(* package.                                                            *)
+<a name="line42"></a>(* ------------------------------------------------------------------- *)
+<a name="line43"></a>
+<a name="line44"></a>val chatting : bool ref (* default is false, no trace of quotient operation *)
+<a name="line45"></a>
+<a name="line46"></a>val caching  : bool ref (* default is true, do cache quotient thms for speed *)
+<a name="line47"></a>
+<a name="line48"></a>val reset_cache : unit -&gt; unit
+<a name="line49"></a>val list_cache  : unit -&gt; (Type.hol_type * Thm.thm) list
+<a name="line50"></a>
+<a name="line51"></a>val define_quotient_type :
+<a name="line52"></a>        string -&gt;      (* name of new quotient type *)
+<a name="line53"></a>        string -&gt;      (* name of abstraction function from old to new *)
+<a name="line54"></a>        string -&gt;      (* name of representation function from new to old *)
+<a name="line55"></a>        Thm.thm -&gt;     (* equivalence or partial equivalence theorem *)
+<a name="line56"></a>        Thm.thm        (* returns one theorem:
+<a name="line57"></a>
+<a name="line58"></a>              abs of rep is identity /\
+<a name="line59"></a>              equivalence is equality of abs
+<a name="line60"></a>*)
+<a name="line61"></a>
+<a name="line62"></a>
+<a name="line63"></a>(* Equivalence theorems have the form:
+<a name="line64"></a>
+<a name="line65"></a>              !x y. R x y = (R x = R y)
+<a name="line66"></a>
+<a name="line67"></a>   Here are routines to create equivalence theorems,
+<a name="line68"></a>   and to convert them into theorems of
+<a name="line69"></a>   reflexivity, symmetry, and transitivity.              *)
+<a name="line70"></a>
+<a name="line71"></a>val equiv_refl :
+<a name="line72"></a>        Thm.thm -&gt;     (* equivalence theorem *)
+<a name="line73"></a>        Thm.thm        (* returns reflexivity theorem for equivalence:
+<a name="line74"></a>
+<a name="line75"></a>              !x. R x x
+<a name="line76"></a>*)
+<a name="line77"></a>
+<a name="line78"></a>val equiv_sym :
+<a name="line79"></a>        Thm.thm -&gt;     (* equivalence theorem *)
+<a name="line80"></a>        Thm.thm        (* returns symmetry theorem for equivalence:
+<a name="line81"></a>
+<a name="line82"></a>              !x y. R x y ==&gt; R y x
+<a name="line83"></a>*)
+<a name="line84"></a>
+<a name="line85"></a>val equiv_trans :
+<a name="line86"></a>        Thm.thm -&gt;     (* equivalence theorem *)
+<a name="line87"></a>        Thm.thm        (* returns transitivity theorem for equivalence:
+<a name="line88"></a>
+<a name="line89"></a>              !x y z. R x y /\ R y z ==&gt; R y x
+<a name="line90"></a>*)
+<a name="line91"></a>
+<a name="line92"></a>val refl_sym_trans_equiv :
+<a name="line93"></a>        Thm.thm -&gt;     (* reflexivity theorem *)
+<a name="line94"></a>        Thm.thm -&gt;     (* symmetry theorem *)
+<a name="line95"></a>        Thm.thm -&gt;     (* transitivity theorem *)
+<a name="line96"></a>        Thm.thm        (* returns equivalence theorem:
+<a name="line97"></a>
+<a name="line98"></a>              !x y. R x y = (R x = R y)
+<a name="line99"></a>*)
+<a name="line100"></a>
+<a name="line101"></a>val identity_equiv :
+<a name="line102"></a>        Type.hol_type -&gt; (* type, whose equivalence relation is equality *)
+<a name="line103"></a>        Thm.thm        (* returns identity equivalence theorem for type:
+<a name="line104"></a>
+<a name="line105"></a>              !x y. $= x y = ($= x = $= y)
+<a name="line106"></a>*)
+<a name="line107"></a>
+<a name="line108"></a>val pair_equiv :
+<a name="line109"></a>        Thm.thm -&gt;     (* equivalence theorem for left element of pair *)
+<a name="line110"></a>        Thm.thm -&gt;     (* equivalence theorem for right element of pair *)
+<a name="line111"></a>        Thm.thm        (* returns equivalence theorem for pair:
+<a name="line112"></a>
+<a name="line113"></a>              !x y. (R1 ### R2) x y = ((R1 ### R2) x = (R1 ### R2) y)
+<a name="line114"></a>*)
+<a name="line115"></a>
+<a name="line116"></a>val sum_equiv :
+<a name="line117"></a>        Thm.thm -&gt;     (* equivalence theorem for left element of sum *)
+<a name="line118"></a>        Thm.thm -&gt;     (* equivalence theorem for right element of sum *)
+<a name="line119"></a>        Thm.thm        (* returns equivalence theorem for sum:
+<a name="line120"></a>
+<a name="line121"></a>              !x y. (R1 +++ R2) x y = ((R1 +++ R2) x = (R1 +++ R2) y)
+<a name="line122"></a>*)
+<a name="line123"></a>
+<a name="line124"></a>val list_equiv :
+<a name="line125"></a>        Thm.thm -&gt;     (* equivalence theorem for element of list *)
+<a name="line126"></a>        Thm.thm        (* returns equivalence theorem for list:
+<a name="line127"></a>
+<a name="line128"></a>              !x y. LIST_REL R x y = (LIST_REL R x = LIST_REL R y)
+<a name="line129"></a>*)
+<a name="line130"></a>
+<a name="line131"></a>val option_equiv :
+<a name="line132"></a>        Thm.thm -&gt;     (* equivalence theorem for element of option *)
+<a name="line133"></a>        Thm.thm        (* returns equivalence theorem for option:
+<a name="line134"></a>
+<a name="line135"></a>              !x y. OPTION_REL R x y = (OPTION_REL R x = OPTION_REL R y)
+<a name="line136"></a>*)
+<a name="line137"></a>
+<a name="line138"></a>val make_equiv :
+<a name="line139"></a>        Thm.thm list -&gt;  (* base equivalence theorems *)
+<a name="line140"></a>        Thm.thm list -&gt;  (* polymorphic type operator equivalence theorems *)
+<a name="line141"></a>        Type.hol_type -&gt; (* type, whose equivalence relation is desired *)
+<a name="line142"></a>        Thm.thm          (* returns equivalence theorem for hol_type:
+<a name="line143"></a>
+<a name="line144"></a>              !x y. R x y = (R x = R y)
+<a name="line145"></a>*)
+<a name="line146"></a>
+<a name="line147"></a>
+<a name="line148"></a>(* Quotient theorems have the form:
+<a name="line149"></a>
+<a name="line150"></a>              (!a. abs (rep a) = a) /\
+<a name="line151"></a>              (|x y. R x y = (abs x = abs y))
+<a name="line152"></a>
+<a name="line153"></a>   These are returned by define_quotient_type.
+<a name="line154"></a>   Here are more routines to create quotient theorems.  *)
+<a name="line155"></a>
+<a name="line156"></a>val identity_quotient :
+<a name="line157"></a>        Type.hol_type -&gt; (* type, whose equivalence relation is equality *)
+<a name="line158"></a>        Thm.thm        (* returns identity quotient theorem for type:
+<a name="line159"></a>
+<a name="line160"></a>              (!a. I (I a) = a) /\
+<a name="line161"></a>              (|x y. $= x y = (I x = I y))
+<a name="line162"></a>*)
+<a name="line163"></a>
+<a name="line164"></a>val pair_quotient :
+<a name="line165"></a>        Thm.thm -&gt;     (* quotient theorem for left element of pair *)
+<a name="line166"></a>        Thm.thm -&gt;     (* quotient theorem for right element of pair *)
+<a name="line167"></a>        Thm.thm        (* returns quotient theorem for pair:
+<a name="line168"></a>
+<a name="line169"></a>              (!a. (abs1 ## abs2) ((rep1 ## rep2) a) = a) /\
+<a name="line170"></a>              (|x y. (R1 ### R2) x y = ((abs1 ## abs2) x = (abs1 ## abs2) y))
+<a name="line171"></a>*)
+<a name="line172"></a>
+<a name="line173"></a>val sum_quotient :
+<a name="line174"></a>        Thm.thm -&gt;     (* quotient theorem for left element of sum *)
+<a name="line175"></a>        Thm.thm -&gt;     (* quotient theorem for right element of sum *)
+<a name="line176"></a>        Thm.thm        (* returns quotient theorem for sum:
+<a name="line177"></a>
+<a name="line178"></a>              (!a. (abs1 ++ abs2) ((rep1 ++ rep2) a) = a) /\
+<a name="line179"></a>              (|x y. (R1 +++ R2) x y = ((abs1 ++ abs2) x = (abs1 ++ abs2) y))
+<a name="line180"></a>*)
+<a name="line181"></a>
+<a name="line182"></a>val list_quotient :
+<a name="line183"></a>        Thm.thm -&gt;     (* quotient theorem for element of list *)
+<a name="line184"></a>        Thm.thm        (* returns quotient theorem for list:
+<a name="line185"></a>
+<a name="line186"></a>              (!a. MAP abs (MAP rep a) = a) /\
+<a name="line187"></a>              (|x y. LIST_REL R x y = (MAP abs x = MAP abs y))
+<a name="line188"></a>*)
+<a name="line189"></a>
+<a name="line190"></a>val option_quotient :
+<a name="line191"></a>        Thm.thm -&gt;     (* quotient theorem for base type of option *)
+<a name="line192"></a>        Thm.thm        (* returns quotient theorem for option:
+<a name="line193"></a>
+<a name="line194"></a>              (!a. OPTION_MAP abs (OPTION_MAP rep a) = a) /\
+<a name="line195"></a>              (|x y. OPTION_REL R x y = (OPTION_MAP abs x = OPTION_MAP abs y))
+<a name="line196"></a>*)
+<a name="line197"></a>
+<a name="line198"></a>val fun_quotient :
+<a name="line199"></a>        Thm.thm -&gt;     (* quotient theorem for domain of function *)
+<a name="line200"></a>        Thm.thm -&gt;     (* quotient theorem for range of function *)
+<a name="line201"></a>        Thm.thm        (* returns quotient theorem for function:
+<a name="line202"></a>
+<a name="line203"></a>          (!a. (rep1 --&gt; abs2) ((abs1 --&gt; rep2) a) = a) /\
+<a name="line204"></a>          (|f g. (rep1 =-&gt; abs2) f g = ((rep1 --&gt; abs2) f = (rep1 --&gt; abs2) g))
+<a name="line205"></a>*)
+<a name="line206"></a>
+<a name="line207"></a>val make_quotient :
+<a name="line208"></a>        Thm.thm list -&gt;  (* quotient theorems for primary lifted types *)
+<a name="line209"></a>        Thm.thm list -&gt;  (* conditional quotient ths for type operators *)
+<a name="line210"></a>        Type.hol_type -&gt; (* type (not lifted) of desired quotient *)
+<a name="line211"></a>        Thm.thm        (* returns quotient theorem for given type:
+<a name="line212"></a>
+<a name="line213"></a>              (!a. abs (rep a) = a) /\
+<a name="line214"></a>              (|x y. R x y = (abs x = abs y))
+<a name="line215"></a>*)
+<a name="line216"></a>
+<a name="line217"></a>
+<a name="line218"></a>
+<a name="line219"></a>val define_quotient_lifted_function :
+<a name="line220"></a>        Thm.thm list -&gt; (* quotient thms, e.g. from define_quotient_type *)
+<a name="line221"></a>        Thm.thm list -&gt;             (* conditional quotient ths for type ops*)
+<a name="line222"></a>        Thm.thm list -&gt;             (* rel & map simplifications for type ops*)
+<a name="line223"></a>        {def_name : string,         (* name to store the definition under *)
+<a name="line224"></a>         fname : string,            (* name of new function *)
+<a name="line225"></a>         func : Term.term,          (* old function, to be lifted *)
+<a name="line226"></a>         fixity : Parse.fixity option} -&gt;  (* fixity of new function *)
+<a name="line227"></a>        Thm.thm                     (* definition of a new lifted function *)
+<a name="line228"></a>
+<a name="line229"></a>
+<a name="line230"></a>(*
+<a name="line231"></a>val regularize :
+<a name="line232"></a>        Term.term -&gt;    (* term to be lifted, may not be regular *)
+<a name="line233"></a>        Term.term       (* version of input term, that is now regular *)
+<a name="line234"></a>
+<a name="line235"></a>
+<a name="line236"></a>val REGULARIZE :
+<a name="line237"></a>        Thm.thm -&gt;      (* theorem to be lifted, may not be regular *)
+<a name="line238"></a>        Thm.thm         (* version of input theorem, that is now regular *)
+<a name="line239"></a>*)
+<a name="line240"></a>
+<a name="line241"></a>
+<a name="line242"></a>val lift_theorem_by_quotients :
+<a name="line243"></a>        Thm.thm list -&gt; (* quotient thms, e.g. from define_quotient_type *)
+<a name="line244"></a>        Thm.thm list -&gt; (* equivalence thms, e.g. from user or make_equiv *)
+<a name="line245"></a>        Thm.thm list -&gt; (* above + conditional equivalence thms for type ops *)
+<a name="line246"></a>        Thm.thm list -&gt; (* conditional quotient ths for type ops *)
+<a name="line247"></a>        Thm.thm list -&gt; (* simplification ths for rel/map idents of type ops *)
+<a name="line248"></a>        Thm.thm list -&gt; (* new function definitions formed by d_q_l_f *)
+<a name="line249"></a>        Thm.thm list -&gt; (* old functions are well-defined to respect the
+<a name="line250"></a>                           equivalence relations mentioned above *)
+<a name="line251"></a>        Thm.thm list -&gt; (* polymorphic function definitions on quotient types
+<a name="line252"></a>                           as lifted from instanciations on old types,
+<a name="line253"></a>                           for all quotient theorems *)
+<a name="line254"></a>        Thm.thm list -&gt; (* polymorphic functions are well-defined to respect
+<a name="line255"></a>                           all quotient theorems *)
+<a name="line256"></a>        Thm.thm -&gt;      (* theorem (regarding old functions) to be lifted *)
+<a name="line257"></a>        Thm.thm         (* lifted version of previous theorem *)
+<a name="line258"></a>
+<a name="line259"></a>
+<a name="line260"></a>
+<a name="line261"></a>(*---------------------------------------------------------------------------*)
+<a name="line262"></a>(* Main function of package: define_equivalence_types                        *)
+<a name="line263"></a>(*                                                                           *)
+<a name="line264"></a>(* Defines a type of equivalence classes, and transfers a list of            *)
+<a name="line265"></a>(* functions and theorems about the representatives over to the new type.    *)
+<a name="line266"></a>(* It returns a list of the transferred theorems.                            *)
+<a name="line267"></a>(*                                                                           *)
+<a name="line268"></a>(* types    - list of records of two fields:                                 *)
+<a name="line269"></a>(*                                                                           *)
+<a name="line270"></a>(*   name     - desired name of new type                                     *)
+<a name="line271"></a>(*   equiv    - Theorem that R is an equivalence relation; in the form:      *)
+<a name="line272"></a>(*               |- !x y. x R y = (R x = R y)                                *)
+<a name="line273"></a>(*                                                                           *)
+<a name="line274"></a>(* tyops    - list of conditional quotient theorems; in the form:            *)
+<a name="line275"></a>(*               |- !R1 (abs1:'a1-&gt;'b1) rep1 ... Rn (absn:'an-&gt;'bn) repn.    *)
+<a name="line276"></a>(*                   (!a:'b1. abs1 (rep1 a) = a) /\                          *)
+<a name="line277"></a>(*                   (|(r:'a1) (r':'a1). R1 r r' = (abs1 r = abs1 r')) ==&gt;   *)
+<a name="line278"></a>(*                   ...                                                     *)
+<a name="line279"></a>(*                   (!a:'bn. absn (repn a) = a) /\                          *)
+<a name="line280"></a>(*                   (|(r:'an) (r':'an). Rn r r' = (absn r = absn r')) ==&gt;   *)
+<a name="line281"></a>(*                   (!a:('b1,...,'bn)tyop.                                  *)
+<a name="line282"></a>(*                         F abs1 ... absn (F rep1 ... repn a) = a) /\       *)
+<a name="line283"></a>(*                   (|(r:('a1,...,'an)tyop) (r':('a1,...,'an)tyop).         *)
+<a name="line284"></a>(*                         R R1 ... Rn r r' =                                *)
+<a name="line285"></a>(*                           (F abs1 ... absn r = F abs1 ... absn r'))       *)
+<a name="line286"></a>(*             where F and R are predefined constants in the logic.          *)
+<a name="line287"></a>(*                                                                           *)
+<a name="line288"></a>(*                                                                           *)
+<a name="line289"></a>(* defs     - list of records of four fields:                                *)
+<a name="line290"></a>(*                                                                           *)
+<a name="line291"></a>(*   def_name - string, name of theorem stored in current theory             *)
+<a name="line292"></a>(*   fname    - string, name of the new function defined in HOL logic        *)
+<a name="line293"></a>(*   func     - term, the old term which is to be lifted                     *)
+<a name="line294"></a>(*   fixity   - Parse.fixity, gives the parsing status of the new function   *)
+<a name="line295"></a>(*                                                                           *)
+<a name="line296"></a>(* respects - list of theorems asserting that the old functions are          *)
+<a name="line297"></a>(*            welldefined;  of the form                                      *)
+<a name="line298"></a>(*                       |- (R1 x1 y1) /\ .. /\ (Rn xn yn) ==&gt;               *)
+<a name="line299"></a>(*                             R (f x1 .. xn) (f y1 .. yn)                   *)
+<a name="line300"></a>(*            where "R[i]" becomes "=" for types other than the              *)
+<a name="line301"></a>(*            representing types.                                            *)
+<a name="line302"></a>(*                                                                           *)
+<a name="line303"></a>(* poly_preserves - list of theorems asserting that polymorphic functions    *)
+<a name="line304"></a>(*            apply to lifted values as they did to representing values;     *)
+<a name="line305"></a>(*            of the form                                                    *)
+<a name="line306"></a>(*                       |- ((!a. abs1 (rep1 a) = a) /\                      *)
+<a name="line307"></a>(*                           (!x y. R1 x y = (abs1 x = abs1 y)) ==&gt;          *)
+<a name="line308"></a>(*                          ... ==&gt;                                          *)
+<a name="line309"></a>(*                          ((!a. absk (repk a) = a) /\                      *)
+<a name="line310"></a>(*                           (!x y. Rk x y = (absk x = absk y)) ==&gt;          *)
+<a name="line311"></a>(*                          (!x1 ... xn.                                     *)
+<a name="line312"></a>(*                            f x1 ... xn = abs (f (rep1 x1) ... (repn xn))) *)
+<a name="line313"></a>(*            where "R[i]" becomes "=" and "abs[i]" or "rep[i]" becomes "I"  *)
+<a name="line314"></a>(*            for types other than the representing types.                   *)
+<a name="line315"></a>(*            The k antecedents need not include duplicates, and may be in   *)
+<a name="line316"></a>(*            any order, so long as all argument and return value types      *)
+<a name="line317"></a>(*            of f are represented.                                          *)
+<a name="line318"></a>(*                                                                           *)
+<a name="line319"></a>(* poly_respects - list of theorems asserting that polymorphic functions     *)
+<a name="line320"></a>(*            respect the equivalence relations;  of the form                *)
+<a name="line321"></a>(*                       |- ((!a. abs1 (rep1 a) = a) /\                      *)
+<a name="line322"></a>(*                           (!x y. R1 x y = (abs1 x = abs1 y)) ==&gt;          *)
+<a name="line323"></a>(*                          ... ==&gt;                                          *)
+<a name="line324"></a>(*                          ((!a. absk (repk a) = a) /\                      *)
+<a name="line325"></a>(*                           (!x y. Rk x y = (absk x = absk y)) ==&gt;          *)
+<a name="line326"></a>(*                          (R1 x1 y1) /\ .. /\ (Rn xn yn) ==&gt;               *)
+<a name="line327"></a>(*                             R (f x1 .. xn) (f y1 .. yn)                   *)
+<a name="line328"></a>(*            where "R[i]" becomes "=" and "abs[i]" or "rep[i]" becomes "I"  *)
+<a name="line329"></a>(*            for types other than the representing types.                   *)
+<a name="line330"></a>(*            The k antecedents need not include duplicates, and may be in   *)
+<a name="line331"></a>(*            any order, so long as all argument and return value types      *)
+<a name="line332"></a>(*            of f are represented.                                          *)
+<a name="line333"></a>(*                                                                           *)
+<a name="line334"></a>(* old_thms - list of theorems about the old functions, on the old types     *)
+<a name="line335"></a>(*                                                                           *)
+<a name="line336"></a>(* Restrictions:                                                             *)
+<a name="line337"></a>(*                                                                           *)
+<a name="line338"></a>(*  * R[i] must be an equivalence relation over the whole types, no subsets. *)
+<a name="line339"></a>(*                                                                           *)
+<a name="line340"></a>(*  * All original functions must be curried (as are the new ones).          *)
+<a name="line341"></a>(*                                                                           *)
+<a name="line342"></a>(*  * The theorems must have all variables bound by existential or           *)
+<a name="line343"></a>(*    universal quantifiers.                                                 *)
+<a name="line344"></a>(*                                                                           *)
+<a name="line345"></a>(*  * The theorems must be obviously `well-defined', i.e. invariant under    *)
+<a name="line346"></a>(*    substitution [t/u] whenever |- t R[i] u. Essentially "R[i]" becomes    *)
+<a name="line347"></a>(*    "=" and  old functions become the new ones.                            *)
+<a name="line348"></a>(*                                                                           *)
+<a name="line349"></a>(*  * All arguments/results of the representing type will be transferred     *)
+<a name="line350"></a>(*    to the new type.                                                       *)
+<a name="line351"></a>(*                                                                           *)
+<a name="line352"></a>(* Original Author: John Harrison                                            *)
+<a name="line353"></a>(* Revised and extended to lift second-order theorems: Peter V. Homeier      *)
+<a name="line354"></a>(*---------------------------------------------------------------------------*)
+<a name="line355"></a>
+<a name="line356"></a>(* MAIN ENTRY POINT: *)
+<a name="line357"></a>
+<a name="line358"></a>val define_quotient_types :
+<a name="line359"></a>        {types: {name:string,          (* name of new quotient type *)
+<a name="line360"></a>                 equiv:Thm.thm} list,  (* relation is an equivalence *)
+<a name="line361"></a>         defs: {def_name:string,            (* name of stored definition *)
+<a name="line362"></a>                fname:string,               (* name of new lifted function *)
+<a name="line363"></a>                func:Term.term,             (* old function to be lifted *)
+<a name="line364"></a>                fixity: Parse.fixity option} list, (* fixity of new function *)
+<a name="line365"></a>         tyop_equivs: Thm.thm list,  (* conditional equiv ths for type ops *)
+<a name="line366"></a>         tyop_quotients: Thm.thm list,(*conditional quotient ths for type ops*)
+<a name="line367"></a>         tyop_simps: Thm.thm list, (* rel/map simplification ths for type ops*)
+<a name="line368"></a>         respects : Thm.thm list,    (* old functions respect equivalence *)
+<a name="line369"></a>         poly_preserves : Thm.thm list, (* polymorphic fns are preserved
+<a name="line370"></a>                                           by quotients *)
+<a name="line371"></a>         poly_respects : Thm.thm list,(* polymorphic fns respect equivalence *)
+<a name="line372"></a>         old_thms : Thm.thm list} -&gt; (* theorems of old fns to be lifted *)
+<a name="line373"></a>        Thm.thm list                 (* new lifted theorems *)
+<a name="line374"></a>
+<a name="line375"></a>(* ALTERNATE ENTRY POINT: *)
+<a name="line376"></a>
+<a name="line377"></a>val define_quotient_types_rule :
+<a name="line378"></a>        {types: {name:string,          (* name of new quotient type *)
+<a name="line379"></a>                 equiv:Thm.thm} list,  (* relation is an equivalence *)
+<a name="line380"></a>         defs: {def_name:string,            (* name of stored definition *)
+<a name="line381"></a>                fname:string,               (* name of new lifted function *)
+<a name="line382"></a>                func:Term.term,             (* old function to be lifted *)
+<a name="line383"></a>                fixity: Parse.fixity option} list, (* fixity of new function *)
+<a name="line384"></a>         tyop_equivs: Thm.thm list,  (* conditional equiv ths for type ops *)
+<a name="line385"></a>         tyop_quotients: Thm.thm list,(*conditional quotient ths for type ops*)
+<a name="line386"></a>         tyop_simps: Thm.thm list, (* rel/map simplification ths for type ops*)
+<a name="line387"></a>         respects : Thm.thm list,    (* old functions respect equivalence *)
+<a name="line388"></a>         poly_preserves : Thm.thm list, (* polymorphic fns are preserved
+<a name="line389"></a>                                           by quotients *)
+<a name="line390"></a>         poly_respects : Thm.thm list} -&gt;
+<a name="line391"></a>                                     (* polymorphic fns respect equivalence *)
+<a name="line392"></a>        (Thm.thm -&gt; Thm.thm)          (* rule for lifting theorems *)
+<a name="line393"></a>
+<a name="line394"></a>(* MAIN ENTRY POINT INCLUDING STANDARD THEOREMS: *)
+<a name="line395"></a>
+<a name="line396"></a>val define_quotient_types_full :
+<a name="line397"></a>        {types: {name:string,          (* name of new quotient type *)
+<a name="line398"></a>                 equiv:Thm.thm} list,  (* relation is an equivalence *)
+<a name="line399"></a>         defs: {def_name:string,            (* name of stored definition *)
+<a name="line400"></a>                fname:string,               (* name of new lifted function *)
+<a name="line401"></a>                func:Term.term,             (* old function to be lifted *)
+<a name="line402"></a>                fixity: Parse.fixity option} list, (* fixity of new function *)
+<a name="line403"></a>         tyop_equivs: Thm.thm list,  (* conditional equiv ths for type ops *)
+<a name="line404"></a>         tyop_quotients: Thm.thm list,(*conditional quotient ths for type ops*)
+<a name="line405"></a>         tyop_simps: Thm.thm list, (* rel/map simplification ths for type ops*)
+<a name="line406"></a>         respects : Thm.thm list,    (* old functions respect equivalence *)
+<a name="line407"></a>         poly_preserves : Thm.thm list, (* polymorphic fns are preserved
+<a name="line408"></a>                                           by quotients *)
+<a name="line409"></a>         poly_respects : Thm.thm list,(* polymorphic fns respect equivalence *)
+<a name="line410"></a>         old_thms : Thm.thm list} -&gt; (* theorems of old fns to be lifted *)
+<a name="line411"></a>        Thm.thm list                 (* new lifted theorems *)
+<a name="line412"></a>
+<a name="line413"></a>(* ALTERNATE ENTRY POINT INCLUDING STANDARD THEOREMS: *)
+<a name="line414"></a>
+<a name="line415"></a>val define_quotient_types_full_rule :
+<a name="line416"></a>        {types: {name:string,          (* name of new quotient type *)
+<a name="line417"></a>                 equiv:Thm.thm} list,  (* relation is an equivalence *)
+<a name="line418"></a>         defs: {def_name:string,            (* name of stored definition *)
+<a name="line419"></a>                fname:string,               (* name of new lifted function *)
+<a name="line420"></a>                func:Term.term,             (* old function to be lifted *)
+<a name="line421"></a>                fixity: Parse.fixity option} list, (* fixity of new function *)
+<a name="line422"></a>         tyop_equivs: Thm.thm list,  (* conditional equiv ths for type ops *)
+<a name="line423"></a>         tyop_quotients: Thm.thm list,(*conditional quotient ths for type ops*)
+<a name="line424"></a>         tyop_simps: Thm.thm list, (* rel/map simplification ths for type ops*)
+<a name="line425"></a>         respects : Thm.thm list,    (* old functions respect equivalence *)
+<a name="line426"></a>         poly_preserves : Thm.thm list, (* polymorphic fns are preserved
+<a name="line427"></a>                                           by quotients *)
+<a name="line428"></a>         poly_respects : Thm.thm list} -&gt;
+<a name="line429"></a>                                     (* polymorphic fns respect equivalence *)
+<a name="line430"></a>        (Thm.thm -&gt; Thm.thm)          (* rule for lifting theorems *)
+<a name="line431"></a>
+<a name="line432"></a>(* MAIN ENTRY POINT WITH JUST STANDARD THEOREMS: *)
+<a name="line433"></a>(* This is a quick, simple entry point if the only type operators involved are
+<a name="line434"></a>   the list, pair, sum, option, and function ones, and no new polymorphic
+<a name="line435"></a>   operators need to have their respectfulness or preservation proven.   *)
+<a name="line436"></a>
+<a name="line437"></a>val define_quotient_types_std :
+<a name="line438"></a>        {types: {name:string,          (* name of new quotient type *)
+<a name="line439"></a>                 equiv:Thm.thm} list,  (* relation is an equivalence *)
+<a name="line440"></a>         defs: {def_name:string,            (* name of stored definition *)
+<a name="line441"></a>                fname:string,               (* name of new lifted function *)
+<a name="line442"></a>                func:Term.term,             (* old function to be lifted *)
+<a name="line443"></a>                fixity: Parse.fixity option} list, (* fixity of new function *)
+<a name="line444"></a>         respects : Thm.thm list,    (* old functions respect equivalence *)
+<a name="line445"></a>         old_thms : Thm.thm list} -&gt; (* theorems of old fns to be lifted *)
+<a name="line446"></a>        Thm.thm list                 (* new lifted theorems *)
+<a name="line447"></a>
+<a name="line448"></a>(* ALTERNATE ENTRY POINT WITH JUST STANDARD THEOREMS: *)
+<a name="line449"></a>
+<a name="line450"></a>val define_quotient_types_std_rule :
+<a name="line451"></a>        {types: {name:string,          (* name of new quotient type *)
+<a name="line452"></a>                 equiv:Thm.thm} list,  (* relation is an equivalence *)
+<a name="line453"></a>         defs: {def_name:string,            (* name of stored definition *)
+<a name="line454"></a>                fname:string,               (* name of new lifted function *)
+<a name="line455"></a>                func:Term.term,             (* old function to be lifted *)
+<a name="line456"></a>                fixity: Parse.fixity option} list, (* fixity of new function *)
+<a name="line457"></a>         respects : Thm.thm list} -&gt;   (* old functions respect equivalence *)
+<a name="line458"></a>        (Thm.thm -&gt; Thm.thm)          (* rule for lifting theorems *)
+<a name="line459"></a>
+<a name="line460"></a>(* For backwards compatibility with John Harrison's package: *)
+<a name="line461"></a>
+<a name="line462"></a>val define_equivalence_type :
+<a name="line463"></a>        {name : string,              (* name of new quotient type *)
+<a name="line464"></a>         equiv : Thm.thm,            (* thm that relation is an equivalence *)
+<a name="line465"></a>         defs: {def_name:string,            (* name of stored definition *)
+<a name="line466"></a>                fname:string,               (* name of new lifted function *)
+<a name="line467"></a>                func:Term.term,             (* old function to be lifted *)
+<a name="line468"></a>                fixity: Parse.fixity option} list, (* fixity of new function *)
+<a name="line469"></a>         welldefs : Thm.thm list,    (* old functions respect equivalence *)
+<a name="line470"></a>         old_thms : Thm.thm list} -&gt; (* theorems of old fns to be lifted *)
+<a name="line471"></a>        Thm.thm list                 (* definitions of new lifted functions *)
+<a name="line472"></a>
+<a name="line473"></a>
+<a name="line474"></a>
+<a name="line475"></a>end;  (* of signature quotient *)
+<a name="line476"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quotient/src/quotient.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-7</a></em></p></body></html>

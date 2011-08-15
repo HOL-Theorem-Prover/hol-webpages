@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Parse.parse_from_grammars</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>parse_from_grammars :
+  (type_grammar.grammar * term_grammar.grammar) -&gt;
+  ((hol_type frag list -&gt; hol_type) * (term frag list -&gt; term))</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Returns parsing functions based on the supplied grammars.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When given a pair consisting of a type and a term grammar, this
+function returns parsing functions that use those grammars to turn
+strings (strictly, quotations) into types and terms respectively.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Can&rsquo;t fail immediately.  However, when the precedence matrix for the
+term parser is built on first application of the term parser, this may
+generate precedence conflict errors depending on the rules in the
+grammar.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">First the user loads </SPAN><SPAN class = "BRKT">arithmeticTheory</SPAN><SPAN class = "TEXT"> to augment the built-in
+grammar with the ability to lex numerals and deal with symbols such as
+</SPAN><SPAN class = "BRKT">+</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">-</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   - load "arithmeticTheory";
+   &gt; val it = () : unit
+   - val t = Term`2 + 3`;
+   &gt; val t = `2 + 3` : term
+</pre></DIV>
+<SPAN class = "TEXT">
+Then the </SPAN><SPAN class = "BRKT">parse_from_grammars</SPAN><SPAN class = "TEXT"> function is used to make the
+values </SPAN><SPAN class = "BRKT">Type</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">Term</SPAN><SPAN class = "TEXT"> use the grammar present in the simpler theory
+of booleans.  Using this function fails to parse numerals or even the
+</SPAN><SPAN class = "BRKT">+</SPAN><SPAN class = "TEXT"> infix:
+</SPAN><DIV class = "XMPL"><pre>
+   - val (Type,Term) = parse_from_grammars boolTheory.bool_grammars;
+   &gt; val Type = fn : hol_type frag list -&gt; hol_type
+     val Term = fn : term frag list -&gt; term
+   - Term`2 + 3`;
+   &lt;&lt;HOL message: No numerals currently allowed.&gt;&gt;
+   ! Uncaught exception:
+   ! HOL_ERR &lt;poly&gt;
+   - Term`x + y`;
+   &lt;&lt;HOL message: inventing new type variable names: 'a, 'b.&gt;&gt;
+   &gt; val it = `x $+ y` : term
+</pre></DIV>
+<SPAN class = "TEXT">
+But, as the last example above also demonstrates, the installed
+pretty-printer is still dependent on the global grammar, and the
+global value of </SPAN><SPAN class = "BRKT">Term</SPAN><SPAN class = "TEXT"> can still be accessed through the </SPAN><SPAN class = "BRKT">Parse</SPAN><SPAN class = "TEXT">
+structure:
+</SPAN><DIV class = "XMPL"><pre>
+   - t;
+   &gt; val it = `2 + 3` : term
+
+   - Parse.Term`2 + 3`;
+   &gt; val it = `2 + 3` : term
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function is used to ensure that library code has access to a term
+parser that is a known quantity.  In particular, it is not good form
+to have library code that depends on the default parsers </SPAN><SPAN class = "BRKT">Term</SPAN><SPAN class = "TEXT"> and
+</SPAN><SPAN class = "BRKT">Type</SPAN><SPAN class = "TEXT">.  When the library is loaded, which may happen at any stage,
+these global values may be such that the parsing causes quite
+unexpected results or failures.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.add_rule.html">add_rule</A>,
+<A HREF = "Parse.print_from_grammars.html">print_from_grammars</A>,
+<A HREF = "Parse.Term.html">Term</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

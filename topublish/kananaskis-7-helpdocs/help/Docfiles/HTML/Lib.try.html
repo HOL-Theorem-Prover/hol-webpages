@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Lib.try</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>try : ('a -&gt; 'b) -&gt; 'a -&gt; 'b</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Lib.html">Lib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Apply a function and print any exceptions</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The application </SPAN><SPAN class = "BRKT">try&nbsp;f&nbsp;x</SPAN><SPAN class = "TEXT"> evaluates </SPAN><SPAN class = "BRKT">f&nbsp;x</SPAN><SPAN class = "TEXT">; if this evaluation raises an
+exception </SPAN><SPAN class = "BRKT">e</SPAN><SPAN class = "TEXT">, then </SPAN><SPAN class = "BRKT">e</SPAN><SPAN class = "TEXT"> is examined and some information about it is
+printed before </SPAN><SPAN class = "BRKT">e</SPAN><SPAN class = "TEXT"> is re-raised. If </SPAN><SPAN class = "BRKT">f&nbsp;x</SPAN><SPAN class = "TEXT"> evaluates to </SPAN><SPAN class = "BRKT">y</SPAN><SPAN class = "TEXT">, then </SPAN><SPAN class = "BRKT">y</SPAN><SPAN class = "TEXT"> is
+returned. </SPAN>
+<P>
+<SPAN class = "TEXT">Often, a </SPAN><SPAN class = "BRKT">HOL_ERR</SPAN><SPAN class = "TEXT"> exception can propagate all the way to the top level.
+Unfortunately, the information held in the exception is not then printed.
+</SPAN><SPAN class = "BRKT">try</SPAN><SPAN class = "TEXT"> can often display this information.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When application of the first argument to the second raises an exception.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- mk_comb (T,F);
+! Uncaught exception: 
+! HOL_ERR
+
+- try mk_comb (T,F);
+
+Exception raised at Term.mk_comb:
+incompatible types
+! Uncaught exception: 
+! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT">
+Evaluation order can be significant. ML evaluates </SPAN><SPAN class = "BRKT">try&nbsp;M&nbsp;N</SPAN><SPAN class = "TEXT"> by
+evaluating </SPAN><SPAN class = "BRKT">M</SPAN><SPAN class = "TEXT"> (yielding </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> say) and </SPAN><SPAN class = "BRKT">N</SPAN><SPAN class = "TEXT"> (yielding </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> say), and then
+</SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> is applied to </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT">. Any exceptions raised in the course of evaluating
+</SPAN><SPAN class = "BRKT">M</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">N</SPAN><SPAN class = "TEXT"> will not be detected by </SPAN><SPAN class = "BRKT">try</SPAN><SPAN class = "TEXT">. In such cases it is better to
+use </SPAN><SPAN class = "BRKT">Raise</SPAN><SPAN class = "TEXT">. In the following example, the erroneous construction of an
+abstraction is not detected by </SPAN><SPAN class = "BRKT">try</SPAN><SPAN class = "TEXT"> and the exception propagates all
+the way to the top level; however, </SPAN><SPAN class = "BRKT">Raise</SPAN><SPAN class = "TEXT"> does handle the exception.
+</SPAN><DIV class = "XMPL"><pre>
+    - try mk_comb (T, mk_abs(T,T));
+    ! Uncaught exception: 
+    ! HOL_ERR
+
+    - mk_comb (T, mk_abs(T,T)) handle e =&gt; Raise e;
+
+    Exception raised at Term.mk_abs:
+    Bvar not a variable
+    ! Uncaught exception: 
+    ! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Feedback.Raise.html">Raise</A>,
+<A HREF = "Lib.trye.html">trye</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

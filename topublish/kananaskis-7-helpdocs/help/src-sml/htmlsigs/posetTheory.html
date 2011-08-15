@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure posetTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure posetTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/pair/src/posetScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature posetTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val bottom_def : thm
+<a name="line7"></a>    val carrier_def : thm
+<a name="line8"></a>    val chain_def : thm
+<a name="line9"></a>    val complete_def : thm
+<a name="line10"></a>    val continuous_def : thm
+<a name="line11"></a>    val down_continuous_def : thm
+<a name="line12"></a>    val function_def : thm
+<a name="line13"></a>    val gfp_def : thm
+<a name="line14"></a>    val glb_def : thm
+<a name="line15"></a>    val lfp_def : thm
+<a name="line16"></a>    val lub_def : thm
+<a name="line17"></a>    val monotonic_def : thm
+<a name="line18"></a>    val pointwise_lift_def : thm
+<a name="line19"></a>    val poset_def : thm
+<a name="line20"></a>    val relation_def : thm
+<a name="line21"></a>    val top_def : thm
+<a name="line22"></a>    val up_continuous_def : thm
+<a name="line23"></a>  
+<a name="line24"></a>  (*  Theorems  *)
+<a name="line25"></a>    val complete_bottom : thm
+<a name="line26"></a>    val complete_down : thm
+<a name="line27"></a>    val complete_pointwise : thm
+<a name="line28"></a>    val complete_top : thm
+<a name="line29"></a>    val complete_up : thm
+<a name="line30"></a>    val gfp_unique : thm
+<a name="line31"></a>    val glb_pred : thm
+<a name="line32"></a>    val knaster_tarski : thm
+<a name="line33"></a>    val knaster_tarski_gfp : thm
+<a name="line34"></a>    val knaster_tarski_lfp : thm
+<a name="line35"></a>    val lfp_unique : thm
+<a name="line36"></a>    val lub_pred : thm
+<a name="line37"></a>    val poset_antisym : thm
+<a name="line38"></a>    val poset_nonempty : thm
+<a name="line39"></a>    val poset_refl : thm
+<a name="line40"></a>    val poset_trans : thm
+<a name="line41"></a>  
+<a name="line42"></a>  val poset_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line43"></a>(*
+   [pair] Parent theory of "poset"
+   
+   [bottom_def]  Definition
+      
+      |- ∀s r x. bottom (s,r) x ⇔ s x ∧ ∀y. s y ⇒ r x y
+   
+   [carrier_def]  Definition
+      
+      |- ∀s r. carrier (s,r) = s
+   
+   [chain_def]  Definition
+      
+      |- ∀s r c.
+           chain (s,r) c ⇔ ∀x y. s x ∧ s y ∧ c x ∧ c y ⇒ r x y ∨ r y x
+   
+   [complete_def]  Definition
+      
+      |- ∀p. complete p ⇔ ∀c. (∃x. lub p c x) ∧ ∃x. glb p c x
+   
+   [continuous_def]  Definition
+      
+      |- ∀p f. continuous p f ⇔ up_continuous p f ∧ down_continuous p f
+   
+   [down_continuous_def]  Definition
+      
+      |- ∀s r f.
+           down_continuous (s,r) f ⇔
+           ∀c x.
+             chain (s,r) c ∧ glb (s,r) c x ⇒
+             glb (s,r) (λy. ∃z. (s z ∧ c z) ∧ (y = f z)) (f x)
+   
+   [function_def]  Definition
+      
+      |- ∀a b f. function a b f ⇔ ∀x. a x ⇒ b (f x)
+   
+   [gfp_def]  Definition
+      
+      |- ∀s r f x.
+           gfp (s,r) f x ⇔ s x ∧ (f x = x) ∧ ∀y. s y ∧ r y (f y) ⇒ r y x
+   
+   [glb_def]  Definition
+      
+      |- ∀s r p x.
+           glb (s,r) p x ⇔
+           s x ∧ (∀y. s y ∧ p y ⇒ r x y) ∧
+           ∀z. s z ∧ (∀y. s y ∧ p y ⇒ r z y) ⇒ r z x
+   
+   [lfp_def]  Definition
+      
+      |- ∀s r f x.
+           lfp (s,r) f x ⇔ s x ∧ (f x = x) ∧ ∀y. s y ∧ r (f y) y ⇒ r x y
+   
+   [lub_def]  Definition
+      
+      |- ∀s r p x.
+           lub (s,r) p x ⇔
+           s x ∧ (∀y. s y ∧ p y ⇒ r y x) ∧
+           ∀z. s z ∧ (∀y. s y ∧ p y ⇒ r y z) ⇒ r x z
+   
+   [monotonic_def]  Definition
+      
+      |- ∀s r f.
+           monotonic (s,r) f ⇔ ∀x y. s x ∧ s y ∧ r x y ⇒ r (f x) (f y)
+   
+   [pointwise_lift_def]  Definition
+      
+      |- ∀t s r.
+           pointwise_lift t (s,r) =
+           (function t s,(λf g. ∀x. t x ⇒ r (f x) (g x)))
+   
+   [poset_def]  Definition
+      
+      |- ∀s r.
+           poset (s,r) ⇔
+           (∃x. s x) ∧ (∀x. s x ⇒ r x x) ∧
+           (∀x y. s x ∧ s y ∧ r x y ∧ r y x ⇒ (x = y)) ∧
+           ∀x y z. s x ∧ s y ∧ s z ∧ r x y ∧ r y z ⇒ r x z
+   
+   [relation_def]  Definition
+      
+      |- ∀s r. relation (s,r) = r
+   
+   [top_def]  Definition
+      
+      |- ∀s r x. top (s,r) x ⇔ s x ∧ ∀y. s y ⇒ r y x
+   
+   [up_continuous_def]  Definition
+      
+      |- ∀s r f.
+           up_continuous (s,r) f ⇔
+           ∀c x.
+             chain (s,r) c ∧ lub (s,r) c x ⇒
+             lub (s,r) (λy. ∃z. (s z ∧ c z) ∧ (y = f z)) (f x)
+   
+   [complete_bottom]  Theorem
+      
+      |- ∀p. poset p ∧ complete p ⇒ ∃x. bottom p x
+   
+   [complete_down]  Theorem
+      
+      |- ∀p c. complete p ⇒ ∃x. glb p c x
+   
+   [complete_pointwise]  Theorem
+      
+      |- ∀p t. complete p ⇒ complete (pointwise_lift t p)
+   
+   [complete_top]  Theorem
+      
+      |- ∀p. poset p ∧ complete p ⇒ ∃x. top p x
+   
+   [complete_up]  Theorem
+      
+      |- ∀p c. complete p ⇒ ∃x. lub p c x
+   
+   [gfp_unique]  Theorem
+      
+      |- ∀p f x x'. poset p ∧ gfp p f x ∧ gfp p f x' ⇒ (x = x')
+   
+   [glb_pred]  Theorem
+      
+      |- ∀s r p x. glb (s,r) (λj. s j ∧ p j) x ⇔ glb (s,r) p x
+   
+   [knaster_tarski]  Theorem
+      
+      |- ∀p f.
+           poset p ∧ complete p ∧ function (carrier p) (carrier p) f ∧
+           monotonic p f ⇒
+           (∃x. lfp p f x) ∧ ∃x. gfp p f x
+   
+   [knaster_tarski_gfp]  Theorem
+      
+      |- ∀p f.
+           poset p ∧ complete p ∧ function (carrier p) (carrier p) f ∧
+           monotonic p f ⇒
+           ∃x. gfp p f x
+   
+   [knaster_tarski_lfp]  Theorem
+      
+      |- ∀p f.
+           poset p ∧ complete p ∧ function (carrier p) (carrier p) f ∧
+           monotonic p f ⇒
+           ∃x. lfp p f x
+   
+   [lfp_unique]  Theorem
+      
+      |- ∀p f x x'. poset p ∧ lfp p f x ∧ lfp p f x' ⇒ (x = x')
+   
+   [lub_pred]  Theorem
+      
+      |- ∀s r p x. lub (s,r) (λj. s j ∧ p j) x ⇔ lub (s,r) p x
+   
+   [poset_antisym]  Theorem
+      
+      |- ∀s r x y. poset (s,r) ∧ s x ∧ s y ∧ r x y ∧ r y x ⇒ (x = y)
+   
+   [poset_nonempty]  Theorem
+      
+      |- ∀s r. poset (s,r) ⇒ ∃x. s x
+   
+   [poset_refl]  Theorem
+      
+      |- ∀s r x. poset (s,r) ∧ s x ⇒ r x x
+   
+   [poset_trans]  Theorem
+      
+      |- ∀s r x y z. poset (s,r) ∧ s x ∧ s y ∧ s z ∧ r x y ∧ r y z ⇒ r x z
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/pair/src/posetScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-7</a></em></p></body></html>

@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Definition.new_type_definition</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>new_type_definition : string * thm -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Definition.html">Definition</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Defines a new type constant or type operator.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The ML function </SPAN><SPAN class = "BRKT">new_type_definition</SPAN><SPAN class = "TEXT"> implements the primitive HOL rule of
+definition for introducing new type constants or type operators into the logic.
+If </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is a term of type </SPAN><SPAN class = "BRKT">ty-&gt;bool</SPAN><SPAN class = "TEXT"> containing </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> distinct type variables,
+then evaluating:
+</SPAN><DIV class = "XMPL"><pre>
+   new_type_definition (tyop, |- ?x. t x)
+</pre></DIV>
+<SPAN class = "TEXT">
+results in </SPAN><SPAN class = "BRKT">tyop</SPAN><SPAN class = "TEXT"> being declared as a new </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">-ary type
+operator in the current theory and returned by the call to
+</SPAN><SPAN class = "BRKT">new_type_definition</SPAN><SPAN class = "TEXT">. This new type operator is characterized by
+a definitional axiom of the form:
+</SPAN><DIV class = "XMPL"><pre>
+   |- ?rep:('a,...,'n)op-&gt;tyop. TYPE_DEFINITION t rep
+</pre></DIV>
+<SPAN class = "TEXT">
+which is stored as a definition in the current theory segment
+under the automatically-generated name </SPAN><SPAN class = "BRKT">op_TY_DEF</SPAN><SPAN class = "TEXT">. The arguments to
+the new type operator occur in the order given by an alphabetic
+ordering of the name of the corresponding type variables. The constant
+</SPAN><SPAN class = "BRKT">TYPE_DEFINITION</SPAN><SPAN class = "TEXT"> in this axiomatic characterization of </SPAN><SPAN class = "BRKT">tyop</SPAN><SPAN class = "TEXT"> is
+defined by:
+</SPAN><DIV class = "XMPL"><pre>
+   |- TYPE_DEFINITION (P:'a-&gt;bool) (rep:'b-&gt;'a) =
+         (!x' x''. (rep x' = rep x'') ==&gt; (x' = x'')) /\
+         (!x. P x = (?x'. x = rep x'))
+</pre></DIV>
+<SPAN class = "TEXT">
+Thus </SPAN><SPAN class = "BRKT">|-&nbsp;?rep.&nbsp;TYPE_DEFINITION&nbsp;P&nbsp;rep</SPAN><SPAN class = "TEXT"> asserts that there is a
+bijection between the newly defined type </SPAN><SPAN class = "BRKT">('a,...,'n)tyop</SPAN><SPAN class = "TEXT"> and the set
+of values of type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> that satisfy </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Executing </SPAN><SPAN class = "BRKT">new_type_definition(tyop,th)</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is not an
+assumption-free theorem of the form </SPAN><SPAN class = "BRKT">|-&nbsp;?x.&nbsp;t&nbsp;x</SPAN><SPAN class = "TEXT">. Failure also occurs
+if the type of </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is not of the form </SPAN><SPAN class = "BRKT">ty-&gt;bool</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In this example, a type containing three elements is defined. The predicate
+defining the type is over the type </SPAN><SPAN class = "BRKT">bool&nbsp;#&nbsp;bool</SPAN><SPAN class = "TEXT">.
+</SPAN><DIV class = "XMPL"><pre>
+   app load ["PairedLambda", "Q"]; open PairedLambda pairTheory;
+
+   - val tyax =
+      new_type_definition ("three",
+        Q.prove(`?p. (\(x,y). ~(x /\ y)) p`,
+                Q.EXISTS_TAC `(F,F)` THEN GEN_BETA_TAC THEN REWRITE_TAC []));
+
+   &gt; val tyax = |- ?rep. TYPE_DEFINITION (\(x,y). ~(x /\ y)) rep : thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Usually, once a type has been defined, maps between the representation
+type and the new type need to be proved. This may be accomplished using
+</SPAN><SPAN class = "BRKT">define_new_type_bijections</SPAN><SPAN class = "TEXT">. In the example, the two functions are named
+</SPAN><SPAN class = "BRKT">abs3</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">rep3</SPAN><SPAN class = "TEXT">.
+</SPAN><DIV class = "XMPL"><pre>
+   - val three_bij = define_new_type_bijections
+                      {name="three_tybij", ABS="abs3", REP="rep3", tyax=tyax};
+   &gt; val three_bij =
+       |- (!a. abs3 (rep3 a) = a) /\
+          (!r. (\(x,y). ~(x /\ y)) r = (rep3 (abs3 r) = r))
+</pre></DIV>
+<SPAN class = "TEXT">
+Properties of the maps may be conveniently proved with
+</SPAN><SPAN class = "BRKT">prove_abs_fn_one_one</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">prove_abs_fn_onto</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">prove_rep_fn_one_one</SPAN><SPAN class = "TEXT">, and
+</SPAN><SPAN class = "BRKT">prove_rep_fn_onto</SPAN><SPAN class = "TEXT">. In this case, we need only </SPAN><SPAN class = "BRKT">prove_abs_fn_one_one</SPAN><SPAN class = "TEXT">.
+</SPAN><DIV class = "XMPL"><pre>
+   - val abs_11 = GEN_BETA_RULE (prove_abs_fn_one_one three_bij);
+
+   &gt; val abs_11 =
+       |- !r r'.
+            ~(FST r /\ SND r) ==&gt;
+            ~(FST r' /\ SND r') ==&gt;
+            ((abs3 r = abs3 r') = (r = r')) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Now we address how to define constants designating the three elements
+of our example type. We will use </SPAN><SPAN class = "BRKT">new_specification</SPAN><SPAN class = "TEXT"> to create these
+constants (say </SPAN><SPAN class = "BRKT">e1</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">e2</SPAN><SPAN class = "TEXT">, and </SPAN><SPAN class = "BRKT">e3</SPAN><SPAN class = "TEXT">) and their characterizing property,
+which is
+</SPAN><DIV class = "XMPL"><pre>
+   ~(e1 = e2) /\ ~(e2 = e3) /\ ~(e3 = e1)
+</pre></DIV>
+<SPAN class = "TEXT">
+A simple lemma stating that the abstraction function doesn&rsquo;t confuse any
+of the representations is required:
+</SPAN><DIV class = "XMPL"><pre>
+   - val abs_distinct =
+       REWRITE_RULE (PAIR_EQ::pair_rws)
+         (LIST_CONJ (map (C Q.SPECL abs_11)
+                         [[`(F,F)`,`(F,T)`],
+                          [`(F,T)`,`(T,F)`],
+                          [`(T,F)`,`(F,F)`]]));
+
+   &gt; val abs_distinct =
+      |- ~(abs3 (F,F) = abs3 (F,T)) /\
+         ~(abs3 (F,T) = abs3 (T,F)) /\
+         ~(abs3 (T,F) = abs3 (F,F)) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Finally, we can introduce the constants and their property.
+</SPAN><DIV class = "XMPL"><pre>
+   - val THREE = new_specification
+       ("THREE", ["e1", "e2", "e3"],
+        PROVE [abs_distinct]
+         (Term`?x y z:three. ~(x=y) /\ ~(y=z) /\ ~(z=x)`));
+
+   &gt; val THREE = |- ~(e1 = e2) /\ ~(e2 = e3) /\ ~(e3 = e1) : thm
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Drule.define_new_type_bijections.html">define_new_type_bijections</A>,
+<A HREF = "Prim_rec.prove_abs_fn_one_one.html">prove_abs_fn_one_one</A>,
+<A HREF = "Prim_rec.prove_abs_fn_onto.html">prove_abs_fn_onto</A>,
+<A HREF = "Drule.prove_rep_fn_one_one.html">prove_rep_fn_one_one</A>,
+<A HREF = "Drule.prove_rep_fn_onto.html">prove_rep_fn_onto</A>,
+<A HREF = "Definition.new_specification.html">new_specification</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Prekind</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Prekind</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Prekind.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Prekind =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a> datatype prekind0
+<a name="line5"></a>    = Varkind of string
+<a name="line6"></a>    | Typekind
+<a name="line7"></a>    | Arrowkind of prekind * prekind
+<a name="line8"></a>    | UVarkind of prekind option ref
+<a name="line9"></a> and prekind = PK of prekind0 locn.located
+<a name="line10"></a>
+<a name="line11"></a>val eq : prekind -&gt; prekind -&gt; bool
+<a name="line12"></a>
+<a name="line13"></a>val typ : prekind
+<a name="line14"></a>val is_var_kind : prekind -&gt; bool
+<a name="line15"></a>val ==> : prekind * prekind -&gt; prekind
+<a name="line16"></a>val mk_arrow_kind : prekind * prekind -&gt; prekind
+<a name="line17"></a>val list_mk_arrow_kind : prekind list * prekind -&gt; prekind
+<a name="line18"></a>val mk_arity : int -&gt; prekind
+<a name="line19"></a>val prekind_compare : prekind * prekind -&gt; order
+<a name="line20"></a>val prekind_to_string : prekind -&gt; string
+<a name="line21"></a>
+<a name="line22"></a>val kindvars : prekind -&gt; string list
+<a name="line23"></a>val new_uvar : unit -&gt; prekind
+<a name="line24"></a>val uvars_of : prekind -&gt; prekind option ref list
+<a name="line25"></a>val ref_occurs_in : prekind option ref * prekind -&gt; bool
+<a name="line26"></a>val ref_equiv : prekind option ref * prekind -&gt; bool
+<a name="line27"></a>val has_free_uvar : prekind -&gt; bool
+<a name="line28"></a>
+<a name="line29"></a>
+<a name="line30"></a>
+<a name="line31"></a>(* first argument is a function which performs a binding between a
+<a name="line32"></a>   prekind reference and another prekind, updating some sort of environment
+<a name="line33"></a>   (the 'a), returning the new alpha and a unit option, SOME () for a
+<a name="line34"></a>   success, and a NONE, if not.
+<a name="line35"></a>
+<a name="line36"></a>   To further complicate things, the bind argument also gets a copy of
+<a name="line37"></a>   gen_unify to call, if it should choose.
+<a name="line38"></a>*)
+<a name="line39"></a>val gen_unify :
+<a name="line40"></a>  ((prekind -&gt; prekind -&gt; ('a -&gt; 'a * unit option)) -&gt;
+<a name="line41"></a>   (prekind option ref -&gt; (prekind -&gt; ('a -&gt; 'a * unit option)))) -&gt;
+<a name="line42"></a>  prekind -&gt; prekind -&gt; ('a -&gt; 'a * unit option)
+<a name="line43"></a>val unify : prekind -&gt; prekind -&gt; unit
+<a name="line44"></a>val can_unify : prekind -&gt; prekind -&gt; bool
+<a name="line45"></a>
+<a name="line46"></a>val unsafe_unify :
+<a name="line47"></a>  prekind -&gt; prekind -&gt;
+<a name="line48"></a>  ((prekind option ref * prekind option) list -&gt;
+<a name="line49"></a>   (prekind option ref * prekind option) list * unit option)
+<a name="line50"></a>
+<a name="line51"></a>val safe_unify :
+<a name="line52"></a>  prekind -&gt; prekind -&gt;
+<a name="line53"></a>  ((prekind option ref * prekind) list -&gt;
+<a name="line54"></a>   (prekind option ref * prekind) list * unit option)
+<a name="line55"></a>
+<a name="line56"></a>(*val apply_subst : (prekind option ref * prekind) list -&gt; prekind -&gt; prekind*)
+<a name="line57"></a>
+<a name="line58"></a>val rename_kv : string list -&gt; prekind -&gt; (string * prekind) list
+<a name="line59"></a>                        -&gt; ((string * prekind) list * prekind option)
+<a name="line60"></a>val rename_kindvars : string list -&gt; prekind -&gt; prekind
+<a name="line61"></a>val fromKind : Kind.kind -&gt; prekind
+<a name="line62"></a>val remove_made_links : prekind -&gt; prekind
+<a name="line63"></a>val replace_null_links : prekind -&gt; string list -&gt; string list * unit option
+<a name="line64"></a>val clean : prekind -&gt; Kind.kind
+<a name="line65"></a>val toKind : prekind -&gt; Kind.kind
+<a name="line66"></a>val chase : prekind -&gt; prekind
+<a name="line67"></a>val pp_prekind : ppstream -&gt; prekind -&gt; unit
+<a name="line68"></a>
+<a name="line69"></a>val termantiq_constructors : (prekind,Term.term) parse_kind.kindconstructors
+<a name="line70"></a>val typeantiq_constructors : (prekind,Type.hol_type) parse_kind.kindconstructors
+<a name="line71"></a>val kindantiq_constructors : (prekind,Kind.kind) parse_kind.kindconstructors
+<a name="line72"></a>
+<a name="line73"></a>end
+<a name="line74"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Prekind.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-7</a></em></p></body></html>

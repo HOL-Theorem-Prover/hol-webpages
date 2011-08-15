@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>bossLib.xDefine</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>xDefine : string -&gt; term quotation -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">General-purpose function definition facility.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">xDefine</SPAN><SPAN class = "TEXT"> behaves exactly like </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT">, except that it takes an
+alphanumeric string which is used as a stem for building names with
+which to store the definition, associated induction theorem (if there is
+one), and any auxiliary definitions used to construct the specified
+function (if there are any) in the current theory segment.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">xDefine</SPAN><SPAN class = "TEXT"> allows the definition of symbolic identifiers, but </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT">
+doesn&rsquo;t.  In all other respects, </SPAN><SPAN class = "BRKT">xDefine</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> succeed and fail
+in the same way.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following example shows how </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> fails when asked to define
+a symbolic identifier.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+    - set_fixity ("/", Infixl 600);    (* tell the parser about "/" *)
+    &gt; val it = () : unit
+
+    - Define 
+       `x/y = if y=0 then NONE else
+              if x&lt;y then SOME 0 
+               else OPTION_MAP SUC ((x-y)/y)`;
+
+    Definition failed! Can't make name for storing definition
+    because there is no alphanumeric identifier in: 
+
+       "/".
+
+    Try "xDefine &lt;alphanumeric-stem&gt; &lt;eqns-quotation&gt;" instead.
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">Next the same definition is attempted with </SPAN><SPAN class = "BRKT">xDefine</SPAN><SPAN class = "TEXT">, supplying the name
+for binding the definition and the induction theorem with in the current
+theory.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+    - xDefine "div"
+         `x/y = if y=0 then NONE else
+                if x&lt;y then SOME 0 
+                 else OPTION_MAP SUC ((x-y)/y)`;
+
+    Equations stored under "div_def".
+    Induction stored under "div_ind".
+
+    &gt; val it =
+        |- x / y =
+           (if y = 0 then NONE
+            else
+             (if x &lt; y then SOME 0 
+                       else OPTION_MAP SUC ((x - y) / y))) : thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> can be thought of as an application of </SPAN><SPAN class = "BRKT">xDefine</SPAN><SPAN class = "TEXT">, in which the
+stem is taken to be the name of the function being defined.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">bossLib.xDefine</SPAN><SPAN class = "TEXT"> is most commonly used. </SPAN><SPAN class = "BRKT">TotalDefn.xDefine</SPAN><SPAN class = "TEXT"> is
+identical to </SPAN><SPAN class = "BRKT">bossLib.xDefine</SPAN><SPAN class = "TEXT">, except that the </SPAN><SPAN class = "BRKT">TotalDefn</SPAN><SPAN class = "TEXT"> structure
+comes with less baggage---it depends only on </SPAN><SPAN class = "BRKT">numLib</SPAN><SPAN class = "TEXT"> and
+</SPAN><SPAN class = "BRKT">pairLib</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.Define.html">Define</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

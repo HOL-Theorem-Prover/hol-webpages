@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Prerank</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Prerank</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Prerank.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Prerank =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>datatype prerank
+<a name="line5"></a>    = Zerorank
+<a name="line6"></a>    | Sucrank of prerank
+<a name="line7"></a>    | Maxrank of prerank * prerank
+<a name="line8"></a>    | UVarrank of (order * prerank) option ref
+<a name="line9"></a>
+<a name="line10"></a>type oprerank = order * prerank
+<a name="line11"></a>
+<a name="line12"></a>(* In UVarrank, if the order is EQUAL then the UVarrank is equal to the contained rank;
+<a name="line13"></a>   if the bool is LESS then the UVarrank is less than or equal to the contained rank, or
+<a name="line14"></a>   if the bool is GREATER then the UVarrank is greater than or equal to the contained rank. *)
+<a name="line15"></a>
+<a name="line16"></a>val mk_Maxrank : prerank * prerank -&gt; prerank
+<a name="line17"></a>
+<a name="line18"></a>val eq : prerank -&gt; prerank -&gt; bool
+<a name="line19"></a>val leq : prerank -&gt; prerank -&gt; bool
+<a name="line20"></a>val prerank_compare : prerank * prerank -&gt; order
+<a name="line21"></a>val prerank_to_string : prerank -&gt; string
+<a name="line22"></a>
+<a name="line23"></a>val new_uvar : unit -&gt; prerank
+<a name="line24"></a>val uvars_of : prerank -&gt; oprerank option ref list
+<a name="line25"></a>val ref_occurs_in : oprerank option ref * prerank -&gt; bool
+<a name="line26"></a>val ref_equiv : oprerank option ref * prerank -&gt; bool
+<a name="line27"></a>val has_free_uvar : prerank -&gt; bool
+<a name="line28"></a>
+<a name="line29"></a>
+<a name="line30"></a>
+<a name="line31"></a>(* first argument is a function which performs a binding between a
+<a name="line32"></a>   prerank reference and another prerank, updating some sort of environment
+<a name="line33"></a>   (the 'a), returning the new alpha and a unit option, SOME () for a
+<a name="line34"></a>   success, and a NONE, if not.
+<a name="line35"></a>
+<a name="line36"></a>   To further complicate things, the bind argument also gets a copy of
+<a name="line37"></a>   gen_unify to call, if it should choose.
+<a name="line38"></a>*)
+<a name="line39"></a>val gen_unify :
+<a name="line40"></a>  ((prerank -&gt; prerank -&gt; ('a -&gt; 'a * unit option)) -&gt;
+<a name="line41"></a>   (prerank -&gt; prerank -&gt; ('a -&gt; 'a * unit option)) -&gt;
+<a name="line42"></a>   (oprerank option ref -&gt; (prerank -&gt; ('a -&gt; 'a * unit option)))) -&gt;
+<a name="line43"></a>  ((prerank -&gt; prerank -&gt; ('a -&gt; 'a * unit option)) -&gt;
+<a name="line44"></a>   (oprerank option ref -&gt; (prerank -&gt; ('a -&gt; 'a * unit option)))) -&gt;
+<a name="line45"></a>  ((prerank -&gt; prerank -&gt; ('a -&gt; 'a * unit option)) -&gt;
+<a name="line46"></a>   (oprerank option ref -&gt; (prerank -&gt; ('a -&gt; 'a * unit option)))) -&gt;
+<a name="line47"></a>  prerank -&gt; prerank -&gt; ('a -&gt; 'a * unit option)
+<a name="line48"></a>val gen_unify_le :
+<a name="line49"></a>  ((prerank -&gt; prerank -&gt; ('a -&gt; 'a * unit option)) -&gt;
+<a name="line50"></a>   (oprerank option ref -&gt; (prerank -&gt; ('a -&gt; 'a * unit option)))) -&gt;
+<a name="line51"></a>  ((prerank -&gt; prerank -&gt; ('a -&gt; 'a * unit option)) -&gt;
+<a name="line52"></a>   (oprerank option ref -&gt; (prerank -&gt; ('a -&gt; 'a * unit option)))) -&gt;
+<a name="line53"></a>  prerank -&gt; prerank -&gt; ('a -&gt; 'a * unit option)
+<a name="line54"></a>val unify : prerank -&gt; prerank -&gt; unit
+<a name="line55"></a>val unify_le : prerank -&gt; prerank -&gt; unit
+<a name="line56"></a>val can_unify : prerank -&gt; prerank -&gt; bool
+<a name="line57"></a>val can_unify_le : prerank -&gt; prerank -&gt; bool
+<a name="line58"></a>
+<a name="line59"></a>val unsafe_unify :
+<a name="line60"></a>  prerank -&gt; prerank -&gt;
+<a name="line61"></a>  ((oprerank option ref * oprerank option) list -&gt;
+<a name="line62"></a>   (oprerank option ref * oprerank option) list * unit option)
+<a name="line63"></a>
+<a name="line64"></a>val unsafe_unify_le :
+<a name="line65"></a>  prerank -&gt; prerank -&gt;
+<a name="line66"></a>  ((oprerank option ref * oprerank option) list -&gt;
+<a name="line67"></a>   (oprerank option ref * oprerank option) list * unit option)
+<a name="line68"></a>
+<a name="line69"></a>val safe_unify :
+<a name="line70"></a>  prerank -&gt; prerank -&gt;
+<a name="line71"></a>  ((oprerank option ref * oprerank) list -&gt;
+<a name="line72"></a>   (oprerank option ref * oprerank) list * unit option)
+<a name="line73"></a>
+<a name="line74"></a>val safe_unify_le :
+<a name="line75"></a>  prerank -&gt; prerank -&gt;
+<a name="line76"></a>  ((oprerank option ref * oprerank) list -&gt;
+<a name="line77"></a>   (oprerank option ref * oprerank) list * unit option)
+<a name="line78"></a>
+<a name="line79"></a>(*val apply_subst : (oprerank option ref * prerank) list -&gt; prerank -&gt; prerank*)
+<a name="line80"></a>
+<a name="line81"></a>
+<a name="line82"></a>val rename_rv : bool -&gt; prerank -&gt; prerank list -&gt; (prerank list * prerank option)
+<a name="line83"></a>val rename_rankvars : prerank -&gt; prerank
+<a name="line84"></a>
+<a name="line85"></a>val fromRank : int -&gt; prerank
+<a name="line86"></a>val remove_made_links : prerank -&gt; prerank
+<a name="line87"></a>val replace_null_links : prerank -&gt; string list -&gt; string list * unit option
+<a name="line88"></a>val clean : prerank -&gt; int
+<a name="line89"></a>val toRank : prerank -&gt; int
+<a name="line90"></a>end
+<a name="line91"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Prerank.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-7</a></em></p></body></html>

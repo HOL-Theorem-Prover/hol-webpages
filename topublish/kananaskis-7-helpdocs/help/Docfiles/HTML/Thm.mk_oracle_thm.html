@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Thm.mk_oracle_thm</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>mk_oracle_thm : string -&gt; term list * term -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Thm.html">Thm</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Construct a theorem without proof, and tag it.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In principle, nearly every theorem of interest can be proved in HOL by
+using only the axioms and primitive rules of inference. The use of ML
+to orchestrate larger inference steps from the primitives, along with
+support in HOL for goal-directed proof, considerably eases the task
+of formal proof. Nearly every theorem of interest can therefore be
+produced as the end product of a chain of primitive inference steps,
+and HOL implementations strive to keep this purity.</SPAN>
+<P>
+<SPAN class = "TEXT">However, it is occasionally useful to interface HOL with trusted
+external tools that also produce, in some sense, theorems that would be
+derivable in HOL. It is clearly a burden to require that HOL proofs
+accompany such theorems so that they can be (re-)derived in HOL. In order
+to support greater interoperation of proof tools, therefore, HOL provides
+the notion of a &lsquo;tagged&rsquo; theorem.</SPAN>
+<P>
+<SPAN class = "TEXT">A tagged theorem is manufactured by invoking </SPAN><SPAN class = "BRKT">mk_oracle_thm&nbsp;tag&nbsp;(A,w)</SPAN><SPAN class = "TEXT">,
+where </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> is a list of HOL terms of type </SPAN><SPAN class = "BRKT">bool</SPAN><SPAN class = "TEXT">, and </SPAN><SPAN class = "BRKT">w</SPAN><SPAN class = "TEXT"> is also a HOL
+term of boolean type. No proof is done; the sequent is merely injected
+into the type of theorems, and the </SPAN><SPAN class = "BRKT">tag</SPAN><SPAN class = "TEXT"> value is attached to it. The
+result is the theorem </SPAN><SPAN class = "BRKT">A&nbsp;|-&nbsp;w</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">tag</SPAN><SPAN class = "TEXT"> value stays with the theorem, and it propagates in a
+hereditary fashion to any theorem derived from the tagged theorem.
+Thus, if one examines a theorem with </SPAN><SPAN class = "BRKT">Thm.tag</SPAN><SPAN class = "TEXT"> and finds that it has
+no tag, then the theorem has been derived purely by proof steps
+in the HOL logic. Otherwise, shortcuts have been taken, and the
+external tools, also known as &lsquo;oracles&rsquo;, used to make the shortcuts
+are signified by the tags.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If some element of </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> does not have type </SPAN><SPAN class = "BRKT">bool</SPAN><SPAN class = "TEXT">, or </SPAN><SPAN class = "BRKT">w</SPAN><SPAN class = "TEXT"> does not
+have type </SPAN><SPAN class = "BRKT">bool</SPAN><SPAN class = "TEXT">, or the tag string doesn&rsquo;t represent a valid tag
+(which occurs if it is the string </SPAN><SPAN class = "BRKT">"DISK_THM"</SPAN><SPAN class = "TEXT">, or if it is a string
+containing unprintable characters).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In the following, we construct a tag and then make a rogue rule
+of inference.
+</SPAN><DIV class = "XMPL"><pre>
+   - val tag = "SimonSays";
+   &gt; val tag = "SimonSays" : string
+
+   - val SimonThm = mk_oracle_thm tag;
+   &gt; val SimonThm = fn : term list * term -&gt; thm
+
+   - val th = SimonThm ([], Term `!x. x`);;
+   &gt; val th = |- !x. x : thm
+
+   - val th1 = SPEC F th;
+   &gt; val th1 = |- F : thm
+
+   - (show_tags := true; th1);
+   &gt; val it = [oracles: SimonSays] [axioms: ] [] |- F : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Tags accumulate in a manner similar to logical hypotheses.
+</SPAN><DIV class = "XMPL"><pre>
+   - CONJ th1 th1;
+   &gt; val it = [oracles: SimonSays] [axioms: ] [] |- F /\ F : thm
+
+   - val SerenaThm = mk_oracle_thm "Serena";
+   &gt; val SerenaThm = fn : term list * term -&gt; thm
+
+   - CONJ th1 (SerenaThm ([],T));
+   &gt; val it = [oracles: Serena, SimonSays] [axioms: ] [] |- F /\ T : thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">It is impossible to detach a tag from a theorem.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Thm.add_tag.html">add_tag</A>,
+<A HREF = "Thm.mk_thm.html">mk_thm</A>,
+<A HREF = "Tag.read.html">read</A>,
+<A HREF = "Thm.tag.html">tag</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

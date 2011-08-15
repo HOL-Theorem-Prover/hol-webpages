@@ -80,6 +80,9 @@ echo -n "Purging copied directories "
 echo -n "[HOLMK,.svn] "
 find . -regex '.*HOLMK\|.*\.svn' -exec /bin/rm -rf \{\} \; -prune
 
+echo -n "[symlink] "
+find . -type l -delete
+
 echo -n "[.u[oi],*Theory,.exe,tmp,Holmakefile] "
 find . -regex '.*\.u[oi]\|.*Theory\.sml\|.*\.exe\|.*svn.*tmp\|.*~\|.*Holmakefile' -delete
 
@@ -87,4 +90,28 @@ echo -n "[Manual,help,examples dirs] "
 find src -regex '.*Manual\|.*help\|.*examples' -execdir /bin/rm -rf \{\} \; -prune
 
 echo "[non sml,sig]"
-find src -type f \! -regex '.*\.sig\|.*\.sml' -delete
+find src -type f \! -regex '.*\.\(sig\|\(s\|ht\)ml\)' -delete
+
+echo "Removing some specific holdovers"
+/bin/rm help/{src-sml/{DOT,README},Docfiles/{HOL.help,HTML/README},theorygraph/{README,theories.{pdf,dot,imap}}}
+
+echo
+
+echo "Adding to Subversion"
+svn add help src
+
+echo -n "Setting mime-types "
+echo -n "[ML] "
+find . -regex '.*\.\(sml\|sig\)' -exec svn -q pset svn:mime-type text/plain \{\} +
+find . -regex '.*\.\(sml\|sig\)' -exec svn -q pset svn:eol-style native \{\} +
+
+echo -n "[HTML] "
+find . -name '*.html' -exec svn -q pset svn:mime-type text/html \{\} +
+find . -name '*.html' -exec svn -q pset svn:eol-style native \{\} +
+
+echo -n "[JPEG] "
+find . -name '*.jpg' -exec svn -q pset svn:mime-type image/jpeg \{\} +
+
+echo "[CSS]"
+find . -name '*.css' -exec svn -q pset svn:mime-type text/css \{\} +
+find . -name '*.css' -exec svn -q pset svn:eol-style native \{\} +

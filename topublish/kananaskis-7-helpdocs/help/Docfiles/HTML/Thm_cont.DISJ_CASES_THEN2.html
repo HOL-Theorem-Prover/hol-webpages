@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Thm_cont.DISJ_CASES_THEN2</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>DISJ_CASES_THEN2 : (thm_tactic -&gt; thm_tactical)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Thm_cont.html">Thm_cont</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Applies separate theorem-tactics to the two disjuncts of a theorem.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If the theorem-tactics </SPAN><SPAN class = "BRKT">f1</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">f2</SPAN><SPAN class = "TEXT">, applied to the </SPAN><SPAN class = "BRKT">ASSUME</SPAN><SPAN class = "TEXT">d left and right
+disjunct of a theorem </SPAN><SPAN class = "BRKT">|-&nbsp;u&nbsp;\/&nbsp;v</SPAN><SPAN class = "TEXT"> respectively, produce results as follows when
+applied to a goal </SPAN><SPAN class = "BRKT">(A&nbsp;?-&nbsp;t)</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+    A ?- t                                 A ?- t
+   =========  f1 (u |- u)      and        =========  f2 (v |- v)
+    A ?- t1                                A ?- t2
+</pre></DIV>
+<SPAN class = "TEXT">
+then applying </SPAN><SPAN class = "BRKT">DISJ_CASES_THEN2&nbsp;f1&nbsp;f2&nbsp;(|-&nbsp;u&nbsp;\/&nbsp;v)</SPAN><SPAN class = "TEXT"> to the
+goal </SPAN><SPAN class = "BRKT">(A&nbsp;?-&nbsp;t)</SPAN><SPAN class = "TEXT"> produces two subgoals.
+</SPAN><DIV class = "XMPL"><pre>
+           A ?- t
+   ======================  DISJ_CASES_THEN2 f1 f2 (|- u \/ v)
+    A ?- t1      A ?- t2
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the theorem is not a disjunction.  An invalid tactic is
+produced if the theorem has any hypothesis which is not
+alpha-convertible to an assumption of the goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Given the theorem
+</SPAN><DIV class = "XMPL"><pre>
+   th = |- (m = 0) \/ (?n. m = SUC n)
+</pre></DIV>
+<SPAN class = "TEXT">
+and a goal of the form </SPAN><SPAN class = "BRKT">?-&nbsp;(PRE&nbsp;m&nbsp;=&nbsp;m)&nbsp;=&nbsp;(m&nbsp;=&nbsp;0)</SPAN><SPAN class = "TEXT">,
+applying the tactic
+</SPAN><DIV class = "XMPL"><pre>
+   DISJ_CASES_THEN2 SUBST1_TAC ASSUME_TAC th
+</pre></DIV>
+<SPAN class = "TEXT">
+to the goal will produce two subgoals
+</SPAN><DIV class = "XMPL"><pre>
+   ?n. m = SUC n ?- (PRE m = m) = (m = 0)
+
+   ?- (PRE 0 = 0) = (0 = 0)
+</pre></DIV>
+<SPAN class = "TEXT">
+The first subgoal has had the disjunct </SPAN><SPAN class = "BRKT">m&nbsp;=&nbsp;0</SPAN><SPAN class = "TEXT"> used
+for a substitution, and the second has added the disjunct to the
+assumption list.  Alternatively, applying the tactic
+</SPAN><DIV class = "XMPL"><pre>
+   DISJ_CASES_THEN2 SUBST1_TAC (CHOOSE_THEN SUBST1_TAC) th
+</pre></DIV>
+<SPAN class = "TEXT">
+to the goal produces the subgoals:
+</SPAN><DIV class = "XMPL"><pre>
+   ?- (PRE(SUC n) = SUC n) = (SUC n = 0)
+
+   ?- (PRE 0 = 0) = (0 = 0)
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Building cases tacticals. For example, </SPAN><SPAN class = "BRKT">DISJ_CASES_THEN</SPAN><SPAN class = "TEXT"> could be defined by:
+</SPAN><DIV class = "XMPL"><pre>
+  let DISJ_CASES_THEN f = DISJ_CASES_THEN2 f f
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Thm_cont.STRIP_THM_THEN.html">STRIP_THM_THEN</A>,
+<A HREF = "Thm_cont.CHOOSE_THEN.html">CHOOSE_THEN</A>,
+<A HREF = "Thm_cont.CONJUNCTS_THEN.html">CONJUNCTS_THEN</A>,
+<A HREF = "Thm_cont.CONJUNCTS_THEN2.html">CONJUNCTS_THEN2</A>,
+<A HREF = "Thm_cont.DISJ_CASES_THEN.html">DISJ_CASES_THEN</A>,
+<A HREF = "Thm_cont.DISJ_CASES_THENL.html">DISJ_CASES_THENL</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

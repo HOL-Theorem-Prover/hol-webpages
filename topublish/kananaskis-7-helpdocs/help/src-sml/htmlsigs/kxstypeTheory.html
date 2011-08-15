@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure kxstypeTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure kxstypeTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/datatype/inftree/kxstypeScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature kxstypeTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val C1_def : thm
+<a name="line7"></a>    val C2_def : thm
+<a name="line8"></a>    val C3_def : thm
+<a name="line9"></a>    val kxs_ABSREP : thm
+<a name="line10"></a>    val kxs_TY_DEF : thm
+<a name="line11"></a>    val kxs_def : thm
+<a name="line12"></a>  
+<a name="line13"></a>  (*  Theorems  *)
+<a name="line14"></a>    val kxs_cases : thm
+<a name="line15"></a>    val kxs_ind : thm
+<a name="line16"></a>    val kxs_rules : thm
+<a name="line17"></a>    val kxs_strongind : thm
+<a name="line18"></a>  
+<a name="line19"></a>  val kxstype_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line20"></a>(*
+   [inftree] Parent theory of "kxstype"
+   
+   [C1_def]  Definition
+      
+      |- C1 = kxs_ABS (iLf ())
+   
+   [C2_def]  Definition
+      
+      |- ∀n k1 k2.
+           C2 n k1 k2 =
+           kxs_ABS
+             (iNd (INL n)
+                (λb.
+                   if ISL b then
+                     if OUTL b then kxs_REP k1 else kxs_REP k2
+                   else
+                     iLf ()))
+   
+   [C3_def]  Definition
+      
+      |- ∀f.
+           C3 f =
+           kxs_ABS
+             (iNd (INR ())
+                (λd. if ISL d then iLf () else kxs_REP (f (OUTR d))))
+   
+   [kxs_ABSREP]  Definition
+      
+      |- (∀a. kxs_ABS (kxs_REP a) = a) ∧
+         ∀r. kxs r ⇔ (kxs_REP (kxs_ABS r) = r)
+   
+   [kxs_TY_DEF]  Definition
+      
+      |- ∃rep. TYPE_DEFINITION kxs rep
+   
+   [kxs_def]  Definition
+      
+      |- kxs =
+         (λa0.
+            ∀kxs'.
+              (∀a0.
+                 (a0 = iLf ()) ∨
+                 (∃data f.
+                    (a0 = iNd data f) ∧ ISL data ∧ kxs' (f (INL T)) ∧
+                    kxs' (f (INL F)) ∧ ∀a. f (INR a) = iLf ()) ∨
+                 (∃f.
+                    (a0 = iNd (INR ()) f) ∧ (∀a. kxs' (f (INR a))) ∧
+                    ∀b. f (INL b) = iLf ()) ⇒
+                 kxs' a0) ⇒
+              kxs' a0)
+   
+   [kxs_cases]  Theorem
+      
+      |- ∀a0.
+           kxs a0 ⇔
+           (a0 = iLf ()) ∨
+           (∃data f.
+              (a0 = iNd data f) ∧ ISL data ∧ kxs (f (INL T)) ∧
+              kxs (f (INL F)) ∧ ∀a. f (INR a) = iLf ()) ∨
+           ∃f.
+             (a0 = iNd (INR ()) f) ∧ (∀a. kxs (f (INR a))) ∧
+             ∀b. f (INL b) = iLf ()
+   
+   [kxs_ind]  Theorem
+      
+      |- ∀kxs'.
+           kxs' (iLf ()) ∧
+           (∀data f.
+              ISL data ∧ kxs' (f (INL T)) ∧ kxs' (f (INL F)) ∧
+              (∀a. f (INR a) = iLf ()) ⇒
+              kxs' (iNd data f)) ∧
+           (∀f.
+              (∀a. kxs' (f (INR a))) ∧ (∀b. f (INL b) = iLf ()) ⇒
+              kxs' (iNd (INR ()) f)) ⇒
+           ∀a0. kxs a0 ⇒ kxs' a0
+   
+   [kxs_rules]  Theorem
+      
+      |- kxs (iLf ()) ∧
+         (∀data f.
+            ISL data ∧ kxs (f (INL T)) ∧ kxs (f (INL F)) ∧
+            (∀a. f (INR a) = iLf ()) ⇒
+            kxs (iNd data f)) ∧
+         ∀f.
+           (∀a. kxs (f (INR a))) ∧ (∀b. f (INL b) = iLf ()) ⇒
+           kxs (iNd (INR ()) f)
+   
+   [kxs_strongind]  Theorem
+      
+      |- ∀kxs'.
+           kxs' (iLf ()) ∧
+           (∀data f.
+              ISL data ∧ kxs (f (INL T)) ∧ kxs' (f (INL T)) ∧
+              kxs (f (INL F)) ∧ kxs' (f (INL F)) ∧
+              (∀a. f (INR a) = iLf ()) ⇒
+              kxs' (iNd data f)) ∧
+           (∀f.
+              (∀a. kxs (f (INR a)) ∧ kxs' (f (INR a))) ∧
+              (∀b. f (INL b) = iLf ()) ⇒
+              kxs' (iNd (INR ()) f)) ⇒
+           ∀a0. kxs a0 ⇒ kxs' a0
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/datatype/inftree/kxstypeScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-7</a></em></p></body></html>

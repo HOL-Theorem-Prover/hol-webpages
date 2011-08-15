@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Prim_rec.new_recursive_definition</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>new_recursive_definition : {name:string, def:term, rec_axiom:thm} -&gt; thm
+</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Prim_rec.html">Prim_rec</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Defines a primitive recursive function over a concrete recursive type.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">new_recursive_definition</SPAN><SPAN class = "TEXT"> provides a facility for defining primitive
+recursive functions on arbitrary concrete recursive types. </SPAN><SPAN class = "BRKT">name</SPAN><SPAN class = "TEXT"> is a
+name under which the resulting definition will be saved in the current
+theory segment. </SPAN><SPAN class = "BRKT">def</SPAN><SPAN class = "TEXT"> is a term giving the desired primitive recursive
+function definition. </SPAN><SPAN class = "BRKT">rec_axiom</SPAN><SPAN class = "TEXT"> is the primitive recursion theorem for
+the concrete type in question; this must be a theorem obtained from
+</SPAN><SPAN class = "BRKT">define_type</SPAN><SPAN class = "TEXT">. The value returned by </SPAN><SPAN class = "BRKT">new_recursive_definition</SPAN><SPAN class = "TEXT"> is a
+theorem which states the primitive recursive definition requested by the
+user. This theorem is derived by formal proof from an instance of the
+general primitive recursion theorem given as the second argument.</SPAN>
+<P>
+<SPAN class = "TEXT">A theorem </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> of the form returned by </SPAN><SPAN class = "BRKT">define_type</SPAN><SPAN class = "TEXT"> is a primitive recursion
+theorem for an automatically-defined concrete type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">.  Let </SPAN><SPAN class = "BRKT">C1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">Cn</SPAN><SPAN class = "TEXT">
+be the constructors of this type, and let &lsquo;</SPAN><SPAN class = "BRKT">(Ci&nbsp;vs)</SPAN><SPAN class = "TEXT">&rsquo; represent a (curried)
+application of the </SPAN><SPAN class = "BRKT">i</SPAN><SPAN class = "TEXT">th constructor to a sequence of variables.  Then a
+curried primitive recursive function </SPAN><SPAN class = "BRKT">fn</SPAN><SPAN class = "TEXT"> over </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> can be specified by a
+conjunction of (optionally universally-quantified) clauses of the form:
+</SPAN><DIV class = "XMPL"><pre>
+   fn v1 ... (C1 vs1) ... vm  =  body1   /\
+   fn v1 ... (C2 vs2) ... vm  =  body2   /\
+                             .
+                             .
+   fn v1 ... (Cn vsn) ... vm  =  bodyn
+</pre></DIV>
+<SPAN class = "TEXT">
+where the variables </SPAN><SPAN class = "BRKT">v1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">vm</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">vs</SPAN><SPAN class = "TEXT"> are distinct in each
+clause, and where in the </SPAN><SPAN class = "BRKT">i</SPAN><SPAN class = "TEXT">th clause </SPAN><SPAN class = "BRKT">fn</SPAN><SPAN class = "TEXT"> appears (free) in </SPAN><SPAN class = "BRKT">bodyi</SPAN><SPAN class = "TEXT"> only
+as part of an application of the form:
+</SPAN><DIV class = "XMPL"><pre>
+   fn t1 ... v ... tm
+</pre></DIV>
+<SPAN class = "TEXT">
+in which the variable </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> of type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> also occurs among the
+variables </SPAN><SPAN class = "BRKT">vsi</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> is a conjunction of clauses, as described above, then evaluating:
+</SPAN><DIV class = "XMPL"><pre>
+   new_recursive_definition{name=name, rec_axiom=th,def=tm}
+</pre></DIV>
+<SPAN class = "TEXT">
+automatically proves the existence of a function </SPAN><SPAN class = "BRKT">fn</SPAN><SPAN class = "TEXT"> that satisfies
+the defining equations supplied as the fourth argument, and then declares a new
+constant in the current theory with this definition as its specification. This
+constant specification is returned as a theorem and is saved in the current
+theory segment under the name </SPAN><SPAN class = "BRKT">name</SPAN><SPAN class = "TEXT">. </SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">new_recursive_definition</SPAN><SPAN class = "TEXT"> also allows the supplied definition to omit clauses
+for any number of constructors.  If a defining equation for the </SPAN><SPAN class = "BRKT">i</SPAN><SPAN class = "TEXT">th
+constructor is omitted, then the value of </SPAN><SPAN class = "BRKT">fn</SPAN><SPAN class = "TEXT"> at that constructor:
+</SPAN><DIV class = "XMPL"><pre>
+   fn v1 ... (Ci vsi) ... vn
+</pre></DIV>
+<SPAN class = "TEXT">
+is left unspecified (</SPAN><SPAN class = "BRKT">fn</SPAN><SPAN class = "TEXT">, however, is still a total function).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">new_recursive_definition</SPAN><SPAN class = "TEXT"> fails if the supplied theorem is not a
+primitive recursion theorem of the form returned by </SPAN><SPAN class = "BRKT">define_type</SPAN><SPAN class = "TEXT">; if the term
+argument supplied is not a well-formed primitive recursive definition; or if
+any other condition for making a constant specification is violated (see the
+failure conditions for </SPAN><SPAN class = "BRKT">new_specification</SPAN><SPAN class = "TEXT">).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Given the following primitive recursion theorem for labelled binary trees:
+</SPAN><DIV class = "XMPL"><pre>
+   |- !f0 f1.
+        ?! fn.
+        (!x. fn(LEAF x) = f0 x) /\
+        (!b1 b2. fn(NODE b1 b2) = f1(fn b1)(fn b2)b1 b2)
+</pre></DIV>
+<SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">new_recursive_definition</SPAN><SPAN class = "TEXT"> can be used to define primitive recursive
+functions over binary trees.  Suppose the value of </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is this theorem.  Then
+a recursive function </SPAN><SPAN class = "BRKT">Leaves</SPAN><SPAN class = "TEXT">, which computes the number of leaves in a
+binary tree, can be defined recursively as shown below:
+</SPAN><DIV class = "XMPL"><pre>
+   - val Leaves = new_recursive_definition
+           {name = "Leaves",
+            rec_axiom = th,
+            def= --`(Leaves (LEAF (x:'a)) = 1) /\
+                    (Leaves (NODE t1 t2) = (Leaves t1) + (Leaves t2))`--};
+    &gt; val Leaves =
+        |- (!x. Leaves (LEAF x) = 1) /\
+           !t1 t2. Leaves (NODE t1 t2) = Leaves t1 + Leaves t2 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The result is a theorem which states that the constant </SPAN><SPAN class = "BRKT">Leaves</SPAN><SPAN class = "TEXT">
+satisfies the primitive-recursive defining equations supplied by the user.</SPAN>
+<P>
+<SPAN class = "TEXT">The function defined using </SPAN><SPAN class = "BRKT">new_recursive_definition</SPAN><SPAN class = "TEXT"> need not, in fact, be
+recursive.  Here is the definition of a predicate </SPAN><SPAN class = "BRKT">IsLeaf</SPAN><SPAN class = "TEXT">, which is true of
+binary trees which are leaves, but is false of the internal nodes in a binary
+tree:
+</SPAN><DIV class = "XMPL"><pre>
+   - val IsLeaf = new_recursive_definition
+           {name = "IsLeaf",
+            rec_axiom = th,
+            def = --`(IsLeaf (NODE t1 t2) = F) /\
+                     (IsLeaf (LEAF (x:'a)) = T)`--};
+&gt; val IsLeaf = |- (!t1 t2. IsLeaf (NODE t1 t2) = F) /\ 
+                  !x. IsLeaf (LEAF x) = T : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Note that the equations defining a (recursive or non-recursive)
+function on binary trees by cases can be given in either order.  Here, the
+</SPAN><SPAN class = "BRKT">NODE</SPAN><SPAN class = "TEXT"> case is given first, and the </SPAN><SPAN class = "BRKT">LEAF</SPAN><SPAN class = "TEXT"> case second.  The reverse order was
+used in the above definition of </SPAN><SPAN class = "BRKT">Leaves</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">new_recursive_definition</SPAN><SPAN class = "TEXT"> also allows the user to partially specify the value
+of a function defined on a concrete type, by allowing defining equations for
+some of the constructors to be omitted.  Here, for example, is the definition
+of a function </SPAN><SPAN class = "BRKT">Label</SPAN><SPAN class = "TEXT"> which extracts the label from a leaf node.  The value of
+</SPAN><SPAN class = "BRKT">Label</SPAN><SPAN class = "TEXT"> applied to an internal node is left unspecified:
+</SPAN><DIV class = "XMPL"><pre>
+   - val Label = new_recursive_definition
+                   {name = "Label",
+                    rec_axiom = th,
+                     def = --`Label (LEAF (x:'a)) = x`--};
+   &gt; val Label = |- !x. Label (LEAF x) = x : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Curried functions can also be defined, and the recursion can be on
+any argument.  The next definition defines an infix function </SPAN><SPAN class = "BRKT">&lt;&lt;</SPAN><SPAN class = "TEXT"> which
+expresses the idea that one tree is a proper subtree of another.
+</SPAN><DIV class = "XMPL"><pre>
+   - val _ = set_fixity ("&lt;&lt;", Infixl 231);
+
+   - val Subtree = new_recursive_definition
+           {name = "Subtree",
+            rec_axiom = th,
+            def = --`($&lt;&lt; (t:'a bintree) (LEAF (x:'a)) = F) /\
+                     ($&lt;&lt; t (NODE t1 t2) = (t = t1) \/
+                                           (t = t2) \/
+                                           ($&lt;&lt; t t1) \/
+                                           ($&lt;&lt; t t2))`--};
+   &gt; val Subtree =
+       |- (!t x. t &lt;&lt; LEAF x = F) /\
+          !t t1 t2.
+            t &lt;&lt; NODE t1 t2 = (t = t1) \/ (t = t2) \/ 
+                              (t &lt;&lt; t1) \/ (t &lt;&lt; t2) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Note that the fixity of the identifier </SPAN><SPAN class = "BRKT">&lt;&lt;</SPAN><SPAN class = "TEXT"> is set independently of
+the definition.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.Hol_datatype.html">Hol_datatype</A>,
+<A HREF = "Prim_rec.prove_rec_fn_exists.html">prove_rec_fn_exists</A>,
+<A HREF = "TotalDefn.Define.html">Define</A>,
+<A HREF = "Parse.set_fixity.html">set_fixity</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>pred_setLib.INSERT_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>INSERT_CONV : conv -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/pred_setLib.html">pred_setLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Reduce </SPAN><SPAN class = "BRKT">t&nbsp;INSERT&nbsp;{t1;...;t;...;tn}</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">{t1;...;t;...;tn}</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">pred_set</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">INSERT_CONV</SPAN><SPAN class = "TEXT"> is a parameterized conversion for reducing finite
+sets of the form </SPAN><SPAN class = "BRKT">t&nbsp;INSERT&nbsp;{t1;...;tn}</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">{t1;...;tn}</SPAN><SPAN class = "TEXT"> is a set of
+type </SPAN><SPAN class = "BRKT">ty-&gt;bool</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is equal to some element </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> of this set.  The first
+argument to </SPAN><SPAN class = "BRKT">INSERT_CONV</SPAN><SPAN class = "TEXT"> is expected to be a conversion that decides equality
+between values of the base type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">.  Given an equation </SPAN><SPAN class = "BRKT">e1&nbsp;=&nbsp;e2</SPAN><SPAN class = "TEXT">, where
+</SPAN><SPAN class = "BRKT">e1</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">e2</SPAN><SPAN class = "TEXT"> are terms of type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">, this conversion should return the theorem
+</SPAN><SPAN class = "BRKT">|-&nbsp;(e1&nbsp;=&nbsp;e2)&nbsp;=&nbsp;T</SPAN><SPAN class = "TEXT"> or the theorem </SPAN><SPAN class = "BRKT">|-&nbsp;(e1&nbsp;=&nbsp;e2)&nbsp;=&nbsp;F</SPAN><SPAN class = "TEXT">, as appropriate.</SPAN>
+<P>
+<SPAN class = "TEXT">Given such a conversion, the function </SPAN><SPAN class = "BRKT">INSERT_CONV</SPAN><SPAN class = "TEXT"> returns a conversion that
+maps a term of the form </SPAN><SPAN class = "BRKT">t&nbsp;INSERT&nbsp;{t1;...;tn}</SPAN><SPAN class = "TEXT"> to the theorem
+</SPAN><DIV class = "XMPL"><pre>
+   |- t INSERT {t1;...;tn} = {t1;...;tn}
+</pre></DIV>
+<SPAN class = "TEXT">
+if </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is alpha-equivalent to any </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> in the set </SPAN><SPAN class = "BRKT">{t1,...,tn}</SPAN><SPAN class = "TEXT">, or
+if the supplied conversion proves </SPAN><SPAN class = "BRKT">|-&nbsp;(t&nbsp;=&nbsp;ti)&nbsp;=&nbsp;T</SPAN><SPAN class = "TEXT"> for any </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In the following example, the conversion </SPAN><SPAN class = "BRKT">REDUCE_CONV</SPAN><SPAN class = "TEXT"> is supplied as a
+parameter and used to test equality of the inserted value </SPAN><SPAN class = "BRKT">2</SPAN><SPAN class = "TEXT"> with the
+remaining elements of the set.
+</SPAN><DIV class = "XMPL"><pre>
+   - INSERT_CONV REDUCE_CONV ``2 INSERT {1;SUC 1;3}``;
+   &gt; val it = |- {2; 1; SUC 1; 3} = {1; SUC 1; 3} : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+In this example, the supplied conversion </SPAN><SPAN class = "BRKT">REDUCE_CONV</SPAN><SPAN class = "TEXT"> is able to
+prove that </SPAN><SPAN class = "BRKT">2</SPAN><SPAN class = "TEXT"> is equal to </SPAN><SPAN class = "BRKT">SUC&nbsp;1</SPAN><SPAN class = "TEXT"> and the set is therefore reduced.  Note
+that </SPAN><SPAN class = "BRKT">2&nbsp;INSERT&nbsp;{1;&nbsp;SUC&nbsp;1;&nbsp;3}</SPAN><SPAN class = "TEXT"> is just </SPAN><SPAN class = "BRKT">{2;&nbsp;1;&nbsp;SUC&nbsp;1;&nbsp;3}</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">INSERT_CONV</SPAN><SPAN class = "TEXT"> fails when the value being inserted is provably not
+equal to any of the remaining elements:
+</SPAN><DIV class = "XMPL"><pre>
+   - INSERT_CONV REDUCE_CONV ``1 INSERT {2;3}``;
+   ! Uncaught exception: 
+   ! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT">
+But this failure can, if desired, be caught using </SPAN><SPAN class = "BRKT">TRY_CONV</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The behaviour of the supplied conversion is irrelevant when the inserted value
+is alpha-equivalent to one of the remaining elements:
+</SPAN><DIV class = "XMPL"><pre>
+   - INSERT_CONV NO_CONV ``y INSERT {x;y;z}``;
+   &gt; val it = |- {y; x; y; z} = {x; y; z} : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The conversion </SPAN><SPAN class = "BRKT">NO_CONV</SPAN><SPAN class = "TEXT"> always fails, but </SPAN><SPAN class = "BRKT">INSERT_CONV</SPAN><SPAN class = "TEXT"> is
+nontheless able in this case to prove the required result.  </SPAN>
+<P>
+<SPAN class = "TEXT">Note that </SPAN><SPAN class = "BRKT">DEPTH_CONV(INSERT_CONV&nbsp;conv)</SPAN><SPAN class = "TEXT"> can be used to remove duplicate
+elements from a finite set, but the following conversion is faster:
+</SPAN><DIV class = "XMPL"><pre>
+   - fun SETIFY_CONV conv tm =
+      (SUB_CONV (SETIFY_CONV conv) 
+        THENC 
+       TRY_CONV (INSERT_CONV conv)) tm;
+   &gt; val SETIFY_CONV = fn : conv -&gt; conv
+
+   - SETIFY_CONV REDUCE_CONV ``{1;2;1;3;2;4;3;5;6}``;
+   &gt; val it = |- {1; 2; 1; 3; 2; 4; 3; 5; 6} = {1; 2; 4; 3; 5; 6} : thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">INSERT_CONV&nbsp;conv</SPAN><SPAN class = "TEXT"> fails if applied to a term not of the form
+</SPAN><SPAN class = "BRKT">t&nbsp;INSERT&nbsp;{t1;...;tn}</SPAN><SPAN class = "TEXT">.  A call </SPAN><SPAN class = "BRKT">INSERT_CONV&nbsp;conv&nbsp;``t&nbsp;INSERT&nbsp;{t1;...;tn}</SPAN><SPAN class = "TEXT">
+fails unless </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is alpha-equivalent to some </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT">, or </SPAN><SPAN class = "BRKT">conv&nbsp;``t&nbsp;=&nbsp;ti``</SPAN><SPAN class = "TEXT"> returns
+</SPAN><SPAN class = "BRKT">|-&nbsp;(t&nbsp;=&nbsp;ti)&nbsp;=&nbsp;T</SPAN><SPAN class = "TEXT"> for some </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "pred_setLib.DELETE_CONV.html">DELETE_CONV</A>,
+<A HREF = "numLib.REDUCE_CONV.html">REDUCE_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

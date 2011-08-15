@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure FinalTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure FinalTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/prekernel/FinalScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature FinalTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  type hol_type
+<a name="line5"></a>  type term
+<a name="line6"></a>  type thm
+<a name="line7"></a>  type ppstream  = Portable.ppstream
+<a name="line8"></a>  type thy_addon = {sig_ps    : (ppstream -&gt; unit) option,
+<a name="line9"></a>                    struct_ps : (ppstream -&gt; unit) option}
+<a name="line10"></a>  type num = Arbnum.num
+<a name="line11"></a>
+<a name="line12"></a>(* Create a new theory *)
+<a name="line13"></a>
+<a name="line14"></a>  val new_theory         : string -&gt; unit
+<a name="line15"></a>
+<a name="line16"></a>(* Add to the current theory segment *)
+<a name="line17"></a>
+<a name="line18"></a>  val new_type           : string * int -&gt; unit
+<a name="line19"></a>  val new_constant       : string * hol_type -&gt; unit
+<a name="line20"></a>  val new_axiom          : string * term -&gt; thm
+<a name="line21"></a>  val save_thm           : string * thm -&gt; thm
+<a name="line22"></a>
+<a name="line23"></a>(* Delete from the current theory segment *)
+<a name="line24"></a>
+<a name="line25"></a>  val delete_type        : string -&gt; unit
+<a name="line26"></a>  val delete_const       : string -&gt; unit
+<a name="line27"></a>  val delete_binding     : string -&gt; unit
+<a name="line28"></a>
+<a name="line29"></a>(* Information on the current theory segment *)
+<a name="line30"></a>
+<a name="line31"></a>  val current_theory     : unit -&gt; string
+<a name="line32"></a>  val stamp              : string -&gt; Time.time
+<a name="line33"></a>  val parents            : string -&gt; string list
+<a name="line34"></a>  val ancestry           : string -&gt; string list
+<a name="line35"></a>  val types              : string -&gt; (string * int) list
+<a name="line36"></a>  val constants          : string -&gt; term list
+<a name="line37"></a>  val current_axioms     : unit -&gt; (string * thm) list
+<a name="line38"></a>  val current_theorems   : unit -&gt; (string * thm) list
+<a name="line39"></a>  val current_definitions : unit -&gt; (string * thm) list
+<a name="line40"></a>
+<a name="line41"></a>(* Support for persistent theories *)
+<a name="line42"></a>
+<a name="line43"></a>  val adjoin_to_theory   : thy_addon -&gt; unit
+<a name="line44"></a>  val export_theory      : unit -&gt; unit
+<a name="line45"></a>  val after_new_theory   : (string * string -&gt; unit) -&gt; unit
+<a name="line46"></a>
+<a name="line47"></a>(* -- and persistent data added to theories *)
+<a name="line48"></a>  structure LoadableThyData : sig
+<a name="line49"></a>    type t
+<a name="line50"></a>    val new : {thydataty : string, merge : 'a * 'a -&gt; 'a,
+<a name="line51"></a>               read : string -&gt; 'a option, write : 'a -&gt; string} -&gt;
+<a name="line52"></a>              ('a -&gt; t) * (t -&gt; 'a option)
+<a name="line53"></a>    val segment_data : {thy: string, thydataty: string} -&gt; t option
+<a name="line54"></a>    val write_data_update : {thydataty : string, data : t} -&gt; unit
+<a name="line55"></a>    (* call in a session to record something for later -
+<a name="line56"></a>       updates segment data, and  will eventually cause a call to
+<a name="line57"></a>       temp_encoded_update to appear in the theory file. *)
+<a name="line58"></a>
+<a name="line59"></a>    val temp_encoded_update : {thy : string, thydataty : string,
+<a name="line60"></a>                               data : string} -&gt; unit
+<a name="line61"></a>    (* updates segment data using an encoded string *)
+<a name="line62"></a>  end
+<a name="line63"></a>
+<a name="line64"></a>(* Register function to be called when a theory loads *)
+<a name="line65"></a>  val register_onload : (string -&gt; unit) -&gt; unit
+<a name="line66"></a>  val load_complete : string -&gt; unit
+<a name="line67"></a>
+<a name="line68"></a>(* Freshness information on HOL objects *)
+<a name="line69"></a>
+<a name="line70"></a>  val uptodate_type      : hol_type -&gt; bool
+<a name="line71"></a>  val uptodate_term      : term -&gt; bool
+<a name="line72"></a>  val uptodate_thm       : thm -&gt; bool
+<a name="line73"></a>  val scrub              : unit -&gt; unit
+<a name="line74"></a>
+<a name="line75"></a>  val try_theory_extension : ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line76"></a>
+<a name="line77"></a>(* Changing internal bindings of ML-level names to theory objects *)
+<a name="line78"></a>
+<a name="line79"></a>  val set_MLname         : string -&gt; string -&gt; unit
+<a name="line80"></a>
+<a name="line81"></a>(* For internal use *)
+<a name="line82"></a>
+<a name="line83"></a>  val pp_thm             : (ppstream -&gt; thm -&gt; unit) ref
+<a name="line84"></a>  val link_parents       : string*num*num -&gt; (string*num*num)list -&gt; unit
+<a name="line85"></a>  val incorporate_types  : string -&gt; (string*int) list -&gt; unit
+<a name="line86"></a>
+<a name="line87"></a>end
+<a name="line88"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/prekernel/FinalScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-7</a></em></p></body></html>

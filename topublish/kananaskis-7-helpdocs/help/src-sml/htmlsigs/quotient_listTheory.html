@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure quotient_listTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure quotient_listTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quotient/src/quotient_listScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature quotient_listTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Theorems  *)
+<a name="line6"></a>    val ALL_EL_PRS : thm
+<a name="line7"></a>    val ALL_EL_RSP : thm
+<a name="line8"></a>    val APPEND_PRS : thm
+<a name="line9"></a>    val APPEND_RSP : thm
+<a name="line10"></a>    val CONS_PRS : thm
+<a name="line11"></a>    val CONS_RSP : thm
+<a name="line12"></a>    val FILTER_PRS : thm
+<a name="line13"></a>    val FILTER_RSP : thm
+<a name="line14"></a>    val FLAT_PRS : thm
+<a name="line15"></a>    val FLAT_RSP : thm
+<a name="line16"></a>    val FOLDL_PRS : thm
+<a name="line17"></a>    val FOLDL_RSP : thm
+<a name="line18"></a>    val FOLDR_PRS : thm
+<a name="line19"></a>    val FOLDR_RSP : thm
+<a name="line20"></a>    val LENGTH_PRS : thm
+<a name="line21"></a>    val LENGTH_RSP : thm
+<a name="line22"></a>    val LIST_EQUIV : thm
+<a name="line23"></a>    val LIST_MAP_I : thm
+<a name="line24"></a>    val LIST_QUOTIENT : thm
+<a name="line25"></a>    val LIST_REL_EQ : thm
+<a name="line26"></a>    val LIST_REL_REFL : thm
+<a name="line27"></a>    val LIST_REL_REL : thm
+<a name="line28"></a>    val MAP_PRS : thm
+<a name="line29"></a>    val MAP_RSP : thm
+<a name="line30"></a>    val NIL_PRS : thm
+<a name="line31"></a>    val NIL_RSP : thm
+<a name="line32"></a>    val NULL_PRS : thm
+<a name="line33"></a>    val NULL_RSP : thm
+<a name="line34"></a>    val REVERSE_PRS : thm
+<a name="line35"></a>    val REVERSE_RSP : thm
+<a name="line36"></a>    val SOME_EL_PRS : thm
+<a name="line37"></a>    val SOME_EL_RSP : thm
+<a name="line38"></a>  
+<a name="line39"></a>  val quotient_list_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line40"></a>(*
+   [quotient] Parent theory of "quotient_list"
+   
+   [rich_list] Parent theory of "quotient_list"
+   
+   [ALL_EL_PRS]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l P. EVERY P l ⇔ EVERY ((abs --&gt; I) P) (MAP rep l)
+   
+   [ALL_EL_RSP]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l1 l2 P1 P2.
+             (R ===&gt; $&lt;=&gt;) P1 P2 ∧ LIST_REL R l1 l2 ⇒
+             (EVERY P1 l1 ⇔ EVERY P2 l2)
+   
+   [APPEND_PRS]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l m. l ++ m = MAP abs (MAP rep l ++ MAP rep m)
+   
+   [APPEND_RSP]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l1 l2 m1 m2.
+             LIST_REL R l1 l2 ∧ LIST_REL R m1 m2 ⇒
+             LIST_REL R (l1 ++ m1) (l2 ++ m2)
+   
+   [CONS_PRS]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒ ∀t h. h::t = MAP abs (rep h::MAP rep t)
+   
+   [CONS_RSP]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀t1 t2 h1 h2.
+             R h1 h2 ∧ LIST_REL R t1 t2 ⇒ LIST_REL R (h1::t1) (h2::t2)
+   
+   [FILTER_PRS]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀P l. FILTER P l = MAP abs (FILTER ((abs --&gt; I) P) (MAP rep l))
+   
+   [FILTER_RSP]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀P1 P2 l1 l2.
+             (R ===&gt; $&lt;=&gt;) P1 P2 ∧ LIST_REL R l1 l2 ⇒
+             LIST_REL R (FILTER P1 l1) (FILTER P2 l2)
+   
+   [FLAT_PRS]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l. FLAT l = MAP abs (FLAT (MAP (MAP rep) l))
+   
+   [FLAT_RSP]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l1 l2.
+             LIST_REL (LIST_REL R) l1 l2 ⇒ LIST_REL R (FLAT l1) (FLAT l2)
+   
+   [FOLDL_PRS]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀l f e.
+               FOLDL f e l =
+               abs1
+                 (FOLDL ((abs1 --&gt; abs2 --&gt; rep1) f) (rep1 e) (MAP rep2 l))
+   
+   [FOLDL_RSP]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀l1 l2 f1 f2 e1 e2.
+               (R1 ===&gt; R2 ===&gt; R1) f1 f2 ∧ R1 e1 e2 ∧ LIST_REL R2 l1 l2 ⇒
+               R1 (FOLDL f1 e1 l1) (FOLDL f2 e2 l2)
+   
+   [FOLDR_PRS]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀l f e.
+               FOLDR f e l =
+               abs2
+                 (FOLDR ((abs1 --&gt; abs2 --&gt; rep2) f) (rep2 e) (MAP rep1 l))
+   
+   [FOLDR_RSP]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀l1 l2 f1 f2 e1 e2.
+               (R1 ===&gt; R2 ===&gt; R2) f1 f2 ∧ R2 e1 e2 ∧ LIST_REL R1 l1 l2 ⇒
+               R2 (FOLDR f1 e1 l1) (FOLDR f2 e2 l2)
+   
+   [LENGTH_PRS]  Theorem
+      
+      |- ∀R abs rep. QUOTIENT R abs rep ⇒ ∀l. LENGTH l = LENGTH (MAP rep l)
+   
+   [LENGTH_RSP]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l1 l2. LIST_REL R l1 l2 ⇒ (LENGTH l1 = LENGTH l2)
+   
+   [LIST_EQUIV]  Theorem
+      
+      |- ∀R. EQUIV R ⇒ EQUIV (LIST_REL R)
+   
+   [LIST_MAP_I]  Theorem
+      
+      |- MAP I = I
+   
+   [LIST_QUOTIENT]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒ QUOTIENT (LIST_REL R) (MAP abs) (MAP rep)
+   
+   [LIST_REL_EQ]  Theorem
+      
+      |- LIST_REL $= = $=
+   
+   [LIST_REL_REFL]  Theorem
+      
+      |- ∀R. (∀x y. R x y ⇔ (R x = R y)) ⇒ ∀x. LIST_REL R x x
+   
+   [LIST_REL_REL]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀r s.
+             LIST_REL R r s ⇔
+             LIST_REL R r r ∧ LIST_REL R s s ∧ (MAP abs r = MAP abs s)
+   
+   [MAP_PRS]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀l f.
+               MAP f l = MAP abs2 (MAP ((abs1 --&gt; rep2) f) (MAP rep1 l))
+   
+   [MAP_RSP]  Theorem
+      
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀l1 l2 f1 f2.
+               (R1 ===&gt; R2) f1 f2 ∧ LIST_REL R1 l1 l2 ⇒
+               LIST_REL R2 (MAP f1 l1) (MAP f2 l2)
+   
+   [NIL_PRS]  Theorem
+      
+      |- ∀R abs rep. QUOTIENT R abs rep ⇒ ([] = MAP abs [])
+   
+   [NIL_RSP]  Theorem
+      
+      |- ∀R abs rep. QUOTIENT R abs rep ⇒ LIST_REL R [] []
+   
+   [NULL_PRS]  Theorem
+      
+      |- ∀R abs rep. QUOTIENT R abs rep ⇒ ∀l. NULL l ⇔ NULL (MAP rep l)
+   
+   [NULL_RSP]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l1 l2. LIST_REL R l1 l2 ⇒ (NULL l1 ⇔ NULL l2)
+   
+   [REVERSE_PRS]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l. REVERSE l = MAP abs (REVERSE (MAP rep l))
+   
+   [REVERSE_RSP]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l1 l2. LIST_REL R l1 l2 ⇒ LIST_REL R (REVERSE l1) (REVERSE l2)
+   
+   [SOME_EL_PRS]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l P. EXISTS P l ⇔ EXISTS ((abs --&gt; I) P) (MAP rep l)
+   
+   [SOME_EL_RSP]  Theorem
+      
+      |- ∀R abs rep.
+           QUOTIENT R abs rep ⇒
+           ∀l1 l2 P1 P2.
+             (R ===&gt; $&lt;=&gt;) P1 P2 ∧ LIST_REL R l1 l2 ⇒
+             (EXISTS P1 l1 ⇔ EXISTS P2 l2)
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quotient/src/quotient_listScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-7</a></em></p></body></html>

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Tactic.STRUCT_CASES_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>STRUCT_CASES_TAC : thm_tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactic.html">Tactic</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Performs very general structural case analysis.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When it is applied to a theorem of the form:
+</SPAN><DIV class = "XMPL"><pre>
+   th = A' |- ?y11...y1m. (x=t1) /\ (B11 /\ ... /\ B1k) \/ ... \/
+                ?yn1...ynp. (x=tn) /\ (Bn1 /\ ... /\ Bnp)
+</pre></DIV>
+<SPAN class = "TEXT">
+in which there may be no existential quantifiers where a &lsquo;vector&rsquo; of
+them is shown above, </SPAN><SPAN class = "BRKT">STRUCT_CASES_TAC&nbsp;th</SPAN><SPAN class = "TEXT"> splits a goal </SPAN><SPAN class = "BRKT">A&nbsp;?-&nbsp;s</SPAN><SPAN class = "TEXT"> into </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">
+subgoals as follows:
+</SPAN><DIV class = "XMPL"><pre>
+                             A ?- s
+   ===============================================================
+    A u {B11,...,B1k} ?- s[t1/x] ... A u {Bn1,...,Bnp} ?- s[tn/x]
+</pre></DIV>
+<SPAN class = "TEXT">
+that is, performs a case split over the possible constructions (the
+</SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT">) of a term, providing as assumptions the given constraints, having
+split conjoined constraints into separate assumptions. Note that unless </SPAN><SPAN class = "BRKT">A'</SPAN><SPAN class = "TEXT">
+is a subset of </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT">, this is an invalid tactic.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails unless the theorem has the above form, namely a conjunction of
+(possibly multiply existentially quantified) terms which assert the equality
+of the same variable </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> and the given terms.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Suppose we have the goal:
+</SPAN><DIV class = "XMPL"><pre>
+  ?- ~(l:(*)list = []) ==&gt; (LENGTH l) &gt; 0
+</pre></DIV>
+<SPAN class = "TEXT">
+then we can get rid of the universal quantifier from the
+inbuilt list theorem </SPAN><SPAN class = "BRKT">list_CASES</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   list_CASES = !l. (l = []) \/ (?t h. l = CONS h t)
+</pre></DIV>
+<SPAN class = "TEXT">
+and then use </SPAN><SPAN class = "BRKT">STRUCT_CASES_TAC</SPAN><SPAN class = "TEXT">. This amounts to applying the
+following tactic:
+</SPAN><DIV class = "XMPL"><pre>
+   STRUCT_CASES_TAC (SPEC_ALL list_CASES)
+</pre></DIV>
+<SPAN class = "TEXT">
+which results in the following two subgoals:
+</SPAN><DIV class = "XMPL"><pre>
+   ?- ~(CONS h t = []) ==&gt; (LENGTH(CONS h t)) &gt; 0
+
+   ?- ~([] = []) ==&gt; (LENGTH[]) &gt; 0
+</pre></DIV>
+<SPAN class = "TEXT">
+Note that this is a rather simple case, since there are no
+constraints, and therefore the resulting subgoals have no assumptions.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Generating a case split from the axioms specifying a structure.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactic.ASM_CASES_TAC.html">ASM_CASES_TAC</A>,
+<A HREF = "Tactic.BOOL_CASES_TAC.html">BOOL_CASES_TAC</A>,
+<A HREF = "Tactic.COND_CASES_TAC.html">COND_CASES_TAC</A>,
+<A HREF = "Tactic.DISJ_CASES_TAC.html">DISJ_CASES_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

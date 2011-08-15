@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Theory.delete_type</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>delete_type : string -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Theory.html">Theory</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Remove a type operator from the signature.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An invocation </SPAN><SPAN class = "BRKT">delete_type&nbsp;s</SPAN><SPAN class = "TEXT"> removes the type constant denoted by </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">
+from the current HOL segment. All types, terms, and theorems that 
+depend on that type should therefore disappear, as though they hadn&rsquo;t been
+constructed in the first place. Conceptually, they have become "garbage"
+and need to be collected. However, because of the way that HOL is
+implemented in ML, it is not possible to have them automatically collected.
+Instead, HOL tracks the currency of type and term constants and provides
+some consistency maintenance support.</SPAN>
+<P>
+<SPAN class = "TEXT">In particular, the implementation ensures that a deleted type
+operator is never equal to a subsequently declared type operator
+with the same name (and arity). Furthermore, although garbage types,
+terms, and theorems may exist in a session, no theorem, definition, 
+or axiom that is garbage is exported when </SPAN><SPAN class = "BRKT">export_theory</SPAN><SPAN class = "TEXT"> is invoked. </SPAN>
+<P>
+<SPAN class = "TEXT">The notion of garbage is hereditary. Any type, term, definition, or theorem
+is garbage if any of its constituents are. Furthermore, if a type operator or 
+term constant had been defined, and its witness theorem later later becomes
+garbage, then that type or term is garbage, as is anything built from it.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If a type constant named </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> has not been declared in the current segment,
+a warning will be issued, but an exception will not be raised.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+new_type ("foo", 2);
+&gt; val it = () : unit
+
+- val thm = REFL (Term `f:('a,'b)foo`);
+&gt; val thm = |- f = f : thm
+
+- delete_type "foo";
+&gt; val it = () : unit
+
+- thm;
+&gt; val it = |- f = f : thm
+
+- show_types := true;
+&gt; val it = () : unit
+
+- thm;
+&gt; val it = |- (x :(('a, 'b) scratch$old-&gt;f&lt;-old)) = x : thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">It&rsquo;s rather dodgy to withdraw constants from the HOL signature. </SPAN>
+<P>
+<SPAN class = "TEXT">It is not possible to delete constants from ancestor theories.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Theory.delete_const.html">delete_const</A>,
+<A HREF = "Theory.uptodate_type.html">uptodate_type</A>,
+<A HREF = "Theory.uptodate_term.html">uptodate_term</A>,
+<A HREF = "Theory.uptodate_thm.html">uptodate_thm</A>,
+<A HREF = "Theory.scrub.html">scrub</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

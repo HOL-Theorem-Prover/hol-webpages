@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Theory.after_new_theory</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>after_new_theory : (string * string -&gt; unit) -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Theory.html">Theory</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Initialize package once a theory is declared.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Some HOL infrastructure depends on certain packages being
+informed each time a new theory is created. The function </SPAN><SPAN class = "BRKT">after_new_theory</SPAN><SPAN class = "TEXT">
+supports this. An invocation </SPAN><SPAN class = "BRKT">after_new_theory&nbsp;f</SPAN><SPAN class = "TEXT"> adds the function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">
+to an internal queue of &lsquo;initializers&rsquo;. All subsequent calls to
+</SPAN><SPAN class = "BRKT">new_theory</SPAN><SPAN class = "TEXT"> will cause each initializer to be run, in queue order. Each
+initializer will be given the names of the theory segments from before
+and after the call to </SPAN><SPAN class = "BRKT">new_theory</SPAN><SPAN class = "TEXT"> as its argument..</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">It can be that an initializer fails for some reason when it is executed.
+Any exceptions will be caught, and an attempt will be made to print
+out a message. Then execution of the remaining initializers will continue.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- fun every8 s (a::b::c::d::e::f::g::h::rst) =
+                a::b::c::d::e::f::g::h::s::every8 s rst
+    | every8 s otherwise = otherwise;
+&gt; val 'a every8 = fn : 'a -&gt; 'a list -&gt; 'a list
+
+- after_new_theory (fn (old,s) =&gt;
+    (print ("Ancestors of "^s^":\n  ");
+     print (String.concat (every8 "\n  " (commafy (ancestry s))));
+     print ".\n"));
+&gt; val it = () : unit
+
+- new_theory"foo";
+&lt;&lt;HOL message: Created theory "foo"&gt;&gt;
+Ancestors of foo:
+  one, option, pair, sum,
+  combin, relation, min, bool,
+  num, prim_rec, arithmetic, numeral,
+  ind_type, list.
+&gt; val it = () : unit
+
+- new_theory"bar";
+Exporting theory "foo" ... done.
+&lt;&lt;HOL message: Created theory "bar"&gt;&gt;
+Ancestors of bar:
+  one, option, pair, sum,
+  combin, relation, min, bool,
+  num, prim_rec, arithmetic, numeral,
+  ind_type, list, foo.
+&gt; val it = () : unit
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Perhaps there should be a </SPAN><SPAN class = "BRKT">before_export_theory</SPAN><SPAN class = "TEXT"> call as well?</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fairly low level system support tasks.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Theory.adjoin_to_theory.html">adjoin_to_theory</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Parse.Term</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Parse.Term : term quotation -&gt; term</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Parses a quotation into a term value.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The parsing process for terms divides into four distinct phases.</SPAN>
+<P>
+<SPAN class = "TEXT">The first phase converts the quotation argument into abstract syntax,
+a relatively simple parse tree datatype, with the following datatype
+definition (from </SPAN><SPAN class = "BRKT">Absyn</SPAN><SPAN class = "TEXT">):
+</SPAN><DIV class = "XMPL"><pre>
+   datatype vstruct
+       = VAQ    of term
+       | VIDENT of string
+       | VPAIR  of vstruct * vstruct
+       | VTYPED of vstruct * pretype
+   datatype absyn
+       = AQ    of term
+       | IDENT of string
+       | APP   of absyn * absyn
+       | LAM   of vstruct * absyn
+       | TYPED of absyn * pretype
+</pre></DIV>
+<SPAN class = "TEXT">
+This phase of parsing is concerned with the treatment of the
+rawest concrete syntax.  It has no notion of whether or not a term
+corresponds to a constant or a variable, so all </SPAN><SPAN class = "BRKT">preterm</SPAN><SPAN class = "TEXT"> leaves are
+ultimately either </SPAN><SPAN class = "BRKT">IDENT</SPAN><SPAN class = "TEXT">s or </SPAN><SPAN class = "BRKT">AQ</SPAN><SPAN class = "TEXT">s (anti-quotations).</SPAN>
+<P>
+<SPAN class = "TEXT">This first phase converts infixes, mixfixes and all the other
+categories of syntactic rule from the global grammar into simple
+structures built up using </SPAN><SPAN class = "BRKT">APP</SPAN><SPAN class = "TEXT">.  For example, </SPAN><SPAN class = "BRKT">`x&nbsp;op&nbsp;y`</SPAN><SPAN class = "TEXT"> (where </SPAN><SPAN class = "BRKT">op</SPAN><SPAN class = "TEXT">
+is an infix) will turn into
+</SPAN><DIV class = "XMPL"><pre>
+   APP(APP(IDENT "op", IDENT "x"), IDENT "y")
+</pre></DIV>
+<SPAN class = "TEXT">
+and </SPAN><SPAN class = "BRKT">`tok1&nbsp;x&nbsp;tok2&nbsp;y`</SPAN><SPAN class = "TEXT"> (where </SPAN><SPAN class = "BRKT">tok1&nbsp;_&nbsp;tok2</SPAN><SPAN class = "TEXT"> has been declared as a
+</SPAN><SPAN class = "BRKT">TruePrefix</SPAN><SPAN class = "TEXT"> form for the term </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">) will turn into
+</SPAN><DIV class = "XMPL"><pre>
+   APP(APP(IDENT "f", IDENT "x"), IDENT "y")
+</pre></DIV>
+<SPAN class = "TEXT">
+The special syntaxes for &ldquo;let&rdquo; and record expressions are also
+handled at this stage.  For more details on how this is done see the
+reference entry for </SPAN><SPAN class = "BRKT">Absyn</SPAN><SPAN class = "TEXT">, which function can be used in
+isolation to see what is done at this phase.</SPAN>
+<P>
+<SPAN class = "TEXT">The second phase of parsing consists of the resolution of names,
+identifying what were just </SPAN><SPAN class = "BRKT">VAR</SPAN><SPAN class = "TEXT">s as constants or genuine variables
+(whether free or bound).  This phase also annotates all leaves of the
+data structure (given in the entry for </SPAN><SPAN class = "BRKT">Preterm</SPAN><SPAN class = "TEXT">) with type
+information.</SPAN>
+<P>
+<SPAN class = "TEXT">The third phase of parsing works over the </SPAN><SPAN class = "BRKT">Preterm</SPAN><SPAN class = "TEXT"> datatype and does
+type-checking, though ignoring overloaded values.  The datatype being
+operated over uses reference variables to allow for efficiency, and
+the type-checking is done &ldquo;in place&rdquo;.  If type-checking is
+successful, the resulting value has consistent type annotations.</SPAN>
+<P>
+<SPAN class = "TEXT">The final phase of parsing resolves overloaded constants.  The
+type-checking done to this point may completely determine which choice
+of overloaded constant is appropriate, but if not, the choice may
+still be completely determined by the interaction of the possible
+types for the overloaded possibilities.</SPAN>
+<P>
+<SPAN class = "TEXT">Finally, depending on the value of the global flags </SPAN><SPAN class = "BRKT">guessing_tyvars</SPAN><SPAN class = "TEXT">
+and </SPAN><SPAN class = "BRKT">guessing_overloads</SPAN><SPAN class = "TEXT">, the parser will make choices about how to
+resolve any remaining ambiguities.</SPAN>
+<P>
+<SPAN class = "TEXT">The parsing process is entirely driven by the global grammar.  This
+value can be inspected with the </SPAN><SPAN class = "BRKT">term_grammar</SPAN><SPAN class = "TEXT"> function.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">All over place, and for all sorts of reasons.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Turns strings into terms.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.Absyn.html">Absyn</A>,
+<A HREF = "Parse.overload_on.html">overload_on</A>,
+<A HREF = "Parse.term_grammar.html">term_grammar</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

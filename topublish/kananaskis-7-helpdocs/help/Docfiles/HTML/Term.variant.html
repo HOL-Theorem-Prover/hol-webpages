@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Term.variant</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>variant : term list -&gt; term -&gt; term</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Term.html">Term</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Modifies a variable name to avoid clashes.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to a list of variables to avoid clashing with, and a
+variable to modify, </SPAN><SPAN class = "BRKT">variant</SPAN><SPAN class = "TEXT"> returns a variant of the variable to
+modify, that is, it changes the name as intuitively as possible to
+make it distinct from any variables in the list, or any constants.
+This is normally done by adding primes to the name.</SPAN>
+<P>
+<SPAN class = "TEXT">The exact form of the variable name should not be relied on, except
+that the original variable will be returned unmodified unless it is
+itself in the list to avoid clashing with, or if it is the name of a
+constant.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">variant&nbsp;l&nbsp;t</SPAN><SPAN class = "TEXT"> fails if any term in the list </SPAN><SPAN class = "BRKT">l</SPAN><SPAN class = "TEXT"> is not a variable or if
+</SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is not a variable.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following shows a couple of typical cases:
+</SPAN><DIV class = "XMPL"><pre>
+   - variant [Term`y:bool`, Term`z:bool`] (Term`x:bool`);
+   &gt; val it = `x` : term
+
+   - variant [Term`x:bool`, Term`x':num`, Term`x'':num`] (Term `x:bool`);
+   &gt; val it = `x'''` : term
+</pre></DIV>
+<SPAN class = "TEXT">
+while the following shows that clashes with the names of constants
+are also avoided:
+</SPAN><DIV class = "XMPL"><pre>
+   - variant [] (mk_var("T",bool));
+   &gt; val it = `T'` : term
+</pre></DIV>
+<SPAN class = "TEXT">
+The style of renaming can be altered by modifying the reference
+variable </SPAN><SPAN class = "BRKT">Globals.priming</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   - with_flag (priming,SOME "_")
+     (uncurry variant)
+     ([Term`x:bool`, Term`x':num`, Term`x'':num`], Term `x:bool`);
+
+   &gt; val it = `x_1` : term
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">variant</SPAN><SPAN class = "TEXT"> is extremely useful for complicated derived
+rules which need to rename variables to avoid free variable capture
+while still making the role of the variable obvious to the user.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Term.genvar.html">genvar</A>,
+<A HREF = "Term.prim_variant.html">prim_variant</A>,
+<A HREF = "Globals.priming.html">priming</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure alistTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure alistTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/finite_map/alistScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature alistTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val ALOOKUP_curried_def : thm
+<a name="line7"></a>    val ALOOKUP_tupled_primitive_def : thm
+<a name="line8"></a>    val alist_to_fmap_def : thm
+<a name="line9"></a>    val fmap_to_alist_def : thm
+<a name="line10"></a>  
+<a name="line11"></a>  (*  Theorems  *)
+<a name="line12"></a>    val ALOOKUP_EQ_FLOOKUP : thm
+<a name="line13"></a>    val ALOOKUP_FAILS : thm
+<a name="line14"></a>    val ALOOKUP_MEM : thm
+<a name="line15"></a>    val ALOOKUP_TABULATE : thm
+<a name="line16"></a>    val ALOOKUP_def : thm
+<a name="line17"></a>    val ALOOKUP_ind : thm
+<a name="line18"></a>    val ALOOKUP_prefix : thm
+<a name="line19"></a>    val FDOM_alist_to_fmap : thm
+<a name="line20"></a>    val FLOOKUP_FUPDATE_LIST_ALOOKUP_NONE : thm
+<a name="line21"></a>    val FLOOKUP_FUPDATE_LIST_ALOOKUP_SOME : thm
+<a name="line22"></a>    val FUPDATE_LIST_EQ_APPEND_REVERSE : thm
+<a name="line23"></a>    val MEM_fmap_to_alist : thm
+<a name="line24"></a>    val alist_to_fmap_prefix : thm
+<a name="line25"></a>    val alist_to_fmap_thm : thm
+<a name="line26"></a>    val fmap_to_alist_FEMPTY : thm
+<a name="line27"></a>    val fmap_to_alist_to_fmap : thm
+<a name="line28"></a>  
+<a name="line29"></a>  val alist_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line30"></a>(*
+   [finite_map] Parent theory of "alist"
+   
+   [ALOOKUP_curried_def]  Definition
+      
+      |- ∀x x1. ALOOKUP x x1 = ALOOKUP_tupled (x,x1)
+   
+   [ALOOKUP_tupled_primitive_def]  Definition
+      
+      |- ALOOKUP_tupled =
+         WFREC (@R. WF R ∧ ∀y t q x. x ≠ q ⇒ R (t,q) ((x,y)::t,q))
+           (λALOOKUP_tupled a.
+              case a of
+                 ([],q) -&gt; I NONE
+              || ((x,y)::t,q) -&gt;
+                   I (if x = q then SOME y else ALOOKUP_tupled (t,q)))
+   
+   [alist_to_fmap_def]  Definition
+      
+      |- ∀s. alist_to_fmap s = FOLDR (λ(k,v) f. f |+ (k,v)) FEMPTY s
+   
+   [fmap_to_alist_def]  Definition
+      
+      |- ∀s. fmap_to_alist s = MAP (λk. (k,s ' k)) (SET_TO_LIST (FDOM s))
+   
+   [ALOOKUP_EQ_FLOOKUP]  Theorem
+      
+      |- (FLOOKUP (alist_to_fmap al) = ALOOKUP al) ∧
+         (ALOOKUP (fmap_to_alist fm) = FLOOKUP fm)
+   
+   [ALOOKUP_FAILS]  Theorem
+      
+      |- (ALOOKUP l x = NONE) ⇔ ∀k v. MEM (k,v) l ⇒ k ≠ x
+   
+   [ALOOKUP_MEM]  Theorem
+      
+      |- ∀al k v. (ALOOKUP al k = SOME v) ⇒ MEM (k,v) al
+   
+   [ALOOKUP_TABULATE]  Theorem
+      
+      |- ALL_DISTINCT l ∧ MEM x l ⇒
+         (ALOOKUP (MAP (λk. (k,f k)) l) x = SOME (f x))
+   
+   [ALOOKUP_def]  Theorem
+      
+      |- (∀q. ALOOKUP [] q = NONE) ∧
+         ∀y x t q.
+           ALOOKUP ((x,y)::t) q = if x = q then SOME y else ALOOKUP t q
+   
+   [ALOOKUP_ind]  Theorem
+      
+      |- ∀P.
+           (∀q. P [] q) ∧ (∀x y t q. (x ≠ q ⇒ P t q) ⇒ P ((x,y)::t) q) ⇒
+           ∀v v1. P v v1
+   
+   [ALOOKUP_prefix]  Theorem
+      
+      |- ∀ls k ls2.
+           ((ALOOKUP ls k = SOME v) ⇒ (ALOOKUP (ls ++ ls2) k = SOME v)) ∧
+           ((ALOOKUP ls k = NONE) ⇒
+            (ALOOKUP (ls ++ ls2) k = ALOOKUP ls2 k))
+   
+   [FDOM_alist_to_fmap]  Theorem
+      
+      |- ∀al. FDOM (alist_to_fmap al) = set (MAP FST al)
+   
+   [FLOOKUP_FUPDATE_LIST_ALOOKUP_NONE]  Theorem
+      
+      |- (ALOOKUP ls k = NONE) ⇒
+         (FLOOKUP (fm |++ REVERSE ls) k = FLOOKUP fm k)
+   
+   [FLOOKUP_FUPDATE_LIST_ALOOKUP_SOME]  Theorem
+      
+      |- (ALOOKUP ls k = SOME v) ⇒ (FLOOKUP (fm |++ REVERSE ls) k = SOME v)
+   
+   [FUPDATE_LIST_EQ_APPEND_REVERSE]  Theorem
+      
+      |- ∀ls fm. fm |++ ls = alist_to_fmap (REVERSE ls ++ fmap_to_alist fm)
+   
+   [MEM_fmap_to_alist]  Theorem
+      
+      |- MEM (x,y) (fmap_to_alist fm) ⇔ x ∈ FDOM fm ∧ (fm ' x = y)
+   
+   [alist_to_fmap_prefix]  Theorem
+      
+      |- ∀ls l1 l2.
+           (alist_to_fmap l1 = alist_to_fmap l2) ⇒
+           (alist_to_fmap (ls ++ l1) = alist_to_fmap (ls ++ l2))
+   
+   [alist_to_fmap_thm]  Theorem
+      
+      |- (alist_to_fmap [] = FEMPTY) ∧
+         (alist_to_fmap ((k,v)::t) = alist_to_fmap t |+ (k,v))
+   
+   [fmap_to_alist_FEMPTY]  Theorem
+      
+      |- fmap_to_alist FEMPTY = []
+   
+   [fmap_to_alist_to_fmap]  Theorem
+      
+      |- alist_to_fmap (fmap_to_alist fm) = fm
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/finite_map/alistScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-7</a></em></p></body></html>

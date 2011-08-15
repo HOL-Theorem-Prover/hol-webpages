@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: ind_type</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "ind_type"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "whileTheory.html"><span class="strong">while</span></a>&nbsp;&nbsp;
+    <a href = "numeralTheory.html"><span class="strong">numeral</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Type
+    <th>
+    Arity<tr><td> <span class="strong">recspace</span> <td> 1
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">BOTTOM</span> <td> :α recspace
+    <tr><td>
+        <span class="strong">CONSTR</span>
+        <td>
+        :num -> α -> (num -> α recspace) -> α recspace
+    <tr><td>
+        <span class="strong">FCONS</span>
+        <td>
+        :α -> (num -> α) -> num -> α
+    <tr><td> <span class="strong">FNIL</span> <td> :num -> α
+    <tr><td> <span class="strong">INJA</span> <td> :α -> num -> α -> bool
+    <tr><td>
+        <span class="strong">INJF</span>
+        <td>
+        :(num -> num -> α -> bool) -> num -> α -> bool
+    <tr><td> <span class="strong">INJN</span> <td> :num -> num -> α -> bool
+    <tr><td>
+        <span class="strong">INJP</span>
+        <td>
+        :(num -> α -> bool) -> (num -> α -> bool) -> num -> α -> bool
+    <tr><td>
+        <span class="strong">ISO</span>
+        <td>
+        :(α -> β) -> (β -> α) -> bool
+    <tr><td> <span class="strong">NUMFST</span> <td> :num -> num
+    <tr><td> <span class="strong">NUMLEFT</span> <td> :num -> bool
+    <tr><td> <span class="strong">NUMPAIR</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">NUMRIGHT</span> <td> :num -> num
+    <tr><td> <span class="strong">NUMSND</span> <td> :num -> num
+    <tr><td> <span class="strong">NUMSUM</span> <td> :bool -> num -> num
+    <tr><td> <span class="strong">ZBOT</span> <td> :num -> α -> bool
+    <tr><td>
+        <span class="strong">ZCONSTR</span>
+        <td>
+        :num -> α -> (num -> num -> α -> bool) -> num -> α -> bool
+    <tr><td>
+        <span class="strong">ZRECSPACE</span>
+        <td>
+        :(num -> α -> bool) -> bool
+    <tr><td>
+        <span class="strong">dest_rec</span>
+        <td>
+        :α recspace -> num -> α -> bool
+    <tr><td>
+        <span class="strong">mk_rec</span>
+        <td>
+        :(num -> α -> bool) -> α recspace
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">NUMPAIR</span>
+<DD>
+<pre>
+|- ∀x y. ind_type$NUMPAIR x y = 2 ** x * (2 * y + 1)
+</pre>
+
+<DT><span class="strong">NUMPAIR_DEST</span>
+<DD>
+<pre>
+|- ∀x y.
+     (NUMFST (ind_type$NUMPAIR x y) = x) ∧ (NUMSND (ind_type$NUMPAIR x y) = y)
+</pre>
+
+<DT><span class="strong">NUMSUM</span>
+<DD>
+<pre>
+|- ∀b x. ind_type$NUMSUM b x = if b then SUC (2 * x) else 2 * x
+</pre>
+
+<DT><span class="strong">NUMSUM_DEST</span>
+<DD>
+<pre>
+|- ∀x y.
+     (NUMLEFT (ind_type$NUMSUM x y) ⇔ x) ∧
+     (NUMRIGHT (ind_type$NUMSUM x y) = y)
+</pre>
+
+<DT><span class="strong">INJN</span>
+<DD>
+<pre>
+|- ∀m. ind_type$INJN m = (λn a. n = m)
+</pre>
+
+<DT><span class="strong">INJA</span>
+<DD>
+<pre>
+|- ∀a. ind_type$INJA a = (λn b. b = a)
+</pre>
+
+<DT><span class="strong">INJF</span>
+<DD>
+<pre>
+|- ∀f. ind_type$INJF f = (λn. f (NUMFST n) (NUMSND n))
+</pre>
+
+<DT><span class="strong">INJP</span>
+<DD>
+<pre>
+|- ∀f1 f2.
+     ind_type$INJP f1 f2 =
+     (λn a. if NUMLEFT n then f1 (NUMRIGHT n) a else f2 (NUMRIGHT n) a)
+</pre>
+
+<DT><span class="strong">ZCONSTR</span>
+<DD>
+<pre>
+|- ∀c i r.
+     ind_type$ZCONSTR c i r =
+     ind_type$INJP (ind_type$INJN (SUC c))
+       (ind_type$INJP (ind_type$INJA i) (ind_type$INJF r))
+</pre>
+
+<DT><span class="strong">ZBOT</span>
+<DD>
+<pre>
+|- ind_type$ZBOT = ind_type$INJP (ind_type$INJN 0) (@z. T)
+</pre>
+
+<DT><span class="strong">ZRECSPACE_def</span>
+<DD>
+<pre>
+|- ZRECSPACE =
+   (λa0.
+      ∀ZRECSPACE'.
+        (∀a0.
+           (a0 = ind_type$ZBOT) ∨
+           (∃c i r. (a0 = ind_type$ZCONSTR c i r) ∧ ∀n. ZRECSPACE' (r n)) ⇒
+           ZRECSPACE' a0) ⇒
+        ZRECSPACE' a0)
+</pre>
+
+<DT><span class="strong">recspace_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep. TYPE_DEFINITION ZRECSPACE rep
+</pre>
+
+<DT><span class="strong">recspace_repfns</span>
+<DD>
+<pre>
+|- (∀a. mk_rec (dest_rec a) = a) ∧ ∀r. ZRECSPACE r ⇔ (dest_rec (mk_rec r) = r)
+</pre>
+
+<DT><span class="strong">BOTTOM</span>
+<DD>
+<pre>
+|- ind_type$BOTTOM = mk_rec ind_type$ZBOT
+</pre>
+
+<DT><span class="strong">CONSTR</span>
+<DD>
+<pre>
+|- ∀c i r.
+     ind_type$CONSTR c i r =
+     mk_rec (ind_type$ZCONSTR c i (λn. dest_rec (r n)))
+</pre>
+
+<DT><span class="strong">FCONS</span>
+<DD>
+<pre>
+|- (∀a f. ind_type$FCONS a f 0 = a) ∧ ∀a f n. ind_type$FCONS a f (SUC n) = f n
+</pre>
+
+<DT><span class="strong">FNIL</span>
+<DD>
+<pre>
+|- ∀n. ind_type$FNIL n = ARB
+</pre>
+
+<DT><span class="strong">ISO</span>
+<DD>
+<pre>
+|- ∀f g. ind_type$ISO f g ⇔ (∀x. f (g x) = x) ∧ ∀y. g (f y) = y
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">INJ_INVERSE2</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀x1 y1 x2 y2. (P x1 y1 = P x2 y2) ⇔ (x1 = x2) ∧ (y1 = y2)) ⇒
+     ∃X Y. ∀x y. (X (P x y) = x) ∧ (Y (P x y) = y)
+</pre>
+
+<DT><span class="strong">NUMPAIR_INJ_LEMMA</span>
+<DD>
+<pre>
+|- ∀x1 y1 x2 y2. (ind_type$NUMPAIR x1 y1 = ind_type$NUMPAIR x2 y2) ⇒ (x1 = x2)
+</pre>
+
+<DT><span class="strong">NUMPAIR_INJ</span>
+<DD>
+<pre>
+|- ∀x1 y1 x2 y2.
+     (ind_type$NUMPAIR x1 y1 = ind_type$NUMPAIR x2 y2) ⇔ (x1 = x2) ∧ (y1 = y2)
+</pre>
+
+<DT><span class="strong">NUMSUM_INJ</span>
+<DD>
+<pre>
+|- ∀b1 x1 b2 x2.
+     (ind_type$NUMSUM b1 x1 = ind_type$NUMSUM b2 x2) ⇔ (b1 ⇔ b2) ∧ (x1 = x2)
+</pre>
+
+<DT><span class="strong">INJN_INJ</span>
+<DD>
+<pre>
+|- ∀n1 n2. (ind_type$INJN n1 = ind_type$INJN n2) ⇔ (n1 = n2)
+</pre>
+
+<DT><span class="strong">INJA_INJ</span>
+<DD>
+<pre>
+|- ∀a1 a2. (ind_type$INJA a1 = ind_type$INJA a2) ⇔ (a1 = a2)
+</pre>
+
+<DT><span class="strong">INJF_INJ</span>
+<DD>
+<pre>
+|- ∀f1 f2. (ind_type$INJF f1 = ind_type$INJF f2) ⇔ (f1 = f2)
+</pre>
+
+<DT><span class="strong">INJP_INJ</span>
+<DD>
+<pre>
+|- ∀f1 f1' f2 f2'.
+     (ind_type$INJP f1 f2 = ind_type$INJP f1' f2') ⇔ (f1 = f1') ∧ (f2 = f2')
+</pre>
+
+<DT><span class="strong">ZCONSTR_ZBOT</span>
+<DD>
+<pre>
+|- ∀c i r. ind_type$ZCONSTR c i r ≠ ind_type$ZBOT
+</pre>
+
+<DT><span class="strong">ZRECSPACE_rules</span>
+<DD>
+<pre>
+|- ZRECSPACE ind_type$ZBOT ∧
+   ∀c i r. (∀n. ZRECSPACE (r n)) ⇒ ZRECSPACE (ind_type$ZCONSTR c i r)
+</pre>
+
+<DT><span class="strong">ZRECSPACE_ind</span>
+<DD>
+<pre>
+|- ∀ZRECSPACE'.
+     ZRECSPACE' ind_type$ZBOT ∧
+     (∀c i r. (∀n. ZRECSPACE' (r n)) ⇒ ZRECSPACE' (ind_type$ZCONSTR c i r)) ⇒
+     ∀a0. ZRECSPACE a0 ⇒ ZRECSPACE' a0
+</pre>
+
+<DT><span class="strong">ZRECSPACE_strongind</span>
+<DD>
+<pre>
+|- ∀ZRECSPACE'.
+     ZRECSPACE' ind_type$ZBOT ∧
+     (∀c i r.
+        (∀n. ZRECSPACE (r n) ∧ ZRECSPACE' (r n)) ⇒
+        ZRECSPACE' (ind_type$ZCONSTR c i r)) ⇒
+     ∀a0. ZRECSPACE a0 ⇒ ZRECSPACE' a0
+</pre>
+
+<DT><span class="strong">ZRECSPACE_cases</span>
+<DD>
+<pre>
+|- ∀a0.
+     ZRECSPACE a0 ⇔
+     (a0 = ind_type$ZBOT) ∨
+     ∃c i r. (a0 = ind_type$ZCONSTR c i r) ∧ ∀n. ZRECSPACE (r n)
+</pre>
+
+<DT><span class="strong">MK_REC_INJ</span>
+<DD>
+<pre>
+|- ∀x y. (mk_rec x = mk_rec y) ⇒ ZRECSPACE x ∧ ZRECSPACE y ⇒ (x = y)
+</pre>
+
+<DT><span class="strong">DEST_REC_INJ</span>
+<DD>
+<pre>
+|- ∀x y. (dest_rec x = dest_rec y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">CONSTR_BOT</span>
+<DD>
+<pre>
+|- ∀c i r. ind_type$CONSTR c i r ≠ ind_type$BOTTOM
+</pre>
+
+<DT><span class="strong">CONSTR_INJ</span>
+<DD>
+<pre>
+|- ∀c1 i1 r1 c2 i2 r2.
+     (ind_type$CONSTR c1 i1 r1 = ind_type$CONSTR c2 i2 r2) ⇔
+     (c1 = c2) ∧ (i1 = i2) ∧ (r1 = r2)
+</pre>
+
+<DT><span class="strong">CONSTR_IND</span>
+<DD>
+<pre>
+|- ∀P.
+     P ind_type$BOTTOM ∧ (∀c i r. (∀n. P (r n)) ⇒ P (ind_type$CONSTR c i r)) ⇒
+     ∀x. P x
+</pre>
+
+<DT><span class="strong">CONSTR_REC</span>
+<DD>
+<pre>
+|- ∀Fn. ∃f. ∀c i r. f (ind_type$CONSTR c i r) = Fn c i r (λn. f (r n))
+</pre>
+
+<DT><span class="strong">FCONS_DEST</span>
+<DD>
+<pre>
+|- ind_type$FCONS a f n = if n = 0 then a else f (n − 1)
+</pre>
+
+<DT><span class="strong">ISO_REFL</span>
+<DD>
+<pre>
+|- ind_type$ISO (λx. x) (λx. x)
+</pre>
+
+<DT><span class="strong">ISO_FUN</span>
+<DD>
+<pre>
+|- ind_type$ISO f f' ∧ ind_type$ISO g g' ⇒
+   ind_type$ISO (λh a'. g (h (f' a'))) (λh a. g' (h (f a)))
+</pre>
+
+<DT><span class="strong">ISO_USAGE</span>
+<DD>
+<pre>
+|- ind_type$ISO f g ⇒
+   (∀P. (∀x. P x) ⇔ ∀x. P (g x)) ∧ (∀P. (∃x. P x) ⇔ ∃x. P (g x)) ∧
+   ∀a b. (a = g b) ⇔ (f a = b)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

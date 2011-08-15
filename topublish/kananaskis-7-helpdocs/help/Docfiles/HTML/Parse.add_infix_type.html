@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Parse.add_infix_type</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>add_infix_type : {Assoc : associativity,
+                  Name : string,
+                  ParseName : string option,
+                  Prec : int} -&gt;
+                 unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Adds a type infix.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">add_infix_type</SPAN><SPAN class = "TEXT"> adds an infix type symbol to the type
+grammar.  The argument is a record of four values providing
+information about the infix.</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">Assoc</SPAN><SPAN class = "TEXT"> field specifies the associativity of the symbol (possible
+values: </SPAN><SPAN class = "BRKT">LEFT</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">RIGHT</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">NONASSOC</SPAN><SPAN class = "TEXT">).  The standard HOL type
+infixes (</SPAN><SPAN class = "BRKT">+</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">#</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">-&gt;</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">|-&gt;</SPAN><SPAN class = "TEXT">) are all right-associative.  The
+</SPAN><SPAN class = "BRKT">Name</SPAN><SPAN class = "TEXT"> field specifies the name of the binary type operator that is
+being mapped to.  If the name of the type is not the same as the
+concrete syntax (as in all the standard HOL examples above), the
+concrete syntax can be provided in the </SPAN><SPAN class = "BRKT">ParseName</SPAN><SPAN class = "TEXT"> field.  The </SPAN><SPAN class = "BRKT">Prec</SPAN><SPAN class = "TEXT">
+field specifies the binding precedence of the infix.  This should be a
+number less than 100, and probably greater than or equal to 50, where
+the function </SPAN><SPAN class = "BRKT">-&gt;</SPAN><SPAN class = "TEXT"> symbol lies.  The greater the number, the more
+tightly the symbol attempts to &ldquo;grab&rdquo; its arguments.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the desired precedence level contains an existing infix with
+a different associativity.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- Hol_datatype `atree = Nd of 'v =&gt; ('k # atree) list`;
+&lt;&lt;HOL message: Defined type: "atree"&gt;&gt;
+&gt; val it = () : unit
+
+- add_infix_type { Assoc = LEFT, Name = "atree",
+                   ParseName = SOME "&gt;-&gt;", Prec = 65 };
+&gt; val it = () : unit
+
+- type_of ``Nd``;
+&lt;&lt;HOL message: inventing new type variable names: 'a, 'b&gt;&gt;
+&gt; val it = ``:'a -&gt; ('b # ('b &gt;-&gt; 'a)) list -&gt; 'b &gt;-&gt; 'a`` : hol_type
+</pre></DIV>
+</DIV></DD>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

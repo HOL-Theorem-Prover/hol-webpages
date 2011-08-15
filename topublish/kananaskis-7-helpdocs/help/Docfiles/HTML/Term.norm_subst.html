@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Term.norm_subst</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>norm_subst : (hol_type,hol_type) subst 
+        -&gt; (term,term) subst -&gt; (term,term)subst</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Term.html">Term</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Instantiate term substitution by a type substitution.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The substitutions coming from </SPAN><SPAN class = "BRKT">raw_match</SPAN><SPAN class = "TEXT"> need to be normalized before
+they can be applied by inference rules like </SPAN><SPAN class = "BRKT">INST_TY_TERM</SPAN><SPAN class = "TEXT">. An invocation
+</SPAN><SPAN class = "BRKT">raw_match&nbsp;avoid_tys&nbsp;avoid_tms&nbsp;pat&nbsp;ob&nbsp;A</SPAN><SPAN class = "TEXT"> returns a pair of substitutions
+</SPAN><SPAN class = "BRKT">(S,(T,Id))</SPAN><SPAN class = "TEXT">. The </SPAN><SPAN class = "BRKT">Id</SPAN><SPAN class = "TEXT"> component can be ignored. The </SPAN><SPAN class = "BRKT">S</SPAN><SPAN class = "TEXT"> component is 
+a substitution for term variables, but it has to be instantiated by </SPAN><SPAN class = "BRKT">T</SPAN><SPAN class = "TEXT">
+in order to be suitable for use by </SPAN><SPAN class = "BRKT">INST_TY_TERM</SPAN><SPAN class = "TEXT">. In this case, one uses
+</SPAN><SPAN class = "BRKT">norm_subst&nbsp;T&nbsp;S</SPAN><SPAN class = "TEXT">. Thus a suitable input for </SPAN><SPAN class = "BRKT">INST_TY_TERM</SPAN><SPAN class = "TEXT"> would be
+</SPAN><SPAN class = "BRKT">(norm_subst&nbsp;T&nbsp;S,&nbsp;T)</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- val (S,(T,_)) = raw_match [] empty_varset 
+                    (Term `\x:'a. x = f (y:'b)`)
+                    (Term `\a.    a = ~p`) ([],([],[]));
+&gt; val S = [{redex = `(f :'b -&gt; 'a)`, residue = `$~`},
+           {redex = `(y :'b)`,       residue = `(p :bool)`}] : ...
+
+  val T = [{redex = `:'b`, residue = `:bool`}, 
+           {redex = `:'a`, residue = `:bool`}] : ...
+
+- norm_subst T S;
+&gt; val it =
+    [{redex = `(y :bool)`, residue = `(p :bool)`},
+     {redex = `(f :bool -&gt; bool)`, residue = `$~`}] 
+  : {redex : term, residue : term} list
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Higher level matching routines, like </SPAN><SPAN class = "BRKT">match_term</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">match_terml</SPAN><SPAN class = "TEXT">
+already return normalized substitutions.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Term.raw_match.html">raw_match</A>,
+<A HREF = "Term.match_term.html">match_term</A>,
+<A HREF = "Term.match_terml.html">match_terml</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-7</div></BODY></HTML>

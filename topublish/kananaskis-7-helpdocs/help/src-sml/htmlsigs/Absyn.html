@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Absyn</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Absyn</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Absyn.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Absyn =
+<a name="line2"></a>sig
+<a name="line3"></a>  type term = Term.term
+<a name="line4"></a>  type pretype = Pretype.pretype
+<a name="line5"></a>  type 'a quotation = 'a Portable.quotation
+<a name="line6"></a>
+<a name="line7"></a>   datatype vstruct
+<a name="line8"></a>       = VAQ    of locn.locn * term
+<a name="line9"></a>       | VIDENT of locn.locn * string
+<a name="line10"></a>       | VPAIR  of locn.locn * vstruct * vstruct
+<a name="line11"></a>       | VTYPED of locn.locn * vstruct * pretype
+<a name="line12"></a>
+<a name="line13"></a>   datatype absyn
+<a name="line14"></a>       = AQ     of locn.locn * term
+<a name="line15"></a>       | IDENT  of locn.locn * string
+<a name="line16"></a>       | QIDENT of locn.locn * string * string
+<a name="line17"></a>       | APP    of locn.locn * absyn * absyn
+<a name="line18"></a>       | LAM    of locn.locn * vstruct * absyn
+<a name="line19"></a>       | TYPED  of locn.locn * absyn * pretype
+<a name="line20"></a>
+<a name="line21"></a>  val locn_of_absyn   : absyn -&gt; locn.locn
+<a name="line22"></a>  val locn_of_vstruct : vstruct -&gt; locn.locn
+<a name="line23"></a>
+<a name="line24"></a>  val mk_AQ    : term -&gt; absyn
+<a name="line25"></a>  val mk_ident : string -&gt; absyn
+<a name="line26"></a>  val mk_app   : absyn * absyn -&gt; absyn
+<a name="line27"></a>  val mk_lam   : vstruct * absyn -&gt; absyn
+<a name="line28"></a>  val mk_typed : absyn * pretype -&gt; absyn
+<a name="line29"></a>
+<a name="line30"></a>  val mk_eq      : absyn * absyn -&gt; absyn
+<a name="line31"></a>  val mk_conj    : absyn * absyn -&gt; absyn
+<a name="line32"></a>  val mk_disj    : absyn * absyn -&gt; absyn
+<a name="line33"></a>  val mk_imp     : absyn * absyn -&gt; absyn
+<a name="line34"></a>  val mk_pair    : absyn * absyn -&gt; absyn
+<a name="line35"></a>  val mk_forall  : vstruct * absyn -&gt; absyn
+<a name="line36"></a>  val mk_exists  : vstruct * absyn -&gt; absyn
+<a name="line37"></a>  val mk_exists1 : vstruct * absyn -&gt; absyn
+<a name="line38"></a>  val mk_select  : vstruct * absyn -&gt; absyn
+<a name="line39"></a>  val mk_binder  : string -&gt; vstruct * absyn -&gt; absyn
+<a name="line40"></a>
+<a name="line41"></a>  val dest_AQ      : absyn -&gt; term
+<a name="line42"></a>  val dest_ident   : absyn -&gt; string
+<a name="line43"></a>  val dest_app     : absyn -&gt; absyn * absyn
+<a name="line44"></a>  val dest_lam     : absyn -&gt; vstruct * absyn
+<a name="line45"></a>  val dest_typed   : absyn -&gt; absyn * pretype
+<a name="line46"></a>  val dest_eq      : absyn -&gt; absyn * absyn
+<a name="line47"></a>  val dest_conj    : absyn -&gt; absyn * absyn
+<a name="line48"></a>  val dest_disj    : absyn -&gt; absyn * absyn
+<a name="line49"></a>  val dest_imp     : absyn -&gt; absyn * absyn
+<a name="line50"></a>  val dest_pair    : absyn -&gt; absyn * absyn
+<a name="line51"></a>  val dest_forall  : absyn -&gt; vstruct * absyn
+<a name="line52"></a>  val dest_exists  : absyn -&gt; vstruct * absyn
+<a name="line53"></a>  val dest_exists1 : absyn -&gt; vstruct * absyn
+<a name="line54"></a>  val dest_select  : absyn -&gt; vstruct * absyn
+<a name="line55"></a>  val dest_binder  : string -&gt; absyn -&gt; vstruct * absyn
+<a name="line56"></a>  val dest_binop   : string -&gt; absyn -&gt; absyn * absyn
+<a name="line57"></a>
+<a name="line58"></a>  val list_mk_app     : absyn * absyn list -&gt; absyn
+<a name="line59"></a>  val list_mk_lam     : vstruct list * absyn -&gt; absyn
+<a name="line60"></a>  val list_mk_conj    : absyn list -&gt; absyn
+<a name="line61"></a>  val list_mk_disj    : absyn list -&gt; absyn
+<a name="line62"></a>  val list_mk_imp     : absyn list -&gt; absyn
+<a name="line63"></a>  val list_mk_pair    : absyn list -&gt; absyn
+<a name="line64"></a>  val list_mk_forall  : vstruct list * absyn -&gt; absyn
+<a name="line65"></a>  val list_mk_exists  : vstruct list * absyn -&gt; absyn
+<a name="line66"></a>  val list_mk_exists1 : vstruct list * absyn -&gt; absyn
+<a name="line67"></a>  val list_mk_select  : vstruct list * absyn -&gt; absyn
+<a name="line68"></a>
+<a name="line69"></a>  val strip_app     : absyn -&gt; absyn * absyn list
+<a name="line70"></a>  val strip_lam     : absyn -&gt; vstruct list * absyn
+<a name="line71"></a>  val strip_conj    : absyn -&gt; absyn list
+<a name="line72"></a>  val strip_disj    : absyn -&gt; absyn list
+<a name="line73"></a>  val strip_imp     : absyn -&gt; absyn list
+<a name="line74"></a>  val strip_pair    : absyn -&gt; absyn list
+<a name="line75"></a>  val strip_forall  : absyn -&gt; vstruct list * absyn
+<a name="line76"></a>  val strip_exists  : absyn -&gt; vstruct list * absyn
+<a name="line77"></a>  val strip_exists1 : absyn -&gt; vstruct list * absyn
+<a name="line78"></a>  val strip_select  : absyn -&gt; vstruct list * absyn
+<a name="line79"></a>
+<a name="line80"></a>  val is_ident   : absyn -&gt; bool
+<a name="line81"></a>  val is_app     : absyn -&gt; bool
+<a name="line82"></a>  val is_lam     : absyn -&gt; bool
+<a name="line83"></a>  val is_AQ      : absyn -&gt; bool
+<a name="line84"></a>  val is_typed   : absyn -&gt; bool
+<a name="line85"></a>  val is_eq      : absyn -&gt; bool
+<a name="line86"></a>  val is_conj    : absyn -&gt; bool
+<a name="line87"></a>  val is_disj    : absyn -&gt; bool
+<a name="line88"></a>  val is_imp     : absyn -&gt; bool
+<a name="line89"></a>  val is_pair    : absyn -&gt; bool
+<a name="line90"></a>  val is_forall  : absyn -&gt; bool
+<a name="line91"></a>  val is_exists  : absyn -&gt; bool
+<a name="line92"></a>  val is_exists1 : absyn -&gt; bool
+<a name="line93"></a>  val is_select  : absyn -&gt; bool
+<a name="line94"></a>end;
+<a name="line95"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Absyn.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-7</a></em></p></body></html>
