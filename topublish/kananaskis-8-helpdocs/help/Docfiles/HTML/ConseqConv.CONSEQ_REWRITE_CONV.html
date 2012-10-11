@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>ConseqConv.CONSEQ_REWRITE_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>CONSEQ_REWRITE_CONV : (thm list * thm list * thm list) -&gt; directed_conseq_conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/ConseqConv.html">ConseqConv</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Applies </SPAN><SPAN class = "BRKT">CONSEQ_TOP_REWRITE_CONV</SPAN><SPAN class = "TEXT"> repeatedly at subterms.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This directed consequence conversion is a combination of
+</SPAN><SPAN class = "BRKT">CONSEQ_TOP_REWRITE_CONV</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">DEPTH_CONSEQ_CONV</SPAN><SPAN class = "TEXT">.
+Given lists of theorems, these theorems are preprocessed to
+extract implications. Then these implications are used to either
+weaken or strengthen an input term.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Reconsider the example for </SPAN><SPAN class = "BRKT">DEPTH_CONSEQ_CONV</SPAN><SPAN class = "TEXT">. Let
+</SPAN><SPAN class = "BRKT">rewrite_every_thm</SPAN><SPAN class = "TEXT"> be the following theorem:
+</SPAN><DIV class = "XMPL"><pre>
+   val rewrite_every_thm =
+       |- FEVERY P FEMPTY /\ 
+          (FEVERY P f /\ P (x,y) ==&gt; FEVERY P (f |+ (x,y)));
+</pre></DIV>
+<SPAN class = "TEXT">
+Then the following call of </SPAN><SPAN class = "BRKT">CONSEQ_REWRITE_CONV</SPAN><SPAN class = "TEXT">
+</SPAN><DIV class = "XMPL"><pre>
+   CONSEQ_REWRITE_CONV ([], [rewrite_every_thm], []) CONSEQ_CONV_STRENGTHEN_direction 
+     ``!y2. FEVERY P (f |+ (x1, y1) |+ (x2,y2)) /\ Q z``
+</pre></DIV>
+<SPAN class = "TEXT">
+results in
+</SPAN><DIV class = "XMPL"><pre>   
+    |- (!y2. ((FEVERY P f /\ P (x1, y1)) /\ P (x2,y2)) /\ Q z) ==&gt;
+       (!y2. FEVERY P (f |+ (x1, y1) |+ (x2,y2)) /\ Q z)
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">More examples can be found at the end of </SPAN><SPAN class = "BRKT">ConseqConv.sml</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Drule.MATCH_MP.html">MATCH_MP</A>,
+<A HREF = "ConseqConv.CONSEQ_TOP_REWRITE_CONV.html">CONSEQ_TOP_REWRITE_CONV</A>,
+<A HREF = "ConseqConv.DEPTH_CONSEQ_CONV.html">DEPTH_CONSEQ_CONV</A>,
+<A HREF = "ConseqConv.EXT_CONSEQ_REWRITE_CONV.html">EXT_CONSEQ_REWRITE_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

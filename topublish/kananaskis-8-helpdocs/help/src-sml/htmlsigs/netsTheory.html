@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure netsTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure netsTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/real/netsScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature netsTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#bounded-val">bounded</a> : thm
+<a name="line7"></a>    val <a href="#dorder-val">dorder</a> : thm
+<a name="line8"></a>    val <a href="#tends-val">tends</a> : thm
+<a name="line9"></a>    val <a href="#tendsto-val">tendsto</a> : thm
+<a name="line10"></a>
+<a name="line11"></a>  (*  Theorems  *)
+<a name="line12"></a>    val <a href="#DORDER_LEMMA-val">DORDER_LEMMA</a> : thm
+<a name="line13"></a>    val <a href="#DORDER_NGE-val">DORDER_NGE</a> : thm
+<a name="line14"></a>    val <a href="#DORDER_TENDSTO-val">DORDER_TENDSTO</a> : thm
+<a name="line15"></a>    val <a href="#LIM_TENDS-val">LIM_TENDS</a> : thm
+<a name="line16"></a>    val <a href="#LIM_TENDS2-val">LIM_TENDS2</a> : thm
+<a name="line17"></a>    val <a href="#MR1_BOUNDED-val">MR1_BOUNDED</a> : thm
+<a name="line18"></a>    val <a href="#MTOP_TENDS-val">MTOP_TENDS</a> : thm
+<a name="line19"></a>    val <a href="#MTOP_TENDS_UNIQ-val">MTOP_TENDS_UNIQ</a> : thm
+<a name="line20"></a>    val <a href="#NET_ABS-val">NET_ABS</a> : thm
+<a name="line21"></a>    val <a href="#NET_ADD-val">NET_ADD</a> : thm
+<a name="line22"></a>    val <a href="#NET_CONV_BOUNDED-val">NET_CONV_BOUNDED</a> : thm
+<a name="line23"></a>    val <a href="#NET_CONV_IBOUNDED-val">NET_CONV_IBOUNDED</a> : thm
+<a name="line24"></a>    val <a href="#NET_CONV_NZ-val">NET_CONV_NZ</a> : thm
+<a name="line25"></a>    val <a href="#NET_DIV-val">NET_DIV</a> : thm
+<a name="line26"></a>    val <a href="#NET_INV-val">NET_INV</a> : thm
+<a name="line27"></a>    val <a href="#NET_LE-val">NET_LE</a> : thm
+<a name="line28"></a>    val <a href="#NET_MUL-val">NET_MUL</a> : thm
+<a name="line29"></a>    val <a href="#NET_NEG-val">NET_NEG</a> : thm
+<a name="line30"></a>    val <a href="#NET_NULL-val">NET_NULL</a> : thm
+<a name="line31"></a>    val <a href="#NET_NULL_ADD-val">NET_NULL_ADD</a> : thm
+<a name="line32"></a>    val <a href="#NET_NULL_CMUL-val">NET_NULL_CMUL</a> : thm
+<a name="line33"></a>    val <a href="#NET_NULL_MUL-val">NET_NULL_MUL</a> : thm
+<a name="line34"></a>    val <a href="#NET_SUB-val">NET_SUB</a> : thm
+<a name="line35"></a>    val <a href="#SEQ_TENDS-val">SEQ_TENDS</a> : thm
+<a name="line36"></a>
+<a name="line37"></a>  val nets_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line38"></a>(*
+   [topology] Parent theory of "nets"
+
+   [<a name="bounded-val"><b>bounded</b></a>]  Definition
+
+      |- ∀m g f.
+           bounded (m,g) f ⇔ ∃k x N. g N N ∧ ∀n. g n N ⇒ dist m (f n,x) &lt; k
+
+   [<a name="dorder-val"><b>dorder</b></a>]  Definition
+
+      |- ∀g.
+           dorder g ⇔
+           ∀x y. g x x ∧ g y y ⇒ ∃z. g z z ∧ ∀w. g w z ⇒ g w x ∧ g w y
+
+   [<a name="tends-val"><b>tends</b></a>]  Definition
+
+      |- ∀s l top g.
+           (s tends l) (top,g) ⇔
+           ∀N. neigh top (N,l) ⇒ ∃n. g n n ∧ ∀m. g m n ⇒ N (s m)
+
+   [<a name="tendsto-val"><b>tendsto</b></a>]  Definition
+
+      |- ∀m x y z.
+           tendsto (m,x) y z ⇔
+           0 &lt; dist m (x,y) ∧ dist m (x,y) ≤ dist m (x,z)
+
+   [<a name="DORDER_LEMMA-val"><b>DORDER_LEMMA</b></a>]  Theorem
+
+      |- ∀g.
+           dorder g ⇒
+           ∀P Q.
+             (∃n. g n n ∧ ∀m. g m n ⇒ P m) ∧
+             (∃n. g n n ∧ ∀m. g m n ⇒ Q m) ⇒
+             ∃n. g n n ∧ ∀m. g m n ⇒ P m ∧ Q m
+
+   [<a name="DORDER_NGE-val"><b>DORDER_NGE</b></a>]  Theorem
+
+      |- dorder $&gt;=
+
+   [<a name="DORDER_TENDSTO-val"><b>DORDER_TENDSTO</b></a>]  Theorem
+
+      |- ∀m x. dorder (tendsto (m,x))
+
+   [<a name="LIM_TENDS-val"><b>LIM_TENDS</b></a>]  Theorem
+
+      |- ∀m1 m2 f x0 y0.
+           limpt (mtop m1) x0 re_universe ⇒
+           ((f tends y0) (mtop m2,tendsto (m1,x0)) ⇔
+            ∀e.
+              0 &lt; e ⇒
+              ∃d.
+                0 &lt; d ∧
+                ∀x.
+                  0 &lt; dist m1 (x,x0) ∧ dist m1 (x,x0) ≤ d ⇒
+                  dist m2 (f x,y0) &lt; e)
+
+   [<a name="LIM_TENDS2-val"><b>LIM_TENDS2</b></a>]  Theorem
+
+      |- ∀m1 m2 f x0 y0.
+           limpt (mtop m1) x0 re_universe ⇒
+           ((f tends y0) (mtop m2,tendsto (m1,x0)) ⇔
+            ∀e.
+              0 &lt; e ⇒
+              ∃d.
+                0 &lt; d ∧
+                ∀x.
+                  0 &lt; dist m1 (x,x0) ∧ dist m1 (x,x0) &lt; d ⇒
+                  dist m2 (f x,y0) &lt; e)
+
+   [<a name="MR1_BOUNDED-val"><b>MR1_BOUNDED</b></a>]  Theorem
+
+      |- ∀g f. bounded (mr1,g) f ⇔ ∃k N. g N N ∧ ∀n. g n N ⇒ abs (f n) &lt; k
+
+   [<a name="MTOP_TENDS-val"><b>MTOP_TENDS</b></a>]  Theorem
+
+      |- ∀d g x x0.
+           (x tends x0) (mtop d,g) ⇔
+           ∀e. 0 &lt; e ⇒ ∃n. g n n ∧ ∀m. g m n ⇒ dist d (x m,x0) &lt; e
+
+   [<a name="MTOP_TENDS_UNIQ-val"><b>MTOP_TENDS_UNIQ</b></a>]  Theorem
+
+      |- ∀g d.
+           dorder g ⇒
+           (x tends x0) (mtop d,g) ∧ (x tends x1) (mtop d,g) ⇒
+           (x0 = x1)
+
+   [<a name="NET_ABS-val"><b>NET_ABS</b></a>]  Theorem
+
+      |- ∀g x x0.
+           (x tends x0) (mtop mr1,g) ⇒
+           ((λn. abs (x n)) tends abs x0) (mtop mr1,g)
+
+   [<a name="NET_ADD-val"><b>NET_ADD</b></a>]  Theorem
+
+      |- ∀g.
+           dorder g ⇒
+           ∀x x0 y y0.
+             (x tends x0) (mtop mr1,g) ∧ (y tends y0) (mtop mr1,g) ⇒
+             ((λn. x n + y n) tends (x0 + y0)) (mtop mr1,g)
+
+   [<a name="NET_CONV_BOUNDED-val"><b>NET_CONV_BOUNDED</b></a>]  Theorem
+
+      |- ∀g x x0. (x tends x0) (mtop mr1,g) ⇒ bounded (mr1,g) x
+
+   [<a name="NET_CONV_IBOUNDED-val"><b>NET_CONV_IBOUNDED</b></a>]  Theorem
+
+      |- ∀g x x0.
+           (x tends x0) (mtop mr1,g) ∧ x0 ≠ 0 ⇒
+           bounded (mr1,g) (λn. inv (x n))
+
+   [<a name="NET_CONV_NZ-val"><b>NET_CONV_NZ</b></a>]  Theorem
+
+      |- ∀g x x0.
+           (x tends x0) (mtop mr1,g) ∧ x0 ≠ 0 ⇒
+           ∃N. g N N ∧ ∀n. g n N ⇒ x n ≠ 0
+
+   [<a name="NET_DIV-val"><b>NET_DIV</b></a>]  Theorem
+
+      |- ∀g.
+           dorder g ⇒
+           ∀x x0 y y0.
+             (x tends x0) (mtop mr1,g) ∧ (y tends y0) (mtop mr1,g) ∧
+             y0 ≠ 0 ⇒
+             ((λn. x n / y n) tends (x0 / y0)) (mtop mr1,g)
+
+   [<a name="NET_INV-val"><b>NET_INV</b></a>]  Theorem
+
+      |- ∀g.
+           dorder g ⇒
+           ∀x x0.
+             (x tends x0) (mtop mr1,g) ∧ x0 ≠ 0 ⇒
+             ((λn. inv (x n)) tends inv x0) (mtop mr1,g)
+
+   [<a name="NET_LE-val"><b>NET_LE</b></a>]  Theorem
+
+      |- ∀g.
+           dorder g ⇒
+           ∀x x0 y y0.
+             (x tends x0) (mtop mr1,g) ∧ (y tends y0) (mtop mr1,g) ∧
+             (∃N. g N N ∧ ∀n. g n N ⇒ x n ≤ y n) ⇒
+             x0 ≤ y0
+
+   [<a name="NET_MUL-val"><b>NET_MUL</b></a>]  Theorem
+
+      |- ∀g.
+           dorder g ⇒
+           ∀x y x0 y0.
+             (x tends x0) (mtop mr1,g) ∧ (y tends y0) (mtop mr1,g) ⇒
+             ((λn. x n * y n) tends (x0 * y0)) (mtop mr1,g)
+
+   [<a name="NET_NEG-val"><b>NET_NEG</b></a>]  Theorem
+
+      |- ∀g.
+           dorder g ⇒
+           ∀x x0.
+             (x tends x0) (mtop mr1,g) ⇔
+             ((λn. -x n) tends -x0) (mtop mr1,g)
+
+   [<a name="NET_NULL-val"><b>NET_NULL</b></a>]  Theorem
+
+      |- ∀g x x0.
+           (x tends x0) (mtop mr1,g) ⇔
+           ((λn. x n − x0) tends 0) (mtop mr1,g)
+
+   [<a name="NET_NULL_ADD-val"><b>NET_NULL_ADD</b></a>]  Theorem
+
+      |- ∀g.
+           dorder g ⇒
+           ∀x y.
+             (x tends 0) (mtop mr1,g) ∧ (y tends 0) (mtop mr1,g) ⇒
+             ((λn. x n + y n) tends 0) (mtop mr1,g)
+
+   [<a name="NET_NULL_CMUL-val"><b>NET_NULL_CMUL</b></a>]  Theorem
+
+      |- ∀g k x.
+           (x tends 0) (mtop mr1,g) ⇒ ((λn. k * x n) tends 0) (mtop mr1,g)
+
+   [<a name="NET_NULL_MUL-val"><b>NET_NULL_MUL</b></a>]  Theorem
+
+      |- ∀g.
+           dorder g ⇒
+           ∀x y.
+             bounded (mr1,g) x ∧ (y tends 0) (mtop mr1,g) ⇒
+             ((λn. x n * y n) tends 0) (mtop mr1,g)
+
+   [<a name="NET_SUB-val"><b>NET_SUB</b></a>]  Theorem
+
+      |- ∀g.
+           dorder g ⇒
+           ∀x x0 y y0.
+             (x tends x0) (mtop mr1,g) ∧ (y tends y0) (mtop mr1,g) ⇒
+             ((λn. x n − y n) tends (x0 − y0)) (mtop mr1,g)
+
+   [<a name="SEQ_TENDS-val"><b>SEQ_TENDS</b></a>]  Theorem
+
+      |- ∀d x x0.
+           (x tends x0) (mtop d,$&gt;=) ⇔
+           ∀e. 0 &lt; e ⇒ ∃N. ∀n. n ≥ N ⇒ dist d (x n,x0) &lt; e
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/real/netsScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

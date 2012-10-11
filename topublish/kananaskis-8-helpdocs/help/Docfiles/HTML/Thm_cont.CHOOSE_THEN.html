@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Thm_cont.CHOOSE_THEN</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>CHOOSE_THEN : thm_tactical</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Thm_cont.html">Thm_cont</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Applies a tactic generated from the body of existentially quantified theorem.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to a theorem-tactic </SPAN><SPAN class = "BRKT">ttac</SPAN><SPAN class = "TEXT">, an existentially quantified
+theorem </SPAN><SPAN class = "BRKT">A'&nbsp;|-&nbsp;?x.&nbsp;t</SPAN><SPAN class = "TEXT">, and a goal, </SPAN><SPAN class = "BRKT">CHOOSE_THEN</SPAN><SPAN class = "TEXT"> applies the tactic
+</SPAN><SPAN class = "BRKT">ttac&nbsp;(t[x'/x]&nbsp;|-&nbsp;t[x'/x])</SPAN><SPAN class = "TEXT"> to the goal, where </SPAN><SPAN class = "BRKT">x'</SPAN><SPAN class = "TEXT"> is a variant of
+</SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> chosen not to be free in the assumption list of the goal. Thus if:
+</SPAN><DIV class = "XMPL"><pre>
+    A ?- s1
+   =========  ttac (t[x'/x] |- t[x'/x])
+    B ?- s2
+</pre></DIV>
+<SPAN class = "TEXT">
+then
+</SPAN><DIV class = "XMPL"><pre>
+    A ?- s1
+   ==========  CHOOSE_THEN ttac (A' |- ?x. t)
+    B ?- s2
+</pre></DIV>
+<SPAN class = "TEXT">
+This is invalid unless </SPAN><SPAN class = "BRKT">A'</SPAN><SPAN class = "TEXT"> is a subset of </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails unless the given theorem is existentially quantified, or if the
+resulting tactic fails when applied to the goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This theorem-tactical and its relatives are very useful for using existentially
+quantified theorems. For example one might use the inbuilt theorem
+</SPAN><DIV class = "XMPL"><pre>
+   LESS_ADD_1 = |- !m n. n &lt; m ==&gt; (?p. m = n + (p + 1))
+</pre></DIV>
+<SPAN class = "TEXT">
+to help solve the goal
+</SPAN><DIV class = "XMPL"><pre>
+   ?- x &lt; y ==&gt; 0 &lt; y * y
+</pre></DIV>
+<SPAN class = "TEXT">
+by starting with the following tactic
+</SPAN><DIV class = "XMPL"><pre>
+   DISCH_THEN (CHOOSE_THEN SUBST1_TAC o MATCH_MP LESS_ADD_1)
+</pre></DIV>
+<SPAN class = "TEXT">
+which reduces the goal to
+</SPAN><DIV class = "XMPL"><pre>
+   ?- 0 &lt; ((x + (p + 1)) * (x + (p + 1)))
+</pre></DIV>
+<SPAN class = "TEXT">
+which can then be finished off quite easily, by, for example:
+</SPAN><DIV class = "XMPL"><pre>
+   REWRITE_TAC[ADD_ASSOC, SYM (SPEC_ALL ADD1),
+               MULT_CLAUSES, ADD_CLAUSES, LESS_0]
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactic.CHOOSE_TAC.html">CHOOSE_TAC</A>,
+<A HREF = "Thm_cont.X_CHOOSE_THEN.html">X_CHOOSE_THEN</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

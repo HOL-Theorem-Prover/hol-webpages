@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure GenPolyCanon</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure GenPolyCanon</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/arith/src/GenPolyCanon.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature GenPolyCanon =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>include Abbrev
+<a name="line5"></a>datatype assoc_mode = L | R | L_Cflipped
+<a name="line6"></a>
+<a name="line7"></a>datatype gci =
+<a name="line8"></a>         GCI of {dest : term -&gt; term * term,
+<a name="line9"></a>                 is_literal : term -&gt; bool,
+<a name="line10"></a>                 assoc_mode : assoc_mode,
+<a name="line11"></a>                 assoc : thm,
+<a name="line12"></a>                 symassoc : thm ,
+<a name="line13"></a>                 comm : thm,
+<a name="line14"></a>                 l_asscomm : thm ,
+<a name="line15"></a>                 r_asscomm : thm ,
+<a name="line16"></a>                 non_coeff : term -&gt; term,
+<a name="line17"></a>                 merge : term -&gt; thm,
+<a name="line18"></a>                 postnorm : term -&gt; thm,
+<a name="line19"></a>                 left_id : thm,
+<a name="line20"></a>                 right_id : thm ,
+<a name="line21"></a>                 reducer : term -&gt; thm}
+<a name="line22"></a>
+<a name="line23"></a>val update_mode : assoc_mode -&gt; gci -&gt; gci
+<a name="line24"></a>val gencanon : gci -&gt; term -&gt; thm
+<a name="line25"></a>
+<a name="line26"></a>val derive_l_asscomm : thm -&gt; thm -&gt; thm
+<a name="line27"></a>val derive_r_asscomm : thm -&gt; thm -&gt; thm
+<a name="line28"></a>
+<a name="line29"></a>end;
+<a name="line30"></a>
+<a name="line31"></a>(*
+<a name="line32"></a>
+<a name="line33"></a>  The gci type stores sufficient information about a type and operators over
+<a name="line34"></a>  it to allow normalisation of "polynomials" over that type, collecting up
+<a name="line35"></a>  coefficients etc.
+<a name="line36"></a>
+<a name="line37"></a>  The required fields of the record are
+<a name="line38"></a>    dest         : pulls apart a term (e.g., x + y  -&gt;  (x,y))
+<a name="line39"></a>    is_literal   : returns true iff a term is a numeric literal - in L & R
+<a name="line40"></a>                   modes literals are shunted to the right end of the term.
+<a name="line41"></a>                   In L_Cflipped they appear on the front.
+<a name="line42"></a>    assoc_mode   : how the term should be associated when built.
+<a name="line43"></a>                     L & R are obvious.  L_Cflipped has non-literals
+<a name="line44"></a>                     left-associated, but possibly prepended by a literal to
+<a name="line45"></a>                     the left.  This is appropriate for multiplication, e.g.,
+<a name="line46"></a>                        c((xy)z)
+<a name="line47"></a>    assoc        : associativity theorem (e.g., |- x + (y + z) = (x + y) + z)
+<a name="line48"></a>    symassoc     : associativity theorem with equality flipped
+<a name="line49"></a>    comm         : commutativity theorem (e.g., |- x + y = y + x)
+<a name="line50"></a>    l_asscomm    : right-commutativity theorem  (letter 'l' indicates that
+<a name="line51"></a>                   terms are left-associated)
+<a name="line52"></a>                      (e.g., |- (x + y) + z = (x + z) + y)
+<a name="line53"></a>    r_asscomm    : left-commutativity theorem (terms are right-associated)
+<a name="line54"></a>                      (e.g., |- x + (y + z) = y + (x + z))
+<a name="line55"></a>    non_coeff    : returns the "base" of a term, ignoring the coefficient.
+<a name="line56"></a>                      (e.g., x  -&gt;  x,  2 * x  -&gt;  x,  ~y  -&gt;  y,  3  -&gt;  1)
+<a name="line57"></a>    merge        : takes a term of the form t1 op t2, where t1 and t2 have
+<a name="line58"></a>                   equal base, and merges them into one by summing
+<a name="line59"></a>                   coefficients.  The result will be subjected to
+<a name="line60"></a>                   post-normalisation (see below)
+<a name="line61"></a>    postnorm     : conversion to normalise certain coeff-term pairs.  Must
+<a name="line62"></a>                   include the analogue of
+<a name="line63"></a>                            0 * x  -&gt;  |- 0 * x = 0
+<a name="line64"></a>                   and might reasonably include
+<a name="line65"></a>                            x ** 1  -&gt;  |- x ** 1 = x
+<a name="line66"></a>                            ~1 * x  -&gt;  |- ~1 * x = ~x
+<a name="line67"></a>                             3 * 1  -&gt;  |- 3 * 1 = 3
+<a name="line68"></a>    left_id      : theorem stating left-identity for the base operator
+<a name="line69"></a>                       (e.g.,  |- 0 + x = x  and  |- 1 * x = x)
+<a name="line70"></a>    right_id     : theorem stating right-identity for the base operator
+<a name="line71"></a>    reducer      : conversion for doing ground arithmetic on coefficients
+<a name="line72"></a>
+<a name="line73"></a>  To handle literals, get non_coeff to return a base of 1 for them, and then
+<a name="line74"></a>  handle their merging separately in the merge function.
+<a name="line75"></a>
+<a name="line76"></a>  [update_mode m g] returns a g' that is identical to g except that
+<a name="line77"></a>  the assoc_mode field of the record has been updated to have value m.
+<a name="line78"></a>
+<a name="line79"></a>  [gencanon g t] returns a theorem of the form |- t = t', where t' is a normal
+<a name="line80"></a>  form.  The polynomial will be right-associated (for backwards compatibility
+<a name="line81"></a>  reasons).
+<a name="line82"></a>
+<a name="line83"></a>  [derive_l_asscomm ass comm] derives an l_asscomm theorem from assoc and comm
+<a name="line84"></a>  theorems.
+<a name="line85"></a>
+<a name="line86"></a>  [derive_r_asscomm ass comm] derives an r_asscomm theorem from assoc and comm
+<a name="line87"></a>  theorems.
+<a name="line88"></a>
+<a name="line89"></a>*)
+<a name="line90"></a>
+<a name="line91"></a>
+<a name="line92"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/arith/src/GenPolyCanon.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

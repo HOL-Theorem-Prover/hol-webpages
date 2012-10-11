@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure TypeBasePure</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure TypeBasePure</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/TypeBasePure.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature TypeBasePure =
+<a name="line2"></a>sig
+<a name="line3"></a>   type hol_type = Type.hol_type
+<a name="line4"></a>   type term     = Term.term
+<a name="line5"></a>   type thm      = Thm.thm
+<a name="line6"></a>   type ppstream = Portable.ppstream
+<a name="line7"></a>
+<a name="line8"></a>   type tyinfo
+<a name="line9"></a>   type typeBase
+<a name="line10"></a>   type simpfrag = simpfrag.simpfrag
+<a name="line11"></a>
+<a name="line12"></a>   datatype shared_thm = ORIG of thm
+<a name="line13"></a>                       | COPY of (string * string) * thm
+<a name="line14"></a>
+<a name="line15"></a>   val mk_datatype_info
+<a name="line16"></a>           : {ax        : shared_thm,
+<a name="line17"></a>              induction : shared_thm,
+<a name="line18"></a>              case_def  : thm,
+<a name="line19"></a>              case_cong : thm,
+<a name="line20"></a>              nchotomy  : thm,
+<a name="line21"></a>              size      : (term * shared_thm) option,
+<a name="line22"></a>              encode    : (term * shared_thm) option,
+<a name="line23"></a>              lift      : term option,
+<a name="line24"></a>              one_one   : thm option,
+<a name="line25"></a>              distinct  : thm option,
+<a name="line26"></a>              fields    : (string * hol_type) list,
+<a name="line27"></a>              accessors : thm list,
+<a name="line28"></a>              updates   : thm list,
+<a name="line29"></a>              destructors : thm list,
+<a name="line30"></a>              recognizers : thm list} -&gt; tyinfo
+<a name="line31"></a>
+<a name="line32"></a>   val gen_datatype_info : {ax:thm,ind:thm,case_defs:thm list} -&gt; tyinfo list
+<a name="line33"></a>
+<a name="line34"></a>   val mk_nondatatype_info
+<a name="line35"></a>           : hol_type *
+<a name="line36"></a>             {nchotomy  : thm option,
+<a name="line37"></a>              induction : thm option,
+<a name="line38"></a>              size      : (term * thm) option,
+<a name="line39"></a>              encode    : (term * thm) option} -&gt; tyinfo
+<a name="line40"></a>
+<a name="line41"></a>   val pp_tyinfo       : ppstream -&gt; tyinfo -&gt; unit
+<a name="line42"></a>
+<a name="line43"></a>   val ty_of           : tyinfo -&gt; hol_type
+<a name="line44"></a>   val ty_name_of      : tyinfo -&gt; string * string
+<a name="line45"></a>
+<a name="line46"></a>   val axiom_of        : tyinfo -&gt; thm
+<a name="line47"></a>   val induction_of    : tyinfo -&gt; thm
+<a name="line48"></a>   val constructors_of : tyinfo -&gt; term list
+<a name="line49"></a>   val destructors_of  : tyinfo -&gt; thm list
+<a name="line50"></a>   val recognizers_of  : tyinfo -&gt; thm list
+<a name="line51"></a>   val case_const_of   : tyinfo -&gt; term
+<a name="line52"></a>   val case_cong_of    : tyinfo -&gt; thm
+<a name="line53"></a>   val case_def_of     : tyinfo -&gt; thm
+<a name="line54"></a>   val nchotomy_of     : tyinfo -&gt; thm
+<a name="line55"></a>   val distinct_of     : tyinfo -&gt; thm option
+<a name="line56"></a>   val one_one_of      : tyinfo -&gt; thm option
+<a name="line57"></a>   val fields_of       : tyinfo -&gt; (string * hol_type) list
+<a name="line58"></a>   val accessors_of    : tyinfo -&gt; thm list
+<a name="line59"></a>   val updates_of      : tyinfo -&gt; thm list
+<a name="line60"></a>   val simpls_of       : tyinfo -&gt; simpfrag
+<a name="line61"></a>   val size_of         : tyinfo -&gt; (term * thm) option
+<a name="line62"></a>   val encode_of       : tyinfo -&gt; (term * thm) option
+<a name="line63"></a>   val lift_of         : tyinfo -&gt; term option
+<a name="line64"></a>
+<a name="line65"></a>   val axiom_of0       : tyinfo -&gt; shared_thm
+<a name="line66"></a>   val induction_of0   : tyinfo -&gt; shared_thm
+<a name="line67"></a>   val size_of0        : tyinfo -&gt; (term * shared_thm) option
+<a name="line68"></a>   val encode_of0      : tyinfo -&gt; (term * shared_thm) option
+<a name="line69"></a>
+<a name="line70"></a>   val put_nchotomy    : thm -&gt; tyinfo -&gt; tyinfo
+<a name="line71"></a>   val put_simpls      : simpfrag -&gt; tyinfo -&gt; tyinfo
+<a name="line72"></a>   val put_induction   : shared_thm -&gt; tyinfo -&gt; tyinfo
+<a name="line73"></a>   val put_size        : term * shared_thm -&gt; tyinfo -&gt; tyinfo
+<a name="line74"></a>   val put_encode      : term * shared_thm -&gt; tyinfo -&gt; tyinfo
+<a name="line75"></a>   val put_lift        : term -&gt; tyinfo -&gt; tyinfo
+<a name="line76"></a>   val put_fields      : (string * hol_type) list -&gt; tyinfo -&gt; tyinfo
+<a name="line77"></a>   val put_accessors   : thm list -&gt; tyinfo -&gt; tyinfo
+<a name="line78"></a>   val put_updates     : thm list -&gt; tyinfo -&gt; tyinfo
+<a name="line79"></a>   val put_destructors : thm list -&gt; tyinfo -&gt; tyinfo
+<a name="line80"></a>   val put_recognizers : thm list -&gt; tyinfo -&gt; tyinfo
+<a name="line81"></a>
+<a name="line82"></a>   (* Functional databases of datatype facts and associated operations *)
+<a name="line83"></a>
+<a name="line84"></a>   val empty           : typeBase
+<a name="line85"></a>   val insert          : typeBase -&gt; tyinfo -&gt; typeBase
+<a name="line86"></a>(*   val add             : typeBase -&gt; tyinfo -&gt; typeBase  *)
+<a name="line87"></a>
+<a name="line88"></a>   val fetch           : typeBase -&gt; hol_type -&gt; tyinfo option
+<a name="line89"></a>   val prim_get        : typeBase -&gt; string * string -&gt; tyinfo option
+<a name="line90"></a>   val get             : typeBase -&gt; string -&gt; tyinfo list
+<a name="line91"></a>                       (* get returns list of tyinfos for types with that tyop *)
+<a name="line92"></a>
+<a name="line93"></a>   val listItems       : typeBase -&gt; tyinfo list
+<a name="line94"></a>
+<a name="line95"></a>  (* Support for polytypism *)
+<a name="line96"></a>
+<a name="line97"></a>   val typeValue       : (hol_type -&gt; term option) *
+<a name="line98"></a>                         (hol_type -&gt; term option) *
+<a name="line99"></a>                         (hol_type -&gt; term) -&gt; hol_type -&gt; term
+<a name="line100"></a>   val tyValue         : (hol_type -&gt; term option) *
+<a name="line101"></a>                         (hol_type -&gt; term option) *
+<a name="line102"></a>                         (hol_type -&gt; term) -&gt; hol_type -&gt; term
+<a name="line103"></a>
+<a name="line104"></a>   val type_size       : typeBase -&gt; hol_type -&gt; term
+<a name="line105"></a>   val type_encode     : typeBase -&gt; hol_type -&gt; term
+<a name="line106"></a>   val type_lift       : typeBase -&gt; hol_type -&gt; term
+<a name="line107"></a>
+<a name="line108"></a>   val cinst           : hol_type -&gt; term -&gt; term
+<a name="line109"></a>
+<a name="line110"></a>   val is_constructor  : typeBase -&gt; term -&gt; bool
+<a name="line111"></a>
+<a name="line112"></a>   val mk_case         : typeBase -&gt; term * (term * term) list -&gt; term
+<a name="line113"></a>   val dest_case       : typeBase -&gt; term -&gt; term * term * (term * term) list
+<a name="line114"></a>   val is_case         : typeBase -&gt; term -&gt; bool
+<a name="line115"></a>   val strip_case      : typeBase -&gt; term -&gt; term * (term * term) list
+<a name="line116"></a>
+<a name="line117"></a>   val mk_record       : typeBase -&gt; hol_type * (string * term) list -&gt; term
+<a name="line118"></a>   val dest_record     : typeBase -&gt; term -&gt; hol_type * (string * term) list
+<a name="line119"></a>   val is_record       : typeBase -&gt; term -&gt; bool
+<a name="line120"></a>
+<a name="line121"></a>   val dest_record_type : typeBase -&gt; hol_type -&gt; (string * hol_type) list
+<a name="line122"></a>   val is_record_type   : typeBase -&gt; hol_type -&gt; bool
+<a name="line123"></a>
+<a name="line124"></a>end
+<a name="line125"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/TypeBasePure.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

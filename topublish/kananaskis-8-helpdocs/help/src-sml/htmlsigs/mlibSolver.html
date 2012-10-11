@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure mlibSolver</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure mlibSolver</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibSolver.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ========================================================================= *)
+<a name="line2"></a>(* PACKAGING UP SOLVERS TO ALLOW THEM TO COOPERATE UNIFORMLY                 *)
+<a name="line3"></a>(* Copyright (c) 2002-2004 Joe Hurd.                                         *)
+<a name="line4"></a>(* ========================================================================= *)
+<a name="line5"></a>
+<a name="line6"></a>signature mlibSolver =
+<a name="line7"></a>sig
+<a name="line8"></a>
+<a name="line9"></a>type 'a pp         = 'a mlibUseful.pp
+<a name="line10"></a>type 'a stream     = 'a mlibStream.stream
+<a name="line11"></a>type formula       = mlibTerm.formula
+<a name="line12"></a>type thm           = mlibThm.thm
+<a name="line13"></a>type limit         = mlibMeter.limit
+<a name="line14"></a>type meter         = mlibMeter.meter
+<a name="line15"></a>type meter_reading = mlibMeter.meter_reading
+<a name="line16"></a>type units         = mlibUnits.units
+<a name="line17"></a>
+<a name="line18"></a>(* The type of a generic solver *)
+<a name="line19"></a>
+<a name="line20"></a>type solver = formula list -&gt; thm list option stream
+<a name="line21"></a>
+<a name="line22"></a>val contradiction_solver : thm -&gt; solver
+<a name="line23"></a>
+<a name="line24"></a>(* Filters to cut off searching or drop subsumed solutions *)
+<a name="line25"></a>
+<a name="line26"></a>val solved_filter   : solver -&gt; solver
+<a name="line27"></a>val subsumed_filter : solver -&gt; solver
+<a name="line28"></a>
+<a name="line29"></a>(* User-friendly interface to generic solvers *)
+<a name="line30"></a>
+<a name="line31"></a>val solve  : solver -&gt; int -&gt; formula list -&gt; thm list list
+<a name="line32"></a>val find   : solver -&gt; formula list -&gt; thm list option
+<a name="line33"></a>val refute : solver -&gt; thm option
+<a name="line34"></a>
+<a name="line35"></a>(* mlibSolver nodes must construct themselves from the following form. *)
+<a name="line36"></a>
+<a name="line37"></a>type form =
+<a name="line38"></a>  {slice : meter ref,                   (* A meter to stop after each slice *)
+<a name="line39"></a>   units : units ref,                   (* mlibSolvers share a unit cache *)
+<a name="line40"></a>   thms  : thm list,                    (* Context, assumed consistent *)
+<a name="line41"></a>   hyps  : thm list}                    (* Hypothesis, or set of support *)
+<a name="line42"></a>
+<a name="line43"></a>(* mlibSolver nodes also incorporate a name. *)
+<a name="line44"></a>
+<a name="line45"></a>type node_data = {name : string, solver_con : form -&gt; solver}
+<a name="line46"></a>type solver_node
+<a name="line47"></a>
+<a name="line48"></a>val mk_solver_node : node_data -&gt; solver_node
+<a name="line49"></a>val pp_solver_node : solver_node pp
+<a name="line50"></a>
+<a name="line51"></a>(* At each step we schedule a slice to the least cost solver node. *)
+<a name="line52"></a>
+<a name="line53"></a>val SLICE : real ref
+<a name="line54"></a>
+<a name="line55"></a>datatype cost_fn =
+<a name="line56"></a>  Time of real          (* Time used divided by a coefficient *)
+<a name="line57"></a>| Infs of real          (* Inferences divided by a coefficient *)
+<a name="line58"></a>val pp_cost_fn : cost_fn pp
+<a name="line59"></a>
+<a name="line60"></a>(* This allows us to hierarchically arrange solver nodes. *)
+<a name="line61"></a>
+<a name="line62"></a>val combine : (cost_fn * solver_node) list -&gt; solver_node
+<a name="line63"></a>
+<a name="line64"></a>(* Overriding the 'natural' set of support from the problem. *)
+<a name="line65"></a>
+<a name="line66"></a>type sos_filter = {name : string, filter : thm -&gt; bool}
+<a name="line67"></a>val apply_sos_filter   : sos_filter -&gt; solver_node -&gt; solver_node
+<a name="line68"></a>val only_if_everything : sos_filter -&gt; sos_filter
+<a name="line69"></a>
+<a name="line70"></a>val everything   : sos_filter
+<a name="line71"></a>val one_negative : sos_filter
+<a name="line72"></a>val one_positive : sos_filter
+<a name="line73"></a>val all_negative : sos_filter
+<a name="line74"></a>val all_positive : sos_filter
+<a name="line75"></a>
+<a name="line76"></a>(* Initializing a solver node makes it ready for action. *)
+<a name="line77"></a>
+<a name="line78"></a>type init_data = {limit : limit, thms : thm list, hyps : thm list}
+<a name="line79"></a>
+<a name="line80"></a>val initialize : solver_node -&gt; init_data -&gt; solver
+<a name="line81"></a>
+<a name="line82"></a>end
+<a name="line83"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibSolver.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

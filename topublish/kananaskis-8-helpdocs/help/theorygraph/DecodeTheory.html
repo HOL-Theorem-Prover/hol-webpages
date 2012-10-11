@@ -1,0 +1,645 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: Decode</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "Decode"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "EncodeTheory.html"><span class="strong">Encode</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">dec2enc</span>
+            <td>
+            :(bitstring, α) state_option -> α -> bitstring
+    <tr><td>
+        <span class="strong">dec_bnum</span>
+        <td>
+        :num -> (bitstring, num) state_option
+    <tr><td>
+        <span class="strong">decode_blist</span>
+        <td>
+        :(α list -> bool) ->
+         num ->
+         (bitstring, α) state_option -> (bitstring, α list) state_option
+    <tr><td>
+        <span class="strong">decode_bnum</span>
+        <td>
+        :num -> (num -> bool) -> (bitstring, num) state_option
+    <tr><td>
+        <span class="strong">decode_bool</span>
+        <td>
+        :(bool -> bool) -> (bitstring, bool) state_option
+    <tr><td>
+        <span class="strong">decode_list</span>
+        <td>
+        :(α list -> bool) ->
+         (bitstring, α) state_option -> (bitstring, α list) state_option
+    <tr><td>
+        <span class="strong">decode_num</span>
+        <td>
+        :(num -> bool) -> (bitstring, num) state_option
+    <tr><td>
+        <span class="strong">decode_option</span>
+        <td>
+        :(α option -> bool) ->
+         (bitstring, α) state_option -> (bitstring, α option) state_option
+    <tr><td>
+        <span class="strong">decode_prod</span>
+        <td>
+        :(α # β -> bool) ->
+         (bitstring, α) state_option ->
+         (bitstring, β) state_option -> (bitstring, α # β) state_option
+    <tr><td>
+        <span class="strong">decode_sum</span>
+        <td>
+        :(α + β -> bool) ->
+         (bitstring, α) state_option ->
+         (bitstring, β) state_option -> (bitstring, α + β) state_option
+    <tr><td>
+        <span class="strong">decode_tree</span>
+        <td>
+        :(α tree -> bool) ->
+         (bitstring, α) state_option -> (bitstring, α tree) state_option
+    <tr><td>
+        <span class="strong">decode_unit</span>
+        <td>
+        :(unit -> bool) -> (bitstring, unit) state_option
+    <tr><td>
+        <span class="strong">enc2dec</span>
+        <td>
+        :(α -> bool) -> (α -> bitstring) -> (bitstring, α) state_option
+    <tr><td>
+        <span class="strong">wf_decoder</span>
+        <td>
+        :(α -> bool) -> (bitstring, α) state_option -> bool
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">wf_decoder_def</span>
+<DD>
+<pre>
+|- ∀p d.
+     wf_decoder p d ⇔
+     ∀x.
+       if p x then
+         ∃a. ∀b c. (d b = SOME (x,c)) ⇔ (b = a ++ c)
+       else
+         ∀a b. d a ≠ SOME (x,b)
+</pre>
+
+<DT><span class="strong">enc2dec_def</span>
+<DD>
+<pre>
+|- ∀p e l.
+     enc2dec p e l =
+     if ∃x t. p x ∧ (l = e x ++ t) then
+       SOME (@(x,t). p x ∧ (l = e x ++ t))
+     else
+       NONE
+</pre>
+
+<DT><span class="strong">dec2enc_def</span>
+<DD>
+<pre>
+|- ∀d x. dec2enc d x = @l. d l = SOME (x,[])
+</pre>
+
+<DT><span class="strong">decode_unit_def</span>
+<DD>
+<pre>
+|- ∀p. decode_unit p = enc2dec p encode_unit
+</pre>
+
+<DT><span class="strong">decode_bool_def</span>
+<DD>
+<pre>
+|- ∀p. decode_bool p = enc2dec p encode_bool
+</pre>
+
+<DT><span class="strong">decode_prod_def</span>
+<DD>
+<pre>
+|- ∀p d1 d2.
+     decode_prod p d1 d2 = enc2dec p (encode_prod (dec2enc d1) (dec2enc d2))
+</pre>
+
+<DT><span class="strong">decode_sum_def</span>
+<DD>
+<pre>
+|- ∀p d1 d2.
+     decode_sum p d1 d2 = enc2dec p (encode_sum (dec2enc d1) (dec2enc d2))
+</pre>
+
+<DT><span class="strong">decode_option_def</span>
+<DD>
+<pre>
+|- ∀p d. decode_option p d = enc2dec p (encode_option (dec2enc d))
+</pre>
+
+<DT><span class="strong">decode_list_def</span>
+<DD>
+<pre>
+|- ∀p d. decode_list p d = enc2dec p (encode_list (dec2enc d))
+</pre>
+
+<DT><span class="strong">decode_blist_def</span>
+<DD>
+<pre>
+|- ∀p m d. decode_blist p m d = enc2dec p (encode_blist m (dec2enc d))
+</pre>
+
+<DT><span class="strong">decode_num_def</span>
+<DD>
+<pre>
+|- ∀p. decode_num p = enc2dec p encode_num
+</pre>
+
+<DT><span class="strong">decode_bnum_def</span>
+<DD>
+<pre>
+|- ∀m p. decode_bnum m p = enc2dec p (encode_bnum m)
+</pre>
+
+<DT><span class="strong">dec_bnum_def</span>
+<DD>
+<pre>
+|- (∀l. dec_bnum 0 l = SOME (0,l)) ∧
+   ∀m l.
+     dec_bnum (SUC m) l =
+     case l of
+       [] => NONE
+     | h::t =>
+         case dec_bnum m t of
+           NONE => NONE
+         | SOME (n,t') => SOME (2 * n + if h then 1 else 0,t')
+</pre>
+
+<DT><span class="strong">decode_tree_def</span>
+<DD>
+<pre>
+|- ∀p d. decode_tree p d = enc2dec p (encode_tree (dec2enc d))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">enc2dec_none</span>
+<DD>
+<pre>
+|- ∀p e l. (enc2dec p e l = NONE) ⇔ ∀x t. p x ⇒ l ≠ e x ++ t
+</pre>
+
+<DT><span class="strong">enc2dec_some</span>
+<DD>
+<pre>
+|- ∀p e l x t.
+     wf_encoder p e ⇒ ((enc2dec p e l = SOME (x,t)) ⇔ p x ∧ (l = e x ++ t))
+</pre>
+
+<DT><span class="strong">enc2dec_some_alt</span>
+<DD>
+<pre>
+|- ∀p e l x.
+     wf_encoder p e ⇒
+     ((enc2dec p e l = SOME x) ⇔ p (FST x) ∧ (l = e (FST x) ++ SND x))
+</pre>
+
+<DT><span class="strong">wf_enc2dec</span>
+<DD>
+<pre>
+|- ∀p e. wf_encoder p e ⇒ wf_decoder p (enc2dec p e)
+</pre>
+
+<DT><span class="strong">dec2enc_some</span>
+<DD>
+<pre>
+|- ∀p d x l. wf_decoder p d ⇒ ((dec2enc d x = l) ∧ p x ⇔ (d l = SOME (x,[])))
+</pre>
+
+<DT><span class="strong">decode_dec2enc</span>
+<DD>
+<pre>
+|- ∀p d x. wf_decoder p d ∧ p x ⇒ (d (dec2enc d x) = SOME (x,[]))
+</pre>
+
+<DT><span class="strong">decode_dec2enc_append</span>
+<DD>
+<pre>
+|- ∀p d x t. wf_decoder p d ∧ p x ⇒ (d (dec2enc d x ++ t) = SOME (x,t))
+</pre>
+
+<DT><span class="strong">wf_dec2enc</span>
+<DD>
+<pre>
+|- ∀p d. wf_decoder p d ⇒ wf_encoder p (dec2enc d)
+</pre>
+
+<DT><span class="strong">dec2enc_enc2dec</span>
+<DD>
+<pre>
+|- ∀p e x. wf_encoder p e ∧ p x ⇒ (dec2enc (enc2dec p e) x = e x)
+</pre>
+
+<DT><span class="strong">enc2dec_dec2enc</span>
+<DD>
+<pre>
+|- ∀p d. wf_decoder p d ⇒ (enc2dec p (dec2enc d) = d)
+</pre>
+
+<DT><span class="strong">wf_decode_unit</span>
+<DD>
+<pre>
+|- wf_decoder p (decode_unit p)
+</pre>
+
+<DT><span class="strong">dec2enc_decode_unit</span>
+<DD>
+<pre>
+|- ∀p x. p x ⇒ (dec2enc (decode_unit p) x = encode_unit x)
+</pre>
+
+<DT><span class="strong">decode_unit</span>
+<DD>
+<pre>
+|- decode_unit p l = if p () then SOME ((),l) else NONE
+</pre>
+
+<DT><span class="strong">wf_decode_bool</span>
+<DD>
+<pre>
+|- ∀p. wf_decoder p (decode_bool p)
+</pre>
+
+<DT><span class="strong">dec2enc_decode_bool</span>
+<DD>
+<pre>
+|- ∀p x. p x ⇒ (dec2enc (decode_bool p) x = encode_bool x)
+</pre>
+
+<DT><span class="strong">decode_bool</span>
+<DD>
+<pre>
+|- decode_bool p l =
+   case l of [] => NONE | h::t => if p h then SOME (h,t) else NONE
+</pre>
+
+<DT><span class="strong">wf_decode_prod</span>
+<DD>
+<pre>
+|- ∀p1 p2 d1 d2.
+     wf_decoder p1 d1 ∧ wf_decoder p2 d2 ⇒
+     wf_decoder (lift_prod p1 p2) (decode_prod (lift_prod p1 p2) d1 d2)
+</pre>
+
+<DT><span class="strong">dec2enc_decode_prod</span>
+<DD>
+<pre>
+|- ∀p1 p2 d1 d2 x.
+     wf_decoder p1 d1 ∧ wf_decoder p2 d2 ∧ lift_prod p1 p2 x ⇒
+     (dec2enc (decode_prod (lift_prod p1 p2) d1 d2) x =
+      encode_prod (dec2enc d1) (dec2enc d2) x)
+</pre>
+
+<DT><span class="strong">encode_then_decode_prod</span>
+<DD>
+<pre>
+|- ∀p1 p2 e1 e2 l t.
+     wf_encoder p1 e1 ∧ wf_encoder p2 e2 ∧ lift_prod p1 p2 l ⇒
+     (decode_prod (lift_prod p1 p2) (enc2dec p1 e1) (enc2dec p2 e2)
+        (encode_prod e1 e2 l ++ t) =
+      SOME (l,t))
+</pre>
+
+<DT><span class="strong">decode_prod</span>
+<DD>
+<pre>
+|- wf_decoder p1 d1 ∧ wf_decoder p2 d2 ⇒
+   (decode_prod (lift_prod p1 p2) d1 d2 l =
+    case d1 l of
+      NONE => NONE
+    | SOME (x,t) =>
+        case d2 t of NONE => NONE | SOME (y,t') => SOME ((x,y),t'))
+</pre>
+
+<DT><span class="strong">wf_decode_sum</span>
+<DD>
+<pre>
+|- ∀p1 p2 d1 d2.
+     wf_decoder p1 d1 ∧ wf_decoder p2 d2 ⇒
+     wf_decoder (lift_sum p1 p2) (decode_sum (lift_sum p1 p2) d1 d2)
+</pre>
+
+<DT><span class="strong">dec2enc_decode_sum</span>
+<DD>
+<pre>
+|- ∀p1 p2 d1 d2 x.
+     wf_decoder p1 d1 ∧ wf_decoder p2 d2 ∧ lift_sum p1 p2 x ⇒
+     (dec2enc (decode_sum (lift_sum p1 p2) d1 d2) x =
+      encode_sum (dec2enc d1) (dec2enc d2) x)
+</pre>
+
+<DT><span class="strong">encode_then_decode_sum</span>
+<DD>
+<pre>
+|- ∀p1 p2 e1 e2 l t.
+     wf_encoder p1 e1 ∧ wf_encoder p2 e2 ∧ lift_sum p1 p2 l ⇒
+     (decode_sum (lift_sum p1 p2) (enc2dec p1 e1) (enc2dec p2 e2)
+        (encode_sum e1 e2 l ++ t) =
+      SOME (l,t))
+</pre>
+
+<DT><span class="strong">decode_sum</span>
+<DD>
+<pre>
+|- wf_decoder p1 d1 ∧ wf_decoder p2 d2 ⇒
+   (decode_sum (lift_sum p1 p2) d1 d2 l =
+    case l of
+      [] => NONE
+    | T::t => (case d1 t of NONE => NONE | SOME (x,t') => SOME (INL x,t'))
+    | F::t => case d2 t of NONE => NONE | SOME (x,t') => SOME (INR x,t'))
+</pre>
+
+<DT><span class="strong">wf_decode_option</span>
+<DD>
+<pre>
+|- ∀p d.
+     wf_decoder p d ⇒
+     wf_decoder (lift_option p) (decode_option (lift_option p) d)
+</pre>
+
+<DT><span class="strong">dec2enc_decode_option</span>
+<DD>
+<pre>
+|- ∀p d x.
+     wf_decoder p d ∧ lift_option p x ⇒
+     (dec2enc (decode_option (lift_option p) d) x =
+      encode_option (dec2enc d) x)
+</pre>
+
+<DT><span class="strong">encode_then_decode_option</span>
+<DD>
+<pre>
+|- ∀p e l t.
+     wf_encoder p e ∧ lift_option p l ⇒
+     (decode_option (lift_option p) (enc2dec p e) (encode_option e l ++ t) =
+      SOME (l,t))
+</pre>
+
+<DT><span class="strong">decode_option</span>
+<DD>
+<pre>
+|- wf_decoder p d ⇒
+   (decode_option (lift_option p) d l =
+    case l of
+      [] => NONE
+    | T::t => (case d t of NONE => NONE | SOME (x,t') => SOME (SOME x,t'))
+    | F::t => SOME (NONE,t))
+</pre>
+
+<DT><span class="strong">wf_decode_list</span>
+<DD>
+<pre>
+|- ∀p d. wf_decoder p d ⇒ wf_decoder (EVERY p) (decode_list (EVERY p) d)
+</pre>
+
+<DT><span class="strong">dec2enc_decode_list</span>
+<DD>
+<pre>
+|- ∀p d x.
+     wf_decoder p d ∧ EVERY p x ⇒
+     (dec2enc (decode_list (EVERY p) d) x = encode_list (dec2enc d) x)
+</pre>
+
+<DT><span class="strong">encode_then_decode_list</span>
+<DD>
+<pre>
+|- ∀p e l t.
+     wf_encoder p e ∧ EVERY p l ⇒
+     (decode_list (EVERY p) (enc2dec p e) (encode_list e l ++ t) = SOME (l,t))
+</pre>
+
+<DT><span class="strong">decode_list</span>
+<DD>
+<pre>
+|- wf_decoder p d ⇒
+   (decode_list (EVERY p) d l =
+    case l of
+      [] => NONE
+    | T::t =>
+        (case d t of
+           NONE => NONE
+         | SOME (x,t') =>
+             case decode_list (EVERY p) d t' of
+               NONE => NONE
+             | SOME (xs,t'') => SOME (x::xs,t''))
+    | F::t => SOME ([],t))
+</pre>
+
+<DT><span class="strong">wf_decode_blist</span>
+<DD>
+<pre>
+|- ∀m p d.
+     wf_decoder p d ⇒
+     wf_decoder (lift_blist m p) (decode_blist (lift_blist m p) m d)
+</pre>
+
+<DT><span class="strong">dec2enc_decode_blist</span>
+<DD>
+<pre>
+|- ∀m p d l.
+     wf_decoder p d ∧ lift_blist m p l ⇒
+     (dec2enc (decode_blist (lift_blist m p) m d) l =
+      encode_blist m (dec2enc d) l)
+</pre>
+
+<DT><span class="strong">encode_then_decode_blist</span>
+<DD>
+<pre>
+|- ∀m p e l t.
+     wf_encoder p e ∧ lift_blist m p l ⇒
+     (decode_blist (lift_blist m p) m (enc2dec p e)
+        (encode_blist m e l ++ t) =
+      SOME (l,t))
+</pre>
+
+<DT><span class="strong">decode_blist</span>
+<DD>
+<pre>
+|- wf_decoder p d ⇒
+   (decode_blist (lift_blist m p) m d l =
+    case m of
+      0 => SOME ([],l)
+    | SUC n =>
+        case d l of
+          NONE => NONE
+        | SOME (x,t) =>
+            case decode_blist (lift_blist n p) n d t of
+              NONE => NONE
+            | SOME (xs,t') => SOME (x::xs,t'))
+</pre>
+
+<DT><span class="strong">wf_decode_num</span>
+<DD>
+<pre>
+|- ∀p. wf_decoder p (decode_num p)
+</pre>
+
+<DT><span class="strong">dec2enc_decode_num</span>
+<DD>
+<pre>
+|- ∀p x. p x ⇒ (dec2enc (decode_num p) x = encode_num x)
+</pre>
+
+<DT><span class="strong">decode_num_total</span>
+<DD>
+<pre>
+|- decode_num (K T) l =
+   case l of
+     [] => NONE
+   | [T] => NONE
+   | T::T::t => SOME (0,t)
+   | T::F::t =>
+       (case decode_num (K T) t of
+          NONE => NONE
+        | SOME (v,t') => SOME (2 * v + 1,t'))
+   | F::t' =>
+       case decode_num (K T) t' of
+         NONE => NONE
+       | SOME (v,t') => SOME (2 * v + 2,t')
+</pre>
+
+<DT><span class="strong">decode_num</span>
+<DD>
+<pre>
+|- decode_num p l =
+   case l of
+     [] => NONE
+   | [T] => NONE
+   | T::T::t => if p 0 then SOME (0,t) else NONE
+   | T::F::t =>
+       (case decode_num (K T) t of
+          NONE => NONE
+        | SOME (v,t') => if p (2 * v + 1) then SOME (2 * v + 1,t') else NONE)
+   | F::t' =>
+       case decode_num (K T) t' of
+         NONE => NONE
+       | SOME (v,t') => if p (2 * v + 2) then SOME (2 * v + 2,t') else NONE
+</pre>
+
+<DT><span class="strong">dec_bnum_def_compute</span>
+<DD>
+<pre>
+|- (∀l. dec_bnum 0 l = SOME (0,l)) ∧
+   (∀m l.
+      dec_bnum (NUMERAL (BIT1 m)) l =
+      case l of
+        [] => NONE
+      | h::t =>
+          case dec_bnum (NUMERAL (BIT1 m) − 1) t of
+            NONE => NONE
+          | SOME (n,t') => SOME (2 * n + if h then 1 else 0,t')) ∧
+   ∀m l.
+     dec_bnum (NUMERAL (BIT2 m)) l =
+     case l of
+       [] => NONE
+     | h::t =>
+         case dec_bnum (NUMERAL (BIT1 m)) t of
+           NONE => NONE
+         | SOME (n,t') => SOME (2 * n + if h then 1 else 0,t')
+</pre>
+
+<DT><span class="strong">dec_bnum_lt</span>
+<DD>
+<pre>
+|- ∀m l n t. (dec_bnum m l = SOME (n,t)) ⇒ n < 2 ** m
+</pre>
+
+<DT><span class="strong">dec_bnum_inj</span>
+<DD>
+<pre>
+|- ∀m l n t. (dec_bnum m l = SOME (n,t)) ⇒ (l = encode_bnum m n ++ t)
+</pre>
+
+<DT><span class="strong">wf_decode_bnum</span>
+<DD>
+<pre>
+|- ∀m p. wf_pred_bnum m p ⇒ wf_decoder p (decode_bnum m p)
+</pre>
+
+<DT><span class="strong">dec2enc_decode_bnum</span>
+<DD>
+<pre>
+|- ∀m p x.
+     wf_pred_bnum m p ∧ p x ⇒ (dec2enc (decode_bnum m p) x = encode_bnum m x)
+</pre>
+
+<DT><span class="strong">decode_bnum</span>
+<DD>
+<pre>
+|- wf_pred_bnum m p ⇒
+   (decode_bnum m p l =
+    case dec_bnum m l of
+      NONE => NONE
+    | SOME (n,t) => if p n then SOME (n,t) else NONE)
+</pre>
+
+<DT><span class="strong">wf_decode_tree</span>
+<DD>
+<pre>
+|- ∀p d.
+     wf_decoder p d ⇒ wf_decoder (lift_tree p) (decode_tree (lift_tree p) d)
+</pre>
+
+<DT><span class="strong">decode_tree</span>
+<DD>
+<pre>
+|- wf_decoder p d ⇒
+   (decode_tree (lift_tree p) d l =
+    case d l of
+      NONE => NONE
+    | SOME (a,t) =>
+        case
+          decode_list (EVERY (lift_tree p)) (decode_tree (lift_tree p) d) t
+        of
+          NONE => NONE
+        | SOME (ts,t') => SOME (Node a ts,t'))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

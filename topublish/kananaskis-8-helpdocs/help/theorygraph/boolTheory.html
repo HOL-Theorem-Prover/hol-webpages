@@ -1,0 +1,1223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: bool</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "bool"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "minTheory.html"><span class="strong">min</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Type
+    <th>
+    Arity<tr><td> <span class="strong">itself</span> <td> 1
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">!</span> <td> :(α -> bool) -> bool
+    <tr><td> <span class="strong">/\</span> <td> :bool -> bool -> bool
+    <tr><td> <span class="strong">?</span> <td> :(α -> bool) -> bool
+    <tr><td> <span class="strong">?!</span> <td> :(α -> bool) -> bool
+    <tr><td> <span class="strong">ARB</span> <td> :α
+    <tr><td> <span class="strong">BOUNDED</span> <td> :bool -> bool
+    <tr><td> <span class="strong">COND</span> <td> :bool -> α -> α -> α
+    <tr><td> <span class="strong">DATATYPE</span> <td> :α -> bool
+    <tr><td> <span class="strong">F</span> <td> :bool
+    <tr><td> <span class="strong">IN</span> <td> :α -> (α -> bool) -> bool
+    <tr><td> <span class="strong">LET</span> <td> :(α -> β) -> α -> β
+    <tr><td> <span class="strong">ONE_ONE</span> <td> :(α -> β) -> bool
+    <tr><td> <span class="strong">ONTO</span> <td> :(α -> β) -> bool
+    <tr><td>
+        <span class="strong">RES_ABSTRACT</span>
+        <td>
+        :(α -> bool) -> (α -> β) -> α -> β
+    <tr><td>
+        <span class="strong">RES_EXISTS</span>
+        <td>
+        :(α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+        <span class="strong">RES_EXISTS_UNIQUE</span>
+        <td>
+        :(α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+        <span class="strong">RES_FORALL</span>
+        <td>
+        :(α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+        <span class="strong">RES_SELECT</span>
+        <td>
+        :(α -> bool) -> (α -> bool) -> α
+    <tr><td> <span class="strong">T</span> <td> :bool
+    <tr><td>
+        <span class="strong">TYPE_DEFINITION</span>
+        <td>
+        :(α -> bool) -> (β -> α) -> bool
+    <tr><td> <span class="strong">\/</span> <td> :bool -> bool -> bool
+    <tr><td> <span class="strong">bool_case</span> <td> :α -> α -> bool -> α
+    <tr><td> <span class="strong">case__magic</span> <td> :α -> (α -> β) -> β
+    <tr><td>
+        <span class="strong">case_arrow__magic</span>
+        <td>
+        :α -> β -> α -> β
+    <tr><td>
+        <span class="strong">case_split__magic</span>
+        <td>
+        :(α -> β) -> (α -> β) -> α -> β
+    <tr><td> <span class="strong">itself_case</span> <td> :β -> α itself -> β
+    <tr><td> <span class="strong">literal_case</span> <td> :(α -> β) -> α -> β
+    <tr><td> <span class="strong">the_value</span> <td> :α itself
+    <tr><td> <span class="strong">~</span> <td> :bool -> bool
+
+</table>
+</center>
+
+<h1>Axioms</h1>
+<DL>
+<DT><span class="strong">BOOL_CASES_AX</span>
+<DD>
+<pre>
+|- ∀t. (t ⇔ T) ∨ (t ⇔ F)
+</pre>
+
+<DT><span class="strong">ETA_AX</span>
+<DD>
+<pre>
+|- ∀t. (λx. t x) = t
+</pre>
+
+<DT><span class="strong">SELECT_AX</span>
+<DD>
+<pre>
+|- ∀P x. P x ⇒ P ($@ P)
+</pre>
+
+<DT><span class="strong">INFINITY_AX</span>
+<DD>
+<pre>
+|- ∃f. ONE_ONE f ∧ ¬ONTO f
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">T_DEF</span>
+<DD>
+<pre>
+|- T ⇔ ((λx. x) = (λx. x))
+</pre>
+
+<DT><span class="strong">FORALL_DEF</span>
+<DD>
+<pre>
+|- $! = (λP. P = (λx. T))
+</pre>
+
+<DT><span class="strong">EXISTS_DEF</span>
+<DD>
+<pre>
+|- $? = (λP. P ($@ P))
+</pre>
+
+<DT><span class="strong">AND_DEF</span>
+<DD>
+<pre>
+|- $/\ = (λt1 t2. ∀t. (t1 ⇒ t2 ⇒ t) ⇒ t)
+</pre>
+
+<DT><span class="strong">OR_DEF</span>
+<DD>
+<pre>
+|- $\/ = (λt1 t2. ∀t. (t1 ⇒ t) ⇒ (t2 ⇒ t) ⇒ t)
+</pre>
+
+<DT><span class="strong">F_DEF</span>
+<DD>
+<pre>
+|- F ⇔ ∀t. t
+</pre>
+
+<DT><span class="strong">NOT_DEF</span>
+<DD>
+<pre>
+|- $~ = (λt. t ⇒ F)
+</pre>
+
+<DT><span class="strong">EXISTS_UNIQUE_DEF</span>
+<DD>
+<pre>
+|- $?! = (λP. $? P ∧ ∀x y. P x ∧ P y ⇒ (x = y))
+</pre>
+
+<DT><span class="strong">LET_DEF</span>
+<DD>
+<pre>
+|- LET = (λf x. f x)
+</pre>
+
+<DT><span class="strong">COND_DEF</span>
+<DD>
+<pre>
+|- COND = (λt t1 t2. @x. ((t ⇔ T) ⇒ (x = t1)) ∧ ((t ⇔ F) ⇒ (x = t2)))
+</pre>
+
+<DT><span class="strong">ONE_ONE_DEF</span>
+<DD>
+<pre>
+|- ONE_ONE = (λf. ∀x1 x2. (f x1 = f x2) ⇒ (x1 = x2))
+</pre>
+
+<DT><span class="strong">ONTO_DEF</span>
+<DD>
+<pre>
+|- ONTO = (λf. ∀y. ∃x. y = f x)
+</pre>
+
+<DT><span class="strong">TYPE_DEFINITION</span>
+<DD>
+<pre>
+|- TYPE_DEFINITION =
+   (λP rep.
+      (∀x' x''. (rep x' = rep x'') ⇒ (x' = x'')) ∧ ∀x. P x ⇔ ∃x'. x = rep x')
+</pre>
+
+<DT><span class="strong">bool_case_DEF</span>
+<DD>
+<pre>
+|- bool_case = (λx y b. if b then x else y)
+</pre>
+
+<DT><span class="strong">literal_case_DEF</span>
+<DD>
+<pre>
+|- literal_case = (λf x. f x)
+</pre>
+
+<DT><span class="strong">IN_DEF</span>
+<DD>
+<pre>
+|- $IN = (λx f. f x)
+</pre>
+
+<DT><span class="strong">RES_FORALL_DEF</span>
+<DD>
+<pre>
+|- RES_FORALL = (λp m. ∀x. x ∈ p ⇒ m x)
+</pre>
+
+<DT><span class="strong">RES_EXISTS_DEF</span>
+<DD>
+<pre>
+|- RES_EXISTS = (λp m. ∃x. x ∈ p ∧ m x)
+</pre>
+
+<DT><span class="strong">RES_EXISTS_UNIQUE_DEF</span>
+<DD>
+<pre>
+|- RES_EXISTS_UNIQUE = (λp m. (∃x::p. m x) ∧ ∀x y::p. m x ∧ m y ⇒ (x = y))
+</pre>
+
+<DT><span class="strong">RES_SELECT_DEF</span>
+<DD>
+<pre>
+|- RES_SELECT = (λp m. @x. x ∈ p ∧ m x)
+</pre>
+
+<DT><span class="strong">BOUNDED_DEF</span>
+<DD>
+<pre>
+|- BOUNDED = (λv. T)
+</pre>
+
+<DT><span class="strong">DATATYPE_TAG_DEF</span>
+<DD>
+<pre>
+|- DATATYPE = (λx. T)
+</pre>
+
+<DT><span class="strong">RES_ABSTRACT_DEF</span>
+<DD>
+<pre>
+|- (∀p m x. x ∈ p ⇒ (RES_ABSTRACT p m x = m x)) ∧
+   ∀p m1 m2.
+     (∀x. x ∈ p ⇒ (m1 x = m2 x)) ⇒ (RES_ABSTRACT p m1 = RES_ABSTRACT p m2)
+</pre>
+
+<DT><span class="strong">itself_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep. TYPE_DEFINITION ($= ARB) rep
+</pre>
+
+<DT><span class="strong">itself_case_thm</span>
+<DD>
+<pre>
+|- ∀b. (case (:α) of (:α) => b) = b
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">TRUTH</span>
+<DD>
+<pre>
+|- T
+</pre>
+
+<DT><span class="strong">IMP_ANTISYM_AX</span>
+<DD>
+<pre>
+|- ∀t1 t2. (t1 ⇒ t2) ⇒ (t2 ⇒ t1) ⇒ (t1 ⇔ t2)
+</pre>
+
+<DT><span class="strong">FALSITY</span>
+<DD>
+<pre>
+|- ∀t. F ⇒ t
+</pre>
+
+<DT><span class="strong">ETA_THM</span>
+<DD>
+<pre>
+|- ∀M. (λx. M x) = M
+</pre>
+
+<DT><span class="strong">EXCLUDED_MIDDLE</span>
+<DD>
+<pre>
+|- ∀t. t ∨ ¬t
+</pre>
+
+<DT><span class="strong">BETA_THM</span>
+<DD>
+<pre>
+|- ∀f y. (λx. f x) y = f y
+</pre>
+
+<DT><span class="strong">LET_THM</span>
+<DD>
+<pre>
+|- ∀f x. LET f x = f x
+</pre>
+
+<DT><span class="strong">FORALL_THM</span>
+<DD>
+<pre>
+|- $! f ⇔ ∀x. f x
+</pre>
+
+<DT><span class="strong">EXISTS_THM</span>
+<DD>
+<pre>
+|- $? f ⇔ ∃x. f x
+</pre>
+
+<DT><span class="strong">ABS_SIMP</span>
+<DD>
+<pre>
+|- ∀t1 t2. (λx. t1) t2 = t1
+</pre>
+
+<DT><span class="strong">FORALL_SIMP</span>
+<DD>
+<pre>
+|- ∀t. (∀x. t) ⇔ t
+</pre>
+
+<DT><span class="strong">EXISTS_SIMP</span>
+<DD>
+<pre>
+|- ∀t. (∃x. t) ⇔ t
+</pre>
+
+<DT><span class="strong">AND_INTRO_THM</span>
+<DD>
+<pre>
+|- ∀t1 t2. t1 ⇒ t2 ⇒ t1 ∧ t2
+</pre>
+
+<DT><span class="strong">AND1_THM</span>
+<DD>
+<pre>
+|- ∀t1 t2. t1 ∧ t2 ⇒ t1
+</pre>
+
+<DT><span class="strong">AND2_THM</span>
+<DD>
+<pre>
+|- ∀t1 t2. t1 ∧ t2 ⇒ t2
+</pre>
+
+<DT><span class="strong">CONJ_SYM</span>
+<DD>
+<pre>
+|- ∀t1 t2. t1 ∧ t2 ⇔ t2 ∧ t1
+</pre>
+
+<DT><span class="strong">CONJ_COMM</span>
+<DD>
+<pre>
+|- ∀t1 t2. t1 ∧ t2 ⇔ t2 ∧ t1
+</pre>
+
+<DT><span class="strong">CONJ_ASSOC</span>
+<DD>
+<pre>
+|- ∀t1 t2 t3. t1 ∧ t2 ∧ t3 ⇔ (t1 ∧ t2) ∧ t3
+</pre>
+
+<DT><span class="strong">OR_INTRO_THM1</span>
+<DD>
+<pre>
+|- ∀t1 t2. t1 ⇒ t1 ∨ t2
+</pre>
+
+<DT><span class="strong">OR_INTRO_THM2</span>
+<DD>
+<pre>
+|- ∀t1 t2. t2 ⇒ t1 ∨ t2
+</pre>
+
+<DT><span class="strong">OR_ELIM_THM</span>
+<DD>
+<pre>
+|- ∀t t1 t2. t1 ∨ t2 ⇒ (t1 ⇒ t) ⇒ (t2 ⇒ t) ⇒ t
+</pre>
+
+<DT><span class="strong">IMP_F</span>
+<DD>
+<pre>
+|- ∀t. (t ⇒ F) ⇒ ¬t
+</pre>
+
+<DT><span class="strong">F_IMP</span>
+<DD>
+<pre>
+|- ∀t. ¬t ⇒ t ⇒ F
+</pre>
+
+<DT><span class="strong">NOT_F</span>
+<DD>
+<pre>
+|- ∀t. ¬t ⇒ (t ⇔ F)
+</pre>
+
+<DT><span class="strong">NOT_AND</span>
+<DD>
+<pre>
+|- ¬(t ∧ ¬t)
+</pre>
+
+<DT><span class="strong">AND_CLAUSES</span>
+<DD>
+<pre>
+|- ∀t. (T ∧ t ⇔ t) ∧ (t ∧ T ⇔ t) ∧ (F ∧ t ⇔ F) ∧ (t ∧ F ⇔ F) ∧ (t ∧ t ⇔ t)
+</pre>
+
+<DT><span class="strong">OR_CLAUSES</span>
+<DD>
+<pre>
+|- ∀t. (T ∨ t ⇔ T) ∧ (t ∨ T ⇔ T) ∧ (F ∨ t ⇔ t) ∧ (t ∨ F ⇔ t) ∧ (t ∨ t ⇔ t)
+</pre>
+
+<DT><span class="strong">IMP_CLAUSES</span>
+<DD>
+<pre>
+|- ∀t. (T ⇒ t ⇔ t) ∧ (t ⇒ T ⇔ T) ∧ (F ⇒ t ⇔ T) ∧ (t ⇒ t ⇔ T) ∧ (t ⇒ F ⇔ ¬t)
+</pre>
+
+<DT><span class="strong">NOT_CLAUSES</span>
+<DD>
+<pre>
+|- (∀t. ¬ ¬t ⇔ t) ∧ (¬T ⇔ F) ∧ (¬F ⇔ T)
+</pre>
+
+<DT><span class="strong">EQ_REFL</span>
+<DD>
+<pre>
+|- ∀x. x = x
+</pre>
+
+<DT><span class="strong">REFL_CLAUSE</span>
+<DD>
+<pre>
+|- ∀x. (x = x) ⇔ T
+</pre>
+
+<DT><span class="strong">EQ_SYM</span>
+<DD>
+<pre>
+|- ∀x y. (x = y) ⇒ (y = x)
+</pre>
+
+<DT><span class="strong">EQ_SYM_EQ</span>
+<DD>
+<pre>
+|- ∀x y. (x = y) ⇔ (y = x)
+</pre>
+
+<DT><span class="strong">EQ_EXT</span>
+<DD>
+<pre>
+|- ∀f g. (∀x. f x = g x) ⇒ (f = g)
+</pre>
+
+<DT><span class="strong">FUN_EQ_THM</span>
+<DD>
+<pre>
+|- ∀f g. (f = g) ⇔ ∀x. f x = g x
+</pre>
+
+<DT><span class="strong">EQ_TRANS</span>
+<DD>
+<pre>
+|- ∀x y z. (x = y) ∧ (y = z) ⇒ (x = z)
+</pre>
+
+<DT><span class="strong">BOOL_EQ_DISTINCT</span>
+<DD>
+<pre>
+|- (T ⇎ F) ∧ (F ⇎ T)
+</pre>
+
+<DT><span class="strong">EQ_CLAUSES</span>
+<DD>
+<pre>
+|- ∀t. ((T ⇔ t) ⇔ t) ∧ ((t ⇔ T) ⇔ t) ∧ ((F ⇔ t) ⇔ ¬t) ∧ ((t ⇔ F) ⇔ ¬t)
+</pre>
+
+<DT><span class="strong">COND_CLAUSES</span>
+<DD>
+<pre>
+|- ∀t1 t2. ((if T then t1 else t2) = t1) ∧ ((if F then t1 else t2) = t2)
+</pre>
+
+<DT><span class="strong">COND_ID</span>
+<DD>
+<pre>
+|- ∀b t. (if b then t else t) = t
+</pre>
+
+<DT><span class="strong">SELECT_THM</span>
+<DD>
+<pre>
+|- ∀P. P (@x. P x) ⇔ ∃x. P x
+</pre>
+
+<DT><span class="strong">SELECT_REFL</span>
+<DD>
+<pre>
+|- ∀x. (@y. y = x) = x
+</pre>
+
+<DT><span class="strong">SELECT_REFL_2</span>
+<DD>
+<pre>
+|- ∀x. (@y. x = y) = x
+</pre>
+
+<DT><span class="strong">SELECT_UNIQUE</span>
+<DD>
+<pre>
+|- ∀P x. (∀y. P y ⇔ (y = x)) ⇒ ($@ P = x)
+</pre>
+
+<DT><span class="strong">SELECT_ELIM_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∃x. P x) ∧ (∀x. P x ⇒ Q x) ⇒ Q ($@ P)
+</pre>
+
+<DT><span class="strong">NOT_FORALL_THM</span>
+<DD>
+<pre>
+|- ∀P. ¬(∀x. P x) ⇔ ∃x. ¬P x
+</pre>
+
+<DT><span class="strong">NOT_EXISTS_THM</span>
+<DD>
+<pre>
+|- ∀P. ¬(∃x. P x) ⇔ ∀x. ¬P x
+</pre>
+
+<DT><span class="strong">FORALL_AND_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∀x. P x ∧ Q x) ⇔ (∀x. P x) ∧ ∀x. Q x
+</pre>
+
+<DT><span class="strong">LEFT_AND_FORALL_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∀x. P x) ∧ Q ⇔ ∀x. P x ∧ Q
+</pre>
+
+<DT><span class="strong">RIGHT_AND_FORALL_THM</span>
+<DD>
+<pre>
+|- ∀P Q. P ∧ (∀x. Q x) ⇔ ∀x. P ∧ Q x
+</pre>
+
+<DT><span class="strong">EXISTS_OR_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∃x. P x ∨ Q x) ⇔ (∃x. P x) ∨ ∃x. Q x
+</pre>
+
+<DT><span class="strong">LEFT_OR_EXISTS_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∃x. P x) ∨ Q ⇔ ∃x. P x ∨ Q
+</pre>
+
+<DT><span class="strong">RIGHT_OR_EXISTS_THM</span>
+<DD>
+<pre>
+|- ∀P Q. P ∨ (∃x. Q x) ⇔ ∃x. P ∨ Q x
+</pre>
+
+<DT><span class="strong">BOTH_EXISTS_AND_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∃x. P ∧ Q) ⇔ (∃x. P) ∧ ∃x. Q
+</pre>
+
+<DT><span class="strong">LEFT_EXISTS_AND_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∃x. P x ∧ Q) ⇔ (∃x. P x) ∧ Q
+</pre>
+
+<DT><span class="strong">RIGHT_EXISTS_AND_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∃x. P ∧ Q x) ⇔ P ∧ ∃x. Q x
+</pre>
+
+<DT><span class="strong">BOTH_FORALL_OR_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∀x. P ∨ Q) ⇔ (∀x. P) ∨ ∀x. Q
+</pre>
+
+<DT><span class="strong">LEFT_FORALL_OR_THM</span>
+<DD>
+<pre>
+|- ∀Q P. (∀x. P x ∨ Q) ⇔ (∀x. P x) ∨ Q
+</pre>
+
+<DT><span class="strong">RIGHT_FORALL_OR_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∀x. P ∨ Q x) ⇔ P ∨ ∀x. Q x
+</pre>
+
+<DT><span class="strong">BOTH_FORALL_IMP_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∀x. P ⇒ Q) ⇔ (∃x. P) ⇒ ∀x. Q
+</pre>
+
+<DT><span class="strong">LEFT_FORALL_IMP_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∀x. P x ⇒ Q) ⇔ (∃x. P x) ⇒ Q
+</pre>
+
+<DT><span class="strong">RIGHT_FORALL_IMP_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∀x. P ⇒ Q x) ⇔ P ⇒ ∀x. Q x
+</pre>
+
+<DT><span class="strong">BOTH_EXISTS_IMP_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∃x. P ⇒ Q) ⇔ (∀x. P) ⇒ ∃x. Q
+</pre>
+
+<DT><span class="strong">LEFT_EXISTS_IMP_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∃x. P x ⇒ Q) ⇔ (∀x. P x) ⇒ Q
+</pre>
+
+<DT><span class="strong">RIGHT_EXISTS_IMP_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∃x. P ⇒ Q x) ⇔ P ⇒ ∃x. Q x
+</pre>
+
+<DT><span class="strong">OR_IMP_THM</span>
+<DD>
+<pre>
+|- ∀A B. (A ⇔ B ∨ A) ⇔ B ⇒ A
+</pre>
+
+<DT><span class="strong">NOT_IMP</span>
+<DD>
+<pre>
+|- ∀A B. ¬(A ⇒ B) ⇔ A ∧ ¬B
+</pre>
+
+<DT><span class="strong">DISJ_ASSOC</span>
+<DD>
+<pre>
+|- ∀A B C. A ∨ B ∨ C ⇔ (A ∨ B) ∨ C
+</pre>
+
+<DT><span class="strong">DISJ_SYM</span>
+<DD>
+<pre>
+|- ∀A B. A ∨ B ⇔ B ∨ A
+</pre>
+
+<DT><span class="strong">DISJ_COMM</span>
+<DD>
+<pre>
+|- ∀A B. A ∨ B ⇔ B ∨ A
+</pre>
+
+<DT><span class="strong">DE_MORGAN_THM</span>
+<DD>
+<pre>
+|- ∀A B. (¬(A ∧ B) ⇔ ¬A ∨ ¬B) ∧ (¬(A ∨ B) ⇔ ¬A ∧ ¬B)
+</pre>
+
+<DT><span class="strong">LEFT_AND_OVER_OR</span>
+<DD>
+<pre>
+|- ∀A B C. A ∧ (B ∨ C) ⇔ A ∧ B ∨ A ∧ C
+</pre>
+
+<DT><span class="strong">RIGHT_AND_OVER_OR</span>
+<DD>
+<pre>
+|- ∀A B C. (B ∨ C) ∧ A ⇔ B ∧ A ∨ C ∧ A
+</pre>
+
+<DT><span class="strong">LEFT_OR_OVER_AND</span>
+<DD>
+<pre>
+|- ∀A B C. A ∨ B ∧ C ⇔ (A ∨ B) ∧ (A ∨ C)
+</pre>
+
+<DT><span class="strong">RIGHT_OR_OVER_AND</span>
+<DD>
+<pre>
+|- ∀A B C. B ∧ C ∨ A ⇔ (B ∨ A) ∧ (C ∨ A)
+</pre>
+
+<DT><span class="strong">IMP_DISJ_THM</span>
+<DD>
+<pre>
+|- ∀A B. A ⇒ B ⇔ ¬A ∨ B
+</pre>
+
+<DT><span class="strong">DISJ_IMP_THM</span>
+<DD>
+<pre>
+|- ∀P Q R. P ∨ Q ⇒ R ⇔ (P ⇒ R) ∧ (Q ⇒ R)
+</pre>
+
+<DT><span class="strong">IMP_CONJ_THM</span>
+<DD>
+<pre>
+|- ∀P Q R. P ⇒ Q ∧ R ⇔ (P ⇒ Q) ∧ (P ⇒ R)
+</pre>
+
+<DT><span class="strong">IMP_F_EQ_F</span>
+<DD>
+<pre>
+|- ∀t. t ⇒ F ⇔ (t ⇔ F)
+</pre>
+
+<DT><span class="strong">AND_IMP_INTRO</span>
+<DD>
+<pre>
+|- ∀t1 t2 t3. t1 ⇒ t2 ⇒ t3 ⇔ t1 ∧ t2 ⇒ t3
+</pre>
+
+<DT><span class="strong">EQ_IMP_THM</span>
+<DD>
+<pre>
+|- ∀t1 t2. (t1 ⇔ t2) ⇔ (t1 ⇒ t2) ∧ (t2 ⇒ t1)
+</pre>
+
+<DT><span class="strong">EQ_EXPAND</span>
+<DD>
+<pre>
+|- ∀t1 t2. (t1 ⇔ t2) ⇔ t1 ∧ t2 ∨ ¬t1 ∧ ¬t2
+</pre>
+
+<DT><span class="strong">COND_RATOR</span>
+<DD>
+<pre>
+|- ∀b f g x. (if b then f else g) x = if b then f x else g x
+</pre>
+
+<DT><span class="strong">COND_RAND</span>
+<DD>
+<pre>
+|- ∀f b x y. f (if b then x else y) = if b then f x else f y
+</pre>
+
+<DT><span class="strong">COND_ABS</span>
+<DD>
+<pre>
+|- ∀b f g. (λx. if b then f x else g x) = if b then f else g
+</pre>
+
+<DT><span class="strong">COND_EXPAND</span>
+<DD>
+<pre>
+|- ∀b t1 t2. (if b then t1 else t2) ⇔ (¬b ∨ t1) ∧ (b ∨ t2)
+</pre>
+
+<DT><span class="strong">COND_EXPAND_IMP</span>
+<DD>
+<pre>
+|- ∀b t1 t2. (if b then t1 else t2) ⇔ (b ⇒ t1) ∧ (¬b ⇒ t2)
+</pre>
+
+<DT><span class="strong">COND_EXPAND_OR</span>
+<DD>
+<pre>
+|- ∀b t1 t2. (if b then t1 else t2) ⇔ b ∧ t1 ∨ ¬b ∧ t2
+</pre>
+
+<DT><span class="strong">TYPE_DEFINITION_THM</span>
+<DD>
+<pre>
+|- ∀P rep.
+     TYPE_DEFINITION P rep ⇔
+     (∀x' x''. (rep x' = rep x'') ⇒ (x' = x'')) ∧ ∀x. P x ⇔ ∃x'. x = rep x'
+</pre>
+
+<DT><span class="strong">ONTO_THM</span>
+<DD>
+<pre>
+|- ∀f. ONTO f ⇔ ∀y. ∃x. y = f x
+</pre>
+
+<DT><span class="strong">ONE_ONE_THM</span>
+<DD>
+<pre>
+|- ∀f. ONE_ONE f ⇔ ∀x1 x2. (f x1 = f x2) ⇒ (x1 = x2)
+</pre>
+
+<DT><span class="strong">ABS_REP_THM</span>
+<DD>
+<pre>
+|- ∀P.
+     (∃rep. TYPE_DEFINITION P rep) ⇒
+     ∃rep abs. (∀a. abs (rep a) = a) ∧ ∀r. P r ⇔ (rep (abs r) = r)
+</pre>
+
+<DT><span class="strong">LET_RAND</span>
+<DD>
+<pre>
+|- P (let x = M in N x) ⇔ (let x = M in P (N x))
+</pre>
+
+<DT><span class="strong">LET_RATOR</span>
+<DD>
+<pre>
+|- (let x = M in N x) b = (let x = M in N x b)
+</pre>
+
+<DT><span class="strong">SWAP_FORALL_THM</span>
+<DD>
+<pre>
+|- ∀P. (∀x y. P x y) ⇔ ∀y x. P x y
+</pre>
+
+<DT><span class="strong">SWAP_EXISTS_THM</span>
+<DD>
+<pre>
+|- ∀P. (∃x y. P x y) ⇔ ∃y x. P x y
+</pre>
+
+<DT><span class="strong">EXISTS_UNIQUE_THM</span>
+<DD>
+<pre>
+|- (∃!x. P x) ⇔ (∃x. P x) ∧ ∀x y. P x ∧ P y ⇒ (x = y)
+</pre>
+
+<DT><span class="strong">LET_CONG</span>
+<DD>
+<pre>
+|- ∀f g M N. (M = N) ∧ (∀x. (x = N) ⇒ (f x = g x)) ⇒ (LET f M = LET g N)
+</pre>
+
+<DT><span class="strong">IMP_CONG</span>
+<DD>
+<pre>
+|- ∀x x' y y'. (x ⇔ x') ∧ (x' ⇒ (y ⇔ y')) ⇒ (x ⇒ y ⇔ x' ⇒ y')
+</pre>
+
+<DT><span class="strong">AND_CONG</span>
+<DD>
+<pre>
+|- ∀P P' Q Q'. (Q ⇒ (P ⇔ P')) ∧ (P' ⇒ (Q ⇔ Q')) ⇒ (P ∧ Q ⇔ P' ∧ Q')
+</pre>
+
+<DT><span class="strong">LEFT_AND_CONG</span>
+<DD>
+<pre>
+|- ∀P P' Q Q'. (P ⇔ P') ∧ (P' ⇒ (Q ⇔ Q')) ⇒ (P ∧ Q ⇔ P' ∧ Q')
+</pre>
+
+<DT><span class="strong">OR_CONG</span>
+<DD>
+<pre>
+|- ∀P P' Q Q'. (¬Q ⇒ (P ⇔ P')) ∧ (¬P' ⇒ (Q ⇔ Q')) ⇒ (P ∨ Q ⇔ P' ∨ Q')
+</pre>
+
+<DT><span class="strong">LEFT_OR_CONG</span>
+<DD>
+<pre>
+|- ∀P P' Q Q'. (P ⇔ P') ∧ (¬P' ⇒ (Q ⇔ Q')) ⇒ (P ∨ Q ⇔ P' ∨ Q')
+</pre>
+
+<DT><span class="strong">COND_CONG</span>
+<DD>
+<pre>
+|- ∀P Q x x' y y'.
+     (P ⇔ Q) ∧ (Q ⇒ (x = x')) ∧ (¬Q ⇒ (y = y')) ⇒
+     ((if P then x else y) = if Q then x' else y')
+</pre>
+
+<DT><span class="strong">RES_FORALL_CONG</span>
+<DD>
+<pre>
+|- (P = Q) ⇒ (∀x. x ∈ Q ⇒ (f x ⇔ g x)) ⇒ (RES_FORALL P f ⇔ RES_FORALL Q g)
+</pre>
+
+<DT><span class="strong">RES_EXISTS_CONG</span>
+<DD>
+<pre>
+|- (P = Q) ⇒ (∀x. x ∈ Q ⇒ (f x ⇔ g x)) ⇒ (RES_EXISTS P f ⇔ RES_EXISTS Q g)
+</pre>
+
+<DT><span class="strong">MONO_AND</span>
+<DD>
+<pre>
+|- (x ⇒ y) ∧ (z ⇒ w) ⇒ x ∧ z ⇒ y ∧ w
+</pre>
+
+<DT><span class="strong">MONO_OR</span>
+<DD>
+<pre>
+|- (x ⇒ y) ∧ (z ⇒ w) ⇒ x ∨ z ⇒ y ∨ w
+</pre>
+
+<DT><span class="strong">MONO_IMP</span>
+<DD>
+<pre>
+|- (y ⇒ x) ∧ (z ⇒ w) ⇒ (x ⇒ z) ⇒ y ⇒ w
+</pre>
+
+<DT><span class="strong">MONO_NOT</span>
+<DD>
+<pre>
+|- (y ⇒ x) ⇒ ¬x ⇒ ¬y
+</pre>
+
+<DT><span class="strong">MONO_NOT_EQ</span>
+<DD>
+<pre>
+|- y ⇒ x ⇔ ¬x ⇒ ¬y
+</pre>
+
+<DT><span class="strong">MONO_ALL</span>
+<DD>
+<pre>
+|- (∀x. P x ⇒ Q x) ⇒ (∀x. P x) ⇒ ∀x. Q x
+</pre>
+
+<DT><span class="strong">MONO_EXISTS</span>
+<DD>
+<pre>
+|- (∀x. P x ⇒ Q x) ⇒ (∃x. P x) ⇒ ∃x. Q x
+</pre>
+
+<DT><span class="strong">MONO_COND</span>
+<DD>
+<pre>
+|- (x ⇒ y) ⇒ (z ⇒ w) ⇒ (if b then x else z) ⇒ if b then y else w
+</pre>
+
+<DT><span class="strong">EXISTS_REFL</span>
+<DD>
+<pre>
+|- ∀a. ∃x. x = a
+</pre>
+
+<DT><span class="strong">EXISTS_UNIQUE_REFL</span>
+<DD>
+<pre>
+|- ∀a. ∃!x. x = a
+</pre>
+
+<DT><span class="strong">UNWIND_THM1</span>
+<DD>
+<pre>
+|- ∀P a. (∃x. (a = x) ∧ P x) ⇔ P a
+</pre>
+
+<DT><span class="strong">UNWIND_THM2</span>
+<DD>
+<pre>
+|- ∀P a. (∃x. (x = a) ∧ P x) ⇔ P a
+</pre>
+
+<DT><span class="strong">UNWIND_FORALL_THM1</span>
+<DD>
+<pre>
+|- ∀f v. (∀x. (v = x) ⇒ f x) ⇔ f v
+</pre>
+
+<DT><span class="strong">UNWIND_FORALL_THM2</span>
+<DD>
+<pre>
+|- ∀f v. (∀x. (x = v) ⇒ f x) ⇔ f v
+</pre>
+
+<DT><span class="strong">SKOLEM_THM</span>
+<DD>
+<pre>
+|- ∀P. (∀x. ∃y. P x y) ⇔ ∃f. ∀x. P x (f x)
+</pre>
+
+<DT><span class="strong">bool_case_thm</span>
+<DD>
+<pre>
+|- (∀e0 e1. (case T of T => e0 | F => e1) = e0) ∧
+   ∀e0 e1. (case F of T => e0 | F => e1) = e1
+</pre>
+
+<DT><span class="strong">bool_case_ID</span>
+<DD>
+<pre>
+|- ∀x b. (case b of T => x | F => x) = x
+</pre>
+
+<DT><span class="strong">boolAxiom</span>
+<DD>
+<pre>
+|- ∀e0 e1. ∃fn. (fn T = e0) ∧ (fn F = e1)
+</pre>
+
+<DT><span class="strong">bool_INDUCT</span>
+<DD>
+<pre>
+|- ∀P. P T ∧ P F ⇒ ∀b. P b
+</pre>
+
+<DT><span class="strong">bool_case_EQ_COND</span>
+<DD>
+<pre>
+|- ∀b x y. (case b of T => x | F => y) = if b then x else y
+</pre>
+
+<DT><span class="strong">bool_case_CONG</span>
+<DD>
+<pre>
+|- ∀P Q x x' y y'.
+     (P ⇔ Q) ∧ (Q ⇒ (x = x')) ∧ (¬Q ⇒ (y = y')) ⇒
+     ((case P of T => x | F => y) = if Q then x' else y')
+</pre>
+
+<DT><span class="strong">FORALL_BOOL</span>
+<DD>
+<pre>
+|- (∀b. P b) ⇔ P T ∧ P F
+</pre>
+
+<DT><span class="strong">UEXISTS_OR_THM</span>
+<DD>
+<pre>
+|- ∀P Q. (∃!x. P x ∨ Q x) ⇒ (∃!x. P x) ∨ ∃!x. Q x
+</pre>
+
+<DT><span class="strong">UEXISTS_SIMP</span>
+<DD>
+<pre>
+|- (∃!x. t) ⇔ t ∧ ∀x y. x = y
+</pre>
+
+<DT><span class="strong">RES_FORALL_THM</span>
+<DD>
+<pre>
+|- ∀P f. RES_FORALL P f ⇔ ∀x. x ∈ P ⇒ f x
+</pre>
+
+<DT><span class="strong">RES_EXISTS_THM</span>
+<DD>
+<pre>
+|- ∀P f. RES_EXISTS P f ⇔ ∃x. x ∈ P ∧ f x
+</pre>
+
+<DT><span class="strong">RES_EXISTS_UNIQUE_THM</span>
+<DD>
+<pre>
+|- ∀P f. RES_EXISTS_UNIQUE P f ⇔ (∃x::P. f x) ∧ ∀x y::P. f x ∧ f y ⇒ (x = y)
+</pre>
+
+<DT><span class="strong">RES_SELECT_THM</span>
+<DD>
+<pre>
+|- ∀P f. RES_SELECT P f = @x. x ∈ P ∧ f x
+</pre>
+
+<DT><span class="strong">RES_FORALL_TRUE</span>
+<DD>
+<pre>
+|- (∀x::P. T) ⇔ T
+</pre>
+
+<DT><span class="strong">RES_EXISTS_FALSE</span>
+<DD>
+<pre>
+|- (∃x::P. F) ⇔ F
+</pre>
+
+<DT><span class="strong">BOOL_FUN_CASES_THM</span>
+<DD>
+<pre>
+|- ∀f. (f = (λb. T)) ∨ (f = (λb. F)) ∨ (f = (λb. b)) ∨ (f = (λb. ¬b))
+</pre>
+
+<DT><span class="strong">BOOL_FUN_INDUCT</span>
+<DD>
+<pre>
+|- ∀P. P (λb. T) ∧ P (λb. F) ∧ P (λb. b) ∧ P (λb. ¬b) ⇒ ∀f. P f
+</pre>
+
+<DT><span class="strong">literal_case_THM</span>
+<DD>
+<pre>
+|- ∀f x. literal_case f x = f x
+</pre>
+
+<DT><span class="strong">literal_case_RAND</span>
+<DD>
+<pre>
+|- P (case M of x => N x) ⇔ case M of x => P (N x)
+</pre>
+
+<DT><span class="strong">literal_case_RATOR</span>
+<DD>
+<pre>
+|- (case M of x => N x) b = case M of x => N x b
+</pre>
+
+<DT><span class="strong">literal_case_CONG</span>
+<DD>
+<pre>
+|- ∀f g M N.
+     (M = N) ∧ (∀x. (x = N) ⇒ (f x = g x)) ⇒
+     (literal_case f M = literal_case g N)
+</pre>
+
+<DT><span class="strong">literal_case_id</span>
+<DD>
+<pre>
+|- (case a of a => t | x => u) = t
+</pre>
+
+<DT><span class="strong">BOUNDED_THM</span>
+<DD>
+<pre>
+|- ∀v. BOUNDED v ⇔ T
+</pre>
+
+<DT><span class="strong">LCOMM_THM</span>
+<DD>
+<pre>
+|- ∀f.
+     (∀x y z. f x (f y z) = f (f x y) z) ⇒
+     (∀x y. f x y = f y x) ⇒
+     ∀x y z. f x (f y z) = f y (f x z)
+</pre>
+
+<DT><span class="strong">DATATYPE_TAG_THM</span>
+<DD>
+<pre>
+|- ∀x. DATATYPE x ⇔ T
+</pre>
+
+<DT><span class="strong">DATATYPE_BOOL</span>
+<DD>
+<pre>
+|- DATATYPE (bool T F) ⇔ T
+</pre>
+
+<DT><span class="strong">ITSELF_UNIQUE</span>
+<DD>
+<pre>
+|- ∀i. i = (:α)
+</pre>
+
+<DT><span class="strong">itself_Axiom</span>
+<DD>
+<pre>
+|- ∀e. ∃f. f (:β) = e
+</pre>
+
+<DT><span class="strong">itself_induction</span>
+<DD>
+<pre>
+|- ∀P. P (:α) ⇒ ∀i. P i
+</pre>
+
+<DT><span class="strong">PEIRCE</span>
+<DD>
+<pre>
+|- ((P ⇒ Q) ⇒ P) ⇒ P
+</pre>
+
+<DT><span class="strong">JRH_INDUCT_UTIL</span>
+<DD>
+<pre>
+|- ∀P t. (∀x. (x = t) ⇒ P x) ⇒ $? P
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

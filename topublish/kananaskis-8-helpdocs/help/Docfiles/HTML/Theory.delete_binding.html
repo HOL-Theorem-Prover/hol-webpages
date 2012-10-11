@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Theory.delete_binding</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>delete_binding : string -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Theory.html">Theory</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Remove a stored value from the current theory segment.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An invocation </SPAN><SPAN class = "BRKT">delete_binding&nbsp;s</SPAN><SPAN class = "TEXT"> attempts to locate an axiom, definition, 
+or theorem that has been stored under name </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> in the current theory segment. 
+If such a binding can be found, it is deleted.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails. If the binding can&rsquo;t be found, then nothing is removed
+from the current theory segment.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- Define `fact x = if x=0 then 1 else x * fact (x-1)`;
+Equations stored under "fact_def".
+Induction stored under "fact_ind".
+&gt; val it = |- fact x = (if x = 0 then 1 else x * fact (x - 1)) : thm
+
+- current_theorems();
+&gt; val it =
+    [("fact_def", |- fact x = (if x = 0 then 1 else x * fact (x - 1))),
+     ("fact_ind", |- !P. (!x. (~(x = 0) ==&gt; P (x - 1)) ==&gt; P x) ==&gt; !v. P v)]
+  : (string * thm) list
+
+- delete_binding "fact_ind";
+&gt; val it = () : unit
+
+- current_theorems();
+&gt; val it =
+    [("fact_def", |- fact x = (if x = 0 then 1 else x * fact (x - 1)))]
+   : (string * thm) list
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Removing a definition binding does not remove the constant(s) it introduced
+from the signature. Use </SPAN><SPAN class = "BRKT">delete_const</SPAN><SPAN class = "TEXT"> for that.</SPAN>
+<P>
+<SPAN class = "TEXT">Removing an axiom has the consequence that all theorems proved from it
+become garbage.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Theory.scrub.html">scrub</A>,
+<A HREF = "Theory.delete_type.html">delete_type</A>,
+<A HREF = "Theory.delete_const.html">delete_const</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

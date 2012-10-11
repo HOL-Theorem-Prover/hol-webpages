@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Redblackmap</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Redblackmap</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/Redblackmap.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* Redblackmap -- applicative maps as Red-black trees *)
+<a name="line2"></a>signature Redblackmap =
+<a name="line3"></a>sig
+<a name="line4"></a>  type ('key, 'a) <a href="#dict-typ">dict</a>
+<a name="line5"></a>
+<a name="line6"></a>  exception NotFound
+<a name="line7"></a>
+<a name="line8"></a>  val <a href="#mkDict-val">mkDict</a>     : ('key * 'key -&gt; order) -&gt; ('key, 'a) dict
+<a name="line9"></a>  val <a href="#fromList-val">fromList</a>   : ('key * 'key -&gt; order) -&gt; ('key * 'a) list -&gt; ('key, 'a) dict
+<a name="line10"></a>  val <a href="#update-val">update</a>     : ('key, 'a) dict * 'key * ('a option -&gt; 'a) -&gt; ('key, 'a) dict
+<a name="line11"></a>  val <a href="#insert-val">insert</a>     : ('key, 'a) dict * 'key * 'a -&gt; ('key, 'a) dict
+<a name="line12"></a>  val <a href="#insertList-val">insertList</a> : ('key, 'a) dict * ('key * 'a) list -&gt; ('key, 'a) dict
+<a name="line13"></a>  val <a href="#findKey-val">findKey</a>    : ('key, 'a) dict * 'key -&gt; 'key * 'a
+<a name="line14"></a>  val <a href="#find-val">find</a>       : ('key, 'a) dict * 'key -&gt; 'a
+<a name="line15"></a>  val <a href="#peek-val">peek</a>       : ('key, 'a) dict * 'key -&gt; 'a option
+<a name="line16"></a>  val <a href="#remove-val">remove</a>     : ('key, 'a) dict * 'key -&gt; ('key, 'a) dict * 'a
+<a name="line17"></a>  val <a href="#numItems-val">numItems</a>   : ('key, 'a) dict -&gt; int
+<a name="line18"></a>  val <a href="#listItems-val">listItems</a>  : ('key, 'a) dict -&gt; ('key * 'a) list
+<a name="line19"></a>  val <a href="#isEmpty-val">isEmpty</a>    : ('key, 'a) dict -&gt; bool
+<a name="line20"></a>  val <a href="#app-val">app</a>        : ('key * 'a -&gt; unit) -&gt; ('key,'a) dict -&gt; unit
+<a name="line21"></a>  val <a href="#revapp-val">revapp</a>     : ('key * 'a -&gt; unit) -&gt; ('key,'a) dict -&gt; unit
+<a name="line22"></a>  val <a href="#foldr-val">foldr</a>      : ('key * 'a * 'b -&gt; 'b)-&gt; 'b -&gt; ('key,'a) dict -&gt; 'b
+<a name="line23"></a>  val <a href="#foldl-val">foldl</a>      : ('key * 'a * 'b -&gt; 'b) -&gt; 'b -&gt; ('key,'a) dict -&gt; 'b
+<a name="line24"></a>  val <a href="#map-val">map</a>        : ('key * 'a -&gt; 'b) -&gt; ('key,'a) dict -&gt; ('key, 'b) dict
+<a name="line25"></a>  val <a href="#transform-val">transform</a>  : ('a -&gt; 'b) -&gt; ('key,'a) dict -&gt; ('key, 'b) dict
+<a name="line26"></a>end
+<a name="line27"></a>
+<a name="line28"></a>(*
+   [('key, 'a) <a name="dict-typ"><b>dict</b></a>] is the type of applicative maps from domain type
+   'key to range type 'a, or equivalently, applicative dictionaries
+   with keys of type 'key and values of type 'a.  They are implemented
+   as Okasaki-style red-black trees.
+
+   [<a name="mkDict-val"><b>mkDict</b></a> ordr] returns a new, empty map whose keys have ordering
+   ordr.
+
+   [<a name="fromList-val"><b>fromList</b></a> ordr xs] returns a map that contains the (index, value)
+   pairs in xs, whose keys have ordering ordr.  It is equivalent to
+   insertList (mkDict ordr, xs).
+
+   [<a name="update-val"><b>update</b></a>(m, i, f)] extends m to map i to (f NONE) if i is not
+   already mapped, or to (f (SOME v)) if i is already mapped to v.
+
+   [<a name="insert-val"><b>insert</b></a>(m, i, v)] extends (or modifies) map m to map i to v.
+
+   [<a name="insertList-val"><b>insertList</b></a>(m, xs)] extends (or modifies) map m with the (index,
+   value) pairs in xs.  (It is equivalent to foldl (fn ((i, v), m) =&gt;
+   insert (m, i, v)) m xs.)  Note that later list entries will
+   overwrite earlier entries for the same index.
+
+   [<a name="findKey-val"><b>findKey</b></a> (m, k)] returns (k, v) if m maps k to v;
+   otherwise, raises NotFound. The returned key is the last one EQUAL in
+   the order to k that was used to extend or modify the map.
+
+   [<a name="find-val"><b>find</b></a> (m, k)] returns v if m maps k to v; otherwise raises NotFound.
+
+   [<a name="peek-val"><b>peek</b></a>(m, k)] returns SOME v if m maps k to v; otherwise returns NONE.
+
+   [<a name="remove-val"><b>remove</b></a>(m, k)] removes k from the domain of m and returns the
+   modified map and the element v corresponding to k.  Raises NotFound
+   if k is not in the domain of m.
+
+   [<a name="numItems-val"><b>numItems</b></a> m] returns the number of entries in m (that is, the size
+   of the domain of m).
+
+   [<a name="listItems-val"><b>listItems</b></a> m] returns a list of the entries (k, v) of keys k and
+   the corresponding values v in m, in order of increasing key values.
+
+   [<a name="isEmpty-val"><b>isEmpty</b></a> m] returns true if the map m is empty, and false otherwise.
+
+   [<a name="app-val"><b>app</b></a> f m] applies function f to the entries (k, v) in m, in
+   increasing order of k (according to the ordering ordr used to
+   create the map or dictionary).
+
+   [<a name="revapp-val"><b>revapp</b></a> f m] applies function f to the entries (k, v) in m, in
+   decreasing order of k.
+
+   [<a name="foldl-val"><b>foldl</b></a> f e m] applies the folding function f to the entries (k, v)
+   in m, in increasing order of k.
+
+   [<a name="foldr-val"><b>foldr</b></a> f e m] applies the folding function f to the entries (k, v)
+   in m, in decreasing order of k.
+
+   [<a name="map-val"><b>map</b></a> f m] returns a new map whose entries have form (k, f(k,v)),
+   where (k, v) is an entry in m.
+
+   [<a name="transform-val"><b>transform</b></a> f m] returns a new map whose entries have form (k, f v),
+   where (k, v) is an entry in m.
+*)
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/Redblackmap.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Count</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Count</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/prekernel/Count.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ===================================================================== *)
+<a name="line2"></a>(* FILE          : Count.sig                                             *)
+<a name="line3"></a>(* DESCRIPTION   : Signature for inference counting.                     *)
+<a name="line4"></a>(*                                                                       *)
+<a name="line5"></a>(* AUTHOR        : (c) Konrad Slind, University of Cambridge             *)
+<a name="line6"></a>(* DATE          : 1998                                                  *)
+<a name="line7"></a>(* ===================================================================== *)
+<a name="line8"></a>
+<a name="line9"></a>signature Count =
+<a name="line10"></a>sig
+<a name="line11"></a>
+<a name="line12"></a>  datatype rule =
+<a name="line13"></a>     Abs
+<a name="line14"></a>   | Alpha
+<a name="line15"></a>   | ApTerm
+<a name="line16"></a>   | ApThm
+<a name="line17"></a>   | Assume
+<a name="line18"></a>   | Axiom
+<a name="line19"></a>   | Beta
+<a name="line20"></a>   | Ccontr
+<a name="line21"></a>   | Choose
+<a name="line22"></a>   | Conj
+<a name="line23"></a>   | Conjunct1
+<a name="line24"></a>   | Conjunct2
+<a name="line25"></a>   | Definition
+<a name="line26"></a>   | Disch
+<a name="line27"></a>   | Disj1
+<a name="line28"></a>   | Disj2
+<a name="line29"></a>   | DisjCases
+<a name="line30"></a>   | Disk
+<a name="line31"></a>   | EqImpRule
+<a name="line32"></a>   | EqMp
+<a name="line33"></a>   | Exists
+<a name="line34"></a>   | Gen
+<a name="line35"></a>   | GenAbs
+<a name="line36"></a>   | Inst
+<a name="line37"></a>   | InstType
+<a name="line38"></a>   | MkComb
+<a name="line39"></a>   | Mp
+<a name="line40"></a>   | NotElim
+<a name="line41"></a>   | NotIntro
+<a name="line42"></a>   | Oracle
+<a name="line43"></a>   | Refl
+<a name="line44"></a>   | Spec
+<a name="line45"></a>   | Subst
+<a name="line46"></a>   | Sym
+<a name="line47"></a>   | Trans
+<a name="line48"></a>
+<a name="line49"></a>  val counting_thms: bool -&gt; unit
+<a name="line50"></a>  val reset_thm_count: unit -&gt; unit
+<a name="line51"></a>  val inc_count: rule -&gt; unit
+<a name="line52"></a>
+<a name="line53"></a>  val <a href="../../Docfiles/HTML/Count.thm_count.html">thm_count</a>:
+<a name="line54"></a>     unit -&gt; {ABS: int,
+<a name="line55"></a>              ALPHA: int,
+<a name="line56"></a>              AP_TERM: int,
+<a name="line57"></a>              AP_THM: int,
+<a name="line58"></a>              ASSUME: int,
+<a name="line59"></a>              BETA_CONV: int,
+<a name="line60"></a>              CCONTR: int,
+<a name="line61"></a>              CHOOSE: int,
+<a name="line62"></a>              CONJ: int,
+<a name="line63"></a>              CONJUNCT1: int,
+<a name="line64"></a>              CONJUNCT2: int,
+<a name="line65"></a>              DISCH: int,
+<a name="line66"></a>              DISJ1: int,
+<a name="line67"></a>              DISJ2: int,
+<a name="line68"></a>              DISJ_CASES: int,
+<a name="line69"></a>              EQ_IMP_RULE: int,
+<a name="line70"></a>              EQ_MP: int,
+<a name="line71"></a>              EXISTS: int,
+<a name="line72"></a>              GEN: int,
+<a name="line73"></a>              GEN_ABS: int,
+<a name="line74"></a>              INST: int,
+<a name="line75"></a>              INST_TYPE: int,
+<a name="line76"></a>              MK_COMB: int,
+<a name="line77"></a>              MP: int,
+<a name="line78"></a>              NOT_ELIM: int,
+<a name="line79"></a>              NOT_INTRO: int,
+<a name="line80"></a>              REFL: int,
+<a name="line81"></a>              SPEC: int,
+<a name="line82"></a>              SUBST: int,
+<a name="line83"></a>              SYM: int,
+<a name="line84"></a>              TRANS: int,
+<a name="line85"></a>              axiom: int,
+<a name="line86"></a>              definition: int,
+<a name="line87"></a>              from_disk: int,
+<a name="line88"></a>              oracle: int,
+<a name="line89"></a>              total: int}
+<a name="line90"></a>
+<a name="line91"></a>  type meter
+<a name="line92"></a>
+<a name="line93"></a>  val mk_meter: unit -&gt; meter
+<a name="line94"></a>  val read:
+<a name="line95"></a>     meter -&gt; {axioms: int, defns: int, oracles: int, disk: int, prims: int}
+<a name="line96"></a>  val report:
+<a name="line97"></a>     {axioms: int, defns: int, oracles: int, disk: int, prims: int} -&gt; unit
+<a name="line98"></a>  val <a href="../../Docfiles/HTML/Count.apply.html">apply</a>: ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line99"></a>
+<a name="line100"></a>end
+<a name="line101"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/prekernel/Count.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

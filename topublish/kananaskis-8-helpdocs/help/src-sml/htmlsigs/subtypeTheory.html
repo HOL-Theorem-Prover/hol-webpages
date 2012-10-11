@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure subtypeTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure subtypeTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/probability/subtypeScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature subtypeTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#DFUNSET_def-val">DFUNSET_def</a> : thm
+<a name="line7"></a>    val <a href="#FUNSET_def-val">FUNSET_def</a> : thm
+<a name="line8"></a>    val <a href="#pair_def-val">pair_def</a> : thm
+<a name="line9"></a>
+<a name="line10"></a>  (*  Theorems  *)
+<a name="line11"></a>    val <a href="#ABS_SUBTYPE-val">ABS_SUBTYPE</a> : thm
+<a name="line12"></a>    val <a href="#COMB_SUBTYPE-val">COMB_SUBTYPE</a> : thm
+<a name="line13"></a>    val <a href="#COND_SUBTYPE-val">COND_SUBTYPE</a> : thm
+<a name="line14"></a>    val <a href="#DEFAULT_SUBTYPE-val">DEFAULT_SUBTYPE</a> : thm
+<a name="line15"></a>    val <a href="#EMPTY_FUNSET-val">EMPTY_FUNSET</a> : thm
+<a name="line16"></a>    val <a href="#EQ_SUBSET_SUBSET-val">EQ_SUBSET_SUBSET</a> : thm
+<a name="line17"></a>    val <a href="#EQ_T_IMP-val">EQ_T_IMP</a> : thm
+<a name="line18"></a>    val <a href="#FUNSET_DFUNSET-val">FUNSET_DFUNSET</a> : thm
+<a name="line19"></a>    val <a href="#FUNSET_EMPTY-val">FUNSET_EMPTY</a> : thm
+<a name="line20"></a>    val <a href="#FUNSET_THM-val">FUNSET_THM</a> : thm
+<a name="line21"></a>    val <a href="#IN_DFUNSET-val">IN_DFUNSET</a> : thm
+<a name="line22"></a>    val <a href="#IN_EQ_UNIV_IMP-val">IN_EQ_UNIV_IMP</a> : thm
+<a name="line23"></a>    val <a href="#IN_FUNSET-val">IN_FUNSET</a> : thm
+<a name="line24"></a>    val <a href="#IN_PAIR-val">IN_PAIR</a> : thm
+<a name="line25"></a>    val <a href="#K_SUBSET-val">K_SUBSET</a> : thm
+<a name="line26"></a>    val <a href="#PAIRED_BETA_THM-val">PAIRED_BETA_THM</a> : thm
+<a name="line27"></a>    val <a href="#PAIR_UNIV-val">PAIR_UNIV</a> : thm
+<a name="line28"></a>    val <a href="#RES_ABSTRACT_SUBTYPE-val">RES_ABSTRACT_SUBTYPE</a> : thm
+<a name="line29"></a>    val <a href="#SUBSET_INTER-val">SUBSET_INTER</a> : thm
+<a name="line30"></a>    val <a href="#SUBSET_K-val">SUBSET_K</a> : thm
+<a name="line31"></a>    val <a href="#SUBSET_THM-val">SUBSET_THM</a> : thm
+<a name="line32"></a>    val <a href="#UNCURRY_SUBTYPE-val">UNCURRY_SUBTYPE</a> : thm
+<a name="line33"></a>    val <a href="#UNIV_FUNSET_UNIV-val">UNIV_FUNSET_UNIV</a> : thm
+<a name="line34"></a>    val <a href="#abs_cong-val">abs_cong</a> : thm
+<a name="line35"></a>    val <a href="#comb_cong-val">comb_cong</a> : thm
+<a name="line36"></a>    val <a href="#cond_cong-val">cond_cong</a> : thm
+<a name="line37"></a>    val <a href="#conj_cong-val">conj_cong</a> : thm
+<a name="line38"></a>    val <a href="#disj_cong-val">disj_cong</a> : thm
+<a name="line39"></a>    val <a href="#imp_cong-val">imp_cong</a> : thm
+<a name="line40"></a>    val <a href="#res_abstract_cong-val">res_abstract_cong</a> : thm
+<a name="line41"></a>    val <a href="#res_exists_cong-val">res_exists_cong</a> : thm
+<a name="line42"></a>    val <a href="#res_forall_cong-val">res_forall_cong</a> : thm
+<a name="line43"></a>    val <a href="#res_select_cong-val">res_select_cong</a> : thm
+<a name="line44"></a>    val <a href="#uncurry_cong-val">uncurry_cong</a> : thm
+<a name="line45"></a>
+<a name="line46"></a>  val subtype_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line47"></a>(*
+   [seq] Parent theory of "subtype"
+
+   [<a name="DFUNSET_def-val"><b>DFUNSET_def</b></a>]  Definition
+
+      |- ∀P Q. P --&gt; Q = (λf. ∀x. x ∈ P ⇒ f x ∈ Q x)
+
+   [<a name="FUNSET_def-val"><b>FUNSET_def</b></a>]  Definition
+
+      |- ∀P Q. P -&gt; Q = (λf. ∀x. x ∈ P ⇒ f x ∈ Q)
+
+   [<a name="pair_def-val"><b>pair_def</b></a>]  Definition
+
+      |- ∀X Y. pair X Y = (λ(x,y). x ∈ X ∧ y ∈ Y)
+
+   [<a name="ABS_SUBTYPE-val"><b>ABS_SUBTYPE</b></a>]  Theorem
+
+      |- ∀f p. (∀x. f x ∈ p x) ⇒ (λx. f x) ∈ 𝕌(:α) --&gt; p
+
+   [<a name="COMB_SUBTYPE-val"><b>COMB_SUBTYPE</b></a>]  Theorem
+
+      |- ∀f a x y. f ∈ x --&gt; y ∧ a ∈ x ⇒ f a ∈ y a
+
+   [<a name="COND_SUBTYPE-val"><b>COND_SUBTYPE</b></a>]  Theorem
+
+      |- ∀c a b x. (c ⇒ a ∈ x) ∧ (¬c ⇒ b ∈ x) ⇒ (if c then a else b) ∈ x
+
+   [<a name="DEFAULT_SUBTYPE-val"><b>DEFAULT_SUBTYPE</b></a>]  Theorem
+
+      |- ∀x. x ∈ 𝕌(:α)
+
+   [<a name="EMPTY_FUNSET-val"><b>EMPTY_FUNSET</b></a>]  Theorem
+
+      |- ∀s. ∅ -&gt; s = 𝕌(:α -&gt; β)
+
+   [<a name="EQ_SUBSET_SUBSET-val"><b>EQ_SUBSET_SUBSET</b></a>]  Theorem
+
+      |- ∀s t. (s = t) ⇒ s ⊆ t ∧ t ⊆ s
+
+   [<a name="EQ_T_IMP-val"><b>EQ_T_IMP</b></a>]  Theorem
+
+      |- ∀x. x ⇔ T ⇒ x
+
+   [<a name="FUNSET_DFUNSET-val"><b>FUNSET_DFUNSET</b></a>]  Theorem
+
+      |- ∀x y. x -&gt; y = x --&gt; K y
+
+   [<a name="FUNSET_EMPTY-val"><b>FUNSET_EMPTY</b></a>]  Theorem
+
+      |- ∀s f. f ∈ (s -&gt; ∅) ⇔ (s = ∅)
+
+   [<a name="FUNSET_THM-val"><b>FUNSET_THM</b></a>]  Theorem
+
+      |- ∀s t f x. f ∈ (s -&gt; t) ∧ x ∈ s ⇒ f x ∈ t
+
+   [<a name="IN_DFUNSET-val"><b>IN_DFUNSET</b></a>]  Theorem
+
+      |- ∀f P Q. f ∈ P --&gt; Q ⇔ ∀x. x ∈ P ⇒ f x ∈ Q x
+
+   [<a name="IN_EQ_UNIV_IMP-val"><b>IN_EQ_UNIV_IMP</b></a>]  Theorem
+
+      |- ∀s. (s = 𝕌(:α)) ⇒ ∀v. v ∈ s
+
+   [<a name="IN_FUNSET-val"><b>IN_FUNSET</b></a>]  Theorem
+
+      |- ∀f P Q. f ∈ (P -&gt; Q) ⇔ ∀x. x ∈ P ⇒ f x ∈ Q
+
+   [<a name="IN_PAIR-val"><b>IN_PAIR</b></a>]  Theorem
+
+      |- ∀x X Y. x ∈ pair X Y ⇔ FST x ∈ X ∧ SND x ∈ Y
+
+   [<a name="K_SUBSET-val"><b>K_SUBSET</b></a>]  Theorem
+
+      |- ∀x y. K x ⊆ y ⇔ ¬x ∨ 𝕌(:α) ⊆ y
+
+   [<a name="PAIRED_BETA_THM-val"><b>PAIRED_BETA_THM</b></a>]  Theorem
+
+      |- ∀f z. UNCURRY f z = f (FST z) (SND z)
+
+   [<a name="PAIR_UNIV-val"><b>PAIR_UNIV</b></a>]  Theorem
+
+      |- pair 𝕌(:α) 𝕌(:β) = 𝕌(:α # β)
+
+   [<a name="RES_ABSTRACT_SUBTYPE-val"><b>RES_ABSTRACT_SUBTYPE</b></a>]  Theorem
+
+      |- ∀p f q. (∀x. x ∈ p ⇒ f x ∈ q x) ⇒ RES_ABSTRACT p f ∈ p --&gt; q
+
+   [<a name="SUBSET_INTER-val"><b>SUBSET_INTER</b></a>]  Theorem
+
+      |- ∀s t u. s ⊆ t ∩ u ⇔ s ⊆ t ∧ s ⊆ u
+
+   [<a name="SUBSET_K-val"><b>SUBSET_K</b></a>]  Theorem
+
+      |- ∀x y. x ⊆ K y ⇔ x ⊆ ∅ ∨ y
+
+   [<a name="SUBSET_THM-val"><b>SUBSET_THM</b></a>]  Theorem
+
+      |- ∀P Q. P ⊆ Q ⇒ ∀x. x ∈ P ⇒ x ∈ Q
+
+   [<a name="UNCURRY_SUBTYPE-val"><b>UNCURRY_SUBTYPE</b></a>]  Theorem
+
+      |- ∀f p. (∀x y. f x y ∈ p x y) ⇒ UNCURRY f ∈ 𝕌(:α # β) --&gt; UNCURRY p
+
+   [<a name="UNIV_FUNSET_UNIV-val"><b>UNIV_FUNSET_UNIV</b></a>]  Theorem
+
+      |- 𝕌(:α) -&gt; 𝕌(:β) = 𝕌(:α -&gt; β)
+
+   [<a name="abs_cong-val"><b>abs_cong</b></a>]  Theorem
+
+      |- ∀f f'. (∀x. f x = f' x) ⇒ ((λx. f x) = f')
+
+   [<a name="comb_cong-val"><b>comb_cong</b></a>]  Theorem
+
+      |- ∀f f' a a'. (f = f') ∧ (a = a') ⇒ (f a = f' a')
+
+   [<a name="cond_cong-val"><b>cond_cong</b></a>]  Theorem
+
+      |- ∀c c' a a' b b'.
+           (c ⇔ c') ∧ (c' ⇒ (a = a')) ∧ (¬c' ⇒ (b = b')) ⇒
+           ((if c then a else b) = if c' then a' else b')
+
+   [<a name="conj_cong-val"><b>conj_cong</b></a>]  Theorem
+
+      |- ∀a a' b b'. (b ⇒ (a ⇔ a')) ∧ (a' ⇒ (b ⇔ b')) ⇒ (a ∧ b ⇔ a' ∧ b')
+
+   [<a name="disj_cong-val"><b>disj_cong</b></a>]  Theorem
+
+      |- ∀a a' b b'. (¬b ⇒ (a ⇔ a')) ∧ (¬a' ⇒ (b ⇔ b')) ⇒ (a ∨ b ⇔ a' ∨ b')
+
+   [<a name="imp_cong-val"><b>imp_cong</b></a>]  Theorem
+
+      |- ∀a a' b b'. (a ⇔ a') ∧ (a' ⇒ (b ⇔ b')) ⇒ (a ⇒ b ⇔ a' ⇒ b')
+
+   [<a name="res_abstract_cong-val"><b>res_abstract_cong</b></a>]  Theorem
+
+      |- ∀p p' f f'.
+           (p = p') ∧ (∀x. x ∈ p' ⇒ (f x = f' x)) ⇒
+           (RES_ABSTRACT p f = RES_ABSTRACT p' f')
+
+   [<a name="res_exists_cong-val"><b>res_exists_cong</b></a>]  Theorem
+
+      |- ∀p p' f f'.
+           (p = p') ∧ (∀x. x ∈ p' ⇒ (f x ⇔ f' x)) ⇒
+           (RES_EXISTS p f ⇔ RES_EXISTS p' f')
+
+   [<a name="res_forall_cong-val"><b>res_forall_cong</b></a>]  Theorem
+
+      |- ∀p p' f f'.
+           (p = p') ∧ (∀x. x ∈ p' ⇒ (f x ⇔ f' x)) ⇒
+           (RES_FORALL p f ⇔ RES_FORALL p' f')
+
+   [<a name="res_select_cong-val"><b>res_select_cong</b></a>]  Theorem
+
+      |- ∀p p' f f'.
+           (p = p') ∧ (∀x. x ∈ p' ⇒ (f x ⇔ f' x)) ⇒
+           (RES_SELECT p f = RES_SELECT p' f')
+
+   [<a name="uncurry_cong-val"><b>uncurry_cong</b></a>]  Theorem
+
+      |- ∀f f'. (∀x y. f x y = f' x y) ⇒ (UNCURRY f = UNCURRY f')
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/probability/subtypeScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

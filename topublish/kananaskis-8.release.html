@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+<meta http-equiv="content-type"
+      content="text/html ; charset=UTF-8">
+<title>Release Notes for Kananaskis-8 version of HOL 4</title>
+<style type="text/css">
+<!--
+  body {color: #333333; background: #FFFFFF;
+        margin-left: 1em; margin-right: 1em }
+  code, pre {color: #660066; font-weight: bold; font-family: "Andale Mono", "Lucida Console", monospace; }
+-->
+</style>
+
+</head>
+
+<body>
+<h1>Notes on HOL 4, Kananaskis-8 release</h1>
+
+<p>We are pleased to announce the Kananaskis-8 release of HOL 4.</p>
+
+<h2 id="contents">Contents</h2>
+<ul>
+  <li> <a href="#new-features">New features</a> </li>
+  <li> <a href="#bugs-fixed">Bugs fixed</a> </li>
+  <li> <a href="#new-theories">New theories</a> </li>
+  <li> <a href="#new-tools">New tools</a> </li>
+  <li> <a href="#new-examples">New examples</a> </li>
+  <li> <a href="#incompatibilities">Incompatibilities</a> </li>
+</ul>
+
+<h2 id="new-features">New features:</h2>
+
+<ul>
+<li><p>The <code>Define</code> function for making function definitions now allows variables that appear as formal parameters to the new functions being defined to share names with existing constants.
+This is based on the view that <code>`f x = x + 1`</code> should be the same as <code>`f = λx. x + 1`</code>.
+In the latter, it was already permitted to use constant names in the position of the <code>x</code>, now it is permitted in the former as well.
+There is one exception: if the formal name is the name of a constructor, then it has to be read as a constant rather than a bound name in order to allow ML-style pattern-matching.
+So, the following now works:
+<pre>
+    &gt; Define`x = (2,3)`;
+    Definition has been stored under "x_def"
+    val it = |- x = (2,3)
+
+    &gt; Define`f x = x + 1`;
+    Definition has been stored under "f_def"
+    val it = |- ∀x. f x = x + 1
+</pre>
+<p>But, this next session fails:
+<pre>
+    &gt; Hol_datatype`foo = X | Y`
+    &lt;&lt;HOL Message: Defined type: "foo"&gt;&gt;
+    val it = () : unit
+
+    &gt; Define`g X = X + 1`;
+    ...<i>&lt;Type inference failure&mdash;exception raised&gt;</i>...
+</pre>
+<p>Thanks to Scott Owens for the <a href="http://github.com/mn200/HOL/issues/17">feature suggestion</a>.
+
+</ul>
+
+<h2 id="bugs-fixed">Bugs fixed:</h2>
+
+<ul>
+<li><p> Declaring an “enumerated” data type (one with nullary constructors only) with certain choices of constructor names could lead to unloadable theories.
+Thanks to Scott Owens for the <a href="https://github.com/mn200/HOL/issues/78">bug report</a>.
+
+<li><p> Calling <code>delete_const</code> on a constant that had been defined with <code>Define</code> could lead to unloadable theories.
+Thanks to Magnus Myreen and Ramana Kumar for help in finding and fixing  <a href="http://github.com/mn200/HOL/issues/73">this bug</a>.
+
+<li><p> If the Unicode trace was turned off in a user’s <code>hol-config</code> file (as per the <a href="http://hol.sourceforge.net/faq.html#turn-off-unicode">FAQ</a>), running the <code>hol</code> executable under Moscow&nbsp;ML resulted in lots of unnecessary warnings about “Unicode-ish” rules being added while the trace was off.
+Thanks to Joseph Chan for the bug report.
+
+</ul>
+
+<h2 id="new-theories">New theories:</h2>
+
+<ul>
+<li> <p>The theory of sets has been extended with new <code>PROD_IMAGE</code> and <code>PROD_SET</code> constants, by analogy with existing <code>SUM_IMAGE</code> (also known as <code>SIGMA</code>) and <code>SUM_SET</code>.
+The <code>PROD_IMAGE</code> constant is overloaded to <code>PI</code> and <code>Π</code>.
+Thanks to Joseph Chan for this.
+
+<li> <p> A new theory, <code>real_sigmaTheory</code> defining the sum over a finite set of real numbers. The <code>REAL_SUM_IMAGE</code> constant is overloaded to <code>SIGMA</code>.
+
+<li> <p>A new <code>probability</code> theory providing an axiomatic formalization of probability theory including probability spaces, random variables, expectation and more.
+The formalization is based on the formalization of measure theory and Lebesgue integration.
+This work was done in the HVG group, Concordia and was built on top of the work of Coble in Cambridge.
+In this formalization, functions as well as Lebesgue integrals are extended-real-valued. Among the main results of the formalization are the convergence theorems, the Radon Nikodym theorem and properties of the integral.
+Details of the work can be found in
+<ol>
+<li> T.&nbsp;Mhamdi, O.&nbsp;Hasan, and S.&nbsp;Tahar: <cite>On the Formalization of the Lebesgue Integration Theory in HOL</cite>, ITP&nbsp;2010; and
+<li> T.&nbsp;Mhamdi, O.&nbsp;Hasan, and S.&nbsp;Tahar: <cite>Formalization of Entropy Measures in HOL</cite>, ITP 2011.
+</ol>
+<p>The <code>probability</code> theories replace the theories that used to be found in <code>src/prob</code>. (<b>Minor incompatibility</b>)
+
+<li> <p> A small theory, <code>gcdset</code> defining a function <code>gcdset</code> that returns the greatest common divisor of any non-empty set of natural numbers (and returns 0 for the empty set for the sake of totality).
+
+<li> <p> A theory, <code>numposrep</code> about positional representations for numbers, linking type <code>:num</code> (<em>i.e.,</em> the natural numbers) to <code>:num list</code>.  The conversion functions <code>n2l</code> and <code>l2n</code> are parameterised by the base to be used.
+
+<p> In addition, there is a theory <code>ASCIInumbers</code>, which builds on this base to define the conversion from lists of digits to lists of characters, using the ASCII encoding for the digits.  This theory defines constants such as <code>num_to_bin_string</code> and <code>num_from_dec_string</code>.
+
+<p>These constants (and the theorems about them) were originally part of the existing theory <code>bit</code>, so theories and SML code referring to the constants and theorems may need to be adjusted to account for their new host theories.  (<b>Minor incompatibility</b>)
+
+</ul>
+
+<h2 id="new-tools">New tools:</h2>
+
+<ul>
+<li><p>A new proof-producing translator from HOL functions to MiniML:
+<code>examples/miniML/hol2miniml</code>. Given an ML-like function in
+the HOL logic, this tool generates a corresponding deeply embedded
+MiniML program and automatically proves (w.r.t. an operational
+semantics) that the generated MiniML program indeed computes exactly
+the same value as the original HOL function. A description of this
+tool can be found in:
+<ol>
+<li> Myreen and Owens: <cite>Proof-Producing Synthesis of ML from Higher-Order Logic</cite>, ICFP&nbsp;2012.
+</ol>
+
+</ul>
+
+<h2 id="new-examples">New examples:</h2>
+
+<ul>
+<li><p>A soundness proof of Jared Davis' ACl2-like Milawa theorem
+prover: <code>examples/theorem-prover</code>. This examples directory
+constructs a verified Lisp implementation in 64-bit x86 (including
+verified garbage collection, parsing, printing, compilation) that is
+able to host the Milawa theorem prover. Going further, we also verify
+the soundness of Milawa's reflective kernel w.r.t. a formal definition
+of the semantics of its logic. Part of this work is described in:
+<ol>
+<li> Myreen and Davis: <cite>A verified runtime for a verified theorem prover</cite>, ITP&nbsp;2011.
+</ol>
+
+<li><p>A development of the theory of ordinal numbers (in <code>examples/set-theory/hol_sets</code>, based on a quotient of well-orders.
+Standard arithmetic operations (addition, multiplication and exponentiation) are defined, as well as the notion of supremum.
+The theorem that all ordinals can be expressed in a unique polynomial form over all possible bases greater than 1 is also proved.
+(When the base is <code>ω</code>, this gives the “Cantor Normal Form”.)
+
+<p>The example also shows the existence of the first uncountable ordinal (<code>ω₁</code>) if the underlying type (the <code>α</code> type parameter in <code>α&nbsp;ordinal</code>) is big enough.
+
+<p>The earlier ordinals theory (of Cantor Normal Form notation up to <code>ε₀</code>) is now in the same directory (moved from <code>examples/ordinal</code>) and is called <code>ordinalNotation</code>.  (<b>Minor incompatibility</b>)
+</ul>
+
+<h2 id="incompatibilities">Incompatibilities:</h2>
+
+<ul>
+
+<li><p>The syntax for <code>case</code> expressions has changed to be the same as in SML. This means that instead of
+<pre>
+        case n of
+           0 -> 1
+        || SUC n -> n + 1
+</pre>
+<p>one should write
+<pre>
+        case n of
+          0 => 1
+        | SUC n => n + 1
+</pre>
+<p>Additionally, as an aid to uniformity, the first case may be preceded by a bar character.
+This makes the following valid HOL (it is not valid SML):
+<pre>
+        case n of
+        | 0 => 1
+        | SUC n => n + 1
+</pre>
+
+<p>The new syntax does not mix well with the vertical bars of the set comprehension syntax.
+If one has a case expression inside a set-comprehension, the parser will likely be confused unless the case expression is enclosed in parentheses.
+The pretty-printer will parenthesise all case-expressions inside set comprehensions.
+
+<p>The pretty-printer’s behaviour cannot be easily changed, but if one wishes to support source files using the old syntax, the following incantation can be used:
+<pre>
+        set_mapped_fixity {
+          tok = "||", fixity = Infixr 6,
+          term_name = GrammarSpecials.case_split_special
+        };
+        set_mapped_fixity {
+          tok = "-&gt;", fixity = Infixr 10,
+          term_name = GrammarSpecials.case_arrow_special
+        };
+</pre>
+<p>The problem with using this old syntax is that the <code>||</code> token is now also used for the bit-wise or operation on words.
+If <code>wordsLib</code> is loaded, the parser will behave unpredictably unless the new syntax for bitwise or is removed.
+This removal can be done with:
+<pre>
+        remove_termtok {tok = "||", term_name = "||"}
+</pre>
+<p>When this is done, or if <code>wordsLib</code> is not loaded in the first place, old-style case-expressions will be parsed correctly.
+</ul>
+
+<hr>
+
+<p><em><a href="http://hol.sourceforge.net">HOL 4, Kananaskis-8</a></em></p>
+
+</body> </html>

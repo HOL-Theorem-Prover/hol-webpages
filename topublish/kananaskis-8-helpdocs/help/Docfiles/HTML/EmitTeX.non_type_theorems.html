@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>EmitTeX.non_type_theorems</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>non_type_theorems : string -&gt; (string * thm) list</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/EmitTeX.html">EmitTeX</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A versions of </SPAN><SPAN class = "BRKT">theorems</SPAN><SPAN class = "TEXT"> that attempts to filter out theorems created by </SPAN><SPAN class = "BRKT">Hol_datatype</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An invocation </SPAN><SPAN class = "BRKT">non_type_theorems&nbsp;thy</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">thy</SPAN><SPAN class = "TEXT"> is the name of a currently
+loaded theory segment, will return a list of the theorems stored in
+that theory. Axioms and definitions are excluded.  Each theorem is 
+paired with its name in the result.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails. If </SPAN><SPAN class = "BRKT">thy</SPAN><SPAN class = "TEXT"> is not the name of a currently loaded theory segment,
+the empty list is returned.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- new_theory "example";
+&lt;&lt;HOL message: Created theory "example"&gt;&gt;
+&gt; val it = () : unit
+- val _ = Hol_datatype `example = First | Second`;
+&lt;&lt;HOL message: Defined type: "example"&gt;&gt;
+- val example_def = Define
+    `(example First = Second) /\ (example Second = First)`;
+Definition has been stored under "example_def".
+&gt; val example_def = |- (example First = Second) /\ (example Second = First) :
+  thm
+- save_thm("example_thm", 
+   METIS_PROVE [example_def, theorem "example_nchotomy"]
+     ``!x. example (example x) = x``);
+metis: r[+0+5]+0+0+0+0+6+2+2+1+0+1+1#
+&gt; val it = |- !x. example (example x) = x : thm
+
+- theorems "example";
+&gt; val it =
+    [("num2example_example2num", |- !a. num2example (example2num a) = a),
+     ("example2num_num2example",
+      |- !r. r &lt; 2 = (example2num (num2example r) = r)),
+     ("num2example_11",
+      |- !r r'.
+           r &lt; 2 ==&gt; r' &lt; 2 ==&gt; ((num2example r = num2example r') = (r = r'))),
+     ("example2num_11", |- !a a'. (example2num a = example2num a') = (a = a')),
+     ("num2example_ONTO", |- !a. ?r. (a = num2example r) /\ r &lt; 2),
+     ("example2num_ONTO", |- !r. r &lt; 2 = ?a. r = example2num a),
+     ("num2example_thm",
+      |- (num2example 0 = First) /\ (num2example 1 = Second)),
+     ("example2num_thm",
+      |- (example2num First = 0) /\ (example2num Second = 1)),
+     ("example_EQ_example",
+      |- !a a'. (a = a') = (example2num a = example2num a')),
+     ("example_case_def",
+      |- (!v0 v1. (case First of First -&gt; v0 || Second -&gt; v1) = v0) /\
+         !v0 v1. (case Second of First -&gt; v0 || Second -&gt; v1) = v1),
+     ("datatype_example", |- DATATYPE (example First Second)),
+     ("example_distinct", |- ~(First = Second)),
+     ("example_case_cong",
+      |- !M M' v0 v1.
+           (M = M') /\ ((M' = First) ==&gt; (v0 = v0')) /\
+           ((M' = Second) ==&gt; (v1 = v1')) ==&gt;
+           ((case M of First -&gt; v0 || Second -&gt; v1) =
+            case M' of First -&gt; v0' || Second -&gt; v1')),
+     ("example_nchotomy", |- !a. (a = First) \/ (a = Second)),
+     ("example_Axiom", |- !x0 x1. ?f. (f First = x0) /\ (f Second = x1)),
+     ("example_induction", |- !P. P First /\ P Second ==&gt; !a. P a),
+     ("example_thm", |- !x. example (example x) = x)] : (string * thm) list
+
+- EmitTeX.non_type_theorems "example";
+&gt; val it = [("example_thm", |- !x. example (example x) = x)] :
+  (string * thm) list
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "DB.theorems.html">theorems</A>,
+<A HREF = "bossLib.Hol_datatype.html">Hol_datatype</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

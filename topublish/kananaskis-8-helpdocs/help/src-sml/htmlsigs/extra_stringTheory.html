@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure extra_stringTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure extra_stringTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/probability/extra_stringScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature extra_stringTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#rec_toNum_def-val">rec_toNum_def</a> : thm
+<a name="line7"></a>    val <a href="#rec_toString_primitive_def-val">rec_toString_primitive_def</a> : thm
+<a name="line8"></a>    val <a href="#toNum_def-val">toNum_def</a> : thm
+<a name="line9"></a>    val <a href="#toString_def-val">toString_def</a> : thm
+<a name="line10"></a>
+<a name="line11"></a>  (*  Theorems  *)
+<a name="line12"></a>    val <a href="#IMPLODE_APPEND_EQ-val">IMPLODE_APPEND_EQ</a> : thm
+<a name="line13"></a>    val <a href="#STRCAT1-val">STRCAT1</a> : thm
+<a name="line14"></a>    val <a href="#STRCAT_NEQ-val">STRCAT_NEQ</a> : thm
+<a name="line15"></a>    val <a href="#STRCAT_toString_inj-val">STRCAT_toString_inj</a> : thm
+<a name="line16"></a>    val <a href="#rec_toString_def-val">rec_toString_def</a> : thm
+<a name="line17"></a>    val <a href="#rec_toString_ind-val">rec_toString_ind</a> : thm
+<a name="line18"></a>    val <a href="#toString_inj-val">toString_inj</a> : thm
+<a name="line19"></a>    val <a href="#toString_toNum_cancel-val">toString_toNum_cancel</a> : thm
+<a name="line20"></a>
+<a name="line21"></a>  val extra_string_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line22"></a>(*
+   [extra_num] Parent theory of "extra_string"
+
+   [string] Parent theory of "extra_string"
+
+   [<a name="rec_toNum_def-val"><b>rec_toNum_def</b></a>]  Definition
+
+      |- (∀n. rec_toNum "" n = 0) ∧
+         ∀c cs n.
+           rec_toNum (STRING c cs) n =
+           10 ** n * (ORD c − 48) + rec_toNum cs (SUC n)
+
+   [<a name="rec_toString_primitive_def-val"><b>rec_toString_primitive_def</b></a>]  Definition
+
+      |- rec_toString =
+         WFREC (@R. WF R ∧ ∀n. R (SUC n DIV 10) (SUC n))
+           (λrec_toString a.
+              case a of
+                0 =&gt; I ""
+              | SUC n =&gt;
+                  I
+                    (STRCAT (rec_toString (SUC n DIV 10))
+                       (STRING (CHR (48 + SUC n MOD 10)) "")))
+
+   [<a name="toNum_def-val"><b>toNum_def</b></a>]  Definition
+
+      |- ∀s. toNum s = rec_toNum (REVERSE (EXPLODE s)) 0
+
+   [<a name="toString_def-val"><b>toString_def</b></a>]  Definition
+
+      |- ∀n. toString n = if n = 0 then "0" else IMPLODE (rec_toString n)
+
+   [<a name="IMPLODE_APPEND_EQ-val"><b>IMPLODE_APPEND_EQ</b></a>]  Theorem
+
+      |- ∀s1 s2 s1' s2'.
+           (IMPLODE (STRCAT s1 s2) = IMPLODE (STRCAT s1' s2')) ⇔
+           (STRCAT s1 s2 = STRCAT s1' s2')
+
+   [<a name="STRCAT1-val"><b>STRCAT1</b></a>]  Theorem
+
+      |- ∀s1 s2. STRCAT s1 s2 = IMPLODE (STRCAT (EXPLODE s1) (EXPLODE s2))
+
+   [<a name="STRCAT_NEQ-val"><b>STRCAT_NEQ</b></a>]  Theorem
+
+      |- ∀s1 s1'.
+           s1 ≠ "" ∧ s1' ≠ "" ∧ ¬(EXPLODE s1' ≼ EXPLODE s1) ∧
+           ¬(EXPLODE s1 ≼ EXPLODE s1') ⇒
+           ∀s2 s2'. STRCAT s1 s2 ≠ STRCAT s1' s2'
+
+   [<a name="STRCAT_toString_inj-val"><b>STRCAT_toString_inj</b></a>]  Theorem
+
+      |- ∀n m s. (STRCAT s (toString n) = STRCAT s (toString m)) ⇔ (n = m)
+
+   [<a name="rec_toString_def-val"><b>rec_toString_def</b></a>]  Theorem
+
+      |- (rec_toString 0 = "") ∧
+         ∀n.
+           rec_toString (SUC n) =
+           STRCAT (rec_toString (SUC n DIV 10))
+             (STRING (CHR (48 + SUC n MOD 10)) "")
+
+   [<a name="rec_toString_ind-val"><b>rec_toString_ind</b></a>]  Theorem
+
+      |- ∀P. P 0 ∧ (∀n. P (SUC n DIV 10) ⇒ P (SUC n)) ⇒ ∀v. P v
+
+   [<a name="toString_inj-val"><b>toString_inj</b></a>]  Theorem
+
+      |- ∀n m. (toString n = toString m) ⇔ (n = m)
+
+   [<a name="toString_toNum_cancel-val"><b>toString_toNum_cancel</b></a>]  Theorem
+
+      |- ∀n. toNum (toString n) = n
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/probability/extra_stringScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

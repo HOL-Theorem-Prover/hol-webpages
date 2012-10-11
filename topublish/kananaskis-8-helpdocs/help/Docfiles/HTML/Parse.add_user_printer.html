@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Parse.add_user_printer</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>add_user_printer : (string * term * userprinter) -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Adds a user specified pretty-printer for a specified type.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Parse</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">add_user_printer</SPAN><SPAN class = "TEXT"> is used to add a special purpose term
+pretty-printer to the interactive system.  The pretty-printer is
+called whenever the term to be printed matches (with </SPAN><SPAN class = "BRKT">match_term</SPAN><SPAN class = "TEXT">) the
+term provided as the second parameter of the triple.  If multiple
+calls to </SPAN><SPAN class = "BRKT">add_user_printer</SPAN><SPAN class = "TEXT"> are made with the same string parameter,
+the older functions are replaced entirely.  If multiple printers
+match, the more specific match will be chosen.  If two matches are
+equally specific, the match chosen is unspecified.</SPAN>
+<P>
+<SPAN class = "TEXT">The user-supplied function may choose not to print anything for the
+given term and hand back control to the standard printer by raising
+the exception </SPAN><SPAN class = "BRKT">term_pp_types.UserPP_Failed</SPAN><SPAN class = "TEXT">.  All other exceptions
+will propagate to the top-level.  If the system printer receives the
+</SPAN><SPAN class = "BRKT">UserPP_Failed</SPAN><SPAN class = "TEXT"> exception, it prints out the term using its standard
+algorithm, but will again attempt to call the user function on any
+sub-terms that match the pattern.</SPAN>
+<P>
+<SPAN class = "TEXT">The type </SPAN><SPAN class = "BRKT">userprinter</SPAN><SPAN class = "TEXT"> is an abbreviation defined in </SPAN><SPAN class = "BRKT">term_grammar</SPAN><SPAN class = "TEXT">
+to be
+</SPAN><DIV class = "XMPL"><pre>
+   type userprinter =
+     type_grammar.grammar * term_grammar.grammar -&gt;
+     PPBackend.t -&gt;
+     sysprinter -&gt;
+     term_pp_types.ppstream_funs -&gt;
+     (grav * grav * grav) -&gt; int -&gt;
+     term -&gt; uprinter
+</pre></DIV>
+<SPAN class = "TEXT">
+where the type </SPAN><SPAN class = "BRKT">grav</SPAN><SPAN class = "TEXT"> (from </SPAN><SPAN class = "BRKT">term_pp_types</SPAN><SPAN class = "TEXT">) is
+</SPAN><DIV class = "XMPL"><pre>
+   datatype grav = Top | RealTop | Prec of (int * string)
+</pre></DIV>
+<SPAN class = "TEXT">
+The type </SPAN><SPAN class = "BRKT">uprinter</SPAN><SPAN class = "TEXT"> (standing for "unit printer") is a special monadic
+printing type based on the </SPAN><SPAN class = "BRKT">smpp</SPAN><SPAN class = "TEXT"> module (explained further in the
+example below).  The type </SPAN><SPAN class = "BRKT">sysprinter</SPAN><SPAN class = "TEXT"> is another abbreviation
+</SPAN><DIV class = "XMPL"><pre>
+   type sysprinter = (grav * grav * grav) -&gt; int -&gt; term -&gt; uprinter
+</pre></DIV>
+<SPAN class = "TEXT">
+Thus, when the user&rsquo;s printing function is called, it is passed ten
+parameters, including three "gravity" values in a triple, and two
+grammars.  The fourth parameter is the system&rsquo;s own printer. The fifth
+parameter is a record of functions to call for adding a string to the
+output, adding a break, adding new lines, defining some styles for
+printing like the color, etc.  The availability of the system&rsquo;s
+printer allows the user function to use the default printer on
+sub-terms that it is not interested in.  The user function must not
+call the </SPAN><SPAN class = "BRKT">sysprinter</SPAN><SPAN class = "TEXT"> on the term that it is handed initially as the
+</SPAN><SPAN class = "BRKT">sysprinter</SPAN><SPAN class = "TEXT"> will immediately call the user printing function all over
+again.  If the user printer wants to give the whole term back to the
+system printer, then it must use the </SPAN><SPAN class = "BRKT">UserPP_Failed</SPAN><SPAN class = "TEXT"> exception
+described above.</SPAN>
+<P>
+<SPAN class = "TEXT">Though there are existing functions </SPAN><SPAN class = "BRKT">add_string</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">add_break</SPAN><SPAN class = "TEXT"> etc. that
+can be used to manipulate pretty-printing streams, users should prefer
+instead to use the functions that are provided in the triple with the
+</SPAN><SPAN class = "BRKT">sysprinter</SPAN><SPAN class = "TEXT">. This then gives them access to functions that can
+prevent inadvertent symbol merges.</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">grav</SPAN><SPAN class = "TEXT"> type is used to let pretty-printers know a little about the
+context in which a term is to be printed out.  The triple of gravities
+is given in the order &ldquo;parent&rdquo;, &ldquo;left&rdquo; and &ldquo;right&rdquo;.  The left
+and right gravities specify the precedence of any operator that might
+be attempting to &ldquo;grab&rdquo; arguments from the left and right.  For
+example, the term
+</SPAN><DIV class = "XMPL"><pre>
+   (p /\ (if q then r else s)) ==&gt; t
+</pre></DIV>
+<SPAN class = "TEXT">
+should be pretty-printed as
+</SPAN><DIV class = "XMPL"><pre>
+   p /\ (if q then r else s) ==&gt; t
+</pre></DIV>
+<SPAN class = "TEXT">
+The system figures this out when it comes to print the
+conditional expression because it knows both that the operator to the
+left has the appropriate precedence for conjunction but also that
+there is an operator with implication&rsquo;s precedence to the right.  The
+issue arises because conjunction is tighter than implication in
+precedence, leading the printer to decide that parentheses aren&rsquo;t
+necessary around the conjunction.  Similarly, considered on its own,
+the conjunction doesn&rsquo;t require parentheses around the conditional
+expression because there is no competition between them for
+arguments.</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">grav</SPAN><SPAN class = "TEXT"> constructors </SPAN><SPAN class = "BRKT">Top</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">RealTop</SPAN><SPAN class = "TEXT"> indicate a context
+analogous to the top of the term, where there is no binding
+competition.  The constructor </SPAN><SPAN class = "BRKT">RealTop</SPAN><SPAN class = "TEXT"> is reserved for situations
+where the term really is the top of the tree; </SPAN><SPAN class = "BRKT">Top</SPAN><SPAN class = "TEXT"> is used for
+analogous situations such when the term is enclosed in parentheses.
+(In the conditional expression above, the printing of </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> will have
+</SPAN><SPAN class = "BRKT">Top</SPAN><SPAN class = "TEXT"> gravities to the left and right.)</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">Prec</SPAN><SPAN class = "TEXT"> constructor for gravity values takes both a number
+indicating precedence level and a string corresponding to the token
+that has this precedence level.  This string parameter is of most
+importance in the parent gravity (the first component of the triple)
+where it can be useful in deciding whether or not to print parentheses
+and whether or not to begin fresh pretty-printing blocks.  For
+example, tuples in the logic look better if they have parentheses
+around the topmost instance of the comma-operator, regardless of
+whether or not this is required according to precedence
+considerations.  By examining the parent gravity, a printer can
+determine more about the term&rsquo;s context.  (Note that the parent
+gravity will also be one or other of the left and right gravities; but
+it is not possible to tell which.)</SPAN>
+<P>
+<SPAN class = "TEXT">The integer parameter to both the system printing function and the
+user printing function is the depth of the term.  The system printer
+will stop printing a term if the depth ever reaches exactly zero.
+Each time it calls itself recursively, the depth parameter is reduced
+by one.  It starts out at the value stored in
+</SPAN><SPAN class = "BRKT">Globals.max_print_depth</SPAN><SPAN class = "TEXT">.  Setting the latter to </SPAN><SPAN class = "BRKT">~1</SPAN><SPAN class = "TEXT"> will ensure
+that all of a term is always printed.</SPAN>
+<P>
+<SPAN class = "TEXT">Finally, the string parameter to the </SPAN><SPAN class = "BRKT">add_user_printer</SPAN><SPAN class = "TEXT"> function is a
+string corresponding to the ML function.  Best practice is probably to
+define the printing function in an independent structure and to then
+have the string be of the form </SPAN><SPAN class = "BRKT">"module.fnname"</SPAN><SPAN class = "TEXT">.  This parameter is
+not present in the accompanying </SPAN><SPAN class = "BRKT">temp_add_user_printer</SPAN><SPAN class = "TEXT">, as this
+latter function does not affect the grammar exported to disk with
+</SPAN><SPAN class = "BRKT">export_theory</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Will not fail directly, but if the function parameter fails to print
+all terms of the registered type in any other way than raising the
+</SPAN><SPAN class = "BRKT">UserPP_Failed</SPAN><SPAN class = "TEXT"> exception, then the pretty-printer will also fail.  If
+the string parameter does not correspond to valid ML code, then the
+theory file generated by </SPAN><SPAN class = "BRKT">export_theory</SPAN><SPAN class = "TEXT"> will not compile.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This example uses the system printer to print sub-terms, and concerns
+itself only with printing conjunctions.  Note how the actions that make up the pretty-printer (combinations of </SPAN><SPAN class = "BRKT">add_string</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">add_break</SPAN><SPAN class = "TEXT"> are combined with the infix </SPAN><SPAN class = "BRKT">&gt;&gt;</SPAN><SPAN class = "TEXT"> operator (from the </SPAN><SPAN class = "BRKT">smpp</SPAN><SPAN class = "TEXT"> module).
+</SPAN><DIV class = "XMPL"><pre>
+  - fun myprint Gs B sys (ppfns:term_pp_types.ppstream_funs) gravs d t =
+    let
+      open Portable term_pp_types smpp
+      val (str,brk) = (#add_string ppfns, #add_break ppfns);
+      val (l,r) = dest_conj t
+    in
+      str "CONJ:" &gt;&gt;
+      brk (1,0) &gt;&gt;
+      sys (Top, Top, Top) (d - 1) l &gt;&gt;
+      brk (1,0) &gt;&gt; str "and then" &gt;&gt; brk(1,0) &gt;&gt;
+      sys (Top, Top, Top) (d - 1) r &gt;&gt;
+      str "ENDCONJ"
+    end handle HOL_ERR _ =&gt; raise term_pp_types.UserPP_Failed;
+  &gt;  val myprint = fn :
+       'a -&gt; 'b -&gt;
+       (grav * grav * grav -&gt; int -&gt; term -&gt;
+         (term_pp_types.printing_info,'c)smpp.t) -&gt;
+       term_pp_types.ppstream_funs -&gt; 'd -&gt; int -&gt; term -&gt;
+       (term_pp_types.printing_info,unit)smpp.t
+
+  - temp_add_user_printer ("myprint", ``p /\ q``, myprint);
+  &gt; val it = () : unit
+
+  - ``p ==&gt; q /\ r``;
+  &gt; val it = ``p ==&gt; CONJ: q and then r ENDCONJ`` : term
+</pre></DIV>
+<SPAN class = "TEXT">
+The variables </SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">r</SPAN><SPAN class = "TEXT"> as well as the implication
+are all of boolean type, but are handled by the system printer.  The
+user printer handles just the special form of the conjunction.  Note
+that this example actually falls within the scope of the </SPAN><SPAN class = "BRKT">add_rule</SPAN><SPAN class = "TEXT">
+functionality.</SPAN>
+<P>
+<SPAN class = "TEXT">The next approach to printing conjunctions is not possible with
+</SPAN><SPAN class = "BRKT">add_rule</SPAN><SPAN class = "TEXT">.  This example uses the styling and blocking functions to
+create part of its effect.  These functions (</SPAN><SPAN class = "BRKT">ustyle</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">ublock</SPAN><SPAN class = "TEXT">
+respectively) are higher-order functions that take printers as
+arguments and cause the arguments to be printed with a particular
+governing style (</SPAN><SPAN class = "BRKT">ustyle</SPAN><SPAN class = "TEXT">), or indented to reveal block structure
+(</SPAN><SPAN class = "BRKT">ublock</SPAN><SPAN class = "TEXT">).
+</SPAN><DIV class = "XMPL"><pre>
+  - fun myprint2 Gs B sys (ppfns:term_pp_types.ppstream_funs) (pg,lg,rg) d t = let
+      open Portable term_pp_types PPBackEnd smpp
+      val {add_string,add_break,ublock,ustyle,...} = ppfns
+      val (l,r) = dest_conj t
+      fun delim wrap body =
+        case pg of
+          Prec(_, "CONJ") =&gt; body
+        | _ =&gt; wrap body
+    in
+      delim (fn bod =&gt; ublock CONSISTENT 0
+                         (ustyle [Bold] (add_string "CONJ") &gt;&gt;
+                          add_break (1,2) &gt;&gt;
+                          ublock INCONSISTENT 0 bod &gt;&gt;
+                          add_break (1,0) &gt;&gt;
+                          ustyle [Bold] (add_string "ENDCONJ")))
+         (sys (Prec(0, "CONJ"), Top, Top) (d - 1) l &gt;&gt;
+          add_string "," &gt;&gt; add_break (1,0) &gt;&gt;
+          sys (Prec(0, "CONJ"), Top, Top) (d - 1) r)
+    end handle HOL_ERR _ =&gt; raise term_pp_types.UserPP_Failed;
+
+  - temp_add_user_printer ("myprint2", ``p /\ q``, myprint2);
+
+  - ``p /\ q /\ r /\ s /\ t /\ u /\ p /\ p /\ p /\ p /\ p /\ p /\
+      p /\ p /\ p /\ p/\ p /\ p /\ q /\ r /\ s /\ t /\ u /\ v /\
+      (w /\ x) /\ (p \/ q) /\ r``;
+
+  &gt; val it =
+      ``CONJ
+          p, q, r, s, t, u, p, p, p, p, p, p, p, p, p, p, p, p, q,
+          r, s, t, u, v, w, x, p \/ q, r
+        ENDCONJ`` : term
+</pre></DIV>
+<SPAN class = "TEXT">
+This example also demonstrates using parent gravities to print out a
+big term.  The function passed as an argument to delim is only called
+when the parent gravity is not </SPAN><SPAN class = "BRKT">"CONJ"</SPAN><SPAN class = "TEXT">.  This ensures that the
+special delimiters only get printed when the first conjunction is
+encountered.  Subsequent, internal conjunctions get passed the
+</SPAN><SPAN class = "BRKT">"CONJ"</SPAN><SPAN class = "TEXT"> gravity in the calls to </SPAN><SPAN class = "BRKT">sys</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">A better approach (and certainly a more direct one) would probably be
+to call </SPAN><SPAN class = "BRKT">strip_conj</SPAN><SPAN class = "TEXT"> and print all of the conjuncts in one fell swoop.
+Additionally, this example demonstrates how easy it is to conceal
+genuine syntactic structure with a pretty-printer. Finally, it shows
+how styles can be used.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">For extending the pretty-printer in ways not possible to encompass
+with the built-in grammar rules for concrete syntax.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.add_rule.html">add_rule</A>,
+<A HREF = "Term.match_term.html">match_term</A>,
+<A HREF = "Parse.remove_user_printer.html">remove_user_printer</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

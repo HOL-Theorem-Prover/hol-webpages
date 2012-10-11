@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>computeLib.monitoring</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>monitoring : (term -&gt; bool) option ref</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/computeLib.html">computeLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Monitoring support for evaluation</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The reference variable </SPAN><SPAN class = "BRKT">monitoring</SPAN><SPAN class = "TEXT"> provides a simple way to view the
+operation of </SPAN><SPAN class = "BRKT">EVAL</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">EVAL_RULE</SPAN><SPAN class = "TEXT">, and </SPAN><SPAN class = "BRKT">EVAL_TAC</SPAN><SPAN class = "TEXT">. The initial value of
+</SPAN><SPAN class = "BRKT">monitoring</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">NONE</SPAN><SPAN class = "TEXT">. If one wants to monitor the expansion of a function,
+defined with constant </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">, then setting </SPAN><SPAN class = "BRKT">monitoring</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">SOME&nbsp;(same_const&nbsp;c)</SPAN><SPAN class = "TEXT">
+will tell the system to print out the expansion of </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> by the evaluation
+entrypoints. To monitor the expansions of a collection of functions, defined
+with </SPAN><SPAN class = "BRKT">c1</SPAN><SPAN class = "TEXT">,...,</SPAN><SPAN class = "BRKT">cn</SPAN><SPAN class = "TEXT">, then </SPAN><SPAN class = "BRKT">monitoring</SPAN><SPAN class = "TEXT"> can be set to 
+</SPAN><DIV class = "XMPL"><pre>
+   SOME (fn x =&gt; same_const c1 x orelse ... orelse same_const cn x)
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- val [FACT] = decls "FACT";
+&gt; val FACT = `FACT` : term
+
+- computeLib.monitoring := SOME (same_const FACT);
+
+- EVAL (Term `FACT 4`);
+FACT 4 = (if 4 = 0 then 1 else 4 * FACT (PRE 4))
+FACT 3 = (if 3 = 0 then 1 else 3 * FACT (PRE 3))
+FACT 2 = (if 2 = 0 then 1 else 2 * FACT (PRE 2))
+FACT 1 = (if 1 = 0 then 1 else 1 * FACT (PRE 1))
+FACT 0 = (if 0 = 0 then 1 else 0 * FACT (PRE 0))
+&gt; val it = |- FACT 4 = 24 : thm
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "computeLib.RESTR_EVAL_CONV.html">RESTR_EVAL_CONV</A>,
+<A HREF = "Term.decls.html">decls</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

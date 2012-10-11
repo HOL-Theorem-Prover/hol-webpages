@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure sum_numTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure sum_numTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/n-bit/sum_numScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature sum_numTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#GSUM_curried_def-val">GSUM_curried_def</a> : thm
+<a name="line7"></a>    val <a href="#GSUM_tupled_primitive_def-val">GSUM_tupled_primitive_def</a> : thm
+<a name="line8"></a>    val <a href="#SUM_def-val">SUM_def</a> : thm
+<a name="line9"></a>
+<a name="line10"></a>  (*  Theorems  *)
+<a name="line11"></a>    val <a href="#GSUM_1-val">GSUM_1</a> : thm
+<a name="line12"></a>    val <a href="#GSUM_ADD-val">GSUM_ADD</a> : thm
+<a name="line13"></a>    val <a href="#GSUM_EQUAL-val">GSUM_EQUAL</a> : thm
+<a name="line14"></a>    val <a href="#GSUM_FUN_EQUAL-val">GSUM_FUN_EQUAL</a> : thm
+<a name="line15"></a>    val <a href="#GSUM_LESS-val">GSUM_LESS</a> : thm
+<a name="line16"></a>    val <a href="#GSUM_MONO-val">GSUM_MONO</a> : thm
+<a name="line17"></a>    val <a href="#GSUM_ZERO-val">GSUM_ZERO</a> : thm
+<a name="line18"></a>    val <a href="#GSUM_def-val">GSUM_def</a> : thm
+<a name="line19"></a>    val <a href="#GSUM_def_compute-val">GSUM_def_compute</a> : thm
+<a name="line20"></a>    val <a href="#GSUM_ind-val">GSUM_ind</a> : thm
+<a name="line21"></a>    val <a href="#SUM-val">SUM</a> : thm
+<a name="line22"></a>    val <a href="#SUM_1-val">SUM_1</a> : thm
+<a name="line23"></a>    val <a href="#SUM_EQUAL-val">SUM_EQUAL</a> : thm
+<a name="line24"></a>    val <a href="#SUM_FOLDL-val">SUM_FOLDL</a> : thm
+<a name="line25"></a>    val <a href="#SUM_FUN_EQUAL-val">SUM_FUN_EQUAL</a> : thm
+<a name="line26"></a>    val <a href="#SUM_LESS-val">SUM_LESS</a> : thm
+<a name="line27"></a>    val <a href="#SUM_MONO-val">SUM_MONO</a> : thm
+<a name="line28"></a>    val <a href="#SUM_ZERO-val">SUM_ZERO</a> : thm
+<a name="line29"></a>    val <a href="#SUM_def_compute-val">SUM_def_compute</a> : thm
+<a name="line30"></a>
+<a name="line31"></a>  val sum_num_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line32"></a>(*
+   [rich_list] Parent theory of "sum_num"
+
+   [<a name="GSUM_curried_def-val"><b>GSUM_curried_def</b></a>]  Definition
+
+      |- ∀x x1. GSUM x x1 = GSUM_tupled (x,x1)
+
+   [<a name="GSUM_tupled_primitive_def-val"><b>GSUM_tupled_primitive_def</b></a>]  Definition
+
+      |- GSUM_tupled =
+         WFREC (@R. WF R ∧ ∀f m n. R ((n,m),f) ((n,SUC m),f))
+           (λGSUM_tupled a.
+              case a of
+                ((n,0),f) =&gt; I 0
+              | ((n,SUC m),f) =&gt; I (GSUM_tupled ((n,m),f) + f (n + m)))
+
+   [<a name="SUM_def-val"><b>SUM_def</b></a>]  Definition
+
+      |- (∀f. SUM 0 f = 0) ∧ ∀m f. SUM (SUC m) f = SUM m f + f m
+
+   [<a name="GSUM_1-val"><b>GSUM_1</b></a>]  Theorem
+
+      |- ∀m f. GSUM (m,1) f = f m
+
+   [<a name="GSUM_ADD-val"><b>GSUM_ADD</b></a>]  Theorem
+
+      |- ∀p m n f. GSUM (p,m + n) f = GSUM (p,m) f + GSUM (p + m,n) f
+
+   [<a name="GSUM_EQUAL-val"><b>GSUM_EQUAL</b></a>]  Theorem
+
+      |- ∀p m n f.
+           (GSUM (p,m) f = GSUM (p,n) f) ⇔
+           m ≤ n ∧ (∀q. p + m ≤ q ∧ q &lt; p + n ⇒ (f q = 0)) ∨
+           n &lt; m ∧ ∀q. p + n ≤ q ∧ q &lt; p + m ⇒ (f q = 0)
+
+   [<a name="GSUM_FUN_EQUAL-val"><b>GSUM_FUN_EQUAL</b></a>]  Theorem
+
+      |- ∀p n f g.
+           (∀x. p ≤ x ∧ x &lt; p + n ⇒ (f x = g x)) ⇒
+           (GSUM (p,n) f = GSUM (p,n) g)
+
+   [<a name="GSUM_LESS-val"><b>GSUM_LESS</b></a>]  Theorem
+
+      |- ∀p m n f.
+           (∃q. m + p ≤ q ∧ q &lt; n + p ∧ f q ≠ 0) ⇔
+           GSUM (p,m) f &lt; GSUM (p,n) f
+
+   [<a name="GSUM_MONO-val"><b>GSUM_MONO</b></a>]  Theorem
+
+      |- ∀p m n f. m ≤ n ∧ f (p + n) ≠ 0 ⇒ GSUM (p,m) f &lt; GSUM (p,SUC n) f
+
+   [<a name="GSUM_ZERO-val"><b>GSUM_ZERO</b></a>]  Theorem
+
+      |- ∀p n f. (∀m. p ≤ m ∧ m &lt; p + n ⇒ (f m = 0)) ⇔ (GSUM (p,n) f = 0)
+
+   [<a name="GSUM_def-val"><b>GSUM_def</b></a>]  Theorem
+
+      |- (∀n f. GSUM (n,0) f = 0) ∧
+         ∀n m f. GSUM (n,SUC m) f = GSUM (n,m) f + f (n + m)
+
+   [<a name="GSUM_def_compute-val"><b>GSUM_def_compute</b></a>]  Theorem
+
+      |- (∀n f. GSUM (n,0) f = 0) ∧
+         (∀n m f.
+            GSUM (n,NUMERAL (BIT1 m)) f =
+            GSUM (n,NUMERAL (BIT1 m) − 1) f +
+            f (n + (NUMERAL (BIT1 m) − 1))) ∧
+         ∀n m f.
+           GSUM (n,NUMERAL (BIT2 m)) f =
+           GSUM (n,NUMERAL (BIT1 m)) f + f (n + NUMERAL (BIT1 m))
+
+   [<a name="GSUM_ind-val"><b>GSUM_ind</b></a>]  Theorem
+
+      |- ∀P.
+           (∀n f. P (n,0) f) ∧ (∀n m f. P (n,m) f ⇒ P (n,SUC m) f) ⇒
+           ∀v v1 v2. P (v,v1) v2
+
+   [<a name="SUM-val"><b>SUM</b></a>]  Theorem
+
+      |- ∀m f. SUM m f = GSUM (0,m) f
+
+   [<a name="SUM_1-val"><b>SUM_1</b></a>]  Theorem
+
+      |- ∀f. SUM 1 f = f 0
+
+   [<a name="SUM_EQUAL-val"><b>SUM_EQUAL</b></a>]  Theorem
+
+      |- ∀m n f.
+           (SUM m f = SUM n f) ⇔
+           m ≤ n ∧ (∀q. m ≤ q ∧ q &lt; n ⇒ (f q = 0)) ∨
+           n &lt; m ∧ ∀q. n ≤ q ∧ q &lt; m ⇒ (f q = 0)
+
+   [<a name="SUM_FOLDL-val"><b>SUM_FOLDL</b></a>]  Theorem
+
+      |- ∀n f. SUM n f = FOLDL (λx n. f n + x) 0 (COUNT_LIST n)
+
+   [<a name="SUM_FUN_EQUAL-val"><b>SUM_FUN_EQUAL</b></a>]  Theorem
+
+      |- ∀f g. (∀x. x &lt; n ⇒ (f x = g x)) ⇒ (SUM n f = SUM n g)
+
+   [<a name="SUM_LESS-val"><b>SUM_LESS</b></a>]  Theorem
+
+      |- ∀m n f. (∃q. m ≤ q ∧ q &lt; n ∧ f q ≠ 0) ⇔ SUM m f &lt; SUM n f
+
+   [<a name="SUM_MONO-val"><b>SUM_MONO</b></a>]  Theorem
+
+      |- ∀m n f. m ≤ n ∧ f n ≠ 0 ⇒ SUM m f &lt; SUM (SUC n) f
+
+   [<a name="SUM_ZERO-val"><b>SUM_ZERO</b></a>]  Theorem
+
+      |- ∀n f. (∀m. m &lt; n ⇒ (f m = 0)) ⇔ (SUM n f = 0)
+
+   [<a name="SUM_def_compute-val"><b>SUM_def_compute</b></a>]  Theorem
+
+      |- (∀f. SUM 0 f = 0) ∧
+         (∀m f.
+            SUM (NUMERAL (BIT1 m)) f =
+            SUM (NUMERAL (BIT1 m) − 1) f + f (NUMERAL (BIT1 m) − 1)) ∧
+         ∀m f.
+           SUM (NUMERAL (BIT2 m)) f =
+           SUM (NUMERAL (BIT1 m)) f + f (NUMERAL (BIT1 m))
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/n-bit/sum_numScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

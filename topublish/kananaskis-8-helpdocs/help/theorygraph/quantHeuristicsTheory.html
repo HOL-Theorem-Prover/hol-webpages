@@ -1,0 +1,568 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: quantHeuristics</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "quantHeuristics"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "listTheory.html"><span class="strong">list</span></a>&nbsp;&nbsp;
+    <a href = "ConseqConvTheory.html"><span class="strong">ConseqConv</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">GUESS_EXISTS</span>
+            <td>
+            :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+        <span class="strong">GUESS_EXISTS_GAP</span>
+        <td>
+        :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+        <span class="strong">GUESS_EXISTS_POINT</span>
+        <td>
+        :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+        <span class="strong">GUESS_FORALL</span>
+        <td>
+        :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+        <span class="strong">GUESS_FORALL_GAP</span>
+        <td>
+        :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+        <span class="strong">GUESS_FORALL_POINT</span>
+        <td>
+        :(α -> β) -> (β -> bool) -> bool
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">GUESS_EXISTS_def</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_EXISTS i P ⇔ ((∃v. P v) ⇔ ∃fv. P (i fv))
+</pre>
+
+<DT><span class="strong">GUESS_FORALL_def</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_FORALL i P ⇔ ((∀v. P v) ⇔ ∀fv. P (i fv))
+</pre>
+
+<DT><span class="strong">GUESS_EXISTS_POINT_def</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_EXISTS_POINT i P ⇔ ∀fv. P (i fv)
+</pre>
+
+<DT><span class="strong">GUESS_FORALL_POINT_def</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_FORALL_POINT i P ⇔ ∀fv. ¬P (i fv)
+</pre>
+
+<DT><span class="strong">GUESS_EXISTS_GAP_def</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_EXISTS_GAP i P ⇔ ∀v. P v ⇒ ∃fv. v = i fv
+</pre>
+
+<DT><span class="strong">GUESS_FORALL_GAP_def</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_FORALL_GAP i P ⇔ ∀v. ¬P v ⇒ ∃fv. v = i fv
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">GUESS_EXISTS_FORALL_REWRITES</span>
+<DD>
+<pre>
+|- (GUESS_EXISTS i P ⇔ ∀v. P v ⇒ ∃fv. P (i fv)) ∧
+   (GUESS_FORALL i P ⇔ ∀v. ¬P v ⇒ ∃fv. ¬P (i fv))
+</pre>
+
+<DT><span class="strong">GUESS_POINT_THM</span>
+<DD>
+<pre>
+|- (GUESS_EXISTS_POINT i P ⇒ ((∃v. P v) ⇔ T)) ∧
+   (GUESS_FORALL_POINT i P ⇒ ((∀v. P v) ⇔ F))
+</pre>
+
+<DT><span class="strong">GUESS_REWRITES</span>
+<DD>
+<pre>
+|- ((GUESS_EXISTS i P ⇔ ∀v. P v ⇒ ∃fv. P (i fv)) ∧
+    (GUESS_FORALL i P ⇔ ∀v. ¬P v ⇒ ∃fv. ¬P (i fv))) ∧
+   (∀i P. GUESS_EXISTS_POINT i P ⇔ ∀fv. P (i fv)) ∧
+   (∀i P. GUESS_FORALL_POINT i P ⇔ ∀fv. ¬P (i fv)) ∧
+   (∀i P. GUESS_EXISTS_GAP i P ⇔ ∀v. P v ⇒ ∃fv. v = i fv) ∧
+   ∀i P. GUESS_FORALL_GAP i P ⇔ ∀v. ¬P v ⇒ ∃fv. v = i fv
+</pre>
+
+<DT><span class="strong">GUESS_EXISTS_POINT_THM</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_EXISTS_POINT i P ⇒ ($? P ⇔ T)
+</pre>
+
+<DT><span class="strong">GUESS_FORALL_POINT_THM</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_FORALL_POINT i P ⇒ ($! P ⇔ F)
+</pre>
+
+<DT><span class="strong">GUESS_EXISTS_THM</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_EXISTS i P ⇒ ($? P ⇔ ∃fv. P (i fv))
+</pre>
+
+<DT><span class="strong">GUESS_FORALL_THM</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_FORALL i P ⇒ ($! P ⇔ ∀fv. P (i fv))
+</pre>
+
+<DT><span class="strong">GUESSES_UEXISTS_THM1</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_EXISTS (λx. i) P ⇒ ($?! P ⇔ P i ∧ ∀v. P v ⇒ (v = i))
+</pre>
+
+<DT><span class="strong">GUESSES_UEXISTS_THM2</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_EXISTS_GAP (λx. i) P ⇒ ($?! P ⇔ P i)
+</pre>
+
+<DT><span class="strong">GUESSES_UEXISTS_THM3</span>
+<DD>
+<pre>
+|- ∀i P. GUESS_EXISTS_POINT (λx. i) P ⇒ ($?! P ⇔ ∀v. P v ⇒ (v = i))
+</pre>
+
+<DT><span class="strong">GUESSES_UEXISTS_THM4</span>
+<DD>
+<pre>
+|- ∀i P.
+     GUESS_EXISTS_POINT (λx. i) P ⇒ GUESS_EXISTS_GAP (λx. i) P ⇒ ($?! P ⇔ T)
+</pre>
+
+<DT><span class="strong">GUESSES_NEG_DUALITY</span>
+<DD>
+<pre>
+|- (GUESS_EXISTS i ($~ o P) ⇔ GUESS_FORALL i P) ∧
+   (GUESS_FORALL i ($~ o P) ⇔ GUESS_EXISTS i P) ∧
+   (GUESS_EXISTS_GAP i ($~ o P) ⇔ GUESS_FORALL_GAP i P) ∧
+   (GUESS_FORALL_GAP i ($~ o P) ⇔ GUESS_EXISTS_GAP i P) ∧
+   (GUESS_EXISTS_POINT i ($~ o P) ⇔ GUESS_FORALL_POINT i P) ∧
+   (GUESS_FORALL_POINT i ($~ o P) ⇔ GUESS_EXISTS_POINT i P)
+</pre>
+
+<DT><span class="strong">GUESSES_NEG_REWRITE</span>
+<DD>
+<pre>
+|- (GUESS_EXISTS i (λx. ¬P x) ⇔ GUESS_FORALL i (λx. P x)) ∧
+   (GUESS_FORALL i (λx. ¬P x) ⇔ GUESS_EXISTS i (λx. P x)) ∧
+   (GUESS_EXISTS_GAP i (λx. ¬P x) ⇔ GUESS_FORALL_GAP i (λx. P x)) ∧
+   (GUESS_FORALL_GAP i (λx. ¬P x) ⇔ GUESS_EXISTS_GAP i (λx. P x)) ∧
+   (GUESS_EXISTS_POINT i (λx. ¬P x) ⇔ GUESS_FORALL_POINT i (λx. P x)) ∧
+   (GUESS_FORALL_POINT i (λx. ¬P x) ⇔ GUESS_EXISTS_POINT i (λx. P x))
+</pre>
+
+<DT><span class="strong">GUESSES_WEAKEN_THM</span>
+<DD>
+<pre>
+|- (GUESS_FORALL_GAP i P ⇒ GUESS_FORALL i P) ∧
+   (GUESS_FORALL_POINT i P ⇒ GUESS_FORALL i P) ∧
+   (GUESS_EXISTS_POINT i P ⇒ GUESS_EXISTS i P) ∧
+   (GUESS_EXISTS_GAP i P ⇒ GUESS_EXISTS i P)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EQUATION_EXISTS_POINT</span>
+<DD>
+<pre>
+|- ∀i P Q. (P i = Q i) ⇒ GUESS_EXISTS_POINT (λxxx. i) (λx. P x = Q x)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EQUATION_FORALL_POINT</span>
+<DD>
+<pre>
+|- ∀i P Q. (∀fv. P (i fv) ≠ Q (i fv)) ⇒ GUESS_FORALL_POINT i (λx. P x = Q x)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EQUATION_EXISTS_GAP</span>
+<DD>
+<pre>
+|- ∀i. GUESS_EXISTS_GAP (λxxx. i) (λx. x = i)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_BOOL</span>
+<DD>
+<pre>
+|- GUESS_EXISTS_POINT (λARB. T) (λx. x) ∧
+   GUESS_FORALL_POINT (λARB. F) (λx. x) ∧ GUESS_EXISTS_GAP (λARB. T) (λx. x) ∧
+   GUESS_FORALL_GAP (λARB. F) (λx. x)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_TWO_CASES</span>
+<DD>
+<pre>
+|- ∀y Q. (∀x. (x = y) ∨ ∃fv. x = Q fv) ⇒ GUESS_FORALL_GAP Q (λx. x = y)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_ONE_CASE___FORALL_GAP</span>
+<DD>
+<pre>
+|- ∀P Q. (∀x. ∃fv. x = Q fv) ⇒ GUESS_FORALL_GAP Q P
+</pre>
+
+<DT><span class="strong">GUESS_RULES_ONE_CASE___EXISTS_GAP</span>
+<DD>
+<pre>
+|- ∀P Q. (∀x. ∃fv. x = Q fv) ⇒ GUESS_EXISTS_GAP Q P
+</pre>
+
+<DT><span class="strong">GUESS_RULES_NEG</span>
+<DD>
+<pre>
+|- (GUESS_EXISTS i (λx. P x) ⇒ GUESS_FORALL i (λx. ¬P x)) ∧
+   (GUESS_EXISTS_GAP i (λx. P x) ⇒ GUESS_FORALL_GAP i (λx. ¬P x)) ∧
+   (GUESS_EXISTS_POINT i (λx. P x) ⇒ GUESS_FORALL_POINT i (λx. ¬P x)) ∧
+   (GUESS_FORALL i (λx. P x) ⇒ GUESS_EXISTS i (λx. ¬P x)) ∧
+   (GUESS_FORALL_GAP i (λx. P x) ⇒ GUESS_EXISTS_GAP i (λx. ¬P x)) ∧
+   (GUESS_FORALL_POINT i (λx. P x) ⇒ GUESS_EXISTS_POINT i (λx. ¬P x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_CONSTANT_EXISTS</span>
+<DD>
+<pre>
+|- GUESS_EXISTS i (λx. p) ⇔ T
+</pre>
+
+<DT><span class="strong">GUESS_RULES_CONSTANT_FORALL</span>
+<DD>
+<pre>
+|- GUESS_FORALL i (λx. p) ⇔ T
+</pre>
+
+<DT><span class="strong">GUESS_RULES_DISJ</span>
+<DD>
+<pre>
+|- (GUESS_EXISTS_POINT i (λx. P x) ⇒ GUESS_EXISTS_POINT i (λx. P x ∨ Q x)) ∧
+   (GUESS_EXISTS_POINT i (λx. Q x) ⇒ GUESS_EXISTS_POINT i (λx. P x ∨ Q x)) ∧
+   (GUESS_EXISTS i (λx. P x) ∧ GUESS_EXISTS i (λx. Q x) ⇒
+    GUESS_EXISTS i (λx. P x ∨ Q x)) ∧
+   (GUESS_EXISTS_GAP i (λx. P x) ∧ GUESS_EXISTS_GAP i (λx. Q x) ⇒
+    GUESS_EXISTS_GAP i (λx. P x ∨ Q x)) ∧
+   (GUESS_FORALL (λxxx. iK) (λx. P x) ∧ GUESS_FORALL (λxxx. iK) (λx. Q x) ⇒
+    GUESS_FORALL (λxxx. iK) (λx. P x ∨ Q x)) ∧
+   (GUESS_FORALL i (λx. P x) ⇒ GUESS_FORALL i (λx. P x ∨ q)) ∧
+   (GUESS_FORALL i (λx. Q x) ⇒ GUESS_FORALL i (λx. p ∨ Q x)) ∧
+   (GUESS_FORALL_POINT i (λx. P x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+    GUESS_FORALL_POINT i (λx. P x ∨ Q x)) ∧
+   (GUESS_FORALL_GAP i (λx. P x) ⇒ GUESS_FORALL_GAP i (λx. P x ∨ Q x)) ∧
+   (GUESS_FORALL_GAP i (λx. Q x) ⇒ GUESS_FORALL_GAP i (λx. P x ∨ Q x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_CONJ</span>
+<DD>
+<pre>
+|- (GUESS_FORALL_POINT i (λx. P x) ⇒ GUESS_FORALL_POINT i (λx. P x ∧ Q x)) ∧
+   (GUESS_FORALL_POINT i (λx. Q x) ⇒ GUESS_FORALL_POINT i (λx. P x ∧ Q x)) ∧
+   (GUESS_FORALL i (λx. P x) ∧ GUESS_FORALL i (λx. Q x) ⇒
+    GUESS_FORALL i (λx. P x ∧ Q x)) ∧
+   (GUESS_FORALL_GAP i (λx. P x) ∧ GUESS_FORALL_GAP i (λx. Q x) ⇒
+    GUESS_FORALL_GAP i (λx. P x ∧ Q x)) ∧
+   (GUESS_EXISTS (λxxx. iK) (λx. P x) ∧ GUESS_EXISTS (λxxx. iK) (λx. Q x) ⇒
+    GUESS_EXISTS (λxxx. iK) (λx. P x ∧ Q x)) ∧
+   (GUESS_EXISTS i (λx. P x) ⇒ GUESS_EXISTS i (λx. P x ∧ q)) ∧
+   (GUESS_EXISTS i (λx. Q x) ⇒ GUESS_EXISTS i (λx. p ∧ Q x)) ∧
+   (GUESS_EXISTS_POINT i (λx. P x) ∧ GUESS_EXISTS_POINT i (λx. Q x) ⇒
+    GUESS_EXISTS_POINT i (λx. P x ∧ Q x)) ∧
+   (GUESS_EXISTS_GAP i (λx. P x) ⇒ GUESS_EXISTS_GAP i (λx. P x ∧ Q x)) ∧
+   (GUESS_EXISTS_GAP i (λx. Q x) ⇒ GUESS_EXISTS_GAP i (λx. P x ∧ Q x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_IMP</span>
+<DD>
+<pre>
+|- (GUESS_FORALL_POINT i (λx. P x) ⇒ GUESS_EXISTS_POINT i (λx. P x ⇒ Q x)) ∧
+   (GUESS_EXISTS_POINT i (λx. Q x) ⇒ GUESS_EXISTS_POINT i (λx. P x ⇒ Q x)) ∧
+   (GUESS_FORALL i (λx. P x) ∧ GUESS_EXISTS i (λx. Q x) ⇒
+    GUESS_EXISTS i (λx. P x ⇒ Q x)) ∧
+   (GUESS_FORALL_GAP i (λx. P x) ∧ GUESS_EXISTS_GAP i (λx. Q x) ⇒
+    GUESS_EXISTS_GAP i (λx. P x ⇒ Q x)) ∧
+   (GUESS_EXISTS (λxxx. iK) (λx. P x) ∧ GUESS_FORALL (λxxx. iK) (λx. Q x) ⇒
+    GUESS_FORALL (λxxx. iK) (λx. P x ⇒ Q x)) ∧
+   (GUESS_EXISTS i (λx. P x) ⇒ GUESS_FORALL i (λx. P x ⇒ q)) ∧
+   (GUESS_FORALL i (λx. Q x) ⇒ GUESS_FORALL i (λx. p ⇒ Q x)) ∧
+   (GUESS_EXISTS_POINT i (λx. P x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+    GUESS_FORALL_POINT i (λx. P x ⇒ Q x)) ∧
+   (GUESS_EXISTS_GAP i (λx. P x) ⇒ GUESS_FORALL_GAP i (λx. P x ⇒ Q x)) ∧
+   (GUESS_FORALL_GAP i (λx. Q x) ⇒ GUESS_FORALL_GAP i (λx. P x ⇒ Q x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EQUIV</span>
+<DD>
+<pre>
+|- (GUESS_EXISTS_POINT i (λx. P x) ∧ GUESS_EXISTS_POINT i (λx. Q x) ⇒
+    GUESS_EXISTS_POINT i (λx. P x ⇔ Q x)) ∧
+   (GUESS_FORALL_POINT i (λx. P x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+    GUESS_EXISTS_POINT i (λx. P x ⇔ Q x)) ∧
+   (GUESS_EXISTS_POINT i (λx. P x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+    GUESS_FORALL_POINT i (λx. P x ⇔ Q x)) ∧
+   (GUESS_FORALL_POINT i (λx. P x) ∧ GUESS_EXISTS_POINT i (λx. Q x) ⇒
+    GUESS_FORALL_POINT i (λx. P x ⇔ Q x)) ∧
+   (GUESS_FORALL_GAP i (λx. P1 x) ∧ GUESS_FORALL_GAP i (λx. P2 x) ⇒
+    GUESS_FORALL_GAP i (λx. P1 x ⇔ P2 x)) ∧
+   (GUESS_EXISTS_GAP i (λx. P1 x) ∧ GUESS_EXISTS_GAP i (λx. P2 x) ⇒
+    GUESS_FORALL_GAP i (λx. P1 x ⇔ P2 x)) ∧
+   (GUESS_EXISTS_GAP i (λx. P1 x) ∧ GUESS_FORALL_GAP i (λx. P2 x) ⇒
+    GUESS_EXISTS_GAP i (λx. P1 x ⇔ P2 x)) ∧
+   (GUESS_FORALL_GAP i (λx. P1 x) ∧ GUESS_EXISTS_GAP i (λx. P2 x) ⇒
+    GUESS_EXISTS_GAP i (λx. P1 x ⇔ P2 x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_COND</span>
+<DD>
+<pre>
+|- (GUESS_FORALL_POINT i (λx. P x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+    GUESS_FORALL_POINT i (λx. if b x then P x else Q x)) ∧
+   (GUESS_EXISTS_POINT i (λx. P x) ∧ GUESS_EXISTS_POINT i (λx. Q x) ⇒
+    GUESS_EXISTS_POINT i (λx. if b x then P x else Q x)) ∧
+   (GUESS_EXISTS i (λx. P x) ∧ GUESS_EXISTS i (λx. Q x) ⇒
+    GUESS_EXISTS i (λx. if bc then P x else Q x)) ∧
+   (GUESS_FORALL i (λx. P x) ∧ GUESS_FORALL i (λx. Q x) ⇒
+    GUESS_FORALL i (λx. if bc then P x else Q x)) ∧
+   (GUESS_EXISTS_GAP i (λx. P x) ∧ GUESS_EXISTS_GAP i (λx. Q x) ⇒
+    GUESS_EXISTS_GAP i (λx. if b x then P x else Q x)) ∧
+   (GUESS_FORALL_GAP i (λx. P x) ∧ GUESS_FORALL_GAP i (λx. Q x) ⇒
+    GUESS_FORALL_GAP i (λx. if b x then P x else Q x)) ∧
+   (GUESS_FORALL_POINT i (λx. b x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+    GUESS_FORALL_POINT i (λx. if b x then P x else Q x)) ∧
+   (GUESS_FORALL_POINT i (λx. b x) ∧ GUESS_EXISTS_POINT i (λx. Q x) ⇒
+    GUESS_EXISTS_POINT i (λx. if b x then P x else Q x)) ∧
+   (GUESS_EXISTS_POINT i (λx. b x) ∧ GUESS_FORALL_POINT i (λx. P x) ⇒
+    GUESS_FORALL_POINT i (λx. if b x then P x else Q x)) ∧
+   (GUESS_EXISTS_POINT i (λx. b x) ∧ GUESS_EXISTS_POINT i (λx. P x) ⇒
+    GUESS_EXISTS_POINT i (λx. if b x then P x else Q x)) ∧
+   (GUESS_FORALL_GAP i (λx. b x) ∧ GUESS_EXISTS_GAP i (λx. P x) ⇒
+    GUESS_EXISTS_GAP i (λx. if b x then P x else Q x)) ∧
+   (GUESS_EXISTS_GAP i (λx. b x) ∧ GUESS_EXISTS_GAP i (λx. Q x) ⇒
+    GUESS_EXISTS_GAP i (λx. if b x then P x else Q x)) ∧
+   (GUESS_EXISTS_GAP i (λx. b x) ∧ GUESS_FORALL_GAP i (λx. Q x) ⇒
+    GUESS_FORALL_GAP i (λx. if b x then P x else Q x)) ∧
+   (GUESS_FORALL_GAP i (λx. b x) ∧ GUESS_FORALL_GAP i (λx. P x) ⇒
+    GUESS_FORALL_GAP i (λx. if b x then P x else Q x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_FORALL___NEW_FV</span>
+<DD>
+<pre>
+|- ((∀y. GUESS_FORALL_POINT (iy y) (λx. P x y)) ⇒
+    GUESS_FORALL_POINT (λfv. iy (FST fv) (SND fv)) (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_FORALL (iy y) (λx. P x y)) ⇒
+    GUESS_FORALL (λfv. iy (FST fv) (SND fv)) (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_FORALL_GAP (iy y) (λx. P x y)) ⇒
+    GUESS_FORALL_GAP (λfv. iy (FST fv) (SND fv)) (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_EXISTS_GAP (iy y) (λx. P x y)) ⇒
+    GUESS_EXISTS_GAP (λfv. iy (FST fv) (SND fv)) (λx. ∀y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_FORALL___NEW_FV_1</span>
+<DD>
+<pre>
+|- ((∀y. GUESS_FORALL_POINT (λxxx. i y) (λx. P x y)) ⇒
+    GUESS_FORALL_POINT i (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_FORALL (λxxx. i y) (λx. P x y)) ⇒
+    GUESS_FORALL i (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_FORALL_GAP (λxxx. i y) (λx. P x y)) ⇒
+    GUESS_FORALL_GAP i (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_EXISTS_GAP (λxxx. i y) (λx. P x y)) ⇒
+    GUESS_EXISTS_GAP i (λx. ∀y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_FORALL</span>
+<DD>
+<pre>
+|- ((∀y. GUESS_FORALL_POINT i (λx. P x y)) ⇒
+    GUESS_FORALL_POINT i (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_FORALL i (λx. P x y)) ⇒ GUESS_FORALL i (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_FORALL_GAP i (λx. P x y)) ⇒
+    GUESS_FORALL_GAP i (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_EXISTS_POINT i (λx. P x y)) ⇒
+    GUESS_EXISTS_POINT i (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_EXISTS (λxxx. iK) (λx. P x y)) ⇒
+    GUESS_EXISTS (λxxx. iK) (λx. ∀y. P x y)) ∧
+   ((∀y. GUESS_EXISTS_GAP i (λx. P x y)) ⇒ GUESS_EXISTS_GAP i (λx. ∀y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EXISTS___NEW_FV</span>
+<DD>
+<pre>
+|- ((∀y. GUESS_EXISTS_POINT (iy y) (λx. P x y)) ⇒
+    GUESS_EXISTS_POINT (λfv. iy (FST fv) (SND fv)) (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_EXISTS (iy y) (λx. P x y)) ⇒
+    GUESS_EXISTS (λfv. iy (FST fv) (SND fv)) (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_EXISTS_GAP (iy y) (λx. P x y)) ⇒
+    GUESS_EXISTS_GAP (λfv. iy (FST fv) (SND fv)) (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_FORALL_GAP (iy y) (λx. P x y)) ⇒
+    GUESS_FORALL_GAP (λfv. iy (FST fv) (SND fv)) (λx. ∃y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EXISTS___NEW_FV_1</span>
+<DD>
+<pre>
+|- ((∀y. GUESS_EXISTS_POINT (λxxx. i y) (λx. P x y)) ⇒
+    GUESS_EXISTS_POINT i (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_EXISTS (λxxx. i y) (λx. P x y)) ⇒
+    GUESS_EXISTS i (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_EXISTS_GAP (λxxx. i y) (λx. P x y)) ⇒
+    GUESS_EXISTS_GAP i (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_FORALL_GAP (λxxx. i y) (λx. P x y)) ⇒
+    GUESS_FORALL_GAP i (λx. ∃y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EXISTS</span>
+<DD>
+<pre>
+|- ((∀y. GUESS_EXISTS_POINT i (λx. P x y)) ⇒
+    GUESS_EXISTS_POINT i (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_EXISTS i (λx. P x y)) ⇒ GUESS_EXISTS i (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_EXISTS_GAP i (λx. P x y)) ⇒
+    GUESS_EXISTS_GAP i (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_FORALL_POINT i (λx. P x y)) ⇒
+    GUESS_FORALL_POINT i (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_FORALL (λxxx. iK) (λx. P x y)) ⇒
+    GUESS_FORALL (λxxx. iK) (λx. ∃y. P x y)) ∧
+   ((∀y. GUESS_FORALL_GAP i (λx. P x y)) ⇒ GUESS_FORALL_GAP i (λx. ∃y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EXISTS_UNIQUE</span>
+<DD>
+<pre>
+|- ((∀y. GUESS_FORALL_POINT i (λx. P x y)) ⇒
+    GUESS_FORALL_POINT i (λx. ∃!y. P x y)) ∧
+   ((∀y. GUESS_EXISTS_GAP i (λx. P x y)) ⇒
+    GUESS_EXISTS_GAP i (λx. ∃!y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_ELIM_UNIT</span>
+<DD>
+<pre>
+|- (GUESS_FORALL_POINT i vt ⇔ GUESS_FORALL_POINT (λx. i (x,())) vt) ∧
+   (GUESS_EXISTS_POINT i vt ⇔ GUESS_EXISTS_POINT (λx. i (x,())) vt) ∧
+   (GUESS_EXISTS i vt ⇔ GUESS_EXISTS (λx. i (x,())) vt) ∧
+   (GUESS_FORALL i vt ⇔ GUESS_FORALL (λx. i (x,())) vt) ∧
+   (GUESS_EXISTS_GAP i vt ⇔ GUESS_EXISTS_GAP (λx. i (x,())) vt) ∧
+   (GUESS_FORALL_GAP i vt ⇔ GUESS_FORALL_GAP (λx. i (x,())) vt)
+</pre>
+
+<DT><span class="strong">CONJ_NOT_OR_THM</span>
+<DD>
+<pre>
+|- ∀A B. A ∧ B ⇔ ¬(¬A ∨ ¬B)
+</pre>
+
+<DT><span class="strong">EXISTS_NOT_FORALL_THM</span>
+<DD>
+<pre>
+|- ∀P. (∃x. P x) ⇔ ¬∀x. ¬P x
+</pre>
+
+<DT><span class="strong">MOVE_EXISTS_IMP_THM</span>
+<DD>
+<pre>
+|- (∃x. (∀y. ¬P x y ⇒ R y) ⇒ Q x) ⇔ (∀y. ¬(∀x. P x y) ⇒ R y) ⇒ ∃x. Q x
+</pre>
+
+<DT><span class="strong">UNWIND_EXISTS_THM</span>
+<DD>
+<pre>
+|- ∀a P. (∃x. P x) ⇔ (∀x. x ≠ a ⇒ ¬P x) ⇒ P a
+</pre>
+
+<DT><span class="strong">LEFT_IMP_AND_INTRO</span>
+<DD>
+<pre>
+|- ∀x t1 t2. (t1 ⇒ t2) ⇒ x ∧ t1 ⇒ x ∧ t2
+</pre>
+
+<DT><span class="strong">RIGHT_IMP_AND_INTRO</span>
+<DD>
+<pre>
+|- ∀x t1 t2. (t1 ⇒ t2) ⇒ t1 ∧ x ⇒ t2 ∧ x
+</pre>
+
+<DT><span class="strong">LEFT_IMP_OR_INTRO</span>
+<DD>
+<pre>
+|- ∀x t1 t2. (t1 ⇒ t2) ⇒ x ∨ t1 ⇒ x ∨ t2
+</pre>
+
+<DT><span class="strong">RIGHT_IMP_OR_INTRO</span>
+<DD>
+<pre>
+|- ∀x t1 t2. (t1 ⇒ t2) ⇒ t1 ∨ x ⇒ t2 ∨ x
+</pre>
+
+<DT><span class="strong">PAIR_EQ_EXPAND</span>
+<DD>
+<pre>
+|- (((x,y) = X) ⇔ (x = FST X) ∧ (y = SND X)) ∧
+   ((X = (x,y)) ⇔ (FST X = x) ∧ (SND X = y))
+</pre>
+
+<DT><span class="strong">PAIR_EQ_SIMPLE_EXPAND</span>
+<DD>
+<pre>
+|- (((x,y) = (x,y')) ⇔ (y = y')) ∧ (((y,x) = (y',x)) ⇔ (y = y')) ∧
+   (((FST X,y) = X) ⇔ (y = SND X)) ∧ (((x,SND X) = X) ⇔ (x = FST X)) ∧
+   ((X = (FST X,y)) ⇔ (SND X = y)) ∧ ((X = (x,SND X)) ⇔ (FST X = x))
+</pre>
+
+<DT><span class="strong">IS_SOME_EQ_NOT_NONE</span>
+<DD>
+<pre>
+|- ∀x. IS_SOME x ⇔ x ≠ NONE
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,1128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: Temporal_Logic</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "Temporal_Logic"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "listTheory.html"><span class="strong">list</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">ALWAYS</span>
+            <td>
+            :(num -> bool) -> num -> bool
+    <tr><td>
+        <span class="strong">BEFORE</span>
+        <td>
+        :(num -> bool) -> (num -> bool) -> num -> bool
+    <tr><td>
+        <span class="strong">EVENTUAL</span>
+        <td>
+        :(num -> bool) -> num -> bool
+    <tr><td>
+        <span class="strong">NEXT</span>
+        <td>
+        :(num -> bool) -> num -> bool
+    <tr><td>
+        <span class="strong">SBEFORE</span>
+        <td>
+        :(num -> bool) -> (num -> bool) -> num -> bool
+    <tr><td>
+        <span class="strong">SUNTIL</span>
+        <td>
+        :(num -> bool) -> (num -> bool) -> num -> bool
+    <tr><td>
+        <span class="strong">SWHEN</span>
+        <td>
+        :(num -> bool) -> (num -> bool) -> num -> bool
+    <tr><td>
+        <span class="strong">UNTIL</span>
+        <td>
+        :(num -> bool) -> (num -> bool) -> num -> bool
+    <tr><td>
+        <span class="strong">UPTO</span>
+        <td>
+        :num # num # (num -> bool) -> bool
+    <tr><td>
+        <span class="strong">WATCH</span>
+        <td>
+        :(num -> bool) -> (num -> bool) -> num -> bool
+    <tr><td>
+        <span class="strong">WHEN</span>
+        <td>
+        :(num -> bool) -> (num -> bool) -> num -> bool
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">NEXT</span>
+<DD>
+<pre>
+|- ∀P. NEXT P = (λt. P (SUC t))
+</pre>
+
+<DT><span class="strong">ALWAYS</span>
+<DD>
+<pre>
+|- ∀P t0. ALWAYS P t0 ⇔ ∀t. P (t + t0)
+</pre>
+
+<DT><span class="strong">EVENTUAL</span>
+<DD>
+<pre>
+|- ∀P t0. EVENTUAL P t0 ⇔ ∃t. P (t + t0)
+</pre>
+
+<DT><span class="strong">WATCH</span>
+<DD>
+<pre>
+|- ∀q b t0.
+     (q WATCH b) t0 ⇔
+     ∀t. (q t0 ⇔ F) ∧ (q (SUC (t + t0)) ⇔ q (t + t0) ∨ b (t + t0))
+</pre>
+
+<DT><span class="strong">UPTO</span>
+<DD>
+<pre>
+|- ∀t0 t1 a. UPTO (t0,t1,a) ⇔ ∀t2. t0 ≤ t2 ∧ t2 < t1 ⇒ a t2
+</pre>
+
+<DT><span class="strong">WHEN</span>
+<DD>
+<pre>
+|- ∀a b t0.
+     (a WHEN b) t0 ⇔
+     ∃q. (q WATCH b) t0 ∧ ∀t. q (t + t0) ∨ (b (t + t0) ⇒ a (t + t0))
+</pre>
+
+<DT><span class="strong">UNTIL</span>
+<DD>
+<pre>
+|- ∀a b t0.
+     (a UNTIL b) t0 ⇔
+     ∃q. (q WATCH b) t0 ∧ ∀t. q (t + t0) ∨ b (t + t0) ∨ a (t + t0)
+</pre>
+
+<DT><span class="strong">BEFORE</span>
+<DD>
+<pre>
+|- ∀a b t0.
+     (a BEFORE b) t0 ⇔
+     ∃q.
+       (q WATCH b) t0 ∧
+       ((∃t. ¬q (t + t0) ∧ ¬b (t + t0) ∧ a (t + t0)) ∨ ∀t. ¬b (t + t0))
+</pre>
+
+<DT><span class="strong">SWHEN</span>
+<DD>
+<pre>
+|- ∀a b t0.
+     (a SWHEN b) t0 ⇔
+     ∃q. (q WATCH b) t0 ∧ ∃t. ¬q (t + t0) ∧ b (t + t0) ∧ a (t + t0)
+</pre>
+
+<DT><span class="strong">SUNTIL</span>
+<DD>
+<pre>
+|- ∀a b t0.
+     (a SUNTIL b) t0 ⇔
+     ∃q.
+       (q WATCH b) t0 ∧ (∀t. q (t + t0) ∨ b (t + t0) ∨ a (t + t0)) ∧
+       ∃t. b (t + t0)
+</pre>
+
+<DT><span class="strong">SBEFORE</span>
+<DD>
+<pre>
+|- ∀a b t0.
+     (a SBEFORE b) t0 ⇔
+     ∃q. (q WATCH b) t0 ∧ ∃t. ¬q (t + t0) ∧ ¬b (t + t0) ∧ a (t + t0)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">WATCH_EXISTS</span>
+<DD>
+<pre>
+|- ∀b t0. ∃q. (q WATCH b) t0
+</pre>
+
+<DT><span class="strong">WELL_ORDER</span>
+<DD>
+<pre>
+|- (∃n. P n) ⇔ ∃m. P m ∧ ∀n. n < m ⇒ ¬P n
+</pre>
+
+<DT><span class="strong">WELL_ORDER_UNIQUE</span>
+<DD>
+<pre>
+|- ∀m2 m1 P.
+     (P m1 ∧ ∀n. n < m1 ⇒ ¬P n) ∧ P m2 ∧ (∀n. n < m2 ⇒ ¬P n) ⇒ (m1 = m2)
+</pre>
+
+<DT><span class="strong">DELTA_CASES</span>
+<DD>
+<pre>
+|- (∃d. (∀t. t < d ⇒ ¬b (t + t0)) ∧ b (d + t0)) ∨ ∀d. ¬b (d + t0)
+</pre>
+
+<DT><span class="strong">WHEN_IMP</span>
+<DD>
+<pre>
+|- (a WHEN b) t0 ⇔
+   ∀q. (q WATCH b) t0 ⇒ ∀t. q (t + t0) ∨ (b (t + t0) ⇒ a (t + t0))
+</pre>
+
+<DT><span class="strong">UNTIL_IMP</span>
+<DD>
+<pre>
+|- (a UNTIL b) t0 ⇔
+   ∀q. (q WATCH b) t0 ⇒ ∀t. q (t + t0) ∨ b (t + t0) ∨ a (t + t0)
+</pre>
+
+<DT><span class="strong">BEFORE_IMP</span>
+<DD>
+<pre>
+|- (a BEFORE b) t0 ⇔
+   ∀q.
+     (q WATCH b) t0 ⇒
+     (∃t. ¬q (t + t0) ∧ ¬b (t + t0) ∧ a (t + t0)) ∨ ∀t. ¬b (t + t0)
+</pre>
+
+<DT><span class="strong">SWHEN_IMP</span>
+<DD>
+<pre>
+|- (a SWHEN b) t0 ⇔
+   ∀q. (q WATCH b) t0 ⇒ ∃t. ¬q (t + t0) ∧ b (t + t0) ∧ a (t + t0)
+</pre>
+
+<DT><span class="strong">SUNTIL_IMP</span>
+<DD>
+<pre>
+|- (a SUNTIL b) t0 ⇔
+   ∀q.
+     (q WATCH b) t0 ⇒
+     (∀t. q (t + t0) ∨ b (t + t0) ∨ a (t + t0)) ∧ ∃t. b (t + t0)
+</pre>
+
+<DT><span class="strong">SBEFORE_IMP</span>
+<DD>
+<pre>
+|- (a SBEFORE b) t0 ⇔
+   ∀q. (q WATCH b) t0 ⇒ ∃t. ¬q (t + t0) ∧ ¬b (t + t0) ∧ a (t + t0)
+</pre>
+
+<DT><span class="strong">ALWAYS_SIGNAL</span>
+<DD>
+<pre>
+|- ALWAYS a t0 ⇔ ∀t. a (t + t0)
+</pre>
+
+<DT><span class="strong">EVENTUAL_SIGNAL</span>
+<DD>
+<pre>
+|- EVENTUAL a t0 ⇔ ∃t. a (t + t0)
+</pre>
+
+<DT><span class="strong">WATCH_SIGNAL</span>
+<DD>
+<pre>
+|- (q WATCH b) t0 ⇔
+   ((∀t. ¬b (t + t0)) ⇒ ∀t. ¬q (t + t0)) ∧
+   ∀d.
+     b (d + t0) ∧ (∀t. t < d ⇒ ¬b (t + t0)) ⇒
+     (∀t. t ≤ d ⇒ ¬q (t + t0)) ∧ ∀t. q (SUC (t + (d + t0)))
+</pre>
+
+<DT><span class="strong">WHEN_SIGNAL</span>
+<DD>
+<pre>
+|- (a WHEN b) t0 ⇔
+   ∀delta. (∀t. t < delta ⇒ ¬b (t + t0)) ∧ b (delta + t0) ⇒ a (delta + t0)
+</pre>
+
+<DT><span class="strong">UNTIL_SIGNAL</span>
+<DD>
+<pre>
+|- (a UNTIL b) t0 ⇔
+   ((∀t. ¬b (t + t0)) ⇒ ∀t. a (t + t0)) ∧
+   ∀d. (∀t. t < d ⇒ ¬b (t + t0)) ∧ b (d + t0) ⇒ ∀t. t < d ⇒ a (t + t0)
+</pre>
+
+<DT><span class="strong">BEFORE_SIGNAL</span>
+<DD>
+<pre>
+|- (a BEFORE b) t0 ⇔
+   ∀delta.
+     (∀t. t < delta ⇒ ¬b (t + t0)) ∧ b (delta + t0) ⇒
+     ∃t. t < delta ∧ a (t + t0)
+</pre>
+
+<DT><span class="strong">SWHEN_SIGNAL</span>
+<DD>
+<pre>
+|- (a SWHEN b) t0 ⇔
+   ∃delta. (∀t. t < delta ⇒ ¬b (t + t0)) ∧ b (delta + t0) ∧ a (delta + t0)
+</pre>
+
+<DT><span class="strong">SUNTIL_SIGNAL</span>
+<DD>
+<pre>
+|- (a SUNTIL b) t0 ⇔
+   ∃delta. (∀t. t < delta ⇒ a (t + t0) ∧ ¬b (t + t0)) ∧ b (delta + t0)
+</pre>
+
+<DT><span class="strong">SBEFORE_SIGNAL</span>
+<DD>
+<pre>
+|- (a SBEFORE b) t0 ⇔ ∃delta. a (delta + t0) ∧ ∀t. t ≤ delta ⇒ ¬b (t + t0)
+</pre>
+
+<DT><span class="strong">NEXT_LINORD</span>
+<DD>
+<pre>
+|- NEXT a t0 ⇔ ∃t1. t0 < t1 ∧ (∀t3. t0 < t3 ⇒ t1 ≤ t3) ∧ a t1
+</pre>
+
+<DT><span class="strong">ALWAYS_LINORD</span>
+<DD>
+<pre>
+|- ALWAYS a t0 ⇔ ∀t1. t0 ≤ t1 ⇒ a t1
+</pre>
+
+<DT><span class="strong">EVENTUAL_LINORD</span>
+<DD>
+<pre>
+|- EVENTUAL a t0 ⇔ ∃t1. t0 ≤ t1 ∧ a t1
+</pre>
+
+<DT><span class="strong">SUNTIL_LINORD</span>
+<DD>
+<pre>
+|- (a SUNTIL b) t0 ⇔ ∃t1. t0 ≤ t1 ∧ b t1 ∧ UPTO (t0,t1,a)
+</pre>
+
+<DT><span class="strong">UNTIL_LINORD</span>
+<DD>
+<pre>
+|- (a UNTIL b) t0 ⇔ ∀t1. t0 ≤ t1 ∧ ¬b t1 ∧ UPTO (t0,t1,(λt. ¬b t)) ⇒ a t1
+</pre>
+
+<DT><span class="strong">SBEFORE_LINORD</span>
+<DD>
+<pre>
+|- (a SBEFORE b) t0 ⇔ ∃t1. t0 ≤ t1 ∧ a t1 ∧ ¬b t1 ∧ UPTO (t0,t1,(λt. ¬b t))
+</pre>
+
+<DT><span class="strong">BEFORE_LINORD</span>
+<DD>
+<pre>
+|- (a BEFORE b) t0 ⇔ ∀t1. t0 ≤ t1 ∧ UPTO (t0,t1,(λt. ¬a t)) ⇒ ¬b t1
+</pre>
+
+<DT><span class="strong">SWHEN_LINORD</span>
+<DD>
+<pre>
+|- (a SWHEN b) t0 ⇔ ∃t1. t0 ≤ t1 ∧ a t1 ∧ b t1 ∧ UPTO (t0,t1,(λt. ¬b t))
+</pre>
+
+<DT><span class="strong">WHEN_LINORD</span>
+<DD>
+<pre>
+|- (a WHEN b) t0 ⇔ ∀t1. t0 ≤ t1 ∧ b t1 ∧ UPTO (t0,t1,(λt. ¬b t)) ⇒ a t1
+</pre>
+
+<DT><span class="strong">ALWAYS_AS_WHEN</span>
+<DD>
+<pre>
+|- ALWAYS a = (λt. F) WHEN (λt. ¬a t)
+</pre>
+
+<DT><span class="strong">EVENTUAL_AS_WHEN</span>
+<DD>
+<pre>
+|- EVENTUAL a = (λt. ¬((λt. F) WHEN a) t)
+</pre>
+
+<DT><span class="strong">UNTIL_AS_WHEN</span>
+<DD>
+<pre>
+|- a UNTIL b = b WHEN (λt. a t ⇒ b t)
+</pre>
+
+<DT><span class="strong">BEFORE_AS_WHEN</span>
+<DD>
+<pre>
+|- a BEFORE b = (λt. ¬b t) WHEN (λt. a t ∨ b t)
+</pre>
+
+<DT><span class="strong">SWHEN_AS_WHEN</span>
+<DD>
+<pre>
+|- a SWHEN b = (λt0. (a WHEN b) t0 ∧ EVENTUAL b t0)
+</pre>
+
+<DT><span class="strong">SWHEN_AS_NOT_WHEN</span>
+<DD>
+<pre>
+|- (a SWHEN b) t0 ⇔ ¬((λt. ¬a t) WHEN b) t0
+</pre>
+
+<DT><span class="strong">SUNTIL_AS_WHEN</span>
+<DD>
+<pre>
+|- a SUNTIL b = (λt. (b WHEN (λt. a t ⇒ b t)) t ∧ EVENTUAL b t)
+</pre>
+
+<DT><span class="strong">SBEFORE_AS_WHEN</span>
+<DD>
+<pre>
+|- a SBEFORE b = (λt0. ((λt. ¬b t) WHEN (λt. a t ∨ b t)) t0 ∧ EVENTUAL a t0)
+</pre>
+
+<DT><span class="strong">BEFORE_AS_WHEN_UNTIL</span>
+<DD>
+<pre>
+|- a BEFORE b = (λt. ((λt. ¬b t) UNTIL a) t ∧ ((λt. ¬b t) WHEN a) t)
+</pre>
+
+<DT><span class="strong">BEFORE_HW</span>
+<DD>
+<pre>
+|- (a BEFORE b) t0 ⇔ ∃q. (q WATCH a) t0 ∧ ∀t. q (t + t0) ∨ ¬b (t + t0)
+</pre>
+
+<DT><span class="strong">ALWAYS_AS_UNTIL</span>
+<DD>
+<pre>
+|- ALWAYS a = a UNTIL (λt. F)
+</pre>
+
+<DT><span class="strong">EVENTUAL_AS_UNTIL</span>
+<DD>
+<pre>
+|- EVENTUAL a = (λt. ¬((λt. ¬a t) UNTIL (λt. F)) t)
+</pre>
+
+<DT><span class="strong">WHEN_AS_UNTIL</span>
+<DD>
+<pre>
+|- a WHEN b = (λt. ¬b t) UNTIL (λt. a t ∧ b t)
+</pre>
+
+<DT><span class="strong">BEFORE_AS_UNTIL</span>
+<DD>
+<pre>
+|- a BEFORE b = (λt0. ¬((λt. ¬a t) UNTIL b) t0 ∨ ALWAYS (λt. ¬b t) t0)
+</pre>
+
+<DT><span class="strong">SWHEN_AS_UNTIL</span>
+<DD>
+<pre>
+|- a SWHEN b = (λt. ((λt. ¬b t) UNTIL (λt. a t ∧ b t)) t ∧ EVENTUAL b t)
+</pre>
+
+<DT><span class="strong">SUNTIL_AS_UNTIL</span>
+<DD>
+<pre>
+|- a SUNTIL b = (λt0. (a UNTIL b) t0 ∧ EVENTUAL b t0)
+</pre>
+
+<DT><span class="strong">SBEFORE_AS_UNTIL</span>
+<DD>
+<pre>
+|- a SBEFORE b = (λt0. ¬((λt. ¬a t) UNTIL b) t0)
+</pre>
+
+<DT><span class="strong">ALWAYS_AS_BEFORE</span>
+<DD>
+<pre>
+|- ALWAYS b = (λt. F) BEFORE (λt. ¬b t)
+</pre>
+
+<DT><span class="strong">EVENTUAL_AS_BEFORE</span>
+<DD>
+<pre>
+|- EVENTUAL b = (λt0. ¬((λt. F) BEFORE b) t0)
+</pre>
+
+<DT><span class="strong">WHEN_AS_BEFORE</span>
+<DD>
+<pre>
+|- a WHEN b = (λt0. ¬(b BEFORE (λt. a t ∧ b t)) t0 ∨ ALWAYS (λt. ¬b t) t0)
+</pre>
+
+<DT><span class="strong">UNTIL_AS_BEFORE</span>
+<DD>
+<pre>
+|- a UNTIL b = (λt0. ¬((λt. ¬a t) BEFORE b) t0 ∨ ALWAYS a t0)
+</pre>
+
+<DT><span class="strong">SWHEN_AS_BEFORE</span>
+<DD>
+<pre>
+|- a SWHEN b = (λt0. ¬(b BEFORE (λt. a t ∧ b t)) t0)
+</pre>
+
+<DT><span class="strong">SUNTIL_AS_BEFORE</span>
+<DD>
+<pre>
+|- a SUNTIL b = (λt0. ¬((λt. ¬a t) BEFORE b) t0)
+</pre>
+
+<DT><span class="strong">SBEFORE_AS_BEFORE</span>
+<DD>
+<pre>
+|- a SBEFORE b = (λt0. (a BEFORE b) t0 ∧ EVENTUAL a t0)
+</pre>
+
+<DT><span class="strong">WHEN_SWHEN_LEMMA</span>
+<DD>
+<pre>
+|- if ∀t1. ∃t2. b (t2 + t1) then
+     ∀t0. (a WHEN b) t0 ⇔ (a SWHEN b) t0
+   else
+     ∃t1. ∀t2. (a WHEN b) (t2 + t1) ∧ ¬(a SWHEN b) (t2 + t1)
+</pre>
+
+<DT><span class="strong">ALWAYS_AS_SWHEN</span>
+<DD>
+<pre>
+|- ALWAYS a = (λt. ¬((λt. T) SWHEN (λt. ¬a t)) t)
+</pre>
+
+<DT><span class="strong">EVENTUAL_AS_SWHEN</span>
+<DD>
+<pre>
+|- EVENTUAL a = (λt. T) SWHEN a
+</pre>
+
+<DT><span class="strong">WHEN_AS_SWHEN</span>
+<DD>
+<pre>
+|- a WHEN b = (λt. (a SWHEN b) t ∨ ALWAYS (λt. ¬b t) t)
+</pre>
+
+<DT><span class="strong">WHEN_AS_NOT_SWHEN</span>
+<DD>
+<pre>
+|- (a WHEN b) t0 ⇔ ¬((λt. ¬a t) SWHEN b) t0
+</pre>
+
+<DT><span class="strong">UNTIL_AS_SWHEN</span>
+<DD>
+<pre>
+|- a UNTIL b = (λt. (b SWHEN (λt. a t ⇒ b t)) t ∨ ALWAYS a t)
+</pre>
+
+<DT><span class="strong">BEFORE_AS_SWHEN</span>
+<DD>
+<pre>
+|- a BEFORE b =
+   (λt0. ((λt. ¬b t) SWHEN (λt. a t ∨ b t)) t0 ∨ ALWAYS (λt. ¬a t ∧ ¬b t) t0)
+</pre>
+
+<DT><span class="strong">BEFORE_AS_NOT_SWHEN</span>
+<DD>
+<pre>
+|- a BEFORE b = (λt0. ¬(b SWHEN (λt. a t ∨ b t)) t0)
+</pre>
+
+<DT><span class="strong">SUNTIL_AS_SWHEN</span>
+<DD>
+<pre>
+|- a SUNTIL b = b SWHEN (λt. a t ⇒ b t)
+</pre>
+
+<DT><span class="strong">SBEFORE_AS_SWHEN</span>
+<DD>
+<pre>
+|- a SBEFORE b = (λt. ¬b t) SWHEN (λt. a t ∨ b t)
+</pre>
+
+<DT><span class="strong">ALWAYS_AS_SUNTIL</span>
+<DD>
+<pre>
+|- ALWAYS a = (λt. ¬((λt. T) SUNTIL (λt. ¬a t)) t)
+</pre>
+
+<DT><span class="strong">EVENTUAL_AS_SUNTIL</span>
+<DD>
+<pre>
+|- EVENTUAL a = (λt. T) SUNTIL a
+</pre>
+
+<DT><span class="strong">WHEN_AS_SUNTIL</span>
+<DD>
+<pre>
+|- a WHEN b =
+   (λt. ((λt. ¬b t) SUNTIL (λt. a t ∧ b t)) t ∨ ALWAYS (λt. ¬b t) t)
+</pre>
+
+<DT><span class="strong">UNTIL_AS_SUNTIL</span>
+<DD>
+<pre>
+|- a UNTIL b = (λt. (a SUNTIL b) t ∨ ALWAYS a t)
+</pre>
+
+<DT><span class="strong">BEFORE_AS_SUNTIL</span>
+<DD>
+<pre>
+|- a BEFORE b = (λt. ¬((λt. ¬a t) SUNTIL b) t)
+</pre>
+
+<DT><span class="strong">SWHEN_AS_SUNTIL</span>
+<DD>
+<pre>
+|- a SWHEN b = (λt. ¬b t) SUNTIL (λt. a t ∧ b t)
+</pre>
+
+<DT><span class="strong">SBEFORE_AS_SUNTIL</span>
+<DD>
+<pre>
+|- a SBEFORE b = (λt0. ¬((λt. ¬a t) SUNTIL b) t0 ∧ EVENTUAL a t0)
+</pre>
+
+<DT><span class="strong">ALWAYS_AS_SBEFORE</span>
+<DD>
+<pre>
+|- ALWAYS b = (λt0. ¬((λt. ¬b t) SBEFORE (λt. F)) t0)
+</pre>
+
+<DT><span class="strong">EVENTUAL_AS_SBEFORE</span>
+<DD>
+<pre>
+|- EVENTUAL b = b SBEFORE (λt. F)
+</pre>
+
+<DT><span class="strong">WHEN_AS_SBEFORE</span>
+<DD>
+<pre>
+|- a WHEN b = (λt0. (b SBEFORE (λt. ¬a t ∧ b t)) t0 ∨ ALWAYS (λt. ¬b t) t0)
+</pre>
+
+<DT><span class="strong">UNTIL_AS_SBEFORE</span>
+<DD>
+<pre>
+|- a UNTIL b = (λt0. ¬((λt. ¬a t) SBEFORE b) t0)
+</pre>
+
+<DT><span class="strong">SWHEN_AS_SBEFORE</span>
+<DD>
+<pre>
+|- a SWHEN b = b SBEFORE (λt. ¬a t ∧ b t)
+</pre>
+
+<DT><span class="strong">SUNTIL_AS_SBEFORE</span>
+<DD>
+<pre>
+|- a SUNTIL b = (λt0. ¬((λt. ¬a t) SBEFORE b) t0 ∧ EVENTUAL b t0)
+</pre>
+
+<DT><span class="strong">BEFORE_AS_SBEFORE</span>
+<DD>
+<pre>
+|- a BEFORE b = (λt0. (a SBEFORE b) t0 ∨ ALWAYS (λt. ¬b t) t0)
+</pre>
+
+<DT><span class="strong">WHEN_SIMP</span>
+<DD>
+<pre>
+|- ((λt. F) WHEN b = ALWAYS (λt. ¬b t)) ∧ ((λt. T) WHEN b = (λt. T)) ∧
+   (a WHEN (λt. F) = (λt. T)) ∧ (a WHEN (λt. T) = (λt. a t)) ∧
+   (a WHEN a = (λt. T))
+</pre>
+
+<DT><span class="strong">UNTIL_SIMP</span>
+<DD>
+<pre>
+|- ((λt. F) UNTIL b = (λt. b t)) ∧ ((λt. T) UNTIL b = (λt. T)) ∧
+   (a UNTIL (λt. F) = ALWAYS a) ∧ (a UNTIL (λt. T) = (λt. T)) ∧
+   (a UNTIL a = (λt. a t))
+</pre>
+
+<DT><span class="strong">BEFORE_SIMP</span>
+<DD>
+<pre>
+|- ((λt. F) BEFORE b = ALWAYS (λt. ¬b t)) ∧ ((λt. T) BEFORE b = (λt. ¬b t)) ∧
+   (a BEFORE (λt. F) = (λt. T)) ∧ (a BEFORE (λt. T) = (λt. F)) ∧
+   (a BEFORE a = ALWAYS (λt. ¬a t))
+</pre>
+
+<DT><span class="strong">SWHEN_SIMP</span>
+<DD>
+<pre>
+|- ((λt. F) SWHEN b = (λt. F)) ∧ ((λt. T) SWHEN b = EVENTUAL b) ∧
+   (a SWHEN (λt. F) = (λt. F)) ∧ (a SWHEN (λt. T) = (λt. a t)) ∧
+   (a SWHEN a = EVENTUAL a)
+</pre>
+
+<DT><span class="strong">SUNTIL_SIMP</span>
+<DD>
+<pre>
+|- ((λt. F) SUNTIL b = (λt. b t)) ∧ ((λt. T) SUNTIL b = EVENTUAL b) ∧
+   (a SUNTIL (λt. F) = (λt. F)) ∧ (a SUNTIL (λt. T) = (λt. T)) ∧
+   (a SUNTIL a = (λt. a t))
+</pre>
+
+<DT><span class="strong">SBEFORE_SIMP</span>
+<DD>
+<pre>
+|- ((λt. F) SBEFORE b = (λt. F)) ∧ ((λt. T) SBEFORE b = (λt. ¬b t)) ∧
+   (a SBEFORE (λt. F) = EVENTUAL a) ∧ (a SBEFORE (λt. T) = (λt. F)) ∧
+   (a SBEFORE a = (λt. F))
+</pre>
+
+<DT><span class="strong">WHEN_EVENT</span>
+<DD>
+<pre>
+|- a WHEN b = (λt. a t ∧ b t) WHEN b
+</pre>
+
+<DT><span class="strong">UNTIL_EVENT</span>
+<DD>
+<pre>
+|- a UNTIL b = (λt. a t ∧ ¬b t) UNTIL b
+</pre>
+
+<DT><span class="strong">BEFORE_EVENT</span>
+<DD>
+<pre>
+|- a BEFORE b = (λt. a t ∧ ¬b t) BEFORE b
+</pre>
+
+<DT><span class="strong">SWHEN_EVENT</span>
+<DD>
+<pre>
+|- a SWHEN b = (λt. a t ∧ b t) SWHEN b
+</pre>
+
+<DT><span class="strong">SUNTIL_EVENT</span>
+<DD>
+<pre>
+|- a SUNTIL b = (λt. a t ∧ ¬b t) SUNTIL b
+</pre>
+
+<DT><span class="strong">SBEFORE_EVENT</span>
+<DD>
+<pre>
+|- a SBEFORE b = (λt. a t ∧ ¬b t) SBEFORE b
+</pre>
+
+<DT><span class="strong">IMMEDIATE_EVENT</span>
+<DD>
+<pre>
+|- b t0 ⇒
+   (∀a. (a WHEN b) t0 ⇔ a t0) ∧ (∀a. (a UNTIL b) t0 ⇔ T) ∧
+   (∀a. (a BEFORE b) t0 ⇔ F) ∧ (∀a. (a SWHEN b) t0 ⇔ a t0) ∧
+   (∀a. (a SUNTIL b) t0 ⇔ T) ∧ ∀a. (a SBEFORE b) t0 ⇔ F
+</pre>
+
+<DT><span class="strong">NO_EVENT</span>
+<DD>
+<pre>
+|- ALWAYS (λt. ¬b t) t0 ⇒
+   (∀a. (a WHEN b) t0 ⇔ T) ∧ (∀a. (a UNTIL b) t0 ⇔ ALWAYS a t0) ∧
+   (∀a. (a BEFORE b) t0 ⇔ T) ∧ (∀a. (a SWHEN b) t0 ⇔ F) ∧
+   (∀a. (a SUNTIL b) t0 ⇔ F) ∧ ∀a. (a SBEFORE b) t0 ⇔ EVENTUAL a t0
+</pre>
+
+<DT><span class="strong">SOME_EVENT</span>
+<DD>
+<pre>
+|- (EVENTUAL b t0 ⇔ ∀a. (a WHEN b) t0 ⇔ (a SWHEN b) t0) ∧
+   (EVENTUAL b t0 ⇔ ∀a. (a UNTIL b) t0 ⇔ (a SUNTIL b) t0) ∧
+   (EVENTUAL b t0 ⇔ ∀a. (a BEFORE b) t0 ⇔ (a SBEFORE b) t0)
+</pre>
+
+<DT><span class="strong">MORE_EVENT</span>
+<DD>
+<pre>
+|- (a WHEN b = (λt. a t ∧ b t) WHEN b) ∧
+   (a UNTIL b = (λt. a t ∧ ¬b t) UNTIL b) ∧
+   (a BEFORE b = (λt. a t ∧ ¬b t) BEFORE b) ∧
+   (a SWHEN b = (λt. a t ∧ b t) SWHEN b) ∧
+   (a SUNTIL b = (λt. a t ∧ ¬b t) SUNTIL b) ∧
+   (a SBEFORE b = (λt. a t ∧ ¬b t) SBEFORE b)
+</pre>
+
+<DT><span class="strong">NOT_NEXT</span>
+<DD>
+<pre>
+|- ∀P. NEXT (λt. ¬P t) = (λt. ¬NEXT P t)
+</pre>
+
+<DT><span class="strong">AND_NEXT</span>
+<DD>
+<pre>
+|- ∀Q P. NEXT (λt. P t ∧ Q t) = (λt. NEXT P t ∧ NEXT Q t)
+</pre>
+
+<DT><span class="strong">OR_NEXT</span>
+<DD>
+<pre>
+|- ∀Q P. NEXT (λt. P t ∨ Q t) = (λt. NEXT P t ∨ NEXT Q t)
+</pre>
+
+<DT><span class="strong">IMP_NEXT</span>
+<DD>
+<pre>
+|- ∀Q P. NEXT (λt. P t ⇒ Q t) = (λt. NEXT P t ⇒ NEXT Q t)
+</pre>
+
+<DT><span class="strong">EQUIV_NEXT</span>
+<DD>
+<pre>
+|- ∀Q P. NEXT (λt. P t ⇔ Q t) = (λt. NEXT P t ⇔ NEXT Q t)
+</pre>
+
+<DT><span class="strong">ALWAYS_NEXT</span>
+<DD>
+<pre>
+|- ∀a. NEXT (ALWAYS a) = ALWAYS (NEXT a)
+</pre>
+
+<DT><span class="strong">EVENTUAL_NEXT</span>
+<DD>
+<pre>
+|- ∀a. NEXT (EVENTUAL a) = EVENTUAL (NEXT a)
+</pre>
+
+<DT><span class="strong">WHEN_NEXT</span>
+<DD>
+<pre>
+|- ∀a b. NEXT (a WHEN b) = NEXT a WHEN NEXT b
+</pre>
+
+<DT><span class="strong">UNTIL_NEXT</span>
+<DD>
+<pre>
+|- ∀a b. NEXT (a UNTIL b) = NEXT a UNTIL NEXT b
+</pre>
+
+<DT><span class="strong">BEFORE_NEXT</span>
+<DD>
+<pre>
+|- ∀a b. NEXT (a BEFORE b) = NEXT a BEFORE NEXT b
+</pre>
+
+<DT><span class="strong">SWHEN_NEXT</span>
+<DD>
+<pre>
+|- ∀a b. NEXT (a SWHEN b) = NEXT a SWHEN NEXT b
+</pre>
+
+<DT><span class="strong">SUNTIL_NEXT</span>
+<DD>
+<pre>
+|- ∀a b. NEXT (a SUNTIL b) = NEXT a SUNTIL NEXT b
+</pre>
+
+<DT><span class="strong">SBEFORE_NEXT</span>
+<DD>
+<pre>
+|- ∀a b. NEXT (a SBEFORE b) = NEXT a SBEFORE NEXT b
+</pre>
+
+<DT><span class="strong">ALWAYS_REC</span>
+<DD>
+<pre>
+|- ALWAYS P t0 ⇔ P t0 ∧ NEXT (ALWAYS P) t0
+</pre>
+
+<DT><span class="strong">EVENTUAL_REC</span>
+<DD>
+<pre>
+|- EVENTUAL P t0 ⇔ P t0 ∨ NEXT (EVENTUAL P) t0
+</pre>
+
+<DT><span class="strong">WATCH_REC</span>
+<DD>
+<pre>
+|- (q WATCH b) t0 ⇔
+   ¬q t0 ∧ if b t0 then NEXT (ALWAYS q) t0 else NEXT (q WATCH b) t0
+</pre>
+
+<DT><span class="strong">WHEN_REC</span>
+<DD>
+<pre>
+|- (a WHEN b) t0 ⇔ if b t0 then a t0 else NEXT (a WHEN b) t0
+</pre>
+
+<DT><span class="strong">UNTIL_REC</span>
+<DD>
+<pre>
+|- (a UNTIL b) t0 ⇔ ¬b t0 ⇒ a t0 ∧ NEXT (a UNTIL b) t0
+</pre>
+
+<DT><span class="strong">BEFORE_REC</span>
+<DD>
+<pre>
+|- (a BEFORE b) t0 ⇔ ¬b t0 ∧ (a t0 ∨ NEXT (a BEFORE b) t0)
+</pre>
+
+<DT><span class="strong">SWHEN_REC</span>
+<DD>
+<pre>
+|- (a SWHEN b) t0 ⇔ if b t0 then a t0 else NEXT (a SWHEN b) t0
+</pre>
+
+<DT><span class="strong">SUNTIL_REC</span>
+<DD>
+<pre>
+|- (a SUNTIL b) t0 ⇔ ¬b t0 ⇒ a t0 ∧ NEXT (a SUNTIL b) t0
+</pre>
+
+<DT><span class="strong">SBEFORE_REC</span>
+<DD>
+<pre>
+|- (a SBEFORE b) t0 ⇔ ¬b t0 ∧ (a t0 ∨ NEXT (a SBEFORE b) t0)
+</pre>
+
+<DT><span class="strong">ALWAYS_FIX</span>
+<DD>
+<pre>
+|- (y = (λt. a t ∧ y (t + 1))) ⇔ (y = ALWAYS a) ∨ (y = (λt. F))
+</pre>
+
+<DT><span class="strong">EVENTUAL_FIX</span>
+<DD>
+<pre>
+|- (y = (λt. a t ∨ y (t + 1))) ⇔ (y = EVENTUAL a) ∨ (y = (λt. T))
+</pre>
+
+<DT><span class="strong">WHEN_FIX</span>
+<DD>
+<pre>
+|- (y = (λt. if b t then a t else y (t + 1))) ⇔
+   (y = a WHEN b) ∨ (y = a SWHEN b)
+</pre>
+
+<DT><span class="strong">UNTIL_FIX</span>
+<DD>
+<pre>
+|- (y = (λt. ¬b t ⇒ a t ∧ y (t + 1))) ⇔ (y = a UNTIL b) ∨ (y = a SUNTIL b)
+</pre>
+
+<DT><span class="strong">BEFORE_FIX</span>
+<DD>
+<pre>
+|- ∀y.
+     (y = (λt. ¬b t ∧ (a t ∨ y (t + 1)))) ⇔
+     (y = a BEFORE b) ∨ (y = a SBEFORE b)
+</pre>
+
+<DT><span class="strong">WHEN_INVARIANT</span>
+<DD>
+<pre>
+|- (a WHEN b) t0 ⇔
+   ∃J.
+     J t0 ∧ (∀t. ¬b (t + t0) ∧ J (t + t0) ⇒ J (SUC (t + t0))) ∧
+     ∀d. b (d + t0) ∧ J (d + t0) ⇒ a (d + t0)
+</pre>
+
+<DT><span class="strong">UNTIL_INVARIANT</span>
+<DD>
+<pre>
+|- ∀t0.
+     (a UNTIL b) t0 ⇔
+     ∃J. J t0 ∧ ∀t. J (t + t0) ∧ ¬b (t + t0) ⇒ a (t + t0) ∧ J (SUC (t + t0))
+</pre>
+
+<DT><span class="strong">BEFORE_INVARIANT</span>
+<DD>
+<pre>
+|- (a BEFORE b) t0 ⇔
+   ∃J.
+     J t0 ∧ (∀t. J (t + t0) ∧ ¬a (t + t0) ⇒ J (SUC (t + t0))) ∧
+     ∀d. J (d + t0) ⇒ ¬b (d + t0)
+</pre>
+
+<DT><span class="strong">ALWAYS_INVARIANT</span>
+<DD>
+<pre>
+|- ALWAYS a t0 ⇔ ∃J. J t0 ∧ ∀t. J (t + t0) ⇒ a (t + t0) ∧ J (t + (t0 + 1))
+</pre>
+
+<DT><span class="strong">EVENTUAL_INVARIANT</span>
+<DD>
+<pre>
+|- EVENTUAL b t0 ⇔
+   ∃J.
+     0 < J t0 ∧ (∀t. J (SUC (t + t0)) < J (t + t0) ∨ (J (SUC (t + t0)) = 0)) ∧
+     ∀t. 0 < J (t + t0) ∧ (J (SUC (t + t0)) = 0) ⇒ b (t + t0)
+</pre>
+
+<DT><span class="strong">SWHEN_INVARIANT</span>
+<DD>
+<pre>
+|- (a SWHEN b) t0 ⇔
+   (∃J1.
+      J1 t0 ∧ (∀t. ¬b (t + t0) ∧ J1 (t + t0) ⇒ J1 (SUC (t + t0))) ∧
+      ∀d. b (d + t0) ∧ J1 (d + t0) ⇒ a (d + t0)) ∧
+   ∃J2.
+     0 < J2 t0 ∧
+     (∀t. J2 (SUC (t + t0)) < J2 (t + t0) ∨ (J2 (SUC (t + t0)) = 0)) ∧
+     ∀t. 0 < J2 (t + t0) ∧ (J2 (SUC (t + t0)) = 0) ⇒ b (t + t0)
+</pre>
+
+<DT><span class="strong">SUNTIL_INVARIANT</span>
+<DD>
+<pre>
+|- (a SUNTIL b) t0 ⇔
+   (∃J1.
+      J1 t0 ∧
+      ∀t. J1 (t + t0) ∧ ¬b (t + t0) ⇒ a (t + t0) ∧ J1 (SUC (t + t0))) ∧
+   ∃J2.
+     0 < J2 t0 ∧
+     (∀t. J2 (SUC (t + t0)) < J2 (t + t0) ∨ (J2 (SUC (t + t0)) = 0)) ∧
+     ∀t. 0 < J2 (t + t0) ∧ (J2 (SUC (t + t0)) = 0) ⇒ b (t + t0)
+</pre>
+
+<DT><span class="strong">SBEFORE_INVARIANT</span>
+<DD>
+<pre>
+|- (a SBEFORE b) t0 ⇔
+   (∃J1.
+      J1 t0 ∧ (∀t. J1 (t + t0) ∧ ¬a (t + t0) ⇒ J1 (SUC (t + t0))) ∧
+      ∀d. J1 (d + t0) ⇒ ¬b (d + t0)) ∧
+   ∃J2.
+     0 < J2 t0 ∧
+     (∀t. J2 (SUC (t + t0)) < J2 (t + t0) ∨ (J2 (SUC (t + t0)) = 0)) ∧
+     ∀t. 0 < J2 (t + t0) ∧ (J2 (SUC (t + t0)) = 0) ⇒ a (t + t0)
+</pre>
+
+<DT><span class="strong">ALWAYS_IDEM</span>
+<DD>
+<pre>
+|- ALWAYS a = ALWAYS (ALWAYS a)
+</pre>
+
+<DT><span class="strong">EVENTUAL_IDEM</span>
+<DD>
+<pre>
+|- EVENTUAL a = EVENTUAL (EVENTUAL a)
+</pre>
+
+<DT><span class="strong">WHEN_IDEM</span>
+<DD>
+<pre>
+|- a WHEN b = (a WHEN b) WHEN b
+</pre>
+
+<DT><span class="strong">UNTIL_IDEM</span>
+<DD>
+<pre>
+|- a UNTIL b = (a UNTIL b) UNTIL b
+</pre>
+
+<DT><span class="strong">BEFORE_IDEM</span>
+<DD>
+<pre>
+|- a BEFORE b = (a BEFORE b) BEFORE b
+</pre>
+
+<DT><span class="strong">SWHEN_IDEM</span>
+<DD>
+<pre>
+|- a SWHEN b = (a SWHEN b) SWHEN b
+</pre>
+
+<DT><span class="strong">SUNTIL_IDEM</span>
+<DD>
+<pre>
+|- a SUNTIL b = (a SUNTIL b) SUNTIL b
+</pre>
+
+<DT><span class="strong">SBEFORE_IDEM</span>
+<DD>
+<pre>
+|- a SBEFORE b = (a SBEFORE b) SBEFORE b
+</pre>
+
+<DT><span class="strong">NOT_ALWAYS</span>
+<DD>
+<pre>
+|- ¬ALWAYS a t0 ⇔ EVENTUAL (λt. ¬a t) t0
+</pre>
+
+<DT><span class="strong">NOT_EVENTUAL</span>
+<DD>
+<pre>
+|- ¬EVENTUAL a t0 ⇔ ALWAYS (λt. ¬a t) t0
+</pre>
+
+<DT><span class="strong">NOT_WHEN</span>
+<DD>
+<pre>
+|- ¬(a WHEN b) t0 ⇔ ((λt. ¬a t) SWHEN b) t0
+</pre>
+
+<DT><span class="strong">NOT_UNTIL</span>
+<DD>
+<pre>
+|- ¬(a UNTIL b) t0 ⇔ ((λt. ¬a t) SBEFORE b) t0
+</pre>
+
+<DT><span class="strong">NOT_BEFORE</span>
+<DD>
+<pre>
+|- ¬(a BEFORE b) t0 ⇔ ((λt. ¬a t) SUNTIL b) t0
+</pre>
+
+<DT><span class="strong">NOT_SWHEN</span>
+<DD>
+<pre>
+|- ¬(a SWHEN b) t0 ⇔ ((λt. ¬a t) WHEN b) t0
+</pre>
+
+<DT><span class="strong">NOT_SUNTIL</span>
+<DD>
+<pre>
+|- ¬(a SUNTIL b) t0 ⇔ ((λt. ¬a t) BEFORE b) t0
+</pre>
+
+<DT><span class="strong">NOT_SBEFORE</span>
+<DD>
+<pre>
+|- ¬(a SBEFORE b) t0 ⇔ ((λt. ¬a t) UNTIL b) t0
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

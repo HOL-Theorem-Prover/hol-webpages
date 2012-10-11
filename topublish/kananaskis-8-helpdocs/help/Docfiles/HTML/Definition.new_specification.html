@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Definition.new_specification</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>new_specification : string * string list * thm  -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Definition.html">Definition</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Introduce a constant or constants satisfying a given property.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The ML function </SPAN><SPAN class = "BRKT">new_specification</SPAN><SPAN class = "TEXT"> implements the primitive rule of
+constant specification for the HOL logic.
+Evaluating:
+</SPAN><DIV class = "XMPL"><pre>
+   new_specification (name, ["c1",...,"cn"], |- ?x1...xn. t)
+</pre></DIV>
+<SPAN class = "TEXT">
+simultaneously introduces new constants named </SPAN><SPAN class = "BRKT">c1</SPAN><SPAN class = "TEXT">,...,</SPAN><SPAN class = "BRKT">cn</SPAN><SPAN class = "TEXT">
+satisfying the property:
+</SPAN><DIV class = "XMPL"><pre>
+   |- t[c1,...,cn/x1,...,xn]
+</pre></DIV>
+<SPAN class = "TEXT">
+This theorem is stored, with name </SPAN><SPAN class = "BRKT">name</SPAN><SPAN class = "TEXT">, as a definition in
+the current theory segment. It is also returned by the call to
+</SPAN><SPAN class = "BRKT">new_specification</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">new_specification</SPAN><SPAN class = "TEXT"> fails if the theorem argument has assumptions or
+free variables. It also fails if the supplied constant names 
+</SPAN><SPAN class = "BRKT">c1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">cn</SPAN><SPAN class = "TEXT"> are not distinct. It also fails if the length of
+the existential prefix of the theorem is not at least </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">. Finally, 
+failure occurs if some </SPAN><SPAN class = "BRKT">ci</SPAN><SPAN class = "TEXT"> does not contain all the type variables that
+occur in the term </SPAN><SPAN class = "BRKT">?x1...xn.&nbsp;t</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">new_specification</SPAN><SPAN class = "TEXT"> can be used to introduce constants that satisfy a given
+property without having to make explicit equational constant definitions for
+them.  For example, the built-in constants </SPAN><SPAN class = "BRKT">MOD</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">DIV</SPAN><SPAN class = "TEXT"> are defined in the
+system by first proving the theorem:
+</SPAN><DIV class = "XMPL"><pre>
+   th |- ?MOD DIV.
+           !n. 0 &lt; n ==&gt; !k. (k = (DIV k n * n) + MOD k n) /\ MOD k n &lt; n
+</pre></DIV>
+<SPAN class = "TEXT">
+and then making the constant specification:
+</SPAN><DIV class = "XMPL"><pre>
+   new_specification ("DIVISION", ["MOD","DIV"], th)
+</pre></DIV>
+<SPAN class = "TEXT">
+This introduces the constants </SPAN><SPAN class = "BRKT">MOD</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">DIV</SPAN><SPAN class = "TEXT"> with the defining
+property shown above.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The introduced constants have a prefix parsing status. To alter this, 
+use </SPAN><SPAN class = "BRKT">set_fixity</SPAN><SPAN class = "TEXT">. Typical fixity values are </SPAN><SPAN class = "BRKT">Prefix</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">Binder</SPAN><SPAN class = "TEXT">,
+</SPAN><SPAN class = "BRKT">Infixl&nbsp;n</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">Infixr&nbsp;n</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">Suffix&nbsp;n</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">TruePrefix&nbsp;n</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">Closefix</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Definition.new_definition.html">new_definition</A>,
+<A HREF = "boolSyntax.new_binder_definition.html">new_binder_definition</A>,
+<A HREF = "boolSyntax.new_infixl_definition.html">new_infixl_definition</A>,
+<A HREF = "boolSyntax.new_infixr_definition.html">new_infixr_definition</A>,
+<A HREF = "TotalDefn.Define.html">Define</A>,
+<A HREF = "Parse.set_fixity.html">set_fixity</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

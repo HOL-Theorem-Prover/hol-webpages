@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>pairLib.PairCases_on</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>PairCases_on : term quotation -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/pairLib.html">pairLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Recursively split variables of product type</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">pairTools</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An application </SPAN><SPAN class = "BRKT">PairCases_on&nbsp;q</SPAN><SPAN class = "TEXT"> first parses </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> in the context of the goal to
+obtain </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT">, which should be a variable of product type. Then, it introduces
+new variables of the form </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT">n, where n is a number, representing the atomic
+components of </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> after all nested pair structure is expanded away. Finally,
+all occurrences of </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> in the goal (including in the assumptions) are replaced
+by the explicit pair structure (with the new variables at its leaves).</SPAN>
+<P>
+<SPAN class = "TEXT">The new variables are numbered from zero according to a depth-first traversal.
+(Therefore, they should appear in increasing order from left to right when the
+tree is pretty-printed.) Primed variants of the new numbered variables are used
+if necessary (i.e. </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT">n already occurs free in the goal).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> is not a variable of product type.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">&gt; val PairCases_on = pairLib.PairCases_on;
+&gt; g(&lsquo;(x = y) ==&gt; ((x:((bool#bool)#bool#(bool#((bool#bool)#bool))))=z)&lsquo;);</SPAN>
+<P>
+<SPAN class = "TEXT">Initial goal:</SPAN>
+<P>
+<SPAN class = "TEXT">(x = y) ==&gt; (x = z)</SPAN>
+<P>
+<SPAN class = "TEXT">&gt; e(DISCH_TAC);
+OK..
+1 subgoal:</SPAN>
+<P>
+<SPAN class = "TEXT">x = z
+------------------------------------
+  x = y</SPAN>
+<P>
+<SPAN class = "TEXT">&gt; e(PairCases_on &lsquo;y&lsquo;);
+OK..
+1 subgoal:</SPAN>
+<P>
+<SPAN class = "TEXT">x = z
+------------------------------------
+  x = ((y0,y1),y2,y3,(y4,y5),y6)</SPAN>
+<P>
+<SPAN class = "TEXT">&gt; e(PairCases_on&lsquo;x&lsquo;);
+OK..
+1 subgoal:</SPAN>
+<P>
+<SPAN class = "TEXT">((x0,x1),x2,x3,(x4,x5),x6) = z
+------------------------------------
+  ((x0,x1),x2,x3,(x4,x5),x6) = ((y0,y1),y2,y3,(y4,y5),y6)</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactic.FULL_STRUCT_CASES_TAC.html">FULL_STRUCT_CASES_TAC</A>,
+<A HREF = "Conv.RENAME_VARS_CONV.html">RENAME_VARS_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

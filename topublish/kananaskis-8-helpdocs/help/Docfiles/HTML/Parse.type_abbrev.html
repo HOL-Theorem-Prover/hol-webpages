@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Parse.type_abbrev</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Parse.type_abbrev : string * hol_type -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Establishes a type abbreviation.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Parse</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">type_abbrev(s,ty)</SPAN><SPAN class = "TEXT"> sets up a type abbreviation that will
+cause the parser to treat the string </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> as a synonym for the type
+</SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">. Moreover, if </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> includes any type variables, then the
+abbreviation is treated as a type operator taking as many parameters
+as appear in </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">.  The order of the parameters will be the alphabetic
+ordering of the type variables&rsquo; names.</SPAN>
+<P>
+<SPAN class = "TEXT">Abbreviations work at the level of the names of type operators.  It is
+thus possible to link a binary infix to an operator that is in turn an
+abbreviation.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the given type is just a type variable.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This is a simple abbreviation.
+</SPAN><DIV class = "XMPL"><pre>
+   - type_abbrev ("set", ``:'a -&gt; bool``);
+   &gt; val it = () : unit
+
+   - ``:num set``;
+   &gt; val it = ``:num set`` : hol_type
+</pre></DIV>
+<SPAN class = "TEXT">
+Here, the abbreviation is set up and provided with its own infix
+symbol.
+</SPAN><DIV class = "XMPL"><pre>
+   - type_abbrev ("rfunc", ``:'b -&gt; 'a``);
+   &gt; val it = () : unit
+
+   - add_infix_type {Assoc = RIGHT, Name = "rfunc",
+                     ParseName = SOME "&lt;-", Prec = 50};
+   &gt; val it = () : unit
+
+   - ``:'a &lt;- bool``;
+   &gt; val it = ``:'a &lt;- bool`` : hol_type
+
+   - dest_thy_type it;
+   &gt; val it = {Args = [``:bool``, ``:'a``], Thy = "min", Tyop = "fun"} :
+      {Args : hol_type list, Thy : string, Tyop : string}
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">As is common with most of the parsing and printing functions, there is
+a companion </SPAN><SPAN class = "BRKT">temp_type_abbrev</SPAN><SPAN class = "TEXT"> function that does not cause the
+abbreviation effect to persist when the theory is exported.  As the
+examples show, type abbreviations also affect the pretty-printing of
+types.  The pretty-printer can be instructed not to print particular
+abbreviations (using </SPAN><SPAN class = "BRKT">Parse.disable_tyabbrev_printing</SPAN><SPAN class = "TEXT">), or to not
+print any (by setting the trace variable </SPAN><SPAN class = "BRKT">"print_tyabbrevs"</SPAN><SPAN class = "TEXT">).</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.add_infix_type.html">add_infix_type</A>,
+<A HREF = "Parse.disable_tyabbrev_printing.html">disable_tyabbrev_printing</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: blast</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "blast"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "wordsTheory.html"><span class="strong">words</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">BCARRY</span>
+            <td>
+            :num -> (num -> bool) -> (num -> bool) -> bool -> bool
+    <tr><td>
+        <span class="strong">BSUM</span>
+        <td>
+        :num -> (num -> bool) -> (num -> bool) -> bool -> bool
+    <tr><td>
+        <span class="strong">bcarry</span>
+        <td>
+        :bool -> bool -> bool -> bool
+    <tr><td>
+        <span class="strong">bsum</span>
+        <td>
+        :bool -> bool -> bool -> bool
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">bcarry_def</span>
+<DD>
+<pre>
+|- ∀x y c. bcarry x y c ⇔ x ∧ y ∨ (x ∨ y) ∧ c
+</pre>
+
+<DT><span class="strong">BCARRY_def</span>
+<DD>
+<pre>
+|- (∀x y c. BCARRY 0 x y c ⇔ c) ∧
+   ∀i x y c. BCARRY (SUC i) x y c ⇔ bcarry (x i) (y i) (BCARRY i x y c)
+</pre>
+
+<DT><span class="strong">bsum_def</span>
+<DD>
+<pre>
+|- ∀x y c. bsum x y c ⇔ ((x ⇔ ¬y) ⇔ ¬c)
+</pre>
+
+<DT><span class="strong">BSUM_def</span>
+<DD>
+<pre>
+|- ∀i x y c. BSUM i x y c ⇔ bsum (x i) (y i) (BCARRY i x y c)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">BCARRY_def_compute</span>
+<DD>
+<pre>
+|- (∀x y c. BCARRY 0 x y c ⇔ c) ∧
+   (∀i x y c.
+      BCARRY (NUMERAL (BIT1 i)) x y c ⇔
+      bcarry (x (NUMERAL (BIT1 i) − 1)) (y (NUMERAL (BIT1 i) − 1))
+        (BCARRY (NUMERAL (BIT1 i) − 1) x y c)) ∧
+   ∀i x y c.
+     BCARRY (NUMERAL (BIT2 i)) x y c ⇔
+     bcarry (x (NUMERAL (BIT1 i))) (y (NUMERAL (BIT1 i)))
+       (BCARRY (NUMERAL (BIT1 i)) x y c)
+</pre>
+
+<DT><span class="strong">BCARRY_LEM</span>
+<DD>
+<pre>
+|- ∀i x y c.
+     0 < i ⇒
+     (BCARRY i (λi. BIT i x) (λi. BIT i y) c ⇔
+      BIT i (BITS (i − 1) 0 x + BITS (i − 1) 0 y + if c then 1 else 0))
+</pre>
+
+<DT><span class="strong">BCARRY_EQ</span>
+<DD>
+<pre>
+|- ∀n c x1 x2 y1 y2.
+     (∀i. i < n ⇒ (x1 i ⇔ x2 i) ∧ (y1 i ⇔ y2 i)) ⇒
+     (BCARRY n x1 y1 c ⇔ BCARRY n x2 y2 c)
+</pre>
+
+<DT><span class="strong">BSUM_EQ</span>
+<DD>
+<pre>
+|- ∀n c x1 x2 y1 y2.
+     (∀i. i ≤ n ⇒ (x1 i ⇔ x2 i) ∧ (y1 i ⇔ y2 i)) ⇒
+     (BSUM n x1 y1 c ⇔ BSUM n x2 y2 c)
+</pre>
+
+<DT><span class="strong">BSUM_LEM</span>
+<DD>
+<pre>
+|- ∀i x y c.
+     BSUM i (λi. BIT i x) (λi. BIT i y) c ⇔ BIT i (x + y + if c then 1 else 0)
+</pre>
+
+<DT><span class="strong">BITWISE_ADD</span>
+<DD>
+<pre>
+|- ∀x y. x + y = FCP i. BSUM i ($' x) ($' y) F
+</pre>
+
+<DT><span class="strong">BITWISE_SUB</span>
+<DD>
+<pre>
+|- ∀x y. x − y = FCP i. BSUM i ($' x) ($~ o $' y) T
+</pre>
+
+<DT><span class="strong">BITWISE_LO</span>
+<DD>
+<pre>
+|- ∀x y. x <₊ y ⇔ ¬BCARRY (dimindex (:α)) ($' x) ($~ o $' y) T
+</pre>
+
+<DT><span class="strong">BITWISE_MUL</span>
+<DD>
+<pre>
+|- ∀w m.
+     w * m =
+     FOLDL (λa j. a + FCP i. w ' j ∧ j ≤ i ∧ m ' (i − j)) 0w
+       (COUNT_LIST (dimindex (:α)))
+</pre>
+
+<DT><span class="strong">word_lsl_bv_expand</span>
+<DD>
+<pre>
+|- ∀w m.
+     w <<~ m =
+     if dimindex (:α) = 1 then
+       $FCP (K (¬m ' 0 ∧ w ' 0))
+     else
+       FCP k.
+         FOLDL
+           (λa j.
+              a ∨
+              ((LOG2 (dimindex (:α) − 1) -- 0) m = n2w j) ∧ j ≤ k ∧
+              w ' (k − j)) F (COUNT_LIST (dimindex (:α))) ∧
+         ((dimindex (:α) − 1 -- LOG2 (dimindex (:α) − 1) + 1) m = 0w)
+</pre>
+
+<DT><span class="strong">word_lsr_bv_expand</span>
+<DD>
+<pre>
+|- ∀w m.
+     w >>>~ m =
+     if dimindex (:α) = 1 then
+       $FCP (K (¬m ' 0 ∧ w ' 0))
+     else
+       FCP k.
+         FOLDL
+           (λa j.
+              a ∨
+              ((LOG2 (dimindex (:α) − 1) -- 0) m = n2w j) ∧
+              k + j < dimindex (:α) ∧ w ' (k + j)) F
+           (COUNT_LIST (dimindex (:α))) ∧
+         ((dimindex (:α) − 1 -- LOG2 (dimindex (:α) − 1) + 1) m = 0w)
+</pre>
+
+<DT><span class="strong">word_asr_bv_expand</span>
+<DD>
+<pre>
+|- ∀w m.
+     w >>~ m =
+     if dimindex (:α) = 1 then
+       $FCP (K (w ' 0))
+     else
+       FCP k.
+         FOLDL
+           (λa j.
+              a ∨ ((LOG2 (dimindex (:α) − 1) -- 0) m = n2w j) ∧ (w ≫ j) ' k) F
+           (COUNT_LIST (dimindex (:α))) ∧
+         ((dimindex (:α) − 1 -- LOG2 (dimindex (:α) − 1) + 1) m = 0w) ∨
+         n2w (dimindex (:α) − 1) <₊ m ∧ w ' (dimindex (:α) − 1)
+</pre>
+
+<DT><span class="strong">word_ror_bv_expand</span>
+<DD>
+<pre>
+|- ∀w m.
+     w #>>~ m =
+     FCP k.
+       FOLDL
+         (λa j.
+            a ∨
+            (word_mod m (n2w (dimindex (:α))) = n2w j) ∧
+            w ' ((j + k) MOD dimindex (:α))) F (COUNT_LIST (dimindex (:α)))
+</pre>
+
+<DT><span class="strong">word_rol_bv_expand</span>
+<DD>
+<pre>
+|- ∀w m.
+     w #<<~ m =
+     FCP k.
+       FOLDL
+         (λa j.
+            a ∨
+            (word_mod m (n2w (dimindex (:α))) = n2w j) ∧
+            w '
+            ((k + (dimindex (:α) − j) MOD dimindex (:α)) MOD dimindex (:α))) F
+         (COUNT_LIST (dimindex (:α)))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>PairRules.PALPHA_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>PALPHA_CONV : term -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/PairRules.html">PairRules</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">pair</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Renames the bound variables of a paired lambda-abstraction.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> is a variable of type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">\p.t</SPAN><SPAN class = "TEXT"> is a paired abstraction in
+which the bound pair </SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT"> also has type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">, then </SPAN><SPAN class = "BRKT">ALPHA_CONV&nbsp;q&nbsp;"\p.t"</SPAN><SPAN class = "TEXT">
+returns the theorem:
+</SPAN><DIV class = "XMPL"><pre>
+   |- (\p.t) = (\q'. t[q'/p])
+</pre></DIV>
+<SPAN class = "TEXT">
+where the pair </SPAN><SPAN class = "BRKT">q':ty</SPAN><SPAN class = "TEXT"> is a primed variant of </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> chosen so
+that none of its components are free in </SPAN><SPAN class = "BRKT">\p.t</SPAN><SPAN class = "TEXT">.
+The pairs </SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> need not have the same structure, but they must
+be of the same type.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">PALPHA_CONV</SPAN><SPAN class = "TEXT"> renames the variables in a bound pair:
+</SPAN><DIV class = "XMPL"><pre>
+   - PALPHA_CONV
+       (Term `((w:'a,x:'a),(y:'a,z:'a))`)
+       (Term `\((a:'a,b:'a),(c:'a,d:'a)). (f a b c d):'a`);
+   &gt; val it = |- (\((a,b),c,d). f a b c d) = (\((w,x),y,z). f w x y z) : thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">The new bound pair and the old bound pair need not have the same structure.
+</SPAN><DIV class = "XMPL"><pre>
+   - PALPHA_CONV
+       (Term `((wx:'a#'a),(y:'a,z:'a))`)
+       (Term `\((a:'a,b:'a),(c:'a,d:'a)). (f a b c d):'a`);
+   &gt; val it = |- (\((a,b),c,d). f a b c d) = 
+                 (\(wx,y,z). f (FST wx) (SND wx) y z) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">PALPHA_CONV</SPAN><SPAN class = "TEXT"> recognises subpairs of a pair as variables
+and preserves structure accordingly.
+</SPAN><DIV class = "XMPL"><pre>
+   - PALPHA_CONV
+      (Term `((wx:'a#'a),(y:'a,z:'a))`)
+      (Term `\((a:'a,b:'a),(c:'a,d:'a)). (f (a,b) c d):'a`);
+   &gt; val it = |- (\((a,b),c,d). f (a,b) c d) = (\(wx,y,z). f wx y z) : thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">PALPHA_CONV</SPAN><SPAN class = "TEXT"> will only ever add the terms </SPAN><SPAN class = "BRKT">FST</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">SND</SPAN><SPAN class = "TEXT">, i.e., it will 
+never remove them. This means that while </SPAN><SPAN class = "BRKT">\(x,y).&nbsp;x&nbsp;+&nbsp;y</SPAN><SPAN class = "TEXT"> can be 
+converted to </SPAN><SPAN class = "BRKT">\xy.&nbsp;(FST&nbsp;xy)&nbsp;+&nbsp;(SND&nbsp;xy)</SPAN><SPAN class = "TEXT">, it can not be converted
+back again.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">PALPHA_CONV&nbsp;q&nbsp;tm</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> is not a variable,
+if </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> is not an abstraction, or if </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> is a variable and 
+</SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> is the lambda abstraction </SPAN><SPAN class = "BRKT">\p.t</SPAN><SPAN class = "TEXT"> but the types of </SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT"> 
+and </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> differ.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Drule.ALPHA_CONV.html">ALPHA_CONV</A>,
+<A HREF = "PairRules.PALPHA.html">PALPHA</A>,
+<A HREF = "PairRules.GEN_PALPHA_CONV.html">GEN_PALPHA_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Pretype</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Pretype</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Pretype.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Pretype =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a> datatype pretype
+<a name="line5"></a>    = Vartype of string
+<a name="line6"></a>    | Tyop of {Thy:string,Tyop:string, Args: pretype list}
+<a name="line7"></a>    | UVar of pretype option ref
+<a name="line8"></a>
+<a name="line9"></a>val tyvars : pretype -&gt; string list
+<a name="line10"></a>val new_uvar : unit -&gt; pretype
+<a name="line11"></a>val ref_occurs_in : pretype option ref * pretype -&gt; bool
+<a name="line12"></a>val ref_equiv : pretype option ref * pretype -&gt; bool
+<a name="line13"></a>val <a href="#has_unbound_uvar-val">has_unbound_uvar</a> : pretype -&gt; bool
+<a name="line14"></a>val <a href="#mk_fun_ty-val">mk_fun_ty</a> : pretype * pretype -&gt; pretype
+<a name="line15"></a>
+<a name="line16"></a>(* first argument is a function which performs a binding between a
+<a name="line17"></a>   pretype reference and another pretype, updating some sort of environment
+<a name="line18"></a>   (the 'a), returning the new alpha and a unit option, SOME () for a
+<a name="line19"></a>   success, and a NONE, if not.
+<a name="line20"></a>
+<a name="line21"></a>   To further complicate things, the bind argument also gets a copy of
+<a name="line22"></a>   gen_unify to call, if it should choose.
+<a name="line23"></a>*)
+<a name="line24"></a>val gen_unify :
+<a name="line25"></a>  ((pretype -&gt; pretype -&gt; ('a -&gt; 'a * unit option)) -&gt;
+<a name="line26"></a>   (pretype option ref -&gt; (pretype -&gt; ('a -&gt; 'a * unit option)))) -&gt;
+<a name="line27"></a>  pretype -&gt; pretype -&gt; ('a -&gt; 'a * unit option)
+<a name="line28"></a>val unify : pretype -&gt; pretype -&gt; unit
+<a name="line29"></a>val can_unify : pretype -&gt; pretype -&gt; bool
+<a name="line30"></a>
+<a name="line31"></a>val safe_unify :
+<a name="line32"></a>  pretype -&gt; pretype -&gt;
+<a name="line33"></a>  ((pretype option ref * pretype) list -&gt;
+<a name="line34"></a>   (pretype option ref * pretype) list * unit option)
+<a name="line35"></a>val apply_subst : (pretype option ref * pretype) list -&gt; pretype -&gt; pretype
+<a name="line36"></a>
+<a name="line37"></a>val rename_typevars : string list -&gt; pretype -&gt; pretype
+<a name="line38"></a>val rename_tv : string list -&gt; pretype -&gt; (string * pretype option ref) list -&gt;
+<a name="line39"></a>                (string * pretype option ref) list * pretype option
+<a name="line40"></a>val fromType : Type.hol_type -&gt; pretype
+<a name="line41"></a>val remove_made_links : pretype -&gt; pretype
+<a name="line42"></a>val replace_null_links : pretype -&gt; (string list -&gt; string list * unit option)
+<a name="line43"></a>val clean : pretype -&gt; Type.hol_type
+<a name="line44"></a>val toType : pretype -&gt; Type.hol_type
+<a name="line45"></a>val <a href="#chase-val">chase</a> : pretype -&gt; pretype
+<a name="line46"></a>
+<a name="line47"></a>val pp_pretype : PP.ppstream -&gt; pretype -&gt; unit
+<a name="line48"></a>
+<a name="line49"></a>val termantiq_constructors : (pretype,Term.term) parse_type.tyconstructors
+<a name="line50"></a>val typantiq_constructors : (pretype,Type.hol_type) parse_type.tyconstructors
+<a name="line51"></a>
+<a name="line52"></a>end
+<a name="line53"></a>
+<a name="line54"></a>(*
+   [<a name="chase-val"><b>chase</b></a> pty]  If pty is of the form (dom --&gt; rng), once all necessary
+   uvar references have been followed, returns rng.
+
+   [rename_typvars avds pty]  Avoiding type variables with names from avds,
+   renames Vartypes into uvar references.
+
+   [<a name="has_unbound_uvar-val"><b>has_unbound_uvar</b></a> pty] Returns true if pty includes (after chasing bound
+   uvars), any unbound uvars.
+
+   [<a name="mk_fun_ty-val"><b>mk_fun_ty</b></a> (dom,rng)] Makes the pretype corresponding to the function space
+   from dom to rng.
+*)
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Pretype.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Tactical.POP_ASSUM_LIST</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>POP_ASSUM_LIST : (thm list -&gt; tactic) -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactical.html">Tactical</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Generates a tactic from the assumptions, discards the assumptions and
+applies the tactic.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to a function and a goal, </SPAN><SPAN class = "BRKT">POP_ASSUM_LIST</SPAN><SPAN class = "TEXT"> applies
+the function to a list of theorems corresponding to the </SPAN><SPAN class = "BRKT">ASSUME</SPAN><SPAN class = "TEXT">d
+assumptions of the goal, then applies the resulting tactic to the goal
+with an empty assumption list.
+</SPAN><DIV class = "XMPL"><pre>
+    POP_ASSUM_LIST f ({A1,...,An} ?- t) = f [A1 |- A1, ..., An |- An] (?- t)
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the function fails when applied to the list of </SPAN><SPAN class = "BRKT">ASSUME</SPAN><SPAN class = "TEXT">d assumptions,
+or if the resulting tactic fails when applied to the goal with no
+assumptions.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">There is nothing magical about </SPAN><SPAN class = "BRKT">POP_ASSUM_LIST</SPAN><SPAN class = "TEXT">: the same effect can be
+achieved by using </SPAN><SPAN class = "BRKT">ASSUME&nbsp;a</SPAN><SPAN class = "TEXT"> explicitly wherever the assumption </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT"> is
+used. If </SPAN><SPAN class = "BRKT">POP_ASSUM_LIST</SPAN><SPAN class = "TEXT"> is used, it is unwise to select elements by
+number from the </SPAN><SPAN class = "BRKT">ASSUME</SPAN><SPAN class = "TEXT">d-assumption list, since this introduces a dependency
+on ordering.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Suppose we have a goal of the following form:
+</SPAN><DIV class = "XMPL"><pre>
+   {a /\ b, c, (d /\ e) /\ f} ?- t
+</pre></DIV>
+<SPAN class = "TEXT">
+Then we can split the conjunctions in the assumption list apart by
+applying the tactic:
+</SPAN><DIV class = "XMPL"><pre>
+   POP_ASSUM_LIST (MAP_EVERY STRIP_ASSUME_TAC)
+</pre></DIV>
+<SPAN class = "TEXT">
+which results in the new goal:
+</SPAN><DIV class = "XMPL"><pre>
+   {a, b, c, d, e, f} ?- t
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Making more delicate use of the assumption list than simply rewriting or
+using resolution.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactical.ASSUM_LIST.html">ASSUM_LIST</A>,
+<A HREF = "Tactical.EVERY_ASSUM.html">EVERY_ASSUM</A>,
+<A HREF = "Tactic.IMP_RES_TAC.html">IMP_RES_TAC</A>,
+<A HREF = "Tactical.POP_ASSUM.html">POP_ASSUM</A>,
+<A HREF = "Rewrite.REWRITE_TAC.html">REWRITE_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

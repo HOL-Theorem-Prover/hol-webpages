@@ -1,0 +1,1109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: float</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "float"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "ieeeTheory.html"><span class="strong">ieee</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">error</span> <td> :real -> real
+    <tr><td> <span class="strong">normalizes</span> <td> :real -> bool
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">error_def</span>
+<DD>
+<pre>
+|- ∀x. error x = Val (float (round float_format To_nearest x)) − x
+</pre>
+
+<DT><span class="strong">normalizes</span>
+<DD>
+<pre>
+|- ∀x.
+     normalizes x ⇔
+     inv (2 pow (bias float_format − 1)) ≤ abs x ∧
+     abs x < threshold float_format
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">FLOAT_DIV_RELATIVE</span>
+<DD>
+<pre>
+|- ∀a b.
+     Finite a ∧ Finite b ∧ ¬Iszero b ∧ normalizes (Val a / Val b) ⇒
+     Finite (a / b) ∧
+     ∃e. abs e ≤ 1 / 2 pow 24 ∧ (Val (a / b) = Val a / Val b * (1 + e))
+</pre>
+
+<DT><span class="strong">FLOAT_MUL_RELATIVE</span>
+<DD>
+<pre>
+|- ∀a b.
+     Finite a ∧ Finite b ∧ normalizes (Val a * Val b) ⇒
+     Finite (a * b) ∧
+     ∃e. abs e ≤ 1 / 2 pow 24 ∧ (Val (a * b) = Val a * Val b * (1 + e))
+</pre>
+
+<DT><span class="strong">FLOAT_SUB_RELATIVE</span>
+<DD>
+<pre>
+|- ∀a b.
+     Finite a ∧ Finite b ∧ normalizes (Val a − Val b) ⇒
+     Finite (a − b) ∧
+     ∃e. abs e ≤ 1 / 2 pow 24 ∧ (Val (a − b) = (Val a − Val b) * (1 + e))
+</pre>
+
+<DT><span class="strong">FLOAT_ADD_RELATIVE</span>
+<DD>
+<pre>
+|- ∀a b.
+     Finite a ∧ Finite b ∧ normalizes (Val a + Val b) ⇒
+     Finite (a + b) ∧
+     ∃e. abs e ≤ 1 / 2 pow 24 ∧ (Val (a + b) = (Val a + Val b) * (1 + e))
+</pre>
+
+<DT><span class="strong">Val_FLOAT_ROUND_VALOF</span>
+<DD>
+<pre>
+|- ∀x.
+     Val (float (round float_format To_nearest x)) =
+     valof float_format (round float_format To_nearest x)
+</pre>
+
+<DT><span class="strong">FLOAT_DIV</span>
+<DD>
+<pre>
+|- ∀a b.
+     Finite a ∧ Finite b ∧ ¬Iszero b ∧
+     abs (Val a / Val b) < threshold float_format ⇒
+     Finite (a / b) ∧ (Val (a / b) = Val a / Val b + error (Val a / Val b))
+</pre>
+
+<DT><span class="strong">FLOAT_MUL</span>
+<DD>
+<pre>
+|- ∀a b.
+     Finite a ∧ Finite b ∧ abs (Val a * Val b) < threshold float_format ⇒
+     Finite (a * b) ∧ (Val (a * b) = Val a * Val b + error (Val a * Val b))
+</pre>
+
+<DT><span class="strong">FLOAT_SUB</span>
+<DD>
+<pre>
+|- ∀a b.
+     Finite a ∧ Finite b ∧ abs (Val a − Val b) < threshold float_format ⇒
+     Finite (a − b) ∧ (Val (a − b) = Val a − Val b + error (Val a − Val b))
+</pre>
+
+<DT><span class="strong">REAL_POW_LE_1</span>
+<DD>
+<pre>
+|- ∀n x. 1 ≤ x ⇒ 1 ≤ x pow n
+</pre>
+
+<DT><span class="strong">REAL_POW_EQ_0</span>
+<DD>
+<pre>
+|- ∀x n. (x pow n = 0) ⇔ (x = 0) ∧ n ≠ 0
+</pre>
+
+<DT><span class="strong">REAL_LE_RCANCEL_IMP</span>
+<DD>
+<pre>
+|- ∀x y z. 0 < z ∧ x * z ≤ y * z ⇒ x ≤ y
+</pre>
+
+<DT><span class="strong">REAL_LT_RCANCEL_IMP</span>
+<DD>
+<pre>
+|- ∀x y z. 0 < z ∧ x * z < y * z ⇒ x < y
+</pre>
+
+<DT><span class="strong">VALOF_SCALE_DOWN</span>
+<DD>
+<pre>
+|- ∀s e k f.
+     k < e ⇒
+     (valof float_format (s,e − k,f) =
+      inv (2 pow k) * valof float_format (s,e,f))
+</pre>
+
+<DT><span class="strong">VALOF_SCALE_UP</span>
+<DD>
+<pre>
+|- ∀s e k f.
+     e ≠ 0 ⇒
+     (valof float_format (s,e + k,f) = 2 pow k * valof float_format (s,e,f))
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_LEMMA8</span>
+<DD>
+<pre>
+|- ∀x.
+     abs x < inv (2 pow 126) ⇒
+     ∃s e f.
+       abs (Val (float (s,e,f)) − x) ≤ inv (2 pow 150) ∧ s < 2 ∧ f < 2 ** 23 ∧
+       ((e = 0) ∨ (e = 1) ∧ (f = 0))
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_LEMMA7</span>
+<DD>
+<pre>
+|- ∀x.
+     0 ≤ x ∧ x < inv (2 pow 126) ⇒
+     ∃e f.
+       abs (Val (float (0,e,f)) − x) ≤ inv (2 pow 150) ∧ f < 2 ** 23 ∧
+       ((e = 0) ∨ (e = 1) ∧ (f = 0))
+</pre>
+
+<DT><span class="strong">EXP_LT_0</span>
+<DD>
+<pre>
+|- ∀n x. 0 < x ** n ⇔ x ≠ 0 ∨ (n = 0)
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_LEMMA6</span>
+<DD>
+<pre>
+|- ∀x.
+     0 ≤ x ∧ x < inv (2 pow 126) ⇒
+     ∃n.
+       n ≤ 2 ** 23 ∧ abs (x − 2 / 2 pow 127 * &n / 2 pow 23) ≤ inv (2 pow 150)
+</pre>
+
+<DT><span class="strong">REAL_LE_LCANCEL_IMP</span>
+<DD>
+<pre>
+|- ∀x y z. 0 < x ∧ x * y ≤ x * z ⇒ y ≤ z
+</pre>
+
+<DT><span class="strong">REAL_MUL_AC</span>
+<DD>
+<pre>
+|- (m * n = n * m) ∧ (m * n * p = m * (n * p)) ∧ (m * (n * p) = n * (m * p))
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_LEMMA5</span>
+<DD>
+<pre>
+|- ∀x.
+     1 ≤ abs x ∧ abs x < 2 ⇒
+     ∃s e f.
+       abs (Val (float (s,e,f)) − x) ≤ inv (2 pow 24) ∧ s < 2 ∧ f < 2 ** 23 ∧
+       ((e = bias float_format) ∨ (e = SUC (bias float_format)) ∧ (f = 0))
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_LEMMA4</span>
+<DD>
+<pre>
+|- ∀x.
+     1 ≤ x ∧ x < 2 ⇒
+     ∃e f.
+       abs (Val (float (0,e,f)) − x) ≤ inv (2 pow 24) ∧ f < 2 ** 23 ∧
+       ((e = bias float_format) ∨ (e = SUC (bias float_format)) ∧ (f = 0))
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_LEMMA3</span>
+<DD>
+<pre>
+|- ∀x.
+     1 ≤ x ∧ x < 2 ⇒
+     ∃n. n ≤ 2 ** 23 ∧ abs (1 + &n / 2 pow 23 − x) ≤ inv (2 pow 24)
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_LEMMA2</span>
+<DD>
+<pre>
+|- ∀x.
+     0 ≤ x ∧ x < 1 ⇒
+     ∃n. n ≤ 2 ** 23 ∧ abs (x − &n / 2 pow 23) ≤ inv (2 pow 24)
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_LEMMA1</span>
+<DD>
+<pre>
+|- ∀x.
+     0 ≤ x ∧ x < 1 ⇒
+     ∃n. n < 2 ** 23 ∧ &n / 2 pow 23 ≤ x ∧ x < &SUC n / 2 pow 23
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_LT</span>
+<DD>
+<pre>
+|- ∀m n. &m < &n ⇔ m < n
+</pre>
+
+<DT><span class="strong">TWO_EXP_GE_1</span>
+<DD>
+<pre>
+|- ∀n. 1 ≤ 2 ** n
+</pre>
+
+<DT><span class="strong">egtff</span>
+<DD>
+<pre>
+|- 8 = 4 + 4
+</pre>
+
+<DT><span class="strong">ftt</span>
+<DD>
+<pre>
+|- 4 = 2 + 2
+</pre>
+
+<DT><span class="strong">tpetfs</span>
+<DD>
+<pre>
+|- 2 pow 8 = 256
+</pre>
+
+<DT><span class="strong">egt1</span>
+<DD>
+<pre>
+|- 1 < 8
+</pre>
+
+<DT><span class="strong">temonz</span>
+<DD>
+<pre>
+|- 2 ** 8 − 1 ≠ 0
+</pre>
+
+<DT><span class="strong">tteettto</span>
+<DD>
+<pre>
+|- 23 = 8 + 8 + 2 + 2 + 2 + 1
+</pre>
+
+<DT><span class="strong">tptteteesze</span>
+<DD>
+<pre>
+|- 2 pow 23 = 8388608
+</pre>
+
+<DT><span class="strong">tfflttfs</span>
+<DD>
+<pre>
+|- 255 < 256
+</pre>
+
+<DT><span class="strong">inv23gt0</span>
+<DD>
+<pre>
+|- 0 < inv (2 pow 23)
+</pre>
+
+<DT><span class="strong">v23not0</span>
+<DD>
+<pre>
+|- 2 pow 23 ≠ 0
+</pre>
+
+<DT><span class="strong">v127not0</span>
+<DD>
+<pre>
+|- 2 pow 127 ≠ 0
+</pre>
+
+<DT><span class="strong">noteteeszegtz</span>
+<DD>
+<pre>
+|- 0 < 8388608
+</pre>
+
+<DT><span class="strong">lt1eqmul</span>
+<DD>
+<pre>
+|- x < 1 ⇔ x * 8388608 < 8388608
+</pre>
+
+<DT><span class="strong">twogz</span>
+<DD>
+<pre>
+|- ∀n. 0 < 2 pow n
+</pre>
+
+<DT><span class="strong">not2eqz</span>
+<DD>
+<pre>
+|- 2 ≠ 0
+</pre>
+
+<DT><span class="strong">tittfittt</span>
+<DD>
+<pre>
+|- 2 * inv (2 pow 24) = inv (2 pow 23)
+</pre>
+
+<DT><span class="strong">ttpinv</span>
+<DD>
+<pre>
+|- 2 * 2 pow 127 * inv (2 pow 127) = 2
+</pre>
+
+<DT><span class="strong">RRRC1</span>
+<DD>
+<pre>
+|- 2 * 8388608 ≤ 2 pow 254 * (2 * 8388608 − 1)
+</pre>
+
+<DT><span class="strong">RRRC2</span>
+<DD>
+<pre>
+|- 2 pow 103 * (2 pow 24 * 2) − 2 pow 103 ≤ 2 pow 128
+</pre>
+
+<DT><span class="strong">RRRC3</span>
+<DD>
+<pre>
+|- 340282356779733661637539395458142568448 ≤ 2 pow 128
+</pre>
+
+<DT><span class="strong">RRRC4</span>
+<DD>
+<pre>
+|- 2 pow 128 − 2 pow 103 = 340282356779733661637539395458142568448
+</pre>
+
+<DT><span class="strong">RRRC5</span>
+<DD>
+<pre>
+|- inv 1 < 2 pow 103 * (2 pow 24 * 2) − 2 pow 103
+</pre>
+
+<DT><span class="strong">RRRC6</span>
+<DD>
+<pre>
+|- 0 < 2 pow 150
+</pre>
+
+<DT><span class="strong">RRRC7</span>
+<DD>
+<pre>
+|- 2 pow 254 − 2 pow 229 < 2 pow 254
+</pre>
+
+<DT><span class="strong">RRRC8</span>
+<DD>
+<pre>
+|- 2 pow 103 * (2 pow 24 * 2) − 2 pow 103 =
+   340282356779733661637539395458142568448
+</pre>
+
+<DT><span class="strong">RRRC9</span>
+<DD>
+<pre>
+|- 2 pow 127 * 2 − 2 pow 104 < 340282356779733661637539395458142568448
+</pre>
+
+<DT><span class="strong">RRRC10</span>
+<DD>
+<pre>
+|- 1 < 2 pow 254 − 2 pow 229
+</pre>
+
+<DT><span class="strong">RRRC11</span>
+<DD>
+<pre>
+|- 340282356779733661637539395458142568448 * 2 pow 126 < 2 pow 254
+</pre>
+
+<DT><span class="strong">sucminmullt</span>
+<DD>
+<pre>
+|- (2 pow SUC 127 − 2 pow 103) * 2 pow 126 < 2 pow 255
+</pre>
+
+<DT><span class="strong">SIGN</span>
+<DD>
+<pre>
+|- ∀a. sign a = FST a
+</pre>
+
+<DT><span class="strong">EXPONENT</span>
+<DD>
+<pre>
+|- ∀a. exponent a = FST (SND a)
+</pre>
+
+<DT><span class="strong">FRACTION</span>
+<DD>
+<pre>
+|- ∀a. fraction a = SND (SND a)
+</pre>
+
+<DT><span class="strong">IS_VALID</span>
+<DD>
+<pre>
+|- ∀X a.
+     is_valid X a ⇔
+     sign a < 2 ∧ exponent a < 2 ** expwidth X ∧ fraction a < 2 ** fracwidth X
+</pre>
+
+<DT><span class="strong">VALOF</span>
+<DD>
+<pre>
+|- ∀X a.
+     valof X a =
+     if exponent a = 0 then
+       -1 pow sign a * (2 / 2 pow bias X) * (&fraction a / 2 pow fracwidth X)
+     else
+       -1 pow sign a * (2 pow exponent a / 2 pow bias X) *
+       (1 + &fraction a / 2 pow fracwidth X)
+</pre>
+
+<DT><span class="strong">IS_VALID_DEFLOAT</span>
+<DD>
+<pre>
+|- ∀a. is_valid float_format (defloat a)
+</pre>
+
+<DT><span class="strong">ADD_SUB2</span>
+<DD>
+<pre>
+|- ∀m n. m + n − m = n
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_SUB</span>
+<DD>
+<pre>
+|- ∀m n. m ≤ n ⇒ (&n − &m = &(n − m))
+</pre>
+
+<DT><span class="strong">IS_FINITE_ALT1</span>
+<DD>
+<pre>
+|- ∀a.
+     is_normal float_format a ∨ is_denormal float_format a ∨
+     is_zero float_format a ⇔ exponent a < 255
+</pre>
+
+<DT><span class="strong">IS_FINITE_ALT</span>
+<DD>
+<pre>
+|- ∀a. is_finite float_format a ⇔ is_valid float_format a ∧ exponent a < 255
+</pre>
+
+<DT><span class="strong">IS_FINITE_EXPLICIT</span>
+<DD>
+<pre>
+|- ∀a.
+     is_finite float_format a ⇔
+     sign a < 2 ∧ exponent a < 255 ∧ fraction a < 8388608
+</pre>
+
+<DT><span class="strong">LT_SUC_LE</span>
+<DD>
+<pre>
+|- ∀m n. m < SUC n ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">FLOAT_CASES</span>
+<DD>
+<pre>
+|- ∀a. Isnan a ∨ Infinity a ∨ Isnormal a ∨ Isdenormal a ∨ Iszero a
+</pre>
+
+<DT><span class="strong">FLOAT_CASES_FINITE</span>
+<DD>
+<pre>
+|- ∀a. Isnan a ∨ Infinity a ∨ Finite a
+</pre>
+
+<DT><span class="strong">FLOAT_DISTINCT</span>
+<DD>
+<pre>
+|- ∀a.
+     ¬(Isnan a ∧ Infinity a) ∧ ¬(Isnan a ∧ Isnormal a) ∧
+     ¬(Isnan a ∧ Isdenormal a) ∧ ¬(Isnan a ∧ Iszero a) ∧
+     ¬(Infinity a ∧ Isnormal a) ∧ ¬(Infinity a ∧ Isdenormal a) ∧
+     ¬(Infinity a ∧ Iszero a) ∧ ¬(Isnormal a ∧ Isdenormal a) ∧
+     ¬(Isnormal a ∧ Iszero a) ∧ ¬(Isdenormal a ∧ Iszero a)
+</pre>
+
+<DT><span class="strong">FLOAT_DISTINCT_FINITE</span>
+<DD>
+<pre>
+|- ∀a.
+     ¬(Isnan a ∧ Infinity a) ∧ ¬(Isnan a ∧ Finite a) ∧
+     ¬(Infinity a ∧ Finite a)
+</pre>
+
+<DT><span class="strong">FLOAT_INFINITIES_SIGNED</span>
+<DD>
+<pre>
+|- (sign (defloat Plus_infinity) = 0) ∧ (sign (defloat Minus_infinity) = 1)
+</pre>
+
+<DT><span class="strong">INFINITY_IS_INFINITY</span>
+<DD>
+<pre>
+|- Infinity Plus_infinity ∧ Infinity Minus_infinity
+</pre>
+
+<DT><span class="strong">ZERO_IS_ZERO</span>
+<DD>
+<pre>
+|- Iszero Plus_zero ∧ Iszero Minus_zero
+</pre>
+
+<DT><span class="strong">INFINITY_NOT_NAN</span>
+<DD>
+<pre>
+|- ¬Isnan Plus_infinity ∧ ¬Isnan Minus_infinity
+</pre>
+
+<DT><span class="strong">ZERO_NOT_NAN</span>
+<DD>
+<pre>
+|- ¬Isnan Plus_zero ∧ ¬Isnan Minus_zero
+</pre>
+
+<DT><span class="strong">FLOAT_INFINITIES</span>
+<DD>
+<pre>
+|- ∀a. Infinity a ⇔ a == Plus_infinity ∨ a == Minus_infinity
+</pre>
+
+<DT><span class="strong">FLOAT_INFINITES_DISTINCT</span>
+<DD>
+<pre>
+|- ∀a. ¬(a == Plus_infinity ∧ a == Minus_infinity)
+</pre>
+
+<DT><span class="strong">FLOAT_LT</span>
+<DD>
+<pre>
+|- ∀a b. Finite a ∧ Finite b ⇒ (a < b ⇔ Val a < Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_GT</span>
+<DD>
+<pre>
+|- ∀a b. Finite a ∧ Finite b ⇒ (a > b ⇔ Val a > Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_LE</span>
+<DD>
+<pre>
+|- ∀a b. Finite a ∧ Finite b ⇒ (a ≤ b ⇔ Val a ≤ Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_GE</span>
+<DD>
+<pre>
+|- ∀a b. Finite a ∧ Finite b ⇒ (a ≥ b ⇔ Val a ≥ Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_EQ</span>
+<DD>
+<pre>
+|- ∀a b. Finite a ∧ Finite b ⇒ (a == b ⇔ (Val a = Val b))
+</pre>
+
+<DT><span class="strong">FLOAT_EQ_REFL</span>
+<DD>
+<pre>
+|- ∀a. a == a ⇔ ¬Isnan a
+</pre>
+
+<DT><span class="strong">EXP_GT_ZERO</span>
+<DD>
+<pre>
+|- ∀n. 0 < 2 ** n
+</pre>
+
+<DT><span class="strong">IS_VALID_SPECIAL</span>
+<DD>
+<pre>
+|- ∀X.
+     is_valid X (minus_infinity X) ∧ is_valid X (plus_infinity X) ∧
+     is_valid X (topfloat X) ∧ is_valid X (bottomfloat X) ∧
+     is_valid X (plus_zero X) ∧ is_valid X (minus_zero X)
+</pre>
+
+<DT><span class="strong">IS_CLOSEST_EXISTS</span>
+<DD>
+<pre>
+|- ∀v x s. FINITE s ⇒ s ≠ ∅ ⇒ ∃a. is_closest v s x a
+</pre>
+
+<DT><span class="strong">CLOSEST_IS_EVERYTHING</span>
+<DD>
+<pre>
+|- ∀v p s x.
+     FINITE s ⇒
+     s ≠ ∅ ⇒
+     is_closest v s x (closest v p s x) ∧
+     ((∃b. is_closest v s x b ∧ p b) ⇒ p (closest v p s x))
+</pre>
+
+<DT><span class="strong">CLOSEST_IN_SET</span>
+<DD>
+<pre>
+|- ∀v p x s. FINITE s ⇒ s ≠ ∅ ⇒ closest v p s x ∈ s
+</pre>
+
+<DT><span class="strong">CLOSEST_IS_CLOSEST</span>
+<DD>
+<pre>
+|- ∀v p x s. FINITE s ⇒ s ≠ ∅ ⇒ is_closest v s x (closest v p s x)
+</pre>
+
+<DT><span class="strong">FLOAT_FIRSTCROSS1</span>
+<DD>
+<pre>
+|- ∀x m n p.
+     (∃x'.
+        (x = (λ(x,y,z). (x,y,z)) x') ∧ FST x' < m ∧ FST (SND x') < n ∧
+        SND (SND x') < p) ⇒
+     FST x < m ∧ FST (SND x) < n ∧ SND (SND x) < p
+</pre>
+
+<DT><span class="strong">FLOAT_FIRSTCROSS2</span>
+<DD>
+<pre>
+|- ∀x m n p.
+     FST x < m ∧ FST (SND x) < n ∧ SND (SND x) < p ⇒
+     ∃x'.
+       (x = (λ(x,y,z). (x,y,z)) x') ∧ FST x' < m ∧ FST (SND x') < n ∧
+       SND (SND x') < p
+</pre>
+
+<DT><span class="strong">FLOAT_FIRSTCROSS3</span>
+<DD>
+<pre>
+|- ∀x m n p.
+     FST x < m ∧ FST (SND x) < n ∧ SND (SND x) < p ⇔
+     ∃x'.
+       (x = (λ(x,y,z). (x,y,z)) x') ∧ FST x' < m ∧ FST (SND x') < n ∧
+       SND (SND x') < p
+</pre>
+
+<DT><span class="strong">FLOAT_FIRSTCROSS</span>
+<DD>
+<pre>
+|- ∀m n p.
+     {a | FST a < m ∧ FST (SND a) < n ∧ SND (SND a) < p} =
+     IMAGE (λ(x,y,z). (x,y,z)) ({x | x < m} × ({y | y < n} × {z | z < p}))
+</pre>
+
+<DT><span class="strong">FLOAT_COUNTINDUCT</span>
+<DD>
+<pre>
+|- ∀n. ({x | x < 0} = ∅) ∧ ({x | x < SUC n} = n INSERT {x | x < n})
+</pre>
+
+<DT><span class="strong">FLOAT_FINITECOUNT</span>
+<DD>
+<pre>
+|- ∀n. FINITE {x | x < n}
+</pre>
+
+<DT><span class="strong">FINITE_R3</span>
+<DD>
+<pre>
+|- ∀m n p. FINITE {a | FST a < m ∧ FST (SND a) < n ∧ SND (SND a) < p}
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_POW</span>
+<DD>
+<pre>
+|- ∀x n. &x pow n = &(x ** n)
+</pre>
+
+<DT><span class="strong">IS_VALID_FINITE</span>
+<DD>
+<pre>
+|- FINITE {a | is_valid X a}
+</pre>
+
+<DT><span class="strong">FLOAT_IS_FINITE_SUBSET</span>
+<DD>
+<pre>
+|- ∀X. {a | is_finite X a} ⊆ {a | is_valid X a}
+</pre>
+
+<DT><span class="strong">MATCH_FLOAT_FINITE</span>
+<DD>
+<pre>
+|- ∀X. {a | is_finite X a} ⊆ {a | is_valid X a} ⇒ FINITE {a | is_finite X a}
+</pre>
+
+<DT><span class="strong">IS_FINITE_FINITE</span>
+<DD>
+<pre>
+|- ∀X. FINITE {a | is_finite X a}
+</pre>
+
+<DT><span class="strong">IS_VALID_NONEMPTY</span>
+<DD>
+<pre>
+|- {a | is_valid X a} ≠ ∅
+</pre>
+
+<DT><span class="strong">IS_FINITE_NONEMPTY</span>
+<DD>
+<pre>
+|- {a | is_finite X a} ≠ ∅
+</pre>
+
+<DT><span class="strong">IS_FINITE_CLOSEST</span>
+<DD>
+<pre>
+|- ∀X v p x. is_finite X (closest v p {a | is_finite X a} x)
+</pre>
+
+<DT><span class="strong">IS_VALID_CLOSEST</span>
+<DD>
+<pre>
+|- ∀X v p x. is_valid X (closest v p {a | is_finite X a} x)
+</pre>
+
+<DT><span class="strong">IS_VALID_ROUND</span>
+<DD>
+<pre>
+|- ∀X x. is_valid X (round X To_nearest x)
+</pre>
+
+<DT><span class="strong">DEFLOAT_FLOAT_ROUND</span>
+<DD>
+<pre>
+|- ∀X x.
+     defloat (float (round float_format To_nearest x)) =
+     round float_format To_nearest x
+</pre>
+
+<DT><span class="strong">DEFLOAT_FLOAT_ZEROSIGN_ROUND</span>
+<DD>
+<pre>
+|- ∀x b.
+     defloat
+       (float (zerosign float_format b (round float_format To_nearest x))) =
+     zerosign float_format b (round float_format To_nearest x)
+</pre>
+
+<DT><span class="strong">VALOF_DEFLOAT_FLOAT_ZEROSIGN_ROUND</span>
+<DD>
+<pre>
+|- ∀x b.
+     valof float_format
+       (defloat
+          (float
+             (zerosign float_format b (round float_format To_nearest x)))) =
+     valof float_format (round float_format To_nearest x)
+</pre>
+
+<DT><span class="strong">REAL_ABS_NUM</span>
+<DD>
+<pre>
+|- abs (&n) = &n
+</pre>
+
+<DT><span class="strong">REAL_ABS_POW</span>
+<DD>
+<pre>
+|- ∀x n. abs (x pow n) = abs x pow n
+</pre>
+
+<DT><span class="strong">ISFINITE</span>
+<DD>
+<pre>
+|- ∀a. Finite a ⇔ is_finite float_format (defloat a)
+</pre>
+
+<DT><span class="strong">REAL_ABS_INV</span>
+<DD>
+<pre>
+|- ∀x. abs (inv x) = inv (abs x)
+</pre>
+
+<DT><span class="strong">REAL_ABS_DIV</span>
+<DD>
+<pre>
+|- ∀x y. abs (x / y) = abs x / abs y
+</pre>
+
+<DT><span class="strong">REAL_LT_LCANCEL_IMP</span>
+<DD>
+<pre>
+|- ∀x y z. 0 < x ∧ x * y < x * z ⇒ y < z
+</pre>
+
+<DT><span class="strong">ERROR_IS_ZERO</span>
+<DD>
+<pre>
+|- ∀a x. Finite a ∧ (Val a = x) ⇒ (error x = 0)
+</pre>
+
+<DT><span class="strong">ERROR_AT_WORST_LEMMA</span>
+<DD>
+<pre>
+|- ∀a x.
+     abs x < threshold float_format ∧ Finite a ⇒
+     abs (error x) ≤ abs (Val a − x)
+</pre>
+
+<DT><span class="strong">BOUND_AT_WORST_LEMMA</span>
+<DD>
+<pre>
+|- ∀a x.
+     abs x < threshold float_format ∧ is_finite float_format a ⇒
+     abs (valof float_format (round float_format To_nearest x) − x) ≤
+     abs (valof float_format a − x)
+</pre>
+
+<DT><span class="strong">VAL_THRESHOLD</span>
+<DD>
+<pre>
+|- ∀a. Finite a ⇒ abs (Val a) < threshold float_format
+</pre>
+
+<DT><span class="strong">FLOAT_THRESHOLD_EXPLICIT</span>
+<DD>
+<pre>
+|- threshold float_format = 340282356779733661637539395458142568448
+</pre>
+
+<DT><span class="strong">ISFINITE_LEMMA</span>
+<DD>
+<pre>
+|- ∀s e f.
+     s < 2 ∧ e < 255 ∧ f < 2 ** 23 ⇒
+     Finite (float (s,e,f)) ∧ is_valid float_format (s,e,f)
+</pre>
+
+<DT><span class="strong">VAL_FINITE</span>
+<DD>
+<pre>
+|- ∀a. Finite a ⇒ abs (Val a) ≤ largest float_format
+</pre>
+
+<DT><span class="strong">REAL_POW_MONO</span>
+<DD>
+<pre>
+|- ∀m n x. 1 ≤ x ∧ m ≤ n ⇒ x pow m ≤ x pow n
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_BIG1</span>
+<DD>
+<pre>
+|- ∀x k.
+     2 pow k ≤ abs x ∧ abs x < 2 pow SUC k ∧ abs x < threshold float_format ⇒
+     ∃a. Finite a ∧ abs (Val a − x) ≤ 2 pow k / 2 pow 24
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_BIG</span>
+<DD>
+<pre>
+|- ∀k x.
+     2 pow k ≤ abs x ∧ abs x < 2 pow SUC k ∧ abs x < threshold float_format ⇒
+     abs (error x) ≤ 2 pow k / 2 pow 24
+</pre>
+
+<DT><span class="strong">REAL_LE_INV2</span>
+<DD>
+<pre>
+|- ∀x y. 0 < x ∧ x ≤ y ⇒ inv y ≤ inv x
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_SMALL1</span>
+<DD>
+<pre>
+|- ∀x k.
+     inv (2 pow SUC k) ≤ abs x ∧ abs x < inv (2 pow k) ∧ k < 126 ⇒
+     ∃a. Finite a ∧ abs (Val a − x) ≤ inv (2 pow SUC k * 2 pow 24)
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_SMALL</span>
+<DD>
+<pre>
+|- ∀k x.
+     inv (2 pow SUC k) ≤ abs x ∧ abs x < inv (2 pow k) ∧ k < 126 ⇒
+     abs (error x) ≤ inv (2 pow SUC k * 2 pow 24)
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_TINY</span>
+<DD>
+<pre>
+|- ∀x. abs x < inv (2 pow 126) ⇒ abs (error x) ≤ inv (2 pow 150)
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_NORM_STRONG</span>
+<DD>
+<pre>
+|- ∀x j.
+     abs x < threshold float_format ∧ abs x < 2 pow SUC j / 2 pow 126 ⇒
+     abs (error x) ≤ 2 pow j / 2 pow 150
+</pre>
+
+<DT><span class="strong">THRESHOLD_MUL_LT</span>
+<DD>
+<pre>
+|- threshold float_format * 2 pow 126 < 2 pow 2 ** 126
+</pre>
+
+<DT><span class="strong">THRESHOLD_LT_POW_INV</span>
+<DD>
+<pre>
+|- 340282356779733661637539395458142568448 < 2 pow 254 * inv (2 pow 126)
+</pre>
+
+<DT><span class="strong">LT_THRESHOLD_LT_POW_INV</span>
+<DD>
+<pre>
+|- ∀x. x < threshold (8,23) ⇒ x < 2 pow (emax (8,23) − 1) / 2 pow 126
+</pre>
+
+<DT><span class="strong">REAL_POS_IN_BINADE</span>
+<DD>
+<pre>
+|- ∀x.
+     normalizes x ∧ 0 ≤ x ⇒
+     ∃j.
+       j ≤ emax float_format − 2 ∧ 2 pow j / 2 pow 126 ≤ x ∧
+       x < 2 pow SUC j / 2 pow 126
+</pre>
+
+<DT><span class="strong">REAL_NEG_IN_BINADE</span>
+<DD>
+<pre>
+|- ∀x.
+     normalizes x ∧ 0 ≤ -x ⇒
+     ∃j.
+       j ≤ emax float_format − 2 ∧ 2 pow j / 2 pow 126 ≤ -x ∧
+       -x < 2 pow SUC j / 2 pow 126
+</pre>
+
+<DT><span class="strong">REAL_IN_BINADE</span>
+<DD>
+<pre>
+|- ∀x.
+     normalizes x ⇒
+     ∃j.
+       j ≤ emax float_format − 2 ∧ 2 pow j / 2 pow 126 ≤ abs x ∧
+       abs x < 2 pow SUC j / 2 pow 126
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_NORM_STRONG_NORMALIZE</span>
+<DD>
+<pre>
+|- ∀x. normalizes x ⇒ ∃j. abs (error x) ≤ 2 pow j / 2 pow 150
+</pre>
+
+<DT><span class="strong">RELATIVE_ERROR_POS</span>
+<DD>
+<pre>
+|- ∀x.
+     normalizes x ∧ 0 < x ⇒
+     ∃e.
+       abs e ≤ 1 / 2 pow 24 ∧
+       (Val (float (round float_format To_nearest x)) = x * (1 + e))
+</pre>
+
+<DT><span class="strong">RELATIVE_ERROR_NEG</span>
+<DD>
+<pre>
+|- ∀x.
+     normalizes x ∧ x < 0 ⇒
+     ∃e.
+       abs e ≤ 1 / 2 pow 24 ∧
+       (Val (float (round float_format To_nearest x)) = x * (1 + e))
+</pre>
+
+<DT><span class="strong">RELATIVE_ERROR_ZERO</span>
+<DD>
+<pre>
+|- ∀x.
+     normalizes x ∧ (x = 0) ⇒
+     ∃e.
+       abs e ≤ 1 / 2 pow 24 ∧
+       (Val (float (round float_format To_nearest x)) = x * (1 + e))
+</pre>
+
+<DT><span class="strong">RELATIVE_ERROR</span>
+<DD>
+<pre>
+|- ∀x.
+     normalizes x ⇒
+     ∃e.
+       abs e ≤ 1 / 2 pow 24 ∧
+       (Val (float (round float_format To_nearest x)) = x * (1 + e))
+</pre>
+
+<DT><span class="strong">DEFLOAT_FLOAT_ZEROSIGN_ROUND_FINITE</span>
+<DD>
+<pre>
+|- ∀b x.
+     abs x < threshold float_format ⇒
+     is_finite float_format
+       (defloat
+          (float (zerosign float_format b (round float_format To_nearest x))))
+</pre>
+
+<DT><span class="strong">FLOAT_ADD</span>
+<DD>
+<pre>
+|- ∀a b.
+     Finite a ∧ Finite b ∧ abs (Val a + Val b) < threshold float_format ⇒
+     Finite (a + b)
+</pre>
+
+<DT><span class="strong">FLOAT_SUB_FINITE</span>
+<DD>
+<pre>
+|- ∀a b.
+     Finite a ∧ Finite b ∧ abs (Val a − Val b) < threshold float_format ⇒
+     Finite (a − b)
+</pre>
+
+<DT><span class="strong">FLOAT_MUL_FINITE</span>
+<DD>
+<pre>
+|- ∀a b.
+     Finite a ∧ Finite b ∧ abs (Val a * Val b) < threshold float_format ⇒
+     Finite (a * b)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

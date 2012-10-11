@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>HolSatLib.SAT_PROVE</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>val SAT_PROVE : Term.term -&gt; Thm.thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/HolSatLib.html">HolSatLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Proves that the supplied term is a tautology, or provides a counterexample.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The supplied term should be purely propositional, i.e., atoms must be Boolean variables or constants, and conditionals must be Boolean-valued. </SPAN><SPAN class = "BRKT">SAT_PROVE</SPAN><SPAN class = "TEXT"> uses the MiniSat SAT solver&rsquo;s proof logging feature to construct and verify a resolution refutation for the negation of the supplied term.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the supplied term is not a tautology. In this case, a theorem providing a satisfying assignment for the negation of the input term is returned, wrapped in an exception.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- load "HolSatLib"; open HolSatLib;
+(* output omitted *)
+&gt; val it = () : unit
+- SAT_PROVE ``(a ==&gt; b) /\ (b ==&gt; a) ==&gt; (a=b)``;
+&gt; val it = |- (a ==&gt; b) /\ (b ==&gt; a) ==&gt; (a = b) : thm
+- SAT_PROVE ``~((a ==&gt; b) /\ (b ==&gt; a) ==&gt; (a=b))`` 
+	handle HolSatLib.SAT_cex th =&gt; th;
+&gt; val it = |- ~b /\ a ==&gt; ~~((a ==&gt; b) /\ (b ==&gt; a) ==&gt; (a = b)) : thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If MiniSat terminates abnormally, or if the MiniSat binary cannot be located or executed, SAT_PROVE falls back to a slower propositional tautology prover implemented in SML. For low-level use of SAT solver facilities and other details, see the section on the HolSat library in the HOL Description.</SPAN></DIV></DD>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-8</div></BODY></HTML>

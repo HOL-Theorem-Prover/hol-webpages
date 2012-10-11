@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure basis_emitTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure basis_emitTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/emit/basis_emitScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature basis_emitTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Axioms  *)
+<a name="line6"></a>    val <a href="#EXPi-val">EXPi</a> : thm
+<a name="line7"></a>    val <a href="#MULi-val">MULi</a> : thm
+<a name="line8"></a>    val <a href="#SUMi-val">SUMi</a> : thm
+<a name="line9"></a>    val <a href="#dimindexi-val">dimindexi</a> : thm
+<a name="line10"></a>
+<a name="line11"></a>  (*  Definitions  *)
+<a name="line12"></a>    val <a href="#FCPi_primitive_def-val">FCPi_primitive_def</a> : thm
+<a name="line13"></a>    val <a href="#IS_EMPTY_def-val">IS_EMPTY_def</a> : thm
+<a name="line14"></a>    val <a href="#fromNum_primitive_def-val">fromNum_primitive_def</a> : thm
+<a name="line15"></a>    val <a href="#i2w_itself_primitive_def-val">i2w_itself_primitive_def</a> : thm
+<a name="line16"></a>    val <a href="#mk_fcp_def-val">mk_fcp_def</a> : thm
+<a name="line17"></a>    val <a href="#neg_int_of_num_def-val">neg_int_of_num_def</a> : thm
+<a name="line18"></a>    val <a href="#sw2sw_itself_def-val">sw2sw_itself_def</a> : thm
+<a name="line19"></a>    val <a href="#w2w_itself_def-val">w2w_itself_def</a> : thm
+<a name="line20"></a>    val <a href="#word_concat_itself_def-val">word_concat_itself_def</a> : thm
+<a name="line21"></a>    val <a href="#word_eq_def-val">word_eq_def</a> : thm
+<a name="line22"></a>    val <a href="#word_extract_itself_def-val">word_extract_itself_def</a> : thm
+<a name="line23"></a>    val <a href="#word_index_def-val">word_index_def</a> : thm
+<a name="line24"></a>
+<a name="line25"></a>  (*  Theorems  *)
+<a name="line26"></a>    val <a href="#FCPi_def-val">FCPi_def</a> : thm
+<a name="line27"></a>    val <a href="#FCPi_ind-val">FCPi_ind</a> : thm
+<a name="line28"></a>    val <a href="#IS_EMPTY_REWRITE-val">IS_EMPTY_REWRITE</a> : thm
+<a name="line29"></a>    val <a href="#fromNum_def-val">fromNum_def</a> : thm
+<a name="line30"></a>    val <a href="#fromNum_ind-val">fromNum_ind</a> : thm
+<a name="line31"></a>    val <a href="#i2w_itself_def-val">i2w_itself_def</a> : thm
+<a name="line32"></a>    val <a href="#i2w_itself_ind-val">i2w_itself_ind</a> : thm
+<a name="line33"></a>
+<a name="line34"></a>  val basis_emit_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line35"></a>
+<a name="line36"></a>  val WORDS_EMIT_RULE : thm -&gt; thm
+<a name="line37"></a>
+<a name="line38"></a>(*
+   [finite_map] Parent theory of "basis_emit"
+
+   [integer_word] Parent theory of "basis_emit"
+
+   [sorting] Parent theory of "basis_emit"
+
+   [<a name="EXPi-val"><b>EXPi</b></a>]  Axiom
+
+      [oracles: ] [axioms: EXPi] []
+      |- EXPi (ITSELF a,ITSELF b) = ITSELF (a ** b)
+
+   [<a name="MULi-val"><b>MULi</b></a>]  Axiom
+
+      [oracles: ] [axioms: MULi] []
+      |- MULi (ITSELF a,ITSELF b) = ITSELF (a * b)
+
+   [<a name="SUMi-val"><b>SUMi</b></a>]  Axiom
+
+      [oracles: ] [axioms: SUMi] []
+      |- SUMi (ITSELF a,ITSELF b) = ITSELF (a + b)
+
+   [<a name="dimindexi-val"><b>dimindexi</b></a>]  Axiom
+
+      [oracles: ] [axioms: dimindexi] [] |- dimindex (ITSELF a) = a
+
+   [<a name="FCPi_primitive_def-val"><b>FCPi_primitive_def</b></a>]  Definition
+
+      |- FCPi =
+         WFREC (@R. WF R) (λFCPi a. case a of (f,(:β)) =&gt; I ($FCP f))
+
+   [<a name="IS_EMPTY_def-val"><b>IS_EMPTY_def</b></a>]  Definition
+
+      |- ∀s. IS_EMPTY s ⇔ if s = ∅ then T else F
+
+   [<a name="fromNum_primitive_def-val"><b>fromNum_primitive_def</b></a>]  Definition
+
+      |- fromNum =
+         WFREC (@R. WF R)
+           (λfromNum a.
+              case a of
+                (n,(:α)) =&gt; I (n2w_itself (n MOD dimword (:α),(:α))))
+
+   [<a name="i2w_itself_primitive_def-val"><b>i2w_itself_primitive_def</b></a>]  Definition
+
+      |- i2w_itself =
+         WFREC (@R. WF R) (λi2w_itself a. case a of (i,(:α)) =&gt; I (i2w i))
+
+   [<a name="mk_fcp_def-val"><b>mk_fcp_def</b></a>]  Definition
+
+      |- mk_fcp = FCPi
+
+   [<a name="neg_int_of_num_def-val"><b>neg_int_of_num_def</b></a>]  Definition
+
+      |- ∀n. neg_int_of_num n = -int_of_num (n + 1)
+
+   [<a name="sw2sw_itself_def-val"><b>sw2sw_itself_def</b></a>]  Definition
+
+      |- ∀w. sw2sw_itself (:α) w = sw2sw w
+
+   [<a name="w2w_itself_def-val"><b>w2w_itself_def</b></a>]  Definition
+
+      |- ∀w. w2w_itself (:α) w = w2w w
+
+   [<a name="word_concat_itself_def-val"><b>word_concat_itself_def</b></a>]  Definition
+
+      |- ∀v w. word_concat_itself (:α) v w = v @@ w
+
+   [<a name="word_eq_def-val"><b>word_eq_def</b></a>]  Definition
+
+      |- ∀v w. word_eq v w ⇔ (v = w)
+
+   [<a name="word_extract_itself_def-val"><b>word_extract_itself_def</b></a>]  Definition
+
+      |- ∀h l w. word_extract_itself (:α) h l w = (h &gt;&lt; l) w
+
+   [<a name="word_index_def-val"><b>word_index_def</b></a>]  Definition
+
+      |- ∀w n. word_index w n ⇔ w ' n
+
+   [<a name="FCPi_def-val"><b>FCPi_def</b></a>]  Theorem
+
+      |- FCPi (f,(:β)) = $FCP f
+
+   [<a name="FCPi_ind-val"><b>FCPi_ind</b></a>]  Theorem
+
+      |- ∀P. (∀f. P (f,(:β))) ⇒ ∀v v1. P (v,v1)
+
+   [<a name="IS_EMPTY_REWRITE-val"><b>IS_EMPTY_REWRITE</b></a>]  Theorem
+
+      |- ((s = ∅) ⇔ IS_EMPTY s) ∧ ((∅ = s) ⇔ IS_EMPTY s)
+
+   [<a name="fromNum_def-val"><b>fromNum_def</b></a>]  Theorem
+
+      |- fromNum (n,(:α)) = n2w_itself (n MOD dimword (:α),(:α))
+
+   [<a name="fromNum_ind-val"><b>fromNum_ind</b></a>]  Theorem
+
+      |- ∀P. (∀n. P (n,(:α))) ⇒ ∀v v1. P (v,v1)
+
+   [<a name="i2w_itself_def-val"><b>i2w_itself_def</b></a>]  Theorem
+
+      |- i2w_itself (i,(:α)) = i2w i
+
+   [<a name="i2w_itself_ind-val"><b>i2w_itself_ind</b></a>]  Theorem
+
+      |- ∀P. (∀i. P (i,(:α))) ⇒ ∀v v1. P (v,v1)
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/emit/basis_emitScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-8</a></em></p></body></html>

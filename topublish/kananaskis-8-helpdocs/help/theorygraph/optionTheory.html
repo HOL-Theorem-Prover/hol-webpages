@@ -1,0 +1,429 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: option</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "option"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "sumTheory.html"><span class="strong">sum</span></a>&nbsp;&nbsp;
+    <a href = "oneTheory.html"><span class="strong">one</span></a>&nbsp;&nbsp;
+    <a href = "normalFormsTheory.html"><span class="strong">normalForms</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Type
+    <th>
+    Arity<tr><td> <span class="strong">option</span> <td> 1
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">IS_NONE</span> <td> :α option -> bool
+    <tr><td> <span class="strong">IS_SOME</span> <td> :α option -> bool
+    <tr><td> <span class="strong">NONE</span> <td> :α option
+    <tr><td>
+        <span class="strong">OPTION_BIND</span>
+        <td>
+        :β option -> (β -> α option) -> α option
+    <tr><td>
+        <span class="strong">OPTION_GUARD</span>
+        <td>
+        :bool -> unit option
+    <tr><td>
+        <span class="strong">OPTION_IGNORE_BIND</span>
+        <td>
+        :β option -> α option -> α option
+    <tr><td>
+        <span class="strong">OPTION_JOIN</span>
+        <td>
+        :α option option -> α option
+    <tr><td>
+        <span class="strong">OPTION_MAP</span>
+        <td>
+        :(α -> β) -> α option -> β option
+    <tr><td>
+        <span class="strong">OPTION_MAP2</span>
+        <td>
+        :(β -> γ -> α) -> β option -> γ option -> α option
+    <tr><td>
+        <span class="strong">OPTREL</span>
+        <td>
+        :(α -> β -> bool) -> α option -> β option -> bool
+    <tr><td> <span class="strong">SOME</span> <td> :α -> α option
+    <tr><td> <span class="strong">THE</span> <td> :α option -> α
+    <tr><td> <span class="strong">option_ABS</span> <td> :α + unit -> α option
+    <tr><td> <span class="strong">option_REP</span> <td> :α option -> α + unit
+    <tr><td>
+        <span class="strong">option_case</span>
+        <td>
+        :β -> (α -> β) -> α option -> β
+    <tr><td> <span class="strong">some</span> <td> :(α -> bool) -> α option
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">option_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep. TYPE_DEFINITION (λx. T) rep
+</pre>
+
+<DT><span class="strong">option_REP_ABS_DEF</span>
+<DD>
+<pre>
+|- (∀a. option_ABS (option_REP a) = a) ∧
+   ∀r. (λx. T) r ⇔ (option_REP (option_ABS r) = r)
+</pre>
+
+<DT><span class="strong">SOME_DEF</span>
+<DD>
+<pre>
+|- ∀x. SOME x = option_ABS (INL x)
+</pre>
+
+<DT><span class="strong">NONE_DEF</span>
+<DD>
+<pre>
+|- NONE = option_ABS (INR ())
+</pre>
+
+<DT><span class="strong">option_case_def</span>
+<DD>
+<pre>
+|- (∀u f. option_case u f NONE = u) ∧ ∀u f x. option_case u f (SOME x) = f x
+</pre>
+
+<DT><span class="strong">OPTION_MAP_DEF</span>
+<DD>
+<pre>
+|- (∀f x. OPTION_MAP f (SOME x) = SOME (f x)) ∧ ∀f. OPTION_MAP f NONE = NONE
+</pre>
+
+<DT><span class="strong">IS_SOME_DEF</span>
+<DD>
+<pre>
+|- (∀x. IS_SOME (SOME x) ⇔ T) ∧ (IS_SOME NONE ⇔ F)
+</pre>
+
+<DT><span class="strong">IS_NONE_DEF</span>
+<DD>
+<pre>
+|- (∀x. IS_NONE (SOME x) ⇔ F) ∧ (IS_NONE NONE ⇔ T)
+</pre>
+
+<DT><span class="strong">THE_DEF</span>
+<DD>
+<pre>
+|- ∀x. THE (SOME x) = x
+</pre>
+
+<DT><span class="strong">OPTION_MAP2_DEF</span>
+<DD>
+<pre>
+|- ∀f x y.
+     OPTION_MAP2 f x y =
+     if IS_SOME x ∧ IS_SOME y then SOME (f (THE x) (THE y)) else NONE
+</pre>
+
+<DT><span class="strong">OPTION_JOIN_DEF</span>
+<DD>
+<pre>
+|- (OPTION_JOIN NONE = NONE) ∧ ∀x. OPTION_JOIN (SOME x) = x
+</pre>
+
+<DT><span class="strong">OPTION_BIND_def</span>
+<DD>
+<pre>
+|- (∀f. OPTION_BIND NONE f = NONE) ∧ ∀x f. OPTION_BIND (SOME x) f = f x
+</pre>
+
+<DT><span class="strong">OPTION_IGNORE_BIND_def</span>
+<DD>
+<pre>
+|- ∀m1 m2. OPTION_IGNORE_BIND m1 m2 = OPTION_BIND m1 (K m2)
+</pre>
+
+<DT><span class="strong">OPTION_GUARD_def</span>
+<DD>
+<pre>
+|- ∀b. OPTION_GUARD b = if b then SOME () else NONE
+</pre>
+
+<DT><span class="strong">OPTREL_def</span>
+<DD>
+<pre>
+|- ∀R x y.
+     OPTREL R x y ⇔
+     (x = NONE) ∧ (y = NONE) ∨ ∃x0 y0. (x = SOME x0) ∧ (y = SOME y0) ∧ R x0 y0
+</pre>
+
+<DT><span class="strong">some_def</span>
+<DD>
+<pre>
+|- ∀P. $some P = if ∃x. P x then SOME (@x. P x) else NONE
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">option_Axiom</span>
+<DD>
+<pre>
+|- ∀e f. ∃fn. (∀x. fn (SOME x) = f x) ∧ (fn NONE = e)
+</pre>
+
+<DT><span class="strong">option_induction</span>
+<DD>
+<pre>
+|- ∀P. P NONE ∧ (∀a. P (SOME a)) ⇒ ∀x. P x
+</pre>
+
+<DT><span class="strong">FORALL_OPTION</span>
+<DD>
+<pre>
+|- (∀opt. P opt) ⇔ P NONE ∧ ∀x. P (SOME x)
+</pre>
+
+<DT><span class="strong">EXISTS_OPTION</span>
+<DD>
+<pre>
+|- (∃opt. P opt) ⇔ P NONE ∨ ∃x. P (SOME x)
+</pre>
+
+<DT><span class="strong">SOME_11</span>
+<DD>
+<pre>
+|- ∀x y. (SOME x = SOME y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">NOT_NONE_SOME</span>
+<DD>
+<pre>
+|- ∀x. NONE ≠ SOME x
+</pre>
+
+<DT><span class="strong">NOT_SOME_NONE</span>
+<DD>
+<pre>
+|- ∀x. SOME x ≠ NONE
+</pre>
+
+<DT><span class="strong">option_nchotomy</span>
+<DD>
+<pre>
+|- ∀opt. (opt = NONE) ∨ ∃x. opt = SOME x
+</pre>
+
+<DT><span class="strong">OPTION_MAP2_THM</span>
+<DD>
+<pre>
+|- (OPTION_MAP2 f (SOME x) (SOME y) = SOME (f x y)) ∧
+   (OPTION_MAP2 f (SOME x) NONE = NONE) ∧
+   (OPTION_MAP2 f NONE (SOME y) = NONE) ∧ (OPTION_MAP2 f NONE NONE = NONE)
+</pre>
+
+<DT><span class="strong">IS_NONE_EQ_NONE</span>
+<DD>
+<pre>
+|- ∀x. IS_NONE x ⇔ (x = NONE)
+</pre>
+
+<DT><span class="strong">NOT_IS_SOME_EQ_NONE</span>
+<DD>
+<pre>
+|- ∀x. ¬IS_SOME x ⇔ (x = NONE)
+</pre>
+
+<DT><span class="strong">option_case_ID</span>
+<DD>
+<pre>
+|- ∀x. option_case NONE SOME x = x
+</pre>
+
+<DT><span class="strong">option_case_SOME_ID</span>
+<DD>
+<pre>
+|- ∀x. option_case x SOME x = x
+</pre>
+
+<DT><span class="strong">option_CLAUSES</span>
+<DD>
+<pre>
+|- (∀x y. (SOME x = SOME y) ⇔ (x = y)) ∧ (∀x. THE (SOME x) = x) ∧
+   (∀x. NONE ≠ SOME x) ∧ (∀x. SOME x ≠ NONE) ∧ (∀x. IS_SOME (SOME x) ⇔ T) ∧
+   (IS_SOME NONE ⇔ F) ∧ (∀x. IS_NONE x ⇔ (x = NONE)) ∧
+   (∀x. ¬IS_SOME x ⇔ (x = NONE)) ∧ (∀x. IS_SOME x ⇒ (SOME (THE x) = x)) ∧
+   (∀x. option_case NONE SOME x = x) ∧ (∀x. option_case x SOME x = x) ∧
+   (∀x. IS_NONE x ⇒ (option_case e f x = e)) ∧
+   (∀x. IS_SOME x ⇒ (option_case e f x = f (THE x))) ∧
+   (∀x. IS_SOME x ⇒ (option_case e SOME x = x)) ∧
+   (∀u f. option_case u f NONE = u) ∧
+   (∀u f x. option_case u f (SOME x) = f x) ∧
+   (∀f x. OPTION_MAP f (SOME x) = SOME (f x)) ∧
+   (∀f. OPTION_MAP f NONE = NONE) ∧ (OPTION_JOIN NONE = NONE) ∧
+   ∀x. OPTION_JOIN (SOME x) = x
+</pre>
+
+<DT><span class="strong">option_case_compute</span>
+<DD>
+<pre>
+|- option_case e f x = if IS_SOME x then f (THE x) else e
+</pre>
+
+<DT><span class="strong">IF_EQUALS_OPTION</span>
+<DD>
+<pre>
+|- (((if P then SOME x else NONE) = NONE) ⇔ ¬P) ∧
+   (((if P then NONE else SOME x) = NONE) ⇔ P) ∧
+   (((if P then SOME x else NONE) = SOME y) ⇔ P ∧ (x = y)) ∧
+   (((if P then NONE else SOME x) = SOME y) ⇔ ¬P ∧ (x = y))
+</pre>
+
+<DT><span class="strong">OPTION_MAP_EQ_SOME</span>
+<DD>
+<pre>
+|- ∀f x y. (OPTION_MAP f x = SOME y) ⇔ ∃z. (x = SOME z) ∧ (y = f z)
+</pre>
+
+<DT><span class="strong">OPTION_MAP_EQ_NONE</span>
+<DD>
+<pre>
+|- ∀f x. (OPTION_MAP f x = NONE) ⇔ (x = NONE)
+</pre>
+
+<DT><span class="strong">OPTION_MAP_EQ_NONE_both_ways</span>
+<DD>
+<pre>
+|- ((OPTION_MAP f x = NONE) ⇔ (x = NONE)) ∧
+   ((NONE = OPTION_MAP f x) ⇔ (x = NONE))
+</pre>
+
+<DT><span class="strong">OPTION_MAP_COMPOSE</span>
+<DD>
+<pre>
+|- OPTION_MAP f (OPTION_MAP g x) = OPTION_MAP (f o g) x
+</pre>
+
+<DT><span class="strong">OPTION_MAP_CONG</span>
+<DD>
+<pre>
+|- ∀opt1 opt2 f1 f2.
+     (opt1 = opt2) ∧ (∀x. (opt2 = SOME x) ⇒ (f1 x = f2 x)) ⇒
+     (OPTION_MAP f1 opt1 = OPTION_MAP f2 opt2)
+</pre>
+
+<DT><span class="strong">OPTION_JOIN_EQ_SOME</span>
+<DD>
+<pre>
+|- ∀x y. (OPTION_JOIN x = SOME y) ⇔ (x = SOME (SOME y))
+</pre>
+
+<DT><span class="strong">OPTION_MAP2_SOME</span>
+<DD>
+<pre>
+|- (OPTION_MAP2 f o1 o2 = SOME v) ⇔
+   ∃x1 x2. (o1 = SOME x1) ∧ (o2 = SOME x2) ∧ (v = f x1 x2)
+</pre>
+
+<DT><span class="strong">OPTION_MAP2_NONE</span>
+<DD>
+<pre>
+|- (OPTION_MAP2 f o1 o2 = NONE) ⇔ (o1 = NONE) ∨ (o2 = NONE)
+</pre>
+
+<DT><span class="strong">OPTION_MAP2_cong</span>
+<DD>
+<pre>
+|- ∀x1 x2 y1 y2 f1 f2.
+     (x1 = x2) ∧ (y1 = y2) ∧
+     (∀x y. (x2 = SOME x) ∧ (y2 = SOME y) ⇒ (f1 x y = f2 x y)) ⇒
+     (OPTION_MAP2 f1 x1 y1 = OPTION_MAP2 f2 x2 y2)
+</pre>
+
+<DT><span class="strong">OPTION_BIND_cong</span>
+<DD>
+<pre>
+|- ∀o1 o2 f1 f2.
+     (o1 = o2) ∧ (∀x. (o2 = SOME x) ⇒ (f1 x = f2 x)) ⇒
+     (OPTION_BIND o1 f1 = OPTION_BIND o2 f2)
+</pre>
+
+<DT><span class="strong">OPTION_BIND_EQUALS_OPTION</span>
+<DD>
+<pre>
+|- ((OPTION_BIND p f = NONE) ⇔ (p = NONE) ∨ ∃x. (p = SOME x) ∧ (f x = NONE)) ∧
+   ((OPTION_BIND p f = SOME y) ⇔ ∃x. (p = SOME x) ∧ (f x = SOME y))
+</pre>
+
+<DT><span class="strong">OPTREL_MONO</span>
+<DD>
+<pre>
+|- (∀x y. P x y ⇒ Q x y) ⇒ OPTREL P x y ⇒ OPTREL Q x y
+</pre>
+
+<DT><span class="strong">some_intro</span>
+<DD>
+<pre>
+|- (∀x. P x ⇒ Q (SOME x)) ∧ ((∀x. ¬P x) ⇒ Q NONE) ⇒ Q ($some P)
+</pre>
+
+<DT><span class="strong">some_elim</span>
+<DD>
+<pre>
+|- Q ($some P) ⇒ (∃x. P x ∧ Q (SOME x)) ∨ (∀x. ¬P x) ∧ Q NONE
+</pre>
+
+<DT><span class="strong">some_F</span>
+<DD>
+<pre>
+|- (some x. F) = NONE
+</pre>
+
+<DT><span class="strong">some_EQ</span>
+<DD>
+<pre>
+|- ((some x. x = y) = SOME y) ∧ ((some x. y = x) = SOME y)
+</pre>
+
+<DT><span class="strong">option_case_cong</span>
+<DD>
+<pre>
+|- ∀M M' u f.
+     (M = M') ∧ ((M' = NONE) ⇒ (u = u')) ∧
+     (∀x. (M' = SOME x) ⇒ (f x = f' x)) ⇒
+     (option_case u f M = option_case u' f' M')
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>
