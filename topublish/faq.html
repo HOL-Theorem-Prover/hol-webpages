@@ -954,6 +954,47 @@ then <code>Holmake</code> will fail to build your script, probably
 failing with a parse exception when it encounters a type name such as
 <code>string</code> that it doesn&rsquo;t think is in scope.</p></dd>
 
+<dt><strong>How can I print my <code>*HOL*</code> buffer (in emacs), complete with Unicode characters?</strong></dt>
+<dd><p> The following elisp code is (will be) part of the standard <code>hol-mode</code>.
+<pre>
+   (defcustom hol-unicode-print-font-filename
+     "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf"
+     "File name of font to use when printing HOL output to a PDF file."
+     :group 'hol
+     :type '(file :must-match t))
+
+   (defun hol-region-to-unicode-pdf (filename beg end)
+        "Print region to FILE as a PDF, handling Unicode characters."
+        (interactive "FFile to write to: \nr")
+        (if (and transient-mark-mode (not mark-active))
+            (error "No active region"))
+        (let* ((temp-ps-file (make-temp-file "annot" nil ".ps"))
+               (lpr-switches
+                (list "-font" hol-unicode-print-font-filename
+                      "-out" temp-ps-file))
+               (lpr-add-switches nil)
+               (lpr-command "uniprint"))
+          (lpr-region beg end)
+          (shell-command (concat "ps2pdf " temp-ps-file " " filename))
+          (delete-file temp-ps-file)))
+</pre>
+<p> This relies on having the <code>uniprint</code> and <code>ps2pdf</code> tools installed.
+On Debian-based systems such as Ubuntu, the former is part of the <code>yudit</code> package, which can be installed with a command like
+<pre>
+   sudo apt-get install yudit
+</pre>
+<p>The code also relies on a hard-coded path pointing to a font file (the <code>hol-unicode-print-font-filename</code>).
+This can be adjusted using <code>M-x&nbsp;customize</code> and navigating to the <code>hol</code> group (see the <code>External</code> sub-category).
+
+<p> To use this code, select a region of an emacs buffer, and type
+<pre>
+   M-x region-to-unicode-pdf
+</pre>
+<p> The command will prompt for a file to save to, and then write a PDF file to that location.
+
+<p> Thanks to Dan Synek for the problem, and subsequent inspiration for the code above.
+</dd>
+
 
 <dt><strong> How to rewrite with a theorem the other way round?</strong>
 <dd> Use <code>GSYM</code>.
@@ -978,7 +1019,7 @@ could write:</p>
 <p>
 <div class="timestamp">
 <p>
-Time-stamp: "Wednesday, 29 December 2010; 14:21 UTC (Michael Norrish)"
+Time-stamp: "Thursday, 22 November 2012; 03:43 UTC (Michael Norrish)"
 </p></div>
 
 
