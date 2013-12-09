@@ -1,0 +1,666 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: Omega_Automata</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "Omega_Automata"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "Past_Temporal_LogicTheory.html"><span class="strong">Past_Temporal_Logic</span></a>
+
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">DET_OMEGA_EXISTS_FORALL_THEOREM</span>
+<DD>
+<pre>
+|- (∃q.
+      (q t0 = InitVal) ∧
+      (∀t. q (t + (t0 + 1)) = TransRel (i (t + t0),q (t + t0))) ∧
+      Accept (i,(λt. q (t + t0)))) ⇔
+   ∀q.
+     (q t0 = InitVal) ∧
+     (∀t. q (t + (t0 + 1)) = TransRel (i (t + t0),q (t + t0))) ⇒
+     Accept (i,(λt. q (t + t0)))
+</pre>
+
+<DT><span class="strong">NEG_DET_AUTOMATA</span>
+<DD>
+<pre>
+|- ¬(∃q.
+       (q t0 = InitVal) ∧
+       (∀t. q (t + (t0 + 1)) = TransRel (i (t + t0),q (t + t0))) ∧
+       Accept (i,(λt. q (t + t0)))) ⇔
+   ∃q.
+     (q t0 = InitVal) ∧
+     (∀t. q (t + (t0 + 1)) = TransRel (i (t + t0),q (t + t0))) ∧
+     ¬Accept (i,(λt. q (t + t0)))
+</pre>
+
+<DT><span class="strong">OMEGA_CONJ_CLOSURE</span>
+<DD>
+<pre>
+|- (∃q1.
+      Phi_I1 (q1 t0) ∧ (∀t. Phi_R1 (i (t + t0),q1 (t + t0))) ∧ Psi1 (i,q1)) ∧
+   (∃q2.
+      Phi_I2 (q2 t0) ∧ (∀t. Phi_R2 (i (t + t0),q2 (t + t0))) ∧ Psi2 (i,q2)) ⇔
+   ∃q1 q2.
+     (Phi_I1 (q1 t0) ∧ Phi_I2 (q2 t0)) ∧
+     (∀t. Phi_R1 (i (t + t0),q1 (t + t0)) ∧ Phi_R2 (i (t + t0),q2 (t + t0))) ∧
+     Psi1 (i,q1) ∧ Psi2 (i,q2)
+</pre>
+
+<DT><span class="strong">OMEGA_DISJ_CLOSURE</span>
+<DD>
+<pre>
+|- (∃q1.
+      Phi_I1 (q1 t0) ∧ (∀t. Phi_R1 (i (t + t0),q1 (t + t0))) ∧ Psi1 (i,q1)) ∨
+   (∃q2.
+      Phi_I2 (q2 t0) ∧ (∀t. Phi_R2 (i (t + t0),q2 (t + t0))) ∧ Psi2 (i,q2)) ⇔
+   ∃p q1 q2.
+     (¬p t0 ∧ Phi_I1 (q1 t0) ∨ p t0 ∧ Phi_I2 (q2 t0)) ∧
+     (∀t.
+        ¬p (t + t0) ∧ Phi_R1 (i (t + t0),q1 (t + t0)) ∧ ¬p (t + (t0 + 1)) ∨
+        p (t + t0) ∧ Phi_R2 (i (t + t0),q2 (t + t0)) ∧ p (t + (t0 + 1))) ∧
+     (¬p t0 ∧ Psi1 (i,q1) ∨ p t0 ∧ Psi2 (i,q2))
+</pre>
+
+<DT><span class="strong">BOOLEAN_CLOSURE_G</span>
+<DD>
+<pre>
+|- (¬(∀t. a (t + t0)) ⇔ ∃t. ¬a (t + t0)) ∧
+   ((∀t. a (t + t0)) ∧ (∀t. b (t + t0)) ⇔ ∀t. a (t + t0) ∧ b (t + t0)) ∧
+   ((∀t. a (t + t0)) ∨ (∀t. b (t + t0)) ⇔
+    ∃p q.
+      (¬p t0 ∧ ¬q t0) ∧
+      (∀t.
+         (p (t + (t0 + 1)) ⇔ p (t + t0) ∨ ¬a (t + t0)) ∧
+         (q (t + (t0 + 1)) ⇔ q (t + t0) ∨ ¬b (t + t0))) ∧
+      ∀t. ¬p (t + t0) ∨ ¬q (t + t0))
+</pre>
+
+<DT><span class="strong">BOOLEAN_CLOSURE_F</span>
+<DD>
+<pre>
+|- (¬(∃t. a (t + t0)) ⇔ ∀t. ¬a (t + t0)) ∧
+   ((∃t. a (t + t0)) ∨ (∃t. b (t + t0)) ⇔ ∃t. a (t + t0) ∨ b (t + t0)) ∧
+   ((∃t. a (t + t0)) ∧ (∃t. b (t + t0)) ⇔
+    ∃p q.
+      (¬p t0 ∧ ¬q t0) ∧
+      (∀t.
+         (p (t + (t0 + 1)) ⇔ p (t + t0) ∨ a (t + t0)) ∧
+         (q (t + (t0 + 1)) ⇔ q (t + t0) ∨ b (t + t0))) ∧
+      ∃t. p (t + t0) ∧ q (t + t0))
+</pre>
+
+<DT><span class="strong">BOOLEAN_CLOSURE_FG</span>
+<DD>
+<pre>
+|- (¬(∃t1. ∀t2. a (t1 + (t2 + t0))) ⇔ ∀t1. ∃t2. ¬a (t1 + (t2 + t0))) ∧
+   ((∃t1. ∀t2. a (t1 + (t2 + t0))) ∧ (∃t1. ∀t2. b (t1 + (t2 + t0))) ⇔
+    ∃t1. ∀t2. a (t1 + (t2 + t0)) ∧ b (t1 + (t2 + t0))) ∧
+   ((∃t1. ∀t2. a (t1 + (t2 + t0))) ∨ (∃t1. ∀t2. b (t1 + (t2 + t0))) ⇔
+    ∃q.
+      ¬q t0 ∧
+      (∀t.
+         q (t + (t0 + 1)) ⇔ if q (t + t0) then b (t + t0) else ¬a (t + t0)) ∧
+      ∃t1. ∀t2. ¬q (t1 + (t2 + t0)) ∨ b (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">BOOLEAN_CLOSURE_GF</span>
+<DD>
+<pre>
+|- (¬(∀t1. ∃t2. a (t1 + (t2 + t0))) ⇔ ∃t1. ∀t2. ¬a (t1 + (t2 + t0))) ∧
+   ((∀t1. ∃t2. a (t1 + (t2 + t0))) ∨ (∀t1. ∃t2. b (t1 + (t2 + t0))) ⇔
+    ∀t1. ∃t2. a (t1 + (t2 + t0)) ∨ b (t1 + (t2 + t0))) ∧
+   ((∀t1. ∃t2. a (t1 + (t2 + t0))) ∧ (∀t1. ∃t2. b (t1 + (t2 + t0))) ⇔
+    ∃q.
+      ¬q t0 ∧
+      (∀t.
+         q (t + (t0 + 1)) ⇔ if q (t + t0) then ¬b (t + t0) else a (t + t0)) ∧
+      ∀t1. ∃t2. q (t1 + (t2 + t0)) ∧ b (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">BOREL_HIERARCHY_G</span>
+<DD>
+<pre>
+|- ((∀t. a (t + t0)) ⇔
+    ∃q.
+      q t0 ∧ (∀t. q (t + t0) ∧ a (t + t0) ∧ q (SUC (t + t0))) ∧
+      ∃t. q (t + t0)) ∧
+   ((∀t. a (t + t0)) ⇔
+    ∃q.
+      q t0 ∧ (∀t. q (SUC (t + t0)) ⇔ q (t + t0) ∧ a (t + t0)) ∧
+      ∃t1. ∀t2. q (t1 + (t2 + t0))) ∧
+   ((∀t. a (t + t0)) ⇔
+    ∃q.
+      q t0 ∧ (∀t. q (SUC (t + t0)) ⇔ q (t + t0) ∧ a (t + t0)) ∧
+      ∀t1. ∃t2. q (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">BOREL_HIERARCHY_F</span>
+<DD>
+<pre>
+|- ((∃t. a (t + t0)) ⇔
+    ∃q.
+      ¬q t0 ∧ (∀t. q (SUC (t + t0)) ⇔ q (t + t0) ∨ a (t + t0)) ∧
+      ∃t1. ∀t2. q (t1 + (t2 + t0))) ∧
+   ((∃t. a (t + t0)) ⇔
+    ∃q.
+      ¬q t0 ∧ (∀t. q (SUC (t + t0)) ⇔ q (t + t0) ∨ a (t + t0)) ∧
+      ∀t1. ∃t2. q (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">BOREL_HIERARCHY_FG</span>
+<DD>
+<pre>
+|- ((∃t1. ∀t2. a (t1 + (t2 + t0))) ⇔
+    ∃q.
+      ¬q t0 ∧ (∀t. q (t + t0) ⇒ a (t + t0) ∧ q (SUC (t + t0))) ∧
+      ∃t. q (t + t0)) ∧
+   ((∃t1. ∀t2. a (t1 + (t2 + t0))) ⇔
+    ∃p q.
+      (¬p t0 ∧ ¬q t0) ∧
+      (∀t.
+         (p (t + t0) ⇒ p (SUC (t + t0))) ∧
+         (p (SUC (t + t0)) ⇒ p (t + t0) ∨ ¬q (t + t0)) ∧
+         (q (SUC (t + t0)) ⇔
+          p (t + t0) ∧ ¬q (t + t0) ∧ ¬a (t + t0) ∨ p (t + t0) ∧ q (t + t0))) ∧
+      ∀t1. ∃t2. p (t1 + (t2 + t0)) ∧ ¬q (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">TEMP_OPS_DEFS_TO_OMEGA</span>
+<DD>
+<pre>
+|- ((l = NEXT a) ⇔ T ∧ (∀t. l t ⇔ a (SUC t)) ∧ T) ∧
+   ((l = ALWAYS a) ⇔
+    T ∧ (∀t. l t ⇔ a t ∧ l (SUC t)) ∧ ∀t1. ∃t2. a (t1 + t2) ⇒ l (t1 + t2)) ∧
+   ((l = EVENTUAL a) ⇔
+    T ∧ (∀t. l t ⇔ a t ∨ l (SUC t)) ∧ ∀t1. ∃t2. l (t1 + t2) ⇒ a (t1 + t2)) ∧
+   ((l = a SUNTIL b) ⇔
+    T ∧ (∀t. l t ⇔ ¬b t ⇒ a t ∧ l (SUC t)) ∧
+    ∀t1. ∃t2. l (t1 + t2) ⇒ ¬a (t1 + t2) ∨ b (t1 + t2)) ∧
+   ((l = a SWHEN b) ⇔
+    T ∧ (∀t. l t ⇔ if b t then a t else l (SUC t)) ∧
+    ∀t1. ∃t2. l (t1 + t2) ⇒ b (t1 + t2)) ∧
+   ((l = a SBEFORE b) ⇔
+    T ∧ (∀t. l t ⇔ ¬b t ∧ (a t ∨ l (SUC t))) ∧
+    ∀t1. ∃t2. l (t1 + t2) ⇒ a (t1 + t2) ∨ b (t1 + t2)) ∧
+   ((l = a UNTIL b) ⇔
+    T ∧ (∀t. l t ⇔ ¬b t ⇒ a t ∧ l (SUC t)) ∧
+    ∀t1. ∃t2. ¬l (t1 + t2) ⇒ ¬a (t1 + t2) ∨ b (t1 + t2)) ∧
+   ((l = a WHEN b) ⇔
+    T ∧ (∀t. l t ⇔ if b t then a t else l (SUC t)) ∧
+    ∀t1. ∃t2. l (t1 + t2) ∨ b (t1 + t2)) ∧
+   ((l = a BEFORE b) ⇔
+    T ∧ (∀t. l t ⇔ ¬b t ∧ (a t ∨ l (SUC t))) ∧
+    ∀t1. ∃t2. ¬l (t1 + t2) ⇒ a (t1 + t2) ∨ b (t1 + t2)) ∧
+   ((l = PNEXT a) ⇔ (l 0 ⇔ T) ∧ (∀t. l (SUC t) ⇔ a t) ∧ T) ∧
+   ((l = PSNEXT a) ⇔ (l 0 ⇔ F) ∧ (∀t. l (SUC t) ⇔ a t) ∧ T) ∧
+   ((l = PNEXT (PALWAYS a)) ⇔ (l 0 ⇔ T) ∧ (∀t. l (SUC t) ⇔ a t ∧ l t) ∧ T) ∧
+   ((l = PSNEXT (PEVENTUAL a)) ⇔
+    (l 0 ⇔ F) ∧ (∀t. l (SUC t) ⇔ a t ∨ l t) ∧ T) ∧
+   ((l = PSNEXT (a PSUNTIL b)) ⇔
+    (l 0 ⇔ F) ∧ (∀t. l (SUC t) ⇔ b t ∨ a t ∧ l t) ∧ T) ∧
+   ((l = PSNEXT (a PSWHEN b)) ⇔
+    (l 0 ⇔ F) ∧ (∀t. l (SUC t) ⇔ a t ∧ b t ∨ ¬b t ∧ l t) ∧ T) ∧
+   ((l = PSNEXT (a PSBEFORE b)) ⇔
+    (l 0 ⇔ F) ∧ (∀t. l (SUC t) ⇔ ¬b t ∧ (a t ∨ l t)) ∧ T) ∧
+   ((l = PNEXT (a PUNTIL b)) ⇔
+    (l 0 ⇔ T) ∧ (∀t. l (SUC t) ⇔ b t ∨ a t ∧ l t) ∧ T) ∧
+   ((l = PNEXT (a PWHEN b)) ⇔
+    (l 0 ⇔ T) ∧ (∀t. l (SUC t) ⇔ a t ∧ b t ∨ ¬b t ∧ l t) ∧ T) ∧
+   ((l = PNEXT (a PBEFORE b)) ⇔
+    (l 0 ⇔ T) ∧ (∀t. l (SUC t) ⇔ ¬b t ∧ (a t ∨ l t)) ∧ T)
+</pre>
+
+<DT><span class="strong">AUTOMATON_TEMP_CLOSURE</span>
+<DD>
+<pre>
+|- ((∃q1.
+       Phi_I1 q1 ∧ Phi_R1 q1 ∧
+       ∃q2. Phi_I2 q2 ∧ Phi_R2 (q2,q1) ∧ Phi_F (q1,q2)) ⇔
+    ∃q1 q2.
+      (Phi_I1 q1 ∧ Phi_I2 q2) ∧ (Phi_R1 q1 ∧ Phi_R2 (q2,q1)) ∧
+      Phi_F (q1,q2)) ∧
+   (Phi (NEXT phi) ⇔
+    ∃q0 q1. T ∧ (∀t. (q0 t ⇔ phi t) ∧ (q1 t ⇔ q0 (t + 1))) ∧ Phi q1) ∧
+   (Phi (PNEXT phi) ⇔ ∃q. q 0 ∧ (∀t. q (t + 1) ⇔ phi t) ∧ Phi q) ∧
+   (Phi (PSNEXT phi) ⇔ ∃q. ¬q 0 ∧ (∀t. q (t + 1) ⇔ phi t) ∧ Phi q) ∧
+   (Phi (PNEXT (PALWAYS a)) ⇔ ∃q. q 0 ∧ (∀t. q (t + 1) ⇔ a t ∧ q t) ∧ Phi q) ∧
+   (Phi (PSNEXT (PEVENTUAL a)) ⇔
+    ∃q. ¬q 0 ∧ (∀t. q (t + 1) ⇔ a t ∨ q t) ∧ Phi q) ∧
+   (Phi (PSNEXT (a PSUNTIL b)) ⇔
+    ∃q. ¬q 0 ∧ (∀t. q (t + 1) ⇔ b t ∨ a t ∧ q t) ∧ Phi q) ∧
+   (Phi (PSNEXT (a PSWHEN b)) ⇔
+    ∃q. ¬q 0 ∧ (∀t. q (t + 1) ⇔ a t ∧ b t ∨ ¬b t ∧ q t) ∧ Phi q) ∧
+   (Phi (PSNEXT (a PSBEFORE b)) ⇔
+    ∃q. ¬q 0 ∧ (∀t. q (t + 1) ⇔ ¬b t ∧ (a t ∨ q t)) ∧ Phi q) ∧
+   (Phi (PNEXT (a PUNTIL b)) ⇔
+    ∃q. q 0 ∧ (∀t. q (t + 1) ⇔ b t ∨ a t ∧ q t) ∧ Phi q) ∧
+   (Phi (PNEXT (a PWHEN b)) ⇔
+    ∃q. q 0 ∧ (∀t. q (t + 1) ⇔ a t ∧ b t ∨ ¬b t ∧ q t) ∧ Phi q) ∧
+   (Phi (PNEXT (a PBEFORE b)) ⇔
+    ∃q. q 0 ∧ (∀t. q (t + 1) ⇔ ¬b t ∧ (a t ∨ q t)) ∧ Phi q)
+</pre>
+
+<DT><span class="strong">BUECHI_TRANSLATION</span>
+<DD>
+<pre>
+|- (Phi (NEXT phi) ⇔
+    ∃q0 q1. T ∧ (∀t. (q0 t ⇔ phi t) ∧ (q1 t ⇔ q0 (t + 1))) ∧ Phi q1) ∧
+   (Phi (ALWAYS a) ⇔
+    ∃q.
+      T ∧ (∀t. q t ⇔ a t ∧ q (t + 1)) ∧
+      (∀t1. ∃t2. a (t1 + t2) ⇒ q (t1 + t2)) ∧ Phi q) ∧
+   (Phi (EVENTUAL a) ⇔
+    ∃q.
+      T ∧ (∀t. q t ⇔ a t ∨ q (t + 1)) ∧
+      (∀t1. ∃t2. q (t1 + t2) ⇒ a (t1 + t2)) ∧ Phi q) ∧
+   (Phi (a SUNTIL b) ⇔
+    ∃q.
+      T ∧ (∀t. q t ⇔ b t ∨ a t ∧ q (t + 1)) ∧
+      (∀t1. ∃t2. q (t1 + t2) ⇒ ¬a (t1 + t2) ∨ b (t1 + t2)) ∧ Phi q) ∧
+   (Phi (a UNTIL b) ⇔
+    ∃q.
+      T ∧ (∀t. q t ⇔ b t ∨ a t ∧ q (t + 1)) ∧
+      (∀t1. ∃t2. ¬q (t1 + t2) ⇒ ¬a (t1 + t2) ∨ b (t1 + t2)) ∧ Phi q) ∧
+   (Phi (a SWHEN b) ⇔
+    ∃q.
+      T ∧ (∀t. q t ⇔ if b t then a t else q (t + 1)) ∧
+      (∀t1. ∃t2. q (t1 + t2) ⇒ b (t1 + t2)) ∧ Phi q) ∧
+   (Phi (a WHEN b) ⇔
+    ∃q.
+      T ∧ (∀t. q t ⇔ if b t then a t else q (t + 1)) ∧
+      (∀t1. ∃t2. q (t1 + t2) ∨ b (t1 + t2)) ∧ Phi q) ∧
+   (Phi (a SBEFORE b) ⇔
+    ∃q.
+      T ∧ (∀t. q t ⇔ ¬b t ∧ (a t ∨ q (t + 1))) ∧
+      (∀t1. ∃t2. q (t1 + t2) ⇒ a (t1 + t2) ∨ b (t1 + t2)) ∧ Phi q) ∧
+   (Phi (a BEFORE b) ⇔
+    ∃q.
+      T ∧ (∀t. q t ⇔ ¬b t ∧ (a t ∨ q (t + 1))) ∧
+      (∀t1. ∃t2. ¬q (t1 + t2) ⇒ a (t1 + t2) ∨ b (t1 + t2)) ∧ Phi q)
+</pre>
+
+<DT><span class="strong">CO_BUECHI_CONJ_CLOSURE</span>
+<DD>
+<pre>
+|- (∃q1.
+      Phi_I1 (q1 t0) ∧ (∀t. Phi_R1 (i (t + t0),q1 (t + t0))) ∧
+      ∃t1. ∀t2. Psi1 (i (t1 + (t2 + t0)),q1 (t1 + (t2 + t0)))) ∧
+   (∃q2.
+      Phi_I2 (q2 t0) ∧ (∀t. Phi_R2 (i (t + t0),q2 (t + t0))) ∧
+      ∃t1. ∀t2. Psi2 (i (t1 + (t2 + t0)),q2 (t1 + (t2 + t0)))) ⇔
+   ∃q1 q2.
+     (Phi_I1 (q1 t0) ∧ Phi_I2 (q2 t0)) ∧
+     (∀t. Phi_R1 (i (t + t0),q1 (t + t0)) ∧ Phi_R2 (i (t + t0),q2 (t + t0))) ∧
+     ∃t1.
+       ∀t2.
+         Psi1 (i (t1 + (t2 + t0)),q1 (t1 + (t2 + t0))) ∧
+         Psi2 (i (t1 + (t2 + t0)),q2 (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">CO_BUECHI_DISJ_CLOSURE</span>
+<DD>
+<pre>
+|- (∃q1.
+      Phi_I1 (q1 t0) ∧ (∀t. Phi_R1 (i (t + t0),q1 (t + t0))) ∧
+      ∃t1. ∀t2. Psi1 (i (t1 + (t2 + t0)),q1 (t1 + (t2 + t0)))) ∨
+   (∃q2.
+      Phi_I2 (q2 t0) ∧ (∀t. Phi_R2 (i (t + t0),q2 (t + t0))) ∧
+      ∃t1. ∀t2. Psi2 (i (t1 + (t2 + t0)),q2 (t1 + (t2 + t0)))) ⇔
+   ∃p q1 q2.
+     (¬p t0 ∧ Phi_I1 (q1 t0) ∨ p t0 ∧ Phi_I2 (q2 t0)) ∧
+     (∀t.
+        ¬p (t + t0) ∧ Phi_R1 (i (t + t0),q1 (t + t0)) ∧ ¬p (t + (t0 + 1)) ∨
+        p (t + t0) ∧ Phi_R2 (i (t + t0),q2 (t + t0)) ∧ p (t + (t0 + 1))) ∧
+     ∃t1.
+       ∀t2.
+         ¬p (t + t0) ∧ Psi1 (i (t1 + (t2 + t0)),q1 (t1 + (t2 + t0))) ∨
+         p (t + t0) ∧ Psi2 (i (t1 + (t2 + t0)),q2 (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">CO_BUECHI_NEXT_CLOSURE</span>
+<DD>
+<pre>
+|- NEXT
+     (λt0.
+        ∃q.
+          Phi_I (q t0) ∧ (∀t. Phi_R (i (t + t0),q (t + t0))) ∧
+          ∃t1. ∀t2. Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))) t0 ⇔
+   ∃p q.
+     ((p t0 ⇔ F) ∧ (q t0 = c)) ∧
+     (∀t.
+        ¬p (t + t0) ∧ (q (t + t0) = c) ∧ p (t + (t0 + 1)) ∧
+        Phi_I (q (t + (t0 + 1))) ∨
+        p (t + t0) ∧ Phi_R (i (t + t0),q (t + t0)) ∧ p (t + (t0 + 1))) ∧
+     ∃t1. ∀t2. Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">CO_BUECHI_SUNTIL_CLOSURE</span>
+<DD>
+<pre>
+|- (phi SUNTIL
+    (λt0.
+       ∃q.
+         Phi_I (q t0) ∧ (∀t. Phi_R (i (t + t0),q (t + t0))) ∧
+         ∃t1. ∀t2. Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0))))) t0 ⇔
+   ∃p q.
+     (if p t0 then Phi_I (q t0) else (q t0 = c)) ∧
+     (∀t.
+        ¬p (t + t0) ∧ (q (t + t0) = c) ∧ phi (t + t0) ∧ ¬p (t + (t0 + 1)) ∧
+        (q (t + (t0 + 1)) = c) ∨
+        ¬p (t + t0) ∧ (q (t + t0) = c) ∧ phi (t + t0) ∧ p (t + (t0 + 1)) ∧
+        Phi_I (q (t + (t0 + 1))) ∨
+        p (t + t0) ∧ Phi_R (i (t + t0),q (t + t0)) ∧ p (t + (t0 + 1))) ∧
+     ∃t1.
+       ∀t2. p (t1 + (t2 + t0)) ∧ Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">CO_BUECHI_UNTIL_CLOSURE</span>
+<DD>
+<pre>
+|- (phi UNTIL
+    (λt0.
+       ∃q.
+         Phi_I (q t0) ∧ (∀t. Phi_R (i (t + t0),q (t + t0))) ∧
+         ∃t1. ∀t2. Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0))))) t0 ⇔
+   ∃p q.
+     (if p t0 then Phi_I (q t0) else (q t0 = c)) ∧
+     (∀t.
+        ¬p (t + t0) ∧ (q (t + t0) = c) ∧ phi (t + t0) ∧ ¬p (t + (t0 + 1)) ∧
+        (q (t + (t0 + 1)) = c) ∨
+        ¬p (t + t0) ∧ (q (t + t0) = c) ∧ phi (t + t0) ∧ p (t + (t0 + 1)) ∧
+        Phi_I (q (t + (t0 + 1))) ∨
+        p (t + t0) ∧ Phi_R (i (t + t0),q (t + t0)) ∧ p (t + (t0 + 1))) ∧
+     ∃t1.
+       ∀t2. ¬p (t1 + (t2 + t0)) ∨ Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">CO_BUECHI_SBEFORE_CLOSURE</span>
+<DD>
+<pre>
+|- ((λt0.
+       ∃q.
+         Phi_I (q t0) ∧ (∀t. Phi_R (i (t + t0),q (t + t0))) ∧
+         ∃t1. ∀t2. Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))) SBEFORE phi)
+     t0 ⇔
+   ∃p1 p2 q.
+     (¬p1 t0 ∧ ¬p2 t0 ∧ (q t0 = c) ∨ p1 t0 ∧ ¬p2 t0 ∧ Phi_I (q t0)) ∧
+     (∀t.
+        ¬p1 (t + t0) ∧ ¬p2 (t + t0) ∧ (q (t + t0) = c) ∧ ¬phi (t + t0) ∧
+        ¬p1 (t + (t0 + 1)) ∧ ¬p2 (t + (t0 + 1)) ∧ (q (t + (t0 + 1)) = c) ∨
+        ¬p1 (t + t0) ∧ ¬p2 (t + t0) ∧ (q (t + t0) = c) ∧ ¬phi (t + t0) ∧
+        p1 (t + (t0 + 1)) ∧ ¬p2 (t + (t0 + 1)) ∧ Phi_I (q (t + (t0 + 1))) ∨
+        p1 (t + t0) ∧ ¬p2 (t + t0) ∧ ¬phi (t + t0) ∧ Phi_I (q (t + t0)) ∧
+        Phi_R (i (t + t0),q (t + t0)) ∧ p1 (t + (t0 + 1)) ∧
+        p2 (t + (t0 + 1)) ∨
+        p1 (t + t0) ∧ p2 (t + t0) ∧ Phi_R (i (t + t0),q (t + t0)) ∧
+        p1 (t + (t0 + 1)) ∧ p2 (t + (t0 + 1))) ∧
+     ∃t1.
+       ∀t2. p1 (t1 + (t2 + t0)) ∧ Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">CO_BUECHI_BEFORE_CLOSURE</span>
+<DD>
+<pre>
+|- ((λt0.
+       ∃q.
+         Phi_I (q t0) ∧ (∀t. Phi_R (i (t + t0),q (t + t0))) ∧
+         ∃t1. ∀t2. Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))) BEFORE phi)
+     t0 ⇔
+   ∃p1 p2 q.
+     (¬p1 t0 ∧ ¬p2 t0 ∧ (q t0 = c) ∨ p1 t0 ∧ ¬p2 t0 ∧ Phi_I (q t0)) ∧
+     (∀t.
+        ¬p1 (t + t0) ∧ ¬p2 (t + t0) ∧ (q (t + t0) = c) ∧ ¬phi (t + t0) ∧
+        ¬p1 (t + (t0 + 1)) ∧ ¬p2 (t + (t0 + 1)) ∧ (q (t + (t0 + 1)) = c) ∨
+        ¬p1 (t + t0) ∧ ¬p2 (t + t0) ∧ (q (t + t0) = c) ∧ ¬phi (t + t0) ∧
+        p1 (t + (t0 + 1)) ∧ ¬p2 (t + (t0 + 1)) ∧ Phi_I (q (t + (t0 + 1))) ∨
+        p1 (t + t0) ∧ ¬p2 (t + t0) ∧ ¬phi (t + t0) ∧ Phi_I (q (t + t0)) ∧
+        Phi_R (i (t + t0),q (t + t0)) ∧ p1 (t + (t0 + 1)) ∧
+        p2 (t + (t0 + 1)) ∨
+        p1 (t + t0) ∧ p2 (t + t0) ∧ Phi_R (i (t + t0),q (t + t0)) ∧
+        p1 (t + (t0 + 1)) ∧ p2 (t + (t0 + 1))) ∧
+     ∃t1.
+       ∀t2. ¬p1 (t1 + (t2 + t0)) ∨ Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">CO_BUECHI_SWHEN_CLOSURE</span>
+<DD>
+<pre>
+|- ((λt0.
+       ∃q.
+         Phi_I (q t0) ∧ (∀t. Phi_R (i (t + t0),q (t + t0))) ∧
+         ∃t1. ∀t2. Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))) SWHEN phi)
+     t0 ⇔
+   ∃p1 p2 q.
+     (¬p1 t0 ∧ ¬p2 t0 ∧ (q t0 = c) ∨ p1 t0 ∧ ¬p2 t0 ∧ Phi_I (q t0)) ∧
+     (∀t.
+        ¬p1 (t + t0) ∧ ¬p2 (t + t0) ∧ (q (t + t0) = c) ∧ ¬phi (t + t0) ∧
+        ¬p1 (t + (t0 + 1)) ∧ ¬p2 (t + (t0 + 1)) ∧ (q (t + (t0 + 1)) = c) ∨
+        ¬p1 (t + t0) ∧ ¬p2 (t + t0) ∧ (q (t + t0) = c) ∧ ¬phi (t + t0) ∧
+        p1 (t + (t0 + 1)) ∧ ¬p2 (t + (t0 + 1)) ∧ Phi_I (q (t + (t0 + 1))) ∨
+        p1 (t + t0) ∧ ¬p2 (t + t0) ∧ phi (t + t0) ∧ Phi_I (q (t + t0)) ∧
+        Phi_R (i (t + t0),q (t + t0)) ∧ p1 (t + (t0 + 1)) ∧
+        p2 (t + (t0 + 1)) ∨
+        p1 (t + t0) ∧ p2 (t + t0) ∧ Phi_R (i (t + t0),q (t + t0)) ∧
+        p1 (t + (t0 + 1)) ∧ p2 (t + (t0 + 1))) ∧
+     ∃t1.
+       ∀t2. p1 (t1 + (t2 + t0)) ∧ Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">CO_BUECHI_WHEN_CLOSURE</span>
+<DD>
+<pre>
+|- ((λt0.
+       ∃q.
+         Phi_I (q t0) ∧ (∀t. Phi_R (i (t + t0),q (t + t0))) ∧
+         ∃t1. ∀t2. Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))) WHEN phi) t0 ⇔
+   ∃p1 p2 q.
+     (¬p1 t0 ∧ ¬p2 t0 ∧ (q t0 = c) ∨ p1 t0 ∧ ¬p2 t0 ∧ Phi_I (q t0)) ∧
+     (∀t.
+        ¬p1 (t + t0) ∧ ¬p2 (t + t0) ∧ (q (t + t0) = c) ∧ ¬phi (t + t0) ∧
+        ¬p1 (t + (t0 + 1)) ∧ ¬p2 (t + (t0 + 1)) ∧ (q (t + (t0 + 1)) = c) ∨
+        ¬p1 (t + t0) ∧ ¬p2 (t + t0) ∧ (q (t + t0) = c) ∧ ¬phi (t + t0) ∧
+        p1 (t + (t0 + 1)) ∧ ¬p2 (t + (t0 + 1)) ∧ Phi_I (q (t + (t0 + 1))) ∨
+        p1 (t + t0) ∧ ¬p2 (t + t0) ∧ phi (t + t0) ∧ Phi_I (q (t + t0)) ∧
+        Phi_R (i (t + t0),q (t + t0)) ∧ p1 (t + (t0 + 1)) ∧
+        p2 (t + (t0 + 1)) ∨
+        p1 (t + t0) ∧ p2 (t + t0) ∧ Phi_R (i (t + t0),q (t + t0)) ∧
+        p1 (t + (t0 + 1)) ∧ p2 (t + (t0 + 1))) ∧
+     ∃t1.
+       ∀t2. ¬p1 (t1 + (t2 + t0)) ∨ Psi (i (t1 + (t2 + t0)),q (t1 + (t2 + t0)))
+</pre>
+
+<DT><span class="strong">NEXT_AS_CO_BUECHI</span>
+<DD>
+<pre>
+|- NEXT a t0 ⇔
+   ∃p q.
+     (¬p t0 ∧ ¬q t0) ∧
+     (∀t.
+        ¬p (t + t0) ∧ ¬q (t + t0) ∧ p (t + (1 + t0)) ∧ ¬q (t + (1 + t0)) ∨
+        p (t + t0) ∧ ¬q (t + t0) ∧ a (t + t0) ∧ p (t + (1 + t0)) ∧
+        q (t + (1 + t0)) ∨
+        p (t + t0) ∧ q (t + t0) ∧ p (t + (1 + t0)) ∧ q (t + (1 + t0))) ∧
+     ∃t1. ∀t2. q (t1 + (t2 + t0))
+</pre>
+
+<DT><span class="strong">SUNTIL_AS_CO_BUECHI</span>
+<DD>
+<pre>
+|- (a SUNTIL b) t0 ⇔
+   ∃q.
+     ¬q t0 ∧
+     (∀t.
+        ¬q (t + t0) ∧ a (t + t0) ∧ ¬b (t + t0) ∧ ¬q (t + (1 + t0)) ∨
+        ¬q (t + t0) ∧ b (t + t0) ∧ q (t + (1 + t0)) ∨
+        q (t + t0) ∧ q (t + (1 + t0))) ∧ ∃t1. ∀t2. q (t1 + (t2 + t0))
+</pre>
+
+<DT><span class="strong">UNTIL_AS_CO_BUECHI</span>
+<DD>
+<pre>
+|- (a UNTIL b) t0 ⇔
+   ∃q.
+     ¬q t0 ∧
+     (∀t.
+        ¬q (t + t0) ∧ a (t + t0) ∧ ¬b (t + t0) ∧ ¬q (t + (1 + t0)) ∨
+        ¬q (t + t0) ∧ b (t + t0) ∧ q (t + (1 + t0)) ∨
+        q (t + t0) ∧ q (t + (1 + t0))) ∧
+     ∃t1. ∀t2. ¬q (t1 + (t2 + t0)) ∨ q (t1 + (t2 + t0))
+</pre>
+
+<DT><span class="strong">SBEFORE_AS_CO_BUECHI</span>
+<DD>
+<pre>
+|- (a SBEFORE b) t0 ⇔
+   ∃q.
+     ¬q t0 ∧
+     (∀t.
+        ¬q (t + t0) ∧ ¬a (t + t0) ∧ ¬b (t + t0) ∧ ¬q (t + (1 + t0)) ∨
+        ¬q (t + t0) ∧ a (t + t0) ∧ ¬b (t + t0) ∧ q (t + (1 + t0)) ∨
+        q (t + t0) ∧ q (t + (1 + t0))) ∧ ∃t1. ∀t2. q (t1 + (t2 + t0))
+</pre>
+
+<DT><span class="strong">BEFORE_AS_CO_BUECHI</span>
+<DD>
+<pre>
+|- (a BEFORE b) t0 ⇔
+   ∃q.
+     ¬q t0 ∧
+     (∀t.
+        ¬q (t + t0) ∧ ¬a (t + t0) ∧ ¬b (t + t0) ∧ ¬q (t + (1 + t0)) ∨
+        ¬q (t + t0) ∧ a (t + t0) ∧ ¬b (t + t0) ∧ q (t + (1 + t0)) ∨
+        q (t + t0) ∧ q (t + (1 + t0))) ∧
+     ∃t1. ∀t2. ¬q (t1 + (t2 + t0)) ∨ q (t1 + (t2 + t0))
+</pre>
+
+<DT><span class="strong">SWHEN_AS_CO_BUECHI</span>
+<DD>
+<pre>
+|- (a SWHEN b) t0 ⇔
+   ∃q.
+     ¬q t0 ∧
+     (∀t.
+        ¬q (t + t0) ∧ ¬b (t + t0) ∧ ¬q (t + (1 + t0)) ∨
+        ¬q (t + t0) ∧ a (t + t0) ∧ b (t + t0) ∧ q (t + (1 + t0)) ∨
+        q (t + t0) ∧ q (t + (1 + t0))) ∧ ∃t1. ∀t2. q (t1 + (t2 + t0))
+</pre>
+
+<DT><span class="strong">WHEN_AS_CO_BUECHI</span>
+<DD>
+<pre>
+|- (a WHEN b) t0 ⇔
+   ∃q.
+     ¬q t0 ∧
+     (∀t.
+        ¬q (t + t0) ∧ ¬b (t + t0) ∧ ¬q (t + (1 + t0)) ∨
+        ¬q (t + t0) ∧ a (t + t0) ∧ b (t + t0) ∧ q (t + (1 + t0)) ∨
+        q (t + t0) ∧ q (t + (1 + t0))) ∧
+     ∃t1. ∀t2. ¬q (t1 + (t2 + t0)) ∨ q (t1 + (t2 + t0))
+</pre>
+
+<DT><span class="strong">BUECHI_PERIODIC_MODEL</span>
+<DD>
+<pre>
+|- (∀s. ∃x0 l. 0 < l ∧ (s x0 = s (x0 + l))) ⇒
+   ((∃i q.
+       InitState (q 0) ∧ (∀t. TransRel (i t,q t,q (t + 1))) ∧
+       ∀t1. ∃t2. Accept (q (t1 + t2))) ⇔
+    ∃x0 l j p.
+      0 < l ∧ (∀t2. j (x0 + t2) = j (x0 + t2 MOD l)) ∧
+      (∀t2. p (x0 + t2) = p (x0 + t2 MOD l)) ∧ InitState (p 0) ∧
+      (∀t. TransRel (j t,p t,p (t + 1))) ∧ ∀t1. ∃t2. Accept (p (t1 + t2)))
+</pre>
+
+<DT><span class="strong">BUECHI_PERIODIC_REDUCTION_THM</span>
+<DD>
+<pre>
+|- (∀s. ∃x0 l. 0 < l ∧ (s x0 = s (x0 + l))) ⇒
+   ((∃i q.
+       InitState (q 0) ∧ (∀t. TransRel (i t,q t,q (t + 1))) ∧
+       ∀t1. ∃t2. Accept (q (t1 + t2))) ⇔
+    ∃x0 l j p.
+      0 < l ∧ (∀t2. j (x0 + t2) = j (x0 + t2 MOD l)) ∧
+      (∀t2. p (x0 + t2) = p (x0 + t2 MOD l)) ∧ InitState (p 0) ∧
+      (∀t. t < x0 + l ⇒ TransRel (j t,p t,p (t + 1))) ∧
+      ∃t. t < l ∧ Accept (p (x0 + t)))
+</pre>
+
+<DT><span class="strong">BUECHI_PROP_REDUCTION</span>
+<DD>
+<pre>
+|- (∀s. ∃x0 l. 0 < l ∧ (s x0 = s (x0 + l))) ⇒
+   ((∃i q.
+       InitState (q 0) ∧ (∀t. TransRel (i t,q t,q (t + 1))) ∧
+       ∀t1. ∃t2. Accept (q (t1 + t2))) ⇔
+    ∃x0 l j p.
+      0 < l ∧ InitState (p 0) ∧
+      (∀t. t < x0 + l ⇒ TransRel (j t,p t,p (t + 1))) ∧
+      (∃t. t < l ∧ Accept (p (x0 + t))) ∧ (p x0 = p (x0 + l)))
+</pre>
+
+<DT><span class="strong">EQUALITY_THM</span>
+<DD>
+<pre>
+|- ∀x y. (x = y) ⇔ ∀P. P x ⇔ P y
+</pre>
+
+<DT><span class="strong">LESS_THM</span>
+<DD>
+<pre>
+|- ∀x y. x < y ⇔ ∃P. P x ∧ ¬P y ∧ ∀z. P (SUC z) ⇒ P z
+</pre>
+
+<DT><span class="strong">FORALL_EXISTS_THM</span>
+<DD>
+<pre>
+|- ∀P. (∀t1. ∃t2. P (t1 + t2)) ⇔ ∀t1. ∃t2. t1 < t2 ∧ P t2
+</pre>
+
+<DT><span class="strong">EXISTS_FORALL_THM</span>
+<DD>
+<pre>
+|- ∀P. (∃t1. ∀t2. P (t1 + t2)) ⇔ ∃t1. ∀t2. t1 < t2 ⇒ P t2
+</pre>
+
+<DT><span class="strong">ELGOT_LEMMA</span>
+<DD>
+<pre>
+|- ∀PHI. (∃x. ∀p. PHI p x) ⇔ ∃q. (∀x. q x ⇒ ∀p. PHI p x) ∧ ∃z. q z
+</pre>
+
+<DT><span class="strong">ELGOT1_THM</span>
+<DD>
+<pre>
+|- ∀PHI. (∃x. ∀p. PHI p x) ⇔ ∃q. ∀p x. ∃z. (q x ⇒ PHI p x) ∧ q z
+</pre>
+
+<DT><span class="strong">ELGOT2_THM</span>
+<DD>
+<pre>
+|- ∀PHI. (∀x. ∃p. PHI p x) ⇔ ∀q. ∃p x. ∀z. q z ⇒ PHI p x ∧ q x
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

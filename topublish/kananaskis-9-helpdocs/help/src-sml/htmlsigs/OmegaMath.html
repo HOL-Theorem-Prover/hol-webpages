@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure OmegaMath</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure OmegaMath</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/integer/OmegaMath.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature OmegaMath =
+<a name="line2"></a>sig
+<a name="line3"></a>  include Abbrev
+<a name="line4"></a>  val <a href="#find_summand-val">find_summand</a>               : term -&gt; term -&gt; term
+<a name="line5"></a>  val <a href="#gcd_eq_check-val">gcd_eq_check</a>               : conv
+<a name="line6"></a>  val <a href="#gcd_le_check-val">gcd_le_check</a>               : conv
+<a name="line7"></a>  val <a href="#gcd_check-val">gcd_check</a>                  : conv
+<a name="line8"></a>
+<a name="line9"></a>  val <a href="#addzero-val">addzero</a>                    : conv
+<a name="line10"></a>
+<a name="line11"></a>  val <a href="#SORT_AND_GATHER1_CONV-val">SORT_AND_GATHER1_CONV</a>      : conv
+<a name="line12"></a>  val <a href="#SORT_AND_GATHER_CONV-val">SORT_AND_GATHER_CONV</a>       : conv
+<a name="line13"></a>  val <a href="#S_AND_G_MULT-val">S_AND_G_MULT</a>               : conv
+<a name="line14"></a>
+<a name="line15"></a>  val <a href="#MOVE_VCOEFF_TO_FRONT-val">MOVE_VCOEFF_TO_FRONT</a>       : term -&gt; conv
+<a name="line16"></a>  val <a href="#NEG_SUM_CONV-val">NEG_SUM_CONV</a>               : conv
+<a name="line17"></a>  val <a href="#NORMALISE_MULT-val">NORMALISE_MULT</a>             : conv
+<a name="line18"></a>
+<a name="line19"></a>  val <a href="#leaf_normalise-val">leaf_normalise</a>             : conv
+<a name="line20"></a>  val <a href="#sum_normalise-val">sum_normalise</a>              : conv
+<a name="line21"></a>  val <a href="#PRENEX_CONV-val">PRENEX_CONV</a>                : conv
+<a name="line22"></a>  val <a href="#cond_removal-val">cond_removal</a>               : conv
+<a name="line23"></a>
+<a name="line24"></a>  val <a href="#eliminate_positive_divides-val">eliminate_positive_divides</a> : conv
+<a name="line25"></a>  val <a href="#eliminate_negative_divides-val">eliminate_negative_divides</a> : conv
+<a name="line26"></a>  val <a href="#calculate_range_disjunct-val">calculate_range_disjunct</a>   : conv
+<a name="line27"></a>
+<a name="line28"></a>  val <a href="#OmegaEq-val">OmegaEq</a>                    : conv
+<a name="line29"></a>end;
+<a name="line30"></a>
+<a name="line31"></a>(*
+<a name="line32"></a>
+   [<a name="find_summand-val"><b>find_summand</b></a> v tm] finds the summand involving variable v in tm.
+   Raise a HOL_ERR if it's not there.  tm must be a left-associated
+   sum with one numeral in the rightmost position.
+
+   [<a name="gcd_eq_check-val"><b>gcd_eq_check</b></a> tm] returns a theorem equating tm to an improved
+   equivalent, or QConv.UNCHANGED, if no improvement is possible.
+
+   tm must be of the form
+       0 = r1 + .. + rn
+   where rn is a numeral and all of the other ri's are of the form
+       (numeral * variable)
+
+   If all of the variables have coefficients divisible by some common
+   factor, then this conversion returns an equality either with all
+   the coefficients appropriately smaller, or equating it to false
+   (which will happen if there the numeral term is of the wrong
+   divisibility).
+
+   [<a name="gcd_le_check-val"><b>gcd_le_check</b></a> tm] returns a theorem equating tm to an improved
+   equivalent (as per gcd_eq_check), or QConv.UNCHANGED, if no
+   improvement is possible.
+
+   tm must be of the form
+      0 &lt;= (c1 * v1) + (c2 * v2) + .. + (cn * vn) + n
+
+   [<a name="gcd_check-val"><b>gcd_check</b></a> tm] applies either gcd_eq_check or gcd_le_check depending
+   on tm's relational operator.  Fails with HOL_ERR otherwise.
+
+   [<a name="addzero-val"><b>addzero</b></a> t] if t (of integer type and not a numeral itself) does
+   not have a numeral as its 'rand, then return thm |- t = t + 0,
+   otherwise ALL_CONV.
+
+   [<a name="SORT_AND_GATHER1_CONV-val"><b>SORT_AND_GATHER1_CONV</b></a> tm] performs one step of an "insertion
+   sort"; modifying a term of the form x + y, with x a normalised sum,
+   and y a singleton summand, so that y is inserted into x, merging
+   with any appropriate other summands, and possibly cancelling others
+   out.
+
+   [<a name="SORT_AND_GATHER_CONV-val"><b>SORT_AND_GATHER_CONV</b></a> tm] performs all the steps of the insertion
+   sort, collecting up variable coefficients and producing a left
+   associated term with variables appearing in sorted order.
+
+   [<a name="S_AND_G_MULT-val"><b>S_AND_G_MULT</b></a> tm] performs a sort-and-gather step, and also copes
+   with distributing multiplications over sub-summands, as long as the
+   constant to be multiplied through is on the left side of the
+   multiplication.
+
+   [<a name="MOVE_VCOEFF_TO_FRONT-val"><b>MOVE_VCOEFF_TO_FRONT</b></a> v tm] turns
+      c1 * v1 + ... + c * v + ... cn * vn + n
+   into
+      c * v + (c1 * v1 + ... + cn * vn + n)
+
+   [<a name="NEG_SUM_CONV-val"><b>NEG_SUM_CONV</b></a>] simplifies ~(c1*v1 + c2 * v2 .. + cn * vn + n), by
+   pushing the negation inwards.
+
+   [<a name="NORMALISE_MULT-val"><b>NORMALISE_MULT</b></a> tm] normalises the multiplicative term tm,
+   gathering up coefficients, and turning it into the form n * (v1 *
+   v2 * ... vn), where n is a numeral and the v's are the variables
+   in the term, sorted into the order specified by Term.compare.
+   Works over both :num and :int.
+
+   [<a name="leaf_normalise-val"><b>leaf_normalise</b></a> t] normalises a "leaf term" t (a relational
+   operator over integer values) to either an equality, a &lt;= or a
+   disjunction of two normalised &lt;= leaves.  (The latter happens if
+   called onto normalise ~(x = y)).
+
+   [<a name="sum_normalise-val"><b>sum_normalise</b></a> t] normalises a term of type :int into the standard
+   Omega normal form, where the resulting term is of the form
+       c1 * v1 + c2 * v2 + c3 * v3 + ... + cn * vn + c
+   where the c is always present and maybe 0.
+
+   [<a name="PRENEX_CONV-val"><b>PRENEX_CONV</b></a> t] normalises t by pulling quantifiers to the front, over
+   boolean connectives such as ~ /\ \/ and also if-then-else, as long as
+   the quantifier is not in the guard of the latter.
+
+   [<a name="cond_removal-val"><b>cond_removal</b></a> t] removes those conditional expressions from t that repeat
+   their guards, and introduces a case split (i.e., disjunctions) at the
+   top level of the term to reflect this.   Don't use if you want to generate
+   CNF.
+
+   [<a name="eliminate_positive_divides-val"><b>eliminate_positive_divides</b></a> t] where t is a term of the form
+       ?x1 .. xn. body
+   where body is a conjunction of leaves, possibly including
+   divisibility relations (negated or positive).  This function
+   writes away those (positive) divisibility relations of the form
+       d | exp
+   where exp includes at least one variable from x1 .. xn.
+
+   [<a name="eliminate_negative_divides-val"><b>eliminate_negative_divides</b></a> t] where t is a term of the form
+       ?x1 .. xn. body
+   where body is a conjunction of leaves, possibly including
+   divisibility relations (negated or positive).  This function writes
+   away those negated divisibility relations of the form
+       ~(d | exp)
+   where exp includes at least one variable from x1 .. xn.  It
+   introduces case splits in the body (at least where d is not 2), and
+   pushes the existential variables over the resulting disjunctions.
+   It doesn't eliminate the positive divisibility terms that result.
+
+   [<a name="calculate_range_disjunct-val"><b>calculate_range_disjunct</b></a> t] where t is of the form
+       ?i. (lo &lt;= i /\ i &lt;= hi) /\ ...
+   and lo and hi are integer literal.  Transforms this into an
+   appropriate number of disjuncts (or possibly false, if hi &lt; lo, of
+   the form
+       P(lo) \/ P (lo + 1) \/ .. P (hi)
+   but where the additions (lo + 1 etc) are reduced to literals
+
+   [<a name="OmegaEq-val"><b>OmegaEq</b></a> t] simplifies an existentially quantified Presburger term,
+   (or returns QConv.UNCHANGED) by using the equality elimination
+   procedure described in section 2.2 of Pugh's CACM paper.
+
+   The term t should be of the form
+      ?v1..vn. body
+   If the conversion is to do anything other than return UNCHANGED,
+   there should be a Omega-normalised equality in (strip_conj body).
+
+
+*)
+
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/integer/OmegaMath.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-9</a></em></p></body></html>

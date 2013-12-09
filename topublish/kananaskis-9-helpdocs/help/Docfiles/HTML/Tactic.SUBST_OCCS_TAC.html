@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Tactic.SUBST_OCCS_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>SUBST_OCCS_TAC : (int list * thm) list -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactic.html">Tactic</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Makes substitutions in a goal at specific occurrences of a term, using a list
+of theorems.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Given a list </SPAN><SPAN class = "BRKT">(l1,A1|-t1=u1),...,(ln,An|-tn=un)</SPAN><SPAN class = "TEXT"> and a goal </SPAN><SPAN class = "BRKT">(A,t)</SPAN><SPAN class = "TEXT">,
+</SPAN><SPAN class = "BRKT">SUBST_OCCS_TAC</SPAN><SPAN class = "TEXT"> replaces each </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> in </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> with </SPAN><SPAN class = "BRKT">ui</SPAN><SPAN class = "TEXT">, simultaneously,
+at the occurrences specified by the integers in the list </SPAN><SPAN class = "BRKT">li&nbsp;=&nbsp;[o1,...,ok]</SPAN><SPAN class = "TEXT">
+for each theorem </SPAN><SPAN class = "BRKT">Ai|-ti=ui</SPAN><SPAN class = "TEXT">.
+</SPAN><DIV class = "XMPL"><pre>
+              A ?- t
+   =============================  SUBST_OCCS_TAC [(l1,A1|-t1=u1),...,
+    A ?- t[u1,...,un/t1,...,tn]                   (ln,An|-tn=un)]
+</pre></DIV>
+<SPAN class = "TEXT">
+The assumptions of the theorems used to substitute with are not
+added to the assumptions </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> of the goal, but they are recorded in the proof.
+If any </SPAN><SPAN class = "BRKT">Ai</SPAN><SPAN class = "TEXT"> is not a subset of </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> (up to alpha-conversion),
+</SPAN><SPAN class = "BRKT">SUBST_OCCS_TAC&nbsp;[(l1,A1|-t1=u1),...,(ln,An|-tn=un)]</SPAN><SPAN class = "TEXT">
+results in an invalid tactic.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_OCCS_TAC</SPAN><SPAN class = "TEXT"> automatically renames bound variables to prevent
+free variables in </SPAN><SPAN class = "BRKT">ui</SPAN><SPAN class = "TEXT"> becoming bound after substitution.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_OCCS_TAC&nbsp;[(l1,th1),...,(ln,thn)]&nbsp;(A,t)</SPAN><SPAN class = "TEXT"> fails if the conclusion of any
+theorem in the list is not an equation.  No change is made to the goal if the
+supplied occurrences </SPAN><SPAN class = "BRKT">li</SPAN><SPAN class = "TEXT"> of the left-hand side of the conclusion of </SPAN><SPAN class = "BRKT">thi</SPAN><SPAN class = "TEXT"> do
+not appear in </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When trying to solve the goal
+</SPAN><DIV class = "XMPL"><pre>
+   ?- (m + n) + (n + m) = (m + n) + (m + n)
+</pre></DIV>
+<SPAN class = "TEXT">
+applying the commutative law for addition on the third occurrence of
+the subterm </SPAN><SPAN class = "BRKT">m&nbsp;+&nbsp;n</SPAN><SPAN class = "TEXT">
+</SPAN><DIV class = "XMPL"><pre>
+   SUBST_OCCS_TAC [([3], SPECL [Term `m:num`, Term `n:num`] 
+                               arithmeticTheory.ADD_SYM)]
+</pre></DIV>
+<SPAN class = "TEXT">
+results in the goal
+</SPAN><DIV class = "XMPL"><pre>
+   ?- (m + n) + (n + m) = (m + n) + (n + m)
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_OCCS_TAC</SPAN><SPAN class = "TEXT"> is used when rewriting a goal at specific occurrences
+of a term, and when rewriting tactics such as </SPAN><SPAN class = "BRKT">REWRITE_TAC</SPAN><SPAN class = "TEXT">, 
+</SPAN><SPAN class = "BRKT">PURE_REWRITE_TAC</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">ONCE_REWRITE_TAC</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">SUBST_TAC</SPAN><SPAN class = "TEXT">, etc. 
+are too extensive or would diverge.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Rewrite.ONCE_REWRITE_TAC.html">ONCE_REWRITE_TAC</A>,
+<A HREF = "Rewrite.PURE_REWRITE_TAC.html">PURE_REWRITE_TAC</A>,
+<A HREF = "Rewrite.REWRITE_TAC.html">REWRITE_TAC</A>,
+<A HREF = "Tactic.SUBST1_TAC.html">SUBST1_TAC</A>,
+<A HREF = "Tactic.SUBST_TAC.html">SUBST_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

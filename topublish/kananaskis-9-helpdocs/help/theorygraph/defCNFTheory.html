@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: defCNF</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "defCNF"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "rich_listTheory.html"><span class="strong">rich_list</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">DEF</span>
+            <td>
+            :(num -> bool) ->
+             num ->
+             (bool -> bool -> bool, (num + bool) # (num + bool)) alist -> bool
+    <tr><td>
+        <span class="strong">OK</span>
+        <td>
+        :num -> (bool -> bool -> bool) # (num + bool) # (num + bool) -> bool
+    <tr><td>
+        <span class="strong">OKDEF</span>
+        <td>
+        :num ->
+         (bool -> bool -> bool, (num + bool) # (num + bool)) alist -> bool
+    <tr><td>
+        <span class="strong">OK_tupled</span>
+        <td>
+        :num # (bool -> bool -> bool) # (num + bool) # (num + bool) -> bool
+    <tr><td>
+        <span class="strong">UNIQUE</span>
+        <td>
+        :(num -> bool) ->
+         num -> (bool -> bool -> bool) # (num + bool) # (num + bool) -> bool
+    <tr><td>
+        <span class="strong">UNIQUE_tupled</span>
+        <td>
+        :(num -> bool) #
+         num # (bool -> bool -> bool) # (num + bool) # (num + bool) -> bool
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">UNIQUE_tupled_primitive_def</span>
+<DD>
+<pre>
+|- UNIQUE_tupled =
+   WFREC (@R. WF R)
+     (λUNIQUE_tupled a'.
+        case a' of
+          (v,n,conn,INL i,INL j) => I (v n ⇔ conn (v i) (v j))
+        | (v,n,conn,INL i,INR b) => I (v n ⇔ conn (v i) b)
+        | (v,n,conn,INR a,INL j') => I (v n ⇔ conn a (v j'))
+        | (v,n,conn,INR a,INR b') => I (v n ⇔ conn a b'))
+</pre>
+
+<DT><span class="strong">UNIQUE_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1 x2. defCNF$UNIQUE x x1 x2 ⇔ UNIQUE_tupled (x,x1,x2)
+</pre>
+
+<DT><span class="strong">DEF_def</span>
+<DD>
+<pre>
+|- (∀v n. defCNF$DEF v n [] ⇔ T) ∧
+   ∀v n x xs.
+     defCNF$DEF v n (x::xs) ⇔ defCNF$UNIQUE v n x ∧ defCNF$DEF v (SUC n) xs
+</pre>
+
+<DT><span class="strong">OK_tupled_primitive_def</span>
+<DD>
+<pre>
+|- OK_tupled =
+   WFREC (@R. WF R)
+     (λOK_tupled a'.
+        case a' of
+          (n,conn,INL i,INL j) => I (i < n ∧ j < n)
+        | (n,conn,INL i,INR b) => I (i < n)
+        | (n,conn,INR a,INL j') => I (j' < n)
+        | (n,conn,INR a,INR b') => I T)
+</pre>
+
+<DT><span class="strong">OK_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1. defCNF$OK x x1 ⇔ OK_tupled (x,x1)
+</pre>
+
+<DT><span class="strong">OKDEF_def</span>
+<DD>
+<pre>
+|- (∀n. defCNF$OKDEF n [] ⇔ T) ∧
+   ∀n x xs. defCNF$OKDEF n (x::xs) ⇔ defCNF$OK n x ∧ defCNF$OKDEF (SUC n) xs
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">UNIQUE_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀v n conn i j. P v n (conn,INL i,INL j)) ∧
+     (∀v n conn i b. P v n (conn,INL i,INR b)) ∧
+     (∀v n conn a j. P v n (conn,INR a,INL j)) ∧
+     (∀v n conn a b. P v n (conn,INR a,INR b)) ⇒
+     ∀v v1 v2 v3 v4. P v v1 (v2,v3,v4)
+</pre>
+
+<DT><span class="strong">UNIQUE_def</span>
+<DD>
+<pre>
+|- (defCNF$UNIQUE v n (conn,INL i,INL j) ⇔ (v n ⇔ conn (v i) (v j))) ∧
+   (defCNF$UNIQUE v n (conn,INL i,INR b) ⇔ (v n ⇔ conn (v i) b)) ∧
+   (defCNF$UNIQUE v n (conn,INR a,INL j) ⇔ (v n ⇔ conn a (v j))) ∧
+   (defCNF$UNIQUE v n (conn,INR a,INR b) ⇔ (v n ⇔ conn a b))
+</pre>
+
+<DT><span class="strong">OK_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀n conn i j. P n (conn,INL i,INL j)) ∧
+     (∀n conn i b. P n (conn,INL i,INR b)) ∧
+     (∀n conn a j. P n (conn,INR a,INL j)) ∧
+     (∀n conn a b. P n (conn,INR a,INR b)) ⇒
+     ∀v v1 v2 v3. P v (v1,v2,v3)
+</pre>
+
+<DT><span class="strong">OK_def</span>
+<DD>
+<pre>
+|- (defCNF$OK n (conn,INL i,INL j) ⇔ i < n ∧ j < n) ∧
+   (defCNF$OK n (conn,INL i,INR b) ⇔ i < n) ∧
+   (defCNF$OK n (conn,INR a,INL j) ⇔ j < n) ∧
+   (defCNF$OK n (conn,INR a,INR b) ⇔ T)
+</pre>
+
+<DT><span class="strong">DEF_SNOC</span>
+<DD>
+<pre>
+|- ∀n x l v.
+     defCNF$DEF v n (SNOC x l) ⇔
+     defCNF$DEF v n l ∧ defCNF$UNIQUE v (n + LENGTH l) x
+</pre>
+
+<DT><span class="strong">OKDEF_SNOC</span>
+<DD>
+<pre>
+|- ∀n x l.
+     defCNF$OKDEF n (SNOC x l) ⇔ defCNF$OKDEF n l ∧ defCNF$OK (n + LENGTH l) x
+</pre>
+
+<DT><span class="strong">CONSISTENCY</span>
+<DD>
+<pre>
+|- ∀n l. defCNF$OKDEF n l ⇒ ∃v. defCNF$DEF v n l
+</pre>
+
+<DT><span class="strong">BIGSTEP</span>
+<DD>
+<pre>
+|- ∀P Q R. (∀v. P v ⇒ (Q ⇔ R v)) ⇒ ((∃v. P v) ∧ Q ⇔ ∃v. P v ∧ R v)
+</pre>
+
+<DT><span class="strong">FINAL_DEF</span>
+<DD>
+<pre>
+|- ∀v n x. (v n ⇔ x) ⇔ (v n ⇔ x) ∧ defCNF$DEF v (SUC n) []
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

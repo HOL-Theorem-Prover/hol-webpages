@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: combin</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "combin"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "markerTheory.html"><span class="strong">marker</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">:></span> <td> :β -> (β -> α) -> α
+    <tr><td> <span class="strong">C</span> <td> :(α -> β -> γ) -> β -> α -> γ
+    <tr><td> <span class="strong">FAIL</span> <td> :α -> β -> α
+    <tr><td> <span class="strong">I</span> <td> :α -> α
+    <tr><td> <span class="strong">K</span> <td> :α -> β -> α
+    <tr><td>
+        <span class="strong">S</span>
+        <td>
+        :(α -> β -> γ) -> (α -> β) -> α -> γ
+    <tr><td>
+        <span class="strong">UPDATE</span>
+        <td>
+        :α -> β -> (α -> β) -> α -> β
+    <tr><td> <span class="strong">W</span> <td> :(α -> α -> β) -> α -> β
+    <tr><td>
+        <span class="strong">o</span>
+        <td>
+        :(γ -> β) -> (α -> γ) -> α -> β
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">K_DEF</span>
+<DD>
+<pre>
+|- K = (λx y. x)
+</pre>
+
+<DT><span class="strong">S_DEF</span>
+<DD>
+<pre>
+|- S = (λf g x. f x (g x))
+</pre>
+
+<DT><span class="strong">I_DEF</span>
+<DD>
+<pre>
+|- I = S K K
+</pre>
+
+<DT><span class="strong">C_DEF</span>
+<DD>
+<pre>
+|- combin$C = (λf x y. f y x)
+</pre>
+
+<DT><span class="strong">W_DEF</span>
+<DD>
+<pre>
+|- W = (λf x. f x x)
+</pre>
+
+<DT><span class="strong">o_DEF</span>
+<DD>
+<pre>
+|- ∀f g. f o g = (λx. f (g x))
+</pre>
+
+<DT><span class="strong">APP_DEF</span>
+<DD>
+<pre>
+|- ∀x f. x :> f = f x
+</pre>
+
+<DT><span class="strong">UPDATE_def</span>
+<DD>
+<pre>
+|- ∀a b. a =+ b = (λf c. if a = c then b else f c)
+</pre>
+
+<DT><span class="strong">FAIL_DEF</span>
+<DD>
+<pre>
+|- FAIL = (λx y. x)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">o_THM</span>
+<DD>
+<pre>
+|- ∀f g x. (f o g) x = f (g x)
+</pre>
+
+<DT><span class="strong">o_ASSOC</span>
+<DD>
+<pre>
+|- ∀f g h. f o g o h = (f o g) o h
+</pre>
+
+<DT><span class="strong">o_ABS_L</span>
+<DD>
+<pre>
+|- (λx. f x) o g = (λx. f (g x))
+</pre>
+
+<DT><span class="strong">o_ABS_R</span>
+<DD>
+<pre>
+|- f o (λx. g x) = (λx. f (g x))
+</pre>
+
+<DT><span class="strong">K_THM</span>
+<DD>
+<pre>
+|- ∀x y. K x y = x
+</pre>
+
+<DT><span class="strong">S_THM</span>
+<DD>
+<pre>
+|- ∀f g x. S f g x = f x (g x)
+</pre>
+
+<DT><span class="strong">S_ABS_L</span>
+<DD>
+<pre>
+|- S (λx. f x) g = (λx. f x (g x))
+</pre>
+
+<DT><span class="strong">S_ABS_R</span>
+<DD>
+<pre>
+|- S f (λx. g x) = (λx. f x (g x))
+</pre>
+
+<DT><span class="strong">C_THM</span>
+<DD>
+<pre>
+|- ∀f x y. combin$C f x y = f y x
+</pre>
+
+<DT><span class="strong">C_ABS_L</span>
+<DD>
+<pre>
+|- combin$C (λx. f x) y = (λx. f x y)
+</pre>
+
+<DT><span class="strong">W_THM</span>
+<DD>
+<pre>
+|- ∀f x. W f x = f x x
+</pre>
+
+<DT><span class="strong">I_THM</span>
+<DD>
+<pre>
+|- ∀x. I x = x
+</pre>
+
+<DT><span class="strong">I_o_ID</span>
+<DD>
+<pre>
+|- ∀f. (I o f = f) ∧ (f o I = f)
+</pre>
+
+<DT><span class="strong">K_o_THM</span>
+<DD>
+<pre>
+|- (∀f v. K v o f = K v) ∧ ∀f v. f o K v = K (f v)
+</pre>
+
+<DT><span class="strong">UPDATE_APPLY</span>
+<DD>
+<pre>
+|- (∀a x f. (a =+ x) f a = x) ∧ ∀a b x f. a ≠ b ⇒ ((a =+ x) f b = f b)
+</pre>
+
+<DT><span class="strong">APPLY_UPDATE_THM</span>
+<DD>
+<pre>
+|- ∀f a b c. (a =+ b) f c = if a = c then b else f c
+</pre>
+
+<DT><span class="strong">UPDATE_COMMUTES</span>
+<DD>
+<pre>
+|- ∀f a b c d. a ≠ b ⇒ ((a =+ c) ((b =+ d) f) = (b =+ d) ((a =+ c) f))
+</pre>
+
+<DT><span class="strong">UPDATE_EQ</span>
+<DD>
+<pre>
+|- ∀f a b c. (a =+ c) ((a =+ b) f) = (a =+ c) f
+</pre>
+
+<DT><span class="strong">UPDATE_APPLY_ID</span>
+<DD>
+<pre>
+|- ∀f a b. (f a = b) ⇔ ((a =+ b) f = f)
+</pre>
+
+<DT><span class="strong">UPDATE_APPLY_IMP_ID</span>
+<DD>
+<pre>
+|- ∀f b a. (f a = b) ⇒ ((a =+ b) f = f)
+</pre>
+
+<DT><span class="strong">APPLY_UPDATE_ID</span>
+<DD>
+<pre>
+|- ∀f a. (a =+ f a) f = f
+</pre>
+
+<DT><span class="strong">UPD11_SAME_BASE</span>
+<DD>
+<pre>
+|- ∀f a b c d.
+     ((a =+ c) f = (b =+ d) f) ⇔
+     (a = b) ∧ (c = d) ∨ a ≠ b ∧ ((a =+ c) f = f) ∧ ((b =+ d) f = f)
+</pre>
+
+<DT><span class="strong">SAME_KEY_UPDATE_DIFFER</span>
+<DD>
+<pre>
+|- ∀f1 f2 a b c. b ≠ c ⇒ (a =+ b) f ≠ (a =+ c) f
+</pre>
+
+<DT><span class="strong">UPD11_SAME_KEY_AND_BASE</span>
+<DD>
+<pre>
+|- ∀f a b c. ((a =+ b) f = (a =+ c) f) ⇔ (b = c)
+</pre>
+
+<DT><span class="strong">UPD_SAME_KEY_UNWIND</span>
+<DD>
+<pre>
+|- ∀f1 f2 a b c.
+     ((a =+ b) f1 = (a =+ c) f2) ⇒ (b = c) ∧ ∀v. (a =+ v) f1 = (a =+ v) f2
+</pre>
+
+<DT><span class="strong">GEN_LET_RAND</span>
+<DD>
+<pre>
+|- P (LET f v) = LET (P o f) v
+</pre>
+
+<DT><span class="strong">GEN_LET_RATOR</span>
+<DD>
+<pre>
+|- LET f v x = LET (combin$C f x) v
+</pre>
+
+<DT><span class="strong">LET_FORALL_ELIM</span>
+<DD>
+<pre>
+|- LET f v ⇔ $! (S ($==> o Abbrev o combin$C $= v) f)
+</pre>
+
+<DT><span class="strong">GEN_literal_case_RAND</span>
+<DD>
+<pre>
+|- P (literal_case f v) = literal_case (P o f) v
+</pre>
+
+<DT><span class="strong">GEN_literal_case_RATOR</span>
+<DD>
+<pre>
+|- literal_case f v x = literal_case (combin$C f x) v
+</pre>
+
+<DT><span class="strong">literal_case_FORALL_ELIM</span>
+<DD>
+<pre>
+|- literal_case f v ⇔ $! (S ($==> o Abbrev o combin$C $= v) f)
+</pre>
+
+<DT><span class="strong">FAIL_THM</span>
+<DD>
+<pre>
+|- FAIL x y = x
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

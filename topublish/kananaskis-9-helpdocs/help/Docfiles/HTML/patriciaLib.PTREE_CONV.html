@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>patriciaLib.PTREE_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>PTREE_CONV : conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/patriciaLib.html">patriciaLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Conversion for evaluating Patricia tree operations.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The conversion </SPAN><SPAN class = "BRKT">PTREE_CONV</SPAN><SPAN class = "TEXT"> evaluates Patricia tree operations such as </SPAN><SPAN class = "BRKT">ADD</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">ADD_LIST</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">REMOVE</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">SIZE</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">PEEK</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">FIND</SPAN><SPAN class = "TEXT">.  These evaluations work for constants that are defined using </SPAN><SPAN class = "BRKT">Define_mk_ptree</SPAN><SPAN class = "TEXT">.  When adding to, or removing from, a Patricia tree a new contant will be defined after </SPAN><SPAN class = "BRKT">patriciaLib.ptree_new_defn_depth</SPAN><SPAN class = "TEXT"> operations.  By default </SPAN><SPAN class = "BRKT">ptree_new_defn_depth</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">~1</SPAN><SPAN class = "TEXT">, which means that new constants are never defined.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Consider the following Patricia tree:
+</SPAN><DIV class = "XMPL"><pre>
+val ptree = Define_mk_ptree "ptree" (int_ptree_of_list [(1,``1``), (2, ``2``)]);
+&lt;&lt;HOL message: Saved IS_PTREE theorem for new constant "ptree"&gt;&gt;
+val ptree = |- ptree = Branch 0 0 (Leaf 1 1) (Leaf 2 2): thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">Adding a list of updates expands into applications of </SPAN><SPAN class = "BRKT">ADD</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+&gt; real_time PTREE_CONV ``ptree |++ [(3,3); (4,4); (5,5); (6,6); (7,7)]``;
+realtime: 0.000s
+val it =
+   |- ptree |++ [(3,3); (4,4); (5,5); (6,6); (7,7)] =
+   ptree |+ (3,3) |+ (4,4) |+ (5,5) |+ (6,6) |+ (7,7):
+   thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">However, setting </SPAN><SPAN class = "BRKT">ptree_new_defn_depth</SPAN><SPAN class = "TEXT"> will cause new definitions to be made:
+</SPAN><DIV class = "XMPL"><pre>
+&gt; ptree_new_defn_depth := 2;
+val it = (): unit
+&gt; real_time PTREE_CONV ``ptree |++ [(3,3); (4,4); (5,5); (6,6); (7,7)]``;
+&lt;&lt;HOL message: Defined new ptree: ptree1&gt;&gt;
+&lt;&lt;HOL message: Defined new ptree: ptree2&gt;&gt;
+realtime: 0.006s
+val it = |- ptree |++ [(3,3); (4,4); (5,5); (6,6); (7,7)] = ptree2 |+ (7,7):
+   thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">New definitions will also be made when removing elements:
+</SPAN><DIV class = "XMPL"><pre>
+&gt; real_time PTREE_CONV ``ptree2 \\ 6 \\ 5``;
+&lt;&lt;HOL message: Defined new ptree: ptree3&gt;&gt;
+realtime: 0.001s
+val it = |- ptree2 \\ 6 \\ 5 = ptree3: thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">Here, the conversion is not smart enough to work out that </SPAN><SPAN class = "BRKT">ptree3</SPAN><SPAN class = "TEXT"> is the same as </SPAN><SPAN class = "BRKT">ptree1</SPAN><SPAN class = "TEXT">.
+</SPAN><DIV class = "XMPL"><pre>
+&gt; (DEPTH_CONV PTREE_DEFN_CONV THENC EVAL) ``ptree1 = ptree3``;
+val it = |- (ptree1 = ptree3) ⇔ T: thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">Look-up behaves as expected:
+</SPAN><DIV class = "XMPL"><pre>
+&gt; real_time PTREE_CONV ``ptree1 ' 2``;
+realtime: 0.001s
+val it = |- ptree1 ' 2 = SOME 2: thm
+&gt; real_time PTREE_CONV ``ptree1 ' 5``;
+realtime: 0.001s
+val it = |- ptree1 ' 5 = NONE: thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The conversion </SPAN><SPAN class = "BRKT">PTREE_CONV</SPAN><SPAN class = "TEXT"> is automatically added to the standard </SPAN><SPAN class = "BRKT">compset</SPAN><SPAN class = "TEXT">.  Thus, </SPAN><SPAN class = "BRKT">EVAL</SPAN><SPAN class = "TEXT"> will have the same behaviour when </SPAN><SPAN class = "BRKT">patriciaLib</SPAN><SPAN class = "TEXT"> is loaded.</SPAN>
+<P>
+<SPAN class = "TEXT">Run-times should be respectable when working with large Patricia trees.  However, this is predicated on the assumption that relatively small numbers of updates are made following an initial application of </SPAN><SPAN class = "BRKT">Define_mk_ptree</SPAN><SPAN class = "TEXT">.  In this sense, the Patricia tree development is best suited to situations where users require fast "read-only" look-up; where the work of building the look-up tree can be performed outside of the logic (i.e. in ML).</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "patriciaLib.Define_mk_ptree.html">Define_mk_ptree</A>,
+<A HREF = "patriciaLib.PTREE_DEFN_CONV.html">PTREE_DEFN_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

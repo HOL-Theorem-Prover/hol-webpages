@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Rewrite.GEN_REWRITE_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>GEN_REWRITE_CONV : ((conv -&gt; conv) -&gt; thm list -&gt; thm list -&gt; conv)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Rewrite.html">Rewrite</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Rewrites a term, selecting terms according to a user-specified strategy.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Rewriting in HOL is based on the use of equational theorems as left-to-right
+replacements on the subterms of an object theorem.  This replacement is
+mediated by the use of </SPAN><SPAN class = "BRKT">REWR_CONV</SPAN><SPAN class = "TEXT">, which finds matches between left-hand
+sides of given equations in a term and applies the substitution.</SPAN>
+<P>
+<SPAN class = "TEXT">Equations used in rewriting are obtained from the theorem lists given as
+arguments to the function. These are at first transformed into a form suitable
+for rewriting. Conjunctions are separated into individual rewrites. Theorems
+with conclusions of the form </SPAN><SPAN class = "BRKT">"~t"</SPAN><SPAN class = "TEXT"> are transformed into the corresponding
+equations </SPAN><SPAN class = "BRKT">"t&nbsp;=&nbsp;F"</SPAN><SPAN class = "TEXT">. Theorems </SPAN><SPAN class = "BRKT">"t"</SPAN><SPAN class = "TEXT"> which are not equations are cast as
+equations of form </SPAN><SPAN class = "BRKT">"t&nbsp;=&nbsp;T"</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">If a theorem is used to rewrite a term, its assumptions
+are added to the assumptions of the returned theorem.
+The matching involved uses variable instantiation.
+Thus, all free variables are generalized, and
+terms are instantiated before substitution.
+Theorems may have universally quantified variables.</SPAN>
+<P>
+<SPAN class = "TEXT">The theorems with which rewriting is done are divided
+into two groups, to facilitate implementing other rewriting tools.
+However, they are considered in an order-independent fashion. (That
+is, the ordering is an implementation detail which is not specified.)</SPAN>
+<P>
+<SPAN class = "TEXT">The search strategy for finding matching subterms is the first
+argument to the rule. Matching and substitution may occur at any
+level of the term, according to the specified search strategy: the
+whole term, or starting from any subterm. The search strategy also
+specifies the depth of the search: recursively up to an arbitrary
+depth until no matches occur, once over the selected subterm, or any
+more complex scheme.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">GEN_REWRITE_CONV</SPAN><SPAN class = "TEXT"> fails if the search strategy fails. It may also
+cause a non-terminating sequence of rewrites, depending on the search
+strategy used.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This conversion is used in the system to implement all other rewritings
+conversions, and may provide a user with a method to fine-tune rewriting of
+terms.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Suppose we have a term of the form:
+</SPAN><DIV class = "XMPL"><pre>
+   "(1 + 2) + 3 = (3 + 1) + 2"
+</pre></DIV>
+<SPAN class = "TEXT">
+and we would like to rewrite the left-hand side with the
+theorem </SPAN><SPAN class = "BRKT">ADD_SYM</SPAN><SPAN class = "TEXT"> without changing the right hand side. This can be
+done by using:
+</SPAN><DIV class = "XMPL"><pre>
+   GEN_REWRITE_CONV (RATOR_CONV o ONCE_DEPTH_CONV) []  [ADD_SYM] mythm
+</pre></DIV>
+<SPAN class = "TEXT">
+Other rules, such as </SPAN><SPAN class = "BRKT">ONCE_REWRITE_CONV</SPAN><SPAN class = "TEXT">, would match and
+substitute on both sides, which would not be the desirable result.</SPAN>
+<P>
+<SPAN class = "TEXT">As another example, </SPAN><SPAN class = "BRKT">REWRITE_CONV</SPAN><SPAN class = "TEXT"> could be implemented as
+</SPAN><DIV class = "XMPL"><pre>
+    GEN_REWRITE_CONV TOP_DEPTH_CONV basic_rewrites
+</pre></DIV>
+<SPAN class = "TEXT">
+which specifies that matches should be searched recursively
+starting from the whole term of the theorem, and </SPAN><SPAN class = "BRKT">basic_rewrites</SPAN><SPAN class = "TEXT"> must
+be added to the user defined set of theorems employed in rewriting.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Rewrite.ONCE_REWRITE_CONV.html">ONCE_REWRITE_CONV</A>,
+<A HREF = "Rewrite.PURE_REWRITE_CONV.html">PURE_REWRITE_CONV</A>,
+<A HREF = "Conv.REWR_CONV.html">REWR_CONV</A>,
+<A HREF = "Rewrite.REWRITE_CONV.html">REWRITE_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

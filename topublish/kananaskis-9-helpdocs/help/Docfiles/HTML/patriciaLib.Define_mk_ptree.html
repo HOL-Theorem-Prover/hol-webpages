@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>patriciaLib.Define_mk_ptree</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Define_mk_ptree : string -&gt; term_ptree -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/patriciaLib.html">patriciaLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Define a new Patricia tree constant.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">Define_mk_ptree&nbsp;c&nbsp;t</SPAN><SPAN class = "TEXT"> builds a HOL Patricia tree from the ML tree </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> and uses this to define a new constant </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">.  This provides and efficient mechanism to define large patricia trees in HOL: the trees can be quickly built in ML and then imported into HOL via </SPAN><SPAN class = "BRKT">patriciaLib.mk_ptree</SPAN><SPAN class = "TEXT">.  Provided the tree is not too large, a side-effect of </SPAN><SPAN class = "BRKT">Define_mk_ptree</SPAN><SPAN class = "TEXT"> is to prove the theorem </SPAN><SPAN class = "BRKT">|-&nbsp;IS_PTREE&nbsp;c</SPAN><SPAN class = "TEXT">.  This is controlled by the reference </SPAN><SPAN class = "BRKT">is_ptree_term_size_limit</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">To avoid producing large terms, a call to </SPAN><SPAN class = "BRKT">EVAL</SPAN><SPAN class = "TEXT"> will not expand out the definition of the new constant </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">.  However, it will efficiently evaluate operations performed on </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">, e.g. </SPAN><SPAN class = "BRKT">PEEK&nbsp;c&nbsp;n</SPAN><SPAN class = "TEXT"> for ground </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define_mk_ptree</SPAN><SPAN class = "TEXT"> will fail when </SPAN><SPAN class = "BRKT">patriciaLib.mk_ptree</SPAN><SPAN class = "TEXT"> fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following session shows the construction of Patricia trees in ML, which are  then imported into HOL.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+open patriciaLib;
+...
+&gt; val ptree = Define_mk_ptree "ptree" (int_ptree_of_list [(1,``1``), (2, ``2``)]);
+&lt;&lt;HOL message: Saved IS_PTREE theorem for new constant "ptree"&gt;&gt;
+val ptree = |- ptree = Branch 0 0 (Leaf 1 1) (Leaf 2 2): thm
+&gt; DB.theorem "ptree_is_ptree_thm";
+val it = |- IS_PTREE ptree: thm
+
+&gt; val _ = Globals.max_print_depth := 7;
+&gt; let
+    fun pp _ _ (_: term_ptree) = PolyML.PrettyString "&lt;ptree&gt;"
+  in
+    PolyML.addPrettyPrinter pp
+  end;
+val it = (): unit
+
+&gt; val random_ptree =
+  real_time patriciaLib.ptree_of_ints
+    (Random.rangelist (0,100000) (10000,Random.newgenseed 1.0));
+realtime: 0.091s
+val random_ptree = &lt;ptree&gt;: term_ptree
+
+&gt; val random = real_time (patriciaLib.Define_mk_ptree "random") random_ptree;
+&lt;&lt;HOL warning: patriciaLib.Define_ptree: Failed to prove IS_PTREE (is_ptree_term_size_limit might be too small).&gt;&gt;
+realtime: 0.196s
+val random =
+   |- random =
+   Branch 0 0
+     (... ... 1 (... ... (... ... ))
+        (... ... (... ... ) (... ... (... ... ))))
+     (Branch 0 1 (... ... (... ... ) (... ... (... ... )))
+        (... ... 2 (... ... (... ... ))
+           (... ... (... ... ) (... ... (... ... ))))):
+   thm
+
+&gt; patriciaLib.size random_ptree;
+val it = 9517: int
+&gt; real_time EVAL ``SIZE random``;
+realtime: 3.531s
+val it = |- SIZE random = 9517: thm
+
+&gt; int_peek random_ptree 3;
+val it = SOME ``()``: term option
+&gt; real_time EVAL ``random ' 3``;
+realtime: 0.004s
+val it = |- random ' 3 = SOME (): thm
+
+&gt; int_peek random_ptree 100;
+val it = NONE: term option
+&gt; real_time EVAL ``random ' 100``;
+realtime: 0.004s
+val it = |- random ' 100 = NONE: thm
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "patriciaLib.mk_ptree.html">mk_ptree</A>,
+<A HREF = "patriciaLib.PTREE_CONV.html">PTREE_CONV</A>,
+<A HREF = "patriciaLib.PTREE_DEFN_CONV.html">PTREE_DEFN_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

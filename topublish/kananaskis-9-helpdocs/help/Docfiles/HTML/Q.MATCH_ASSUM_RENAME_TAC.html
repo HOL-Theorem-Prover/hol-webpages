@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Q.MATCH_ASSUM_RENAME_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Q.MATCH_ASSUM_RENAME_TAC : term quotation -&gt; string list -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Q.html">Q</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Replaces selected terms with new variables by matching a pattern against an assumption.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to the goal </SPAN><SPAN class = "BRKT">(asl,&nbsp;w)</SPAN><SPAN class = "TEXT">, the tactic </SPAN><SPAN class = "BRKT">Q.MATCH_ASSUM_RENAME_TAC&nbsp;q&nbsp;ls</SPAN><SPAN class = "TEXT">
+parses the quotation </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> in the context of the goal, producing a term to use as
+a pattern. The tactic then attempts a (first order) match of the pattern
+against each term in </SPAN><SPAN class = "BRKT">asl</SPAN><SPAN class = "TEXT">, stopping on the first matching assumption </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">For each variable </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> in the pattern, there will be an instantiation term </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">,
+such that the substitution </SPAN><SPAN class = "BRKT">pattern[v1&nbsp;|-&gt;&nbsp;t1,&nbsp;v2&nbsp;|-&gt;&nbsp;t2,&nbsp;...]</SPAN><SPAN class = "TEXT"> produces </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT">.
+The effect of the tactic is to then replace each </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> with the corresponding
+</SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT">, yielding a new goal. The list </SPAN><SPAN class = "BRKT">ls</SPAN><SPAN class = "TEXT"> is of exceptions: if a variable </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT">&rsquo;s
+name appears in </SPAN><SPAN class = "BRKT">ls</SPAN><SPAN class = "TEXT">, then no replacement of </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> for </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is made.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">MATCH_ASSUM_RENAME_TAC</SPAN><SPAN class = "TEXT"> fails if the pattern provided does not match any
+assumption, or if variables from the goal are used in the pattern in ways that
+make the pattern fail to type-check.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If the current goal is
+</SPAN><DIV class = "XMPL"><pre>
+  (f x = Pair C'' C0') ?- (f C'' = f C0')
+</pre></DIV>
+<SPAN class = "TEXT">
+then applying the tactic </SPAN><SPAN class = "BRKT">Q.MATCH_ASSUM_RENAME_TAC&nbsp;`X&nbsp;=&nbsp;Pair&nbsp;c1&nbsp;c2`&nbsp;["X"]</SPAN><SPAN class = "TEXT"> results in
+the goal
+</SPAN><DIV class = "XMPL"><pre>
+  (f x = Pair c1 c2) ?- (f c1 = f c2)
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This tactic improves on the following tedious workflow: </SPAN><SPAN class = "BRKT">Q.PAT_ASSUM&nbsp;pat&nbsp;MP_TAC</SPAN><SPAN class = "TEXT">,
+</SPAN><SPAN class = "BRKT">Q.MATCH_ABBREV_TAC&nbsp;`pat&nbsp;==&gt;&nbsp;X`</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">Q.UNABBREV_TAC&nbsp;`X`</SPAN><SPAN class = "TEXT">,
+</SPAN><SPAN class = "BRKT">markerLib.RM_ALL_ABBREVS_TAC</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">STRIP_TAC</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Q.MATCH_RENAME_TAC.html">MATCH_RENAME_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure clauses</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure clauses</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/compute/src/clauses.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature clauses =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  include Abbrev
+<a name="line5"></a>  datatype pattern =
+<a name="line6"></a>           Pvar of int
+<a name="line7"></a>         | Papp of { Head : term, Args : pattern list}
+<a name="line8"></a>
+<a name="line9"></a>  datatype 'a fterm = (* order of Args: outermost ahead *)
+<a name="line10"></a>      CST of { Head : term,
+<a name="line11"></a>               Args : (term * 'a fterm) list,
+<a name="line12"></a>               Rws  : 'a,
+<a name="line13"></a>               Skip : int option }
+<a name="line14"></a>    | NEUTR
+<a name="line15"></a>    | CLOS of { Env : 'a fterm list, Term : 'a dterm }
+<a name="line16"></a>  and 'a dterm =
+<a name="line17"></a>      Bv of int
+<a name="line18"></a>    | Fv
+<a name="line19"></a>    | Cst of term * ('a * int option) ref
+<a name="line20"></a>    | App of 'a dterm * 'a dterm list  (* order: outermost ahead *)
+<a name="line21"></a>    | Abs of 'a dterm
+<a name="line22"></a>
+<a name="line23"></a>  val is_skip : 'a * 'b fterm -&gt; bool
+<a name="line24"></a>  val inst_type_dterm : (hol_type,hol_type) subst * 'a dterm -&gt; 'a dterm
+<a name="line25"></a>
+<a name="line26"></a>
+<a name="line27"></a>  datatype action =
+<a name="line28"></a>           Rewrite of rewrite list
+<a name="line29"></a>         | Conv of (term -&gt; Thm.thm * db fterm)
+<a name="line30"></a>
+<a name="line31"></a>  and db =
+<a name="line32"></a>      EndDb
+<a name="line33"></a>    | Try of { Hcst : term, Rws : action, Tail : db }
+<a name="line34"></a>    | NeedArg of db
+<a name="line35"></a>
+<a name="line36"></a>  and rewrite =
+<a name="line37"></a>      RW of { cst: term,          (* constant which the rule applies to *)
+<a name="line38"></a>              lhs: pattern list,  (* patterns = constant args in lhs of thm *)
+<a name="line39"></a>	      npv: int,           (* number of distinct pat vars in lhs *)
+<a name="line40"></a>	      rhs: db dterm,
+<a name="line41"></a>              thm: Thm.thm }      (* thm we use for rewriting *)
+<a name="line42"></a>
+<a name="line43"></a>  type comp_rws
+<a name="line44"></a>  val empty_rws : unit -&gt; comp_rws
+<a name="line45"></a>  val from_list : thm list -&gt; comp_rws
+<a name="line46"></a>  val add_extern : term * int * (term -&gt; thm * db fterm) -&gt; comp_rws -&gt; unit
+<a name="line47"></a>  val add_thms : thm list -&gt; comp_rws -&gt; unit
+<a name="line48"></a>
+<a name="line49"></a>  val scrub_const : comp_rws -&gt; term -&gt; unit
+<a name="line50"></a>  val scrub_thms : thm list -&gt; comp_rws -&gt; unit
+<a name="line51"></a>  val from_term : comp_rws * term list * term -&gt; db dterm
+<a name="line52"></a>  val set_skip : comp_rws -&gt; string * string -&gt; int option -&gt; unit
+<a name="line53"></a>
+<a name="line54"></a>end
+<a name="line55"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/compute/src/clauses.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-9</a></em></p></body></html>

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>boolSyntax.new_infixl_definition</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>new_infixl_definition : string * term * int -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/boolSyntax.html">boolSyntax</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Declares a new left associative infix constant and installs a
+definition in the current theory.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">new_infix_definition</SPAN><SPAN class = "TEXT"> provides a facility for
+definitional extensions to the current theory.  It takes a triple
+consisting of the name under which the resulting definition will be
+saved in the current theory segment, a term giving the desired
+definition and an integer giving the precedence of the infix.  The
+value returned by </SPAN><SPAN class = "BRKT">new_infix_definition</SPAN><SPAN class = "TEXT"> is a theorem which states the
+definition requested by the user.</SPAN>
+<P>
+<SPAN class = "TEXT">Let </SPAN><SPAN class = "BRKT">v_1</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">v_2</SPAN><SPAN class = "TEXT"> be tuples of distinct variables, containing the variables
+</SPAN><SPAN class = "BRKT">x_1,...,x_m</SPAN><SPAN class = "TEXT">.  Evaluating </SPAN><SPAN class = "BRKT">new_infix_definition&nbsp;(name,&nbsp;ix&nbsp;v_1&nbsp;v_2&nbsp;=&nbsp;t)</SPAN><SPAN class = "TEXT">
+declares the sequent </SPAN><SPAN class = "BRKT">({},\v_1&nbsp;v_2.&nbsp;t)</SPAN><SPAN class = "TEXT"> to be a definition in the 
+current theory, and declares </SPAN><SPAN class = "BRKT">ix</SPAN><SPAN class = "TEXT"> to be a new constant in the
+current theory with this definition as its specification.
+This constant specification is returned as a theorem with the form
+</SPAN><DIV class = "XMPL"><pre>
+   |- !x_1 ... x_m. v_1 ix v_2 = t
+</pre></DIV>
+<SPAN class = "TEXT">
+and is saved in the current theory under
+(the name) </SPAN><SPAN class = "BRKT">name</SPAN><SPAN class = "TEXT">.  Optionally, the definitional term argument
+may have any of its variables universally quantified.
+The constant </SPAN><SPAN class = "BRKT">ix</SPAN><SPAN class = "TEXT"> has infix status only after the infix
+declaration has been processed.  It is therefore necessary to use
+the constant in normal prefix position when making the definition.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">new_infixl_definition</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> contains free
+variables that are not in either of the variable structures </SPAN><SPAN class = "BRKT">v_1</SPAN><SPAN class = "TEXT"> and
+</SPAN><SPAN class = "BRKT">v_2</SPAN><SPAN class = "TEXT"> (this is equivalent to requiring </SPAN><SPAN class = "BRKT">\v_1&nbsp;v_2.&nbsp;t</SPAN><SPAN class = "TEXT"> to be a closed
+term); or if any variable occurs more than once in </SPAN><SPAN class = "BRKT">v_1,&nbsp;v_2</SPAN><SPAN class = "TEXT">.  It
+also fails if the precedence level chosen for the infix is already
+home to parsing rules of a different form of fixity (infixes
+associating in a different way, or suffixes, prefixes etc).  Finally,
+failure occurs if there is a type variable in </SPAN><SPAN class = "BRKT">v_1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">v_n</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">
+that does not occur in the type of </SPAN><SPAN class = "BRKT">ix</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The nand function can be defined as follows.
+</SPAN><DIV class = "XMPL"><pre>
+   - new_infix_definition
+    ("nand", --`$nand in_1 in_2 = ~(in_1 /\ in_2)`--, 500);;
+   &gt; val it = |- !in_1 in_2. in_1 nand in_2 = ~(in_1 /\ in_2) : thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">It is a common practice among HOL users to write a </SPAN><SPAN class = "BRKT">$</SPAN><SPAN class = "TEXT"> before
+the constant being defined as an infix to indicate that after the
+definition is made, it will have a special syntactic status; ie. to
+write:
+</SPAN><DIV class = "XMPL"><pre>
+   new_infixl_definition("ix_DEF", Term `$ix m n = ... `)
+</pre></DIV>
+<SPAN class = "TEXT">
+This use of </SPAN><SPAN class = "BRKT">$</SPAN><SPAN class = "TEXT"> is not necessary; but after the definition
+has been made </SPAN><SPAN class = "BRKT">$</SPAN><SPAN class = "TEXT"> must, of course, be used if the syntactic status
+needs to be suppressed.</SPAN>
+<P>
+<SPAN class = "TEXT">In releases of hol98 past Taupo 1, </SPAN><SPAN class = "BRKT">new_infixl_definition</SPAN><SPAN class = "TEXT"> and its
+sister </SPAN><SPAN class = "BRKT">new_infixr_definition</SPAN><SPAN class = "TEXT"> replace the old </SPAN><SPAN class = "BRKT">new_infix_definition</SPAN><SPAN class = "TEXT">,
+which has been superseded.  Its behaviour was to define a right
+associative infix, so can be freely replaced by
+</SPAN><SPAN class = "BRKT">new_infixr_definition</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "boolSyntax.new_binder_definition.html">new_binder_definition</A>,
+<A HREF = "Definition.new_definition.html">new_definition</A>,
+<A HREF = "Definition.new_specification.html">new_specification</A>,
+<A HREF = "boolSyntax.new_infixr_definition.html">new_infixr_definition</A>,
+<A HREF = "Prim_rec.new_recursive_definition.html">new_recursive_definition</A>,
+<A HREF = "TotalDefn.Define.html">Define</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

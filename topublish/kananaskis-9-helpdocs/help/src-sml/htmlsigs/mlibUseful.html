@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure mlibUseful</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure mlibUseful</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibUseful.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ========================================================================= *)
+<a name="line2"></a>(* ML UTILITY FUNCTIONS                                                      *)
+<a name="line3"></a>(* Copyright (c) 2001-2004 Joe Hurd.                                         *)
+<a name="line4"></a>(* ========================================================================= *)
+<a name="line5"></a>
+<a name="line6"></a>signature mlibUseful =
+<a name="line7"></a>sig
+<a name="line8"></a>
+<a name="line9"></a>(* Exceptions, profiling and tracing *)
+<a name="line10"></a>exception Error of string
+<a name="line11"></a>exception Bug of string
+<a name="line12"></a>val report      : exn -&gt; string
+<a name="line13"></a>val assert      : bool -&gt; exn -&gt; unit
+<a name="line14"></a>val try         : ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line15"></a>val total       : ('a -&gt; 'b) -&gt; 'a -&gt; 'b option
+<a name="line16"></a>val can         : ('a -&gt; 'b) -&gt; 'a -&gt; bool
+<a name="line17"></a>val partial     : exn -&gt; ('a -&gt; 'b option) -&gt; 'a -&gt; 'b
+<a name="line18"></a>val timed       : ('a -&gt; 'b) -&gt; 'a -&gt; real * 'b
+<a name="line19"></a>val timed_many  : ('a -&gt; 'b) -&gt; 'a -&gt; real * 'b
+<a name="line20"></a>val trace_level : int ref
+<a name="line21"></a>val traces      : {module : string, alignment : int -&gt; int} list ref
+<a name="line22"></a>val tracing     : {module : string, level : int} -&gt; bool
+<a name="line23"></a>val trace       : string -&gt; unit
+<a name="line24"></a>
+<a name="line25"></a>(* Combinators *)
+<a name="line26"></a>val C      : ('a -&gt; 'b -&gt; 'c) -&gt; 'b -&gt; 'a -&gt; 'c
+<a name="line27"></a>val I      : 'a -&gt; 'a
+<a name="line28"></a>val K      : 'a -&gt; 'b -&gt; 'a
+<a name="line29"></a>val S      : ('a -&gt; 'b -&gt; 'c) -&gt; ('a -&gt; 'b) -&gt; 'a -&gt; 'c
+<a name="line30"></a>val W      : ('a -&gt; 'a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line31"></a>val oo     : ('a -&gt; 'b) * ('c -&gt; 'd -&gt; 'a) -&gt; 'c -&gt; 'd -&gt; 'b
+<a name="line32"></a>val ##     : ('a -&gt; 'c) * ('b -&gt; 'd) -&gt; 'a * 'b -&gt; 'c * 'd
+<a name="line33"></a>val funpow : int -&gt; ('a -&gt; 'a) -&gt; 'a -&gt; 'a
+<a name="line34"></a>
+<a name="line35"></a>(* Booleans *)
+<a name="line36"></a>val bool_to_string : bool -&gt; string
+<a name="line37"></a>val non            : ('a -&gt; bool) -&gt; 'a -&gt; bool
+<a name="line38"></a>val bool_compare   : bool * bool -&gt; order
+<a name="line39"></a>
+<a name="line40"></a>(* Pairs *)
+<a name="line41"></a>val D       : 'a -&gt; 'a * 'a
+<a name="line42"></a>val Df      : ('a -&gt; 'b) -&gt; 'a * 'a -&gt; 'b * 'b
+<a name="line43"></a>val fst     : 'a * 'b -&gt; 'a
+<a name="line44"></a>val snd     : 'a * 'b -&gt; 'b
+<a name="line45"></a>val pair    : 'a -&gt; 'b -&gt; 'a * 'b
+<a name="line46"></a>val swap    : 'a * 'b -&gt; 'b * 'a
+<a name="line47"></a>val curry   : ('a * 'b -&gt; 'c) -&gt; 'a -&gt; 'b -&gt; 'c
+<a name="line48"></a>val uncurry : ('a -&gt; 'b -&gt; 'c) -&gt; 'a * 'b -&gt; 'c
+<a name="line49"></a>val equal   : ''a -&gt; ''a -&gt; bool
+<a name="line50"></a>
+<a name="line51"></a>(* State transformers *)
+<a name="line52"></a>val unit   : 'a -&gt; 's -&gt; 'a * 's
+<a name="line53"></a>val bind   : ('s -&gt; 'a * 's) -&gt; ('a -&gt; 's -&gt; 'b * 's) -&gt; 's -&gt; 'b * 's
+<a name="line54"></a>val mmap   : ('a -&gt; 'b) -&gt; ('s -&gt; 'a * 's) -&gt; 's -&gt; 'b * 's
+<a name="line55"></a>val mjoin  : ('s -&gt; ('s -&gt; 'a * 's) * 's) -&gt; 's -&gt; 'a * 's
+<a name="line56"></a>val mwhile : ('a -&gt; bool) -&gt; ('a -&gt; 's -&gt; 'a * 's) -&gt; 'a -&gt; 's -&gt; 'a * 's
+<a name="line57"></a>
+<a name="line58"></a>(* Lists: note we count elements from 0 *)
+<a name="line59"></a>val cons         : 'a -&gt; 'a list -&gt; 'a list
+<a name="line60"></a>val hd_tl        : 'a list -&gt; 'a * 'a list
+<a name="line61"></a>val append       : 'a list -&gt; 'a list -&gt; 'a list
+<a name="line62"></a>val sing         : 'a -&gt; 'a list
+<a name="line63"></a>val first        : ('a -&gt; 'b option) -&gt; 'a list -&gt; 'b option
+<a name="line64"></a>val index        : ('a -&gt; bool) -&gt; 'a list -&gt; int option
+<a name="line65"></a>val maps         : ('a -&gt; 's -&gt; 'b * 's) -&gt; 'a list -&gt; 's -&gt; 'b list * 's
+<a name="line66"></a>val partial_maps : ('a -&gt; 's -&gt; 'b option * 's) -&gt; 'a list -&gt; 's -&gt; 'b list * 's
+<a name="line67"></a>val enumerate    : int -&gt; 'a list -&gt; (int * 'a) list
+<a name="line68"></a>val zipwith      : ('a -&gt; 'b -&gt; 'c) -&gt; 'a list -&gt; 'b list -&gt; 'c list
+<a name="line69"></a>val zip          : 'a list -&gt; 'b list -&gt; ('a * 'b) list
+<a name="line70"></a>val unzip        : ('a * 'b) list -&gt; 'a list * 'b list
+<a name="line71"></a>val cartwith     : ('a -&gt; 'b -&gt; 'c) -&gt; 'a list -&gt; 'b list -&gt; 'c list
+<a name="line72"></a>val cart         : 'a list -&gt; 'b list -&gt; ('a * 'b) list
+<a name="line73"></a>val divide       : 'a list -&gt; int -&gt; 'a list * 'a list      (* Subscript *)
+<a name="line74"></a>val update_nth   : ('a -&gt; 'a) -&gt; int -&gt; 'a list -&gt; 'a list  (* Subscript *)
+<a name="line75"></a>val shared_map   : ('a -&gt; 'a) -&gt; 'a list -&gt; 'a list  (* preserves sharing *)
+<a name="line76"></a>
+<a name="line77"></a>(* Lists-as-sets *)
+<a name="line78"></a>val mem       : ''a -&gt; ''a list -&gt; bool
+<a name="line79"></a>val insert    : ''a -&gt; ''a list -&gt; ''a list
+<a name="line80"></a>val delete    : ''a -&gt; ''a list -&gt; ''a list
+<a name="line81"></a>val union     : ''a list -&gt; ''a list -&gt; ''a list
+<a name="line82"></a>val intersect : ''a list -&gt; ''a list -&gt; ''a list
+<a name="line83"></a>val subtract  : ''a list -&gt; ''a list -&gt; ''a list
+<a name="line84"></a>val setify    : ''a list -&gt; ''a list
+<a name="line85"></a>val subset    : ''a list -&gt; ''a list -&gt; bool
+<a name="line86"></a>val distinct  : ''a list -&gt; bool
+<a name="line87"></a>
+<a name="line88"></a>(* Comparisons *)
+<a name="line89"></a>type 'a ordering = 'a * 'a -&gt; order
+<a name="line90"></a>val order_to_string : order -&gt; string
+<a name="line91"></a>val map_order       : ('a -&gt; 'b) -&gt; 'b ordering -&gt; 'a ordering
+<a name="line92"></a>val rev_order       : 'a ordering -&gt; 'a ordering
+<a name="line93"></a>val lex_order       : 'a ordering -&gt; 'b ordering -&gt; ('a * 'b) ordering
+<a name="line94"></a>val lex_order2      : 'a ordering -&gt; ('a * 'a) ordering
+<a name="line95"></a>val lex_order3      : 'a ordering -&gt; ('a * 'a * 'a) ordering
+<a name="line96"></a>val lex_seq_order   : 'a ordering -&gt; 'a ordering -&gt; 'a ordering
+<a name="line97"></a>val lex_list_order  : 'a ordering -&gt; 'a list ordering
+<a name="line98"></a>
+<a name="line99"></a>(* Sorting and searching *)
+<a name="line100"></a>val min      : 'a ordering -&gt; 'a list -&gt; 'a * 'a list
+<a name="line101"></a>val max      : 'a ordering -&gt; 'a list -&gt; 'a * 'a list
+<a name="line102"></a>val merge    : 'a ordering -&gt; 'a list -&gt; 'a list -&gt; 'a list
+<a name="line103"></a>val sort     : 'a ordering -&gt; 'a list -&gt; 'a list
+<a name="line104"></a>val sort_map : ('a -&gt; 'b) -&gt; 'b ordering -&gt; 'a list -&gt; 'a list
+<a name="line105"></a>val top_sort : 'a ordering -&gt; ('a -&gt; 'a list) -&gt; 'a list -&gt; 'a list
+<a name="line106"></a>
+<a name="line107"></a>(* Integers *)
+<a name="line108"></a>val int_to_string : int -&gt; string
+<a name="line109"></a>val string_to_int : string -&gt; int                 (* Overflow, Option *)
+<a name="line110"></a>val int_to_bits   : int -&gt; bool list
+<a name="line111"></a>val bits_to_int   : bool list -&gt; int              (* Overflow *)
+<a name="line112"></a>val int_to_base64 : int -&gt; char
+<a name="line113"></a>val base64_to_int : char -&gt; int
+<a name="line114"></a>val interval      : int -&gt; int -&gt; int list
+<a name="line115"></a>val even          : int -&gt; bool
+<a name="line116"></a>val odd           : int -&gt; bool
+<a name="line117"></a>val divides       : int -&gt; int -&gt; bool
+<a name="line118"></a>val primes        : int -&gt; int list
+<a name="line119"></a>val gcd           : int -&gt; int -&gt; int
+<a name="line120"></a>
+<a name="line121"></a>(* Strings *)
+<a name="line122"></a>val rot         : int -&gt; char -&gt; char
+<a name="line123"></a>val nchars      : char -&gt; int -&gt; string
+<a name="line124"></a>val chomp       : string -&gt; string
+<a name="line125"></a>val unpad       : string -&gt; string
+<a name="line126"></a>val join        : string -&gt; string list -&gt; string
+<a name="line127"></a>val split       : string -&gt; string -&gt; string list
+<a name="line128"></a>val variant     : string -&gt; string list -&gt; string
+<a name="line129"></a>val variant_num : string -&gt; string list -&gt; string
+<a name="line130"></a>val dest_prefix : string -&gt; string -&gt; string
+<a name="line131"></a>val is_prefix   : string -&gt; string -&gt; bool
+<a name="line132"></a>val mk_prefix   : string -&gt; string -&gt; string
+<a name="line133"></a>val align_table : {left : bool, pad : char} -&gt; string list list -&gt; string list
+<a name="line134"></a>
+<a name="line135"></a>(* Reals *)
+<a name="line136"></a>val real_to_string    : real -&gt; string
+<a name="line137"></a>val percent_to_string : real -&gt; string
+<a name="line138"></a>val pos               : real -&gt; real
+<a name="line139"></a>val log2              : real -&gt; real              (* Domain *)
+<a name="line140"></a>
+<a name="line141"></a>(* Pretty-printing *)
+<a name="line142"></a>type 'a pp = PP.ppstream -&gt; 'a -&gt; unit
+<a name="line143"></a>val LINE_LENGTH : int ref
+<a name="line144"></a>val pp_map      : ('a -&gt; 'b) -&gt; 'b pp -&gt; 'a pp
+<a name="line145"></a>val pp_bracket  : string -&gt; string -&gt; 'a pp -&gt; 'a pp
+<a name="line146"></a>val pp_sequence : string -&gt; 'a pp -&gt; 'a list pp
+<a name="line147"></a>val pp_binop    : string -&gt; 'a pp -&gt; 'b pp -&gt; ('a * 'b) pp
+<a name="line148"></a>val pp_char     : char pp
+<a name="line149"></a>val pp_string   : string pp
+<a name="line150"></a>val pp_unit     : unit pp
+<a name="line151"></a>val pp_bool     : bool pp
+<a name="line152"></a>val pp_int      : int pp
+<a name="line153"></a>val pp_real     : real pp
+<a name="line154"></a>val pp_order    : order pp
+<a name="line155"></a>val pp_porder   : order option pp
+<a name="line156"></a>val pp_list     : 'a pp -&gt; 'a list pp
+<a name="line157"></a>val pp_pair     : 'a pp -&gt; 'b pp -&gt; ('a * 'b) pp
+<a name="line158"></a>val pp_triple   : 'a pp -&gt; 'b pp -&gt; 'c pp -&gt; ('a * 'b * 'c) pp
+<a name="line159"></a>val to_string   : 'a pp -&gt; 'a -&gt; string           (* Uses LINE_LENGTH *)
+<a name="line160"></a>
+<a name="line161"></a>(* Sum datatype *)
+<a name="line162"></a>datatype ('a,'b) sum = INL of 'a | INR of 'b
+<a name="line163"></a>val is_inl : ('a,'b) sum -&gt; bool
+<a name="line164"></a>val is_inr : ('a,'b) sum -&gt; bool
+<a name="line165"></a>val pp_sum : 'a pp -&gt; 'b pp -&gt; ('a,'b) sum pp
+<a name="line166"></a>
+<a name="line167"></a>(* Maplets *)
+<a name="line168"></a>datatype ('a,'b) maplet = |-&gt; of 'a * 'b
+<a name="line169"></a>val pp_maplet : 'a pp -&gt; 'b pp -&gt; ('a,'b) maplet pp
+<a name="line170"></a>
+<a name="line171"></a>(* Trees *)
+<a name="line172"></a>datatype ('a,'b) tree = BRANCH of 'a * ('a,'b) tree list | LEAF of 'b
+<a name="line173"></a>val tree_size  : ('a,'b) tree -&gt; {branches : int, leaves : int}
+<a name="line174"></a>val tree_foldr : ('a -&gt; 'c list -&gt; 'c) -&gt; ('b -&gt; 'c) -&gt; ('a, 'b) tree -&gt; 'c
+<a name="line175"></a>val tree_foldl : ('a-&gt;'c-&gt;'c) -&gt; ('b-&gt;'c-&gt;'d) -&gt; 'c -&gt; ('a,'b) tree -&gt; 'd list
+<a name="line176"></a>val tree_partial_foldl :
+<a name="line177"></a>  ('a-&gt;'c-&gt;'c option) -&gt; ('b-&gt;'c-&gt;'d option) -&gt; 'c -&gt; ('a,'b) tree -&gt; 'd list
+<a name="line178"></a>
+<a name="line179"></a>(* mlibUseful impure features *)
+<a name="line180"></a>val ==        : 'a * 'a -&gt; bool  (* pointer equality *)
+<a name="line181"></a>val memoize   : (unit -&gt; 'a) -&gt; unit -&gt; 'a
+<a name="line182"></a>val new_int   : unit -&gt; int
+<a name="line183"></a>val new_ints  : int -&gt; int list
+<a name="line184"></a>val uniform   : unit -&gt; real
+<a name="line185"></a>val coin_flip : unit -&gt; bool
+<a name="line186"></a>val with_flag : 'r ref * ('r -&gt; 'r) -&gt; ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line187"></a>val cached    : 'a ordering -&gt; ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line188"></a>
+<a name="line189"></a>(* The environment *)
+<a name="line190"></a>val host           : string
+<a name="line191"></a>val date           : unit -&gt; string
+<a name="line192"></a>val today          : unit -&gt; string
+<a name="line193"></a>val warn           : string -&gt; unit
+<a name="line194"></a>val die            : string -&gt; unit
+<a name="line195"></a>val read_textfile  : {filename : string} -&gt; string
+<a name="line196"></a>val write_textfile : {filename : string, contents : string} -&gt; unit
+<a name="line197"></a>
+<a name="line198"></a>end
+<a name="line199"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibUseful.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-9</a></em></p></body></html>

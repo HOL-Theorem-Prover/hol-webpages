@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Opentheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Opentheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/opentheory/Opentheory.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Opentheory = sig
+<a name="line2"></a>type term = Term.term type hol_type = Type.hol_type type thm = Thm.thm
+<a name="line3"></a>type thy_tyop  = OpenTheoryMap.thy_tyop
+<a name="line4"></a>type thy_const = OpenTheoryMap.thy_const
+<a name="line5"></a>type otname    = OpenTheoryMap.otname
+<a name="line6"></a>
+<a name="line7"></a>(* record of data an article reader must provide: *)
+<a name="line8"></a>type reader = {
+<a name="line9"></a>  define_tyop  : {name:thy_tyop, ax:thm, args:hol_type list, rep:thy_const, abs:thy_const} -&gt;
+<a name="line10"></a>                 {rep_abs:thm, abs_rep:thm},
+<a name="line11"></a>  define_const : thy_const -&gt; term -&gt; thm,
+<a name="line12"></a>  axiom        : thm Net.net -&gt; (term list * term) -&gt; thm,
+<a name="line13"></a>  const_name   : otname -&gt; thy_const,
+<a name="line14"></a>  tyop_name    : otname -&gt; thy_tyop}
+<a name="line15"></a>
+<a name="line16"></a>(*
+<a name="line17"></a>[define_tyop r] will be called when the article wants to define a type. [r]
+<a name="line18"></a>consists of the name of the type operator to be defined, the type axiom, a list
+<a name="line19"></a>of arguments (type variables) for the type operator in the desired order, and
+<a name="line20"></a>the names of the rep and abs constants. The call must return the type bijection
+<a name="line21"></a>theorems. The type axiom will be of the form |- P t. The bijection theorems
+<a name="line22"></a>should be:
+<a name="line23"></a>  abs_rep = |- abs (rep a) = a
+<a name="line24"></a>  rep_abs = |- P r = (rep(abs r) = r)
+<a name="line25"></a>
+<a name="line26"></a>[define_const name rhs] will be called when the article wants to define a new
+<a name="line27"></a>constant. The call must return a theorem |- const = rhs, where [const] is the
+<a name="line28"></a>constant with name [name].
+<a name="line29"></a>
+<a name="line30"></a>[axiom thms (h,c)] will be called when the article wants to retrieve an
+<a name="line31"></a>assumption or an axiom. [thms] is the collection of theorems the article has
+<a name="line32"></a>already proved, represented by a conclusion-indexed net. The call must return a
+<a name="line33"></a>theorem h |- c.
+<a name="line34"></a>
+<a name="line35"></a>[const_name n] and [tyop_name n] will be called to translate OpenTheory names
+<a name="line36"></a>to HOL4 names. The following functions can be used to simply look the names up in the global OpenTheory map.
+<a name="line37"></a>*)
+<a name="line38"></a>val const_name_in_map : otname -&gt; thy_const
+<a name="line39"></a>val tyop_name_in_map  : otname -&gt; thy_tyop
+<a name="line40"></a>
+<a name="line41"></a>val axiom_in_db : thm Net.net -&gt; (term list * term) -&gt; thm
+<a name="line42"></a>(*
+<a name="line43"></a>An axiom function for readers that tries to find the desired theorem in the
+<a name="line44"></a>following places (in order): an internal list of theorems that should be in
+<a name="line45"></a>the OpenTheory base package, the HOL4 database (via DB.match []), and the
+<a name="line46"></a>theorems already proved by the article.
+<a name="line47"></a>*)
+<a name="line48"></a>
+<a name="line49"></a>val define_tyop_in_thy :
+<a name="line50"></a>  {name:thy_tyop, ax:thm, args:hol_type list, rep:thy_const, abs:thy_const}
+<a name="line51"></a>    -&gt; {rep_abs:thm, abs_rep:thm}
+<a name="line52"></a>val define_const_in_thy : (string -&gt; string) -&gt; thy_const -&gt; term -&gt; thm
+<a name="line53"></a>(*
+<a name="line54"></a>define_tyop and define_const functions for readers that try to produce the
+<a name="line55"></a>desired theorems by actually defining a new type or constant in the current
+<a name="line56"></a>theory. They fail if the theory of the type or constant desired is not the
+<a name="line57"></a>current theory. The first argument to [define_const_in_thy] is a function to
+<a name="line58"></a>produce the prefix of the ML name of the constant's definition from the
+<a name="line59"></a>constant's name (useful when a constant's name is not a valid ML identifier).
+<a name="line60"></a>*)
+<a name="line61"></a>
+<a name="line62"></a>val raw_read_article : TextIO.instream -&gt; reader -&gt; thm Net.net
+<a name="line63"></a>val read_article     : string -&gt; reader -&gt; thm Net.net
+<a name="line64"></a>
+<a name="line65"></a>val delete_unused_consts : thm list -&gt; unit
+<a name="line66"></a>(*
+<a name="line67"></a>Given a list (usually by calling [Net.listItems] on the result of
+<a name="line68"></a>[read_article]), calls [Theory.delete_const] on any constants in the current
+<a name="line69"></a>theory that do not appear in some theorem in the list.
+<a name="line70"></a>*)
+<a name="line71"></a>
+<a name="line72"></a>val NUMERAL_conv : Conv.conv
+<a name="line73"></a>
+<a name="line74"></a>end
+<a name="line75"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/opentheory/Opentheory.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-9</a></em></p></body></html>

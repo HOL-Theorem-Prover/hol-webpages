@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>unwindLib.UNWIND_AUTO_RIGHT_RULE</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>UNWIND_AUTO_RIGHT_RULE : (thm -&gt; thm)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/unwindLib.html">unwindLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Automatic unwinding of equations defining wire values in a standard device
+specification.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">unwind</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">UNWIND_AUTO_RIGHT_RULE</SPAN><SPAN class = "TEXT"> behaves as follows:
+</SPAN><DIV class = "XMPL"><pre>
+    A |- !z1 ... zr. t = ?l1 ... lm. t1  /\ ... /\ tn
+   ----------------------------------------------------
+    A |- !z1 ... zr. t = ?l1 ... lm. t1' /\ ... /\ tn'
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">tj'</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">tj</SPAN><SPAN class = "TEXT"> rewritten with equations selected from the
+</SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT">&rsquo;s.</SPAN>
+<P>
+<SPAN class = "TEXT">The function decides which equations to use for rewriting by performing a loop
+analysis on the graph representing the dependencies of the lines. By this means
+the term can be unwound as much as possible without the risk of looping. The
+user is left to deal with the recursive equations.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if there is more than one equation for any line variable, or if the
+argument theorem is not of the required form, though either or both of </SPAN><SPAN class = "BRKT">m</SPAN><SPAN class = "TEXT"> and
+</SPAN><SPAN class = "BRKT">r</SPAN><SPAN class = "TEXT"> may be zero.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+#UNWIND_AUTO_RIGHT_RULE
+# (ASSUME
+#   "!f. IMP(f) =
+#     ?l2 l1.
+#      (!(x:num). l1 x = (l2 x) - 1) /\
+#      (!x. f x = (l2 (x+1)) + (l1 (x+2))) /\
+#      (!x. l2 x = 7)");;
+. |- !f.
+      IMP f =
+      (?l2 l1.
+        (!x. l1 x = 7 - 1) /\ (!x. f x = 7 + (7 - 1)) /\ (!x. l2 x = 7))
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "unwindLib.UNWIND_ALL_BUT_RIGHT_RULE.html">UNWIND_ALL_BUT_RIGHT_RULE</A>,
+<A HREF = "unwindLib.UNWIND_AUTO_CONV.html">UNWIND_AUTO_CONV</A>,
+<A HREF = "unwindLib.UNWIND_ALL_BUT_CONV.html">UNWIND_ALL_BUT_CONV</A>,
+<A HREF = "unwindLib.UNWIND_ONCE_CONV.html">UNWIND_ONCE_CONV</A>,
+<A HREF = "unwindLib.UNWIND_CONV.html">UNWIND_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

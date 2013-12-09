@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: alist</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "alist"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "sortingTheory.html"><span class="strong">sorting</span></a>&nbsp;&nbsp;
+    <a href = "finite_mapTheory.html"><span class="strong">finite_map</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">ALOOKUP</span>
+            <td>
+            :(β, α) alist -> β -> α option
+    <tr><td>
+        <span class="strong">ALOOKUP_tupled</span>
+        <td>
+        :(β, α) alist # β -> α option
+    <tr><td>
+        <span class="strong">alist_to_fmap</span>
+        <td>
+        :(α, β) alist -> (α |-> β)
+    <tr><td>
+        <span class="strong">fmap_to_alist</span>
+        <td>
+        :(α |-> β) -> (α, β) alist
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">fmap_to_alist_def</span>
+<DD>
+<pre>
+|- ∀s. fmap_to_alist s = MAP (λk. (k,s ' k)) (SET_TO_LIST (FDOM s))
+</pre>
+
+<DT><span class="strong">alist_to_fmap_def</span>
+<DD>
+<pre>
+|- ∀s. alist_to_fmap s = FOLDR (λ(k,v) f. f |+ (k,v)) FEMPTY s
+</pre>
+
+<DT><span class="strong">ALOOKUP_tupled_primitive_def</span>
+<DD>
+<pre>
+|- ALOOKUP_tupled =
+   WFREC (@R. WF R ∧ ∀y t q x. x ≠ q ⇒ R (t,q) ((x,y)::t,q))
+     (λALOOKUP_tupled a.
+        case a of
+          ([],q) => I NONE
+        | ((x,y)::t,q) => I (if x = q then SOME y else ALOOKUP_tupled (t,q)))
+</pre>
+
+<DT><span class="strong">ALOOKUP_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1. ALOOKUP x x1 = ALOOKUP_tupled (x,x1)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">fmap_to_alist_FEMPTY</span>
+<DD>
+<pre>
+|- fmap_to_alist FEMPTY = []
+</pre>
+
+<DT><span class="strong">alist_to_fmap_thm</span>
+<DD>
+<pre>
+|- (alist_to_fmap [] = FEMPTY) ∧
+   (alist_to_fmap ((k,v)::t) = alist_to_fmap t |+ (k,v))
+</pre>
+
+<DT><span class="strong">ALOOKUP_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀q. P [] q) ∧ (∀x y t q. (x ≠ q ⇒ P t q) ⇒ P ((x,y)::t) q) ⇒
+     ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">ALOOKUP_def</span>
+<DD>
+<pre>
+|- (∀q. ALOOKUP [] q = NONE) ∧
+   ∀y x t q. ALOOKUP ((x,y)::t) q = if x = q then SOME y else ALOOKUP t q
+</pre>
+
+<DT><span class="strong">ALOOKUP_FAILS</span>
+<DD>
+<pre>
+|- (ALOOKUP l x = NONE) ⇔ ∀k v. MEM (k,v) l ⇒ k ≠ x
+</pre>
+
+<DT><span class="strong">ALOOKUP_NONE</span>
+<DD>
+<pre>
+|- ∀l x. (ALOOKUP l x = NONE) ⇔ x ∉ LIST_TO_SET (MAP FST l)
+</pre>
+
+<DT><span class="strong">ALOOKUP_TABULATE</span>
+<DD>
+<pre>
+|- ALL_DISTINCT l ∧ MEM x l ⇒ (ALOOKUP (MAP (λk. (k,f k)) l) x = SOME (f x))
+</pre>
+
+<DT><span class="strong">ALOOKUP_EQ_FLOOKUP</span>
+<DD>
+<pre>
+|- (FLOOKUP (alist_to_fmap al) = ALOOKUP al) ∧
+   (ALOOKUP (fmap_to_alist fm) = FLOOKUP fm)
+</pre>
+
+<DT><span class="strong">MEM_fmap_to_alist</span>
+<DD>
+<pre>
+|- MEM (x,y) (fmap_to_alist fm) ⇔ x ∈ FDOM fm ∧ (fm ' x = y)
+</pre>
+
+<DT><span class="strong">MEM_fmap_to_alist_FLOOKUP</span>
+<DD>
+<pre>
+|- ∀p fm. MEM p (fmap_to_alist fm) ⇔ (FLOOKUP fm (FST p) = SOME (SND p))
+</pre>
+
+<DT><span class="strong">MEM_pair_fmap_to_alist_FLOOKUP</span>
+<DD>
+<pre>
+|- ∀x y fm. MEM (x,y) (fmap_to_alist fm) ⇔ (FLOOKUP fm x = SOME y)
+</pre>
+
+<DT><span class="strong">LENGTH_fmap_to_alist</span>
+<DD>
+<pre>
+|- ∀fm. LENGTH (fmap_to_alist fm) = CARD (FDOM fm)
+</pre>
+
+<DT><span class="strong">fmap_to_alist_to_fmap</span>
+<DD>
+<pre>
+|- alist_to_fmap (fmap_to_alist fm) = fm
+</pre>
+
+<DT><span class="strong">ALOOKUP_MEM</span>
+<DD>
+<pre>
+|- ∀al k v. (ALOOKUP al k = SOME v) ⇒ MEM (k,v) al
+</pre>
+
+<DT><span class="strong">ALOOKUP_SOME_FAPPLY_alist_to_fmap</span>
+<DD>
+<pre>
+|- ∀al k v. (ALOOKUP al k = SOME v) ⇒ (alist_to_fmap al ' k = v)
+</pre>
+
+<DT><span class="strong">alist_to_fmap_FAPPLY_MEM</span>
+<DD>
+<pre>
+|- ∀al z. z ∈ FDOM (alist_to_fmap al) ⇒ MEM (z,alist_to_fmap al ' z) al
+</pre>
+
+<DT><span class="strong">ALOOKUP_MAP</span>
+<DD>
+<pre>
+|- ∀f al. ALOOKUP (MAP (λ(x,y). (x,f y)) al) = OPTION_MAP f o ALOOKUP al
+</pre>
+
+<DT><span class="strong">FDOM_alist_to_fmap</span>
+<DD>
+<pre>
+|- ∀al. FDOM (alist_to_fmap al) = LIST_TO_SET (MAP FST al)
+</pre>
+
+<DT><span class="strong">alist_to_fmap_prefix</span>
+<DD>
+<pre>
+|- ∀ls l1 l2.
+     (alist_to_fmap l1 = alist_to_fmap l2) ⇒
+     (alist_to_fmap (ls ++ l1) = alist_to_fmap (ls ++ l2))
+</pre>
+
+<DT><span class="strong">alist_to_fmap_APPEND</span>
+<DD>
+<pre>
+|- ∀l1 l2. alist_to_fmap (l1 ++ l2) = alist_to_fmap l1 ⊌ alist_to_fmap l2
+</pre>
+
+<DT><span class="strong">ALOOKUP_prefix</span>
+<DD>
+<pre>
+|- ∀ls k ls2.
+     ((ALOOKUP ls k = SOME v) ⇒ (ALOOKUP (ls ++ ls2) k = SOME v)) ∧
+     ((ALOOKUP ls k = NONE) ⇒ (ALOOKUP (ls ++ ls2) k = ALOOKUP ls2 k))
+</pre>
+
+<DT><span class="strong">ALOOKUP_APPEND</span>
+<DD>
+<pre>
+|- ∀l1 l2 k.
+     ALOOKUP (l1 ++ l2) k =
+     case ALOOKUP l1 k of NONE => ALOOKUP l2 k | SOME v => SOME v
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_EQ_APPEND_REVERSE</span>
+<DD>
+<pre>
+|- ∀ls fm. fm |++ ls = alist_to_fmap (REVERSE ls ++ fmap_to_alist fm)
+</pre>
+
+<DT><span class="strong">FLOOKUP_FUPDATE_LIST_ALOOKUP_SOME</span>
+<DD>
+<pre>
+|- (ALOOKUP ls k = SOME v) ⇒ (FLOOKUP (fm |++ REVERSE ls) k = SOME v)
+</pre>
+
+<DT><span class="strong">FLOOKUP_FUPDATE_LIST_ALOOKUP_NONE</span>
+<DD>
+<pre>
+|- (ALOOKUP ls k = NONE) ⇒ (FLOOKUP (fm |++ REVERSE ls) k = FLOOKUP fm k)
+</pre>
+
+<DT><span class="strong">FUNION_alist_to_fmap</span>
+<DD>
+<pre>
+|- ∀ls fm. alist_to_fmap ls ⊌ fm = fm |++ REVERSE ls
+</pre>
+
+<DT><span class="strong">alist_to_fmap_MAP</span>
+<DD>
+<pre>
+|- ∀f1 f2 al.
+     INJ f1 (LIST_TO_SET (MAP FST al)) 𝕌(:β) ⇒
+     (alist_to_fmap (MAP (λ(x,y). (f1 x,f2 y)) al) =
+      MAP_KEYS f1 (f2 o_f alist_to_fmap al))
+</pre>
+
+<DT><span class="strong">alist_to_fmap_to_alist</span>
+<DD>
+<pre>
+|- ∀al.
+     fmap_to_alist (alist_to_fmap al) =
+     MAP (λk. (k,THE (ALOOKUP al k))) (SET_TO_LIST (LIST_TO_SET (MAP FST al)))
+</pre>
+
+<DT><span class="strong">alist_to_fmap_to_alist_PERM</span>
+<DD>
+<pre>
+|- ∀al. ALL_DISTINCT (MAP FST al) ⇒ PERM (fmap_to_alist (alist_to_fmap al)) al
+</pre>
+
+<DT><span class="strong">ALOOKUP_LEAST_EL</span>
+<DD>
+<pre>
+|- ∀ls k.
+     ALOOKUP ls k =
+     if MEM k (MAP FST ls) then
+       SOME (EL (LEAST n. EL n (MAP FST ls) = k) (MAP SND ls))
+     else NONE
+</pre>
+
+<DT><span class="strong">ALOOKUP_ALL_DISTINCT_MEM</span>
+<DD>
+<pre>
+|- ALL_DISTINCT (MAP FST al) ∧ MEM (k,v) al ⇒ (ALOOKUP al k = SOME v)
+</pre>
+
+<DT><span class="strong">ALL_DISTINCT_fmap_to_alist_keys</span>
+<DD>
+<pre>
+|- ∀fm. ALL_DISTINCT (MAP FST (fmap_to_alist fm))
+</pre>
+
+<DT><span class="strong">fmap_to_alist_inj</span>
+<DD>
+<pre>
+|- ∀f1 f2. (fmap_to_alist f1 = fmap_to_alist f2) ⇒ (f1 = f2)
+</pre>
+
+<DT><span class="strong">fmap_to_alist_preserves_FDOM</span>
+<DD>
+<pre>
+|- ∀fm1 fm2.
+     (FDOM fm1 = FDOM fm2) ⇒
+     (MAP FST (fmap_to_alist fm1) = MAP FST (fmap_to_alist fm2))
+</pre>
+
+<DT><span class="strong">PERM_fmap_to_alist</span>
+<DD>
+<pre>
+|- PERM (fmap_to_alist fm1) (fmap_to_alist fm2) ⇔ (fm1 = fm2)
+</pre>
+
+<DT><span class="strong">alist_to_fmap_PERM</span>
+<DD>
+<pre>
+|- ∀l1 l2.
+     PERM l1 l2 ∧ ALL_DISTINCT (MAP FST l1) ⇒
+     (alist_to_fmap l1 = alist_to_fmap l2)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

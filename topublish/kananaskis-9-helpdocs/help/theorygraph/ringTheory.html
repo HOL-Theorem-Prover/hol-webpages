@@ -1,0 +1,594 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: ring</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "ring"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "semi_ringTheory.html"><span class="strong">semi_ring</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">ring</span> <td> 1
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">is_ring</span> <td> :α ring -> bool
+    <tr><td>
+        <span class="strong">ring</span>
+        <td>
+        :α -> α -> (α -> α -> α) -> (α -> α -> α) -> (α -> α) -> α ring
+    <tr><td>
+        <span class="strong">ring_CASE</span>
+        <td>
+        :α ring ->
+         (α -> α -> (α -> α -> α) -> (α -> α -> α) -> (α -> α) -> β) -> β
+    <tr><td> <span class="strong">ring_R0</span> <td> :α ring -> α
+    <tr><td>
+        <span class="strong">ring_R0_fupd</span>
+        <td>
+        :(α -> α) -> α ring -> α ring
+    <tr><td> <span class="strong">ring_R1</span> <td> :α ring -> α
+    <tr><td>
+        <span class="strong">ring_R1_fupd</span>
+        <td>
+        :(α -> α) -> α ring -> α ring
+    <tr><td> <span class="strong">ring_RM</span> <td> :α ring -> α -> α -> α
+    <tr><td>
+        <span class="strong">ring_RM_fupd</span>
+        <td>
+        :((α -> α -> α) -> α -> α -> α) -> α ring -> α ring
+    <tr><td> <span class="strong">ring_RN</span> <td> :α ring -> α -> α
+    <tr><td>
+        <span class="strong">ring_RN_fupd</span>
+        <td>
+        :((α -> α) -> α -> α) -> α ring -> α ring
+    <tr><td> <span class="strong">ring_RP</span> <td> :α ring -> α -> α -> α
+    <tr><td>
+        <span class="strong">ring_RP_fupd</span>
+        <td>
+        :((α -> α -> α) -> α -> α -> α) -> α ring -> α ring
+    <tr><td>
+        <span class="strong">ring_size</span>
+        <td>
+        :(α -> num) -> α ring -> num
+    <tr><td>
+        <span class="strong">semi_ring_of</span>
+        <td>
+        :α ring -> α semi_ring
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">ring_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep.
+     TYPE_DEFINITION
+       (λa0'.
+          ∀'ring' .
+            (∀a0'.
+               (∃a0 a1 a2 a3 a4.
+                  a0' =
+                  (λa0 a1 a2 a3 a4.
+                     ind_type$CONSTR 0 (a0,a1,a2,a3,a4) (λn. ind_type$BOTTOM))
+                    a0 a1 a2 a3 a4) ⇒
+               'ring' a0') ⇒
+            'ring' a0') rep
+</pre>
+
+<DT><span class="strong">ring_case_def</span>
+<DD>
+<pre>
+|- ∀a0 a1 a2 a3 a4 f. ring_CASE (ring a0 a1 a2 a3 a4) f = f a0 a1 a2 a3 a4
+</pre>
+
+<DT><span class="strong">ring_size_def</span>
+<DD>
+<pre>
+|- ∀f a0 a1 a2 a3 a4. ring_size f (ring a0 a1 a2 a3 a4) = 1 + (f a0 + f a1)
+</pre>
+
+<DT><span class="strong">ring_R0</span>
+<DD>
+<pre>
+|- ∀a a0 f f0 f1. R0 (ring a a0 f f0 f1) = a
+</pre>
+
+<DT><span class="strong">ring_R1</span>
+<DD>
+<pre>
+|- ∀a a0 f f0 f1. R1 (ring a a0 f f0 f1) = a0
+</pre>
+
+<DT><span class="strong">ring_RP</span>
+<DD>
+<pre>
+|- ∀a a0 f f0 f1. RP (ring a a0 f f0 f1) = f
+</pre>
+
+<DT><span class="strong">ring_RM</span>
+<DD>
+<pre>
+|- ∀a a0 f f0 f1. RM (ring a a0 f f0 f1) = f0
+</pre>
+
+<DT><span class="strong">ring_RN</span>
+<DD>
+<pre>
+|- ∀a a0 f f0 f1. RN (ring a a0 f f0 f1) = f1
+</pre>
+
+<DT><span class="strong">ring_R0_fupd</span>
+<DD>
+<pre>
+|- ∀f2 a a0 f f0 f1.
+     ring a a0 f f0 f1 with R0 updated_by f2 = ring (f2 a) a0 f f0 f1
+</pre>
+
+<DT><span class="strong">ring_R1_fupd</span>
+<DD>
+<pre>
+|- ∀f2 a a0 f f0 f1.
+     ring a a0 f f0 f1 with R1 updated_by f2 = ring a (f2 a0) f f0 f1
+</pre>
+
+<DT><span class="strong">ring_RP_fupd</span>
+<DD>
+<pre>
+|- ∀f2 a a0 f f0 f1.
+     ring a a0 f f0 f1 with RP updated_by f2 = ring a a0 (f2 f) f0 f1
+</pre>
+
+<DT><span class="strong">ring_RM_fupd</span>
+<DD>
+<pre>
+|- ∀f2 a a0 f f0 f1.
+     ring a a0 f f0 f1 with RM updated_by f2 = ring a a0 f (f2 f0) f1
+</pre>
+
+<DT><span class="strong">ring_RN_fupd</span>
+<DD>
+<pre>
+|- ∀f2 a a0 f f0 f1.
+     ring a a0 f f0 f1 with RN updated_by f2 = ring a a0 f f0 (f2 f1)
+</pre>
+
+<DT><span class="strong">is_ring_def</span>
+<DD>
+<pre>
+|- ∀r.
+     is_ring r ⇔
+     (∀n m. RP r n m = RP r m n) ∧
+     (∀n m p. RP r n (RP r m p) = RP r (RP r n m) p) ∧
+     (∀n m. RM r n m = RM r m n) ∧
+     (∀n m p. RM r n (RM r m p) = RM r (RM r n m) p) ∧
+     (∀n. RP r (R0 r) n = n) ∧ (∀n. RM r (R1 r) n = n) ∧
+     (∀n. RP r n (RN r n) = R0 r) ∧
+     ∀n m p. RM r (RP r n m) p = RP r (RM r n p) (RM r m p)
+</pre>
+
+<DT><span class="strong">semi_ring_of_def</span>
+<DD>
+<pre>
+|- ∀r. semi_ring_of r = semi_ring (R0 r) (R1 r) (RP r) (RM r)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ring_accessors</span>
+<DD>
+<pre>
+|- (∀a a0 f f0 f1. R0 (ring a a0 f f0 f1) = a) ∧
+   (∀a a0 f f0 f1. R1 (ring a a0 f f0 f1) = a0) ∧
+   (∀a a0 f f0 f1. RP (ring a a0 f f0 f1) = f) ∧
+   (∀a a0 f f0 f1. RM (ring a a0 f f0 f1) = f0) ∧
+   ∀a a0 f f0 f1. RN (ring a a0 f f0 f1) = f1
+</pre>
+
+<DT><span class="strong">ring_fn_updates</span>
+<DD>
+<pre>
+|- (∀f2 a a0 f f0 f1.
+      ring a a0 f f0 f1 with R0 updated_by f2 = ring (f2 a) a0 f f0 f1) ∧
+   (∀f2 a a0 f f0 f1.
+      ring a a0 f f0 f1 with R1 updated_by f2 = ring a (f2 a0) f f0 f1) ∧
+   (∀f2 a a0 f f0 f1.
+      ring a a0 f f0 f1 with RP updated_by f2 = ring a a0 (f2 f) f0 f1) ∧
+   (∀f2 a a0 f f0 f1.
+      ring a a0 f f0 f1 with RM updated_by f2 = ring a a0 f (f2 f0) f1) ∧
+   ∀f2 a a0 f f0 f1.
+     ring a a0 f f0 f1 with RN updated_by f2 = ring a a0 f f0 (f2 f1)
+</pre>
+
+<DT><span class="strong">ring_accfupds</span>
+<DD>
+<pre>
+|- (∀r f. R0 (r with R1 updated_by f) = R0 r) ∧
+   (∀r f. R0 (r with RP updated_by f) = R0 r) ∧
+   (∀r f. R0 (r with RM updated_by f) = R0 r) ∧
+   (∀r f. R0 (r with RN updated_by f) = R0 r) ∧
+   (∀r f. R1 (r with R0 updated_by f) = R1 r) ∧
+   (∀r f. R1 (r with RP updated_by f) = R1 r) ∧
+   (∀r f. R1 (r with RM updated_by f) = R1 r) ∧
+   (∀r f. R1 (r with RN updated_by f) = R1 r) ∧
+   (∀r f. RP (r with R0 updated_by f) = RP r) ∧
+   (∀r f. RP (r with R1 updated_by f) = RP r) ∧
+   (∀r f. RP (r with RM updated_by f) = RP r) ∧
+   (∀r f. RP (r with RN updated_by f) = RP r) ∧
+   (∀r f. RM (r with R0 updated_by f) = RM r) ∧
+   (∀r f. RM (r with R1 updated_by f) = RM r) ∧
+   (∀r f. RM (r with RP updated_by f) = RM r) ∧
+   (∀r f. RM (r with RN updated_by f) = RM r) ∧
+   (∀r f. RN (r with R0 updated_by f) = RN r) ∧
+   (∀r f. RN (r with R1 updated_by f) = RN r) ∧
+   (∀r f. RN (r with RP updated_by f) = RN r) ∧
+   (∀r f. RN (r with RM updated_by f) = RN r) ∧
+   (∀r f. R0 (r with R0 updated_by f) = f (R0 r)) ∧
+   (∀r f. R1 (r with R1 updated_by f) = f (R1 r)) ∧
+   (∀r f. RP (r with RP updated_by f) = f (RP r)) ∧
+   (∀r f. RM (r with RM updated_by f) = f (RM r)) ∧
+   ∀r f. RN (r with RN updated_by f) = f (RN r)
+</pre>
+
+<DT><span class="strong">ring_fupdfupds</span>
+<DD>
+<pre>
+|- (∀r g f.
+      r with <|R0 updated_by f; R0 updated_by g|> =
+      r with R0 updated_by f o g) ∧
+   (∀r g f.
+      r with <|R1 updated_by f; R1 updated_by g|> =
+      r with R1 updated_by f o g) ∧
+   (∀r g f.
+      r with <|RP updated_by f; RP updated_by g|> =
+      r with RP updated_by f o g) ∧
+   (∀r g f.
+      r with <|RM updated_by f; RM updated_by g|> =
+      r with RM updated_by f o g) ∧
+   ∀r g f.
+     r with <|RN updated_by f; RN updated_by g|> = r with RN updated_by f o g
+</pre>
+
+<DT><span class="strong">ring_fupdfupds_comp</span>
+<DD>
+<pre>
+|- ((∀g f.
+        _ record fupdateR0 f o  _ record fupdateR0 g =
+        _ record fupdateR0 (f o g)) ∧
+    ∀h g f.
+       _ record fupdateR0 f o  _ record fupdateR0 g o h =
+       _ record fupdateR0 (f o g) o h) ∧
+   ((∀g f.
+        _ record fupdateR1 f o  _ record fupdateR1 g =
+        _ record fupdateR1 (f o g)) ∧
+    ∀h g f.
+       _ record fupdateR1 f o  _ record fupdateR1 g o h =
+       _ record fupdateR1 (f o g) o h) ∧
+   ((∀g f.
+        _ record fupdateRP f o  _ record fupdateRP g =
+        _ record fupdateRP (f o g)) ∧
+    ∀h g f.
+       _ record fupdateRP f o  _ record fupdateRP g o h =
+       _ record fupdateRP (f o g) o h) ∧
+   ((∀g f.
+        _ record fupdateRM f o  _ record fupdateRM g =
+        _ record fupdateRM (f o g)) ∧
+    ∀h g f.
+       _ record fupdateRM f o  _ record fupdateRM g o h =
+       _ record fupdateRM (f o g) o h) ∧
+   (∀g f.
+       _ record fupdateRN f o  _ record fupdateRN g =
+       _ record fupdateRN (f o g)) ∧
+   ∀h g f.
+      _ record fupdateRN f o  _ record fupdateRN g o h =
+      _ record fupdateRN (f o g) o h
+</pre>
+
+<DT><span class="strong">ring_fupdcanon</span>
+<DD>
+<pre>
+|- (∀r g f.
+      r with <|R1 updated_by f; R0 updated_by g|> =
+      r with <|R0 updated_by g; R1 updated_by f|>) ∧
+   (∀r g f.
+      r with <|RP updated_by f; R0 updated_by g|> =
+      r with <|R0 updated_by g; RP updated_by f|>) ∧
+   (∀r g f.
+      r with <|RP updated_by f; R1 updated_by g|> =
+      r with <|R1 updated_by g; RP updated_by f|>) ∧
+   (∀r g f.
+      r with <|RM updated_by f; R0 updated_by g|> =
+      r with <|R0 updated_by g; RM updated_by f|>) ∧
+   (∀r g f.
+      r with <|RM updated_by f; R1 updated_by g|> =
+      r with <|R1 updated_by g; RM updated_by f|>) ∧
+   (∀r g f.
+      r with <|RM updated_by f; RP updated_by g|> =
+      r with <|RP updated_by g; RM updated_by f|>) ∧
+   (∀r g f.
+      r with <|RN updated_by f; R0 updated_by g|> =
+      r with <|R0 updated_by g; RN updated_by f|>) ∧
+   (∀r g f.
+      r with <|RN updated_by f; R1 updated_by g|> =
+      r with <|R1 updated_by g; RN updated_by f|>) ∧
+   (∀r g f.
+      r with <|RN updated_by f; RP updated_by g|> =
+      r with <|RP updated_by g; RN updated_by f|>) ∧
+   ∀r g f.
+     r with <|RN updated_by f; RM updated_by g|> =
+     r with <|RM updated_by g; RN updated_by f|>
+</pre>
+
+<DT><span class="strong">ring_fupdcanon_comp</span>
+<DD>
+<pre>
+|- ((∀g f.
+        _ record fupdateR1 f o  _ record fupdateR0 g =
+        _ record fupdateR0 g o  _ record fupdateR1 f) ∧
+    ∀h g f.
+       _ record fupdateR1 f o  _ record fupdateR0 g o h =
+       _ record fupdateR0 g o  _ record fupdateR1 f o h) ∧
+   ((∀g f.
+        _ record fupdateRP f o  _ record fupdateR0 g =
+        _ record fupdateR0 g o  _ record fupdateRP f) ∧
+    ∀h g f.
+       _ record fupdateRP f o  _ record fupdateR0 g o h =
+       _ record fupdateR0 g o  _ record fupdateRP f o h) ∧
+   ((∀g f.
+        _ record fupdateRP f o  _ record fupdateR1 g =
+        _ record fupdateR1 g o  _ record fupdateRP f) ∧
+    ∀h g f.
+       _ record fupdateRP f o  _ record fupdateR1 g o h =
+       _ record fupdateR1 g o  _ record fupdateRP f o h) ∧
+   ((∀g f.
+        _ record fupdateRM f o  _ record fupdateR0 g =
+        _ record fupdateR0 g o  _ record fupdateRM f) ∧
+    ∀h g f.
+       _ record fupdateRM f o  _ record fupdateR0 g o h =
+       _ record fupdateR0 g o  _ record fupdateRM f o h) ∧
+   ((∀g f.
+        _ record fupdateRM f o  _ record fupdateR1 g =
+        _ record fupdateR1 g o  _ record fupdateRM f) ∧
+    ∀h g f.
+       _ record fupdateRM f o  _ record fupdateR1 g o h =
+       _ record fupdateR1 g o  _ record fupdateRM f o h) ∧
+   ((∀g f.
+        _ record fupdateRM f o  _ record fupdateRP g =
+        _ record fupdateRP g o  _ record fupdateRM f) ∧
+    ∀h g f.
+       _ record fupdateRM f o  _ record fupdateRP g o h =
+       _ record fupdateRP g o  _ record fupdateRM f o h) ∧
+   ((∀g f.
+        _ record fupdateRN f o  _ record fupdateR0 g =
+        _ record fupdateR0 g o  _ record fupdateRN f) ∧
+    ∀h g f.
+       _ record fupdateRN f o  _ record fupdateR0 g o h =
+       _ record fupdateR0 g o  _ record fupdateRN f o h) ∧
+   ((∀g f.
+        _ record fupdateRN f o  _ record fupdateR1 g =
+        _ record fupdateR1 g o  _ record fupdateRN f) ∧
+    ∀h g f.
+       _ record fupdateRN f o  _ record fupdateR1 g o h =
+       _ record fupdateR1 g o  _ record fupdateRN f o h) ∧
+   ((∀g f.
+        _ record fupdateRN f o  _ record fupdateRP g =
+        _ record fupdateRP g o  _ record fupdateRN f) ∧
+    ∀h g f.
+       _ record fupdateRN f o  _ record fupdateRP g o h =
+       _ record fupdateRP g o  _ record fupdateRN f o h) ∧
+   (∀g f.
+       _ record fupdateRN f o  _ record fupdateRM g =
+       _ record fupdateRM g o  _ record fupdateRN f) ∧
+   ∀h g f.
+      _ record fupdateRN f o  _ record fupdateRM g o h =
+      _ record fupdateRM g o  _ record fupdateRN f o h
+</pre>
+
+<DT><span class="strong">ring_component_equality</span>
+<DD>
+<pre>
+|- ∀r1 r2.
+     (r1 = r2) ⇔
+     (R0 r1 = R0 r2) ∧ (R1 r1 = R1 r2) ∧ (RP r1 = RP r2) ∧ (RM r1 = RM r2) ∧
+     (RN r1 = RN r2)
+</pre>
+
+<DT><span class="strong">ring_updates_eq_literal</span>
+<DD>
+<pre>
+|- ∀r a0 a f1 f0 f.
+     r with <|R0 := a0; R1 := a; RP := f1; RM := f0; RN := f|> =
+     <|R0 := a0; R1 := a; RP := f1; RM := f0; RN := f|>
+</pre>
+
+<DT><span class="strong">ring_literal_nchotomy</span>
+<DD>
+<pre>
+|- ∀r. ∃a0 a f1 f0 f. r = <|R0 := a0; R1 := a; RP := f1; RM := f0; RN := f|>
+</pre>
+
+<DT><span class="strong">FORALL_ring</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀r. P r) ⇔
+     ∀a0 a f1 f0 f. P <|R0 := a0; R1 := a; RP := f1; RM := f0; RN := f|>
+</pre>
+
+<DT><span class="strong">EXISTS_ring</span>
+<DD>
+<pre>
+|- ∀P.
+     (∃r. P r) ⇔
+     ∃a0 a f1 f0 f. P <|R0 := a0; R1 := a; RP := f1; RM := f0; RN := f|>
+</pre>
+
+<DT><span class="strong">ring_literal_11</span>
+<DD>
+<pre>
+|- ∀a01 a1 f11 f01 f1 a02 a2 f12 f02 f2.
+     (<|R0 := a01; R1 := a1; RP := f11; RM := f01; RN := f1|> =
+      <|R0 := a02; R1 := a2; RP := f12; RM := f02; RN := f2|>) ⇔
+     (a01 = a02) ∧ (a1 = a2) ∧ (f11 = f12) ∧ (f01 = f02) ∧ (f1 = f2)
+</pre>
+
+<DT><span class="strong">datatype_ring</span>
+<DD>
+<pre>
+|- DATATYPE (record ring R0 R1 RP RM RN)
+</pre>
+
+<DT><span class="strong">ring_11</span>
+<DD>
+<pre>
+|- ∀a0 a1 a2 a3 a4 a0' a1' a2' a3' a4'.
+     (ring a0 a1 a2 a3 a4 = ring a0' a1' a2' a3' a4') ⇔
+     (a0 = a0') ∧ (a1 = a1') ∧ (a2 = a2') ∧ (a3 = a3') ∧ (a4 = a4')
+</pre>
+
+<DT><span class="strong">ring_case_cong</span>
+<DD>
+<pre>
+|- ∀M M' f.
+     (M = M') ∧
+     (∀a0 a1 a2 a3 a4.
+        (M' = ring a0 a1 a2 a3 a4) ⇒ (f a0 a1 a2 a3 a4 = f' a0 a1 a2 a3 a4)) ⇒
+     (ring_CASE M f = ring_CASE M' f')
+</pre>
+
+<DT><span class="strong">ring_nchotomy</span>
+<DD>
+<pre>
+|- ∀rr. ∃a a0 f f0 f1. rr = ring a a0 f f0 f1
+</pre>
+
+<DT><span class="strong">ring_Axiom</span>
+<DD>
+<pre>
+|- ∀f. ∃fn. ∀a0 a1 a2 a3 a4. fn (ring a0 a1 a2 a3 a4) = f a0 a1 a2 a3 a4
+</pre>
+
+<DT><span class="strong">ring_induction</span>
+<DD>
+<pre>
+|- ∀P. (∀a a0 f f0 f1. P (ring a a0 f f0 f1)) ⇒ ∀r. P r
+</pre>
+
+<DT><span class="strong">plus_sym</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n m. RP r n m = RP r m n
+</pre>
+
+<DT><span class="strong">plus_assoc</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n m p. RP r n (RP r m p) = RP r (RP r n m) p
+</pre>
+
+<DT><span class="strong">mult_sym</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n m. RM r n m = RM r m n
+</pre>
+
+<DT><span class="strong">mult_assoc</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n m p. RM r n (RM r m p) = RM r (RM r n m) p
+</pre>
+
+<DT><span class="strong">plus_zero_left</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n. RP r (R0 r) n = n
+</pre>
+
+<DT><span class="strong">mult_one_left</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n. RM r (R1 r) n = n
+</pre>
+
+<DT><span class="strong">opp_def</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n. RP r n (RN r n) = R0 r
+</pre>
+
+<DT><span class="strong">distr_left</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n m p. RM r (RP r n m) p = RP r (RM r n p) (RM r m p)
+</pre>
+
+<DT><span class="strong">plus_zero_right</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n. RP r n (R0 r) = n
+</pre>
+
+<DT><span class="strong">mult_zero_left</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n. RM r (R0 r) n = R0 r
+</pre>
+
+<DT><span class="strong">mult_zero_right</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n. RM r n (R0 r) = R0 r
+</pre>
+
+<DT><span class="strong">ring_is_semi_ring</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ is_semi_ring (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">mult_one_right</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀n. RM r n (R1 r) = n
+</pre>
+
+<DT><span class="strong">neg_mult</span>
+<DD>
+<pre>
+|- ∀r. is_ring r ⇒ ∀a b. RM r (RN r a) b = RN r (RM r a b)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

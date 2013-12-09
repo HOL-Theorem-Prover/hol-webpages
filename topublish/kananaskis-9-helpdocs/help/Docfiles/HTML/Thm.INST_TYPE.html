@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Thm.INST_TYPE</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>INST_TYPE : (hol_type,hol_type) subst -&gt; thm -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Thm.html">Thm</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Instantiates types in a theorem.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">INST_TYPE</SPAN><SPAN class = "TEXT"> is a primitive rule in the HOL logic, which allows
+instantiation of type variables.
+</SPAN><DIV class = "XMPL"><pre>
+
+              A |- t
+  ----------------------------------- INST_TYPE[vty1|-&gt;ty1,..., vtyn|-&gt;tyn]
+   A[ty1,...,tyn/vty1,...,vtyn] 
+    |- 
+   t[ty1,...,tyn/vty1,...,vtyn]
+</pre></DIV>
+<SPAN class = "TEXT">
+Type substitution is performed throughout the hypotheses and
+the conclusion. Variables will be renamed if necessary to
+prevent distinct bound variables becoming identical after
+the instantiation.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">INST_TYPE</SPAN><SPAN class = "TEXT"> enables polymorphic theorems to be used at any type.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Supposing one wanted to specialize the theorem </SPAN><SPAN class = "BRKT">EQ_SYM_EQ</SPAN><SPAN class = "TEXT"> for
+particular values, the first attempt could be to use </SPAN><SPAN class = "BRKT">SPECL</SPAN><SPAN class = "TEXT"> as
+follows:
+</SPAN><DIV class = "XMPL"><pre>
+   - SPECL [``a:num``, ``b:num``] EQ_SYM_EQ;
+   uncaught exception HOL_ERR
+
+</pre></DIV>
+<SPAN class = "TEXT">
+The failure occurred because </SPAN><SPAN class = "BRKT">EQ_SYM_EQ</SPAN><SPAN class = "TEXT"> contains polymorphic types.
+The desired specialization can be obtained by using </SPAN><SPAN class = "BRKT">INST_TYPE</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   - load "numTheory";
+
+   - SPECL [Term `a:num`, Term`b:num`]
+           (INST_TYPE [alpha |-&gt; Type`:num`] EQ_SYM_EQ);
+
+   &gt; val it = |- (a = b) = (b = a) : thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Term.inst.html">inst</A>,
+<A HREF = "Thm.INST.html">INST</A>,
+<A HREF = "Drule.INST_TY_TERM.html">INST_TY_TERM</A>,
+<A HREF = "Lib.maplet.html">|-></A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

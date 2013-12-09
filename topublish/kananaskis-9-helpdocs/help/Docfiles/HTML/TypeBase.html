@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>TypeBase</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>structure TypeBase</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A database of facts stemming from datatype declarations</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The structure </SPAN><SPAN class = "BRKT">TypeBase</SPAN><SPAN class = "TEXT"> provides an interface to a database that
+is updated when a new datatype is introduced with </SPAN><SPAN class = "BRKT">Hol_datatype</SPAN><SPAN class = "TEXT">.
+When a new datatype is declared, a collection of theorems "about" the
+type can be automatically derived. These are indeed proved, and are
+stored in the current theory segment. They are also automatically stored
+in </SPAN><SPAN class = "BRKT">TypeBase</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The interface to </SPAN><SPAN class = "BRKT">TypeBase</SPAN><SPAN class = "TEXT"> is intended to provide support for writers
+of high-level tools for reasoning about datatypes.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+   - Hol_datatype `tree = Leaf
+                         | Node of 'a =&gt; tree =&gt; tree`;
+   &lt;&lt;HOL message: Defined type: "tree"&gt;&gt;
+   &gt; val it = () : unit
+
+   - TypeBase.read {Thy = current_theory(), Tyop = "tree"};
+   &gt; val it =
+    SOME-----------------------
+        -----------------------
+        HOL datatype: "tree"
+        Primitive recursion:
+         |- !f0 f1.
+              ?fn.
+                (!a. fn (Leaf a) = f0 a) /\
+                !a0 a1. fn (Node a0 a1) = f1 a0 a1 (fn a0) (fn a1)
+        Case analysis:
+         |- (!f f1 a. case f f1 (Leaf a) = f a) /\
+            !f f1 a0 a1. case f f1 (Node a0 a1) = f1 a0 a1
+        Size:
+         |- (!a. tree_size (Leaf a) = 1 + a) /\
+            !a0 a1. tree_size (Node a0 a1) = 1 + (tree_size a0 + tree_size a1)
+        Induction:
+         |- !P.
+              (!n. P (Leaf n)) /\ (!t t0. P t /\ P t0 ==&gt; P (Node t t0)) ==&gt;
+              !t. P t
+        Case completeness: |- !t. (?n. t = Leaf n) \/ ?t' t0. t = Node t' t0
+        One-to-one:
+         |- (!a a'. (Leaf a = Leaf a') = (a = a')) /\
+            !a0 a1 a0' a1'.
+              (Node a0 a1 = Node a0' a1') = (a0 = a0') /\ (a1 = a1')
+        Distinctness: |- !a1 a0 a. ~(Leaf a = Node a0 a1) : tyinfo option
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.Hol_datatype.html">Hol_datatype</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

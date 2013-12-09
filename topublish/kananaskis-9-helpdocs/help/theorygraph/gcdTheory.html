@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: gcd</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "gcd"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "dividesTheory.html"><span class="strong">divides</span></a>&nbsp;&nbsp;
+    <a href = "basicSizeTheory.html"><span class="strong">basicSize</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">gcd</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">gcd_tupled</span> <td> :num # num -> num
+    <tr><td>
+        <span class="strong">is_gcd</span>
+        <td>
+        :num -> num -> num -> bool
+    <tr><td> <span class="strong">lcm</span> <td> :num -> num -> num
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">is_gcd_def</span>
+<DD>
+<pre>
+|- ∀a b c.
+     is_gcd a b c ⇔
+     divides c a ∧ divides c b ∧ ∀d. divides d a ∧ divides d b ⇒ divides d c
+</pre>
+
+<DT><span class="strong">gcd_tupled_primitive_def</span>
+<DD>
+<pre>
+|- gcd_tupled =
+   WFREC
+     (@R.
+        WF R ∧ (∀x y. ¬(y ≤ x) ⇒ R (SUC x,y − x) (SUC x,SUC y)) ∧
+        ∀x y. y ≤ x ⇒ R (x − y,SUC y) (SUC x,SUC y))
+     (λgcd_tupled a.
+        case a of
+          (0,y) => I y
+        | (SUC x,0) => I (SUC x)
+        | (SUC x,SUC y') =>
+            I
+              (if y' ≤ x then gcd_tupled (x − y',SUC y')
+               else gcd_tupled (SUC x,y' − x)))
+</pre>
+
+<DT><span class="strong">gcd_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1. gcd x x1 = gcd_tupled (x,x1)
+</pre>
+
+<DT><span class="strong">lcm_def</span>
+<DD>
+<pre>
+|- ∀m n. lcm m n = if (m = 0) ∨ (n = 0) then 0 else m * n DIV gcd m n
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">IS_GCD_UNIQUE</span>
+<DD>
+<pre>
+|- ∀a b c d. is_gcd a b c ∧ is_gcd a b d ⇒ (c = d)
+</pre>
+
+<DT><span class="strong">IS_GCD_REF</span>
+<DD>
+<pre>
+|- ∀a. is_gcd a a a
+</pre>
+
+<DT><span class="strong">IS_GCD_SYM</span>
+<DD>
+<pre>
+|- ∀a b c. is_gcd a b c ⇔ is_gcd b a c
+</pre>
+
+<DT><span class="strong">IS_GCD_0R</span>
+<DD>
+<pre>
+|- ∀a. is_gcd 0 a a
+</pre>
+
+<DT><span class="strong">PRIME_IS_GCD</span>
+<DD>
+<pre>
+|- ∀p b. prime p ⇒ divides p b ∨ is_gcd p b 1
+</pre>
+
+<DT><span class="strong">IS_GCD_MINUS_L</span>
+<DD>
+<pre>
+|- ∀a b c. b ≤ a ∧ is_gcd (a − b) b c ⇒ is_gcd a b c
+</pre>
+
+<DT><span class="strong">IS_GCD_MINUS_R</span>
+<DD>
+<pre>
+|- ∀a b c. a ≤ b ∧ is_gcd a (b − a) c ⇒ is_gcd a b c
+</pre>
+
+<DT><span class="strong">gcd_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀y. P 0 y) ∧ (∀x. P (SUC x) 0) ∧
+     (∀x y.
+        (¬(y ≤ x) ⇒ P (SUC x) (y − x)) ∧ (y ≤ x ⇒ P (x − y) (SUC y)) ⇒
+        P (SUC x) (SUC y)) ⇒
+     ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">gcd_def</span>
+<DD>
+<pre>
+|- (∀y. gcd 0 y = y) ∧ (∀x. gcd (SUC x) 0 = SUC x) ∧
+   ∀y x.
+     gcd (SUC x) (SUC y) =
+     if y ≤ x then gcd (x − y) (SUC y) else gcd (SUC x) (y − x)
+</pre>
+
+<DT><span class="strong">gcd_def_compute</span>
+<DD>
+<pre>
+|- (∀y. gcd 0 y = y) ∧ (∀x. gcd (NUMERAL (BIT1 x)) 0 = NUMERAL (BIT1 x)) ∧
+   (∀x. gcd (NUMERAL (BIT2 x)) 0 = NUMERAL (BIT2 x)) ∧
+   (∀y x.
+      gcd (NUMERAL (BIT1 x)) (NUMERAL (BIT1 y)) =
+      if NUMERAL (BIT1 y) − 1 ≤ NUMERAL (BIT1 x) − 1 then
+        gcd (NUMERAL (BIT1 x) − 1 − (NUMERAL (BIT1 y) − 1)) (NUMERAL (BIT1 y))
+      else
+        gcd (NUMERAL (BIT1 x))
+          (NUMERAL (BIT1 y) − 1 − (NUMERAL (BIT1 x) − 1))) ∧
+   (∀y x.
+      gcd (NUMERAL (BIT2 x)) (NUMERAL (BIT1 y)) =
+      if NUMERAL (BIT1 y) − 1 ≤ NUMERAL (BIT1 x) then
+        gcd (NUMERAL (BIT1 x) − (NUMERAL (BIT1 y) − 1)) (NUMERAL (BIT1 y))
+      else gcd (NUMERAL (BIT2 x)) (NUMERAL (BIT1 y) − 1 − NUMERAL (BIT1 x))) ∧
+   (∀y x.
+      gcd (NUMERAL (BIT1 x)) (NUMERAL (BIT2 y)) =
+      if NUMERAL (BIT1 y) ≤ NUMERAL (BIT1 x) − 1 then
+        gcd (NUMERAL (BIT1 x) − 1 − NUMERAL (BIT1 y)) (NUMERAL (BIT2 y))
+      else
+        gcd (NUMERAL (BIT1 x)) (NUMERAL (BIT1 y) − (NUMERAL (BIT1 x) − 1))) ∧
+   ∀y x.
+     gcd (NUMERAL (BIT2 x)) (NUMERAL (BIT2 y)) =
+     if NUMERAL (BIT1 y) ≤ NUMERAL (BIT1 x) then
+       gcd (NUMERAL (BIT1 x) − NUMERAL (BIT1 y)) (NUMERAL (BIT2 y))
+     else gcd (NUMERAL (BIT2 x)) (NUMERAL (BIT1 y) − NUMERAL (BIT1 x))
+</pre>
+
+<DT><span class="strong">GCD_IS_GCD</span>
+<DD>
+<pre>
+|- ∀a b. is_gcd a b (gcd a b)
+</pre>
+
+<DT><span class="strong">GCD_REF</span>
+<DD>
+<pre>
+|- ∀a. gcd a a = a
+</pre>
+
+<DT><span class="strong">GCD_SYM</span>
+<DD>
+<pre>
+|- ∀a b. gcd a b = gcd b a
+</pre>
+
+<DT><span class="strong">GCD_0R</span>
+<DD>
+<pre>
+|- ∀a. gcd a 0 = a
+</pre>
+
+<DT><span class="strong">GCD_0L</span>
+<DD>
+<pre>
+|- ∀a. gcd 0 a = a
+</pre>
+
+<DT><span class="strong">GCD_ADD_R</span>
+<DD>
+<pre>
+|- ∀a b. gcd a (a + b) = gcd a b
+</pre>
+
+<DT><span class="strong">GCD_ADD_R_THM</span>
+<DD>
+<pre>
+|- (∀a b. gcd a (a + b) = gcd a b) ∧ ∀a b. gcd a (b + a) = gcd a b
+</pre>
+
+<DT><span class="strong">GCD_ADD_L</span>
+<DD>
+<pre>
+|- ∀a b. gcd (a + b) a = gcd a b
+</pre>
+
+<DT><span class="strong">GCD_ADD_L_THM</span>
+<DD>
+<pre>
+|- (∀a b. gcd (a + b) a = gcd a b) ∧ ∀a b. gcd (b + a) a = gcd a b
+</pre>
+
+<DT><span class="strong">GCD_EQ_0</span>
+<DD>
+<pre>
+|- ∀n m. (gcd n m = 0) ⇔ (n = 0) ∧ (m = 0)
+</pre>
+
+<DT><span class="strong">GCD_1</span>
+<DD>
+<pre>
+|- (gcd 1 x = 1) ∧ (gcd x 1 = 1)
+</pre>
+
+<DT><span class="strong">PRIME_GCD</span>
+<DD>
+<pre>
+|- ∀p b. prime p ⇒ divides p b ∨ (gcd p b = 1)
+</pre>
+
+<DT><span class="strong">L_EUCLIDES</span>
+<DD>
+<pre>
+|- ∀a b c. (gcd a b = 1) ∧ divides b (a * c) ⇒ divides b c
+</pre>
+
+<DT><span class="strong">P_EUCLIDES</span>
+<DD>
+<pre>
+|- ∀p a b. prime p ∧ divides p (a * b) ⇒ divides p a ∨ divides p b
+</pre>
+
+<DT><span class="strong">FACTOR_OUT_GCD</span>
+<DD>
+<pre>
+|- ∀n m.
+     n ≠ 0 ∧ m ≠ 0 ⇒
+     ∃p q. (n = p * gcd n m) ∧ (m = q * gcd n m) ∧ (gcd p q = 1)
+</pre>
+
+<DT><span class="strong">GCD_SUCfree_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀y. P 0 y) ∧ (∀x y. P x y ⇒ P y x) ∧ (∀x. P x x) ∧
+     (∀x y. 0 < x ∧ 0 < y ∧ P x y ⇒ P x (x + y)) ⇒
+     ∀m n. P m n
+</pre>
+
+<DT><span class="strong">LINEAR_GCD</span>
+<DD>
+<pre>
+|- ∀n m. n ≠ 0 ⇒ ∃p q. p * n = q * m + gcd m n
+</pre>
+
+<DT><span class="strong">GCD_EFFICIENTLY</span>
+<DD>
+<pre>
+|- ∀a b. gcd a b = if a = 0 then b else gcd (b MOD a) a
+</pre>
+
+<DT><span class="strong">LCM_IS_LEAST_COMMON_MULTIPLE</span>
+<DD>
+<pre>
+|- divides m (lcm m n) ∧ divides n (lcm m n) ∧
+   ∀p. divides m p ∧ divides n p ⇒ divides (lcm m n) p
+</pre>
+
+<DT><span class="strong">LCM_0</span>
+<DD>
+<pre>
+|- (lcm 0 x = 0) ∧ (lcm x 0 = 0)
+</pre>
+
+<DT><span class="strong">LCM_1</span>
+<DD>
+<pre>
+|- (lcm 1 x = x) ∧ (lcm x 1 = x)
+</pre>
+
+<DT><span class="strong">LCM_COMM</span>
+<DD>
+<pre>
+|- lcm a b = lcm b a
+</pre>
+
+<DT><span class="strong">LCM_LE</span>
+<DD>
+<pre>
+|- 0 < m ∧ 0 < n ⇒ m ≤ lcm m n ∧ m ≤ lcm n m
+</pre>
+
+<DT><span class="strong">LCM_LEAST</span>
+<DD>
+<pre>
+|- 0 < m ∧ 0 < n ⇒ ∀p. 0 < p ∧ p < lcm m n ⇒ ¬divides m p ∨ ¬divides n p
+</pre>
+
+<DT><span class="strong">GCD_COMMON_FACTOR</span>
+<DD>
+<pre>
+|- ∀m n k. gcd (k * m) (k * n) = k * gcd m n
+</pre>
+
+<DT><span class="strong">GCD_CANCEL_MULT</span>
+<DD>
+<pre>
+|- ∀m n k. (gcd m k = 1) ⇒ (gcd m (k * n) = gcd m n)
+</pre>
+
+<DT><span class="strong">BINARY_GCD</span>
+<DD>
+<pre>
+|- ∀m n.
+     (EVEN m ∧ EVEN n ⇒ (gcd m n = 2 * gcd (m DIV 2) (n DIV 2))) ∧
+     (EVEN m ∧ ODD n ⇒ (gcd m n = gcd (m DIV 2) n))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>pred_setLib.IMAGE_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>IMAGE_CONV : conv -&gt; conv -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/pred_setLib.html">pred_setLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Compute the image of a function on a finite set.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">pred_set</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">IMAGE_CONV</SPAN><SPAN class = "TEXT"> is a parameterized conversion for computing the image
+of a function </SPAN><SPAN class = "BRKT">f:ty1-&gt;ty2</SPAN><SPAN class = "TEXT"> on a finite set </SPAN><SPAN class = "BRKT">{t1;...;tn}</SPAN><SPAN class = "TEXT"> of type
+</SPAN><SPAN class = "BRKT">ty1-&gt;bool</SPAN><SPAN class = "TEXT">.  The first argument to </SPAN><SPAN class = "BRKT">IMAGE_CONV</SPAN><SPAN class = "TEXT"> is expected to be a conversion
+that computes the result of applying the function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to each element of this
+set. When applied to a term </SPAN><SPAN class = "BRKT">f&nbsp;ti</SPAN><SPAN class = "TEXT">, this conversion should return a theorem
+of the form </SPAN><SPAN class = "BRKT">|-&nbsp;(f&nbsp;ti)&nbsp;=&nbsp;ri</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">ri</SPAN><SPAN class = "TEXT"> is the result of applying the function
+</SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to the element </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT">.  This conversion is used by </SPAN><SPAN class = "BRKT">IMAGE_CONV</SPAN><SPAN class = "TEXT"> to compute a
+theorem of the form
+</SPAN><DIV class = "XMPL"><pre>
+   |- IMAGE f {t1;...;tn} = {r1;...;rn}
+</pre></DIV>
+<SPAN class = "TEXT">
+The second argument to </SPAN><SPAN class = "BRKT">IMAGE_CONV</SPAN><SPAN class = "TEXT"> is used (optionally) to simplify
+the resulting image set </SPAN><SPAN class = "BRKT">{r1;...;rn}</SPAN><SPAN class = "TEXT"> by removing redundant occurrences of
+values.  This conversion expected to decide equality of values of the result
+type </SPAN><SPAN class = "BRKT">ty2</SPAN><SPAN class = "TEXT">; given an equation </SPAN><SPAN class = "BRKT">e1&nbsp;=&nbsp;e2</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">e1</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">e2</SPAN><SPAN class = "TEXT"> are terms of
+type </SPAN><SPAN class = "BRKT">ty2</SPAN><SPAN class = "TEXT">, the conversion should return either </SPAN><SPAN class = "BRKT">|-&nbsp;(e1&nbsp;=&nbsp;e2)&nbsp;=&nbsp;T</SPAN><SPAN class = "TEXT"> or
+</SPAN><SPAN class = "BRKT">|-&nbsp;(e1&nbsp;=&nbsp;e2)&nbsp;=&nbsp;F</SPAN><SPAN class = "TEXT">, as appropriate.</SPAN>
+<P>
+<SPAN class = "TEXT">Given appropriate conversions </SPAN><SPAN class = "BRKT">conv1</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">conv2</SPAN><SPAN class = "TEXT">, the function </SPAN><SPAN class = "BRKT">IMAGE_CONV</SPAN><SPAN class = "TEXT">
+returns a conversion that maps a term of the form </SPAN><SPAN class = "BRKT">IMAGE&nbsp;f&nbsp;{t1;...;tn}</SPAN><SPAN class = "TEXT"> to
+the theorem
+</SPAN><DIV class = "XMPL"><pre>
+   |- IMAGE f {t1;...;tn} = {rj;...;rk}
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">conv1</SPAN><SPAN class = "TEXT"> proves a theorem of the form </SPAN><SPAN class = "BRKT">|-&nbsp;(f&nbsp;ti)&nbsp;=&nbsp;ri</SPAN><SPAN class = "TEXT"> for each
+element </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> of the set </SPAN><SPAN class = "BRKT">{t1;...;tn}</SPAN><SPAN class = "TEXT">, and where the set </SPAN><SPAN class = "BRKT">{rj;...;rk}</SPAN><SPAN class = "TEXT"> is
+the smallest subset of </SPAN><SPAN class = "BRKT">{r1;...;rn}</SPAN><SPAN class = "TEXT"> such no two elements are
+alpha-equivalent and </SPAN><SPAN class = "BRKT">conv2</SPAN><SPAN class = "TEXT"> does not map </SPAN><SPAN class = "BRKT">rl&nbsp;=&nbsp;rm</SPAN><SPAN class = "TEXT"> to the theorem
+</SPAN><SPAN class = "BRKT">|-&nbsp;(rl&nbsp;=&nbsp;rm)&nbsp;=&nbsp;T</SPAN><SPAN class = "TEXT"> for any pair of values </SPAN><SPAN class = "BRKT">rl</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">rm</SPAN><SPAN class = "TEXT"> in </SPAN><SPAN class = "BRKT">{rj;...;rk}</SPAN><SPAN class = "TEXT">.
+That is, </SPAN><SPAN class = "BRKT">{rj;...;rk}</SPAN><SPAN class = "TEXT"> is the set obtained by removing multiple occurrences
+of values from the set </SPAN><SPAN class = "BRKT">{r1;...;rn}</SPAN><SPAN class = "TEXT">, where the equality conversion </SPAN><SPAN class = "BRKT">conv2</SPAN><SPAN class = "TEXT">
+(or alpha-equivalence) is used to determine which pairs of terms in
+</SPAN><SPAN class = "BRKT">{r1;...;rn}</SPAN><SPAN class = "TEXT"> are equal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following is a very simple example in which </SPAN><SPAN class = "BRKT">REFL</SPAN><SPAN class = "TEXT"> is used to construct the
+result of applying the function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to each element of the set </SPAN><SPAN class = "BRKT">{1;&nbsp;2;&nbsp;1;&nbsp;4}</SPAN><SPAN class = "TEXT">,
+and </SPAN><SPAN class = "BRKT">NO_CONV</SPAN><SPAN class = "TEXT"> is the supplied &lsquo;equality conversion&rsquo;.
+</SPAN><DIV class = "XMPL"><pre>
+   - IMAGE_CONV REFL NO_CONV ``IMAGE (f:num-&gt;num) {1; 2; 1; 4}``;
+   &gt; val it = |- IMAGE f {1; 2; 1; 4} = {f 2; f 1; f 4} : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The result contains only one occurrence of </SPAN><SPAN class = "BRKT">f&nbsp;1</SPAN><SPAN class = "TEXT">, even though
+</SPAN><SPAN class = "BRKT">NO_CONV</SPAN><SPAN class = "TEXT"> always fails, since </SPAN><SPAN class = "BRKT">IMAGE_CONV</SPAN><SPAN class = "TEXT"> simplifies the resulting set by
+removing elements that are redundant up to alpha-equivalence.</SPAN>
+<P>
+<SPAN class = "TEXT">For the next example, we construct a conversion that maps </SPAN><SPAN class = "BRKT">SUC&nbsp;n</SPAN><SPAN class = "TEXT"> for any
+numeral </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> to the numeral standing for the successor of </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">. 
+</SPAN><DIV class = "XMPL"><pre>
+   - fun SUC_CONV tm =
+      let open numLib Arbnum
+          val n = dest_numeral (rand tm)
+          val sucn = mk_numeral (n + one)
+      in
+        SYM (num_CONV sucn)
+      end;
+
+   &gt; val SUC_CONV = fn : term -&gt; thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The result is a conversion that inverts </SPAN><SPAN class = "BRKT">num_CONV</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   - numLib.num_CONV ``4``;
+   &gt; val it = |- 4 = SUC 3 : thm
+
+   - SUC_CONV ``SUC 3``;
+   &gt; val it = |- SUC 3 = 4 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The conversion </SPAN><SPAN class = "BRKT">SUC_CONV</SPAN><SPAN class = "TEXT"> can then be used to compute the image
+of the successor function on a finite set:
+</SPAN><DIV class = "XMPL"><pre>
+   - IMAGE_CONV SUC_CONV NO_CONV ``IMAGE SUC {1; 2; 1; 4}``;
+   &gt; val it = |- IMAGE SUC {1; 2; 1; 4} = {3; 2; 5} : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Note that </SPAN><SPAN class = "BRKT">2</SPAN><SPAN class = "TEXT"> (= </SPAN><SPAN class = "BRKT">SUC&nbsp;1</SPAN><SPAN class = "TEXT">) appears only once in the resulting set. </SPAN>
+<P>
+<SPAN class = "TEXT">Finally, here is an example of using </SPAN><SPAN class = "BRKT">IMAGE_CONV</SPAN><SPAN class = "TEXT"> to compute the image of a
+paired addition function on a set of pairs of numbers:
+</SPAN><DIV class = "XMPL"><pre>
+   - IMAGE_CONV (pairLib.PAIRED_BETA_CONV THENC reduceLib.ADD_CONV) 
+                numLib.REDUCE_CONV
+            ``IMAGE (\(n,m).n+m) {{(1,2), (3,4), (0,3), (1,3)}}``;
+   &gt; val it = |- IMAGE (\(n,m). n + m) {(1,2); (3,4); (0,3); (1,3)} = {7; 3; 4}
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">IMAGE_CONV&nbsp;conv1&nbsp;conv2</SPAN><SPAN class = "TEXT"> fails if applied to a term not of the form
+</SPAN><SPAN class = "BRKT">IMAGE&nbsp;f&nbsp;{t1;...;tn}</SPAN><SPAN class = "TEXT">.  An application of </SPAN><SPAN class = "BRKT">IMAGE_CONV&nbsp;conv1&nbsp;conv2</SPAN><SPAN class = "TEXT"> to
+a term </SPAN><SPAN class = "BRKT">IMAGE&nbsp;f&nbsp;{t1;...;tn}</SPAN><SPAN class = "TEXT"> fails unless for all </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> in the set
+</SPAN><SPAN class = "BRKT">{t1;...;tn}</SPAN><SPAN class = "TEXT">, evaluating </SPAN><SPAN class = "BRKT">conv1&nbsp;``f&nbsp;ti``</SPAN><SPAN class = "TEXT"> returns </SPAN><SPAN class = "BRKT">|-&nbsp;(f&nbsp;ti)&nbsp;=&nbsp;ri</SPAN><SPAN class = "TEXT">
+for some </SPAN><SPAN class = "BRKT">ri</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

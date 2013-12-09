@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure defCNFTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure defCNFTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/HolSat/vector_def_CNF/defCNFScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature defCNFTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#DEF_def-val">DEF_def</a> : thm
+<a name="line7"></a>    val <a href="#OKDEF_def-val">OKDEF_def</a> : thm
+<a name="line8"></a>    val <a href="#OK_curried_def-val">OK_curried_def</a> : thm
+<a name="line9"></a>    val <a href="#OK_tupled_primitive_def-val">OK_tupled_primitive_def</a> : thm
+<a name="line10"></a>    val <a href="#UNIQUE_curried_def-val">UNIQUE_curried_def</a> : thm
+<a name="line11"></a>    val <a href="#UNIQUE_tupled_primitive_def-val">UNIQUE_tupled_primitive_def</a> : thm
+<a name="line12"></a>
+<a name="line13"></a>  (*  Theorems  *)
+<a name="line14"></a>    val <a href="#BIGSTEP-val">BIGSTEP</a> : thm
+<a name="line15"></a>    val <a href="#CONSISTENCY-val">CONSISTENCY</a> : thm
+<a name="line16"></a>    val <a href="#DEF_SNOC-val">DEF_SNOC</a> : thm
+<a name="line17"></a>    val <a href="#FINAL_DEF-val">FINAL_DEF</a> : thm
+<a name="line18"></a>    val <a href="#OKDEF_SNOC-val">OKDEF_SNOC</a> : thm
+<a name="line19"></a>    val <a href="#OK_def-val">OK_def</a> : thm
+<a name="line20"></a>    val <a href="#OK_ind-val">OK_ind</a> : thm
+<a name="line21"></a>    val <a href="#UNIQUE_def-val">UNIQUE_def</a> : thm
+<a name="line22"></a>    val <a href="#UNIQUE_ind-val">UNIQUE_ind</a> : thm
+<a name="line23"></a>
+<a name="line24"></a>  val defCNF_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line25"></a>(*
+   [rich_list] Parent theory of "defCNF"
+
+   [<a name="DEF_def-val"><b>DEF_def</b></a>]  Definition
+
+      |- (∀v n. defCNF$DEF v n [] ⇔ T) ∧
+         ∀v n x xs.
+           defCNF$DEF v n (x::xs) ⇔
+           defCNF$UNIQUE v n x ∧ defCNF$DEF v (SUC n) xs
+
+   [<a name="OKDEF_def-val"><b>OKDEF_def</b></a>]  Definition
+
+      |- (∀n. defCNF$OKDEF n [] ⇔ T) ∧
+         ∀n x xs.
+           defCNF$OKDEF n (x::xs) ⇔ defCNF$OK n x ∧ defCNF$OKDEF (SUC n) xs
+
+   [<a name="OK_curried_def-val"><b>OK_curried_def</b></a>]  Definition
+
+      |- ∀x x1. defCNF$OK x x1 ⇔ OK_tupled (x,x1)
+
+   [<a name="OK_tupled_primitive_def-val"><b>OK_tupled_primitive_def</b></a>]  Definition
+
+      |- OK_tupled =
+         WFREC (@R. WF R)
+           (λOK_tupled a'.
+              case a' of
+                (n,conn,INL i,INL j) =&gt; I (i &lt; n ∧ j &lt; n)
+              | (n,conn,INL i,INR b) =&gt; I (i &lt; n)
+              | (n,conn,INR a,INL j') =&gt; I (j' &lt; n)
+              | (n,conn,INR a,INR b') =&gt; I T)
+
+   [<a name="UNIQUE_curried_def-val"><b>UNIQUE_curried_def</b></a>]  Definition
+
+      |- ∀x x1 x2. defCNF$UNIQUE x x1 x2 ⇔ UNIQUE_tupled (x,x1,x2)
+
+   [<a name="UNIQUE_tupled_primitive_def-val"><b>UNIQUE_tupled_primitive_def</b></a>]  Definition
+
+      |- UNIQUE_tupled =
+         WFREC (@R. WF R)
+           (λUNIQUE_tupled a'.
+              case a' of
+                (v,n,conn,INL i,INL j) =&gt; I (v n ⇔ conn (v i) (v j))
+              | (v,n,conn,INL i,INR b) =&gt; I (v n ⇔ conn (v i) b)
+              | (v,n,conn,INR a,INL j') =&gt; I (v n ⇔ conn a (v j'))
+              | (v,n,conn,INR a,INR b') =&gt; I (v n ⇔ conn a b'))
+
+   [<a name="BIGSTEP-val"><b>BIGSTEP</b></a>]  Theorem
+
+      |- ∀P Q R. (∀v. P v ⇒ (Q ⇔ R v)) ⇒ ((∃v. P v) ∧ Q ⇔ ∃v. P v ∧ R v)
+
+   [<a name="CONSISTENCY-val"><b>CONSISTENCY</b></a>]  Theorem
+
+      |- ∀n l. defCNF$OKDEF n l ⇒ ∃v. defCNF$DEF v n l
+
+   [<a name="DEF_SNOC-val"><b>DEF_SNOC</b></a>]  Theorem
+
+      |- ∀n x l v.
+           defCNF$DEF v n (SNOC x l) ⇔
+           defCNF$DEF v n l ∧ defCNF$UNIQUE v (n + LENGTH l) x
+
+   [<a name="FINAL_DEF-val"><b>FINAL_DEF</b></a>]  Theorem
+
+      |- ∀v n x. (v n ⇔ x) ⇔ (v n ⇔ x) ∧ defCNF$DEF v (SUC n) []
+
+   [<a name="OKDEF_SNOC-val"><b>OKDEF_SNOC</b></a>]  Theorem
+
+      |- ∀n x l.
+           defCNF$OKDEF n (SNOC x l) ⇔
+           defCNF$OKDEF n l ∧ defCNF$OK (n + LENGTH l) x
+
+   [<a name="OK_def-val"><b>OK_def</b></a>]  Theorem
+
+      |- (defCNF$OK n (conn,INL i,INL j) ⇔ i &lt; n ∧ j &lt; n) ∧
+         (defCNF$OK n (conn,INL i,INR b) ⇔ i &lt; n) ∧
+         (defCNF$OK n (conn,INR a,INL j) ⇔ j &lt; n) ∧
+         (defCNF$OK n (conn,INR a,INR b) ⇔ T)
+
+   [<a name="OK_ind-val"><b>OK_ind</b></a>]  Theorem
+
+      |- ∀P.
+           (∀n conn i j. P n (conn,INL i,INL j)) ∧
+           (∀n conn i b. P n (conn,INL i,INR b)) ∧
+           (∀n conn a j. P n (conn,INR a,INL j)) ∧
+           (∀n conn a b. P n (conn,INR a,INR b)) ⇒
+           ∀v v1 v2 v3. P v (v1,v2,v3)
+
+   [<a name="UNIQUE_def-val"><b>UNIQUE_def</b></a>]  Theorem
+
+      |- (defCNF$UNIQUE v n (conn,INL i,INL j) ⇔
+          (v n ⇔ conn (v i) (v j))) ∧
+         (defCNF$UNIQUE v n (conn,INL i,INR b) ⇔ (v n ⇔ conn (v i) b)) ∧
+         (defCNF$UNIQUE v n (conn,INR a,INL j) ⇔ (v n ⇔ conn a (v j))) ∧
+         (defCNF$UNIQUE v n (conn,INR a,INR b) ⇔ (v n ⇔ conn a b))
+
+   [<a name="UNIQUE_ind-val"><b>UNIQUE_ind</b></a>]  Theorem
+
+      |- ∀P.
+           (∀v n conn i j. P v n (conn,INL i,INL j)) ∧
+           (∀v n conn i b. P v n (conn,INL i,INR b)) ∧
+           (∀v n conn a j. P v n (conn,INR a,INL j)) ∧
+           (∀v n conn a b. P v n (conn,INR a,INR b)) ⇒
+           ∀v v1 v2 v3 v4. P v v1 (v2,v3,v4)
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/HolSat/vector_def_CNF/defCNFScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-9</a></em></p></body></html>

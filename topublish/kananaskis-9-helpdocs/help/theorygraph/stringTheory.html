@@ -1,0 +1,808 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: string</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "string"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "rich_listTheory.html"><span class="strong">rich_list</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">char</span> <td> 0
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">CHR</span> <td> :num -> char
+    <tr><td>
+        <span class="strong">DEST_STRING</span>
+        <td>
+        :(string, char) state_option
+    <tr><td> <span class="strong">EXPLODE</span> <td> :string -> string
+    <tr><td>
+        <span class="strong">EXTRACT</span>
+        <td>
+        :string # num # num option -> string
+    <tr><td>
+        <span class="strong">FIELDS</span>
+        <td>
+        :(char -> bool) -> string -> string list
+    <tr><td>
+        <span class="strong">FIELDS_tupled</span>
+        <td>
+        :(char -> bool) # string -> string list
+    <tr><td> <span class="strong">IMPLODE</span> <td> :string -> string
+    <tr><td> <span class="strong">ORD</span> <td> :char -> num
+    <tr><td> <span class="strong">STR</span> <td> :char -> string
+    <tr><td> <span class="strong">SUB</span> <td> :string # num -> char
+    <tr><td>
+        <span class="strong">SUBSTRING</span>
+        <td>
+        :string # num # num -> string
+    <tr><td>
+        <span class="strong">TOKENS</span>
+        <td>
+        :(char -> bool) -> string -> string list
+    <tr><td>
+        <span class="strong">TOKENS_tupled</span>
+        <td>
+        :(char -> bool) # string -> string list
+    <tr><td>
+        <span class="strong">TRANSLATE</span>
+        <td>
+        :(char -> string) -> string -> string
+    <tr><td> <span class="strong">char_ge</span> <td> :char -> char -> bool
+    <tr><td> <span class="strong">char_gt</span> <td> :char -> char -> bool
+    <tr><td> <span class="strong">char_le</span> <td> :char -> char -> bool
+    <tr><td> <span class="strong">char_lt</span> <td> :char -> char -> bool
+    <tr><td> <span class="strong">char_size</span> <td> :char -> num
+    <tr><td> <span class="strong">isAlpha</span> <td> :char -> bool
+    <tr><td> <span class="strong">isAlphaNum</span> <td> :char -> bool
+    <tr><td> <span class="strong">isAscii</span> <td> :char -> bool
+    <tr><td> <span class="strong">isCntrl</span> <td> :char -> bool
+    <tr><td> <span class="strong">isDigit</span> <td> :char -> bool
+    <tr><td> <span class="strong">isGraph</span> <td> :char -> bool
+    <tr><td> <span class="strong">isHexDigit</span> <td> :char -> bool
+    <tr><td> <span class="strong">isLower</span> <td> :char -> bool
+    <tr><td> <span class="strong">isPrint</span> <td> :char -> bool
+    <tr><td> <span class="strong">isPunct</span> <td> :char -> bool
+    <tr><td> <span class="strong">isSpace</span> <td> :char -> bool
+    <tr><td> <span class="strong">isUpper</span> <td> :char -> bool
+    <tr><td>
+        <span class="strong">string_ge</span>
+        <td>
+        :string -> string -> bool
+    <tr><td>
+        <span class="strong">string_gt</span>
+        <td>
+        :string -> string -> bool
+    <tr><td>
+        <span class="strong">string_le</span>
+        <td>
+        :string -> string -> bool
+    <tr><td>
+        <span class="strong">string_lt</span>
+        <td>
+        :string -> string -> bool
+    <tr><td> <span class="strong">string_lt_tupled</span> <td> :string reln
+    <tr><td> <span class="strong">toLower</span> <td> :char -> char
+    <tr><td> <span class="strong">toUpper</span> <td> :char -> char
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">DEST_STRING_def</span>
+<DD>
+<pre>
+|- (DEST_STRING "" = NONE) ∧ ∀c rst. DEST_STRING (STRING c rst) = SOME (c,rst)
+</pre>
+
+<DT><span class="strong">char_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep. TYPE_DEFINITION (λn. n < 256) rep
+</pre>
+
+<DT><span class="strong">char_BIJ</span>
+<DD>
+<pre>
+|- (∀a. CHR (ORD a) = a) ∧ ∀r. (λn. n < 256) r ⇔ (ORD (CHR r) = r)
+</pre>
+
+<DT><span class="strong">isLower_def</span>
+<DD>
+<pre>
+|- ∀c. isLower c ⇔ 97 ≤ ORD c ∧ ORD c ≤ 122
+</pre>
+
+<DT><span class="strong">isUpper_def</span>
+<DD>
+<pre>
+|- ∀c. isUpper c ⇔ 65 ≤ ORD c ∧ ORD c ≤ 90
+</pre>
+
+<DT><span class="strong">isDigit_def</span>
+<DD>
+<pre>
+|- ∀c. isDigit c ⇔ 48 ≤ ORD c ∧ ORD c ≤ 57
+</pre>
+
+<DT><span class="strong">isAlpha_def</span>
+<DD>
+<pre>
+|- ∀c. isAlpha c ⇔ isLower c ∨ isUpper c
+</pre>
+
+<DT><span class="strong">isHexDigit_def</span>
+<DD>
+<pre>
+|- ∀c.
+     isHexDigit c ⇔
+     48 ≤ ORD c ∧ ORD c ≤ 57 ∨ 97 ≤ ORD c ∧ ORD c ≤ 102 ∨
+     65 ≤ ORD c ∧ ORD c ≤ 70
+</pre>
+
+<DT><span class="strong">isAlphaNum_def</span>
+<DD>
+<pre>
+|- ∀c. isAlphaNum c ⇔ isAlpha c ∨ isDigit c
+</pre>
+
+<DT><span class="strong">isPrint_def</span>
+<DD>
+<pre>
+|- ∀c. isPrint c ⇔ 32 ≤ ORD c ∧ ORD c < 127
+</pre>
+
+<DT><span class="strong">isSpace_def</span>
+<DD>
+<pre>
+|- ∀c. isSpace c ⇔ (ORD c = 32) ∨ 9 ≤ ORD c ∧ ORD c ≤ 13
+</pre>
+
+<DT><span class="strong">isGraph_def</span>
+<DD>
+<pre>
+|- ∀c. isGraph c ⇔ isPrint c ∧ ¬isSpace c
+</pre>
+
+<DT><span class="strong">isPunct_def</span>
+<DD>
+<pre>
+|- ∀c. isPunct c ⇔ isGraph c ∧ ¬isAlphaNum c
+</pre>
+
+<DT><span class="strong">isAscii_def</span>
+<DD>
+<pre>
+|- ∀c. isAscii c ⇔ ORD c ≤ 127
+</pre>
+
+<DT><span class="strong">isCntrl_def</span>
+<DD>
+<pre>
+|- ∀c. isCntrl c ⇔ ORD c < 32 ∨ 127 ≤ ORD c
+</pre>
+
+<DT><span class="strong">toLower_def</span>
+<DD>
+<pre>
+|- ∀c. toLower c = if isUpper c then CHR (ORD c + 32) else c
+</pre>
+
+<DT><span class="strong">toUpper_def</span>
+<DD>
+<pre>
+|- ∀c. toUpper c = if isLower c then CHR (ORD c − 32) else c
+</pre>
+
+<DT><span class="strong">char_lt_def</span>
+<DD>
+<pre>
+|- ∀a b. a < b ⇔ ORD a < ORD b
+</pre>
+
+<DT><span class="strong">char_le_def</span>
+<DD>
+<pre>
+|- ∀a b. a ≤ b ⇔ ORD a ≤ ORD b
+</pre>
+
+<DT><span class="strong">char_gt_def</span>
+<DD>
+<pre>
+|- ∀a b. a > b ⇔ ORD a > ORD b
+</pre>
+
+<DT><span class="strong">char_ge_def</span>
+<DD>
+<pre>
+|- ∀a b. a ≥ b ⇔ ORD a ≥ ORD b
+</pre>
+
+<DT><span class="strong">char_size_def</span>
+<DD>
+<pre>
+|- ∀c. char_size c = 0
+</pre>
+
+<DT><span class="strong">SUB_def</span>
+<DD>
+<pre>
+|- ∀s n. SUB (s,n) = EL n s
+</pre>
+
+<DT><span class="strong">STR_def</span>
+<DD>
+<pre>
+|- ∀c. STR c = STRING c ""
+</pre>
+
+<DT><span class="strong">SUBSTRING_def</span>
+<DD>
+<pre>
+|- ∀s i n. SUBSTRING (s,i,n) = SEG n i s
+</pre>
+
+<DT><span class="strong">TRANSLATE_def</span>
+<DD>
+<pre>
+|- ∀f s. TRANSLATE f s = CONCAT (MAP f s)
+</pre>
+
+<DT><span class="strong">TOKENS_tupled_primitive_def</span>
+<DD>
+<pre>
+|- TOKENS_tupled =
+   WFREC
+     (@R.
+        WF R ∧
+        (∀t h P l r.
+           ((l,r) = SPLITP P (STRING h t)) ∧ NULL l ⇒
+           R (P,TL r) (P,STRING h t)) ∧
+        ∀t h P l r.
+          ((l,r) = SPLITP P (STRING h t)) ∧ ¬NULL l ⇒ R (P,r) (P,STRING h t))
+     (λTOKENS_tupled a.
+        case a of
+          (P,"") => I []
+        | (P,STRING h t) =>
+            I
+              (let (l,r) = SPLITP P (STRING h t)
+               in
+                 if NULL l then TOKENS_tupled (P,TL r)
+                 else l::TOKENS_tupled (P,r)))
+</pre>
+
+<DT><span class="strong">TOKENS_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1. TOKENS x x1 = TOKENS_tupled (x,x1)
+</pre>
+
+<DT><span class="strong">FIELDS_tupled_primitive_def</span>
+<DD>
+<pre>
+|- FIELDS_tupled =
+   WFREC
+     (@R.
+        WF R ∧
+        (∀t h P l r.
+           ((l,r) = SPLITP P (STRING h t)) ∧ NULL l ⇒
+           R (P,TL r) (P,STRING h t)) ∧
+        ∀t h P l r.
+          ((l,r) = SPLITP P (STRING h t)) ∧ ¬NULL l ∧ ¬NULL r ⇒
+          R (P,TL r) (P,STRING h t))
+     (λFIELDS_tupled a.
+        case a of
+          (P,"") => I [""]
+        | (P,STRING h t) =>
+            I
+              (let (l,r) = SPLITP P (STRING h t)
+               in
+                 if NULL l then ""::FIELDS_tupled (P,TL r)
+                 else if NULL r then [l]
+                 else l::FIELDS_tupled (P,TL r)))
+</pre>
+
+<DT><span class="strong">FIELDS_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1. FIELDS x x1 = FIELDS_tupled (x,x1)
+</pre>
+
+<DT><span class="strong">IMPLODE_def</span>
+<DD>
+<pre>
+|- (IMPLODE "" = "") ∧ ∀c cs. IMPLODE (STRING c cs) = STRING c (IMPLODE cs)
+</pre>
+
+<DT><span class="strong">EXPLODE_def</span>
+<DD>
+<pre>
+|- (EXPLODE "" = "") ∧ ∀c s. EXPLODE (STRING c s) = STRING c (EXPLODE s)
+</pre>
+
+<DT><span class="strong">EXTRACT_primitive_def</span>
+<DD>
+<pre>
+|- EXTRACT =
+   WFREC (@R. WF R)
+     (λEXTRACT a.
+        case a of
+          (s,i,NONE) => I (SUBSTRING (s,i,STRLEN s − i))
+        | (s,i,SOME n) => I (SUBSTRING (s,i,n)))
+</pre>
+
+<DT><span class="strong">string_lt_tupled_primitive_def</span>
+<DD>
+<pre>
+|- string_lt_tupled =
+   WFREC (@R. WF R ∧ ∀c2 c1 s2 s1. R (s1,s2) (STRING c1 s1,STRING c2 s2))
+     (λstring_lt_tupled a.
+        case a of
+          (s,"") => I F
+        | ("",STRING c s') => I T
+        | (STRING c1 s1,STRING c s') =>
+            I (c1 < c ∨ (c1 = c) ∧ string_lt_tupled (s1,s')))
+</pre>
+
+<DT><span class="strong">string_lt_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1. x < x1 ⇔ string_lt_tupled (x,x1)
+</pre>
+
+<DT><span class="strong">string_le_def</span>
+<DD>
+<pre>
+|- ∀s1 s2. s1 ≤ s2 ⇔ (s1 = s2) ∨ s1 < s2
+</pre>
+
+<DT><span class="strong">string_gt_def</span>
+<DD>
+<pre>
+|- ∀s1 s2. s1 > s2 ⇔ s2 < s1
+</pre>
+
+<DT><span class="strong">string_ge_def</span>
+<DD>
+<pre>
+|- ∀s1 s2. s1 ≥ s2 ⇔ s2 ≤ s1
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">IMPLODE_STRING</span>
+<DD>
+<pre>
+|- ∀clist. IMPLODE clist = FOLDR STRING "" clist
+</pre>
+
+<DT><span class="strong">EXPLODE_DEST_STRING</span>
+<DD>
+<pre>
+|- ∀s.
+     EXPLODE s =
+     case DEST_STRING s of NONE => "" | SOME (c,t) => STRING c (EXPLODE t)
+</pre>
+
+<DT><span class="strong">IMPLODE_EQ_THM</span>
+<DD>
+<pre>
+|- ∀c s l.
+     ((STRING c s = IMPLODE l) ⇔ (l = STRING c (EXPLODE s))) ∧
+     ((IMPLODE l = STRING c s) ⇔ (l = STRING c (EXPLODE s)))
+</pre>
+
+<DT><span class="strong">EXPLODE_EQ_THM</span>
+<DD>
+<pre>
+|- ∀s h t.
+     ((STRING h t = EXPLODE s) ⇔ (s = STRING h (IMPLODE t))) ∧
+     ((EXPLODE s = STRING h t) ⇔ (s = STRING h (IMPLODE t)))
+</pre>
+
+<DT><span class="strong">EXPLODE_EQ_NIL</span>
+<DD>
+<pre>
+|- ((EXPLODE s = "") ⇔ (s = "")) ∧ (("" = EXPLODE s) ⇔ (s = ""))
+</pre>
+
+<DT><span class="strong">IMPLODE_EQ_EMPTYSTRING</span>
+<DD>
+<pre>
+|- ((IMPLODE l = "") ⇔ (l = "")) ∧ (("" = IMPLODE l) ⇔ (l = ""))
+</pre>
+
+<DT><span class="strong">IMPLODE_EQNS</span>
+<DD>
+<pre>
+|- (IMPLODE "" = "") ∧ ∀c cs. IMPLODE (STRING c cs) = STRING c (IMPLODE cs)
+</pre>
+
+<DT><span class="strong">EXPLODE_EQNS</span>
+<DD>
+<pre>
+|- (EXPLODE "" = "") ∧ ∀c s. EXPLODE (STRING c s) = STRING c (EXPLODE s)
+</pre>
+
+<DT><span class="strong">DEST_STRING_LEMS</span>
+<DD>
+<pre>
+|- ∀s.
+     ((DEST_STRING s = NONE) ⇔ (s = "")) ∧
+     ((DEST_STRING s = SOME (c,t)) ⇔ (s = STRING c t))
+</pre>
+
+<DT><span class="strong">STRLEN_EXPLODE_THM</span>
+<DD>
+<pre>
+|- STRLEN s = STRLEN (EXPLODE s)
+</pre>
+
+<DT><span class="strong">ORD_11</span>
+<DD>
+<pre>
+|- ∀a a'. (ORD a = ORD a') ⇔ (a = a')
+</pre>
+
+<DT><span class="strong">CHR_11</span>
+<DD>
+<pre>
+|- ∀r r'. r < 256 ⇒ r' < 256 ⇒ ((CHR r = CHR r') ⇔ (r = r'))
+</pre>
+
+<DT><span class="strong">ORD_ONTO</span>
+<DD>
+<pre>
+|- ∀r. r < 256 ⇔ ∃a. r = ORD a
+</pre>
+
+<DT><span class="strong">CHR_ONTO</span>
+<DD>
+<pre>
+|- ∀a. ∃r. (a = CHR r) ∧ r < 256
+</pre>
+
+<DT><span class="strong">CHR_ORD</span>
+<DD>
+<pre>
+|- ∀a. CHR (ORD a) = a
+</pre>
+
+<DT><span class="strong">ORD_CHR</span>
+<DD>
+<pre>
+|- ∀r. r < 256 ⇔ (ORD (CHR r) = r)
+</pre>
+
+<DT><span class="strong">ORD_CHR_RWT</span>
+<DD>
+<pre>
+|- ∀r. r < 256 ⇒ (ORD (CHR r) = r)
+</pre>
+
+<DT><span class="strong">ORD_CHR_COMPUTE</span>
+<DD>
+<pre>
+|- ∀n. ORD (CHR n) = if n < 256 then n else FAIL ORD > 255 (CHR n)
+</pre>
+
+<DT><span class="strong">ORD_BOUND</span>
+<DD>
+<pre>
+|- ∀c. ORD c < 256
+</pre>
+
+<DT><span class="strong">char_nchotomy</span>
+<DD>
+<pre>
+|- ∀c. ∃n. c = CHR n
+</pre>
+
+<DT><span class="strong">ranged_char_nchotomy</span>
+<DD>
+<pre>
+|- ∀c. ∃n. (c = CHR n) ∧ n < 256
+</pre>
+
+<DT><span class="strong">CHAR_EQ_THM</span>
+<DD>
+<pre>
+|- ∀c1 c2. (c1 = c2) ⇔ (ORD c1 = ORD c2)
+</pre>
+
+<DT><span class="strong">CHAR_INDUCT_THM</span>
+<DD>
+<pre>
+|- ∀P. (∀n. n < 256 ⇒ P (CHR n)) ⇒ ∀c. P c
+</pre>
+
+<DT><span class="strong">TOKENS_ind</span>
+<DD>
+<pre>
+|- ∀P'.
+     (∀P. P' P "") ∧
+     (∀P h t.
+        (∀l r. ((l,r) = SPLITP P (STRING h t)) ∧ NULL l ⇒ P' P (TL r)) ∧
+        (∀l r. ((l,r) = SPLITP P (STRING h t)) ∧ ¬NULL l ⇒ P' P r) ⇒
+        P' P (STRING h t)) ⇒
+     ∀v v1. P' v v1
+</pre>
+
+<DT><span class="strong">TOKENS_def</span>
+<DD>
+<pre>
+|- (∀P. TOKENS P "" = []) ∧
+   ∀t h P.
+     TOKENS P (STRING h t) =
+     (let (l,r) = SPLITP P (STRING h t)
+      in
+        if NULL l then TOKENS P (TL r) else l::TOKENS P r)
+</pre>
+
+<DT><span class="strong">FIELDS_ind</span>
+<DD>
+<pre>
+|- ∀P'.
+     (∀P. P' P "") ∧
+     (∀P h t.
+        (∀l r. ((l,r) = SPLITP P (STRING h t)) ∧ NULL l ⇒ P' P (TL r)) ∧
+        (∀l r.
+           ((l,r) = SPLITP P (STRING h t)) ∧ ¬NULL l ∧ ¬NULL r ⇒
+           P' P (TL r)) ⇒
+        P' P (STRING h t)) ⇒
+     ∀v v1. P' v v1
+</pre>
+
+<DT><span class="strong">FIELDS_def</span>
+<DD>
+<pre>
+|- (∀P. FIELDS P "" = [""]) ∧
+   ∀t h P.
+     FIELDS P (STRING h t) =
+     (let (l,r) = SPLITP P (STRING h t)
+      in
+        if NULL l then ""::FIELDS P (TL r)
+        else if NULL r then [l]
+        else l::FIELDS P (TL r))
+</pre>
+
+<DT><span class="strong">IMPLODE_EXPLODE_I</span>
+<DD>
+<pre>
+|- (EXPLODE s = s) ∧ (IMPLODE s = s)
+</pre>
+
+<DT><span class="strong">IMPLODE_EXPLODE</span>
+<DD>
+<pre>
+|- IMPLODE (EXPLODE s) = s
+</pre>
+
+<DT><span class="strong">EXPLODE_IMPLODE</span>
+<DD>
+<pre>
+|- EXPLODE (IMPLODE cs) = cs
+</pre>
+
+<DT><span class="strong">EXPLODE_ONTO</span>
+<DD>
+<pre>
+|- ∀cs. ∃s. cs = EXPLODE s
+</pre>
+
+<DT><span class="strong">IMPLODE_ONTO</span>
+<DD>
+<pre>
+|- ∀s. ∃cs. s = IMPLODE cs
+</pre>
+
+<DT><span class="strong">EXPLODE_11</span>
+<DD>
+<pre>
+|- (EXPLODE s1 = EXPLODE s2) ⇔ (s1 = s2)
+</pre>
+
+<DT><span class="strong">IMPLODE_11</span>
+<DD>
+<pre>
+|- (IMPLODE cs1 = IMPLODE cs2) ⇔ (cs1 = cs2)
+</pre>
+
+<DT><span class="strong">STRING_ACYCLIC</span>
+<DD>
+<pre>
+|- ∀s c. STRING c s ≠ s ∧ s ≠ STRING c s
+</pre>
+
+<DT><span class="strong">EXTRACT_ind</span>
+<DD>
+<pre>
+|- ∀P. (∀s i. P (s,i,NONE)) ∧ (∀s i n. P (s,i,SOME n)) ⇒ ∀v v1 v2. P (v,v1,v2)
+</pre>
+
+<DT><span class="strong">EXTRACT_def</span>
+<DD>
+<pre>
+|- (EXTRACT (s,i,NONE) = SUBSTRING (s,i,STRLEN s − i)) ∧
+   (EXTRACT (s,i,SOME n) = SUBSTRING (s,i,n))
+</pre>
+
+<DT><span class="strong">STRLEN_EQ_0</span>
+<DD>
+<pre>
+|- ∀l. (STRLEN l = 0) ⇔ (l = "")
+</pre>
+
+<DT><span class="strong">STRLEN_THM</span>
+<DD>
+<pre>
+|- (STRLEN "" = 0) ∧ ∀h t. STRLEN (STRING h t) = SUC (STRLEN t)
+</pre>
+
+<DT><span class="strong">STRLEN_DEF</span>
+<DD>
+<pre>
+|- (STRLEN "" = 0) ∧ ∀h t. STRLEN (STRING h t) = SUC (STRLEN t)
+</pre>
+
+<DT><span class="strong">STRCAT_def</span>
+<DD>
+<pre>
+|- (∀l. STRCAT "" l = l) ∧
+   ∀l1 l2 h. STRCAT (STRING h l1) l2 = STRING h (STRCAT l1 l2)
+</pre>
+
+<DT><span class="strong">STRCAT</span>
+<DD>
+<pre>
+|- STRCAT s1 s2 = STRCAT s1 s2
+</pre>
+
+<DT><span class="strong">STRCAT_EQNS</span>
+<DD>
+<pre>
+|- (STRCAT "" s = s) ∧ (STRCAT s "" = s) ∧
+   (STRCAT (STRING c s1) s2 = STRING c (STRCAT s1 s2))
+</pre>
+
+<DT><span class="strong">STRCAT_ASSOC</span>
+<DD>
+<pre>
+|- ∀l1 l2 l3. STRCAT l1 (STRCAT l2 l3) = STRCAT (STRCAT l1 l2) l3
+</pre>
+
+<DT><span class="strong">STRCAT_11</span>
+<DD>
+<pre>
+|- (∀l1 l2 l3. (STRCAT l1 l2 = STRCAT l1 l3) ⇔ (l2 = l3)) ∧
+   ∀l1 l2 l3. (STRCAT l2 l1 = STRCAT l3 l1) ⇔ (l2 = l3)
+</pre>
+
+<DT><span class="strong">STRCAT_ACYCLIC</span>
+<DD>
+<pre>
+|- ∀s s1. ((s = STRCAT s s1) ⇔ (s1 = "")) ∧ ((s = STRCAT s1 s) ⇔ (s1 = ""))
+</pre>
+
+<DT><span class="strong">STRCAT_EXPLODE</span>
+<DD>
+<pre>
+|- ∀s1 s2. STRCAT s1 s2 = FOLDR STRING s2 (EXPLODE s1)
+</pre>
+
+<DT><span class="strong">STRCAT_EQ_EMPTY</span>
+<DD>
+<pre>
+|- ∀l1 l2. (STRCAT l1 l2 = "") ⇔ (l1 = "") ∧ (l2 = "")
+</pre>
+
+<DT><span class="strong">STRLEN_CAT</span>
+<DD>
+<pre>
+|- ∀l1 l2. STRLEN (STRCAT l1 l2) = STRLEN l1 + STRLEN l2
+</pre>
+
+<DT><span class="strong">isPREFIX_DEF</span>
+<DD>
+<pre>
+|- ∀s1 s2.
+     s1 ≼ s2 ⇔
+     case (DEST_STRING s1,DEST_STRING s2) of
+       (NONE,v1) => T
+     | (SOME v2,NONE) => F
+     | (SOME (c1,t1),SOME (c2,t2)) => (c1 = c2) ∧ t1 ≼ t2
+</pre>
+
+<DT><span class="strong">isPREFIX_IND</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀s1 s2.
+        (∀c t1 t2.
+           (DEST_STRING s1 = SOME (c,t1)) ∧ (DEST_STRING s2 = SOME (c,t2)) ⇒
+           P t1 t2) ⇒
+        P s1 s2) ⇒
+     ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">isPREFIX_STRCAT</span>
+<DD>
+<pre>
+|- ∀s1 s2. s1 ≼ s2 ⇔ ∃s3. s2 = STRCAT s1 s3
+</pre>
+
+<DT><span class="strong">string_lt_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀s. P s "") ∧ (∀c s. P "" (STRING c s)) ∧
+     (∀c1 s1 c2 s2. P s1 s2 ⇒ P (STRING c1 s1) (STRING c2 s2)) ⇒
+     ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">string_lt_def</span>
+<DD>
+<pre>
+|- (∀s. s < "" ⇔ F) ∧ (∀s c. "" < STRING c s ⇔ T) ∧
+   ∀s2 s1 c2 c1. STRING c1 s1 < STRING c2 s2 ⇔ c1 < c2 ∨ (c1 = c2) ∧ s1 < s2
+</pre>
+
+<DT><span class="strong">string_lt_nonrefl</span>
+<DD>
+<pre>
+|- ∀s. ¬(s < s)
+</pre>
+
+<DT><span class="strong">string_lt_antisym</span>
+<DD>
+<pre>
+|- ∀s t. ¬(s < t ∧ t < s)
+</pre>
+
+<DT><span class="strong">string_lt_cases</span>
+<DD>
+<pre>
+|- ∀s t. (s = t) ∨ s < t ∨ t < s
+</pre>
+
+<DT><span class="strong">string_lt_trans</span>
+<DD>
+<pre>
+|- ∀s1 s2 s3. s1 < s2 ∧ s2 < s3 ⇒ s1 < s3
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

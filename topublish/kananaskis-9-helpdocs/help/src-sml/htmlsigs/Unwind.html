@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Unwind</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Unwind</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/Unwind.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(*-------------------------------------------------------------------
+<a name="line2"></a> * UNWIND_EXISTS_CONV : conv
+<a name="line3"></a> * UNWIND_FORALL_CONV : conv
+<a name="line4"></a> *
+<a name="line5"></a> * DESCRIPTION
+<a name="line6"></a> *
+<a name="line7"></a> * UNWIND_EXISTS_CONV eliminates existential
+<a name="line8"></a> * quantifiers where the quantified variable
+<a name="line9"></a> * is restricted to a single point via an equality in the
+<a name="line10"></a> * conjuncts of the body.  Given a term of the form
+<a name="line11"></a> *    ?x1 x2 ... xn. P1[x1..xn] /\ P2[x1..xn] /\ ... /\ Pm[x1..xn]
+<a name="line12"></a> * where one of Pk is
+<a name="line13"></a> *        "x1 = F[x2...xn]"
+<a name="line14"></a> *   or   "F[x2...xn] = x1"
+<a name="line15"></a> *   or   "x1"
+<a name="line16"></a> *   or   "~x1"
+<a name="line17"></a> * UNWIND_EXISTS_CONV eliminates the variable x1 from the existential
+<a name="line18"></a> * quantification and converts the term to
+<a name="line19"></a> *     ?x2...xn. P1'[x2...xn] /\ ...P(m-1)'[x2...xn]
+<a name="line20"></a> * where P1' through Pm-1' have any occurrences of x1 substituted as
+<a name="line21"></a> * F[x2...xn].
+<a name="line22"></a> *
+<a name="line23"></a> * UNWIND_FORALL_CONV eliminates universal
+<a name="line24"></a> * quantifiers where the quantified variable
+<a name="line25"></a> * is restricted to a single point via an equality in the
+<a name="line26"></a> * conjuncts of the body.  Given a term of the form
+<a name="line27"></a> *    !x1 x2 ... xn. P1[x1..xn] ==&gt; P2[x1..xn] ==&gt; ... ==&gt; Pm[x1..xn]
+<a name="line28"></a> * where one of Pk (k &lt; m) is
+<a name="line29"></a> *        "x1 = F[x2...xn]"
+<a name="line30"></a> *   or   "F[x2...xn] = x1"
+<a name="line31"></a> *   or   "x1"
+<a name="line32"></a> *   or   "~x1"
+<a name="line33"></a> * UNWIND_FORALL_CONV eliminates the variable x1 from the
+<a name="line34"></a> * quantification and converts the term to
+<a name="line35"></a> *     !x2...xn. P1'[x2...xn] ==&gt; ...P(m-1)'[x2...xn] ==&gt; Pm[x1..xn]
+<a name="line36"></a> * where P1' through Pm-1' have any occurrences of x1 substituted as
+<a name="line37"></a> * F[x2...xn], and Pk has been removed.
+<a name="line38"></a> *
+<a name="line39"></a> * The constraint can also occur within conjuncts of P1, P2 ... P(m-1).
+<a name="line40"></a> *
+<a name="line41"></a> * USES
+<a name="line42"></a> *
+<a name="line43"></a> * Eliminating trivial existential and universal quantifiers.
+<a name="line44"></a> *
+<a name="line45"></a> * EXAMPLES
+<a name="line46"></a> *
+<a name="line47"></a> * - UNWIND_EXISTS_CONV (--`?inp. inp /\ P inp`--);
+<a name="line48"></a> * |- (?inp. inp /\ P inp) = P T : thm
+<a name="line49"></a> *
+<a name="line50"></a> * - UNWIND_EXISTS_CONV (--`?inp (f:'a-&gt;num). (inp = f x)  /\ P f inp`--);
+<a name="line51"></a> * |- (?inp f. (inp = f x) /\ P f inp) = (?f. P f (f x)) : thm
+<a name="line52"></a> *
+<a name="line53"></a> * - UNWIND_EXISTS_CONV (--`?inp. ~inp /\ P inp`--);
+<a name="line54"></a> * |- (?inp. ~inp /\ P inp) = P F : thm
+<a name="line55"></a> *
+<a name="line56"></a> * UNWIND_FORALL_CONV (--`!x. (x = 3) ==&gt; P x`--);
+<a name="line57"></a> * UNWIND_FORALL_CONV (--`!x. (x = 3) /\ Q x ==&gt; P x`--);
+<a name="line58"></a> * UNWIND_FORALL_CONV (--`!x. (3 = x) /\ Q x ==&gt; P x`--);
+<a name="line59"></a> * UNWIND_FORALL_CONV (--`!x. (x &lt; y) ==&gt; (x = 3) /\ Q x ==&gt; P x`--);
+<a name="line60"></a> * UNWIND_FORALL_CONV (--`!Q R. (x = 3) /\ Q /\ P x ==&gt; R Q`--);
+<a name="line61"></a> * UNWIND_FORALL_CONV (--`!Q R. (x = 3) /\ ~Q /\ P x ==&gt; R Q`--);
+<a name="line62"></a> *
+<a name="line63"></a> * TESTING CODE
+<a name="line64"></a> *
+<a name="line65"></a> * use "3/simplifier/src/UNWIND.sml";
+<a name="line66"></a> * open UNWIND;
+<a name="line67"></a> *------------------------------------------------------------------------*)
+<a name="line68"></a>
+<a name="line69"></a>signature Unwind =
+<a name="line70"></a>sig
+<a name="line71"></a>   include Abbrev
+<a name="line72"></a>
+<a name="line73"></a>   val UNWIND_EXISTS_CONV : conv
+<a name="line74"></a>   val UNWIND_EXISTS_TAC : tactic
+<a name="line75"></a>   val UNWIND_EXISTS_RULE : thm -&gt; thm
+<a name="line76"></a>   val UNWIND_FORALL_CONV : conv
+<a name="line77"></a>   val UNWIND_FORALL_TAC : tactic
+<a name="line78"></a>   val UNWIND_FORALL_RULE : thm -&gt; thm
+<a name="line79"></a>
+<a name="line80"></a>end (* sig *)
+<a name="line81"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/Unwind.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-9</a></em></p></body></html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure blastTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure blastTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/n-bit/blastScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature blastTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#BCARRY_def-val">BCARRY_def</a> : thm
+<a name="line7"></a>    val <a href="#BSUM_def-val">BSUM_def</a> : thm
+<a name="line8"></a>    val <a href="#bcarry_def-val">bcarry_def</a> : thm
+<a name="line9"></a>    val <a href="#bsum_def-val">bsum_def</a> : thm
+<a name="line10"></a>
+<a name="line11"></a>  (*  Theorems  *)
+<a name="line12"></a>    val <a href="#BCARRY_EQ-val">BCARRY_EQ</a> : thm
+<a name="line13"></a>    val <a href="#BCARRY_LEM-val">BCARRY_LEM</a> : thm
+<a name="line14"></a>    val <a href="#BCARRY_def_compute-val">BCARRY_def_compute</a> : thm
+<a name="line15"></a>    val <a href="#BITWISE_ADD-val">BITWISE_ADD</a> : thm
+<a name="line16"></a>    val <a href="#BITWISE_LO-val">BITWISE_LO</a> : thm
+<a name="line17"></a>    val <a href="#BITWISE_MUL-val">BITWISE_MUL</a> : thm
+<a name="line18"></a>    val <a href="#BITWISE_SUB-val">BITWISE_SUB</a> : thm
+<a name="line19"></a>    val <a href="#BSUM_EQ-val">BSUM_EQ</a> : thm
+<a name="line20"></a>    val <a href="#BSUM_LEM-val">BSUM_LEM</a> : thm
+<a name="line21"></a>    val <a href="#word_asr_bv_expand-val">word_asr_bv_expand</a> : thm
+<a name="line22"></a>    val <a href="#word_lsl_bv_expand-val">word_lsl_bv_expand</a> : thm
+<a name="line23"></a>    val <a href="#word_lsr_bv_expand-val">word_lsr_bv_expand</a> : thm
+<a name="line24"></a>    val <a href="#word_rol_bv_expand-val">word_rol_bv_expand</a> : thm
+<a name="line25"></a>    val <a href="#word_ror_bv_expand-val">word_ror_bv_expand</a> : thm
+<a name="line26"></a>
+<a name="line27"></a>  val blast_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line28"></a>(*
+   [words] Parent theory of "blast"
+
+   [<a name="BCARRY_def-val"><b>BCARRY_def</b></a>]  Definition
+
+      |- (∀x y c. BCARRY 0 x y c ⇔ c) ∧
+         ∀i x y c.
+           BCARRY (SUC i) x y c ⇔ bcarry (x i) (y i) (BCARRY i x y c)
+
+   [<a name="BSUM_def-val"><b>BSUM_def</b></a>]  Definition
+
+      |- ∀i x y c. BSUM i x y c ⇔ bsum (x i) (y i) (BCARRY i x y c)
+
+   [<a name="bcarry_def-val"><b>bcarry_def</b></a>]  Definition
+
+      |- ∀x y c. bcarry x y c ⇔ x ∧ y ∨ (x ∨ y) ∧ c
+
+   [<a name="bsum_def-val"><b>bsum_def</b></a>]  Definition
+
+      |- ∀x y c. bsum x y c ⇔ ((x ⇔ ¬y) ⇔ ¬c)
+
+   [<a name="BCARRY_EQ-val"><b>BCARRY_EQ</b></a>]  Theorem
+
+      |- ∀n c x1 x2 y1 y2.
+           (∀i. i &lt; n ⇒ (x1 i ⇔ x2 i) ∧ (y1 i ⇔ y2 i)) ⇒
+           (BCARRY n x1 y1 c ⇔ BCARRY n x2 y2 c)
+
+   [<a name="BCARRY_LEM-val"><b>BCARRY_LEM</b></a>]  Theorem
+
+      |- ∀i x y c.
+           0 &lt; i ⇒
+           (BCARRY i (λi. BIT i x) (λi. BIT i y) c ⇔
+            BIT i
+              (BITS (i − 1) 0 x + BITS (i − 1) 0 y + if c then 1 else 0))
+
+   [<a name="BCARRY_def_compute-val"><b>BCARRY_def_compute</b></a>]  Theorem
+
+      |- (∀x y c. BCARRY 0 x y c ⇔ c) ∧
+         (∀i x y c.
+            BCARRY (NUMERAL (BIT1 i)) x y c ⇔
+            bcarry (x (NUMERAL (BIT1 i) − 1)) (y (NUMERAL (BIT1 i) − 1))
+              (BCARRY (NUMERAL (BIT1 i) − 1) x y c)) ∧
+         ∀i x y c.
+           BCARRY (NUMERAL (BIT2 i)) x y c ⇔
+           bcarry (x (NUMERAL (BIT1 i))) (y (NUMERAL (BIT1 i)))
+             (BCARRY (NUMERAL (BIT1 i)) x y c)
+
+   [<a name="BITWISE_ADD-val"><b>BITWISE_ADD</b></a>]  Theorem
+
+      |- ∀x y. x + y = FCP i. BSUM i ($' x) ($' y) F
+
+   [<a name="BITWISE_LO-val"><b>BITWISE_LO</b></a>]  Theorem
+
+      |- ∀x y. x &lt;₊ y ⇔ ¬BCARRY (dimindex (:α)) ($' x) ($~ o $' y) T
+
+   [<a name="BITWISE_MUL-val"><b>BITWISE_MUL</b></a>]  Theorem
+
+      |- ∀w m.
+           w * m =
+           FOLDL (λa j. a + FCP i. w ' j ∧ j ≤ i ∧ m ' (i − j)) 0w
+             (COUNT_LIST (dimindex (:α)))
+
+   [<a name="BITWISE_SUB-val"><b>BITWISE_SUB</b></a>]  Theorem
+
+      |- ∀x y. x − y = FCP i. BSUM i ($' x) ($~ o $' y) T
+
+   [<a name="BSUM_EQ-val"><b>BSUM_EQ</b></a>]  Theorem
+
+      |- ∀n c x1 x2 y1 y2.
+           (∀i. i ≤ n ⇒ (x1 i ⇔ x2 i) ∧ (y1 i ⇔ y2 i)) ⇒
+           (BSUM n x1 y1 c ⇔ BSUM n x2 y2 c)
+
+   [<a name="BSUM_LEM-val"><b>BSUM_LEM</b></a>]  Theorem
+
+      |- ∀i x y c.
+           BSUM i (λi. BIT i x) (λi. BIT i y) c ⇔
+           BIT i (x + y + if c then 1 else 0)
+
+   [<a name="word_asr_bv_expand-val"><b>word_asr_bv_expand</b></a>]  Theorem
+
+      |- ∀w m.
+           w &gt;&gt;~ m =
+           if dimindex (:α) = 1 then $FCP (K (w ' 0))
+           else
+             FCP k.
+               FOLDL
+                 (λa j.
+                    a ∨
+                    ((LOG2 (dimindex (:α) − 1) -- 0) m = n2w j) ∧
+                    (w ≫ j) ' k) F (COUNT_LIST (dimindex (:α))) ∧
+               ((dimindex (:α) − 1 -- LOG2 (dimindex (:α) − 1) + 1) m =
+                0w) ∨
+               n2w (dimindex (:α) − 1) &lt;₊ m ∧ w ' (dimindex (:α) − 1)
+
+   [<a name="word_lsl_bv_expand-val"><b>word_lsl_bv_expand</b></a>]  Theorem
+
+      |- ∀w m.
+           w &lt;&lt;~ m =
+           if dimindex (:α) = 1 then $FCP (K (¬m ' 0 ∧ w ' 0))
+           else
+             FCP k.
+               FOLDL
+                 (λa j.
+                    a ∨
+                    ((LOG2 (dimindex (:α) − 1) -- 0) m = n2w j) ∧ j ≤ k ∧
+                    w ' (k − j)) F (COUNT_LIST (dimindex (:α))) ∧
+               ((dimindex (:α) − 1 -- LOG2 (dimindex (:α) − 1) + 1) m = 0w)
+
+   [<a name="word_lsr_bv_expand-val"><b>word_lsr_bv_expand</b></a>]  Theorem
+
+      |- ∀w m.
+           w &gt;&gt;&gt;~ m =
+           if dimindex (:α) = 1 then $FCP (K (¬m ' 0 ∧ w ' 0))
+           else
+             FCP k.
+               FOLDL
+                 (λa j.
+                    a ∨
+                    ((LOG2 (dimindex (:α) − 1) -- 0) m = n2w j) ∧
+                    k + j &lt; dimindex (:α) ∧ w ' (k + j)) F
+                 (COUNT_LIST (dimindex (:α))) ∧
+               ((dimindex (:α) − 1 -- LOG2 (dimindex (:α) − 1) + 1) m = 0w)
+
+   [<a name="word_rol_bv_expand-val"><b>word_rol_bv_expand</b></a>]  Theorem
+
+      |- ∀w m.
+           w #&lt;&lt;~ m =
+           FCP k.
+             FOLDL
+               (λa j.
+                  a ∨
+                  (word_mod m (n2w (dimindex (:α))) = n2w j) ∧
+                  w '
+                  ((k + (dimindex (:α) − j) MOD dimindex (:α)) MOD
+                   dimindex (:α))) F (COUNT_LIST (dimindex (:α)))
+
+   [<a name="word_ror_bv_expand-val"><b>word_ror_bv_expand</b></a>]  Theorem
+
+      |- ∀w m.
+           w #&gt;&gt;~ m =
+           FCP k.
+             FOLDL
+               (λa j.
+                  a ∨
+                  (word_mod m (n2w (dimindex (:α))) = n2w j) ∧
+                  w ' ((j + k) MOD dimindex (:α))) F
+               (COUNT_LIST (dimindex (:α)))
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/n-bit/blastScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-9</a></em></p></body></html>

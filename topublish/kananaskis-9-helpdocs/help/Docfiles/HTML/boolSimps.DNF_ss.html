@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>boolSimps.DNF_ss</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>DNF_ss : ssfrag</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/boolSimps.html">boolSimps</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A simpset fragment that does aggressive propositional and quantifier
+normalisation</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Adding the </SPAN><SPAN class = "BRKT">DNF_ss</SPAN><SPAN class = "TEXT"> simpset fragment to a simpset augments it with
+rewrites that make the simplifier normalise &ldquo;towards&rdquo; disjunctive
+normal form. This normalisation at the propositional level does leave
+implications alone (rather than convert them to disjunctions).
+</SPAN><SPAN class = "BRKT">DNF_ss</SPAN><SPAN class = "TEXT"> also includes normalisations pertaining to quantifiers. The
+complete list of rewrites is
+</SPAN><DIV class = "XMPL"><pre>
+   |- !P Q. (!x. P x /\ Q x) &lt;=&gt; (!x. P x) /\ !x. Q x
+   |- !P Q. (?x. P x \/ Q x) &lt;=&gt; (?x. P x) \/ ?x. Q x
+   |- !P Q R. P \/ Q ==&gt; R &lt;=&gt; (P ==&gt; R) /\ (Q ==&gt; R)
+   |- !P Q R. P ==&gt; Q /\ R &lt;=&gt; (P ==&gt; Q) /\ (P ==&gt; R)
+   |- !A B C. (B \/ C) /\ A &lt;=&gt; B /\ A \/ C /\ A
+   |- !A B C. A /\ (B \/ C) &lt;=&gt; A /\ B \/ A /\ C
+   |- !P Q. (?x. P x) ==&gt; Q &lt;=&gt; !x. P x ==&gt; Q
+   |- !P Q. P ==&gt; (!x. Q x) &lt;=&gt; !x. P ==&gt; Q x
+   |- !P Q. (?x. P x) /\ Q &lt;=&gt; ?x. P x /\ Q
+   |- !P Q. P /\ (?x. Q x) &lt;=&gt; ?x. P /\ Q x
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">As a value rather than a function, </SPAN><SPAN class = "BRKT">DNF_ss</SPAN><SPAN class = "TEXT"> can&rsquo;t fail.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+&gt; SIMP_CONV (bool_ss ++ DNF_ss) []
+            ``!x. (?y. P x y) /\ Q z ==&gt; R1 x z /\ R2 z x``;
+&lt;&lt;HOL message: inventing new type variable names: 'a, 'b, 'c&gt;&gt;
+val it =
+   |- (!x. (?y. P x y) /\ Q z ==&gt; R1 x z /\ R2 z x) &lt;=&gt;
+        (!x y. P x y /\ Q z ==&gt; R1 x z) /\
+        !x y. P x y /\ Q z ==&gt; R2 z x : thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">DNF_ss</SPAN><SPAN class = "TEXT"> fragment interacts well with the one-point elimination
+rules for equalities under quantifiers (provided in </SPAN><SPAN class = "BRKT">bool_ss</SPAN><SPAN class = "TEXT"> and its
+descendants).</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "boolSimps.bool_ss.html">bool_ss</A>,
+<A HREF = "simpLib.SIMP_CONV.html">SIMP_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Tactical.POP_ASSUM</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>POP_ASSUM : thm_tactic -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactical.html">Tactical</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Applies tactic generated from the first element of a goal&rsquo;s assumption list.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to a theorem-tactic and a goal, </SPAN><SPAN class = "BRKT">POP_ASSUM</SPAN><SPAN class = "TEXT"> applies
+the theorem-tactic to the </SPAN><SPAN class = "BRKT">ASSUME</SPAN><SPAN class = "TEXT">d first element of the assumption list,
+and applies the resulting tactic to the goal without the first
+assumption in its assumption list:
+</SPAN><DIV class = "XMPL"><pre>
+    POP_ASSUM f ({A1,...,An} ?- t) = f (A1 |- A1) ({A2,...,An} ?- t)
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the assumption list of the goal is empty, or the theorem-tactic
+fails when applied to the popped assumption, or if the resulting tactic
+fails when applied to the goal (with depleted assumption list).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">It is possible simply to use the theorem </SPAN><SPAN class = "BRKT">ASSUME&nbsp;A1</SPAN><SPAN class = "TEXT"> as required rather than
+use </SPAN><SPAN class = "BRKT">POP_ASSUM</SPAN><SPAN class = "TEXT">; this will also maintain </SPAN><SPAN class = "BRKT">A1</SPAN><SPAN class = "TEXT"> in the assumption list,
+which is generally useful. In addition, this approach can equally well be
+applied to assumptions other than the first.</SPAN>
+<P>
+<SPAN class = "TEXT">There are admittedly times when </SPAN><SPAN class = "BRKT">POP_ASSUM</SPAN><SPAN class = "TEXT"> is convenient, but it is most
+unwise to use it if there is more than one assumption in the assumption
+list, since this introduces a dependency on the ordering, which is vulnerable
+to changes in the HOL system.</SPAN>
+<P>
+<SPAN class = "TEXT">Another point to consider is that if the relevant assumption has been obtained
+by </SPAN><SPAN class = "BRKT">DISCH_TAC</SPAN><SPAN class = "TEXT">, it is often cleaner to use </SPAN><SPAN class = "BRKT">DISCH_THEN</SPAN><SPAN class = "TEXT"> with a theorem-tactic.
+For example, instead of:
+</SPAN><DIV class = "XMPL"><pre>
+   DISCH_TAC THEN POP_ASSUM (\th. SUBST1_TAC (SYM th))
+</pre></DIV>
+<SPAN class = "TEXT">
+one might use
+</SPAN><DIV class = "XMPL"><pre>
+   DISCH_THEN (SUBST1_TAC o SYM)
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The goal:
+</SPAN><DIV class = "XMPL"><pre>
+   {4 = SUC x} ?- x = 3
+</pre></DIV>
+<SPAN class = "TEXT">
+can be solved by:
+</SPAN><DIV class = "XMPL"><pre>
+   POP_ASSUM 
+    (fn th =&gt; REWRITE_TAC[REWRITE_RULE[num_CONV (Term`4`, INV_SUC_EQ] th]])
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Making more delicate use of an assumption than rewriting or resolution
+using it.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactical.ASSUM_LIST.html">ASSUM_LIST</A>,
+<A HREF = "Tactical.EVERY_ASSUM.html">EVERY_ASSUM</A>,
+<A HREF = "Tactic.IMP_RES_TAC.html">IMP_RES_TAC</A>,
+<A HREF = "Tactical.POP_ASSUM_LIST.html">POP_ASSUM_LIST</A>,
+<A HREF = "Rewrite.REWRITE_TAC.html">REWRITE_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-9</div></BODY></HTML>
