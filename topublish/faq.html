@@ -809,7 +809,7 @@ the system will attempt to rewrite occurrences of <code>LENGTH l</code> to <code
 <dt><strong>How do I put HOL in a state so that theorem assumptions are
    printed?</strong>
 
-<dd> Use
+<dd> <p>Use</p>
 <pre>
     show_assums := true;
 </pre>
@@ -820,14 +820,15 @@ the system will attempt to rewrite occurrences of <code>LENGTH l</code> to <code
 
 <dt><strong>How do I select assumptions in proof steps?</strong>
 <dd>
-This has been a much-discussed topic by HOL users over the
+<p> This has been a much-discussed topic by HOL users over the
 years. The info-hol archives have the details. The received opinion
 seemed to be that numbered assumptions were great at proof-creation
 time, but had potential for being a nightmare when existing proofs had
-to be changed.
-<P>
+to be changed.</p>
+
+<p>
 In any case, the assumptions have to be dealt with. My current favourite
-approach is to use "PAT_ASSUM", as follows:
+approach is to use "PAT_ASSUM", as follows:</p>
 <pre>
     PAT_ASSUM tm MATCH_MP_TAC
 </pre> or
@@ -835,26 +836,23 @@ approach is to use "PAT_ASSUM", as follows:
     Q.PAT_ASSUM q MATCH_MP_TAC
 </PRE>
 
-PAT_ASSUM is like UNDISCH_THEN in that it removes an assumption and
-makes it available as a theorem. However, it is better than UNDISCH_THEN
-since the quotation argument it takes is treated as a pattern to match
-against. The free variables of the goal to help constrain the match. It
-is often the case that very complex assumptions can be singled out by
-giving quite simple patterns to PAT_ASSUM.
+<p>
+<code>PAT_ASSUM</code> is like <code>UNDISCH_THEN</code> in that it removes an assumption and makes it available as a theorem.
+However, it is better than <code>UNDISCH_THEN</code> since the quotation argument it takes is treated as a pattern to match against.
+The free variables of the goal to help constrain the match.
+It is often the case that very complex assumptions can be singled out by giving quite simple patterns to <code>PAT_ASSUM</code>.
+</p>
 
-<P>
-
-If you are unsatisfied with the way hypotheses are handled in proofs,
-numbered (or named) assumptions can be added in a number of ways. Perhaps
-the simplest is to write a version of UNDISCH_THEN, call it UNDISCH_NTH
-having type
+<p>
+If you are unsatisfied with the way hypotheses are handled in proofs, numbered (or named) assumptions can be added in a number of ways.
+Perhaps
+the simplest is to write a version of <code>UNDISCH_THEN</code>, call it <code>UNDISCH_NTH</code> having type</p>
 <pre>
     int -&gt; (thm -&gt; tactic) -&gt; tactic
 </pre>
-
-<code>UNDISCH_NTH k ttac</code> grabs the <em>k</em>th assumption,
-converts it to a theorem <em>thk</em>, and applies <em>ttac</em> to
-<em>thk</em> to get the desired tactic.  Here’s one way to define it:
+<p>
+<code>UNDISCH_NTH k ttac</code> grabs the <em>k</em>th assumption, converts it to a theorem <em>thk</em>, and applies <em>ttac</em> to <em>thk</em> to get the desired tactic.
+Here’s one way to define it:</p>
 <pre>
     fun UNDISCH_NTH k ttac (g as (asl,_)) =
         UNDISCH_THEN (Lib.el (k+1)(rev asl)) ttac g;
@@ -872,44 +870,42 @@ converts it to a theorem <em>thk</em>, and applies <em>ttac</em> to
              Hol_datatype?</strong>
 
 <dd>
-Use
+<p>Use</p>
 <pre>
     TypeBase.axiom_of ``:mytypename``
-</pre> Hopefully you won’t need to do this very much because many of the
-     contexts in which you previously needed the axiom are dealt with
-     more smoothly.  For example, cases, induction, one-one and
-     distinctness theorems are now proved automatically, and are
-     available from the TypeBase.  For example,
+</pre>
+<p>
+Hopefully you won’t need to do this very much because many of the contexts in which you previously needed the axiom are dealt with more smoothly.
+For example, cases, induction, one-one and distinctness theorems are now proved automatically, and are available from the TypeBase.
+For example,
 <pre>
     TypeBase.one_one_of ``:mytypename``
 </pre>
 <p>
 
-<dt><strong> Is there documentation on
-<code>computeLib.add_convs</code></strong>?
+<dt><strong> Is there documentation on <code>computeLib.add_convs</code></strong>?
 <dd>
-Best thing currently is to look at the implementation of
+<p>Best thing currently is to look at the implementation of
 <code>REDUCE_CONV</code>, which uses add_convs to deal with
-<code>DIV</code> and <code>MOD</code>: the invocation
+<code>DIV</code> and <code>MOD</code>: the invocation</p>
 <pre>
     add_conv (M,n,c) compset
 </pre>
-
-means (roughly):
-    <blockquote> <p> when you see constant <em>M</em> applied to
-    <em>n</em> subterms (i.e., <em>M</em> is fully applied to its
-    arguments), apply conversion <em>c</em> </p></blockquote>
-
 <p>
+means (roughly):
+
+<blockquote> <p>
+when you see constant <em>M</em> applied to <em>n</em> subterms (i.e., <em>M</em> is fully applied to its arguments), apply conversion <em>c</em>
+</p></blockquote>
+
 <dt><strong> I can’t find help on <code>IN</code>. What theory defined
 is it defined in?</strong>
 <dd>
-<code>IN</code> is declared in <code>boolTheory</code>. <code>IN</code>
+<p><code>IN</code> is declared in <code>boolTheory</code>. <code>IN</code>
 is not an ML identifier, so we don’t index it. Perhaps we could index
 constants to their place of definition though.
 <p>
 You can always figure out the originating theory by
-
 <pre>
    dest_thy_const : term -&gt; {Theory : string, Name : string, Ty : hol_type}
 </pre>
@@ -925,12 +921,12 @@ have the given name.
 <dt><strong> How can I find out more information about a HOL_ERR
 exception?</strong>
 
-<dd> If expression <code>M</code> is causing the grief, then write
+<dd> <p>If expression <code>M</code> is causing the grief, then write
 <pre>
     (M) handle e =&gt; Raise e
 </pre>
 Often the parentheses around <code>M</code> will not be required.
-<P>
+<p>
 It is sometimes convenient to use the <code>try</code> function as
 well. It takes a function and an argument, applies the function to the
 argument, and (on success) returns the result or (on failure) prints the
@@ -1021,8 +1017,7 @@ This can be adjusted using <code>M-x&nbsp;customize</code> and navigating to the
 
 
 <dt><strong> How to rewrite with a theorem the other way round?</strong>
-<dd> Use <code>GSYM</code>.
-<p>
+<dd> <p>Use <code>GSYM</code>.
 
 <dt><strong> How do I prove strings equal or inequal?</strong>
 
@@ -1042,7 +1037,7 @@ For example, to demonstrate that <code>``(if "foo" = "bar" then 3 else 1) = 1``<
 <p>
 <div class="timestamp">
 <p>
-Time-stamp: "Monday, 1 September 2014; 00:34 UTC (Michael Norrish)"
+Time-stamp: "Monday, 1 September 2014; 00:42 UTC (Michael Norrish)"
 </p></div>
 
 
