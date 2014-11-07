@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Feedback.HOL_ERR</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>HOL_ERR : {message : string, origin_function : string,
+           origin_structure : string} -&gt; exn</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Feedback.html">Feedback</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Standard HOL exception</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">HOL_ERR</SPAN><SPAN class = "TEXT"> is the single exception that HOL functions are expected to raise
+when they encounter an anomalous situation.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Building an application of </SPAN><SPAN class = "BRKT">HOL_ERR</SPAN><SPAN class = "TEXT"> and binding it to an ML variable
+</SPAN><DIV class = "XMPL"><pre>
+   val test_exn =
+      HOL_ERR {origin_structure = "Foo",
+               origin_function = "bar",
+               message = "incomprehensible input"};
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">yields
+</SPAN><DIV class = "XMPL"><pre>
+   val test_exn = HOL_ERR : exn
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">One can scrutinize the contents of an application of </SPAN><SPAN class = "BRKT">HOL_ERR</SPAN><SPAN class = "TEXT"> by
+pattern matching:
+</SPAN><DIV class = "XMPL"><pre>
+   - val HOL_ERR r = test_exn;
+
+   &gt; val r = {message = "incomprehensible input",
+              origin_function = "bar",
+              origin_structure = "Foo"}
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">In current ML implementations supporting HOL, exceptions that propagate
+to the top level without being handled do not print informatively:
+</SPAN><DIV class = "XMPL"><pre>
+   - raise test_exn;
+   ! Uncaught exception:
+   ! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">In such cases, the functions </SPAN><SPAN class = "BRKT">Raise</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">exn_to_string</SPAN><SPAN class = "TEXT"> can be used
+to obtain useful information:
+</SPAN><DIV class = "XMPL"><pre>
+   - Raise test_exn;
+
+   Exception raised at Foo.bar:
+   incomprehensible input
+   ! Uncaught exception:
+   ! HOL_ERR
+
+   - print(exn_to_string test_exn);
+
+   Exception raised at Foo.bar:
+   incomprehensible input
+   &gt; val it = () : unit
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Feedback.html">Feedback</A>,
+<A HREF = "Feedback.error_record.html">error_record</A>,
+<A HREF = "Feedback.mk_HOL_ERR.html">mk_HOL_ERR</A>,
+<A HREF = "Feedback.Raise.html">Raise</A>,
+<A HREF = "Feedback.exn_to_string.html">exn_to_string</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-10</div></BODY></HTML>

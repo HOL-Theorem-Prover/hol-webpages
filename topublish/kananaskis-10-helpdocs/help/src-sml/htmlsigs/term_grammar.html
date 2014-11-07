@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure term_grammar</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure term_grammar</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/term_grammar.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>
+<a name="line2"></a>signature term_grammar =
+<a name="line3"></a>sig
+<a name="line4"></a>
+<a name="line5"></a>  type ppstream = Portable.ppstream
+<a name="line6"></a>  type block_info = Portable.break_style * int
+<a name="line7"></a>  type overload_info = Overload.overload_info
+<a name="line8"></a>  type associativity = HOLgrammars.associativity
+<a name="line9"></a>
+<a name="line10"></a>  datatype rule_element
+<a name="line11"></a>     = TOK of string
+<a name="line12"></a>     | TM
+<a name="line13"></a>  val RE_compare : rule_element * rule_element -&gt; order
+<a name="line14"></a>
+<a name="line15"></a>  datatype pp_element
+<a name="line16"></a>     = PPBlock of pp_element list * block_info
+<a name="line17"></a>     | EndInitialBlock of block_info
+<a name="line18"></a>     | BeginFinalBlock of block_info
+<a name="line19"></a>     | HardSpace of int
+<a name="line20"></a>     | BreakSpace of (int * int)
+<a name="line21"></a>     | RE of rule_element
+<a name="line22"></a>     | LastTM
+<a name="line23"></a>     | FirstTM   (* these last two only used internally *)
+<a name="line24"></a>
+<a name="line25"></a>  datatype PhraseBlockStyle
+<a name="line26"></a>     = AroundSameName
+<a name="line27"></a>     | AroundSamePrec
+<a name="line28"></a>     | AroundEachPhrase
+<a name="line29"></a>     | NoPhrasing
+<a name="line30"></a>
+<a name="line31"></a>  datatype ParenStyle
+<a name="line32"></a>     = Always
+<a name="line33"></a>     | OnlyIfNecessary
+<a name="line34"></a>     | NotEvenIfRand
+<a name="line35"></a>     | ParoundName
+<a name="line36"></a>     | ParoundPrec
+<a name="line37"></a>
+<a name="line38"></a>  val rule_elements  : pp_element list -&gt; rule_element list
+<a name="line39"></a>  val pp_elements_ok : pp_element list -&gt; bool
+<a name="line40"></a>
+<a name="line41"></a>  val reltoString    : rule_element -&gt; string
+<a name="line42"></a>
+<a name="line43"></a>  type rule_record = {term_name   : string,
+<a name="line44"></a>                      elements    : pp_element list,
+<a name="line45"></a>                      timestamp   : int,
+<a name="line46"></a>                      block_style : PhraseBlockStyle * block_info,
+<a name="line47"></a>                      paren_style : ParenStyle}
+<a name="line48"></a>
+<a name="line49"></a>  datatype binder
+<a name="line50"></a>     = LAMBDA
+<a name="line51"></a>     | BinderString of {tok : string, term_name : string, timestamp : int}
+<a name="line52"></a>
+<a name="line53"></a>  datatype prefix_rule
+<a name="line54"></a>     = STD_prefix of rule_record list
+<a name="line55"></a>     | BINDER of binder list
+<a name="line56"></a>
+<a name="line57"></a>  datatype suffix_rule
+<a name="line58"></a>     = STD_suffix of rule_record list
+<a name="line59"></a>     | TYPE_annotation
+<a name="line60"></a>
+<a name="line61"></a>  datatype infix_rule
+<a name="line62"></a>     = STD_infix of rule_record list * associativity
+<a name="line63"></a>     | RESQUAN_OP
+<a name="line64"></a>     | VSCONS
+<a name="line65"></a>     | FNAPP of rule_record list
+<a name="line66"></a>
+<a name="line67"></a>  type listspec =
+<a name="line68"></a>     {separator  : pp_element list,
+<a name="line69"></a>      leftdelim  : pp_element list,
+<a name="line70"></a>      rightdelim : pp_element list,
+<a name="line71"></a>      block_info : block_info,
+<a name="line72"></a>      cons       : string,
+<a name="line73"></a>      nilstr     : string}
+<a name="line74"></a>
+<a name="line75"></a>  datatype grammar_rule
+<a name="line76"></a>     = PREFIX of prefix_rule
+<a name="line77"></a>     | SUFFIX of suffix_rule
+<a name="line78"></a>     | INFIX of infix_rule
+<a name="line79"></a>     | CLOSEFIX of rule_record list
+<a name="line80"></a>     | LISTRULE of listspec list
+<a name="line81"></a>
+<a name="line82"></a>  type grammar
+<a name="line83"></a>
+<a name="line84"></a>  datatype rule_fixity
+<a name="line85"></a>     = Infix of associativity * int
+<a name="line86"></a>     | Closefix
+<a name="line87"></a>     | Suffix of int
+<a name="line88"></a>     | Prefix of int
+<a name="line89"></a>
+<a name="line90"></a>  datatype user_delta =
+<a name="line91"></a>           GRULE of {term_name : string,
+<a name="line92"></a>                     fixity : rule_fixity,
+<a name="line93"></a>                     pp_elements: pp_element list,
+<a name="line94"></a>                     paren_style : ParenStyle,
+<a name="line95"></a>                     block_style : PhraseBlockStyle * block_info}
+<a name="line96"></a>         | LRULE of listspec
+<a name="line97"></a>         | BRULE of {tok : string, term_name : string}
+<a name="line98"></a>
+<a name="line99"></a>  val userdelta_toks : user_delta -&gt; string list
+<a name="line100"></a>  val userdelta_name : user_delta -&gt; string
+<a name="line101"></a>
+<a name="line102"></a>  val stdhol         : grammar
+<a name="line103"></a>  val min_grammar    : grammar
+<a name="line104"></a>  val merge_grammars : grammar * grammar -&gt; grammar
+<a name="line105"></a>  val fupdate_overload_info :
+<a name="line106"></a>    (overload_info -&gt; overload_info) -&gt; grammar -&gt; grammar
+<a name="line107"></a>  val mfupdate_overload_info :
+<a name="line108"></a>    (overload_info -&gt; overload_info * 'a) -&gt; grammar -&gt; grammar * 'a
+<a name="line109"></a>
+<a name="line110"></a>
+<a name="line111"></a>  (* User code additions *)
+<a name="line112"></a>  (* Users can add special-purpose printers and parsers to grammars *)
+<a name="line113"></a>  type term = Term.term
+<a name="line114"></a>  type userprinter = (type_grammar.grammar * grammar) term_pp_types.userprinter
+<a name="line115"></a>  val add_user_printer :
+<a name="line116"></a>    (string * term * userprinter) -&gt; grammar -&gt;
+<a name="line117"></a>    grammar
+<a name="line118"></a>  val remove_user_printer :
+<a name="line119"></a>    string -&gt; grammar -&gt; (grammar * (term * userprinter) option)
+<a name="line120"></a>  val user_printers :
+<a name="line121"></a>    grammar -&gt; (term * string * userprinter)Net.net
+<a name="line122"></a>
+<a name="line123"></a>  val absyn_postprocessors : grammar -&gt;
+<a name="line124"></a>                             (string * (Absyn.absyn -&gt; Absyn.absyn)) list
+<a name="line125"></a>  val new_absyn_postprocessor : string * (Absyn.absyn -&gt; Absyn.absyn) -&gt;
+<a name="line126"></a>                                grammar -&gt; grammar
+<a name="line127"></a>  val remove_absyn_postprocessor :
+<a name="line128"></a>      string -&gt; grammar -&gt;
+<a name="line129"></a>      (grammar * (Absyn.absyn -&gt; Absyn.absyn) option)
+<a name="line130"></a>
+<a name="line131"></a>
+<a name="line132"></a>  type special_info = {type_intro    : string,
+<a name="line133"></a>                       lambda        : string list,
+<a name="line134"></a>                       endbinding    : string,
+<a name="line135"></a>                       restr_binders : (string option * string) list,
+<a name="line136"></a>                       res_quanop    : string}
+<a name="line137"></a>  val rules          : grammar -&gt; (int option * grammar_rule) list
+<a name="line138"></a>  val grammar_rules  : grammar -&gt; grammar_rule list
+<a name="line139"></a>  val specials       : grammar -&gt; special_info
+<a name="line140"></a>  val fupdate_specials : (special_info -&gt; special_info) -&gt; grammar -&gt; grammar
+<a name="line141"></a>  val numeral_info   : grammar -&gt; (char * string option) list
+<a name="line142"></a>  val overload_info  : grammar -&gt; overload_info
+<a name="line143"></a>  val grammar_name   : grammar -&gt; term -&gt; string option
+<a name="line144"></a>
+<a name="line145"></a>  (*------------------------------------------------------------------------
+<a name="line146"></a>   * known constants are those strings that the parsing process will
+<a name="line147"></a>   * attempt to turn into constants.  Known constants are those strings
+<a name="line148"></a>   * that are in the domain of the overloading map (this map being from
+<a name="line149"></a>   * strings to non-empty sets of constants.
+<a name="line150"></a>   *-------------------------------------------------------------------------*)
+<a name="line151"></a>
+<a name="line152"></a>  val known_constants : grammar -&gt; string list
+<a name="line153"></a>
+<a name="line154"></a>  val binders          : grammar -&gt; string list
+<a name="line155"></a>  val is_binder        : grammar -&gt; string -&gt; bool
+<a name="line156"></a>  val binder_to_string : grammar -&gt; binder -&gt; string
+<a name="line157"></a>
+<a name="line158"></a>  val resquan_op            : grammar -&gt; string
+<a name="line159"></a>  val associate_restriction : grammar -&gt;
+<a name="line160"></a>                              {binder : string option,
+<a name="line161"></a>                               resbinder : string} -&gt; grammar
+<a name="line162"></a>
+<a name="line163"></a>  val compatible_listrule : grammar
+<a name="line164"></a>                             -&gt; {separator : string,
+<a name="line165"></a>                                 leftdelim : string,
+<a name="line166"></a>                                 rightdelim : string}
+<a name="line167"></a>                             -&gt; {cons : string, nilstr : string} option
+<a name="line168"></a>
+<a name="line169"></a>  datatype stack_terminal
+<a name="line170"></a>     = STD_HOL_TOK of string
+<a name="line171"></a>     | BOS
+<a name="line172"></a>     | EOS
+<a name="line173"></a>     | Id
+<a name="line174"></a>     | TypeColon
+<a name="line175"></a>     | TypeTok
+<a name="line176"></a>     | EndBinding
+<a name="line177"></a>     | VS_cons
+<a name="line178"></a>     | ResquanOpTok
+<a name="line179"></a>  val ST_compare : stack_terminal * stack_terminal -&gt; order
+<a name="line180"></a>
+<a name="line181"></a>  val STtoString : grammar -&gt; stack_terminal -&gt; string
+<a name="line182"></a>
+<a name="line183"></a>  val grammar_tokens : grammar -&gt; string list
+<a name="line184"></a>  val rule_tokens : grammar -&gt; grammar_rule -&gt; string list
+<a name="line185"></a>  val find_suffix_rhses : grammar -&gt; stack_terminal list
+<a name="line186"></a>  val find_prefix_lhses : grammar -&gt; stack_terminal list
+<a name="line187"></a>
+<a name="line188"></a>  val add_binder : {term_name:string,tok:string} -&gt; grammar -&gt; grammar
+<a name="line189"></a>  val add_listform : grammar -&gt; listspec -&gt; grammar
+<a name="line190"></a>
+<a name="line191"></a>  val rule_fixityToString : rule_fixity -&gt; string
+<a name="line192"></a>  val add_rule : grammar
+<a name="line193"></a>                  -&gt; {term_name : string,
+<a name="line194"></a>                      fixity : rule_fixity,
+<a name="line195"></a>                      pp_elements: pp_element list,
+<a name="line196"></a>                      paren_style : ParenStyle,
+<a name="line197"></a>                      block_style : PhraseBlockStyle * block_info}
+<a name="line198"></a>                  -&gt; grammar
+<a name="line199"></a>  val add_delta : user_delta -&gt; grammar -&gt; grammar
+<a name="line200"></a>
+<a name="line201"></a>  val add_numeral_form : grammar -&gt; (char * string option) -&gt; grammar
+<a name="line202"></a>  val give_num_priority : grammar -&gt; char -&gt; grammar
+<a name="line203"></a>  val remove_numeral_form : grammar -&gt; char -&gt; grammar
+<a name="line204"></a>
+<a name="line205"></a>  (*------------------------------------------------------------------------*
+<a name="line206"></a>   * this removes all those rules which give special status to the          *
+<a name="line207"></a>   * given string.  If there is a rule saying that COND is written          *
+<a name="line208"></a>   *     if _ then _ else _                                                 *
+<a name="line209"></a>   * you could get rid of it with                                           *
+<a name="line210"></a>   *  remove_standard_form G "COND"                                         *
+<a name="line211"></a>   *------------------------------------------------------------------------*)
+<a name="line212"></a>
+<a name="line213"></a>  val remove_standard_form : grammar -&gt; string -&gt; grammar
+<a name="line214"></a>
+<a name="line215"></a>  (* ----------------------------------------------------------------------
+<a name="line216"></a>      these two remove rules relating to the term which also include
+<a name="line217"></a>      a token, or the exact token list of the form given.
+<a name="line218"></a>      Thus, if you had two rules for COND, and you wanted to get rid of
+<a name="line219"></a>      the one with the "if" token in it, you would use
+<a name="line220"></a>
+<a name="line221"></a>         remove_form_with_tok G {term_name = "COND", tok = "if"}
+<a name="line222"></a>     ---------------------------------------------------------------------- *)
+<a name="line223"></a>
+<a name="line224"></a>  val remove_form_with_tok : grammar -&gt; {term_name : string, tok: string} -&gt;
+<a name="line225"></a>                             grammar
+<a name="line226"></a>  val remove_form_with_toklist : {term_name : string, toklist : string list} -&gt;
+<a name="line227"></a>                                 grammar -&gt; grammar
+<a name="line228"></a>
+<a name="line229"></a>  (*-----------------------------------------------------------------------*
+<a name="line230"></a>   * Pretty-printing                                                       *
+<a name="line231"></a>   *-----------------------------------------------------------------------*)
+<a name="line232"></a>
+<a name="line233"></a>  val prefer_form_with_tok : {term_name : string, tok : string} -&gt; grammar -&gt;
+<a name="line234"></a>                             grammar
+<a name="line235"></a>  val prefer_form_with_toklist : {term_name : string, toklist : string list} -&gt;
+<a name="line236"></a>                                 grammar -&gt; grammar
+<a name="line237"></a>
+<a name="line238"></a>
+<a name="line239"></a>  val set_associativity_at_level : grammar -&gt; int * associativity -&gt; grammar
+<a name="line240"></a>  val get_precedence : grammar -&gt; string -&gt; rule_fixity option
+<a name="line241"></a>  val rules_for : grammar -&gt; string -&gt; (int * user_delta) list
+<a name="line242"></a>
+<a name="line243"></a>
+<a name="line244"></a>  val prettyprint_grammar_rules
+<a name="line245"></a>                          : (grammar -&gt; ppstream -&gt; term -&gt; unit) -&gt;
+<a name="line246"></a>                            ppstream -&gt; grammar -&gt; unit
+<a name="line247"></a>  val prettyprint_grammar : (grammar -&gt; ppstream -&gt; term -&gt; unit) -&gt;
+<a name="line248"></a>                            ppstream -&gt; grammar -&gt; unit
+<a name="line249"></a>
+<a name="line250"></a>  val grule_reader : grammar_rule Coding.reader
+<a name="line251"></a>  val grule_encode : grammar_rule -&gt; string
+<a name="line252"></a>  val user_delta_reader : user_delta Coding.reader
+<a name="line253"></a>  val user_delta_encode : user_delta -&gt; string
+<a name="line254"></a>  val fixity_encode : rule_fixity -&gt; string
+<a name="line255"></a>  val fixity_reader : rule_fixity Coding.reader
+<a name="line256"></a>
+<a name="line257"></a>end
+<a name="line258"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/term_grammar.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-10</a></em></p></body></html>

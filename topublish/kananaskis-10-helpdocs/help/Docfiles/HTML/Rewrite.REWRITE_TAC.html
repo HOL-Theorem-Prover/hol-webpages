@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Rewrite.REWRITE_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>REWRITE_TAC : (thm list -&gt; tactic)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Rewrite.html">Rewrite</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Rewrites a goal including built-in tautologies in the list of rewrites.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Rewriting tactics in HOL provide a recursive left-to-right matching
+and rewriting facility that automatically decomposes subgoals and
+justifies segments of proof in which equational theorems are used,
+singly or collectively.  These include the unfolding of definitions,
+and the substitution of equals for equals.  Rewriting is used either
+to advance or to complete the decomposition of subgoals.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">REWRITE_TAC</SPAN><SPAN class = "TEXT"> transforms (or solves) a goal by using as rewrite rules
+(i.e. as left-to-right replacement rules) the conclusions of the given
+list of (equational) theorems, as well as a set of built-in theorems
+(common tautologies) held in the ML variable </SPAN><SPAN class = "BRKT">implicit_rewrites</SPAN><SPAN class = "TEXT">.
+Recognition of a tautology often terminates the subgoaling process
+(i.e. solves the goal).</SPAN>
+<P>
+<SPAN class = "TEXT">The equational rewrites generated are applied recursively and to
+arbitrary depth, with matching and instantiation of variables and type
+variables.  A list of rewrites can set off an infinite rewriting
+process, and it is not, of course, decidable in general whether a
+rewrite set has that property. The order in which the rewrite theorems
+are applied is unspecified, and the user should not depend on any
+ordering.</SPAN>
+<P>
+<SPAN class = "TEXT">See </SPAN><SPAN class = "BRKT">GEN_REWRITE_TAC</SPAN><SPAN class = "TEXT"> for more details on the rewriting process.
+Variants of </SPAN><SPAN class = "BRKT">REWRITE_TAC</SPAN><SPAN class = "TEXT"> allow the use of a different set of
+rewrites. Some of them, such as </SPAN><SPAN class = "BRKT">PURE_REWRITE_TAC</SPAN><SPAN class = "TEXT">, exclude the basic
+tautologies from the possible transformations. </SPAN><SPAN class = "BRKT">ASM_REWRITE_TAC</SPAN><SPAN class = "TEXT"> and
+others include the assumptions at the goal in the set of possible
+rewrites.</SPAN>
+<P>
+<SPAN class = "TEXT">Still other tactics allow greater control over the search for
+rewritable subterms. Several of them such as </SPAN><SPAN class = "BRKT">ONCE_REWRITE_TAC</SPAN><SPAN class = "TEXT"> do not
+apply rewrites recursively. </SPAN><SPAN class = "BRKT">GEN_REWRITE_TAC</SPAN><SPAN class = "TEXT"> allows a rewrite to be
+applied at a particular subterm.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">REWRITE_TAC</SPAN><SPAN class = "TEXT"> does not fail. Certain sets of rewriting theorems on
+certain goals may cause a non-terminating sequence of rewrites.
+Divergent rewriting behaviour results from a term </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> being
+immediately or eventually rewritten to a term containing </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> as a
+sub-term. The exact behaviour depends on the </SPAN><SPAN class = "BRKT">HOL</SPAN><SPAN class = "TEXT"> implementation.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The arithmetic theorem </SPAN><SPAN class = "BRKT">GREATER_DEF</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">|-&nbsp;!m&nbsp;n.&nbsp;m&nbsp;&gt;&nbsp;n&nbsp;=&nbsp;n&nbsp;&lt;&nbsp;m</SPAN><SPAN class = "TEXT">, is used
+below to advance a goal:
+</SPAN><DIV class = "XMPL"><pre>
+   - REWRITE_TAC [GREATER_DEF] ([],``5 &gt; 4``);
+   &gt; ([([], ``4 &lt; 5``)], -) : subgoals
+</pre></DIV>
+<SPAN class = "TEXT">
+It is used below with the theorem </SPAN><SPAN class = "BRKT">LESS_0</SPAN><SPAN class = "TEXT">,
+</SPAN><SPAN class = "BRKT">|-&nbsp;!n.&nbsp;0&nbsp;&lt;&nbsp;(SUC&nbsp;n)</SPAN><SPAN class = "TEXT">, to solve a goal:
+</SPAN><DIV class = "XMPL"><pre>
+   - val (gl,p) =
+       REWRITE_TAC [GREATER_DEF, LESS_0] ([],``(SUC n) &gt; 0``);
+   &gt; val gl = [] : goal list
+   &gt; val p = fn : proof
+
+   - p[];
+   &gt; val it = |- (SUC n) &gt; 0 : thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Rewriting is a powerful and general mechanism in HOL, and an important
+part of many proofs.  It relieves the user of the burden of directing
+and justifying a large number of minor proof steps.  </SPAN><SPAN class = "BRKT">REWRITE_TAC</SPAN><SPAN class = "TEXT">
+fits a forward proof sequence smoothly into the general goal-oriented
+framework. That is, (within one subgoaling step) it produces and
+justifies certain forward inferences, none of which are necessarily on
+a direct path to the desired goal.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">REWRITE_TAC</SPAN><SPAN class = "TEXT"> may be more powerful a tactic than is needed in certain
+situations; if efficiency is at stake, alternatives might be
+considered.  On the other hand, if more power is required, the
+simplification functions (</SPAN><SPAN class = "BRKT">SIMP_TAC</SPAN><SPAN class = "TEXT"> and others) may be appropriate.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Rewrite.ASM_REWRITE_TAC.html">ASM_REWRITE_TAC</A>,
+<A HREF = "Rewrite.GEN_REWRITE_TAC.html">GEN_REWRITE_TAC</A>,
+<A HREF = "Rewrite.FILTER_ASM_REWRITE_TAC.html">FILTER_ASM_REWRITE_TAC</A>,
+<A HREF = "Rewrite.FILTER_ONCE_ASM_REWRITE_TAC.html">FILTER_ONCE_ASM_REWRITE_TAC</A>,
+<A HREF = "Rewrite.ONCE_ASM_REWRITE_TAC.html">ONCE_ASM_REWRITE_TAC</A>,
+<A HREF = "Rewrite.ONCE_REWRITE_TAC.html">ONCE_REWRITE_TAC</A>,
+<A HREF = "Rewrite.PURE_ASM_REWRITE_TAC.html">PURE_ASM_REWRITE_TAC</A>,
+<A HREF = "Rewrite.PURE_ONCE_ASM_REWRITE_TAC.html">PURE_ONCE_ASM_REWRITE_TAC</A>,
+<A HREF = "Rewrite.PURE_ONCE_REWRITE_TAC.html">PURE_ONCE_REWRITE_TAC</A>,
+<A HREF = "Rewrite.PURE_REWRITE_TAC.html">PURE_REWRITE_TAC</A>,
+<A HREF = "Conv.REWR_CONV.html">REWR_CONV</A>,
+<A HREF = "Rewrite.REWRITE_CONV.html">REWRITE_CONV</A>,
+<A HREF = "simpLib.SIMP_TAC.html">SIMP_TAC</A>,
+<A HREF = "Tactic.SUBST_TAC.html">SUBST_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-10</div></BODY></HTML>

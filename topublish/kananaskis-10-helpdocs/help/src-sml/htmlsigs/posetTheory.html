@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure posetTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure posetTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/pair/src/posetScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature posetTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#bottom_def-val">bottom_def</a> : thm
+<a name="line7"></a>    val <a href="#carrier_def-val">carrier_def</a> : thm
+<a name="line8"></a>    val <a href="#chain_def-val">chain_def</a> : thm
+<a name="line9"></a>    val <a href="#complete_def-val">complete_def</a> : thm
+<a name="line10"></a>    val <a href="#continuous_def-val">continuous_def</a> : thm
+<a name="line11"></a>    val <a href="#down_continuous_def-val">down_continuous_def</a> : thm
+<a name="line12"></a>    val <a href="#function_def-val">function_def</a> : thm
+<a name="line13"></a>    val <a href="#gfp_def-val">gfp_def</a> : thm
+<a name="line14"></a>    val <a href="#glb_def-val">glb_def</a> : thm
+<a name="line15"></a>    val <a href="#lfp_def-val">lfp_def</a> : thm
+<a name="line16"></a>    val <a href="#lub_def-val">lub_def</a> : thm
+<a name="line17"></a>    val <a href="#monotonic_def-val">monotonic_def</a> : thm
+<a name="line18"></a>    val <a href="#pointwise_lift_def-val">pointwise_lift_def</a> : thm
+<a name="line19"></a>    val <a href="#poset_def-val">poset_def</a> : thm
+<a name="line20"></a>    val <a href="#relation_def-val">relation_def</a> : thm
+<a name="line21"></a>    val <a href="#top_def-val">top_def</a> : thm
+<a name="line22"></a>    val <a href="#up_continuous_def-val">up_continuous_def</a> : thm
+<a name="line23"></a>
+<a name="line24"></a>  (*  Theorems  *)
+<a name="line25"></a>    val <a href="#complete_bottom-val">complete_bottom</a> : thm
+<a name="line26"></a>    val <a href="#complete_down-val">complete_down</a> : thm
+<a name="line27"></a>    val <a href="#complete_pointwise-val">complete_pointwise</a> : thm
+<a name="line28"></a>    val <a href="#complete_top-val">complete_top</a> : thm
+<a name="line29"></a>    val <a href="#complete_up-val">complete_up</a> : thm
+<a name="line30"></a>    val <a href="#gfp_unique-val">gfp_unique</a> : thm
+<a name="line31"></a>    val <a href="#glb_pred-val">glb_pred</a> : thm
+<a name="line32"></a>    val <a href="#knaster_tarski-val">knaster_tarski</a> : thm
+<a name="line33"></a>    val <a href="#knaster_tarski_gfp-val">knaster_tarski_gfp</a> : thm
+<a name="line34"></a>    val <a href="#knaster_tarski_lfp-val">knaster_tarski_lfp</a> : thm
+<a name="line35"></a>    val <a href="#lfp_unique-val">lfp_unique</a> : thm
+<a name="line36"></a>    val <a href="#lub_pred-val">lub_pred</a> : thm
+<a name="line37"></a>    val <a href="#poset_antisym-val">poset_antisym</a> : thm
+<a name="line38"></a>    val <a href="#poset_nonempty-val">poset_nonempty</a> : thm
+<a name="line39"></a>    val <a href="#poset_refl-val">poset_refl</a> : thm
+<a name="line40"></a>    val <a href="#poset_trans-val">poset_trans</a> : thm
+<a name="line41"></a>
+<a name="line42"></a>  val poset_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line43"></a>(*
+   [pair] Parent theory of "poset"
+
+   [<a name="bottom_def-val"><b>bottom_def</b></a>]  Definition
+
+      |- ∀s r x. bottom (s,r) x ⇔ s x ∧ ∀y. s y ⇒ r x y
+
+   [<a name="carrier_def-val"><b>carrier_def</b></a>]  Definition
+
+      |- ∀s r. carrier (s,r) = s
+
+   [<a name="chain_def-val"><b>chain_def</b></a>]  Definition
+
+      |- ∀s r c.
+           chain (s,r) c ⇔ ∀x y. s x ∧ s y ∧ c x ∧ c y ⇒ r x y ∨ r y x
+
+   [<a name="complete_def-val"><b>complete_def</b></a>]  Definition
+
+      |- ∀p. complete p ⇔ ∀c. (∃x. lub p c x) ∧ ∃x. glb p c x
+
+   [<a name="continuous_def-val"><b>continuous_def</b></a>]  Definition
+
+      |- ∀p f. continuous p f ⇔ up_continuous p f ∧ down_continuous p f
+
+   [<a name="down_continuous_def-val"><b>down_continuous_def</b></a>]  Definition
+
+      |- ∀s r f.
+           down_continuous (s,r) f ⇔
+           ∀c x.
+             chain (s,r) c ∧ glb (s,r) c x ⇒
+             glb (s,r) (λy. ∃z. (s z ∧ c z) ∧ (y = f z)) (f x)
+
+   [<a name="function_def-val"><b>function_def</b></a>]  Definition
+
+      |- ∀a b f. function a b f ⇔ ∀x. a x ⇒ b (f x)
+
+   [<a name="gfp_def-val"><b>gfp_def</b></a>]  Definition
+
+      |- ∀s r f x.
+           gfp (s,r) f x ⇔ s x ∧ (f x = x) ∧ ∀y. s y ∧ r y (f y) ⇒ r y x
+
+   [<a name="glb_def-val"><b>glb_def</b></a>]  Definition
+
+      |- ∀s r p x.
+           glb (s,r) p x ⇔
+           s x ∧ (∀y. s y ∧ p y ⇒ r x y) ∧
+           ∀z. s z ∧ (∀y. s y ∧ p y ⇒ r z y) ⇒ r z x
+
+   [<a name="lfp_def-val"><b>lfp_def</b></a>]  Definition
+
+      |- ∀s r f x.
+           lfp (s,r) f x ⇔ s x ∧ (f x = x) ∧ ∀y. s y ∧ r (f y) y ⇒ r x y
+
+   [<a name="lub_def-val"><b>lub_def</b></a>]  Definition
+
+      |- ∀s r p x.
+           lub (s,r) p x ⇔
+           s x ∧ (∀y. s y ∧ p y ⇒ r y x) ∧
+           ∀z. s z ∧ (∀y. s y ∧ p y ⇒ r y z) ⇒ r x z
+
+   [<a name="monotonic_def-val"><b>monotonic_def</b></a>]  Definition
+
+      |- ∀s r f.
+           monotonic (s,r) f ⇔ ∀x y. s x ∧ s y ∧ r x y ⇒ r (f x) (f y)
+
+   [<a name="pointwise_lift_def-val"><b>pointwise_lift_def</b></a>]  Definition
+
+      |- ∀t s r.
+           pointwise_lift t (s,r) =
+           (function t s,(λf g. ∀x. t x ⇒ r (f x) (g x)))
+
+   [<a name="poset_def-val"><b>poset_def</b></a>]  Definition
+
+      |- ∀s r.
+           poset (s,r) ⇔
+           (∃x. s x) ∧ (∀x. s x ⇒ r x x) ∧
+           (∀x y. s x ∧ s y ∧ r x y ∧ r y x ⇒ (x = y)) ∧
+           ∀x y z. s x ∧ s y ∧ s z ∧ r x y ∧ r y z ⇒ r x z
+
+   [<a name="relation_def-val"><b>relation_def</b></a>]  Definition
+
+      |- ∀s r. relation (s,r) = r
+
+   [<a name="top_def-val"><b>top_def</b></a>]  Definition
+
+      |- ∀s r x. top (s,r) x ⇔ s x ∧ ∀y. s y ⇒ r y x
+
+   [<a name="up_continuous_def-val"><b>up_continuous_def</b></a>]  Definition
+
+      |- ∀s r f.
+           up_continuous (s,r) f ⇔
+           ∀c x.
+             chain (s,r) c ∧ lub (s,r) c x ⇒
+             lub (s,r) (λy. ∃z. (s z ∧ c z) ∧ (y = f z)) (f x)
+
+   [<a name="complete_bottom-val"><b>complete_bottom</b></a>]  Theorem
+
+      |- ∀p. poset p ∧ complete p ⇒ ∃x. bottom p x
+
+   [<a name="complete_down-val"><b>complete_down</b></a>]  Theorem
+
+      |- ∀p c. complete p ⇒ ∃x. glb p c x
+
+   [<a name="complete_pointwise-val"><b>complete_pointwise</b></a>]  Theorem
+
+      |- ∀p t. complete p ⇒ complete (pointwise_lift t p)
+
+   [<a name="complete_top-val"><b>complete_top</b></a>]  Theorem
+
+      |- ∀p. poset p ∧ complete p ⇒ ∃x. top p x
+
+   [<a name="complete_up-val"><b>complete_up</b></a>]  Theorem
+
+      |- ∀p c. complete p ⇒ ∃x. lub p c x
+
+   [<a name="gfp_unique-val"><b>gfp_unique</b></a>]  Theorem
+
+      |- ∀p f x x'. poset p ∧ gfp p f x ∧ gfp p f x' ⇒ (x = x')
+
+   [<a name="glb_pred-val"><b>glb_pred</b></a>]  Theorem
+
+      |- ∀s r p x. glb (s,r) (λj. s j ∧ p j) x ⇔ glb (s,r) p x
+
+   [<a name="knaster_tarski-val"><b>knaster_tarski</b></a>]  Theorem
+
+      |- ∀p f.
+           poset p ∧ complete p ∧ function (carrier p) (carrier p) f ∧
+           monotonic p f ⇒
+           (∃x. lfp p f x) ∧ ∃x. gfp p f x
+
+   [<a name="knaster_tarski_gfp-val"><b>knaster_tarski_gfp</b></a>]  Theorem
+
+      |- ∀p f.
+           poset p ∧ complete p ∧ function (carrier p) (carrier p) f ∧
+           monotonic p f ⇒
+           ∃x. gfp p f x
+
+   [<a name="knaster_tarski_lfp-val"><b>knaster_tarski_lfp</b></a>]  Theorem
+
+      |- ∀p f.
+           poset p ∧ complete p ∧ function (carrier p) (carrier p) f ∧
+           monotonic p f ⇒
+           ∃x. lfp p f x
+
+   [<a name="lfp_unique-val"><b>lfp_unique</b></a>]  Theorem
+
+      |- ∀p f x x'. poset p ∧ lfp p f x ∧ lfp p f x' ⇒ (x = x')
+
+   [<a name="lub_pred-val"><b>lub_pred</b></a>]  Theorem
+
+      |- ∀s r p x. lub (s,r) (λj. s j ∧ p j) x ⇔ lub (s,r) p x
+
+   [<a name="poset_antisym-val"><b>poset_antisym</b></a>]  Theorem
+
+      |- ∀s r x y. poset (s,r) ∧ s x ∧ s y ∧ r x y ∧ r y x ⇒ (x = y)
+
+   [<a name="poset_nonempty-val"><b>poset_nonempty</b></a>]  Theorem
+
+      |- ∀s r. poset (s,r) ⇒ ∃x. s x
+
+   [<a name="poset_refl-val"><b>poset_refl</b></a>]  Theorem
+
+      |- ∀s r x. poset (s,r) ∧ s x ⇒ r x x
+
+   [<a name="poset_trans-val"><b>poset_trans</b></a>]  Theorem
+
+      |- ∀s r x y z. poset (s,r) ∧ s x ∧ s y ∧ s z ∧ r x y ∧ r y z ⇒ r x z
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/pair/src/posetScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-10</a></em></p></body></html>

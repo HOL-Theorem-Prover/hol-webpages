@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure BasicProvers</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure BasicProvers</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/basicProof/BasicProvers.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature BasicProvers =
+<a name="line2"></a>sig
+<a name="line3"></a>  include Abbrev
+<a name="line4"></a>  type simpset = simpLib.simpset
+<a name="line5"></a>
+<a name="line6"></a>  (* Eliminate v = M or M = v from hypotheses *)
+<a name="line7"></a>
+<a name="line8"></a>  val VAR_EQ_TAC      : tactic
+<a name="line9"></a>
+<a name="line10"></a>  (* First order automatic proof *)
+<a name="line11"></a>
+<a name="line12"></a>  val <a href="../../Docfiles/HTML/BasicProvers.PROVE.html">PROVE</a>           : thm list -&gt; term -&gt; thm
+<a name="line13"></a>  val <a href="../../Docfiles/HTML/BasicProvers.PROVE_TAC.html">PROVE_TAC</a>       : thm list -&gt; tactic
+<a name="line14"></a>  val GEN_PROVE_TAC   : int -&gt; int -&gt; int -&gt; thm list -&gt; tactic
+<a name="line15"></a>
+<a name="line16"></a>  (* Simplification *)
+<a name="line17"></a>
+<a name="line18"></a>  val <a href="../../Docfiles/HTML/BasicProvers.bool_ss.html">bool_ss</a>         : simpset
+<a name="line19"></a>  val <a href="../../Docfiles/HTML/BasicProvers.srw_ss.html">srw_ss</a>          : unit -&gt; simpset
+<a name="line20"></a>  val <a href="../../Docfiles/HTML/BasicProvers.Abbr.html">Abbr</a>            : term quotation -&gt; thm
+<a name="line21"></a>  val LEAVE_LETS      : thm
+<a name="line22"></a>
+<a name="line23"></a>  val <a href="../../Docfiles/HTML/BasicProvers.RW_TAC.html">RW_TAC</a>          : simpset -&gt; thm list -&gt; tactic
+<a name="line24"></a>  val NORM_TAC        : simpset -&gt; thm list -&gt; tactic
+<a name="line25"></a>  val <a href="../../Docfiles/HTML/BasicProvers.SRW_TAC.html">SRW_TAC</a>         : simpLib.ssfrag list -&gt; thm list -&gt; tactic
+<a name="line26"></a>  val <a href="../../Docfiles/HTML/BasicProvers.augment_srw_ss.html">augment_srw_ss</a>  : simpLib.ssfrag list -&gt; unit
+<a name="line27"></a>  val <a href="../../Docfiles/HTML/BasicProvers.diminish_srw_ss.html">diminish_srw_ss</a> : string list -&gt; simpLib.ssfrag list
+<a name="line28"></a>  val <a href="../../Docfiles/HTML/BasicProvers.export_rewrites.html">export_rewrites</a> : string list -&gt; unit
+<a name="line29"></a>  val thy_ssfrag      : string -&gt; simpLib.ssfrag
+<a name="line30"></a>
+<a name="line31"></a>  (* LET manoeuvres *)
+<a name="line32"></a>  val LET_ELIM_TAC    : tactic
+<a name="line33"></a>  val new_let_thms    : thm list -&gt; unit
+<a name="line34"></a>
+<a name="line35"></a>  (* Compound automated reasoners. *)
+<a name="line36"></a>
+<a name="line37"></a>  val PRIM_STP_TAC    : simpset -&gt; tactic -&gt; tactic
+<a name="line38"></a>  val STP_TAC         : simpset -&gt; tactic -&gt; tactic
+<a name="line39"></a>
+<a name="line40"></a>  (* Other reasoning support. *)
+<a name="line41"></a>  val SPOSE_NOT_THEN    : (thm -&gt; tactic) -&gt; tactic
+<a name="line42"></a>
+<a name="line43"></a>  val by                : term quotation * tactic -&gt; tactic  (* infix *)
+<a name="line44"></a>  val suffices_by       : term quotation * tactic -&gt; tactic  (* infix *)
+<a name="line45"></a>  val on                : (thm -&gt; tactic) * (term quotation * tactic) -&gt; tactic
+<a name="line46"></a>                          (* infix *)
+<a name="line47"></a>
+<a name="line48"></a>  datatype tmkind
+<a name="line49"></a>      = Free of term
+<a name="line50"></a>      | Bound of term list * term
+<a name="line51"></a>      | Alien of term;
+<a name="line52"></a>
+<a name="line53"></a>  val dest_tmkind       : tmkind -&gt; term
+<a name="line54"></a>  val prim_find_subterm : term list -&gt; term -&gt; goal -&gt; tmkind
+<a name="line55"></a>  val find_subterm      : term quotation -&gt; goal -&gt; tmkind
+<a name="line56"></a>  val primInduct        : tmkind -&gt; tactic -&gt; tactic
+<a name="line57"></a>  val <a href="../../Docfiles/HTML/BasicProvers.Cases.html">Cases</a>             : tactic
+<a name="line58"></a>  val <a href="../../Docfiles/HTML/BasicProvers.Induct.html">Induct</a>            : tactic
+<a name="line59"></a>  val <a href="../../Docfiles/HTML/BasicProvers.Cases_on.html">Cases_on</a>          : term quotation -&gt; tactic
+<a name="line60"></a>  val <a href="../../Docfiles/HTML/BasicProvers.Induct_on.html">Induct_on</a>         : term quotation -&gt; tactic
+<a name="line61"></a>
+<a name="line62"></a>  val PURE_TOP_CASE_TAC : tactic  (* top-most case-split *)
+<a name="line63"></a>  val <a href="../../Docfiles/HTML/BasicProvers.PURE_CASE_TAC.html">PURE_CASE_TAC</a>     : tactic  (* smallest case-split (concl) *)
+<a name="line64"></a>  val PURE_FULL_CASE_TAC: tactic  (* smallest case-split  (goal) *)
+<a name="line65"></a>
+<a name="line66"></a>  val PURE_CASE_SIMP_CONV : thm list -&gt; conv
+<a name="line67"></a>  val CASE_SIMP_CONV    : conv     (* Apply case rewrites in theTypeBase *)
+<a name="line68"></a>
+<a name="line69"></a>  val <a href="../../Docfiles/HTML/BasicProvers.CASE_TAC.html">CASE_TAC</a>          : tactic   (* PURE_CASE_TAC then simplification *)
+<a name="line70"></a>  val TOP_CASE_TAC      : tactic   (* PURE_TOP_CASE_TAC then simplification *)
+<a name="line71"></a>  val FULL_CASE_TAC     : tactic   (* PURE_FULL_CASE_TAC then simplification *)
+<a name="line72"></a>  val EVERY_CASE_TAC    : tactic   (* Repeat FULL_CASE_TAC *)
+<a name="line73"></a>
+<a name="line74"></a>end
+<a name="line75"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/basicProof/BasicProvers.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-10</a></em></p></body></html>

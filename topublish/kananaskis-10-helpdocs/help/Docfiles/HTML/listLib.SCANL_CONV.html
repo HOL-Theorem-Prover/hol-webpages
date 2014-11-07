@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>listLib.SCANL_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>SCANL_CONV : conv -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/listLib.html">listLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Computes by inference the result of applying a function to the elements of a list.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SCANL_CONV</SPAN><SPAN class = "TEXT"> takes a conversion </SPAN><SPAN class = "BRKT">conv</SPAN><SPAN class = "TEXT"> and a term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> in the following form:
+</SPAN><DIV class = "XMPL"><pre>
+   SCANL f e0 [x1;...xn]
+</pre></DIV>
+<SPAN class = "TEXT">
+It returns the theorem
+</SPAN><DIV class = "XMPL"><pre>
+   |- SCANL f e0 [x1;...xn] = [e0; e1; ...;en]
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">ei</SPAN><SPAN class = "TEXT"> is the result of applying the function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to
+the result of the previous iteration and the current element, i.e.,
+</SPAN><SPAN class = "BRKT">ei&nbsp;=&nbsp;f&nbsp;e(i-1)&nbsp;xi</SPAN><SPAN class = "TEXT">. The iteration starts from the left-hand side (the
+head) of the list. 
+The user supplied conversion </SPAN><SPAN class = "BRKT">conv</SPAN><SPAN class = "TEXT"> is used to derive a theorem 
+</SPAN><DIV class = "XMPL"><pre>
+   |- f e(i-1) xi = ei
+</pre></DIV>
+<SPAN class = "TEXT">
+which is used in the next iteration.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SCANL_CONV&nbsp;conv&nbsp;tm</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> is not of the form described above,
+or failure occurs when evaluating </SPAN><SPAN class = "BRKT">conv&nbsp;(--`f&nbsp;e(i-1)&nbsp;xi`--)</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">To sum the elements of a list and save the result at each step, one can use
+</SPAN><SPAN class = "BRKT">SCANL_CONV</SPAN><SPAN class = "TEXT"> with </SPAN><SPAN class = "BRKT">ADD_CONV</SPAN><SPAN class = "TEXT"> from the library </SPAN><SPAN class = "BRKT">num_lib</SPAN><SPAN class = "TEXT">.
+</SPAN><DIV class = "XMPL"><pre>
+   - load_library_in_place num_lib;
+   - SCANL_CONV Num_lib.ADD_CONV (--`SCANL $+ 0 [1;2;3]`--);
+   |- SCANL $+ 0[1;2;3] = [0;1;3;6]
+</pre></DIV>
+<SPAN class = "TEXT">
+In general, if the function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> is an explicit lambda abstraction
+</SPAN><SPAN class = "BRKT">(\x&nbsp;x'.&nbsp;t[x,x'])</SPAN><SPAN class = "TEXT">, the conversion should be in the form
+</SPAN><DIV class = "XMPL"><pre>
+   ((RATOR_CONV BETA_CONV) THENC BETA_CONV THENC conv'))
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">conv'</SPAN><SPAN class = "TEXT"> applied to </SPAN><SPAN class = "BRKT">t[x,x']</SPAN><SPAN class = "TEXT"> returns the theorem
+</SPAN><DIV class = "XMPL"><pre>
+   |-t[x,x'] = e''.
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "listLib.SCANR_CONV.html">SCANR_CONV</A>,
+<A HREF = "listLib.FOLDL_CONV.html">FOLDL_CONV</A>,
+<A HREF = "listLib.FOLDR_CONV.html">FOLDR_CONV</A>,
+<A HREF = "listLib.list_FOLD_CONV.html">list_FOLD_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-10</div></BODY></HTML>

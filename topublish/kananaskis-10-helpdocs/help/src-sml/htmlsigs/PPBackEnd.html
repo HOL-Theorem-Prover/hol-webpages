@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure PPBackEnd</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure PPBackEnd</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/PPBackEnd.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature PPBackEnd =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  type hol_type = Type.hol_type
+<a name="line5"></a>  type ppstream = PP.ppstream
+<a name="line6"></a>  type break_style = PP.break_style
+<a name="line7"></a>
+<a name="line8"></a>  datatype pp_color =
+<a name="line9"></a>      Black
+<a name="line10"></a>    | RedBrown
+<a name="line11"></a>    | Green
+<a name="line12"></a>    | BrownGreen
+<a name="line13"></a>    | DarkBlue
+<a name="line14"></a>    | Purple
+<a name="line15"></a>    | BlueGreen
+<a name="line16"></a>    | DarkGrey
+<a name="line17"></a>    | LightGrey
+<a name="line18"></a>    | OrangeRed
+<a name="line19"></a>    | VividGreen
+<a name="line20"></a>    | Yellow
+<a name="line21"></a>    | Blue
+<a name="line22"></a>    | PinkPurple
+<a name="line23"></a>    | LightBlue
+<a name="line24"></a>    | White;
+<a name="line25"></a>
+<a name="line26"></a>  datatype pp_style =
+<a name="line27"></a>      FG of pp_color
+<a name="line28"></a>    | BG of pp_color
+<a name="line29"></a>    | Bold
+<a name="line30"></a>    | Underline
+<a name="line31"></a>    | UserStyle of string
+<a name="line32"></a>
+<a name="line33"></a>  datatype lit_type = FldName | StringLit | NumLit | CharLit
+<a name="line34"></a>
+<a name="line35"></a>  datatype annotation =
+<a name="line36"></a>    BV of hol_type * (unit -&gt; string)
+<a name="line37"></a>  | FV of hol_type * (unit -&gt; string)
+<a name="line38"></a>  | TyV
+<a name="line39"></a>  | TyOp of (unit -&gt; string)
+<a name="line40"></a>  | TySyn of (unit -&gt; string)
+<a name="line41"></a>  | Const of {Thy:string,Name:string,Ty:hol_type * (unit -&gt; string)}
+<a name="line42"></a>  | SymConst of {Thy:string,Name:string,Ty:hol_type * (unit -&gt; string)}
+<a name="line43"></a>  | Note of string
+<a name="line44"></a>  | Literal of lit_type
+<a name="line45"></a>
+<a name="line46"></a>  type xstring = {s:string,sz:int option,ann:annotation option}
+<a name="line47"></a>
+<a name="line48"></a>  type t = {add_string     : ppstream -&gt; string -&gt; unit,
+<a name="line49"></a>            add_xstring    : ppstream -&gt; xstring -&gt; unit,
+<a name="line50"></a>            begin_block    : ppstream -&gt; PP.break_style -&gt; int -&gt; unit,
+<a name="line51"></a>            end_block      : ppstream -&gt; unit,
+<a name="line52"></a>            add_break      : ppstream -&gt; int * int -&gt; unit,
+<a name="line53"></a>            add_newline    : ppstream -&gt; unit,
+<a name="line54"></a>            begin_style    : ppstream -&gt; pp_style list -&gt; unit,
+<a name="line55"></a>            end_style      : ppstream -&gt; unit,
+<a name="line56"></a>            name : string}
+<a name="line57"></a>
+<a name="line58"></a>  val with_ppstream : t -&gt; ppstream -&gt;
+<a name="line59"></a>                      {add_break      : int * int -&gt; unit,
+<a name="line60"></a>                       add_newline    : unit -&gt; unit,
+<a name="line61"></a>                       add_string     : string -&gt; unit,
+<a name="line62"></a>                       add_xstring    : xstring -&gt; unit,
+<a name="line63"></a>                       begin_block    : break_style -&gt; int -&gt; unit,
+<a name="line64"></a>                       end_block      : unit -&gt; unit,
+<a name="line65"></a>                       begin_style    : pp_style list -&gt; unit,
+<a name="line66"></a>                       end_style      : unit -&gt; unit,
+<a name="line67"></a>                       clear_ppstream : unit -&gt; unit,
+<a name="line68"></a>                       flush_ppstream : unit -&gt; unit}
+<a name="line69"></a>
+<a name="line70"></a>  val known_UserStyles   : unit -&gt; string list
+<a name="line71"></a>  val lookup_UserStyle   : string -&gt; string -&gt; pp_style list
+<a name="line72"></a>  val register_UserStyle : string option -&gt; string -&gt; pp_style list -&gt; unit
+<a name="line73"></a>
+<a name="line74"></a>  val raw_terminal          : t
+<a name="line75"></a>  val debug_blocks_terminal : t
+<a name="line76"></a>  val vt100_terminal        : t
+<a name="line77"></a>  val emacs_terminal        : t
+<a name="line78"></a>  val html_terminal         : t
+<a name="line79"></a>  val html_escape    : string -&gt; string
+<a name="line80"></a>
+<a name="line81"></a>
+<a name="line82"></a>end
+<a name="line83"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/PPBackEnd.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-10</a></em></p></body></html>

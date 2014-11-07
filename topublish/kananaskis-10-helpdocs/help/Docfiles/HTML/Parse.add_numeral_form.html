@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Parse.add_numeral_form</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Parse.add_numeral_form : (char * string option) -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Adds support for numerals of differing types to the parser/pretty-printer.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Parse</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function allows the user to extend HOL&rsquo;s parser and
+pretty-printer so that they recognise and print numerals.  A numeral
+in this context is a string of digits.  Each such string corresponds
+to a natural number (i.e., the HOL type </SPAN><SPAN class = "BRKT">num</SPAN><SPAN class = "TEXT">) but </SPAN><SPAN class = "BRKT">add_numeral_form</SPAN><SPAN class = "TEXT">
+allows for numerals to stand for values in other types as well.</SPAN>
+<P>
+<SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">add_numeral_form(c,s)</SPAN><SPAN class = "TEXT"> augments the global term grammar in
+two ways.  Firstly, in common with the function
+</SPAN><SPAN class = "BRKT">add_bare_numeral_form</SPAN><SPAN class = "TEXT"> (q.v.), it allows the user to write a single
+letter suffix after a numeral (the argument </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">).  The presence of
+this character specifies </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> as the &ldquo;injection function&rdquo; which is to
+be applied to the natural number denoted by the preceding digits.</SPAN>
+<P>
+<SPAN class = "TEXT">Secondly, the constant denoted by the </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> argument is overloaded to be
+one of the possible resolutions of an internal, overloaded operator,
+which is invisibly wrapped around all numerals that appear without a
+character suffix.  After applying </SPAN><SPAN class = "BRKT">add_numeral_form</SPAN><SPAN class = "TEXT">, the function
+denoted by the argument </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> is now a possible resolution of this
+overloading, so numerals can now be seen as members of the range of
+the type of </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Finally, if </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> is not </SPAN><SPAN class = "BRKT">NONE</SPAN><SPAN class = "TEXT">, the constant denoted by </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> is
+overloaded to be one of the possible resolutions of the string </SPAN><SPAN class = "BRKT">&amp;</SPAN><SPAN class = "TEXT">.
+This operator is thus the standard way of writing the injection
+function from </SPAN><SPAN class = "BRKT">:num</SPAN><SPAN class = "TEXT"> into other numeric types.</SPAN>
+<P>
+<SPAN class = "TEXT">The injection function specifed by argument </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> is either the constant
+with name </SPAN><SPAN class = "BRKT">s0</SPAN><SPAN class = "TEXT">, if </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> is of the form </SPAN><SPAN class = "BRKT">SOME&nbsp;s0</SPAN><SPAN class = "TEXT">, or the identity
+function if </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">NONE</SPAN><SPAN class = "TEXT">.  Using </SPAN><SPAN class = "BRKT">add_numeral_form</SPAN><SPAN class = "TEXT"> with </SPAN><SPAN class = "BRKT">NONE</SPAN><SPAN class = "TEXT"> for
+this parameter is done in the development of </SPAN><SPAN class = "BRKT">arithmeticTheory</SPAN><SPAN class = "TEXT">, and
+should not be done subsequently.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if </SPAN><SPAN class = "BRKT">arithmeticTheory</SPAN><SPAN class = "TEXT"> is not loaded, as this is where the basic
+constants implementing natural number numerals are defined.  Also
+fails if there is no constant with the given name, or if it doesn&rsquo;t
+have type </SPAN><SPAN class = "BRKT">:num&nbsp;-&gt;&nbsp;'a</SPAN><SPAN class = "TEXT"> for some </SPAN><SPAN class = "BRKT">'a</SPAN><SPAN class = "TEXT">.  Fails if
+</SPAN><SPAN class = "BRKT">add_bare_numeral_form</SPAN><SPAN class = "TEXT"> would also fail on this input.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The natural numbers are given numeral forms as follows:
+</SPAN><DIV class = "XMPL"><pre>
+   val _ = add_numeral_form (#"n", NONE);
+</pre></DIV>
+<SPAN class = "TEXT">
+This is done in </SPAN><SPAN class = "BRKT">arithmeticTheory</SPAN><SPAN class = "TEXT"> so that after it is
+loaded, one can write numerals and have them parse (and print) as
+natural numbers.  However, later in the development, in
+</SPAN><SPAN class = "BRKT">integerTheory</SPAN><SPAN class = "TEXT">, numeral forms for integers are also introduced:
+</SPAN><DIV class = "XMPL"><pre>
+   val _ = add_numeral_form(#"i", SOME "int_of_num");
+</pre></DIV>
+<SPAN class = "TEXT">
+Here </SPAN><SPAN class = "BRKT">int_of_num</SPAN><SPAN class = "TEXT"> is the name of the function which injects
+natural numbers into integers.  After this call is made, numeral strings
+can be treated as integers or natural numbers, depending on the
+context.
+</SPAN><DIV class = "XMPL"><pre>
+   - load "integerTheory";
+   &gt; val it = () : unit
+   - Term`3`;
+   &lt;&lt;HOL message: more than one resolution of overloading was possible.&gt;&gt;
+   &gt; val it = `3` : term
+   - type_of it;
+   &gt; val it = `:int` : hol_type
+</pre></DIV>
+<SPAN class = "TEXT">
+The parser has chosen to give the string &ldquo;3&rdquo; integer type
+(it will prefer the most recently specified possibility, in common
+with overloading in general).  However, numerals can appear with
+natural number type in appropriate contexts:
+</SPAN><DIV class = "XMPL"><pre>
+   - Term`(SUC 3, 4 + ~x)`;
+   &gt; val it = `(SUC 3,4 + ~x)` : term
+   - type_of it;
+   &gt; val it = `:num # int` : hol_type
+</pre></DIV>
+<SPAN class = "TEXT">
+Moreover, one can always use the character suffixes to
+absolutely specify the type of the numeral form:
+</SPAN><DIV class = "XMPL"><pre>
+   - Term`f 3 /\ p`;
+   &lt;&lt;HOL message: more than one resolution of overloading was possible.&gt;&gt;
+   &gt; val it = `f 3 /\ p` : term
+
+   - Term`f 3n /\ p`;
+   &gt; val it = `f 3 /\ p` : term
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Overloading on too many numeral forms is a sure recipe for confusion.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.add_bare_numeral_form.html">add_bare_numeral_form</A>,
+<A HREF = "Parse.overload_on.html">overload_on</A>,
+<A HREF = "Parse.show_numeral_types.html">show_numeral_types</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-10</div></BODY></HTML>

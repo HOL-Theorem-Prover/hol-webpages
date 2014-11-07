@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure ConseqConv</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure ConseqConv</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/ConseqConv.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature ConseqConv =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>include Abbrev
+<a name="line5"></a>
+<a name="line6"></a>
+<a name="line7"></a>(*
+<a name="line8"></a>  trace "DEPTH_CONSEQ_CONV" can be used to get debug information
+<a name="line9"></a>  on DEPTH_CONSEQ_CONV and related conversions
+<a name="line10"></a>*)
+<a name="line11"></a>
+<a name="line12"></a>
+<a name="line13"></a>(* Types *)
+<a name="line14"></a>datatype <a href="../../Docfiles/HTML/ConseqConv.CONSEQ_CONV_direction.html">CONSEQ_CONV_direction</a> =
+<a name="line15"></a>         CONSEQ_CONV_STRENGTHEN_direction
+<a name="line16"></a>       | CONSEQ_CONV_WEAKEN_direction
+<a name="line17"></a>       | CONSEQ_CONV_UNKNOWN_direction;
+<a name="line18"></a>
+<a name="line19"></a>datatype CONSEQ_CONV_context =
+<a name="line20"></a>         (* do not use context at all *)
+<a name="line21"></a>         CONSEQ_CONV_NO_CONTEXT
+<a name="line22"></a>         (* use just the antecedents of implications *)
+<a name="line23"></a>       | CONSEQ_CONV_IMP_CONTEXT
+<a name="line24"></a>         (* use all available context (from and, or, ...) *)
+<a name="line25"></a>       | CONSEQ_CONV_FULL_CONTEXT;
+<a name="line26"></a>
+<a name="line27"></a>type <a href="../../Docfiles/HTML/ConseqConv.conseq_conv.html">conseq_conv</a> = term -&gt; thm;
+<a name="line28"></a>type <a href="../../Docfiles/HTML/ConseqConv.directed_conseq_conv.html">directed_conseq_conv</a> = CONSEQ_CONV_direction -&gt; conseq_conv;
+<a name="line29"></a>
+<a name="line30"></a>type conseq_conv_congruence_syscall =
+<a name="line31"></a>   term list -&gt; thm list -&gt; int -&gt; CONSEQ_CONV_direction -&gt; term -&gt; (int * thm option)
+<a name="line32"></a>
+<a name="line33"></a>type conseq_conv_congruence =
+<a name="line34"></a>   thm list -&gt; conseq_conv_congruence_syscall -&gt;
+<a name="line35"></a>   CONSEQ_CONV_direction -&gt; term -&gt; (int * thm)
+<a name="line36"></a>
+<a name="line37"></a>
+<a name="line38"></a>(* Technical stuff that might help writing
+<a name="line39"></a>   your own CONSEQ-CONVs, but is otherwise uninteresting *)
+<a name="line40"></a>val CONSEQ_CONV_DIRECTION_NEGATE      : CONSEQ_CONV_direction -&gt; CONSEQ_CONV_direction;
+<a name="line41"></a>val CONSEQ_CONV___GET_SIMPLIFIED_TERM : thm -&gt; term -&gt; term;
+<a name="line42"></a>val CONSEQ_CONV___GET_DIRECTION       : thm -&gt; term -&gt; CONSEQ_CONV_direction;
+<a name="line43"></a>val THEN_CONSEQ_CONV___combine        : thm -&gt; thm -&gt; term -&gt; thm;
+<a name="line44"></a>val CONSEQ_CONV___APPLY_CONV_RULE     : thm -&gt; term -&gt; (term -&gt; thm) -&gt; thm;
+<a name="line45"></a>
+<a name="line46"></a>
+<a name="line47"></a>
+<a name="line48"></a>
+<a name="line49"></a>(* General rules and tactics. These might be useful in general *)
+<a name="line50"></a>val GEN_ASSUM               : term -&gt; thm -&gt; thm;
+<a name="line51"></a>val GEN_IMP                 : term -&gt; thm -&gt; thm;
+<a name="line52"></a>val LIST_GEN_IMP            : term list -&gt; thm -&gt; thm;
+<a name="line53"></a>val GEN_EQ                  : term -&gt; thm -&gt; thm;
+<a name="line54"></a>val LIST_GEN_EQ             : term list -&gt; thm -&gt; thm;
+<a name="line55"></a>val EXISTS_INTRO_IMP        : term -&gt; thm -&gt; thm;
+<a name="line56"></a>val LIST_EXISTS_INTRO_IMP   : term list -&gt; thm -&gt; thm;
+<a name="line57"></a>val SPEC_ALL_TAC            : tactic;
+<a name="line58"></a>val REMOVE_TRUE_TAC         : tactic;
+<a name="line59"></a>
+<a name="line60"></a>
+<a name="line61"></a>val IMP_QUANT_CANON             : thm -&gt; thm;
+<a name="line62"></a>val IMP_FORALL_CONCLUSION_CANON : thm -&gt; thm;
+<a name="line63"></a>val IMP_EXISTS_PRECOND_CANON    : thm -&gt; thm;
+<a name="line64"></a>
+<a name="line65"></a>
+<a name="line66"></a>
+<a name="line67"></a>(* Basic consequence conversions; some of these are trivial, but
+<a name="line68"></a>   useful for writing your own conseq_convs *)
+<a name="line69"></a>val <a href="../../Docfiles/HTML/ConseqConv.FALSE_CONSEQ_CONV.html">FALSE_CONSEQ_CONV</a>       : conseq_conv;
+<a name="line70"></a>val <a href="../../Docfiles/HTML/ConseqConv.TRUE_CONSEQ_CONV.html">TRUE_CONSEQ_CONV</a>        : conseq_conv;
+<a name="line71"></a>val <a href="../../Docfiles/HTML/ConseqConv.REFL_CONSEQ_CONV.html">REFL_CONSEQ_CONV</a>        : conseq_conv;
+<a name="line72"></a>val <a href="../../Docfiles/HTML/ConseqConv.FORALL_EQ___CONSEQ_CONV.html">FORALL_EQ___CONSEQ_CONV</a> : conseq_conv;
+<a name="line73"></a>val <a href="../../Docfiles/HTML/ConseqConv.EXISTS_EQ___CONSEQ_CONV.html">EXISTS_EQ___CONSEQ_CONV</a> : conseq_conv;
+<a name="line74"></a>
+<a name="line75"></a>val <a href="../../Docfiles/HTML/ConseqConv.TRUE_FALSE_REFL_CONSEQ_CONV.html">TRUE_FALSE_REFL_CONSEQ_CONV</a> : directed_conseq_conv
+<a name="line76"></a>
+<a name="line77"></a>
+<a name="line78"></a>(*Some things about asm_marker*)
+<a name="line79"></a>val asm_marker_tm         : term
+<a name="line80"></a>val dest_asm_marker       : term -&gt; term * term
+<a name="line81"></a>val is_asm_marker         : term -&gt; bool
+<a name="line82"></a>val mk_asm_marker         : term -&gt; term -&gt; term
+<a name="line83"></a>val mk_asm_marker_random  : term -&gt; term
+<a name="line84"></a>val dest_neg_asm_marker   : term -&gt; term * term
+<a name="line85"></a>val is_neg_asm_marker     : term -&gt; bool
+<a name="line86"></a>val asm_marker_ELIM_CONV  : conv
+<a name="line87"></a>val asm_marker_INTRO_CONV : term -&gt; conv
+<a name="line88"></a>
+<a name="line89"></a>(* Cache and congruence options *)
+<a name="line90"></a>
+<a name="line91"></a>type depth_conseq_conv_cache
+<a name="line92"></a>type depth_conseq_conv_cache_opt =
+<a name="line93"></a>   ((unit -&gt; depth_conseq_conv_cache) * ((term * (int * thm option)) -&gt; bool)) option
+<a name="line94"></a>
+<a name="line95"></a>(* make a new cache *)
+<a name="line96"></a>val mk_DEPTH_CONSEQ_CONV_CACHE : unit -&gt; depth_conseq_conv_cache;
+<a name="line97"></a>(* the default cache option, a cache option is a pair,
+<a name="line98"></a>   first is a function to create a new cache, by default
+<a name="line99"></a>   mk_DEPTH_CONSEQ_CONV_CACHE is used, however often
+<a name="line100"></a>   (K some_existing_cache) might be useful. The second one is
+<a name="line101"></a>   a predicate of (t, (n, result_opt)) that determines whether
+<a name="line102"></a>   the result that t was converted in n steps to result_opt should
+<a name="line103"></a>   be put into the cache or not (default is (K true)).
+<a name="line104"></a>*)
+<a name="line105"></a>val CONSEQ_CONV_default_cache_opt : depth_conseq_conv_cache_opt
+<a name="line106"></a>
+<a name="line107"></a>
+<a name="line108"></a>val mk_DEPTH_CONSEQ_CONV_CACHE_OPT : ((term * (int * thm option)) -&gt; bool) -&gt; depth_conseq_conv_cache_opt;
+<a name="line109"></a>val mk_PERSISTENT_DEPTH_CONSEQ_CONV_CACHE_OPT : ((term * (int * thm option)) -&gt; bool) -&gt; depth_conseq_conv_cache_opt;
+<a name="line110"></a>
+<a name="line111"></a>val CONSEQ_CONV_get_context_congruences :
+<a name="line112"></a>    CONSEQ_CONV_context -&gt; conseq_conv_congruence list;
+<a name="line113"></a>
+<a name="line114"></a>val clear_CONSEQ_CONV_CACHE     : depth_conseq_conv_cache -&gt; unit
+<a name="line115"></a>val clear_CONSEQ_CONV_CACHE_OPT : depth_conseq_conv_cache_opt -&gt; unit
+<a name="line116"></a>
+<a name="line117"></a>
+<a name="line118"></a>
+<a name="line119"></a>(* Rewriting consequence conversions *)
+<a name="line120"></a>val <a href="../../Docfiles/HTML/ConseqConv.CONSEQ_REWRITE_CONV.html">CONSEQ_REWRITE_CONV</a>         : (thm list * thm list * thm list) -&gt; directed_conseq_conv;
+<a name="line121"></a>val CONSEQ_HO_REWRITE_CONV      : (thm list * thm list * thm list) -&gt; directed_conseq_conv;
+<a name="line122"></a>val ONCE_CONSEQ_REWRITE_CONV    : (thm list * thm list * thm list) -&gt; directed_conseq_conv;
+<a name="line123"></a>val ONCE_CONSEQ_HO_REWRITE_CONV : (thm list * thm list * thm list) -&gt; directed_conseq_conv;
+<a name="line124"></a>
+<a name="line125"></a>val <a href="../../Docfiles/HTML/ConseqConv.EXT_CONSEQ_REWRITE_CONV.html">EXT_CONSEQ_REWRITE_CONV</a>             : (thm list -&gt; conv) list -&gt; thm list -&gt; (thm list * thm list * thm list) -&gt; directed_conseq_conv;
+<a name="line126"></a>val EXT_CONSEQ_HO_REWRITE_CONV          : (thm list -&gt; conv) list -&gt; thm list -&gt; (thm list * thm list * thm list) -&gt; directed_conseq_conv;
+<a name="line127"></a>val EXT_CONTEXT_CONSEQ_REWRITE_CONV     : CONSEQ_CONV_context -&gt; (thm list -&gt; conv) list -&gt; thm list -&gt; (thm list * thm list * thm list) -&gt; directed_conseq_conv;
+<a name="line128"></a>val EXT_CONTEXT_CONSEQ_HO_REWRITE_CONV  : CONSEQ_CONV_context -&gt; (thm list -&gt; conv) list -&gt; thm list -&gt; (thm list * thm list * thm list) -&gt; directed_conseq_conv;
+<a name="line129"></a>
+<a name="line130"></a>
+<a name="line131"></a>val FULL_EXT_CONSEQ_REWRITE_CONV        :
+<a name="line132"></a>   conseq_conv_congruence list -&gt; (* congruences *)
+<a name="line133"></a>   depth_conseq_conv_cache_opt -&gt; (* cache *)
+<a name="line134"></a>   int option -&gt;                  (* steps *)
+<a name="line135"></a>   bool -&gt;                        (* redepth *)
+<a name="line136"></a>   bool -&gt;                        (* higher order rewriting ? *)
+<a name="line137"></a>   thm list -&gt;                    (* context *)
+<a name="line138"></a>   (bool * int option * (thm list -&gt; conv)) list -&gt; (* conversions *)
+<a name="line139"></a>   (thm list * thm list * thm list) -&gt; (*consequence rewrites *)
+<a name="line140"></a>   directed_conseq_conv
+<a name="line141"></a>
+<a name="line142"></a>
+<a name="line143"></a>
+<a name="line144"></a>val step_opt_sub          : int option -&gt; int -&gt; int option
+<a name="line145"></a>val step_opt_allows_steps : int option -&gt; int -&gt; int option -&gt; bool
+<a name="line146"></a>
+<a name="line147"></a>(* Depth consequence conversions *)
+<a name="line148"></a>val <a href="../../Docfiles/HTML/ConseqConv.EXT_DEPTH_CONSEQ_CONV.html">EXT_DEPTH_CONSEQ_CONV</a>  :
+<a name="line149"></a>    conseq_conv_congruence list -&gt;    (*congruence_list*)
+<a name="line150"></a>    depth_conseq_conv_cache_opt -&gt;    (*use cache*)
+<a name="line151"></a>    int option -&gt;                     (*no of steps, NONE for unbounded *)
+<a name="line152"></a>    bool -&gt;                           (*redepth ?*)
+<a name="line153"></a>    (bool * int option * (thm list -&gt; directed_conseq_conv)) list -&gt;
+<a name="line154"></a>         (*conversion list:
+<a name="line155"></a>           (1: apply before or after descending in subterms
+<a name="line156"></a>            2: weight, how many steps are counted, 0 means that it does
+<a name="line157"></a>               not count
+<a name="line158"></a>            3: context -&gt; conversion
+<a name="line159"></a>          *)
+<a name="line160"></a>    thm list -&gt;                       (*context that might be used*)
+<a name="line161"></a>    directed_conseq_conv
+<a name="line162"></a>
+<a name="line163"></a>val EXT_DEPTH_NUM_CONSEQ_CONV  :
+<a name="line164"></a>    conseq_conv_congruence list -&gt;    (*congruence_list*)
+<a name="line165"></a>    depth_conseq_conv_cache_opt -&gt;    (*use cache*)
+<a name="line166"></a>    int option -&gt;                     (*no of steps, NONE for unbounded *)
+<a name="line167"></a>    bool -&gt;                           (*redepth ?*)
+<a name="line168"></a>    (bool * int option * (thm list -&gt; directed_conseq_conv)) list -&gt;
+<a name="line169"></a>         (*conversion list:
+<a name="line170"></a>           (1: apply before or after descending in subterms
+<a name="line171"></a>            2: weight, how many steps are counted, 0 means that it does
+<a name="line172"></a>               not count
+<a name="line173"></a>            3: context -&gt; conversion
+<a name="line174"></a>          *)
+<a name="line175"></a>    thm list -&gt;                       (*context that might be used*)
+<a name="line176"></a>    CONSEQ_CONV_direction -&gt; term -&gt;
+<a name="line177"></a>    (int * thm option)
+<a name="line178"></a>
+<a name="line179"></a>val <a href="../../Docfiles/HTML/ConseqConv.DEPTH_CONSEQ_CONV.html">DEPTH_CONSEQ_CONV</a>      : directed_conseq_conv -&gt; directed_conseq_conv;
+<a name="line180"></a>val <a href="../../Docfiles/HTML/ConseqConv.REDEPTH_CONSEQ_CONV.html">REDEPTH_CONSEQ_CONV</a>    : directed_conseq_conv -&gt; directed_conseq_conv;
+<a name="line181"></a>val <a href="../../Docfiles/HTML/ConseqConv.ONCE_DEPTH_CONSEQ_CONV.html">ONCE_DEPTH_CONSEQ_CONV</a> : directed_conseq_conv -&gt; directed_conseq_conv;
+<a name="line182"></a>val <a href="../../Docfiles/HTML/ConseqConv.NUM_DEPTH_CONSEQ_CONV.html">NUM_DEPTH_CONSEQ_CONV</a>  : directed_conseq_conv -&gt; int -&gt;
+<a name="line183"></a>			     directed_conseq_conv;
+<a name="line184"></a>val NUM_REDEPTH_CONSEQ_CONV: directed_conseq_conv -&gt; int -&gt;
+<a name="line185"></a>			     directed_conseq_conv
+<a name="line186"></a>
+<a name="line187"></a>val CONTEXT_DEPTH_CONSEQ_CONV      : CONSEQ_CONV_context -&gt; (thm list -&gt; directed_conseq_conv) -&gt; directed_conseq_conv;
+<a name="line188"></a>val CONTEXT_REDEPTH_CONSEQ_CONV    : CONSEQ_CONV_context -&gt; (thm list -&gt; directed_conseq_conv) -&gt; directed_conseq_conv;
+<a name="line189"></a>val CONTEXT_ONCE_DEPTH_CONSEQ_CONV : CONSEQ_CONV_context -&gt; (thm list -&gt; directed_conseq_conv) -&gt; directed_conseq_conv;
+<a name="line190"></a>val CONTEXT_NUM_DEPTH_CONSEQ_CONV  : CONSEQ_CONV_context -&gt; (thm list -&gt; directed_conseq_conv) -&gt; int -&gt;
+<a name="line191"></a>			             directed_conseq_conv;
+<a name="line192"></a>val CONTEXT_NUM_REDEPTH_CONSEQ_CONV: (thm list -&gt; directed_conseq_conv) -&gt; int -&gt;
+<a name="line193"></a>		         	     directed_conseq_conv
+<a name="line194"></a>
+<a name="line195"></a>val <a href="../../Docfiles/HTML/ConseqConv.DEPTH_STRENGTHEN_CONSEQ_CONV.html">DEPTH_STRENGTHEN_CONSEQ_CONV</a>   : conseq_conv -&gt; conseq_conv;
+<a name="line196"></a>val REDEPTH_STRENGTHEN_CONSEQ_CONV : conseq_conv -&gt; conseq_conv;
+<a name="line197"></a>
+<a name="line198"></a>
+<a name="line199"></a>
+<a name="line200"></a>
+<a name="line201"></a>(* Combinations for consequence conversions *)
+<a name="line202"></a>val <a href="../../Docfiles/HTML/ConseqConv.CHANGED_CONSEQ_CONV.html">CHANGED_CONSEQ_CONV</a>    : conseq_conv -&gt; conseq_conv;
+<a name="line203"></a>val <a href="../../Docfiles/HTML/ConseqConv.QCHANGED_CONSEQ_CONV.html">QCHANGED_CONSEQ_CONV</a>   : conseq_conv -&gt; conseq_conv;
+<a name="line204"></a>val <a href="../../Docfiles/HTML/ConseqConv.ORELSE_CONSEQ_CONV.html">ORELSE_CONSEQ_CONV</a>     : conseq_conv -&gt; conseq_conv -&gt; conseq_conv
+<a name="line205"></a>val <a href="../../Docfiles/HTML/ConseqConv.THEN_CONSEQ_CONV.html">THEN_CONSEQ_CONV</a>       : conseq_conv -&gt; conseq_conv -&gt; conseq_conv;
+<a name="line206"></a>val <a href="../../Docfiles/HTML/ConseqConv.FIRST_CONSEQ_CONV.html">FIRST_CONSEQ_CONV</a>      : conseq_conv list -&gt; conseq_conv;
+<a name="line207"></a>val <a href="../../Docfiles/HTML/ConseqConv.EVERY_CONSEQ_CONV.html">EVERY_CONSEQ_CONV</a>      : conseq_conv list -&gt; conseq_conv;
+<a name="line208"></a>
+<a name="line209"></a>val <a href="../../Docfiles/HTML/ConseqConv.FORALL_CONSEQ_CONV.html">FORALL_CONSEQ_CONV</a>     : conseq_conv -&gt; conseq_conv;
+<a name="line210"></a>val <a href="../../Docfiles/HTML/ConseqConv.EXISTS_CONSEQ_CONV.html">EXISTS_CONSEQ_CONV</a>     : conseq_conv -&gt; conseq_conv;
+<a name="line211"></a>val <a href="../../Docfiles/HTML/ConseqConv.QUANT_CONSEQ_CONV.html">QUANT_CONSEQ_CONV</a>      : conseq_conv -&gt; conseq_conv;
+<a name="line212"></a>
+<a name="line213"></a>val STRENGTHEN_CONSEQ_CONV : conseq_conv -&gt; directed_conseq_conv;
+<a name="line214"></a>val WEAKEN_CONSEQ_CONV     : conseq_conv -&gt; directed_conseq_conv;
+<a name="line215"></a>
+<a name="line216"></a>
+<a name="line217"></a>(* Rules *)
+<a name="line218"></a>val <a href="../../Docfiles/HTML/ConseqConv.STRENGTHEN_CONSEQ_CONV_RULE.html">STRENGTHEN_CONSEQ_CONV_RULE</a>  : directed_conseq_conv -&gt; thm -&gt; thm;
+<a name="line219"></a>val <a href="../../Docfiles/HTML/ConseqConv.WEAKEN_CONSEQ_CONV_RULE.html">WEAKEN_CONSEQ_CONV_RULE</a>      : directed_conseq_conv -&gt; thm -&gt; thm;
+<a name="line220"></a>
+<a name="line221"></a>
+<a name="line222"></a>
+<a name="line223"></a>
+<a name="line224"></a>(* Tactics *)
+<a name="line225"></a>val <a href="../../Docfiles/HTML/ConseqConv.CONSEQ_CONV_TAC.html">CONSEQ_CONV_TAC</a>              : directed_conseq_conv -&gt; tactic;
+<a name="line226"></a>val ASM_CONSEQ_CONV_TAC          : (thm list -&gt; directed_conseq_conv) -&gt; tactic
+<a name="line227"></a>
+<a name="line228"></a>val DISCH_ASM_CONV_TAC           : conv -&gt; tactic;
+<a name="line229"></a>val DISCH_ASM_CONSEQ_CONV_TAC    : directed_conseq_conv -&gt; tactic;
+<a name="line230"></a>
+<a name="line231"></a>val DEPTH_CONSEQ_CONV_TAC        : directed_conseq_conv -&gt; tactic;
+<a name="line232"></a>val REDEPTH_CONSEQ_CONV_TAC      : directed_conseq_conv -&gt; tactic;
+<a name="line233"></a>val ONCE_DEPTH_CONSEQ_CONV_TAC   : directed_conseq_conv -&gt; tactic;
+<a name="line234"></a>val CONSEQ_REWRITE_TAC           : (thm list * thm list * thm list) -&gt; tactic;
+<a name="line235"></a>val CONSEQ_HO_REWRITE_TAC        : (thm list * thm list * thm list) -&gt; tactic;
+<a name="line236"></a>val ONCE_CONSEQ_REWRITE_TAC      : (thm list * thm list * thm list) -&gt; tactic;
+<a name="line237"></a>val ONCE_CONSEQ_HO_REWRITE_TAC   : (thm list * thm list * thm list) -&gt; tactic;
+<a name="line238"></a>
+<a name="line239"></a>val EXT_CONSEQ_REWRITE_TAC              :                        (thm list -&gt; conv) list -&gt; thm list -&gt; (thm list * thm list * thm list) -&gt; tactic;
+<a name="line240"></a>val EXT_CONTEXT_CONSEQ_REWRITE_TAC      : CONSEQ_CONV_context -&gt; (thm list -&gt; conv) list -&gt; thm list -&gt; (thm list * thm list * thm list) -&gt; tactic;
+<a name="line241"></a>val EXT_CONSEQ_HO_REWRITE_TAC           :                        (thm list -&gt; conv) list -&gt; thm list -&gt; (thm list * thm list * thm list) -&gt; tactic;
+<a name="line242"></a>val EXT_CONTEXT_CONSEQ_HO_REWRITE_TAC   : CONSEQ_CONV_context -&gt; (thm list -&gt; conv) list -&gt; thm list -&gt; (thm list * thm list * thm list) -&gt; tactic;
+<a name="line243"></a>
+<a name="line244"></a>
+<a name="line245"></a>end
+<a name="line246"></a>
+<a name="line247"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/ConseqConv.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-10</a></em></p></body></html>

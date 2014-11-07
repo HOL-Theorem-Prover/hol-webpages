@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Q.PAT_ABBREV_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Q.PAT_ABBREV_TAC : term quotation -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Q.html">Q</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Introduces an abbreviation within the goal statement.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to the goal </SPAN><SPAN class = "BRKT">(asl,&nbsp;w)</SPAN><SPAN class = "TEXT">, the tactic </SPAN><SPAN class = "BRKT">Q.PAT_ABBREV_TAC&nbsp;q</SPAN><SPAN class = "TEXT"> parses the
+quotation </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> in the context of the goal, producing a equality term </SPAN><SPAN class = "BRKT">v&nbsp;=&nbsp;p</SPAN><SPAN class = "TEXT">.
+The tactic then uses </SPAN><SPAN class = "BRKT">HolKernel.find_term</SPAN><SPAN class = "TEXT"> to search for a sub-term of </SPAN><SPAN class = "BRKT">w</SPAN><SPAN class = "TEXT"> that
+</SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT"> matches against. If such a sub-term </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is found then all occurrences of
+</SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> (in </SPAN><SPAN class = "BRKT">asl</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">w</SPAN><SPAN class = "TEXT">) will be replaced by </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> and an assumption
+</SPAN><SPAN class = "BRKT">Abbrev(v&nbsp;=&nbsp;t)</SPAN><SPAN class = "TEXT"> is added to the goal.</SPAN>
+<P>
+<SPAN class = "TEXT">The trace variable </SPAN><SPAN class = "BRKT">"PAT_ABBREV_TAC:&nbsp;match&nbsp;var/const"</SPAN><SPAN class = "TEXT"> controls whether or not
+trivial matches (with constants or variables) are allowed. By default trivial
+matches are permitted but when the trace variable is false the tactic will
+ignore trivial matches, which could result in failure.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">PAT_ABBREV_TAC</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> does not successfully parse as an equality or if
+no matching sub-term is found in the goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If the current goal is
+</SPAN><DIV class = "XMPL"><pre>
+   ?- (n + 10) * y &lt;= 42315
+</pre></DIV>
+<SPAN class = "TEXT">
+then applying the tactic </SPAN><SPAN class = "BRKT">Q.PAT_ABBREV_TAC&nbsp;`X&nbsp;=&nbsp;a&nbsp;*&nbsp;b:&nbsp;num`</SPAN><SPAN class = "TEXT"> results in
+the goal
+</SPAN><DIV class = "XMPL"><pre>
+   Abbrev (X = (n + 10) * y)
+      ?-
+   X &lt;= 42315
+</pre></DIV>
+<SPAN class = "TEXT">
+By default trivial matches are permitted. If the current goal is
+</SPAN><DIV class = "XMPL"><pre>
+   ?- y &lt;= 42315
+</pre></DIV>
+<SPAN class = "TEXT">
+then </SPAN><SPAN class = "BRKT">Q.PAT_ABBREV_TAC&nbsp;`X&nbsp;=&nbsp;a:&nbsp;num`</SPAN><SPAN class = "TEXT"> will give
+</SPAN><DIV class = "XMPL"><pre>
+   Abbrev (X = y)
+      ?-
+   X &lt;= 42315
+</pre></DIV>
+<SPAN class = "TEXT">
+However, if this is not desirable then setting
+</SPAN><DIV class = "XMPL"><pre>
+Feedback.set_trace "PAT_ABBREV_TAC: match var/const" 0
+</pre></DIV>
+<SPAN class = "TEXT">
+and applying </SPAN><SPAN class = "BRKT">Q.PAT_ABBREV_TAC&nbsp;`X&nbsp;=&nbsp;a:&nbsp;num`</SPAN><SPAN class = "TEXT"> will give
+</SPAN><DIV class = "XMPL"><pre>
+   Abbrev (X = 42315)
+      ?-
+   y &lt;= X
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Q.ABBREV_TAC.html">ABBREV_TAC</A>,
+<A HREF = "Q.MATCH_ABBREV_TAC.html">MATCH_ABBREV_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-10</div></BODY></HTML>

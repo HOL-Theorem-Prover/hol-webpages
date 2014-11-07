@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Definition.new_definition</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>new_definition : string * term -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Definition.html">Definition</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Declare a new constant and install a definitional axiom in the current theory.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">new_definition</SPAN><SPAN class = "TEXT"> provides a facility for definitional
+extensions to the current theory.  It takes a pair argument consisting
+of the name under which the resulting definition will be saved
+in the current theory segment, and a term giving the desired definition.  The
+value returned by </SPAN><SPAN class = "BRKT">new_definition</SPAN><SPAN class = "TEXT"> is a theorem which states the definition
+requested by the user.</SPAN>
+<P>
+<SPAN class = "TEXT">Let </SPAN><SPAN class = "BRKT">v_1</SPAN><SPAN class = "TEXT">,...,</SPAN><SPAN class = "BRKT">v_n</SPAN><SPAN class = "TEXT"> be tuples of distinct variables, containing the
+variables </SPAN><SPAN class = "BRKT">x_1,...,x_m</SPAN><SPAN class = "TEXT">.  Evaluating
+</SPAN><SPAN class = "BRKT">new_definition&nbsp;(name,&nbsp;c&nbsp;v_1&nbsp;...&nbsp;v_n&nbsp;=&nbsp;t)</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> is not
+already a constant, declares the sequent </SPAN><SPAN class = "BRKT">({},\v_1&nbsp;...&nbsp;v_n.&nbsp;t)</SPAN><SPAN class = "TEXT"> to
+be a definition in the current theory, and declares </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> to be a new
+constant in the current theory with this definition as its
+specification. This constant specification is returned as a theorem
+with the form
+</SPAN><DIV class = "XMPL"><pre>
+   |- !x_1 ... x_m. c v_1 ... v_n = t
+</pre></DIV>
+<SPAN class = "TEXT">
+and is saved in the current theory under
+</SPAN><SPAN class = "BRKT">name</SPAN><SPAN class = "TEXT">.  Optionally, the definitional term argument
+may have any of its variables universally quantified.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">new_definition</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> contains free variables that are not
+in </SPAN><SPAN class = "BRKT">x_1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">x_m</SPAN><SPAN class = "TEXT"> (this is equivalent to requiring 
+</SPAN><SPAN class = "BRKT">\v_1&nbsp;...&nbsp;v_n.&nbsp;t</SPAN><SPAN class = "TEXT"> to be a closed term). Failure also occurs if
+any variable occurs more than once in </SPAN><SPAN class = "BRKT">v_1,&nbsp;...,&nbsp;v_n</SPAN><SPAN class = "TEXT">.  Finally, 
+failure occurs if there is a type variable in </SPAN><SPAN class = "BRKT">v_1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">v_n</SPAN><SPAN class = "TEXT"> or
+</SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> that does not occur in the type of </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A NAND relation can be defined as follows.
+</SPAN><DIV class = "XMPL"><pre>
+   - new_definition (
+       "NAND2",
+       Term`NAND2 (in_1,in_2) out = !t:num. out t = ~(in_1 t /\ in_2 t)`);
+
+   &gt; val it =
+       |- !in_1 in_2 out.
+              NAND2 (in_1,in_2) out = !t. out t = ~(in_1 t /\ in_2 t)
+       : thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Definition.new_specification.html">new_specification</A>,
+<A HREF = "boolSyntax.new_binder_definition.html">new_binder_definition</A>,
+<A HREF = "boolSyntax.new_infixl_definition.html">new_infixl_definition</A>,
+<A HREF = "boolSyntax.new_infixr_definition.html">new_infixr_definition</A>,
+<A HREF = "Prim_rec.new_recursive_definition.html">new_recursive_definition</A>,
+<A HREF = "TotalDefn.Define.html">Define</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-10</div></BODY></HTML>

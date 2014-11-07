@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Conv.REDEPTH_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>REDEPTH_CONV : (conv -&gt; conv)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Conv.html">Conv</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Applies a conversion bottom-up to all subterms, retraversing changed ones.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">REDEPTH_CONV&nbsp;c&nbsp;tm</SPAN><SPAN class = "TEXT"> applies the conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> repeatedly to all subterms of
+the term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> and recursively applies </SPAN><SPAN class = "BRKT">REDEPTH_CONV&nbsp;c</SPAN><SPAN class = "TEXT"> to each subterm at which
+</SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> succeeds, until there is no subterm remaining for which application of </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">
+succeeds.</SPAN>
+<P>
+<SPAN class = "TEXT">More precisely, </SPAN><SPAN class = "BRKT">REDEPTH_CONV&nbsp;c&nbsp;tm</SPAN><SPAN class = "TEXT"> repeatedly applies the conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> to
+all the subterms of the term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT">, including the term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> itself. The supplied
+conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> is applied to the subterms of </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> in bottom-up order and is
+applied repeatedly (zero or more times, as is done by </SPAN><SPAN class = "BRKT">REPEATC</SPAN><SPAN class = "TEXT">) to each
+subterm until it fails.  If </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> is successfully applied at least once to a
+subterm, </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> say, then the term into which </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is transformed is retraversed by
+applying </SPAN><SPAN class = "BRKT">REDEPTH_CONV&nbsp;c</SPAN><SPAN class = "TEXT"> to it.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">REDEPTH_CONV&nbsp;c&nbsp;tm</SPAN><SPAN class = "TEXT"> never fails but can diverge if the conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> can be
+applied repeatedly to some subterm of </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> without failing.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following example shows how </SPAN><SPAN class = "BRKT">REDEPTH_CONV</SPAN><SPAN class = "TEXT"> retraverses subterms:
+</SPAN><DIV class = "XMPL"><pre>
+   - REDEPTH_CONV BETA_CONV (Term `(\f x. (f x) + 1) (\y.y) 2`);
+   val it = |- (\f x. (f x) + 1)(\y. y)2 = 2 + 1 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Here, </SPAN><SPAN class = "BRKT">BETA_CONV</SPAN><SPAN class = "TEXT"> is first applied successfully to the (beta-redex)
+subterm:
+</SPAN><DIV class = "XMPL"><pre>
+   (\f x. (f x) + 1) (\y.y)
+</pre></DIV>
+<SPAN class = "TEXT">
+This application reduces this subterm to:
+</SPAN><DIV class = "XMPL"><pre>
+   (\x. ((\y.y) x) + 1)
+</pre></DIV>
+<SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">REDEPTH_CONV&nbsp;BETA_CONV</SPAN><SPAN class = "TEXT"> is then recursively applied to this
+transformed subterm, eventually reducing it to </SPAN><SPAN class = "BRKT">(\x.&nbsp;x&nbsp;+&nbsp;1)</SPAN><SPAN class = "TEXT">. Finally, a
+beta-reduction of the top-level term, now the simplified beta-redex
+</SPAN><SPAN class = "BRKT">(\x.&nbsp;x&nbsp;+&nbsp;1)&nbsp;2</SPAN><SPAN class = "TEXT">, produces </SPAN><SPAN class = "BRKT">2&nbsp;+&nbsp;1</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The implementation of this function uses failure to avoid rebuilding
+unchanged subterms. That is to say, during execution the exception
+</SPAN><SPAN class = "BRKT">QConv.UNCHANGED</SPAN><SPAN class = "TEXT"> may be generated and later trapped. The behaviour of
+the function is dependent on this use of failure. So, if the
+conversion given as an argument happens to generate the same
+exception, the operation of </SPAN><SPAN class = "BRKT">REDEPTH_CONV</SPAN><SPAN class = "TEXT"> will be unpredictable.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Conv.DEPTH_CONV.html">DEPTH_CONV</A>,
+<A HREF = "Conv.ONCE_DEPTH_CONV.html">ONCE_DEPTH_CONV</A>,
+<A HREF = "Conv.TOP_DEPTH_CONV.html">TOP_DEPTH_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-10</div></BODY></HTML>

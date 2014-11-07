@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: wot</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "wot"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "listTheory.html"><span class="strong">list</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">StrongWellOrder</span>
+            <td>
+            :α reln -> bool
+    <tr><td> <span class="strong">U</span> <td> :(ψ -> bool) reln
+    <tr><td> <span class="strong">WeakWellOrder</span> <td> :α reln -> bool
+    <tr><td>
+        <span class="strong">chain</span>
+        <td>
+        :((ψ -> bool) -> bool) -> bool
+    <tr><td> <span class="strong">comparable</span> <td> :(ψ -> bool) -> bool
+    <tr><td> <span class="strong">cpl</span> <td> :(ψ -> bool) reln
+    <tr><td>
+        <span class="strong">lub_sub</span>
+        <td>
+        :((ψ -> bool) -> bool) -> ψ -> bool
+    <tr><td> <span class="strong">mex</span> <td> :(ψ -> bool) -> ψ
+    <tr><td> <span class="strong">mex_less</span> <td> :ψ reln
+    <tr><td> <span class="strong">mex_less_eq</span> <td> :ψ reln
+    <tr><td> <span class="strong">preds</span> <td> :ψ reln
+    <tr><td> <span class="strong">preds_image</span> <td> :(ψ -> bool) reln
+    <tr><td> <span class="strong">setsuc</span> <td> :(ψ -> bool) -> ψ -> bool
+    <tr><td>
+        <span class="strong">succl</span>
+        <td>
+        :((ψ -> bool) -> bool) -> bool
+    <tr><td> <span class="strong">t0</span> <td> :(ψ -> bool) -> bool
+    <tr><td>
+        <span class="strong">tower</span>
+        <td>
+        :((ψ -> bool) -> bool) -> bool
+    <tr><td>
+        <span class="strong">uncl</span>
+        <td>
+        :((ψ -> bool) -> bool) -> bool
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">cpl_def</span>
+<DD>
+<pre>
+|- ∀A B. A cpl B ⇔ A ⊆ B ∨ B ⊆ A
+</pre>
+
+<DT><span class="strong">chain_def</span>
+<DD>
+<pre>
+|- ∀C. chain C ⇔ ∀a b. a ∈ C ∧ b ∈ C ⇒ a cpl b
+</pre>
+
+<DT><span class="strong">mex_def</span>
+<DD>
+<pre>
+|- ∀s. mex s = CHOICE (COMPL s)
+</pre>
+
+<DT><span class="strong">setsuc_def</span>
+<DD>
+<pre>
+|- ∀s. setsuc s = mex s INSERT s
+</pre>
+
+<DT><span class="strong">succl_def</span>
+<DD>
+<pre>
+|- ∀c. succl c ⇔ ∀s. s ∈ c ⇒ setsuc s ∈ c
+</pre>
+
+<DT><span class="strong">uncl_def</span>
+<DD>
+<pre>
+|- ∀c. uncl c ⇔ ∀w. w ⊆ c ∧ chain w ⇒ BIGUNION w ∈ c
+</pre>
+
+<DT><span class="strong">tower_def</span>
+<DD>
+<pre>
+|- ∀A. tower A ⇔ succl A ∧ uncl A
+</pre>
+
+<DT><span class="strong">t0_def</span>
+<DD>
+<pre>
+|- t0 = BIGINTER tower
+</pre>
+
+<DT><span class="strong">comparable_def</span>
+<DD>
+<pre>
+|- ∀p. comparable p ⇔ ∀q. q ∈ t0 ⇒ p cpl q
+</pre>
+
+<DT><span class="strong">U_def</span>
+<DD>
+<pre>
+|- ∀C. U C = {A | A ∈ t0 ∧ (A ⊆ C ∨ setsuc C ⊆ A)}
+</pre>
+
+<DT><span class="strong">lub_sub_def</span>
+<DD>
+<pre>
+|- ∀B. lub_sub B = BIGUNION {y | y ∈ t0 ∧ ∀x. x ∈ B ⇒ y ⊆ x}
+</pre>
+
+<DT><span class="strong">preds_def</span>
+<DD>
+<pre>
+|- ∀a. preds a = BIGUNION {s | s ∈ t0 ∧ a ∉ s}
+</pre>
+
+<DT><span class="strong">mex_less_eq_def</span>
+<DD>
+<pre>
+|- ∀a b. a mex_less_eq b ⇔ preds a ⊆ preds b
+</pre>
+
+<DT><span class="strong">mex_less_def</span>
+<DD>
+<pre>
+|- $mex_less = STRORD $mex_less_eq
+</pre>
+
+<DT><span class="strong">WeakWellOrder_def</span>
+<DD>
+<pre>
+|- ∀R.
+     WeakWellOrder R ⇔ WeakOrder R ∧ ∀B. B ≠ ∅ ⇒ ∃m. m ∈ B ∧ ∀b. b ∈ B ⇒ R m b
+</pre>
+
+<DT><span class="strong">preds_image_def</span>
+<DD>
+<pre>
+|- ∀X. preds_image X = {preds x | x ∈ X}
+</pre>
+
+<DT><span class="strong">StrongWellOrder_def</span>
+<DD>
+<pre>
+|- ∀R. StrongWellOrder R ⇔ StrongLinearOrder R ∧ WF R
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">StrongWellOrderExists</span>
+<DD>
+<pre>
+|- ∃R. StrongLinearOrder R ∧ WF R
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

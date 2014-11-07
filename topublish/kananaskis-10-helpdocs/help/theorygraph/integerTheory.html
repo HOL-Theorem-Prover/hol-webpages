@@ -1,0 +1,2378 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: integer</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "integer"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "quotient_sumTheory.html"><span class="strong">quotient_sum</span></a>&nbsp;&nbsp;
+    <a href = "quotient_pairTheory.html"><span class="strong">quotient_pair</span></a>&nbsp;&nbsp;
+    <a href = "quotient_optionTheory.html"><span class="strong">quotient_option</span></a>&nbsp;&nbsp;
+    <a href = "quotient_listTheory.html"><span class="strong">quotient_list</span></a>&nbsp;&nbsp;
+    <a href = "dividesTheory.html"><span class="strong">divides</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">int</span> <td> 0
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">ABS</span> <td> :int -> int
+    <tr><td> <span class="strong">LEAST_INT</span> <td> :(int -> bool) -> int
+    <tr><td> <span class="strong">Num</span> <td> :int -> num
+    <tr><td> <span class="strong">int_0</span> <td> :int
+    <tr><td> <span class="strong">int_1</span> <td> :int
+    <tr><td> <span class="strong">int_ABS</span> <td> :num # num -> int
+    <tr><td> <span class="strong">int_ABS_CLASS</span> <td> :num reln -> int
+    <tr><td> <span class="strong">int_REP</span> <td> :int -> num # num
+    <tr><td> <span class="strong">int_REP_CLASS</span> <td> :int -> num reln
+    <tr><td> <span class="strong">int_add</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">int_div</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">int_divides</span> <td> :int reln
+    <tr><td> <span class="strong">int_exp</span> <td> :int -> num -> int
+    <tr><td> <span class="strong">int_ge</span> <td> :int reln
+    <tr><td> <span class="strong">int_gt</span> <td> :int reln
+    <tr><td> <span class="strong">int_le</span> <td> :int reln
+    <tr><td> <span class="strong">int_lt</span> <td> :int reln
+    <tr><td> <span class="strong">int_max</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">int_min</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">int_mod</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">int_mul</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">int_neg</span> <td> :int -> int
+    <tr><td> <span class="strong">int_of_num</span> <td> :num -> int
+    <tr><td> <span class="strong">int_quot</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">int_rem</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">int_sub</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">tint_0</span> <td> :num # num
+    <tr><td> <span class="strong">tint_1</span> <td> :num # num
+    <tr><td>
+        <span class="strong">tint_add</span>
+        <td>
+        :num # num -> num # num -> num # num
+    <tr><td> <span class="strong">tint_eq</span> <td> :(num # num) reln
+    <tr><td> <span class="strong">tint_lt</span> <td> :(num # num) reln
+    <tr><td>
+        <span class="strong">tint_mul</span>
+        <td>
+        :num # num -> num # num -> num # num
+    <tr><td> <span class="strong">tint_neg</span> <td> :num # num -> num # num
+    <tr><td> <span class="strong">tint_of_num</span> <td> :num -> num # num
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">int_ge</span>
+<DD>
+<pre>
+|- ∀x y. x ≥ y ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">int_gt</span>
+<DD>
+<pre>
+|- ∀x y. x > y ⇔ y < x
+</pre>
+
+<DT><span class="strong">int_le</span>
+<DD>
+<pre>
+|- ∀x y. x ≤ y ⇔ ¬(y < x)
+</pre>
+
+<DT><span class="strong">int_sub</span>
+<DD>
+<pre>
+|- ∀x y. x − y = x + -y
+</pre>
+
+<DT><span class="strong">tint_0</span>
+<DD>
+<pre>
+|- tint_0 = (1,1)
+</pre>
+
+<DT><span class="strong">tint_1</span>
+<DD>
+<pre>
+|- tint_1 = (1 + 1,1)
+</pre>
+
+<DT><span class="strong">tint_neg</span>
+<DD>
+<pre>
+|- ∀x y. tint_neg (x,y) = (y,x)
+</pre>
+
+<DT><span class="strong">tint_add</span>
+<DD>
+<pre>
+|- ∀x1 y1 x2 y2. (x1,y1) tint_add (x2,y2) = (x1 + x2,y1 + y2)
+</pre>
+
+<DT><span class="strong">tint_mul</span>
+<DD>
+<pre>
+|- ∀x1 y1 x2 y2.
+     (x1,y1) tint_mul (x2,y2) = (x1 * x2 + y1 * y2,x1 * y2 + y1 * x2)
+</pre>
+
+<DT><span class="strong">tint_lt</span>
+<DD>
+<pre>
+|- ∀x1 y1 x2 y2. tint_lt (x1,y1) (x2,y2) ⇔ x1 + y2 < x2 + y1
+</pre>
+
+<DT><span class="strong">tint_eq</span>
+<DD>
+<pre>
+|- ∀x1 y1 x2 y2. tint_eq (x1,y1) (x2,y2) ⇔ (x1 + y2 = x2 + y1)
+</pre>
+
+<DT><span class="strong">tint_of_num</span>
+<DD>
+<pre>
+|- (tint_of_num 0 = tint_0) ∧
+   ∀n. tint_of_num (SUC n) = tint_of_num n tint_add tint_1
+</pre>
+
+<DT><span class="strong">int_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep. TYPE_DEFINITION (λc. ∃r. tint_eq r r ∧ (c = tint_eq r)) rep
+</pre>
+
+<DT><span class="strong">int_bijections</span>
+<DD>
+<pre>
+|- (∀a. int_ABS_CLASS (int_REP_CLASS a) = a) ∧
+   ∀r.
+     (λc. ∃r. tint_eq r r ∧ (c = tint_eq r)) r ⇔
+     (int_REP_CLASS (int_ABS_CLASS r) = r)
+</pre>
+
+<DT><span class="strong">int_REP_def</span>
+<DD>
+<pre>
+|- ∀a. int_REP a = $@ (int_REP_CLASS a)
+</pre>
+
+<DT><span class="strong">int_ABS_def</span>
+<DD>
+<pre>
+|- ∀r. int_ABS r = int_ABS_CLASS (tint_eq r)
+</pre>
+
+<DT><span class="strong">int_0</span>
+<DD>
+<pre>
+|- int_0 = int_ABS tint_0
+</pre>
+
+<DT><span class="strong">int_1</span>
+<DD>
+<pre>
+|- int_1 = int_ABS tint_1
+</pre>
+
+<DT><span class="strong">int_neg</span>
+<DD>
+<pre>
+|- ∀T1. -T1 = int_ABS (tint_neg (int_REP T1))
+</pre>
+
+<DT><span class="strong">int_add</span>
+<DD>
+<pre>
+|- ∀T1 T2. T1 + T2 = int_ABS (int_REP T1 tint_add int_REP T2)
+</pre>
+
+<DT><span class="strong">int_mul</span>
+<DD>
+<pre>
+|- ∀T1 T2. T1 * T2 = int_ABS (int_REP T1 tint_mul int_REP T2)
+</pre>
+
+<DT><span class="strong">int_lt</span>
+<DD>
+<pre>
+|- ∀T1 T2. T1 < T2 ⇔ tint_lt (int_REP T1) (int_REP T2)
+</pre>
+
+<DT><span class="strong">Num</span>
+<DD>
+<pre>
+|- ∀i. Num i = @n. i = &n
+</pre>
+
+<DT><span class="strong">int_div</span>
+<DD>
+<pre>
+|- ∀i j.
+     j ≠ 0 ⇒
+     (i / j =
+      if 0 < j then
+        if 0 ≤ i then &(Num i DIV Num j)
+        else -&(Num (-i) DIV Num j) + if Num (-i) MOD Num j = 0 then 0 else -1
+      else if 0 ≤ i then
+        -&(Num i DIV Num (-j)) + if Num i MOD Num (-j) = 0 then 0 else -1
+      else &(Num (-i) DIV Num (-j)))
+</pre>
+
+<DT><span class="strong">int_mod</span>
+<DD>
+<pre>
+|- ∀i j. j ≠ 0 ⇒ (i % j = i − i / j * j)
+</pre>
+
+<DT><span class="strong">INT_ABS</span>
+<DD>
+<pre>
+|- ∀n. ABS n = if n < 0 then -n else n
+</pre>
+
+<DT><span class="strong">int_quot</span>
+<DD>
+<pre>
+|- ∀i j.
+     j ≠ 0 ⇒
+     (i quot j =
+      if 0 < j then
+        if 0 ≤ i then &(Num i DIV Num j) else -&(Num (-i) DIV Num j)
+      else if 0 ≤ i then -&(Num i DIV Num (-j))
+      else &(Num (-i) DIV Num (-j)))
+</pre>
+
+<DT><span class="strong">int_rem</span>
+<DD>
+<pre>
+|- ∀i j. j ≠ 0 ⇒ (i rem j = i − i quot j * j)
+</pre>
+
+<DT><span class="strong">INT_DIVIDES</span>
+<DD>
+<pre>
+|- ∀p q. p int_divides q ⇔ ∃m. m * p = q
+</pre>
+
+<DT><span class="strong">int_exp</span>
+<DD>
+<pre>
+|- (∀p. p ** 0 = 1) ∧ ∀p n. p ** SUC n = p * p ** n
+</pre>
+
+<DT><span class="strong">INT_MIN</span>
+<DD>
+<pre>
+|- ∀x y. int_min x y = if x < y then x else y
+</pre>
+
+<DT><span class="strong">INT_MAX</span>
+<DD>
+<pre>
+|- ∀x y. int_max x y = if x < y then y else x
+</pre>
+
+<DT><span class="strong">LEAST_INT_DEF</span>
+<DD>
+<pre>
+|- ∀P. $LEAST_INT P = @i. P i ∧ ∀j. j < i ⇒ ¬P j
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">INT_LT</span>
+<DD>
+<pre>
+|- ∀m n. &m < &n ⇔ m < n
+</pre>
+
+<DT><span class="strong">INT_LE</span>
+<DD>
+<pre>
+|- ∀m n. &m ≤ &n ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">INT_POS</span>
+<DD>
+<pre>
+|- ∀n. 0 ≤ &n
+</pre>
+
+<DT><span class="strong">INT</span>
+<DD>
+<pre>
+|- ∀n. &SUC n = &n + 1
+</pre>
+
+<DT><span class="strong">INT_EQ_RMUL</span>
+<DD>
+<pre>
+|- ∀x y z. (x * z = y * z) ⇔ (z = 0) ∨ (x = y)
+</pre>
+
+<DT><span class="strong">INT_EQ_LMUL</span>
+<DD>
+<pre>
+|- ∀x y z. (x * y = x * z) ⇔ (x = 0) ∨ (y = z)
+</pre>
+
+<DT><span class="strong">INT_ENTIRE</span>
+<DD>
+<pre>
+|- ∀x y. (x * y = 0) ⇔ (x = 0) ∨ (y = 0)
+</pre>
+
+<DT><span class="strong">INT_LT_ADDL</span>
+<DD>
+<pre>
+|- ∀x y. y < x + y ⇔ 0 < x
+</pre>
+
+<DT><span class="strong">INT_LT_ADDR</span>
+<DD>
+<pre>
+|- ∀x y. x < x + y ⇔ 0 < y
+</pre>
+
+<DT><span class="strong">INT_LE_ADDL</span>
+<DD>
+<pre>
+|- ∀x y. y ≤ x + y ⇔ 0 ≤ x
+</pre>
+
+<DT><span class="strong">INT_LE_ADDR</span>
+<DD>
+<pre>
+|- ∀x y. x ≤ x + y ⇔ 0 ≤ y
+</pre>
+
+<DT><span class="strong">INT_LT_IMP_NE</span>
+<DD>
+<pre>
+|- ∀x y. x < y ⇒ x ≠ y
+</pre>
+
+<DT><span class="strong">INT_NEG_MINUS1</span>
+<DD>
+<pre>
+|- ∀x. -x = -1 * x
+</pre>
+
+<DT><span class="strong">INT_NEG_EQ</span>
+<DD>
+<pre>
+|- ∀x y. (-x = y) ⇔ (x = -y)
+</pre>
+
+<DT><span class="strong">INT_SUB_RDISTRIB</span>
+<DD>
+<pre>
+|- ∀x y z. (x − y) * z = x * z − y * z
+</pre>
+
+<DT><span class="strong">INT_SUB_LDISTRIB</span>
+<DD>
+<pre>
+|- ∀x y z. x * (y − z) = x * y − x * z
+</pre>
+
+<DT><span class="strong">INT_ADD_SUB</span>
+<DD>
+<pre>
+|- ∀x y. x + y − x = y
+</pre>
+
+<DT><span class="strong">INT_SUB_LE</span>
+<DD>
+<pre>
+|- ∀x y. 0 ≤ x − y ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">INT_SUB_LT</span>
+<DD>
+<pre>
+|- ∀x y. 0 < x − y ⇔ y < x
+</pre>
+
+<DT><span class="strong">INT_NEG_SUB</span>
+<DD>
+<pre>
+|- ∀x y. -(x − y) = y − x
+</pre>
+
+<DT><span class="strong">INT_NEG_0</span>
+<DD>
+<pre>
+|- -0 = 0
+</pre>
+
+<DT><span class="strong">INT_NEG_EQ0</span>
+<DD>
+<pre>
+|- ∀x. (-x = 0) ⇔ (x = 0)
+</pre>
+
+<DT><span class="strong">INT_LE_NEGR</span>
+<DD>
+<pre>
+|- ∀x. x ≤ -x ⇔ x ≤ 0
+</pre>
+
+<DT><span class="strong">INT_LE_NEGL</span>
+<DD>
+<pre>
+|- ∀x. -x ≤ x ⇔ 0 ≤ x
+</pre>
+
+<DT><span class="strong">INT_LE_DOUBLE</span>
+<DD>
+<pre>
+|- ∀x. 0 ≤ x + x ⇔ 0 ≤ x
+</pre>
+
+<DT><span class="strong">INT_SUB_0</span>
+<DD>
+<pre>
+|- ∀x y. (x − y = 0) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">INT_SUB_REFL</span>
+<DD>
+<pre>
+|- ∀x. x − x = 0
+</pre>
+
+<DT><span class="strong">INT_SUB_ADD2</span>
+<DD>
+<pre>
+|- ∀x y. y + (x − y) = x
+</pre>
+
+<DT><span class="strong">INT_SUB_ADD</span>
+<DD>
+<pre>
+|- ∀x y. x − y + y = x
+</pre>
+
+<DT><span class="strong">INT_LT_ADD1</span>
+<DD>
+<pre>
+|- ∀x y. x ≤ y ⇒ x < y + 1
+</pre>
+
+<DT><span class="strong">INT_LT_ADDNEG2</span>
+<DD>
+<pre>
+|- ∀x y z. x + -y < z ⇔ x < z + y
+</pre>
+
+<DT><span class="strong">INT_LT_ADDNEG</span>
+<DD>
+<pre>
+|- ∀x y z. y < x + -z ⇔ y + z < x
+</pre>
+
+<DT><span class="strong">INT_LT_ADD</span>
+<DD>
+<pre>
+|- ∀x y. 0 < x ∧ 0 < y ⇒ 0 < x + y
+</pre>
+
+<DT><span class="strong">INT_LE_ADD</span>
+<DD>
+<pre>
+|- ∀x y. 0 ≤ x ∧ 0 ≤ y ⇒ 0 ≤ x + y
+</pre>
+
+<DT><span class="strong">INT_LE_ADD2</span>
+<DD>
+<pre>
+|- ∀w x y z. w ≤ x ∧ y ≤ z ⇒ w + y ≤ x + z
+</pre>
+
+<DT><span class="strong">INT_LT_ADD2</span>
+<DD>
+<pre>
+|- ∀w x y z. w < x ∧ y < z ⇒ w + y < x + z
+</pre>
+
+<DT><span class="strong">INT_LE_RADD</span>
+<DD>
+<pre>
+|- ∀x y z. x + z ≤ y + z ⇔ x ≤ y
+</pre>
+
+<DT><span class="strong">INT_LE_LADD</span>
+<DD>
+<pre>
+|- ∀x y z. x + y ≤ x + z ⇔ y ≤ z
+</pre>
+
+<DT><span class="strong">INT_LT_01</span>
+<DD>
+<pre>
+|- 0 < 1
+</pre>
+
+<DT><span class="strong">INT_LE_01</span>
+<DD>
+<pre>
+|- 0 ≤ 1
+</pre>
+
+<DT><span class="strong">INT_LE_SQUARE</span>
+<DD>
+<pre>
+|- ∀x. 0 ≤ x * x
+</pre>
+
+<DT><span class="strong">INT_LE_MUL</span>
+<DD>
+<pre>
+|- ∀x y. 0 ≤ x ∧ 0 ≤ y ⇒ 0 ≤ x * y
+</pre>
+
+<DT><span class="strong">INT_LE_NEGTOTAL</span>
+<DD>
+<pre>
+|- ∀x. 0 ≤ x ∨ 0 ≤ -x
+</pre>
+
+<DT><span class="strong">INT_LT_NEGTOTAL</span>
+<DD>
+<pre>
+|- ∀x. (x = 0) ∨ 0 < x ∨ 0 < -x
+</pre>
+
+<DT><span class="strong">INT_NEG_GE0</span>
+<DD>
+<pre>
+|- ∀x. 0 ≤ -x ⇔ x ≤ 0
+</pre>
+
+<DT><span class="strong">INT_NEG_LE0</span>
+<DD>
+<pre>
+|- ∀x. -x ≤ 0 ⇔ 0 ≤ x
+</pre>
+
+<DT><span class="strong">INT_NEG_GT0</span>
+<DD>
+<pre>
+|- ∀x. 0 < -x ⇔ x < 0
+</pre>
+
+<DT><span class="strong">INT_NEG_LT0</span>
+<DD>
+<pre>
+|- ∀x. -x < 0 ⇔ 0 < x
+</pre>
+
+<DT><span class="strong">INT_LTE_ANTSYM</span>
+<DD>
+<pre>
+|- ∀x y. ¬(x ≤ y ∧ y < x)
+</pre>
+
+<DT><span class="strong">INT_LET_ANTISYM</span>
+<DD>
+<pre>
+|- ∀x y. ¬(x < y ∧ y ≤ x)
+</pre>
+
+<DT><span class="strong">INT_LE_ANTISYM</span>
+<DD>
+<pre>
+|- ∀x y. x ≤ y ∧ y ≤ x ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">INT_LE_TRANS</span>
+<DD>
+<pre>
+|- ∀x y z. x ≤ y ∧ y ≤ z ⇒ x ≤ z
+</pre>
+
+<DT><span class="strong">INT_LET_TRANS</span>
+<DD>
+<pre>
+|- ∀x y z. x ≤ y ∧ y < z ⇒ x < z
+</pre>
+
+<DT><span class="strong">INT_LTE_TRANS</span>
+<DD>
+<pre>
+|- ∀x y z. x < y ∧ y ≤ z ⇒ x < z
+</pre>
+
+<DT><span class="strong">INT_LT_IMP_LE</span>
+<DD>
+<pre>
+|- ∀x y. x < y ⇒ x ≤ y
+</pre>
+
+<DT><span class="strong">INT_LT_LE</span>
+<DD>
+<pre>
+|- ∀x y. x < y ⇔ x ≤ y ∧ x ≠ y
+</pre>
+
+<DT><span class="strong">INT_LE_LT</span>
+<DD>
+<pre>
+|- ∀x y. x ≤ y ⇔ x < y ∨ (x = y)
+</pre>
+
+<DT><span class="strong">INT_LE_REFL</span>
+<DD>
+<pre>
+|- ∀x. x ≤ x
+</pre>
+
+<DT><span class="strong">INT_LTE_TOTAL</span>
+<DD>
+<pre>
+|- ∀x y. x < y ∨ y ≤ x
+</pre>
+
+<DT><span class="strong">INT_LET_TOTAL</span>
+<DD>
+<pre>
+|- ∀x y. x ≤ y ∨ y < x
+</pre>
+
+<DT><span class="strong">INT_LE_TOTAL</span>
+<DD>
+<pre>
+|- ∀x y. x ≤ y ∨ y ≤ x
+</pre>
+
+<DT><span class="strong">INT_NOT_LE</span>
+<DD>
+<pre>
+|- ∀x y. ¬(x ≤ y) ⇔ y < x
+</pre>
+
+<DT><span class="strong">INT_LT_GT</span>
+<DD>
+<pre>
+|- ∀x y. x < y ⇒ ¬(y < x)
+</pre>
+
+<DT><span class="strong">INT_LT_ANTISYM</span>
+<DD>
+<pre>
+|- ∀x y. ¬(x < y ∧ y < x)
+</pre>
+
+<DT><span class="strong">INT_NOT_LT</span>
+<DD>
+<pre>
+|- ∀x y. ¬(x < y) ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">INT_LT_RADD</span>
+<DD>
+<pre>
+|- ∀x y z. x + z < y + z ⇔ x < y
+</pre>
+
+<DT><span class="strong">INT_LT_LADD</span>
+<DD>
+<pre>
+|- ∀x y z. x + y < x + z ⇔ y < z
+</pre>
+
+<DT><span class="strong">INT_NEG_MUL2</span>
+<DD>
+<pre>
+|- ∀x y. -x * -y = x * y
+</pre>
+
+<DT><span class="strong">INT_NEGNEG</span>
+<DD>
+<pre>
+|- ∀x. - -x = x
+</pre>
+
+<DT><span class="strong">INT_NEG_RMUL</span>
+<DD>
+<pre>
+|- ∀x y. -(x * y) = x * -y
+</pre>
+
+<DT><span class="strong">INT_NEG_LMUL</span>
+<DD>
+<pre>
+|- ∀x y. -(x * y) = -x * y
+</pre>
+
+<DT><span class="strong">INT_MUL_RZERO</span>
+<DD>
+<pre>
+|- ∀x. x * 0 = 0
+</pre>
+
+<DT><span class="strong">INT_MUL_LZERO</span>
+<DD>
+<pre>
+|- ∀x. 0 * x = 0
+</pre>
+
+<DT><span class="strong">INT_NEG_ADD</span>
+<DD>
+<pre>
+|- ∀x y. -(x + y) = -x + -y
+</pre>
+
+<DT><span class="strong">INT_RNEG_UNIQ</span>
+<DD>
+<pre>
+|- ∀x y. (x + y = 0) ⇔ (y = -x)
+</pre>
+
+<DT><span class="strong">INT_LNEG_UNIQ</span>
+<DD>
+<pre>
+|- ∀x y. (x + y = 0) ⇔ (x = -y)
+</pre>
+
+<DT><span class="strong">INT_ADD_RID_UNIQ</span>
+<DD>
+<pre>
+|- ∀x y. (x + y = x) ⇔ (y = 0)
+</pre>
+
+<DT><span class="strong">INT_ADD_LID_UNIQ</span>
+<DD>
+<pre>
+|- ∀x y. (x + y = y) ⇔ (x = 0)
+</pre>
+
+<DT><span class="strong">INT_EQ_RADD</span>
+<DD>
+<pre>
+|- ∀x y z. (x + z = y + z) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">INT_EQ_LADD</span>
+<DD>
+<pre>
+|- ∀x y z. (x + y = x + z) ⇔ (y = z)
+</pre>
+
+<DT><span class="strong">INT_RDISTRIB</span>
+<DD>
+<pre>
+|- ∀x y z. (x + y) * z = x * z + y * z
+</pre>
+
+<DT><span class="strong">INT_MUL_RID</span>
+<DD>
+<pre>
+|- ∀x. x * 1 = x
+</pre>
+
+<DT><span class="strong">INT_MUL_LID</span>
+<DD>
+<pre>
+|- ∀x. 1 * x = x
+</pre>
+
+<DT><span class="strong">INT_ADD_RINV</span>
+<DD>
+<pre>
+|- ∀x. x + -x = 0
+</pre>
+
+<DT><span class="strong">INT_ADD_LINV</span>
+<DD>
+<pre>
+|- ∀x. -x + x = 0
+</pre>
+
+<DT><span class="strong">INT_ADD_RID</span>
+<DD>
+<pre>
+|- ∀x. x + 0 = x
+</pre>
+
+<DT><span class="strong">INT_ADD_LID</span>
+<DD>
+<pre>
+|- ∀x. 0 + x = x
+</pre>
+
+<DT><span class="strong">INT_1</span>
+<DD>
+<pre>
+|- int_1 = 1
+</pre>
+
+<DT><span class="strong">INT_0</span>
+<DD>
+<pre>
+|- int_0 = 0
+</pre>
+
+<DT><span class="strong">NUM_POSINT_EX</span>
+<DD>
+<pre>
+|- ∀t. ¬(t < int_0) ⇒ ∃n. t = &n
+</pre>
+
+<DT><span class="strong">INT_LT_MUL</span>
+<DD>
+<pre>
+|- ∀x y. int_0 < x ∧ int_0 < y ⇒ int_0 < x * y
+</pre>
+
+<DT><span class="strong">INT_LT_LADD_IMP</span>
+<DD>
+<pre>
+|- ∀x y z. y < z ⇒ x + y < x + z
+</pre>
+
+<DT><span class="strong">INT_LT_TRANS</span>
+<DD>
+<pre>
+|- ∀x y z. x < y ∧ y < z ⇒ x < z
+</pre>
+
+<DT><span class="strong">INT_LT_REFL</span>
+<DD>
+<pre>
+|- ∀x. ¬(x < x)
+</pre>
+
+<DT><span class="strong">INT_LT_TOTAL</span>
+<DD>
+<pre>
+|- ∀x y. (x = y) ∨ x < y ∨ y < x
+</pre>
+
+<DT><span class="strong">INT_LDISTRIB</span>
+<DD>
+<pre>
+|- ∀z y x. x * (y + z) = x * y + x * z
+</pre>
+
+<DT><span class="strong">INT_MUL_ASSOC</span>
+<DD>
+<pre>
+|- ∀z y x. x * (y * z) = x * y * z
+</pre>
+
+<DT><span class="strong">INT_ADD_ASSOC</span>
+<DD>
+<pre>
+|- ∀z y x. x + (y + z) = x + y + z
+</pre>
+
+<DT><span class="strong">INT_MUL_COMM</span>
+<DD>
+<pre>
+|- ∀y x. x * y = y * x
+</pre>
+
+<DT><span class="strong">INT_MUL_SYM</span>
+<DD>
+<pre>
+|- ∀y x. x * y = y * x
+</pre>
+
+<DT><span class="strong">INT_ADD_COMM</span>
+<DD>
+<pre>
+|- ∀y x. x + y = y + x
+</pre>
+
+<DT><span class="strong">INT_ADD_SYM</span>
+<DD>
+<pre>
+|- ∀y x. x + y = y + x
+</pre>
+
+<DT><span class="strong">INT_10</span>
+<DD>
+<pre>
+|- int_1 ≠ int_0
+</pre>
+
+<DT><span class="strong">EQ_LADD</span>
+<DD>
+<pre>
+|- ∀x y z. (x + y = x + z) ⇔ (y = z)
+</pre>
+
+<DT><span class="strong">EQ_ADDL</span>
+<DD>
+<pre>
+|- ∀x y. (x = x + y) ⇔ (y = 0)
+</pre>
+
+<DT><span class="strong">LT_LADD</span>
+<DD>
+<pre>
+|- ∀x y z. x + y < x + z ⇔ y < z
+</pre>
+
+<DT><span class="strong">LT_ADDL</span>
+<DD>
+<pre>
+|- ∀x y. x < x + y ⇔ 0 < y
+</pre>
+
+<DT><span class="strong">LT_ADDR</span>
+<DD>
+<pre>
+|- ∀x y. ¬(x + y < x)
+</pre>
+
+<DT><span class="strong">LT_ADD2</span>
+<DD>
+<pre>
+|- ∀x1 x2 y1 y2. x1 < y1 ∧ x2 < y2 ⇒ x1 + x2 < y1 + y2
+</pre>
+
+<DT><span class="strong">TINT_EQ_REFL</span>
+<DD>
+<pre>
+|- ∀x. tint_eq x x
+</pre>
+
+<DT><span class="strong">TINT_EQ_SYM</span>
+<DD>
+<pre>
+|- ∀x y. tint_eq x y ⇔ tint_eq y x
+</pre>
+
+<DT><span class="strong">TINT_EQ_TRANS</span>
+<DD>
+<pre>
+|- ∀x y z. tint_eq x y ∧ tint_eq y z ⇒ tint_eq x z
+</pre>
+
+<DT><span class="strong">TINT_EQ_EQUIV</span>
+<DD>
+<pre>
+|- ∀p q. tint_eq p q ⇔ (tint_eq p = tint_eq q)
+</pre>
+
+<DT><span class="strong">TINT_EQ_AP</span>
+<DD>
+<pre>
+|- ∀p q. (p = q) ⇒ tint_eq p q
+</pre>
+
+<DT><span class="strong">TINT_10</span>
+<DD>
+<pre>
+|- ¬tint_eq tint_1 tint_0
+</pre>
+
+<DT><span class="strong">TINT_ADD_SYM</span>
+<DD>
+<pre>
+|- ∀x y. x tint_add y = y tint_add x
+</pre>
+
+<DT><span class="strong">TINT_MUL_SYM</span>
+<DD>
+<pre>
+|- ∀x y. x tint_mul y = y tint_mul x
+</pre>
+
+<DT><span class="strong">TINT_ADD_ASSOC</span>
+<DD>
+<pre>
+|- ∀x y z. x tint_add (y tint_add z) = x tint_add y tint_add z
+</pre>
+
+<DT><span class="strong">TINT_MUL_ASSOC</span>
+<DD>
+<pre>
+|- ∀x y z. x tint_mul (y tint_mul z) = x tint_mul y tint_mul z
+</pre>
+
+<DT><span class="strong">TINT_LDISTRIB</span>
+<DD>
+<pre>
+|- ∀x y z. x tint_mul (y tint_add z) = x tint_mul y tint_add x tint_mul z
+</pre>
+
+<DT><span class="strong">TINT_ADD_LID</span>
+<DD>
+<pre>
+|- ∀x. tint_eq (tint_0 tint_add x) x
+</pre>
+
+<DT><span class="strong">TINT_MUL_LID</span>
+<DD>
+<pre>
+|- ∀x. tint_eq (tint_1 tint_mul x) x
+</pre>
+
+<DT><span class="strong">TINT_ADD_LINV</span>
+<DD>
+<pre>
+|- ∀x. tint_eq (tint_neg x tint_add x) tint_0
+</pre>
+
+<DT><span class="strong">TINT_LT_TOTAL</span>
+<DD>
+<pre>
+|- ∀x y. tint_eq x y ∨ tint_lt x y ∨ tint_lt y x
+</pre>
+
+<DT><span class="strong">TINT_LT_REFL</span>
+<DD>
+<pre>
+|- ∀x. ¬tint_lt x x
+</pre>
+
+<DT><span class="strong">TINT_LT_TRANS</span>
+<DD>
+<pre>
+|- ∀x y z. tint_lt x y ∧ tint_lt y z ⇒ tint_lt x z
+</pre>
+
+<DT><span class="strong">TINT_LT_ADD</span>
+<DD>
+<pre>
+|- ∀x y z. tint_lt y z ⇒ tint_lt (x tint_add y) (x tint_add z)
+</pre>
+
+<DT><span class="strong">TINT_LT_MUL</span>
+<DD>
+<pre>
+|- ∀x y. tint_lt tint_0 x ∧ tint_lt tint_0 y ⇒ tint_lt tint_0 (x tint_mul y)
+</pre>
+
+<DT><span class="strong">TINT_NEG_WELLDEF</span>
+<DD>
+<pre>
+|- ∀x1 x2. tint_eq x1 x2 ⇒ tint_eq (tint_neg x1) (tint_neg x2)
+</pre>
+
+<DT><span class="strong">TINT_ADD_WELLDEFR</span>
+<DD>
+<pre>
+|- ∀x1 x2 y. tint_eq x1 x2 ⇒ tint_eq (x1 tint_add y) (x2 tint_add y)
+</pre>
+
+<DT><span class="strong">TINT_ADD_WELLDEF</span>
+<DD>
+<pre>
+|- ∀x1 x2 y1 y2.
+     tint_eq x1 x2 ∧ tint_eq y1 y2 ⇒ tint_eq (x1 tint_add y1) (x2 tint_add y2)
+</pre>
+
+<DT><span class="strong">TINT_MUL_WELLDEFR</span>
+<DD>
+<pre>
+|- ∀x1 x2 y. tint_eq x1 x2 ⇒ tint_eq (x1 tint_mul y) (x2 tint_mul y)
+</pre>
+
+<DT><span class="strong">TINT_MUL_WELLDEF</span>
+<DD>
+<pre>
+|- ∀x1 x2 y1 y2.
+     tint_eq x1 x2 ∧ tint_eq y1 y2 ⇒ tint_eq (x1 tint_mul y1) (x2 tint_mul y2)
+</pre>
+
+<DT><span class="strong">TINT_LT_WELLDEFR</span>
+<DD>
+<pre>
+|- ∀x1 x2 y. tint_eq x1 x2 ⇒ (tint_lt x1 y ⇔ tint_lt x2 y)
+</pre>
+
+<DT><span class="strong">TINT_LT_WELLDEFL</span>
+<DD>
+<pre>
+|- ∀x y1 y2. tint_eq y1 y2 ⇒ (tint_lt x y1 ⇔ tint_lt x y2)
+</pre>
+
+<DT><span class="strong">TINT_LT_WELLDEF</span>
+<DD>
+<pre>
+|- ∀x1 x2 y1 y2.
+     tint_eq x1 x2 ∧ tint_eq y1 y2 ⇒ (tint_lt x1 y1 ⇔ tint_lt x2 y2)
+</pre>
+
+<DT><span class="strong">tint_of_num_eq</span>
+<DD>
+<pre>
+|- ∀n. FST (tint_of_num n) = SND (tint_of_num n) + n
+</pre>
+
+<DT><span class="strong">TINT_INJ</span>
+<DD>
+<pre>
+|- ∀m n. tint_eq (tint_of_num m) (tint_of_num n) ⇔ (m = n)
+</pre>
+
+<DT><span class="strong">NUM_POSTINT_EX</span>
+<DD>
+<pre>
+|- ∀t. ¬tint_lt t tint_0 ⇒ ∃n. tint_eq t (tint_of_num n)
+</pre>
+
+<DT><span class="strong">int_ABS_REP_CLASS</span>
+<DD>
+<pre>
+|- (∀a. int_ABS_CLASS (int_REP_CLASS a) = a) ∧
+   ∀c.
+     (∃r. tint_eq r r ∧ (c = tint_eq r)) ⇔
+     (int_REP_CLASS (int_ABS_CLASS c) = c)
+</pre>
+
+<DT><span class="strong">int_QUOTIENT</span>
+<DD>
+<pre>
+|- QUOTIENT tint_eq int_ABS int_REP
+</pre>
+
+<DT><span class="strong">int_of_num</span>
+<DD>
+<pre>
+|- (0 = int_0) ∧ ∀n. &SUC n = &n + int_1
+</pre>
+
+<DT><span class="strong">INT_INJ</span>
+<DD>
+<pre>
+|- ∀m n. (&m = &n) ⇔ (m = n)
+</pre>
+
+<DT><span class="strong">INT_ADD</span>
+<DD>
+<pre>
+|- ∀m n. &m + &n = &(m + n)
+</pre>
+
+<DT><span class="strong">INT_MUL</span>
+<DD>
+<pre>
+|- ∀m n. &m * &n = &(m * n)
+</pre>
+
+<DT><span class="strong">INT_LT_NZ</span>
+<DD>
+<pre>
+|- ∀n. &n ≠ 0 ⇔ 0 < &n
+</pre>
+
+<DT><span class="strong">INT_NZ_IMP_LT</span>
+<DD>
+<pre>
+|- ∀n. n ≠ 0 ⇒ 0 < &n
+</pre>
+
+<DT><span class="strong">INT_DOUBLE</span>
+<DD>
+<pre>
+|- ∀x. x + x = 2 * x
+</pre>
+
+<DT><span class="strong">INT_SUB_SUB</span>
+<DD>
+<pre>
+|- ∀x y. x − y − x = -y
+</pre>
+
+<DT><span class="strong">INT_LT_ADD_SUB</span>
+<DD>
+<pre>
+|- ∀x y z. x + y < z ⇔ x < z − y
+</pre>
+
+<DT><span class="strong">INT_LT_SUB_RADD</span>
+<DD>
+<pre>
+|- ∀x y z. x − y < z ⇔ x < z + y
+</pre>
+
+<DT><span class="strong">INT_LT_SUB_LADD</span>
+<DD>
+<pre>
+|- ∀x y z. x < y − z ⇔ x + z < y
+</pre>
+
+<DT><span class="strong">INT_LE_SUB_LADD</span>
+<DD>
+<pre>
+|- ∀x y z. x ≤ y − z ⇔ x + z ≤ y
+</pre>
+
+<DT><span class="strong">INT_LE_SUB_RADD</span>
+<DD>
+<pre>
+|- ∀x y z. x − y ≤ z ⇔ x ≤ z + y
+</pre>
+
+<DT><span class="strong">INT_LT_NEG</span>
+<DD>
+<pre>
+|- ∀x y. -x < -y ⇔ y < x
+</pre>
+
+<DT><span class="strong">INT_LE_NEG</span>
+<DD>
+<pre>
+|- ∀x y. -x ≤ -y ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">INT_ADD2_SUB2</span>
+<DD>
+<pre>
+|- ∀a b c d. a + b − (c + d) = a − c + (b − d)
+</pre>
+
+<DT><span class="strong">INT_SUB_LZERO</span>
+<DD>
+<pre>
+|- ∀x. 0 − x = -x
+</pre>
+
+<DT><span class="strong">INT_SUB_RZERO</span>
+<DD>
+<pre>
+|- ∀x. x − 0 = x
+</pre>
+
+<DT><span class="strong">INT_LET_ADD2</span>
+<DD>
+<pre>
+|- ∀w x y z. w ≤ x ∧ y < z ⇒ w + y < x + z
+</pre>
+
+<DT><span class="strong">INT_LTE_ADD2</span>
+<DD>
+<pre>
+|- ∀w x y z. w < x ∧ y ≤ z ⇒ w + y < x + z
+</pre>
+
+<DT><span class="strong">INT_LET_ADD</span>
+<DD>
+<pre>
+|- ∀x y. 0 ≤ x ∧ 0 < y ⇒ 0 < x + y
+</pre>
+
+<DT><span class="strong">INT_LTE_ADD</span>
+<DD>
+<pre>
+|- ∀x y. 0 < x ∧ 0 ≤ y ⇒ 0 < x + y
+</pre>
+
+<DT><span class="strong">INT_LT_MUL2</span>
+<DD>
+<pre>
+|- ∀x1 x2 y1 y2. 0 ≤ x1 ∧ 0 ≤ y1 ∧ x1 < x2 ∧ y1 < y2 ⇒ x1 * y1 < x2 * y2
+</pre>
+
+<DT><span class="strong">INT_SUB_LNEG</span>
+<DD>
+<pre>
+|- ∀x y. -x − y = -(x + y)
+</pre>
+
+<DT><span class="strong">INT_SUB_RNEG</span>
+<DD>
+<pre>
+|- ∀x y. x − -y = x + y
+</pre>
+
+<DT><span class="strong">INT_SUB_NEG2</span>
+<DD>
+<pre>
+|- ∀x y. -x − -y = y − x
+</pre>
+
+<DT><span class="strong">INT_SUB_TRIANGLE</span>
+<DD>
+<pre>
+|- ∀a b c. a − b + (b − c) = a − c
+</pre>
+
+<DT><span class="strong">INT_EQ_SUB_LADD</span>
+<DD>
+<pre>
+|- ∀x y z. (x = y − z) ⇔ (x + z = y)
+</pre>
+
+<DT><span class="strong">INT_EQ_SUB_RADD</span>
+<DD>
+<pre>
+|- ∀x y z. (x − y = z) ⇔ (x = z + y)
+</pre>
+
+<DT><span class="strong">INT_SUB</span>
+<DD>
+<pre>
+|- ∀n m. m ≤ n ⇒ (&n − &m = &(n − m))
+</pre>
+
+<DT><span class="strong">INT_SUB_SUB2</span>
+<DD>
+<pre>
+|- ∀x y. x − (x − y) = y
+</pre>
+
+<DT><span class="strong">INT_ADD_SUB2</span>
+<DD>
+<pre>
+|- ∀x y. x − (x + y) = -y
+</pre>
+
+<DT><span class="strong">INT_EQ_LMUL2</span>
+<DD>
+<pre>
+|- ∀x y z. x ≠ 0 ⇒ ((y = z) ⇔ (x * y = x * z))
+</pre>
+
+<DT><span class="strong">INT_EQ_IMP_LE</span>
+<DD>
+<pre>
+|- ∀x y. (x = y) ⇒ x ≤ y
+</pre>
+
+<DT><span class="strong">INT_POS_NZ</span>
+<DD>
+<pre>
+|- ∀x. 0 < x ⇒ x ≠ 0
+</pre>
+
+<DT><span class="strong">INT_EQ_RMUL_IMP</span>
+<DD>
+<pre>
+|- ∀x y z. z ≠ 0 ∧ (x * z = y * z) ⇒ (x = y)
+</pre>
+
+<DT><span class="strong">INT_EQ_LMUL_IMP</span>
+<DD>
+<pre>
+|- ∀x y z. x ≠ 0 ∧ (x * y = x * z) ⇒ (y = z)
+</pre>
+
+<DT><span class="strong">INT_DIFFSQ</span>
+<DD>
+<pre>
+|- ∀x y. (x + y) * (x − y) = x * x − y * y
+</pre>
+
+<DT><span class="strong">INT_POASQ</span>
+<DD>
+<pre>
+|- ∀x. 0 < x * x ⇔ x ≠ 0
+</pre>
+
+<DT><span class="strong">INT_SUMSQ</span>
+<DD>
+<pre>
+|- ∀x y. (x * x + y * y = 0) ⇔ (x = 0) ∧ (y = 0)
+</pre>
+
+<DT><span class="strong">INT_EQ_NEG</span>
+<DD>
+<pre>
+|- ∀x y. (-x = -y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">INT_LT_CALCULATE</span>
+<DD>
+<pre>
+|- ∀n m.
+     (&n < &m ⇔ n < m) ∧ (-&n < -&m ⇔ m < n) ∧ (-&n < &m ⇔ n ≠ 0 ∨ m ≠ 0) ∧
+     (&n < -&m ⇔ F)
+</pre>
+
+<DT><span class="strong">NUM_POSINT</span>
+<DD>
+<pre>
+|- ∀i. 0 ≤ i ⇒ ∃!n. i = &n
+</pre>
+
+<DT><span class="strong">NUM_POSINT_EXISTS</span>
+<DD>
+<pre>
+|- ∀i. 0 ≤ i ⇒ ∃n. i = &n
+</pre>
+
+<DT><span class="strong">NUM_NEGINT_EXISTS</span>
+<DD>
+<pre>
+|- ∀i. i ≤ 0 ⇒ ∃n. i = -&n
+</pre>
+
+<DT><span class="strong">INT_NUM_CASES</span>
+<DD>
+<pre>
+|- ∀p. (∃n. (p = &n) ∧ n ≠ 0) ∨ (∃n. (p = -&n) ∧ n ≠ 0) ∨ (p = 0)
+</pre>
+
+<DT><span class="strong">INT_DISCRETE</span>
+<DD>
+<pre>
+|- ∀x y. ¬(x < y ∧ y < x + 1)
+</pre>
+
+<DT><span class="strong">INT_LE_LT1</span>
+<DD>
+<pre>
+|- x ≤ y ⇔ x < y + 1
+</pre>
+
+<DT><span class="strong">INT_LT_LE1</span>
+<DD>
+<pre>
+|- x < y ⇔ x + 1 ≤ y
+</pre>
+
+<DT><span class="strong">INT_MUL_EQ_1</span>
+<DD>
+<pre>
+|- ∀x y. (x * y = 1) ⇔ (x = 1) ∧ (y = 1) ∨ (x = -1) ∧ (y = -1)
+</pre>
+
+<DT><span class="strong">NUM_OF_INT</span>
+<DD>
+<pre>
+|- ∀n. Num (&n) = n
+</pre>
+
+<DT><span class="strong">INT_OF_NUM</span>
+<DD>
+<pre>
+|- ∀i. (&Num i = i) ⇔ 0 ≤ i
+</pre>
+
+<DT><span class="strong">LE_NUM_OF_INT</span>
+<DD>
+<pre>
+|- ∀n i. &n ≤ i ⇒ n ≤ Num i
+</pre>
+
+<DT><span class="strong">INT_DIV</span>
+<DD>
+<pre>
+|- ∀n m. m ≠ 0 ⇒ (&n / &m = &(n DIV m))
+</pre>
+
+<DT><span class="strong">INT_DIV_NEG</span>
+<DD>
+<pre>
+|- ∀p q. q ≠ 0 ⇒ (p / -q = -p / q)
+</pre>
+
+<DT><span class="strong">INT_DIV_1</span>
+<DD>
+<pre>
+|- ∀p. p / 1 = p
+</pre>
+
+<DT><span class="strong">INT_DIV_0</span>
+<DD>
+<pre>
+|- ∀q. q ≠ 0 ⇒ (0 / q = 0)
+</pre>
+
+<DT><span class="strong">INT_DIV_ID</span>
+<DD>
+<pre>
+|- ∀p. p ≠ 0 ⇒ (p / p = 1)
+</pre>
+
+<DT><span class="strong">INT_MOD_BOUNDS</span>
+<DD>
+<pre>
+|- ∀p q.
+     q ≠ 0 ⇒ if q < 0 then q < p % q ∧ p % q ≤ 0 else 0 ≤ p % q ∧ p % q < q
+</pre>
+
+<DT><span class="strong">INT_DIVISION</span>
+<DD>
+<pre>
+|- ∀q.
+     q ≠ 0 ⇒
+     ∀p.
+       (p = p / q * q + p % q) ∧
+       if q < 0 then q < p % q ∧ p % q ≤ 0 else 0 ≤ p % q ∧ p % q < q
+</pre>
+
+<DT><span class="strong">INT_MOD</span>
+<DD>
+<pre>
+|- ∀n m. m ≠ 0 ⇒ (&n % &m = &(n MOD m))
+</pre>
+
+<DT><span class="strong">INT_MOD_NEG</span>
+<DD>
+<pre>
+|- ∀p q. q ≠ 0 ⇒ (p % -q = -(-p % q))
+</pre>
+
+<DT><span class="strong">INT_MOD0</span>
+<DD>
+<pre>
+|- ∀p. p ≠ 0 ⇒ (0 % p = 0)
+</pre>
+
+<DT><span class="strong">INT_DIV_MUL_ID</span>
+<DD>
+<pre>
+|- ∀p q. q ≠ 0 ∧ (p % q = 0) ⇒ (p / q * q = p)
+</pre>
+
+<DT><span class="strong">INT_DIV_UNIQUE</span>
+<DD>
+<pre>
+|- ∀i j q.
+     (∃r. (i = q * j + r) ∧ if j < 0 then j < r ∧ r ≤ 0 else 0 ≤ r ∧ r < j) ⇒
+     (i / j = q)
+</pre>
+
+<DT><span class="strong">INT_MOD_UNIQUE</span>
+<DD>
+<pre>
+|- ∀i j m.
+     (∃q. (i = q * j + m) ∧ if j < 0 then j < m ∧ m ≤ 0 else 0 ≤ m ∧ m < j) ⇒
+     (i % j = m)
+</pre>
+
+<DT><span class="strong">INT_MOD_ID</span>
+<DD>
+<pre>
+|- ∀i. i ≠ 0 ⇒ (i % i = 0)
+</pre>
+
+<DT><span class="strong">INT_MOD_COMMON_FACTOR</span>
+<DD>
+<pre>
+|- ∀p. p ≠ 0 ⇒ ∀q. (q * p) % p = 0
+</pre>
+
+<DT><span class="strong">INT_DIV_LMUL</span>
+<DD>
+<pre>
+|- ∀i j. i ≠ 0 ⇒ (i * j / i = j)
+</pre>
+
+<DT><span class="strong">INT_DIV_RMUL</span>
+<DD>
+<pre>
+|- ∀i j. i ≠ 0 ⇒ (j * i / i = j)
+</pre>
+
+<DT><span class="strong">INT_MOD_EQ0</span>
+<DD>
+<pre>
+|- ∀q. q ≠ 0 ⇒ ∀p. (p % q = 0) ⇔ ∃k. p = k * q
+</pre>
+
+<DT><span class="strong">INT_MUL_DIV</span>
+<DD>
+<pre>
+|- ∀p q k. q ≠ 0 ∧ (p % q = 0) ⇒ (k * p / q = k * (p / q))
+</pre>
+
+<DT><span class="strong">INT_ADD_DIV</span>
+<DD>
+<pre>
+|- ∀i j k. k ≠ 0 ∧ ((i % k = 0) ∨ (j % k = 0)) ⇒ ((i + j) / k = i / k + j / k)
+</pre>
+
+<DT><span class="strong">INT_MOD_ADD_MULTIPLES</span>
+<DD>
+<pre>
+|- k ≠ 0 ⇒ ((q * k + r) % k = r % k)
+</pre>
+
+<DT><span class="strong">INT_MOD_NEG_NUMERATOR</span>
+<DD>
+<pre>
+|- k ≠ 0 ⇒ (-x % k = (k − x) % k)
+</pre>
+
+<DT><span class="strong">INT_MOD_PLUS</span>
+<DD>
+<pre>
+|- k ≠ 0 ⇒ ((i % k + j % k) % k = (i + j) % k)
+</pre>
+
+<DT><span class="strong">INT_MOD_SUB</span>
+<DD>
+<pre>
+|- k ≠ 0 ⇒ ((i % k − j % k) % k = (i − j) % k)
+</pre>
+
+<DT><span class="strong">INT_MOD_MOD</span>
+<DD>
+<pre>
+|- k ≠ 0 ⇒ (j % k % k = j % k)
+</pre>
+
+<DT><span class="strong">INT_DIV_P</span>
+<DD>
+<pre>
+|- ∀P x c.
+     c ≠ 0 ⇒
+     (P (x / c) ⇔
+      ∃k r.
+        (x = k * c + r) ∧ (c < 0 ∧ c < r ∧ r ≤ 0 ∨ ¬(c < 0) ∧ 0 ≤ r ∧ r < c) ∧
+        P k)
+</pre>
+
+<DT><span class="strong">INT_MOD_P</span>
+<DD>
+<pre>
+|- ∀P x c.
+     c ≠ 0 ⇒
+     (P (x % c) ⇔
+      ∃k r.
+        (x = k * c + r) ∧ (c < 0 ∧ c < r ∧ r ≤ 0 ∨ ¬(c < 0) ∧ 0 ≤ r ∧ r < c) ∧
+        P r)
+</pre>
+
+<DT><span class="strong">INT_DIV_FORALL_P</span>
+<DD>
+<pre>
+|- ∀P x c.
+     c ≠ 0 ⇒
+     (P (x / c) ⇔
+      ∀k r.
+        (x = k * c + r) ∧ (c < 0 ∧ c < r ∧ r ≤ 0 ∨ ¬(c < 0) ∧ 0 ≤ r ∧ r < c) ⇒
+        P k)
+</pre>
+
+<DT><span class="strong">INT_MOD_FORALL_P</span>
+<DD>
+<pre>
+|- ∀P x c.
+     c ≠ 0 ⇒
+     (P (x % c) ⇔
+      ∀q r.
+        (x = q * c + r) ∧ (c < 0 ∧ c < r ∧ r ≤ 0 ∨ ¬(c < 0) ∧ 0 ≤ r ∧ r < c) ⇒
+        P r)
+</pre>
+
+<DT><span class="strong">INT_MOD_1</span>
+<DD>
+<pre>
+|- ∀i. i % 1 = 0
+</pre>
+
+<DT><span class="strong">INT_LESS_MOD</span>
+<DD>
+<pre>
+|- ∀i j. 0 ≤ i ∧ i < j ⇒ (i % j = i)
+</pre>
+
+<DT><span class="strong">INT_MOD_MINUS1</span>
+<DD>
+<pre>
+|- ∀n. 0 < n ⇒ (-1 % n = n − 1)
+</pre>
+
+<DT><span class="strong">INT_ABS_POS</span>
+<DD>
+<pre>
+|- ∀p. 0 ≤ ABS p
+</pre>
+
+<DT><span class="strong">INT_ABS_NUM</span>
+<DD>
+<pre>
+|- ∀n. ABS (&n) = &n
+</pre>
+
+<DT><span class="strong">INT_NEG_SAME_EQ</span>
+<DD>
+<pre>
+|- ∀p. (p = -p) ⇔ (p = 0)
+</pre>
+
+<DT><span class="strong">INT_ABS_NEG</span>
+<DD>
+<pre>
+|- ∀p. ABS (-p) = ABS p
+</pre>
+
+<DT><span class="strong">INT_ABS_ABS</span>
+<DD>
+<pre>
+|- ∀p. ABS (ABS p) = ABS p
+</pre>
+
+<DT><span class="strong">INT_ABS_EQ_ID</span>
+<DD>
+<pre>
+|- ∀p. (ABS p = p) ⇔ 0 ≤ p
+</pre>
+
+<DT><span class="strong">INT_ABS_MUL</span>
+<DD>
+<pre>
+|- ∀p q. ABS p * ABS q = ABS (p * q)
+</pre>
+
+<DT><span class="strong">INT_ABS_EQ0</span>
+<DD>
+<pre>
+|- ∀p. (ABS p = 0) ⇔ (p = 0)
+</pre>
+
+<DT><span class="strong">INT_ABS_LT0</span>
+<DD>
+<pre>
+|- ∀p. ¬(ABS p < 0)
+</pre>
+
+<DT><span class="strong">INT_ABS_LE0</span>
+<DD>
+<pre>
+|- ∀p. ABS p ≤ 0 ⇔ (p = 0)
+</pre>
+
+<DT><span class="strong">INT_ABS_LT</span>
+<DD>
+<pre>
+|- ∀p q.
+     (ABS p < q ⇔ p < q ∧ -q < p) ∧ (q < ABS p ⇔ q < p ∨ p < -q) ∧
+     (-ABS p < q ⇔ -q < p ∨ p < q) ∧ (q < -ABS p ⇔ p < -q ∧ q < p)
+</pre>
+
+<DT><span class="strong">INT_ABS_LE</span>
+<DD>
+<pre>
+|- ∀p q.
+     (ABS p ≤ q ⇔ p ≤ q ∧ -q ≤ p) ∧ (q ≤ ABS p ⇔ q ≤ p ∨ p ≤ -q) ∧
+     (-ABS p ≤ q ⇔ -q ≤ p ∨ p ≤ q) ∧ (q ≤ -ABS p ⇔ p ≤ -q ∧ q ≤ p)
+</pre>
+
+<DT><span class="strong">INT_ABS_EQ</span>
+<DD>
+<pre>
+|- ∀p q.
+     ((ABS p = q) ⇔ (p = q) ∧ 0 < q ∨ (p = -q) ∧ 0 ≤ q) ∧
+     ((q = ABS p) ⇔ (p = q) ∧ 0 < q ∨ (p = -q) ∧ 0 ≤ q)
+</pre>
+
+<DT><span class="strong">INT_QUOT</span>
+<DD>
+<pre>
+|- ∀p q. q ≠ 0 ⇒ (&p quot &q = &(p DIV q))
+</pre>
+
+<DT><span class="strong">INT_QUOT_0</span>
+<DD>
+<pre>
+|- ∀q. q ≠ 0 ⇒ (0 quot q = 0)
+</pre>
+
+<DT><span class="strong">INT_QUOT_1</span>
+<DD>
+<pre>
+|- ∀p. p quot 1 = p
+</pre>
+
+<DT><span class="strong">INT_QUOT_NEG</span>
+<DD>
+<pre>
+|- ∀p q. q ≠ 0 ⇒ (-p quot q = -(p quot q)) ∧ (p quot -q = -(p quot q))
+</pre>
+
+<DT><span class="strong">INT_ABS_QUOT</span>
+<DD>
+<pre>
+|- ∀p q. q ≠ 0 ⇒ ABS (p quot q * q) ≤ ABS p
+</pre>
+
+<DT><span class="strong">INT_QUOT_UNIQUE</span>
+<DD>
+<pre>
+|- ∀p q k.
+     (∃r.
+        (p = k * q + r) ∧ (if 0 < p then 0 ≤ r else r ≤ 0) ∧ ABS r < ABS q) ⇒
+     (p quot q = k)
+</pre>
+
+<DT><span class="strong">INT_QUOT_ID</span>
+<DD>
+<pre>
+|- ∀p. p ≠ 0 ⇒ (p quot p = 1)
+</pre>
+
+<DT><span class="strong">INT_REM</span>
+<DD>
+<pre>
+|- ∀p q. q ≠ 0 ⇒ (&p rem &q = &(p MOD q))
+</pre>
+
+<DT><span class="strong">INT_REMQUOT</span>
+<DD>
+<pre>
+|- ∀q.
+     q ≠ 0 ⇒
+     ∀p.
+       (p = p quot q * q + (p rem q)) ∧
+       (if 0 < p then 0 ≤ p rem q else p rem q ≤ 0) ∧ ABS (p rem q) < ABS q
+</pre>
+
+<DT><span class="strong">INT_REM_UNIQUE</span>
+<DD>
+<pre>
+|- ∀p q r.
+     ABS r < ABS q ∧ (if 0 < p then 0 ≤ r else r ≤ 0) ∧ (∃k. p = k * q + r) ⇒
+     (p rem q = r)
+</pre>
+
+<DT><span class="strong">INT_REM_NEG</span>
+<DD>
+<pre>
+|- ∀p q. q ≠ 0 ⇒ (-p rem q = -(p rem q)) ∧ (p rem -q = p rem q)
+</pre>
+
+<DT><span class="strong">INT_REM_ID</span>
+<DD>
+<pre>
+|- ∀p. p ≠ 0 ⇒ (p rem p = 0)
+</pre>
+
+<DT><span class="strong">INT_REM0</span>
+<DD>
+<pre>
+|- ∀q. q ≠ 0 ⇒ (0 rem q = 0)
+</pre>
+
+<DT><span class="strong">INT_REM_COMMON_FACTOR</span>
+<DD>
+<pre>
+|- ∀p. p ≠ 0 ⇒ ∀q. q * p rem p = 0
+</pre>
+
+<DT><span class="strong">INT_REM_EQ0</span>
+<DD>
+<pre>
+|- ∀q. q ≠ 0 ⇒ ∀p. (p rem q = 0) ⇔ ∃k. p = k * q
+</pre>
+
+<DT><span class="strong">INT_MUL_QUOT</span>
+<DD>
+<pre>
+|- ∀p q k. q ≠ 0 ∧ (p rem q = 0) ⇒ (k * p quot q = k * (p quot q))
+</pre>
+
+<DT><span class="strong">INT_REM_EQ_MOD</span>
+<DD>
+<pre>
+|- ∀i n. 0 < n ⇒ (i rem n = if i < 0 then (i − 1) % n − n + 1 else i % n)
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_MOD0</span>
+<DD>
+<pre>
+|- ∀p q. p int_divides q ⇔ (q % p = 0) ∧ p ≠ 0 ∨ (p = 0) ∧ (q = 0)
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_0</span>
+<DD>
+<pre>
+|- (∀x. x int_divides 0) ∧ ∀x. 0 int_divides x ⇔ (x = 0)
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_1</span>
+<DD>
+<pre>
+|- ∀x. 1 int_divides x ∧ (x int_divides 1 ⇔ (x = 1) ∨ (x = -1))
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_REFL</span>
+<DD>
+<pre>
+|- ∀x. x int_divides x
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_TRANS</span>
+<DD>
+<pre>
+|- ∀x y z. x int_divides y ∧ y int_divides z ⇒ x int_divides z
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_MUL</span>
+<DD>
+<pre>
+|- ∀p q. p int_divides p * q ∧ p int_divides q * p
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_LMUL</span>
+<DD>
+<pre>
+|- ∀p q r. p int_divides q ⇒ p int_divides q * r
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_RMUL</span>
+<DD>
+<pre>
+|- ∀p q r. p int_divides q ⇒ p int_divides r * q
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_MUL_BOTH</span>
+<DD>
+<pre>
+|- ∀p q r. p ≠ 0 ⇒ (p * q int_divides p * r ⇔ q int_divides r)
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_LADD</span>
+<DD>
+<pre>
+|- ∀p q r. p int_divides q ⇒ (p int_divides q + r ⇔ p int_divides r)
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_RADD</span>
+<DD>
+<pre>
+|- ∀p q r. p int_divides q ⇒ (p int_divides r + q ⇔ p int_divides r)
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_NEG</span>
+<DD>
+<pre>
+|- ∀p q.
+     (p int_divides -q ⇔ p int_divides q) ∧
+     (-p int_divides q ⇔ p int_divides q)
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_LSUB</span>
+<DD>
+<pre>
+|- ∀p q r. p int_divides q ⇒ (p int_divides q − r ⇔ p int_divides r)
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_RSUB</span>
+<DD>
+<pre>
+|- ∀p q r. p int_divides q ⇒ (p int_divides r − q ⇔ p int_divides r)
+</pre>
+
+<DT><span class="strong">INT_EXP</span>
+<DD>
+<pre>
+|- ∀n m. &n ** m = &(n ** m)
+</pre>
+
+<DT><span class="strong">INT_EXP_EQ0</span>
+<DD>
+<pre>
+|- ∀p n. (p ** n = 0) ⇔ (p = 0) ∧ n ≠ 0
+</pre>
+
+<DT><span class="strong">INT_MUL_SIGN_CASES</span>
+<DD>
+<pre>
+|- ∀p q.
+     (0 < p * q ⇔ 0 < p ∧ 0 < q ∨ p < 0 ∧ q < 0) ∧
+     (p * q < 0 ⇔ 0 < p ∧ q < 0 ∨ p < 0 ∧ 0 < q)
+</pre>
+
+<DT><span class="strong">INT_EXP_NEG</span>
+<DD>
+<pre>
+|- ∀n m. (EVEN n ⇒ (-&m ** n = &(m ** n))) ∧ (ODD n ⇒ (-&m ** n = -&(m ** n)))
+</pre>
+
+<DT><span class="strong">INT_EXP_ADD_EXPONENTS</span>
+<DD>
+<pre>
+|- ∀n m p. p ** n * p ** m = p ** (n + m)
+</pre>
+
+<DT><span class="strong">INT_EXP_MULTIPLY_EXPONENTS</span>
+<DD>
+<pre>
+|- ∀m n p. (p ** n) ** m = p ** (n * m)
+</pre>
+
+<DT><span class="strong">INT_EXP_MOD</span>
+<DD>
+<pre>
+|- ∀m n p. n ≤ m ∧ p ≠ 0 ⇒ (p ** m % p ** n = 0)
+</pre>
+
+<DT><span class="strong">INT_EXP_SUBTRACT_EXPONENTS</span>
+<DD>
+<pre>
+|- ∀m n p. n ≤ m ∧ p ≠ 0 ⇒ (p ** m / p ** n = p ** (m − n))
+</pre>
+
+<DT><span class="strong">INT_MIN_LT</span>
+<DD>
+<pre>
+|- ∀x y z. x < int_min y z ⇒ x < y ∧ x < z
+</pre>
+
+<DT><span class="strong">INT_MAX_LT</span>
+<DD>
+<pre>
+|- ∀x y z. int_max x y < z ⇒ x < z ∧ y < z
+</pre>
+
+<DT><span class="strong">INT_MIN_NUM</span>
+<DD>
+<pre>
+|- ∀m n. int_min (&m) (&n) = &MIN m n
+</pre>
+
+<DT><span class="strong">INT_MAX_NUM</span>
+<DD>
+<pre>
+|- ∀m n. int_max (&m) (&n) = &MAX m n
+</pre>
+
+<DT><span class="strong">INT_LT_MONO</span>
+<DD>
+<pre>
+|- ∀x y z. 0 < x ⇒ (x * y < x * z ⇔ y < z)
+</pre>
+
+<DT><span class="strong">INT_LE_MONO</span>
+<DD>
+<pre>
+|- ∀x y z. 0 < x ⇒ (x * y ≤ x * z ⇔ y ≤ z)
+</pre>
+
+<DT><span class="strong">INFINITE_INT_UNIV</span>
+<DD>
+<pre>
+|- INFINITE 𝕌(:int)
+</pre>
+
+<DT><span class="strong">INT_ADD_CALCULATE</span>
+<DD>
+<pre>
+|- ∀p n m.
+     (0 + p = p) ∧ (p + 0 = p) ∧ (&n + &m = &(n + m)) ∧
+     (&n + -&m = if m ≤ n then &(n − m) else -&(m − n)) ∧
+     (-&n + &m = if n ≤ m then &(m − n) else -&(n − m)) ∧
+     (-&n + -&m = -&(n + m))
+</pre>
+
+<DT><span class="strong">INT_ADD_REDUCE</span>
+<DD>
+<pre>
+|- ∀p n m.
+     (0 + p = p) ∧ (p + 0 = p) ∧ (-0 = 0) ∧ (- -p = p) ∧
+     (&NUMERAL n + &NUMERAL m = &NUMERAL (numeral$iZ (n + m))) ∧
+     (&NUMERAL n + -&NUMERAL m =
+      if m ≤ n then &NUMERAL (n − m) else -&NUMERAL (m − n)) ∧
+     (-&NUMERAL n + &NUMERAL m =
+      if n ≤ m then &NUMERAL (m − n) else -&NUMERAL (n − m)) ∧
+     (-&NUMERAL n + -&NUMERAL m = -&NUMERAL (numeral$iZ (n + m)))
+</pre>
+
+<DT><span class="strong">INT_SUB_CALCULATE</span>
+<DD>
+<pre>
+|- ∀x y. x − y = x + -y
+</pre>
+
+<DT><span class="strong">INT_SUB_REDUCE</span>
+<DD>
+<pre>
+|- ∀m n p.
+     (p − 0 = p) ∧ (0 − p = -p) ∧
+     (&NUMERAL m − &NUMERAL n = &NUMERAL m + -&NUMERAL n) ∧
+     (-&NUMERAL m − &NUMERAL n = -&NUMERAL m + -&NUMERAL n) ∧
+     (&NUMERAL m − -&NUMERAL n = &NUMERAL m + &NUMERAL n) ∧
+     (-&NUMERAL m − -&NUMERAL n = -&NUMERAL m + &NUMERAL n)
+</pre>
+
+<DT><span class="strong">INT_MUL_CALCULATE</span>
+<DD>
+<pre>
+|- (∀m n. &m * &n = &(m * n)) ∧ (∀x y. -x * y = -(x * y)) ∧
+   (∀x y. x * -y = -(x * y)) ∧ ∀x. - -x = x
+</pre>
+
+<DT><span class="strong">INT_MUL_REDUCE</span>
+<DD>
+<pre>
+|- ∀m n p.
+     (p * 0 = 0) ∧ (0 * p = 0) ∧
+     (&NUMERAL m * &NUMERAL n = &NUMERAL (m * n)) ∧
+     (-&NUMERAL m * &NUMERAL n = -&NUMERAL (m * n)) ∧
+     (&NUMERAL m * -&NUMERAL n = -&NUMERAL (m * n)) ∧
+     (-&NUMERAL m * -&NUMERAL n = &NUMERAL (m * n))
+</pre>
+
+<DT><span class="strong">INT_DIV_CALCULATE</span>
+<DD>
+<pre>
+|- (∀n m. m ≠ 0 ⇒ (&n / &m = &(n DIV m))) ∧
+   (∀p q. q ≠ 0 ⇒ (p / -q = -p / q)) ∧ (∀m n. (&m = &n) ⇔ (m = n)) ∧
+   (∀x. (-x = 0) ⇔ (x = 0)) ∧ ∀x. - -x = x
+</pre>
+
+<DT><span class="strong">INT_DIV_REDUCE</span>
+<DD>
+<pre>
+|- ∀m n.
+     (0 / &NUMERAL (BIT1 n) = 0) ∧ (0 / &NUMERAL (BIT2 n) = 0) ∧
+     (&NUMERAL m / &NUMERAL (BIT1 n) = &(NUMERAL m DIV NUMERAL (BIT1 n))) ∧
+     (&NUMERAL m / &NUMERAL (BIT2 n) = &(NUMERAL m DIV NUMERAL (BIT2 n))) ∧
+     (-&NUMERAL m / &NUMERAL (BIT1 n) =
+      -&(NUMERAL m DIV NUMERAL (BIT1 n)) +
+      if NUMERAL m MOD NUMERAL (BIT1 n) = 0 then 0 else -1) ∧
+     (-&NUMERAL m / &NUMERAL (BIT2 n) =
+      -&(NUMERAL m DIV NUMERAL (BIT2 n)) +
+      if NUMERAL m MOD NUMERAL (BIT2 n) = 0 then 0 else -1) ∧
+     (&NUMERAL m / -&NUMERAL (BIT1 n) =
+      -&(NUMERAL m DIV NUMERAL (BIT1 n)) +
+      if NUMERAL m MOD NUMERAL (BIT1 n) = 0 then 0 else -1) ∧
+     (&NUMERAL m / -&NUMERAL (BIT2 n) =
+      -&(NUMERAL m DIV NUMERAL (BIT2 n)) +
+      if NUMERAL m MOD NUMERAL (BIT2 n) = 0 then 0 else -1) ∧
+     (-&NUMERAL m / -&NUMERAL (BIT1 n) = &(NUMERAL m DIV NUMERAL (BIT1 n))) ∧
+     (-&NUMERAL m / -&NUMERAL (BIT2 n) = &(NUMERAL m DIV NUMERAL (BIT2 n)))
+</pre>
+
+<DT><span class="strong">INT_QUOT_CALCULATE</span>
+<DD>
+<pre>
+|- (∀p q. q ≠ 0 ⇒ (&p quot &q = &(p DIV q))) ∧
+   (∀p q. q ≠ 0 ⇒ (-p quot q = -(p quot q)) ∧ (p quot -q = -(p quot q))) ∧
+   (∀m n. (&m = &n) ⇔ (m = n)) ∧ (∀x. (-x = 0) ⇔ (x = 0)) ∧ ∀x. - -x = x
+</pre>
+
+<DT><span class="strong">INT_QUOT_REDUCE</span>
+<DD>
+<pre>
+|- ∀m n.
+     (0 quot &NUMERAL (BIT1 n) = 0) ∧ (0 quot &NUMERAL (BIT2 n) = 0) ∧
+     (&NUMERAL m quot &NUMERAL (BIT1 n) = &(NUMERAL m DIV NUMERAL (BIT1 n))) ∧
+     (&NUMERAL m quot &NUMERAL (BIT2 n) = &(NUMERAL m DIV NUMERAL (BIT2 n))) ∧
+     (-&NUMERAL m quot &NUMERAL (BIT1 n) =
+      -&(NUMERAL m DIV NUMERAL (BIT1 n))) ∧
+     (-&NUMERAL m quot &NUMERAL (BIT2 n) =
+      -&(NUMERAL m DIV NUMERAL (BIT2 n))) ∧
+     (&NUMERAL m quot -&NUMERAL (BIT1 n) =
+      -&(NUMERAL m DIV NUMERAL (BIT1 n))) ∧
+     (&NUMERAL m quot -&NUMERAL (BIT2 n) =
+      -&(NUMERAL m DIV NUMERAL (BIT2 n))) ∧
+     (-&NUMERAL m quot -&NUMERAL (BIT1 n) =
+      &(NUMERAL m DIV NUMERAL (BIT1 n))) ∧
+     (-&NUMERAL m quot -&NUMERAL (BIT2 n) = &(NUMERAL m DIV NUMERAL (BIT2 n)))
+</pre>
+
+<DT><span class="strong">INT_MOD_CALCULATE</span>
+<DD>
+<pre>
+|- (∀n m. m ≠ 0 ⇒ (&n % &m = &(n MOD m))) ∧
+   (∀p q. q ≠ 0 ⇒ (p % -q = -(-p % q))) ∧ (∀x. - -x = x) ∧
+   (∀m n. (&m = &n) ⇔ (m = n)) ∧ ∀x. (-x = 0) ⇔ (x = 0)
+</pre>
+
+<DT><span class="strong">INT_MOD_REDUCE</span>
+<DD>
+<pre>
+|- ∀m n.
+     (0 % &NUMERAL (BIT1 n) = 0) ∧ (0 % &NUMERAL (BIT2 n) = 0) ∧
+     (&NUMERAL m % &NUMERAL (BIT1 n) = &(NUMERAL m MOD NUMERAL (BIT1 n))) ∧
+     (&NUMERAL m % &NUMERAL (BIT2 n) = &(NUMERAL m MOD NUMERAL (BIT2 n))) ∧
+     (x % &NUMERAL (BIT1 n) = x − x / &NUMERAL (BIT1 n) * &NUMERAL (BIT1 n)) ∧
+     (x % &NUMERAL (BIT2 n) = x − x / &NUMERAL (BIT2 n) * &NUMERAL (BIT2 n))
+</pre>
+
+<DT><span class="strong">INT_REM_CALCULATE</span>
+<DD>
+<pre>
+|- (∀p q. q ≠ 0 ⇒ (&p rem &q = &(p MOD q))) ∧
+   (∀p q. q ≠ 0 ⇒ (-p rem q = -(p rem q)) ∧ (p rem -q = p rem q)) ∧
+   (∀x. - -x = x) ∧ (∀m n. (&m = &n) ⇔ (m = n)) ∧ ∀x. (-x = 0) ⇔ (x = 0)
+</pre>
+
+<DT><span class="strong">INT_REM_REDUCE</span>
+<DD>
+<pre>
+|- ∀m n.
+     (0 rem &NUMERAL (BIT1 n) = 0) ∧ (0 rem &NUMERAL (BIT2 n) = 0) ∧
+     (&NUMERAL m rem &NUMERAL (BIT1 n) = &(NUMERAL m MOD NUMERAL (BIT1 n))) ∧
+     (&NUMERAL m rem &NUMERAL (BIT2 n) = &(NUMERAL m MOD NUMERAL (BIT2 n))) ∧
+     (-&NUMERAL m rem &NUMERAL (BIT1 n) =
+      -&(NUMERAL m MOD NUMERAL (BIT1 n))) ∧
+     (-&NUMERAL m rem &NUMERAL (BIT2 n) =
+      -&(NUMERAL m MOD NUMERAL (BIT2 n))) ∧
+     (&NUMERAL m rem -&NUMERAL (BIT1 n) = &(NUMERAL m MOD NUMERAL (BIT1 n))) ∧
+     (&NUMERAL m rem -&NUMERAL (BIT2 n) = &(NUMERAL m MOD NUMERAL (BIT2 n))) ∧
+     (-&NUMERAL m rem -&NUMERAL (BIT1 n) =
+      -&(NUMERAL m MOD NUMERAL (BIT1 n))) ∧
+     (-&NUMERAL m rem -&NUMERAL (BIT2 n) = -&(NUMERAL m MOD NUMERAL (BIT2 n)))
+</pre>
+
+<DT><span class="strong">INT_EXP_CALCULATE</span>
+<DD>
+<pre>
+|- ∀p n m.
+     (p ** 0 = 1) ∧ (&n ** m = &(n ** m)) ∧
+     (-&n ** NUMERAL (BIT1 m) = -&NUMERAL (n ** NUMERAL (BIT1 m))) ∧
+     (-&n ** NUMERAL (BIT2 m) = &NUMERAL (n ** NUMERAL (BIT2 m)))
+</pre>
+
+<DT><span class="strong">INT_EXP_REDUCE</span>
+<DD>
+<pre>
+|- ∀n m p.
+     (p ** 0 = 1) ∧ (&NUMERAL n ** NUMERAL m = &NUMERAL (n ** m)) ∧
+     (-&NUMERAL n ** NUMERAL (BIT1 m) = -&NUMERAL (n ** BIT1 m)) ∧
+     (-&NUMERAL n ** NUMERAL (BIT2 m) = &NUMERAL (n ** BIT2 m))
+</pre>
+
+<DT><span class="strong">INT_LT_REDUCE</span>
+<DD>
+<pre>
+|- ∀n m.
+     (0 < &NUMERAL (BIT1 n) ⇔ T) ∧ (0 < &NUMERAL (BIT2 n) ⇔ T) ∧ (0 < 0 ⇔ F) ∧
+     (0 < -&NUMERAL n ⇔ F) ∧ (&NUMERAL n < 0 ⇔ F) ∧
+     (-&NUMERAL (BIT1 n) < 0 ⇔ T) ∧ (-&NUMERAL (BIT2 n) < 0 ⇔ T) ∧
+     (&NUMERAL n < &NUMERAL m ⇔ n < m) ∧
+     (-&NUMERAL (BIT1 n) < &NUMERAL m ⇔ T) ∧
+     (-&NUMERAL (BIT2 n) < &NUMERAL m ⇔ T) ∧ (&NUMERAL n < -&NUMERAL m ⇔ F) ∧
+     (-&NUMERAL n < -&NUMERAL m ⇔ m < n)
+</pre>
+
+<DT><span class="strong">INT_LE_CALCULATE</span>
+<DD>
+<pre>
+|- ∀x y. x ≤ y ⇔ x < y ∨ (x = y)
+</pre>
+
+<DT><span class="strong">INT_LE_REDUCE</span>
+<DD>
+<pre>
+|- ∀n m.
+     (0 ≤ 0 ⇔ T) ∧ (0 ≤ &NUMERAL n ⇔ T) ∧ (0 ≤ -&NUMERAL (BIT1 n) ⇔ F) ∧
+     (0 ≤ -&NUMERAL (BIT2 n) ⇔ F) ∧ (&NUMERAL (BIT1 n) ≤ 0 ⇔ F) ∧
+     (&NUMERAL (BIT2 n) ≤ 0 ⇔ F) ∧ (-&NUMERAL (BIT1 n) ≤ 0 ⇔ T) ∧
+     (-&NUMERAL (BIT2 n) ≤ 0 ⇔ T) ∧ (&NUMERAL n ≤ &NUMERAL m ⇔ n ≤ m) ∧
+     (&NUMERAL n ≤ -&NUMERAL (BIT1 m) ⇔ F) ∧
+     (&NUMERAL n ≤ -&NUMERAL (BIT2 m) ⇔ F) ∧ (-&NUMERAL n ≤ &NUMERAL m ⇔ T) ∧
+     (-&NUMERAL n ≤ -&NUMERAL m ⇔ m ≤ n)
+</pre>
+
+<DT><span class="strong">INT_GT_CALCULATE</span>
+<DD>
+<pre>
+|- ∀x y. x > y ⇔ y < x
+</pre>
+
+<DT><span class="strong">INT_GT_REDUCE</span>
+<DD>
+<pre>
+|- ∀n m.
+     (&NUMERAL (BIT1 n) > 0 ⇔ T) ∧ (&NUMERAL (BIT2 n) > 0 ⇔ T) ∧ (0 > 0 ⇔ F) ∧
+     (-&NUMERAL n > 0 ⇔ F) ∧ (0 > &NUMERAL n ⇔ F) ∧
+     (0 > -&NUMERAL (BIT1 n) ⇔ T) ∧ (0 > -&NUMERAL (BIT2 n) ⇔ T) ∧
+     (&NUMERAL m > &NUMERAL n ⇔ n < m) ∧
+     (&NUMERAL m > -&NUMERAL (BIT1 n) ⇔ T) ∧
+     (&NUMERAL m > -&NUMERAL (BIT2 n) ⇔ T) ∧ (-&NUMERAL m > &NUMERAL n ⇔ F) ∧
+     (-&NUMERAL m > -&NUMERAL n ⇔ m < n)
+</pre>
+
+<DT><span class="strong">INT_GE_CALCULATE</span>
+<DD>
+<pre>
+|- ∀x y. x ≥ y ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">INT_GE_REDUCE</span>
+<DD>
+<pre>
+|- ∀n m.
+     (0 ≥ 0 ⇔ T) ∧ (&NUMERAL n ≥ 0 ⇔ T) ∧ (-&NUMERAL (BIT1 n) ≥ 0 ⇔ F) ∧
+     (-&NUMERAL (BIT2 n) ≥ 0 ⇔ F) ∧ (0 ≥ &NUMERAL (BIT1 n) ⇔ F) ∧
+     (0 ≥ &NUMERAL (BIT2 n) ⇔ F) ∧ (0 ≥ -&NUMERAL (BIT1 n) ⇔ T) ∧
+     (0 ≥ -&NUMERAL (BIT2 n) ⇔ T) ∧ (&NUMERAL m ≥ &NUMERAL n ⇔ n ≤ m) ∧
+     (-&NUMERAL (BIT1 m) ≥ &NUMERAL n ⇔ F) ∧
+     (-&NUMERAL (BIT2 m) ≥ &NUMERAL n ⇔ F) ∧ (&NUMERAL m ≥ -&NUMERAL n ⇔ T) ∧
+     (-&NUMERAL m ≥ -&NUMERAL n ⇔ m ≤ n)
+</pre>
+
+<DT><span class="strong">INT_EQ_CALCULATE</span>
+<DD>
+<pre>
+|- (∀m n. (&m = &n) ⇔ (m = n)) ∧ (∀x y. (-x = -y) ⇔ (x = y)) ∧
+   ∀n m. ((&n = -&m) ⇔ (n = 0) ∧ (m = 0)) ∧ ((-&n = &m) ⇔ (n = 0) ∧ (m = 0))
+</pre>
+
+<DT><span class="strong">INT_EQ_REDUCE</span>
+<DD>
+<pre>
+|- ∀n m.
+     ((0 = 0) ⇔ T) ∧ ((0 = &NUMERAL (BIT1 n)) ⇔ F) ∧
+     ((0 = &NUMERAL (BIT2 n)) ⇔ F) ∧ ((0 = -&NUMERAL (BIT1 n)) ⇔ F) ∧
+     ((0 = -&NUMERAL (BIT2 n)) ⇔ F) ∧ ((&NUMERAL (BIT1 n) = 0) ⇔ F) ∧
+     ((&NUMERAL (BIT2 n) = 0) ⇔ F) ∧ ((-&NUMERAL (BIT1 n) = 0) ⇔ F) ∧
+     ((-&NUMERAL (BIT2 n) = 0) ⇔ F) ∧ ((&NUMERAL n = &NUMERAL m) ⇔ (n = m)) ∧
+     ((&NUMERAL (BIT1 n) = -&NUMERAL m) ⇔ F) ∧
+     ((&NUMERAL (BIT2 n) = -&NUMERAL m) ⇔ F) ∧
+     ((-&NUMERAL (BIT1 n) = &NUMERAL m) ⇔ F) ∧
+     ((-&NUMERAL (BIT2 n) = &NUMERAL m) ⇔ F) ∧
+     ((-&NUMERAL n = -&NUMERAL m) ⇔ (n = m))
+</pre>
+
+<DT><span class="strong">INT_DIVIDES_REDUCE</span>
+<DD>
+<pre>
+|- ∀n m p.
+     (0 int_divides 0 ⇔ T) ∧ (0 int_divides &NUMERAL (BIT1 n) ⇔ F) ∧
+     (0 int_divides &NUMERAL (BIT2 n) ⇔ F) ∧ (p int_divides 0 ⇔ T) ∧
+     (&NUMERAL (BIT1 n) int_divides &NUMERAL m ⇔
+      (NUMERAL m MOD NUMERAL (BIT1 n) = 0)) ∧
+     (&NUMERAL (BIT2 n) int_divides &NUMERAL m ⇔
+      (NUMERAL m MOD NUMERAL (BIT2 n) = 0)) ∧
+     (&NUMERAL (BIT1 n) int_divides -&NUMERAL m ⇔
+      (NUMERAL m MOD NUMERAL (BIT1 n) = 0)) ∧
+     (&NUMERAL (BIT2 n) int_divides -&NUMERAL m ⇔
+      (NUMERAL m MOD NUMERAL (BIT2 n) = 0)) ∧
+     (-&NUMERAL (BIT1 n) int_divides &NUMERAL m ⇔
+      (NUMERAL m MOD NUMERAL (BIT1 n) = 0)) ∧
+     (-&NUMERAL (BIT2 n) int_divides &NUMERAL m ⇔
+      (NUMERAL m MOD NUMERAL (BIT2 n) = 0)) ∧
+     (-&NUMERAL (BIT1 n) int_divides -&NUMERAL m ⇔
+      (NUMERAL m MOD NUMERAL (BIT1 n) = 0)) ∧
+     (-&NUMERAL (BIT2 n) int_divides -&NUMERAL m ⇔
+      (NUMERAL m MOD NUMERAL (BIT2 n) = 0))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>
