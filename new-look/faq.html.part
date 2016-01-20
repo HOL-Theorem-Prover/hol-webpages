@@ -1,0 +1,1025 @@
+HOL Frequently Asked Questions
+HOL Frequently Asked Questions
+
+<h2>Contents</h2>
+
+<ul>
+  <li> <a href = "#Build">Build Failures and Warnings</a>
+  <li> <a href = "#Parsing">Parsing and Printing</a>
+    <ul>
+      <li> <a href = "#Quotes">Quotes and Antiquotes</a>
+    </ul>
+  <li> <a href = "#Tactics">Tactics</a>
+    <ul><li> <a href = "#Assumptions">Manipulating Hypotheses</a>
+    </ul>
+  <li> <a href = "#Locating">Locating Things</a>
+  <li> <a href = "#Misc">Miscellaneous</a>
+</ul>
+
+<hr>
+
+<h2 id = "Build"> Build Failures and Warnings</h2>
+
+<dl>
+<dt>
+<strong>I can&rsquo;t build on Ubuntu (or some other recent Linux),
+  where I have Moscow&nbsp;ML executables in <code>/usr/bin/</code>, and
+  the Moscow&nbsp;ML library files in <code>/usr/lib/</code>.</strong>
+<dd>
+<p>If <code>configure</code> is not guessing the correct directories,
+you will need to write a <code>config-override</code> file in the
+  root directory of the HOL installation, and put in it the line</p>
+<pre>
+    val mosmldir = "/usr/bin/"
+</pre>
+<p>You should then be able to run </p>
+<pre>
+    $ mosml &lt; tools/smart-configure.sml
+</pre>
+<p>and</p>
+<pre>
+    $ bin/build
+</pre>
+<p>as normal.</p>
+</dd>
+
+
+<dt>
+<strong>Moscow&nbsp;ML is raising a <code>Chr</code> exception when
+trying to build my (large) theories!</strong></dt>
+<dd>
+<p> This is a known problem in Moscow&nbsp;ML&nbsp;2.01.  There is a
+patch, and <a href="mosml-chr-instructions.html">some
+instructions on how to apply it</a>.
+</dd>
+
+<dt>
+<strong>HOL is failing to complete the build process.  It stops when trying
+ to create the HolBdd theory.  Why is this, and what should I do?</strong></dt>
+<dd> <p> The problem is almost certainly that your copy of MoscowML hasn’t
+     been built with dynamic linking correctly enabled.  This in turn
+     means that the Muddy BDD package that HolBdd uses can’t load.
+     You can test that this is the problem by running hol, and then
+     trying</p>
+<pre>
+    - load "HolBdd";
+</pre>
+<p>     This should fail with an error message about not being able to
+     load <code>muddy.so</code>.</p>
+
+    <p>If you decide you do want HolBdd (there is nothing else in HOL
+     that depends on dynamic linking) you will probably need to build
+     Moscow ML yourself.  Binaries from the central site in Denmark
+     don’t seem to work.  However the install.txt file in the
+     distribution does talk about things you need to do to binaries in
+     order to get dynamic linking to work for them, and it would be
+     interesting to hear that someone had got this to work.  In any
+     case, to build from sources, you must make sure that you alter
+     the src/Makefile.inc in the MoscowML distribution in line with
+     the instructions in the comments there.</p>
+<p>
+     This advice seems to solve this problem for 90% of the people
+     reporting it.  If it doesn’t in your case, please get back to us.
+</p></dd>
+<dt>
+<strong> Should I be concerned by error messages during the build process? </strong></dt>
+<dd> <p> Neither </p>
+<pre>
+   &gt; File "Term.sml", line 1328, characters 10-42:
+   &gt; !   let val {const=Const(r1,_),theory,place} = const_decl name
+   &gt; !           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   &gt; ! Warning: pattern matching is not exhaustive
+</pre>
+<p> nor the following sort of output, when configuring the
+system before building:</p>
+<pre>
+   &gt; /local/scratch/kxs/144/bin/mosmlyac: 4 shift/reduce conflicts.
+</pre>
+<p> represent problems. </p>
+</dd>
+
+<dt><strong>How do I stop <code>Holmake</code> from proving false
+theorems?!</strong></dt>
+<dd> <p> The default behaviour of <code>Holmake</code> is to cause
+failing proofs (from calls to <code>prove</code>
+and <code>store_thm</code>) to be asserted as true
+with <code>mk_thm</code> (such results get oracle tags recording this
+fact).  This behaviour allows for more of a script file to be checked
+because the first failing proof doesn&rsquo;t abort the script.</p>
+
+<p> If you don&rsquo;want this behaviour, use the <code>--qof</code>
+(&ldquo;quit on failure&rdquo;) flag to <code>Holmake</code>, or use
+an <code>OPTIONS&nbsp;=&nbsp;QUIT_ON_FAILURE</code> line in
+a <code>Holmakefile</code>.</p></dd>
+
+
+    <dt><strong> How do I build old versions of HOL, such as Taupo-6
+    and Kananaskis-1?</strong></dt>
+    <dd> <p> These versions of the system no longer build successfully
+    because of the <code>Overflow</code> bug, caused by the fact that
+    more than 2<sup>30</sup> seconds have passed since 1 January
+    1970. </p>
+
+   <p> In the file src/portableML/Portable.sml, replace the
+   <code>local-in-end</code> block that defines <code>mk_time</code>,
+   <code>dest_time</code> and some others with</p>
+<pre>
+    local open Time
+          val two_30 = Math.pow(2.0, 30.0)
+    in
+      val timestamp : unit -&gt; time = now
+      val time_to_string : time -&gt; string = toString
+      fun dest_time t =
+         let val adjusted = Real.-(toReal t, two_30)
+             val sec = Real.trunc adjusted
+         in
+            {sec=sec, usec=0}
+         end
+      fun mk_time {sec,usec} = fromReal (Real.+(real sec, two_30))
+      fun time_eq (t1:time) t2 = (t1 = t2)
+      fun time_lt (t1:time) t2 = Time.&lt;(t1,t2)
+    end
+</pre>
+
+<p> (In Kananaskis-1 this is at line 89; in Taupo-6, it is at line 85.)</p>
+
+<p> If you are using Windows, you will also have to upgrade to Moscow ML
+ 2.01. </p></dd>
+
+</dl>
+
+<hr>
+<h2 id = "Parsing">Parsing and Printing</h2>
+
+<dl>
+<dt><strong>HOL output is all garbled!</strong></dt>
+<dd><p>You are probably seeing mis-interpreted UTF8.  You can
+either <a href="#turn-off-unicode">turn Unicode off</a>, or fix the
+environment in which you are running HOL. </p>
+
+<p> If you are using Emacs, you should add the following lines to
+your <code>.emacs</code>:</p>
+<pre>
+    (set-selection-coding-system 'utf-8)
+    (set-next-selection-coding-system 'utf-8)
+    (setq process-coding-system-alist '((".*" . utf-8)))
+</pre>
+
+<p>If you are using a Windows console, you might try issuing the
+command</p>
+<pre>
+    chcp 65001
+</pre>
+<p>before starting HOL.  According to Albert Lai, one should be aware
+that <q>even then, the console font lacks some pretty common symbols</q>.</p>
+
+<p>If you are using a Unix shell, you should make sure that
+your <code>LANG</code> environment variable includes the
+string <code>UTF-8</code> as a suffix.</p>
+</dd>
+
+<dt id="turn-off-unicode"><strong>How do I turn Unicode off? </strong></dt>
+<dd> <p> Use</p>
+<pre>
+    val _ = set_trace "Unicode" 0;
+</pre>
+<p> You can put this line into a <code>.hol-config.sml</code> file in
+your home directory in Kananaskis-6 and later.</p>
+</dd>
+
+<dt><strong>How do I understand the output
+of <code>term_grammar()</code>?</strong></dt>
+<dd><p>The <code>term_grammar()</code> function returns the grammar
+controlling the parsing and printing of HOL terms.  Its printed form
+doesn’t capture everything inside the grammar, but does provide a
+pretty good picture of what happens to your string when it’s
+parsed, and what happens to your term when it’s printed.
+
+<p>The first part of the grammar output is something that looks like:
+<pre>
+   (0)    TM  ::=  "LEAST" &lt;..binders..&gt; "." TM |
+                   "?!" &lt;..binders..&gt; "." TM | "?" &lt;..binders..&gt; "." TM |
+                   "!" &lt;..binders..&gt; "." TM | "@" &lt;..binders..&gt; "." TM |
+                   "\" &lt;..binders..&gt; "." TM
+   (2)    TM  ::=  "let" TM "in" TM  [ _ let]
+   (4)    TM  ::=  TM "::" TM (restricted quantification operator)
+   (5)    TM  ::=  TM TM  (binder argument concatenation)
+   (7)    TM  ::=  "case" TM "of" TM  [case__magic]
+...
+   (50)   TM  ::=  TM "," TM   (R-associative)
+   (70)   TM  ::=  "if" TM "then" TM "else" TM  [COND]
+   (80)   TM  ::=  TM ":-" TM   (non-associative)
+   (100)  TM  ::=  TM "&lt;=/=&gt;" TM | TM "&lt;=&gt;" TM | TM "=" TM
+                   (non-associative)
+   (200)  TM  ::=  TM "==&gt;" TM   (R-associative)
+...
+   (450)  TM  ::=  TM "&lt;&lt;=" TM | TM "PSUBSET" TM | TM "SUBSET" TM |
+                   TM "&gt;=" TM | TM "&lt;=" TM | TM "&gt;" TM | TM "&lt;" TM |
+                   TM "RSUBSET" TM | TM "&lt;&gt;" TM (non-associative)
+   (460)  TM  ::=  TM "with" TM  [record update] | ... (R-associative)
+   (480)  TM  ::=  TM "++" TM   (L-associative)
+   (490)  TM  ::=  TM "::" TM  [CONS] | TM "INSERT" TM | TM "LEX" TM |
+                   TM "##" TM (R-associative)
+   (500)  TM  ::=  TM "DELETE" TM | TM "DIFF" TM | TM "UNION" TM |
+                   TM "-" TM | TM "+" TM | TM "RUNION" TM
+                   (L-associative)
+...
+</pre>
+<p> This is a description of the way in which terms can be constructed
+from tokens and recursive invocations.  For example, the rule at
+precedence level 70 is
+<pre>
+   TM  ::=  "if" TM "then" TM "else" TM  [COND]
+</pre>
+<p> This rule is saying that if you input <code>``if P then Q else
+R``</code>, the concrete syntax phase treatment of this phrase will turn
+it into <code>COND&nbsp;P&nbsp;Q&nbsp;R</code>.  If there is no name
+in square brackets after a rule, then the head operator name is the
+same as the (one) token in the rule.  Thus the rule for <code>+</code>
+is
+just <code>TM&nbsp;&nbsp;::=&nbsp;&nbsp;TM&nbsp;"+"&nbsp;TM</code>.</p>
+
+<p> The numbers associated with rules indicate their precedence.  The
+higher the number, the more tightly the operators “pull
+at” <code>TM</code>s to their left or right.  Because <code>+</code>
+is at level 500, and <code>*</code> is at 600, arithmetic expressions
+such as <code>``2 * x + 1``</code> parse as you’d expect.  Rules that
+can pull in both directions at once (“infixes”, such as <code>+</code>
+and <code>&lt;=</code>) are also given <em>associativities</em>.
+Because <code>/\</code> is
+right-associative, <code>``p&nbsp;/\&nbsp;q&nbsp;/\&nbsp;r``</code> parses
+to <code>(/\&nbsp;p&nbsp;(/\&nbsp;q&nbsp;r))</code>.
+
+<p>The next section of the <code>term_grammar()</code> output is the
+list of known constants.  For example:
+<pre>
+   Known constants:
+     ! ## & () * ** *, + ++ , - /\ 0 :- :&gt; &lt; &lt;&lt;= &lt;= &lt;=/=&gt; &lt;=&gt; &lt;&gt; = =+ ==&gt; &gt;
+     &gt;= ? ?! @ ABS_num ABS_prod ABS_sum AC ALL_DISTINCT APPEND ARB ASSOC
+     Abbrev BIGINTER BIGUNION BIJ BIT1 BIT2 BOUNDED CARD CHOICE COMM COMPL
+     COND CONS CR CROSS CURRY Cong DATATYPE DELETE DIFF DISJOINT DIV DIV2
+     DIVMOD DIV_2EXP DROP EL EMPTY EMPTY_REL EQC EVEN EVERY EXISTS EXP
+...
+     stmarker sum_case sum_size symmetric the_fun the_value total
+     transitive tri trichotomous unint wellfounded ~
+</pre>
+
+<p>This is the list of names that cannot be used to name free
+variables.  Instead, if this name occurs (after concrete syntax has
+been processed away), it will turn into a constant (or a pattern form,
+see below).  Thus, you cannot write <code>``EQC + 6``</code>
+(when <code>relationTheory</code> is loaded) because
+the <code>EQC</code> is the name of a constant, and it does not have a
+numeric type.  If a name appears in a binding position, it can be
+anything.  So you <em>can</em> write <code>``λEQC. EQC + 6``</code>.
+I wouldn’t recommend it, but it’s allowed.
+
+<p> The final section is a list of mappings from constant “names” (in
+the sense of the previous paragraph) to actual term values.  Not every
+such binding is listed.  In particular, if a string maps to one constant
+that has the same name, then this listing will not appear.  Each line
+is of the form
+<pre>
+    &lt;name&gt;        -&gt;  &lt;constant1&gt; ... &lt;constantn&gt;
+</pre>
+<p> For example, there is a line
+<pre>
+    **            -&gt;  EXP
+</pre>
+<p>meaning that the name <code>**</code> will map to the
+constant <code>EXP</code> (from <code>arithmeticTheory</code>).  Note
+that there is also a mapping from the string <code>EXP</code> to the
+same constant.  This mapping <em>isn’t</em> listed because there is
+less cause for confusion there.
+
+<p> Another sort of situation is illustrated with the line
+<pre>
+    ++            -&gt;  APPEND ++
+</pre>
+<p> which means that the name <code>++</code> can map to either the
+list constant <code>APPEND</code> or the constant <code>++</code>.
+(How do you find out which constant that last one is?
+Try <code>map&nbsp;dest_thy_const&nbsp;(decls&nbsp;"++")</code>.)
+
+<p> Finally, an overloading mapping may also take a string to a
+pattern, which is a λ-expression.  This is illustrated by the line
+for <code>&lt;&gt;</code>:
+<pre>
+    &lt;&gt;            -&gt;  (\(x :'a) (y :'a). bool$~ (min$= x y))
+</pre>
+<p>This means that the name <code>&lt;&gt;</code> maps to a pattern
+taking two arguments and turning them into a negated equality.
+
+</dd>
+<dt> <strong>
+    What’s the difference between <code>`...`</code>
+    and <code>``...``</code> — it seems like some
+functions want one and others the other, but there’s no obvious
+difference between the uses to me ...</strong></dt>
+
+<dd>
+<p>The <code>``...``</code> form is really the application of the
+function <code>Parse.Term</code> to the quotation <code>`...`</code>.
+A quotation is really just a string (except it also supports
+anti-quotations, see <a href="#Quotes">below</a>).  The reason it
+isn’t just a string is that SML strings require you to backslash quote
+backslashes, and to backslash quote newlines.  Both of these would
+interfere with HOL syntax (conjunction, disjunction, and lambda in our
+ASCII notation all involve backslashes; we often want to input goals
+over multiple lines).</p>
+
+<p>The <code>Term</code> function turns a quotation into a term.  It’s
+the system’s parser.</p>
+
+<p>If you write something like</p>
+<pre>
+         tactic_taking_argument ``my term``  THEN some_other_tactic
+</pre>
+<p>
+the <code>`my term`</code> quotation is parsed entirely independently
+of the goal.  This can be a pain.  Say, you’re proving something about
+numbers, and your goal includes variables <code>x</code>
+and <code>y</code>.  If your quotation is <code>`x ≠ y`</code>,
+you’d like those variables to have the type <code>:num</code>.  But they won’t
+because the parser’s default behaviour is to assign variables
+polymorphic types.</p>
+
+<p>But, the tactics that take quotations can arrange to call the
+parser in a special way, passing in information about the goal’s free
+variables, so that when you write</p>
+<pre>
+         Q.tactic_taking_argument `x ≠ y` THEN some_other_tactic
+</pre>
+<p>
+you get <code>x</code> and <code>y</code> parsing to have type <code>:num</code> instead of <code>:'a</code>.</p>
+
+<p> Most things that take quotations are tactics, but there are some
+other situations where it makes sense to be parsing the terms in
+augmented contexts.  Also, some functions
+(<i>e.g.</i>, <code>proofManagerLib.g</code>, <code>Q.store_thm</code>
+and <code>Q.prove</code>) don’t exploit a context, but do enforce a
+type on what is parsed (goals must be of type <code>:bool</code>).
+They also reduce screen-clutter. </p>
+</dd>
+
+<dt>
+<strong><code>$∉</code> isn’t recognised as the “not-an-element” term,
+but <code>$NOTIN</code> is. </strong>
+</dt>
+<dd>
+<p>The following session seems to exhibit a strange behaviour:</p>
+<pre>
+         - type_of ``$NOTIN``;
+         &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
+         &gt; val it = ``:α -&gt; (α -&gt; bool) -&gt; bool`` : hol_type
+
+         - type_of ``$∉``;
+         &gt; val it = ``:α`` : hol_type
+
+         - dest_term ``$∉``;
+         &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
+         &gt; val it = VAR ("∉", ``:'a``) : lambda
+</pre>
+<p>In fact, this is a known consequence of the design.
+The <code>$</code>-quoting of symbols turns them into things that
+aren’t treated specially by the surface syntax parsing (which handles
+infix operators <i>etc</i>).  Thus, when dollar-quoted,
+the <code>∉</code> gets passed through to the name resolution phase
+unchanged.  The name resolution phase then decides that <code>∉</code>
+is not a name it knows anything about, so it passes through that phase
+and becomes a variable.</p>
+
+<p> Name resolution doesn’t know anything about <code>∉</code> because
+the system is set up so that the surface syntax phase turns it into
+the name <code>NOTIN</code>.  You can see this by examining the
+output of <code>term_grammar()</code>:</p>
+
+<pre>
+         - term_grammar();
+         &gt; val it =
+               ...
+               (425) TM  ::=  ... | TM "∉" TM [NOTIN] | ...
+               ...
+</pre>
+<p> The presence of <code>NOTIN</code> in the square brackets
+indicates that this rule maps the form with <code>∉</code> into the
+name <code>NOTIN</code>.</p>
+
+<p> A similar mapping from surface syntax to name happens to turn
+<code>if-then-else</code> into <code>COND</code>.  If you
+write <code>$if</code>, you get a variable called <code>if</code>, not
+the constant <code>COND</code>.</p>
+
+</dd>
+
+<dt>
+<strong>How do I add a new symbol <code>&lt;-&gt;</code>?</strong>
+</dt>
+
+<dd>
+<p>The problem looks like this:</p>
+<pre>
+         - ``&lt;-&gt;``;
+         Don't expect to find a -&gt; in this position after a &lt;
+         on line 1318, characters 3-4 and at line 1318, character 2.
+         ! Uncaught exception:
+         ! HOL_ERR
+</pre>
+<p>
+The treatment of <code>-</code> changed to support unary minus, and so
+you get this odd splitting behaviour if you give the
+parser <code>&lt;-&gt;</code> when it’s “unprepared”.  You can
+“prepare” it by making calls to <code>set_fixity</code>
+and/or <code>overload_on</code>.</p>
+
+<p>Thus:</p>
+<pre>
+         val _ = set_fixity "&lt;-&gt;" (Infixl 500);
+
+         val _ = overload_on ("&lt;-&gt;", ``myconst``);
+</pre>
+<p>
+Either of these will do the trick; doing both (a common use-case) is
+also fine. </p>
+
+</dd>
+
+<dt>
+  <strong>
+    I defined an infix “and”. This works OK, but it seems to
+    not get the precedence I gave it. Is this an interaction
+    with <code>let-and</code> declaration syntax? I don’t
+    use <code>let-and</code> much, so is there a way to remove
+    the <code>let-and</code> treatment of “and” from the term
+    grammar?
+  </strong></dt>
+
+<dd>
+  <p>Yes, if the <code>let-and</code> syntax is enabled (as it is by
+    default), there will be a competing “and” infix at fixity level 9 in
+    the grammar.  (You can see this if you look at the output of a call
+    to <code>term_grammar()</code>.)  The way to get rid of it is with
+  </p>
+<pre>
+    remove_termtok {term_name = GrammarSpecials.and_special, tok = "and"};
+</pre>
+</dd>
+
+<dt><strong>Why can’t I write <code>``MAP ~ x``</code>?</strong>
+<dd> When you attempt this, you will get the error message
+<pre>
+    No rule for [~]
+</pre>
+     meaning that the parser wants to do a reduction involving just
+     the special symbol <code>~</code>, and it can’t find a rule that
+     allows this. The rule in the grammar is
+<pre>
+    TM ::= ~ TM
+</pre>
+<p>
+     <code>~</code> is treated specially, and not just as a function
+     that you’d apply to arguments normally, for two reasons:
+<p>
+<ul>
+<li> it can have precedence weaker than just function
+          application.  This means that when you write <code>~f
+          x</code>, this is parsed as <code>~(f x)</code>.
+<p>
+<li> it can group without needing extra parentheses, so you can
+          write <code>~~b</code>; you don’t need to write
+          <code>~(~b)</code>.
+</ul>
+<p>
+     To make <code>~</code> lose its special status, you should prefix
+     it with a <code>$</code>.  <code>``MAP $~ x``</code> will work in
+     the example, assuming that <code>x</code> has type <code>:bool
+     list</code>.
+<p>
+
+<dt><strong> I’d like to use MEM as an infix, not a Prefix.</strong></dt>
+<dd> <p> Use grammar manipulation functions such as
+     <code>set_fixity</code> to alter its parsing information.
+     These changes can be made to persist when the current
+     theory is exported.  For example:</p>
+<pre>
+   - load "listTheory";
+   - set_fixity "MEM" (Infix(NONASSOC,425));
+   &gt; val it = () : unit
+   - listTheory.MEM;
+   &gt; val it =
+           |- (!x. x MEM [] = F) /\ !x h t. x MEM h::t = (x = h) \/ x MEM t
+           : thm
+</pre>
+
+<dt><strong>How do I print a term with all the pretty-printing turned
+off?</strong></dt>
+<dd>
+    <p> To print a term <code>t</code> try </p>
+<pre>
+   print_term_by_grammar boolTheory.bool_grammars t
+</pre>
+    <p> This still retains pretty-printing for all of the constants in
+<code>boolTheory</code>, including <code>COND</code>.  If you really
+want to see even <code>/\</code>, <code>!</code> etc in their raw
+form, try</p>
+<pre>
+   print_term_by_grammar min_grammars t
+</pre>
+<p> For example: </p>
+<pre>
+   - print_term_by_grammar min_grammars  (concl AND_CLAUSES);
+   bool$!
+     (\t.
+        bool$/\ (bool$/\ bool$T t = t)
+          (bool$/\ (bool$/\ t bool$T = t)
+             (bool$/\ (bool$/\ bool$F t = bool$F)
+                (bool$/\ (bool$/\ t bool$F = bool$F) (bool$/\ t t = t)))))
+   &gt; val it = () : unit
+</pre><p> and </p>
+<pre>
+   - print_term_by_grammar min_grammars  (concl COND_CLAUSES);
+   bool$!
+     (\t1.
+        bool$!
+          (\t2.
+             bool$/\ (bool$COND bool$T t1 t2 = t1)
+               (bool$COND bool$F t1 t2 = t2)))
+   &gt; val it = () : unit
+</pre>
+<p>
+    Note that even in <code>min_grammars</code>, <code>=</code>,
+    <code>@</code> and <code>==&gt;</code> are treated
+    specially.</p></dd>
+
+
+
+
+
+
+
+<dt><strong>I want to have the parser transform the concrete syntax
+<code>``P[e/v]``</code> into <code>``(\v. P) e``</code>.</strong></dt>
+
+<dd>
+<p> First a warning: this is not likely to do  what you want. For example,
+you wouldn’t get any nice way of stating the Hoare assignment axiom.
+<pre>
+    { P[e/v] } v := e { P }
+</pre>
+In order to state the above, you’d need to actually write
+<pre>
+    { (P v)[e/v] } v := e { P v }
+</pre>
+<p> to make it clear that <code>v</code> might exist in the post-condition.</p>
+
+<p>And given this, you might as well write:
+</p>
+<pre>
+    { P e } v := e { P v }
+</pre>
+(The problem boils down to the fact that the literal HOL term
+<pre>
+    ``(\v. P) x``
+</pre>
+where P is a variable, reduces under beta-conversion to <code>P</code>.)<p>
+
+Incidentally, if this is the sort of thing you are doing, you might be
+interested in looking at Peter Homeier’s Sunrise system which
+implements a VCG in HOL.  This is available
+<a href="http://www.cis.upenn.edu/%7Ehol/sunrise/index.html">here</a>.
+<p>
+If you really do want to implement your parsing trick above (turning
+<code>``P[e/v]``</code> into <code>``(\v. P) e``</code>), you could do
+this by implementing your own parser.  Moreover, this might not be
+impossibly difficult, because the various phases of the existing
+parser can be called independently.  Here’s a sketch of what you’d
+need to do:
+
+</p><ol>
+<li>  add a rule to the grammar corresponding to your concrete syntax
+      above.  Map the syntax to some arbitrary identifier, "foo" say
+      (see the Reference entry for <code>add_rule</code>).  Note that
+      your particular choice of syntax, involving square brackets and
+      / will conflict with the use of these symbols in the theories of
+      lists and integers.  The best way around these problems is to
+      explicitly load these theories, remove their syntax (see
+      <code>remove_termtok</code>), and then install your own. This
+      will ensure that things won’t break if someone loads your
+      theory/library and then later loads lists and/or integers.
+
+</li><li> The first phase of your new parser will be to call
+    <code>Absyn</code>, which
+      will turn <code>P[e/v]</code> into abstract syntax corresponding
+      to
+        <blockquote><p><code>``foo P e v``</code></p></blockquote>
+      You then traverse the term looking for this pattern and turning
+      it into <code>(\v. P) e</code>.  You would also raise an error
+      at this stage if <code>v</code> wasn’t a variable.
+
+</li><li>  You would then pass your modified abstract syntax "term" onto
+      the next stages of the built-in parser (type-checking etc).  To
+      do this, you would use
+         <blockquote><pre>   Parse.absyn_to_term (term_grammar())
+         </pre></blockquote>
+</li></ol>
+
+I hope this makes sense.  The definition of the standard parser from
+Parse.sml is just
+
+<pre>   fun Term q = absyn_to_term (term_grammar()) (Absyn q)
+</pre>
+
+So all you are doing is inserting an extra phase into the process
+after calling <code>Absyn</code>, but before calling
+<code>absyn_to_term</code>.
+</dl>
+<h3 id= "Quotes">Quotes and Antiquotes</h3>
+
+<dl>
+<dt><strong>How do I antiquote types?</strong>
+
+<dd> Antiquoting types works as you would expect when parsing types,
+     so that it is fine to write:
+<pre>
+    - val ty = Type`:bool`;
+</pre>
+     and then
+<pre>
+    - Type`:num -&gt; ^ty`;
+</pre>
+     However, you may wish to also introduce type antiquotations into
+     term parses (as a type constraint on a variable for example).
+     The problem is that you can’t just write <code>^ty</code> in this
+     context, because the parsing function’s type insists that all
+     antiquotes be of type term.  You must use the
+     <code>ty_antiq</code> function, which magically makes a type
+     appear as a term:
+<pre>
+    - val antity = ty_antiq ty;
+    &gt; val antity = `(ty_antiq(`:bool`))` : term
+</pre>
+     Then:
+<pre>
+    - val x = Term `x:^antity`;
+</pre>
+     It’s quite easy to figure out when and why <code>ty_antiq</code>
+     is required if one understands the type of the parsing functions.
+     For example, <code>Term</code> and <code>(fn q =&gt; -- q --)</code>
+     have type
+<pre>
+    term frag list -&gt; term
+</pre>
+     While <code>Type</code> and <code>(fn q =&gt; == q ==)</code> have type
+<pre>
+    hol_type frag list -&gt; hol_type
+</pre>
+     The <code>frag list</code> refers to the fact that there is a
+     quotation being consumed.  A quotation is something that appears
+     between back-quotes.  A quotation consists of strings and
+     antiquotations.  A <code>term frag list</code> must have
+     antiquotations that are of type <code>term</code>.  A
+     <code>hol_type frag list</code> must have antiquotations that are
+     of type <code>hol_type</code>.  Thus, if you use
+     <code>Term</code> to parse a term, you can’t directly antiquote
+     in types, because this would violate the typing rules (you can
+     only antiquote in terms if you call <code>Term</code>, because it
+     requires a <code>term frag list</code>).
+<p>
+     So, in order to antiquote types into terms there is a bit of
+     magic called <code>ty_antiq</code>, which if you look at its type
+     (<code>hol_type -&gt; term</code>) turns a type into a term.  The
+     term formed is completely bogus in a logical sense (it’s actually
+     a variable with a special name and the given type), but can be
+     pushed into the parsing function <code>Term</code> so as to give
+     the effect of antiquoting a type.
+</p><p>
+     The function <code>Hol_datatype</code> takes a <code>hol_type
+     frag list</code>, so if you want to antiquote a type into the
+     quotations it takes, you will not need to use
+     <code>ty_antiq</code>.
+</dl>
+<hr>
+
+<h2 id= "Tactics">Tactics</h2>
+
+<dl>
+<dt>I want to just
+write <code>tac1&nbsp;THEN&nbsp;tac2</code> instead
+of <code>tac1&nbsp;THENL&nbsp;((fn&nbsp;<i>t</i>&nbsp;=&gt;&nbsp;[<i>t</i>,<i>t</i>])&nbsp;tac2)</code>
+but when I tried the version with <code>THEN</code> I got an error</dt>
+<dd>
+
+<p>
+The fact that the infixes <code>THEN</code>, <code>THEN1</code> (a version of <code>THENL</code>) are left-associative occasionally causes problems.
+(That there is a problem stems from the fact that the <code>THEN</code>/<code>THENL</code> combination is not associative.)
+You can usually get around this problem by bracketing your tactics differently.
+</p>
+
+<p>The typical problem is when you apply <code>tac1</code>, generating
+two goals.  You then apply <code>tac2</code> to one of these
+generating a further two goals.  You construct <code>tac3</code>
+and <code>tac4</code> to handle these.  Then you realise that</p>
+<pre>
+    tac2 THENL [tac3, tac4]
+</pre>
+<p>
+would correctly handle the second goal that was generated
+by <code>tac1</code> as well. So, you write</p>
+<pre>
+    tac1 THEN tac2 THENL [tac3, tac4]
+</pre>
+<p>
+and are annoyed when it fails with a <code>THENL</code> error.  The
+reason is that at the point when the <code>THENL</code> gets applied,
+there are actually four goals to work with, not just two.  The same
+sort of thing happens with <code>THEN1</code> instead
+of <code>THENL</code>.  You can solve the problem by writing</p>
+<pre>
+    tac1 THEN (tac2 THENL [tac3, tac4])
+</pre>
+<p>
+But your problem is superficially slightly different.
+You say that</p>
+<pre>
+    tac1 THENL (fn t =&gt; [t,t]) tac2
+</pre>
+<p>
+works, but</p>
+<pre>
+    tac1 THEN tac2
+</pre>
+<p>doesn’t.  This will be because <code>tac2</code> involves
+a <code>THENL</code> or a <code>THEN1</code>.  Say, it is
+<pre>
+    tac21 THEN1 tac22 THEN tac23
+</pre>
+<p>
+When inside a <code>THENL</code> branch, the two copies of this tactic
+do the right thing.  When you use <code>THEN</code>, you have</p>
+<pre>
+    tac1 THEN tac21 THEN1 tac22 THEN tac23
+</pre>
+<p>After <code>tac1</code> has been applied you have two goals.  After
+<code>tac21</code> you have four goals.  After <code>tac22</code>, you
+have three goals, the second of which you wanted to be solved
+by <code>tac22</code>.  From that point on, the tactics behave
+differently.  In particular, <code>tac23</code> may well do the wrong
+thing when applied to the goal that <code>tac22</code> was supposed
+to see but didn’t.</p>
+
+<p>The fix: write</p>
+<pre>
+    tac1 THEN (tac21 THEN1 tac22 THEN tac23)
+</pre>
+
+<dt><strong>What is the difference between simplifying with <code>p ⇔ q</code> and the two theorems <code>p ⇒ q</code> and <code>q ⇒ p</code>?</strong>
+<dd>
+<p>If the simplifier has been told to rewrite <code>p ⇔ q</code>, then if it sees occurrences of terms matching (the pattern) <code>p</code>, it will rewrite to <code>q</code>.  Thus, simplifying with the theorem
+
+<pre>
+    ⊢ (LENGTH l = 0)  ⇔  (l = [])
+</pre>
+<p>
+will find instances of <code>LENGTH l = 0</code> in the goal and rewrite those instances to <code>l = []</code>.
+
+<p>
+If you instead provide the theorem <code>⊢ (LENGTH l = 0) ⇒ (l = [])</code>, the simplifier will look for occurrences of <code>l</code> and attempt to rewrite them to <code>[]</code>, after first attempting to prove <code>LENGTH l = 0</code> as a side condition.
+An instance of <code>l</code> (a variable) is any term of list type, so this rewrite may be attempted a great many times.
+
+Similarly, if you give
+<pre>
+    ⊢ (l = [])  ⇒  (LENGTH l = 0)
+</pre>
+<p>
+the system will attempt to rewrite occurrences of <code>LENGTH l</code> to <code>0</code> by proving the side condition <code>l = []</code>.
+
+<p> In almost all circumstances, the iff-rewrite will be better, and trying to use the implications will just cause pain.
+</dd>
+
+</dl>
+<h3 id = "Assumptions">Manipulating Hypotheses</h3>
+<dl>
+<dt><strong>How do I put HOL in a state so that theorem assumptions are
+   printed?</strong>
+
+<dd> <p>Use</p>
+<pre>
+    show_assums := true;
+</pre>
+<p>
+     This flag, along with several others that control HOL behaviour can
+     be found in the <code>Globals</code> structure.
+<P>
+
+<dt><strong>How do I select assumptions in proof steps?</strong>
+<dd>
+<p> This has been a much-discussed topic by HOL users over the
+years. The info-hol archives have the details. The received opinion
+seemed to be that numbered assumptions were great at proof-creation
+time, but had potential for being a nightmare when existing proofs had
+to be changed.</p>
+
+<p>
+In any case, the assumptions have to be dealt with. My current favourite
+approach is to use "PAT_ASSUM", as follows:</p>
+<pre>
+    PAT_ASSUM tm MATCH_MP_TAC
+</pre> or
+<pre>
+    Q.PAT_ASSUM q MATCH_MP_TAC
+</PRE>
+
+<p>
+<code>PAT_ASSUM</code> is like <code>UNDISCH_THEN</code> in that it removes an assumption and makes it available as a theorem.
+However, it is better than <code>UNDISCH_THEN</code> since the quotation argument it takes is treated as a pattern to match against.
+The free variables of the goal to help constrain the match.
+It is often the case that very complex assumptions can be singled out by giving quite simple patterns to <code>PAT_ASSUM</code>.
+</p>
+
+<p>
+If you are unsatisfied with the way hypotheses are handled in proofs, numbered (or named) assumptions can be added in a number of ways.
+Perhaps
+the simplest is to write a version of <code>UNDISCH_THEN</code>, call it <code>UNDISCH_NTH</code> having type</p>
+<pre>
+    int -&gt; (thm -&gt; tactic) -&gt; tactic
+</pre>
+<p>
+<code>UNDISCH_NTH k ttac</code> grabs the <em>k</em>th assumption, converts it to a theorem <em>thk</em>, and applies <em>ttac</em> to <em>thk</em> to get the desired tactic.
+Here’s one way to define it:</p>
+<pre>
+    fun UNDISCH_NTH k ttac (g as (asl,_)) =
+        UNDISCH_THEN (Lib.el (k+1)(rev asl)) ttac g;
+</pre>
+</dl>
+
+
+
+<hr>
+
+<h2 id = "Locating">Locating Things</h2>
+
+<dl>
+<dt><strong> How do I get a datatype’s axiom after using
+             Hol_datatype?</strong>
+
+<dd>
+<p>Use</p>
+<pre>
+    TypeBase.axiom_of ``:mytypename``
+</pre>
+<p>
+Hopefully you won’t need to do this very much because many of the contexts in which you previously needed the axiom are dealt with more smoothly.
+For example, cases, induction, one-one and distinctness theorems are now proved automatically, and are available from the TypeBase.
+For example,
+<pre>
+    TypeBase.one_one_of ``:mytypename``
+</pre>
+<p>
+
+<dt><strong> Is there documentation on <code>computeLib.add_convs</code></strong>?
+<dd>
+<p>Best thing currently is to look at the implementation of
+<code>REDUCE_CONV</code>, which uses add_convs to deal with
+<code>DIV</code> and <code>MOD</code>: the invocation</p>
+<pre>
+    add_conv (M,n,c) compset
+</pre>
+<p>
+means (roughly):
+
+<blockquote> <p>
+when you see constant <em>M</em> applied to <em>n</em> subterms (i.e., <em>M</em> is fully applied to its arguments), apply conversion <em>c</em>
+</p></blockquote>
+
+<dt><strong> I can’t find help on <code>IN</code>. What theory defined
+is it defined in?</strong>
+<dd>
+<p><code>IN</code> is declared in <code>boolTheory</code>. <code>IN</code>
+is not an ML identifier, so we don’t index it. Perhaps we could index
+constants to their place of definition though.
+<p>
+You can always figure out the originating theory by
+<pre>
+   dest_thy_const : term -&gt; {Theory : string, Name : string, Ty : hol_type}
+</pre>
+<p>
+Using <code>decls name</code> will give you all the declared constants that
+have the given name.
+
+</dl>
+<hr>
+<h2 id = "Misc">Miscellaneous</h2>
+
+<dl>
+<dt><strong> How can I find out more information about a HOL_ERR
+exception?</strong>
+
+<dd> <p>If expression <code>M</code> is causing the grief, then write
+<pre>
+    (M) handle e =&gt; Raise e
+</pre>
+Often the parentheses around <code>M</code> will not be required.
+<p>
+It is sometimes convenient to use the <code>try</code> function as
+well. It takes a function and an argument, applies the function to the
+argument, and (on success) returns the result or (on failure) prints the
+exception. Note however, that <code>try f x</code> will not catch errors
+arising from the evaluations that lead to <code>f</code> or
+<code>x</code>.
+
+<dt><strong>How do I quit?  (The system hangs when I type <code>quit()</code>)</strong></dt>
+
+<dd><p>This arises because the quotation-filter, which handles the
+<code>``...``</code> and <code>``:...``</code> syntax, doesn’t
+understand the <code>quit</code> command&rsquo;s significance.  Rather than use <code>quit()</code>, end your interactive
+process by sending an <code>EOF</code> signal.  On Unix, type
+<code>Control-D</code>; on Windows, type <code>Control-Z</code>,
+followed by <code>RETURN</code>.</p></dd>
+
+<dt><strong>How do I create theories in more than one directory?</strong>
+<dd> <p>Both the <code>Holmake</code> program and the various <code>hol</code>
+scripts take <code>-I &lt;dir&gt;</code> flags to indicate that the
+system should look in the specified directories for object files
+(whether theories or libraries).  You can rebuild theories in later
+directories by calling <code>Holmake</code> with the appropriate
+<code>-I</code> flags.  Directories that should be examined for
+&ldquo;include files&rdquo; can also be specified with an
+<code>INCLUDES=</code> directive in a <code>Holmakefile</code>.
+See the DESCRIPTION manual for more on this.</p>
+
+<dt><strong>How do I specify a new theory&rsquo;s
+ancestors?</strong></dt>
+
+<dd><p> This is done implicitly in a script
+file, usually by implicitly referring to an ancestor theory&rsquo;s
+theorems in the course of proof.  If you want a theory to be an
+ancestor because you use an exported type (say <code>string</code>
+from <code>stringTheory</code>), but never refer to any of the
+theory&rsquo;s theorems, then you can explicitly refer to it.  The
+standard idiom we have adopted is to write</p>
+<pre>
+   local open stringTheory in end;
+</pre>
+
+<p>This makes the dependency on the ancestor theory explicit.  If you
+omit this, and have no other ML-level dependency in your script file,
+then <code>Holmake</code> will fail to build your script, probably
+failing with a parse exception when it encounters a type name such as
+<code>string</code> that it doesn&rsquo;t think is in scope.</p></dd>
+
+<dt><strong>How can I print my <code>*HOL*</code> buffer (in emacs), complete with Unicode characters?</strong></dt>
+<dd><p> The following elisp code is (will be) part of the standard <code>hol-mode</code>.
+<pre>
+   (defcustom hol-unicode-print-font-filename
+     "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf"
+     "File name of font to use when printing HOL output to a PDF file."
+     :group 'hol
+     :type '(file :must-match t))
+
+   (defun hol-region-to-unicode-pdf (filename beg end)
+        "Print region to FILE as a PDF, handling Unicode characters."
+        (interactive "FFile to write to: \nr")
+        (if (and transient-mark-mode (not mark-active))
+            (error "No active region"))
+        (let* ((temp-ps-file (make-temp-file "annot" nil ".ps"))
+               (lpr-switches
+                (list "-font" hol-unicode-print-font-filename
+                      "-out" temp-ps-file))
+               (lpr-add-switches nil)
+               (lpr-command "uniprint"))
+          (lpr-region beg end)
+          (shell-command (concat "ps2pdf " temp-ps-file " " filename))
+          (delete-file temp-ps-file)))
+</pre>
+<p> This relies on having the <code>uniprint</code> and <code>ps2pdf</code> tools installed.
+On Debian-based systems such as Ubuntu, the former is part of the <code>yudit</code> package, which can be installed with a command like
+<pre>
+   sudo apt-get install yudit
+</pre>
+<p>The code also relies on a hard-coded path pointing to a font file (the <code>hol-unicode-print-font-filename</code>).
+This can be adjusted using <code>M-x&nbsp;customize</code> and navigating to the <code>hol</code> group (see the <code>External</code> sub-category).
+
+<p> To use this code, select a region of an emacs buffer, and type
+<pre>
+   M-x hol-region-to-unicode-pdf
+</pre>
+<p> The command will prompt for a file to save to, and then write a PDF file to that location.
+
+<p> Thanks to Dan Synek for the problem, and subsequent inspiration for the code above.
+</dd>
+
+
+<dt><strong> How to rewrite with a theorem the other way round?</strong>
+<dd> <p>Use <code>GSYM</code>.
+
+<dt><strong> How do I prove strings equal or inequal?</strong>
+
+<dd> <p> To achieve <em>exactly</em> this objective, use <code>stringLib.string_EQ_CONV</code>, which reduces equalities over string literals to either <code>T</code> or <code>F</code>.
+For example, to demonstrate that <code>``(if "foo" = "bar" then 3 else 1) = 1``</code>, you could write:</p>
+<pre>
+   - val t = ``(if "foo" = "bar" then 3 else 1)``;
+   &gt; val t = ``(if "foo" = "bar" then 3 else 1)`` : Term.term
+   - (DEPTH_CONV stringLib.string_EQ_CONV THENC REWRITE_CONV []) t;
+   &gt; val it = |- (if "foo" = "bar" then 3 else 1) = 1 : Thm.thm
+</pre>
+<p>Note though that the stateful simplification set behind <code>SRW_TAC</code> and <code>srw_ss()</code> will automatically handle equalities of this form, so that <code>SIMP_CONV&nbsp;(srw_ss())&nbsp;[]</code> would serve just as well above.</p>
