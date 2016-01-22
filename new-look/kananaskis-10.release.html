@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="style.css">
+  <title>Latest</title>
+</head>
+<body>
+<a class="toprightcorner" href="https://github.com/HOL-Theorem-Prover/HOL"><img src="images/on-github-70.png" style="opacity:0.6;" alt="on github"/></a>
+
+<div id="wrapper">
+
+<div class="textbox">
+<h1>Release notes for HOL4, Kananaskis-10</h1>
+
+<p>We are pleased to announce the Kananaskis-10 release of HOL 4.</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><a href="#new-features">New features</a></li>
+<li><a href="#bugs-fixed">Bugs fixed</a></li>
+<li><a href="#new-theories">New theories</a></li>
+<li><a href="#new-tools">New tools</a></li>
+<li><a href="#examples">Examples</a></li>
+<li><a href="#incompatibilities">Incompatibilities</a></li>
+</ul>
+<h2 id="new-features">New features:</h2>
+<ul>
+<li><p>Our <em>TUTORIAL</em> and <em>LOGIC</em> manuals are now available in Italian translations. Work on the <em>DESCRIPTION</em> manual is also far advanced. Many, many thanks to Domenico Masini for doing this work.</p></li>
+<li><p>The abbreviation tactics (<code>Q.ABBREV_TAC</code> and others) now handle abstractions as abbreviations better. In particular, if one sets up an abstraction as an abbreviation (<em>e.g.</em>, <code>Q.ABBREV_TAC `f = (λn. 2 * n + 10)`</code>), then the simplifier will find and replace instances not just of the abstraction itself (the old behaviour), but also instances of applications of the abstraction to arguments. For example, given the abbreviation for <code>f</code> above, the simplifier would turn a goal such as <code>2 * (z + 1) + 10 &lt; 100</code> into <code>f (z + 1) &lt; 100</code>.</p></li>
+<li><p>The <code>MAX_SET</code> function in <code>pred_setTheory</code> is now defined (to have value <code>0</code>) on the empty set.</p></li>
+<li><p>There is an alternative syntax for specifying datatypes. Instead of the <code>Hol_datatype</code> entry-point, one can also use <code>Datatype</code>, which takes a slightly different syntax, inspired by Haskell. This does away with the use of the (somewhat confusing) <code>of</code> and <code>=&gt;</code> tokens.</p>
+<p>For example, one would define a simple type of binary tree with</p>
+<pre><code>   Datatype`tree = Lf num | Node tree tree`</code></pre>
+<p>If the arguments to a constructor are not just simple types (expressible as single tokens), then they need to be enclosed in parentheses. For example:</p>
+<pre><code>   Datatype`mytype = Constr mytype (&#39;a -&gt; bool) | BaseCase`</code></pre>
+<p>The <code>Hol_datatype</code> entry-point can continue to be used. However, the LaTeX output of <code>EmitTeX</code> uses the new format, and the various <code>DATATYPE</code> constructors used in the <code>EmitML</code> module take quotations in the new format, rather than the old.</p></li>
+<li><p>The arithmetic decision procedure for natural numbers will now prove slightly more goals by doing case-splits on boolean sub-terms that are not in the Presburger subset. This means that goals such as</p>
+<pre><code>   0 &lt; y ⇒ x &lt; x + (if P then y else y + 1)</code></pre>
+<p>are now provable.</p></li>
+<li><p>The Vim mode for HOL now supports multiple simultaneous sessions. See its <code>README</code> for details.</p></li>
+<li><p>Many of the standard libraries now provide an <code>add_X_compset : compset -&gt; unit</code> (<em>e.g.</em>, <code>add_pred_set_compset</code>) to ease building of custom call-by-name evaluation conversions that don't, like <code>EVAL</code>, include everything in <code>the_compset()</code>.</p></li>
+<li><p><code>Holmake</code> has a new function, <code>wildcard</code> which allows expansion of “glob” patterns (<em>e.g.</em>, <code>*Script.sml</code>) into lists of matching filenames.</p></li>
+<li><p>The standard pretty-printer now annotates constants with their types as well as variables. (Note that these annotations are typically only visible by using mouse-over tooltips in the emacs mode.) The annotation also includes the constant’s real name, in the form <code>thy$name</code>, making overloads easier to tell apart.</p>
+<p>For example, this means that it is possible to have integers, reals and numbers all in scope, to write something like <code>MAP (+)</code>, and to then see what constants are involved by using the mouse. (See <a href="https://github.com/HOL-Theorem-Prover/HOL/issues/39">Github issue #39</a>.)</p></li>
+<li><p>Unicode is handled slightly better on Windows systems. By default, the pretty-printer avoids printing with Unicode characters there, but can still parse Unicode input successfully. This is important because many of the examples distributed with HOL use Unicode characters in their scripts (nothing in <code>src/</code> does). This behaviour can be adjusted by toggling the <code>PP.avoid_unicode</code> trace. On Windows this trace is initialised to true; elsewhere it is initialised to false.</p></li>
+</ul>
+<h2 id="bugs-fixed">Bugs fixed:</h2>
+<ul>
+<li><p><code>Holmake</code> was unnecessarily quiet when it compiled certain SML files.</p></li>
+<li><p>The “munging” code for turning HOL into LaTeX now does a better job of rendering data type definition theorems. (This change is independent of the new underlying syntax described earlier.)</p></li>
+<li><p>Pretty-printers added to the system with <code>add_user_printer</code> weren’t having terms-to-be-printed tested against the supplied patterns (except by the gross approximation provided by the built-in term-net structure). Thanks to Ramana Kumar for the <a href="https://github.com/mn200/HOL/issues/172">bug report</a>.</p></li>
+<li><p>Character literals weren’t pretty-printing to LaTeX. We also improved the handling of string literals. Thanks to Ramana Kumar for the <a href="http://github.com/HOL-Theorem-Prover/HOL/issues/190">bug reports</a>.</p></li>
+<li><p>Piotr Trojanek found and fixed many documentation bugs in our various manuals.</p></li>
+<li><p>The <code>remove_rules_for_term</code> and <code>temp_remove_rules_for_term</code> functions tended to remove rules for binders as well as the desired rules.</p></li>
+</ul>
+<h2 id="new-theories">New theories:</h2>
+<ul>
+<li><p>A theory of “list ranges” (<code>listRangeTheory</code>). A range is a term written <code>[ lo ..&lt; hi ]</code>, meaning the list consisting of the (natural) numbers from <code>lo</code> up to, but not including, <code>hi</code>. The theory comes with some basic and obvious theorems, such as</p>
+<pre><code>   MEM i [lo ..&lt; hi] ⇔ lo ≤ i ∧ i &lt; hi</code></pre>
+<p>and</p>
+<pre><code>   LENGTH [lo ..&lt; hi] = hi - lo</code></pre></li>
+<li><p>A new development in <code>src/floating-point</code>, which is a reworking of the theories in <code>src/float</code>. Key differences are listed below.</p>
+<ol type="1">
+<li><p>The data representation:</p>
+<ul>
+<li><p>The old <code>ieeeTheory</code> uses a pair <code>``:num # num``</code> to represent the exponent and fraction widths and a triple <code>``:num # num # num``</code> to represent sign, exponent and fraction values.</p></li>
+<li><p>The new <code>binary_ieeeTheory</code> makes use of HOL records and bit-vectors. The floating-point type <code>``:(α, β) float``</code> has values of the form</p>
+<pre><code>  &lt;| Sign : word1; Exponent : β word; Significand : α word |&gt;</code></pre>
+<p>The fraction and exponent widths are now constrained by the type, which facilitates type-checking and avoids having to pass size arguments to operations.</p></li>
+</ul></li>
+<li><p>The new development now supports standard bit-vector encoding schemes. The theory <code>machine_ieeeTheory</code> defines floating-point operations over 16-bit, 32-bit and 64-bit values. For example, the 16-bit floating point operations are defined by mapping to and from the type <code>:(10, 5) float</code>, which is given the type abbreviation <code>:half</code>. Theories for other sizes can be built using <code>machine_ieeeLib.mk_fp_encoding</code>.</p></li>
+<li><p>There is now syntax support via the structures <code>binary_ieeeSyntax</code> and <code>machine_ieeeSyntax</code>.</p></li>
+<li><p>Ground term evaluation is now supported for most operations. This can be enabled by loading <code>binary_ieeeLib</code>.</p></li>
+<li><p>The full development does not build under Moscow ML 2.01, as it makes use of the <code>IEEEReal</code> and <code>PackRealBig</code> basis structures.</p></li>
+</ol></li>
+<li><p>A theory of “simple Patricia trees” (<code>sptreeTheory</code>). This theory implements a type <code>α sptree</code>, which is a finite map from natural numbers to values of type <code>α</code>. (This type is not really a Patricia tree at all; for those, see the other theories in <code>src/patricia</code>.) Values of type <code>α sptree</code> feature efficient lookup, insertion, deletion and union (efficient when evaluated with <code>EVAL</code> or simplified). Though there is a efficient (linear-time) fold operation, it does not iterate over the key-value pairs in key-order.</p></li>
+</ul>
+<h2 id="new-tools">New tools:</h2>
+<ul>
+<li>New libraries <code>enumLib</code> and <code>fmapalLib</code> provide representations in <code>pred_set</code> and finite map types of enumerated constant sets and maps as minimum-depth binary search trees. A suitable total order on the set elements (map arguments) must be supplied, with a conversion for evaluating it; assistance with this is provided. The primary objective has been an <code>IN_CONV</code>, and a similar <code>FAPPLY_CONV</code>, operating with a logarithmic number of comparisons, but additional operations such as <code>UNION_CONV</code>, <code>INTER_CONV</code>, and <code>FUPDATE_CONV</code> are included and have reasonable asymptotic running times. A conversion <code>TC_CONV</code> implements Warshall’s algorithm for transitive closure of a binary relation (treated as a set-valued finite map).</li>
+</ul>
+<h2 id="examples">Examples:</h2>
+<ul>
+<li>The <code>miniml</code> example has been removed. This work has evolved into the <a href="http://cakeml.org">CakeML project</a>. That project’s <code>git</code> repository contains all of the material that was once in the HOL distribution, and, given its continuing evolution, much more besides.</li>
+</ul>
+<h2 id="incompatibilities">Incompatibilities:</h2>
+<ul>
+<li><p>In <code>relationTheory</code>, the theorems <code>TC_CASES1</code> and <code>TC_CASES2</code> have been renamed to <code>TC_CASES1_E</code> and <code>TC_CASES2_E</code> respectively, where the <code>_E</code> suffix indicates that these are elimination rules. In other words, these theorems are of the form <code>TC R x y ⇒ ...</code>. This has been done so that new equivalences can be introduced under the old names. For example, <code>TC_CASES1</code> now states</p>
+<pre><code>   TC R x z ⇔ R x z ∨ ∃y. R x y ∧ TC R y z</code></pre>
+<p>This change makes the naming consistent with similar theorems <code>RTC_CASES1</code> and <code>RTC_CASES2</code> about the reflexive and transitive closure.</p></li>
+<li><p>A theorem stating</p>
+<pre><code>   ⊢ ¬(0 &lt; n) ⇔ (n = 0)</code></pre>
+<p>(for <code>n</code> a natural number) has been added to the automatic rewrites used by <code>SRW_TAC</code> and <code>srw_ss()</code>.</p></li>
+<li><p>Some new automatic rewrites from <code>pred_setTheory</code>:</p>
+<ul>
+<li><code>⊢ DISJOINT (x INSERT s) t ⇔ DISJOINT s t ∧ x ∉ t</code> (and the version of this with <code>DISJOINT s (x INSERT t)</code> as the l.h.s.)</li>
+<li><code>⊢ ∀f s. INJ f ∅ s</code></li>
+<li><code>⊢ ∀f s. INJ f s ∅ ⇔ (s = ∅)</code></li>
+</ul></li>
+<li><p>The <code>add_binder</code> and <code>temp_add_binder</code> entry-points in <code>Parse</code> have been removed. They are subsumed by <code>set_fixity &lt;name&gt; Binder</code> and <code>temp_set_fixity &lt;name&gt; Binder</code> respectively. In addition, <code>add_binder</code> was broken, creating an unloadable theory on export.</p></li>
+<li><p>There is a new automatic rewrite from <code>oneTheory</code>:</p>
+<pre><code>   ⊢ ∀v:one. v = ()</code></pre>
+<p>stating that every value in the type <code>one</code> (analogue of SML’s <code>unit</code> type) is equal to the designated value <code>()</code>.</p></li>
+<li><p>Constants that print to the TeX backend as symbolic identifiers (<em>e.g.</em>, non-alphanumeric tokens like <code>+</code>, <code>**</code>) are now annotated there with the <code>\HOLSymConst</code> command rather than <code>\HOLConst</code>. The default behaviour of <code>\HOLSymConst</code> (defined in <code>holtexbasic.sty</code>) is to do nothing.</p></li>
+<li>If
+<ul>
+<li><code>Holmake</code> is called in a directory with a <code>Holmakefile</code>, <strong>and</strong></li>
+<li>that <code>Holmakefile</code> has at least one explicit target, <strong>and</strong></li>
+<li><code>Holmake</code> is called with no command-line targets,</li>
+</ul>
+<p><strong>then:</strong> <code>Holmake</code> will attempt to build <em>only</em> the first target in that <code>Holmakefile</code>. We believe that this will cause problems in only a relatively small number of scenarios. The advantage of this change is that it makes <code>Holmake</code> easier to control from a <code>Holmakefile</code>. It also makes <code>Holmake</code>’s behaviour rather more like that of normal <code>make</code>.</p>
+<p>One scenario, among others, where this change may cause problems is where Poly/ML users have set up a rule to create a HOL heap. The fix is to prepend something like the following to your <code>Holmakefile</code>:</p>
+<pre><code>   THYFILES = $(patsubst %Script.sml,%Theory.uo,$(wildcard *.sml))
+   TARGETS = $(patsubst %.sml,%.uo,$(THYFILES))
+
+   all: $(TARGETS) ...
+   .PHONY: all</code></pre>
+<p>so that <code>all</code> becomes the first target of the <code>Holmakefile</code>. Any previous targets, such as HOL heaps, should be inserted where the <code>...</code> occurs above.</p>
+<p>Note that <code>Holmakefile</code>s that only include variable declarations such as <code>OPTIONS = ...</code>, <code>INCLUDES = ...</code>, and <code>HOLHEAP = ...</code> don’t have any targets at all, so that <code>Holmake</code>’s behaviour in such files’ directories will not change.</p></li>
+</ul>
+
+</div>
+
+
+<div class="footer">
+<a href="http://validator.w3.org/check?uri=http://hol-theorem-prover.org/new-look/faq.html" class="footnotelink">Valid HTML</a>&nbsp;&nbsp;&nbsp;
+<a href="http://jigsaw.w3.org/css-validator/validator?uri=http://hol-theorem-prover.org/new-look/style.css" class="footnotelink">Valid CSS</a>&nbsp;&nbsp;&nbsp;
+<span class="mobile_version">mobile version</span>
+</div>
+
+</div>
+
+</body>
+</html>
