@@ -6,7 +6,7 @@
   <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="style.css">
-  <title>Windows Installer for HOL</title>
+  <title>HOL on Windows</title>
 </head>
 <body>
 <a class="toprightcorner" href="https://github.com/HOL-Theorem-Prover/HOL"><img src="images/on-github-70.png" style="opacity:0.6;" alt="on github"/></a>
@@ -15,70 +15,62 @@
 
 <div class="textbox">
 
-<h1>Windows Installer for HOL</h1>
+<h1>Running HOL on Windows</h1>
 
   <h2>System requirements:</h2>
 
-  <p> Windows&nbsp;NT, Windows&nbsp;2000, Windows&nbsp;XP, Windows&nbsp;Vista, or Windows&nbsp;7.
-    We assume Windows&nbsp;8 will work as well.
-    In addition to the space required to store the installer executable (35MB), you will need approximately 300 MB of disk-space.
-  </p>
+  <dl>
+    <dt><strong>Unix on Windows</strong></dt>
+    <dd>
+      <p> You must have either </p>
+      <ul><li>
+          a recent version of <a href="https://www.cygwin.com">Cygwin</a> installed (which probably implies you need to be running Windows&nbsp;Vista or later);  <strong>or</strong>
+        <li>
+          the Microsoft Linux subsystem for Windows&nbsp;10 (see, for example, <a href="https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux">this Wikipedia page</a> for more on this subsystem)
+    </dd>
 
-  <h2>Using the installer:</h2>
-      <ul>
-        <li> You <strong>must</strong> have MoscowML&nbsp;2.01 installed before you running the installer.
-            In particular, this means that the environment variables <code>PATH</code> and <code>MOSMLLIB</code> must be correctly set.
-            Further, these variables must be Windows environment variables (set through the Control Panel).
-            It is not enough to have variables set just for Cygwin shells.
+    <dt><strong>Poly/ML</strong> </dt>
+    <dd>
+    <p> You must also have <a href="http://polyml.org">Poly/ML</a>.
+      This must have been installed from sources, and within a Unix shell so that <code>poly</code> believes itself to be running on Unix rather than on Windows.
+      If you can type <code>poly</code> at a shell-prompt and have it start up the Poly/ML read-eval-print loop, you are good to go.
+</dl>
 
-	    <p> The <a href="http://www.itu.dk/~sestoft/mosml/mosml-2.01-1.exe">self-extracting installer</a> for Moscow&nbsp;ML will normally set environment variables correctly as part of its installation process.
+  <h2>Installing HOL:</h2>
 
-            <p> For Kananaskis-10 and earlier, the Moscow&nbsp;ML installer for 2.10 is not compatible with the HOL4 installer; you must use the older installer for Moscow&nbsp;2.01.
+  <p>Follow the standard instructions (see the Tutorial for details).
+    Namely, in the <code>HOL</code> directory:
+    <pre>
+           $ poly < tools/smart-configure.sml
+           $ bin/build
+    </pre>
 
-        <li> When Moscow ML is installed, you can install HOL by
-            running the installer executable.  It will prompt you for
-            the directory to install in.
+  <p> The output of the configure script should indicate that the system believes itself to be on a Unix system.
 
-        <li> Note that both the Moscow&nbsp;ML and HOL installers require the user to have administrative privileges.
-
-        <li> At the very end of the process, a DOS-like window will
-            appear, and the system will attempt to configure itself.
-            This process also involves the creation of many help
-            files, and can take a little while.  If this window
-            disappears almost instantly or with an error message, you
-            probably haven’t installed Moscow ML correctly.  (See
-	    <a href="win-details.html">here</a>
-	    for more details.)
-      </ul>
-
-  <h2>Acknowledgements:</h2>
-  <p> The self-installing executable was created with the freely
-  available, and highly recommended, <a
-  href="http://www.jrsoftware.org/isinfo.php">InnoSetup</a> tool.
-  </p>
 
 <h2>Unicode, UTF-8 and HOL4 on Windows</h2>
 
-<p> A new trace variable <code>PP.avoid_unicode</code> is set to true (strictly, <code>1</code>) on Windows by default.
-This prevents the appearance of “gibberish” in the standard “MS-DOS” <code>command.com</code> shell.
-If you are running within <code>emacs</code> or some other setting where UTF-8 characters will work, you can set this trace variable to <code>0</code>:
+<p> The trace variable <code>PP.avoid_unicode</code> can be set to true
+to prevent the appearance of “gibberish” in the standard “MS-DOS” <code>command.com</code> shell.
+If you are running within <code>emacs</code> or some other setting where UTF-8 characters will work, this trace variable should be set to <code>0</code>:
 <pre>
        set_trace "PP.avoid_unicode" 0;
 </pre>
 <p> to get back the nice Unicode output.
 Note that Unicode input in UTF-8 will continue to work regardless.
+Moreover, as the installation instructions above should make HOL believe it is on a Unix system, this variable will be set to <code>0</code> by default.
 (See also <a href="faq.html#turn-off-unicode">this FAQ question</a>.)
-
-<h2>Use of minisat SAT solver</h2>
-
-<p> On some Windows systems, the automatic use of the <code>minisat</code> solver causes serious slowdowns as <code>hol</code> starts up.
-For this reason, it has been disabled by default in the self-installing executable.
-It can be re-enabled by renaming the file <code>src/HolSat/sat_solvers/minisat/DELTHISminisat.exe</code> to <code>src/HolSat/sat_solvers/minisat/minisat.exe</code>.
 
 <hr>
 
-<p><strong><a href="http://sourceforge.net/projects/hol/files/hol/kananaskis-10/kananaskis-10-install.exe/download">Download the installer</a></strong></p>
+<h2>Using Moscow ML</h2>
 
+<p>It is possible to build HOL4 using Moscow&nbsp;ML in a standard Windows console setting (<em>i.e.</em>, without emulating Unix).
+This is <em>not</em> recommended: Moscow&nbsp;ML runs many times slower than Poly/ML, and lacks libraries that make the Poly/ML version of HOL4 much more fully-featured (<em>e.g.</em>, Moscow&nbsp;ML HOL does not support concurrent builds with <code>Holmake</code>).
+
+<p>Using Moscow&nbsp;ML may be required if one cannot use Cygwin or the Windows Linux subsystem.
+
+<hr>
 </div>
 
 
