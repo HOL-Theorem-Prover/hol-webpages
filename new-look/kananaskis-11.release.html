@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="style.css">
+  <title>Release notes for HOL4, Kananaskis-11</title>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a class="toprightcorner" href="https://github.com/HOL-Theorem-Prover/HOL"><img src="images/on-github-70.png" style="opacity:0.6;" alt="on github"/></a>
+
+<div id="wrapper">
+<div class="textbox">
+<h1 class="title">Release notes for HOL4, Kananaskis-11</h1>
+<!-- search and replace ?????? strings corresponding to release name -->
+<!-- indent code within bulleted lists to column 11 -->
+<p>(Released: 3 March 2017)</p>
+<p>We are pleased to announce the Kananaskis-11 release of HOL 4.</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><a href="#new-features">New features</a></li>
+<li><a href="#bugs-fixed">Bugs fixed</a></li>
+<li><a href="#new-theories">New theories</a></li>
+<li><a href="#new-tools">New tools</a></li>
+<li><a href="#examples">Examples</a></li>
+<li><a href="#incompatibilities">Incompatibilities</a></li>
+</ul>
+<h2 id="new-features">New features:</h2>
+<ul>
+<li><p>We have ported HOL Light’s <code>PAT_CONV</code> and <code>PATH_CONV</code> “conversionals”, providing nice machinery for applying conversions to specific sub-terms.</p></li>
+<li><p>The tactic <code>PAT_ABBREV_TAC</code> (also available in the <code>Q</code> module) can now use patterns that are more polymorphic than the sub-term in the goal that is ultimately matched. (<a href="http://github.com/HOL-Theorem-Prover/HOL/issues/252">Github issue</a>)</p></li>
+<li><p>We have implemented the rule for constant specification described by Rob Arthan in <a href="http://www.lemma-one.com/papers/hcddr.pdf">HOL Constant Definition Done Right</a>. The new primitive <code>gen_prim_specification</code> in the kernel is used to implement the new rule, <code>gen_new_specification</code>, and is also used to re-implement <code>new_definition</code> and <code>new_specification</code>. We removed <code>prim_constant_definition</code> from the kernel, but kept <code>prim_specification</code> because the new derivation of <code>new_specification</code> uses pairs. (<a href="https://github.com/HOL-Theorem-Prover/HOL/pull/201">Github pull-req</a>)</p></li>
+<li><p>Various commands for moving over and selecting HOL tactics in the emacs mode have been improved. We have also added a new command <code>hol-find-eval-next-tactic</code> (bound to <code>M-h M-e</code> by default), which selects and highlights the next tactic in the source text, and then applies it to the current goal in the <code>*HOL*</code> buffer. This shortcuts the current idiom, which requires the tactic to be highlighted manually, and then applied <em>via</em> <code>M-h e</code>. (The advantage of the latter is that one can select specific tactic sequences to be applied all at once.)</p></li>
+<li><p>Record updates can now be more polymorphic. For example, if one defined</p>
+<pre><code>   Datatype`rcd = &lt;| myset : α -&gt; bool ; size : num |&gt;`</code></pre>
+<p>one used to get back an update constant for the <code>myset</code> field:</p>
+<pre><code>   rcd_myset_fupd : ((α -&gt; bool) -&gt; (α -&gt; bool)) -&gt; α rcd -&gt; α rcd</code></pre>
+<p>Now, the same constant is</p>
+<pre><code>   rcd_myset_fupd : ((α -&gt; bool) -&gt; (β -&gt; bool)) -&gt; α rcd -&gt; β rcd</code></pre>
+<p>One might use this to define</p>
+<pre><code>   Define`img (f:α-&gt;β) r = r with myset updated_by IMAGE f`</code></pre>
+<p>This definition would have previously been rejected. (<a href="https://github.com/HOL-Theorem-Prover/HOL/issues/173">Github issue</a>)</p>
+<p>This change can cause <strong>incompatibilities</strong>. If one wants the old behaviour, it should suffice to overload the record update syntax to use a more specific type. For example:</p>
+<pre><code>   val _ = gen_remove_ovl_mapping
+             (GrammarSpecials.recfupd_special ^ &quot;myset&quot;)
+             ``λf x. rcd_myset_fupd f x``
+
+   val _ = Parse.add_record_fupdate(
+         &quot;myset&quot;, Term.inst[beta |-&gt; alpha] ``rcd_myset_fupd``);</code></pre></li>
+<li><p>PolyML “heaps” are now implemented with its <code>SaveState</code> technology, used hierarchically. This should make heaps smaller as they now only save deltas over the last used heap.</p></li>
+</ul>
+<h2 id="bugs-fixed">Bugs fixed:</h2>
+<ul>
+<li><p>An embarrassing infinite loop bug in the integration of the integer decision procedures (the Omega test, Cooper’s algorithm) into the simplifier was fixed.</p></li>
+<li><p>Theorems can now have names that are the same as SML constructor names (<em>e.g.</em>, <code>Empty</code>). (<a href="http://github.com/HOL-Theorem-Prover/HOL/issues/225">Github issue</a>)</p></li>
+<li><p><code>Holmake</code> will now follow <code>INCLUDES</code> specifications from <code>Holmakefiles</code> when given “phony” targets to build on the command-line. (A typical phony target is <code>all</code>.) As in the past, it will still act only locally if given just a clean target (<code>clean</code>, <code>cleanDeps</code> or <code>cleanAll</code>). To clean recursively, you must also pass the <code>-r</code> flag to <code>Holmake</code>. (<a href="http://github.com/HOL-Theorem-Prover/HOL/issues/145">Github issue</a>)</p></li>
+<li><p>We fixed three problems with <code>Datatype</code>. Thanks to Ramana Kumar for the reports. <a href="http://github.com/HOL-Theorem-Prover/HOL/issues/257">First</a>, <code>Datatype</code> will no longer create a recursive type if the recursive instance is qualified with a theory name other than the current one. In other words,</p>
+<pre><code>    Datatype`num = C1 num$num | C2`</code></pre>
+<p>won’t create a recursive type (assuming this is not called in theory <code>num</code>). (<code>Hol_datatype</code> had the same problem.)</p>
+<p><a href="http://github.com/HOL-Theorem-Prover/HOL/issues/258">Second</a>, <code>Datatype</code> will handle antiquotations in its input properly (<code>Hol_datatype</code> already did).</p>
+<p><a href="http://github.com/HOL-Theorem-Prover/HOL/issues/260">Third</a>, <code>Datatype</code> (and <code>Hol_datatype</code>) allows the definition of identical record types in different theories.</p></li>
+<li><p>Attempts to define constants or types with invalid names are now caught much earlier. An invalid name is one that contains “non-graphical” characters (as <em>per</em> SML’s <code>Char.isGraph</code>) or parentheses. This means that Unicode cannot be used in the kernel’s name for a constant, but certainly doesn’t prevent Unicode being used in overloaded notation. Functions such as <code>overload_on</code>, <code>add_rule</code> and <code>set_mapped_fixity</code> can still be used to create pretty notation with as many Unicode characters included as desired.</p></li>
+<li><p>Loading theories under Poly/ML would fail unnecessarily if the current directory was unwritable. Working in such directories will likely cause problems when and if an <code>export_theory</code> call is made, so there is a warning emitted in this situation, but the <code>load</code> now succeeds. Thanks to Narges Khakpour for the bug report.</p></li>
+<li><p>The function <code>thm_to_string</code> was creating ugly strings full of special codes (encoding type information) rather than using the “raw” backend.</p></li>
+<li><p>Bare record operations (<em>e.g.</em>, <code>rcdtype_field</code>, the function that accesses <code>field</code> of type <code>rcdtype</code>) would occasionally pretty-print badly. (<a href="http://github.com/HOL-Theorem-Prover/HOL/issues/150">Github issue</a>)</p></li>
+</ul>
+<h2 id="new-theories">New theories:</h2>
+<h2 id="new-tools">New tools:</h2>
+<ul>
+<li><p><strong>Holyhammer:</strong> A method for automatically finding relevant theorems for Metis. Given a term, the procedure selects a large number of lemmas through different predictors such as KNN or Mepo. These lemmas are given to the external provers E-prover (1.9), Vampire (2.6) or Z3 (4.0). The necessary lemmas in the provers' proofs are then returned to the user. Modifications to the kernels to track dependencies between theorems allow predictors to learn from the induced relation improving future predictions. The build of the source directory <code>src/holyhammer</code> needs ocaml (&gt; 3.12.1) installed as well as a recent version of g++ that supports the C++11 standard. The three ATPs have to be installed independently. At least one of them should be present, preferably E-prover (1.9).</p>
+<p>Thanks to Thibault Gauthier for this tool.</p></li>
+<li><p>A principle for making coinductive definitions, <code>Hol_coreln</code>. The input syntax is the same as for <code>Hol_reln</code>, that is: a conjunction of introduction rules. For example, if one is representing coalgebraic lists as a subset of the type <code>:num → α option</code>, the coinductive predicate specifying the subset would be given as</p>
+<pre><code>   val (lrep_ok_rules, lrep_ok_coind, lrep_ok_cases) = Hol_coreln`
+     lrep_ok (λn. NONE)
+         ∧
+     ∀h t.
+       lrep_ok t
+           ⇒
+       lrep_ok (λn. if n = 0 then SOME h else t(n - 1))
+   `;</code></pre>
+<p>as is now done in <code>src/llist/llistScript.sml</code>.</p>
+<p>Thanks to Andrea Condoluci for this tool.</p></li>
+</ul>
+<h2 id="new-examples">New examples:</h2>
+<ul>
+<li><p>A theory of balanced binary trees (<code>examples/balanced_bst</code>), based on Haskell code by Leijen and Palamarchuk, and mechanised by Scott Owens. The type supports operations such as <code>insert</code>, <code>union</code>, <code>delete</code>, filters and folds. Operations are parameterised by comparison operators for comparing keys. Balanced trees can themselves be compared.</p></li>
+<li><p>A formalisation of pattern matches (<code>examples/pattern_matches</code>). Pattern matching is not directly supported by higher-order logic. HOL4’s parser therefore compiles case-expressions (<code>case x of ...</code>) to decision trees based on case constants. For non-trivial case expressions, there is a big discrepancy between the user’s view and this internal representation. The <code>pattern_matches</code> example defines a new general-purpose representation for case expressions that mirrors the input syntax in the internal representation closely. Because of this close connection, the new representation is more intuitive and often much more compact. Complicated parsers and pretty-printers are no longer required. Proofs can more closely follow the user’s intentions, and code generators (like CakeML) can produce better code. Moreover, the new representation is strictly more general than the currently used representation. The new representation allows for guards, patterns with multiple occurrences of the same bound variable, unbound variables, arithmetic expressions in patterns, and more. The example provides the definitions as well as tools to work with the new case-expressions. These tools include support for evaluating and simplifying them, a highly configurable pattern compilation algorithm inside the logic, and optimisations like detecting redundant rows and eliminating them.</p></li>
+</ul>
+<h2 id="incompatibilities">Incompatibilities:</h2>
+<ul>
+<li><p>The function <code>optionSyntax.dest_none</code> will now unwrap the type of its result, <em>e.g.</em>, returning <code>:α</code> rather than <code>:α option</code> when applied to <code>NONE : α option</code>. This brings it into line with the behaviour of <code>listSyntax.dest_nil</code>. See <a href="https://github.com/HOL-Theorem-Prover/HOL/issues/215">this github issue</a>.</p></li>
+<li><p>The functions <code>Q.MATCH_RENAME_TAC</code> and <code>Q.MATCH_ASSUM_RENAME_TAC</code> have been adjusted to lose their second arguments (the list of variable names that are not to be bound). For example, applying <code>Q.MATCH_RENAME_TAC `(f x = Pair c1 c2) ⇒ X` [&quot;X&quot;]</code> to the goal</p>
+<pre><code>   ?- (f x = Pair C&#39;&#39; C0&#39;) ⇒ (f C&#39;&#39; = f C0&#39;)</code></pre>
+<p>used to result in the renamed goal</p>
+<pre><code>   ?- (f x = Pair c1 c2) ⇒ (f c1 = f c2)</code></pre>
+<p>where the <code>X</code> in the pattern was ignored. The interface now achieves the same end by simply allowing the user to write underscores in the pattern. Thus, the tactic would become <code>Q.MATCH_RENAME_TAC `(f x = Pair c1 c2) ⇒ _`</code>. Multiple underscores can be used to ignore multiple sub-terms.</p>
+<p>Of course, the <code>qmatch_rename_tac</code> and <code>qmatch_assum_rename_tac</code> names for these tactics in <code>bossLib</code> have changed types as well. The new <code>Q.MATCH_GOALSUB_RENAME_TAC</code> and <code>Q.MATCH_ASMSUB_RENAME_TAC</code> (and their lower-case versions) have similar types, without explicit lists of variable names to ignore.</p></li>
+<li><p>The theory <code>state_option</code> was removed. The better-developed <code>errorStateMonad</code> theory should be used instead.</p></li>
+</ul>
+<hr />
+</div>
+<div class="footer">
+<a href="http://validator.w3.org/check?uri=https://hol-theorem-prover.org/kananaskis-11.release.html" class="footnotelink">Valid HTML</a>&nbsp;&nbsp;&nbsp;
+<a href="http://jigsaw.w3.org/css-validator/validator?uri=https://hol-theorem-prover.org/style.css" class="footnotelink">Valid CSS</a>&nbsp;&nbsp;&nbsp;
+</div>
+</body>
+</html>
