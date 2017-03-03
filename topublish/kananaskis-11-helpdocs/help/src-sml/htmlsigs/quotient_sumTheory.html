@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure quotient_sumTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure quotient_sumTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quotient/src/quotient_sumScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature quotient_sumTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#SUM_REL_curried_def-val">SUM_REL_curried_def</a> : thm
+<a name="line7"></a>    val <a href="#SUM_REL_tupled_primitive_def-val">SUM_REL_tupled_primitive_def</a> : thm
+<a name="line8"></a>
+<a name="line9"></a>  (*  Theorems  *)
+<a name="line10"></a>    val <a href="#INL_PRS-val">INL_PRS</a> : thm
+<a name="line11"></a>    val <a href="#INL_RSP-val">INL_RSP</a> : thm
+<a name="line12"></a>    val <a href="#INR_PRS-val">INR_PRS</a> : thm
+<a name="line13"></a>    val <a href="#INR_RSP-val">INR_RSP</a> : thm
+<a name="line14"></a>    val <a href="#ISL_PRS-val">ISL_PRS</a> : thm
+<a name="line15"></a>    val <a href="#ISL_RSP-val">ISL_RSP</a> : thm
+<a name="line16"></a>    val <a href="#ISR_PRS-val">ISR_PRS</a> : thm
+<a name="line17"></a>    val <a href="#ISR_RSP-val">ISR_RSP</a> : thm
+<a name="line18"></a>    val <a href="#SUM_EQUIV-val">SUM_EQUIV</a> : thm
+<a name="line19"></a>    val <a href="#SUM_MAP_PRS-val">SUM_MAP_PRS</a> : thm
+<a name="line20"></a>    val <a href="#SUM_MAP_RSP-val">SUM_MAP_RSP</a> : thm
+<a name="line21"></a>    val <a href="#SUM_QUOTIENT-val">SUM_QUOTIENT</a> : thm
+<a name="line22"></a>    val <a href="#SUM_REL_EQ-val">SUM_REL_EQ</a> : thm
+<a name="line23"></a>    val <a href="#SUM_REL_def-val">SUM_REL_def</a> : thm
+<a name="line24"></a>    val <a href="#SUM_REL_ind-val">SUM_REL_ind</a> : thm
+<a name="line25"></a>
+<a name="line26"></a>  val quotient_sum_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line27"></a>(*
+   [quotient] Parent theory of "quotient_sum"
+
+   [<a name="SUM_REL_curried_def-val"><b>SUM_REL_curried_def</b></a>]  Definition
+
+      |- ∀x x1 x2 x3. (x +++ x1) x2 x3 ⇔ SUM_REL_tupled (x,x1,x2,x3)
+
+   [<a name="SUM_REL_tupled_primitive_def-val"><b>SUM_REL_tupled_primitive_def</b></a>]  Definition
+
+      |- SUM_REL_tupled =
+         WFREC (@R. WF R)
+           (λSUM_REL_tupled a.
+              case a of
+                (R1,R2,INL a1,INL a2) =&gt; I (R1 a1 a2)
+              | (R1,R2,INL a1,INR b2') =&gt; I F
+              | (R1,R2,INR b1,INL a2') =&gt; I F
+              | (R1,R2,INR b1,INR b2) =&gt; I (R2 b1 b2))
+
+   [<a name="INL_PRS-val"><b>INL_PRS</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀a. INL a = (abs1 ++ abs2) (INL (rep1 a))
+
+   [<a name="INL_RSP-val"><b>INL_RSP</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀a1 a2. R1 a1 a2 ⇒ (R1 +++ R2) (INL a1) (INL a2)
+
+   [<a name="INR_PRS-val"><b>INR_PRS</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀b. INR b = (abs1 ++ abs2) (INR (rep2 b))
+
+   [<a name="INR_RSP-val"><b>INR_RSP</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀b1 b2. R2 b1 b2 ⇒ (R1 +++ R2) (INR b1) (INR b2)
+
+   [<a name="ISL_PRS-val"><b>ISL_PRS</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒ ∀a. ISL a ⇔ ISL ((rep1 ++ rep2) a)
+
+   [<a name="ISL_RSP-val"><b>ISL_RSP</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀a1 a2. (R1 +++ R2) a1 a2 ⇒ (ISL a1 ⇔ ISL a2)
+
+   [<a name="ISR_PRS-val"><b>ISR_PRS</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒ ∀a. ISR a ⇔ ISR ((rep1 ++ rep2) a)
+
+   [<a name="ISR_RSP-val"><b>ISR_RSP</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀a1 a2. (R1 +++ R2) a1 a2 ⇒ (ISR a1 ⇔ ISR a2)
+
+   [<a name="SUM_EQUIV-val"><b>SUM_EQUIV</b></a>]  Theorem
+
+      |- ∀R1 R2. EQUIV R1 ⇒ EQUIV R2 ⇒ EQUIV (R1 +++ R2)
+
+   [<a name="SUM_MAP_PRS-val"><b>SUM_MAP_PRS</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀R3 abs3 rep3.
+               QUOTIENT R3 abs3 rep3 ⇒
+               ∀R4 abs4 rep4.
+                 QUOTIENT R4 abs4 rep4 ⇒
+                 ∀f g.
+                   f ++ g =
+                   ((rep1 ++ rep3) --&gt; (abs2 ++ abs4))
+                     ((abs1 --&gt; rep2) f ++ (abs3 --&gt; rep4) g)
+
+   [<a name="SUM_MAP_RSP-val"><b>SUM_MAP_RSP</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             ∀R3 abs3 rep3.
+               QUOTIENT R3 abs3 rep3 ⇒
+               ∀R4 abs4 rep4.
+                 QUOTIENT R4 abs4 rep4 ⇒
+                 ∀f1 f2 g1 g2.
+                   (R1 ===&gt; R2) f1 f2 ∧ (R3 ===&gt; R4) g1 g2 ⇒
+                   ((R1 +++ R3) ===&gt; (R2 +++ R4)) (f1 ++ g1) (f2 ++ g2)
+
+   [<a name="SUM_QUOTIENT-val"><b>SUM_QUOTIENT</b></a>]  Theorem
+
+      |- ∀R1 abs1 rep1.
+           QUOTIENT R1 abs1 rep1 ⇒
+           ∀R2 abs2 rep2.
+             QUOTIENT R2 abs2 rep2 ⇒
+             QUOTIENT (R1 +++ R2) (abs1 ++ abs2) (rep1 ++ rep2)
+
+   [<a name="SUM_REL_EQ-val"><b>SUM_REL_EQ</b></a>]  Theorem
+
+      |- $= +++ $= = $=
+
+   [<a name="SUM_REL_def-val"><b>SUM_REL_def</b></a>]  Theorem
+
+      |- ((R1 +++ R2) (INL a1) (INL a2) ⇔ R1 a1 a2) ∧
+         ((R1 +++ R2) (INR b1) (INR b2) ⇔ R2 b1 b2) ∧
+         ((R1 +++ R2) (INL a1) (INR b2) ⇔ F) ∧
+         ((R1 +++ R2) (INR b1) (INL a2) ⇔ F)
+
+   [<a name="SUM_REL_ind-val"><b>SUM_REL_ind</b></a>]  Theorem
+
+      |- ∀P.
+           (∀R1 R2 a1 a2. P R1 R2 (INL a1) (INL a2)) ∧
+           (∀R1 R2 b1 b2. P R1 R2 (INR b1) (INR b2)) ∧
+           (∀R1 R2 a1 b2. P R1 R2 (INL a1) (INR b2)) ∧
+           (∀R1 R2 b1 a2. P R1 R2 (INR b1) (INL a2)) ⇒
+           ∀v v1 v2 v3. P v v1 v2 v3
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quotient/src/quotient_sumScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

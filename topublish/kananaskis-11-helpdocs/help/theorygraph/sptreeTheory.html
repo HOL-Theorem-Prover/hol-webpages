@@ -1,0 +1,1192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: sptree</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "sptree"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "logrootTheory.html"><span class="strong">logroot</span></a>&nbsp;&nbsp;
+    <a href = "alistTheory.html"><span class="strong">alist</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">spt</span> <td> 1
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">BN</span> <td> :α spt -> α spt -> α spt
+    <tr><td> <span class="strong">BS</span> <td> :α spt -> α -> α spt -> α spt
+    <tr><td> <span class="strong">LN</span> <td> :α spt
+    <tr><td> <span class="strong">LS</span> <td> :α -> α spt
+    <tr><td> <span class="strong">delete</span> <td> :num -> α spt -> α spt
+    <tr><td>
+        <span class="strong">difference</span>
+        <td>
+        :α spt -> β spt -> α spt
+    <tr><td> <span class="strong">domain</span> <td> :α spt -> num -> bool
+    <tr><td>
+        <span class="strong">foldi</span>
+        <td>
+        :(num -> β -> α -> α) -> num -> α -> β spt -> α
+    <tr><td>
+        <span class="strong">fromAList</span>
+        <td>
+        :(num, α) alist -> α spt
+    <tr><td> <span class="strong">fromList</span> <td> :α list -> α spt
+    <tr><td>
+        <span class="strong">insert</span>
+        <td>
+        :num -> α -> α spt -> α spt
+    <tr><td>
+        <span class="strong">insert_tupled</span>
+        <td>
+        :num # α # α spt -> α spt
+    <tr><td> <span class="strong">inter</span> <td> :α spt -> β spt -> α spt
+    <tr><td>
+        <span class="strong">inter_eq</span>
+        <td>
+        :α spt -> α spt -> α spt
+    <tr><td> <span class="strong">lookup</span> <td> :num -> α spt -> α option
+    <tr><td>
+        <span class="strong">lookup_tupled</span>
+        <td>
+        :num # α spt -> α option
+    <tr><td> <span class="strong">lrnext</span> <td> :num -> num
+    <tr><td> <span class="strong">map</span> <td> :(β -> α) -> β spt -> α spt
+    <tr><td> <span class="strong">mk_BN</span> <td> :α spt -> α spt -> α spt
+    <tr><td>
+        <span class="strong">mk_BN_tupled</span>
+        <td>
+        :α spt # α spt -> α spt
+    <tr><td>
+        <span class="strong">mk_BS</span>
+        <td>
+        :α spt -> α -> α spt -> α spt
+    <tr><td>
+        <span class="strong">mk_BS_tupled</span>
+        <td>
+        :α spt # α # α spt -> α spt
+    <tr><td> <span class="strong">mk_wf</span> <td> :α spt -> α spt
+    <tr><td> <span class="strong">size</span> <td> :α spt -> num
+    <tr><td>
+        <span class="strong">spt_CASE</span>
+        <td>
+        :α spt ->
+         β ->
+         (α -> β) -> (α spt -> α spt -> β) -> (α spt -> α -> α spt -> β) -> β
+    <tr><td>
+        <span class="strong">spt_size</span>
+        <td>
+        :(α -> num) -> α spt -> num
+    <tr><td> <span class="strong">toAList</span> <td> :α spt -> (num, α) alist
+    <tr><td> <span class="strong">toList</span> <td> :α spt -> α list
+    <tr><td>
+        <span class="strong">toListA</span>
+        <td>
+        :α list -> α spt -> α list
+    <tr><td> <span class="strong">union</span> <td> :α spt -> α spt -> α spt
+    <tr><td> <span class="strong">wf</span> <td> :α spt -> bool
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">spt_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep.
+     TYPE_DEFINITION
+       (λa0'.
+          ∀'spt' .
+            (∀a0'.
+               (a0' = ind_type$CONSTR 0 ARB (λn. ind_type$BOTTOM)) ∨
+               (∃a.
+                  a0' =
+                  (λa. ind_type$CONSTR (SUC 0) a (λn. ind_type$BOTTOM)) a) ∨
+               (∃a0 a1.
+                  (a0' =
+                   (λa0 a1.
+                      ind_type$CONSTR (SUC (SUC 0)) ARB
+                        (ind_type$FCONS a0
+                           (ind_type$FCONS a1 (λn. ind_type$BOTTOM)))) a0
+                     a1) ∧ 'spt' a0 ∧ 'spt' a1) ∨
+               (∃a0 a1 a2.
+                  (a0' =
+                   (λa0 a1 a2.
+                      ind_type$CONSTR (SUC (SUC (SUC 0))) a1
+                        (ind_type$FCONS a0
+                           (ind_type$FCONS a2 (λn. ind_type$BOTTOM)))) a0 a1
+                     a2) ∧ 'spt' a0 ∧ 'spt' a2) ⇒
+               'spt' a0') ⇒
+            'spt' a0') rep
+</pre>
+
+<DT><span class="strong">spt_case_def</span>
+<DD>
+<pre>
+|- (∀v f f1 f2. spt_CASE LN v f f1 f2 = v) ∧
+   (∀a v f f1 f2. spt_CASE (LS a) v f f1 f2 = f a) ∧
+   (∀a0 a1 v f f1 f2. spt_CASE (BN a0 a1) v f f1 f2 = f1 a0 a1) ∧
+   ∀a0 a1 a2 v f f1 f2. spt_CASE (BS a0 a1 a2) v f f1 f2 = f2 a0 a1 a2
+</pre>
+
+<DT><span class="strong">spt_size_def</span>
+<DD>
+<pre>
+|- (∀f. spt_size f LN = 0) ∧ (∀f a. spt_size f (LS a) = 1 + f a) ∧
+   (∀f a0 a1. spt_size f (BN a0 a1) = 1 + (spt_size f a0 + spt_size f a1)) ∧
+   ∀f a0 a1 a2.
+     spt_size f (BS a0 a1 a2) = 1 + (spt_size f a0 + (f a1 + spt_size f a2))
+</pre>
+
+<DT><span class="strong">wf_def</span>
+<DD>
+<pre>
+|- (wf LN ⇔ T) ∧ (∀a. wf (LS a) ⇔ T) ∧
+   (∀t1 t2. wf (BN t1 t2) ⇔ wf t1 ∧ wf t2 ∧ ¬(isEmpty t1 ∧ isEmpty t2)) ∧
+   ∀t1 a t2. wf (BS t1 a t2) ⇔ wf t1 ∧ wf t2 ∧ ¬(isEmpty t1 ∧ isEmpty t2)
+</pre>
+
+<DT><span class="strong">lookup_tupled_primitive_def</span>
+<DD>
+<pre>
+|- lookup_tupled =
+   WFREC
+     (@R.
+        WF R ∧
+        (∀t2 t1 k.
+           k ≠ 0 ⇒ R ((k − 1) DIV 2,if EVEN k then t1 else t2) (k,BN t1 t2)) ∧
+        ∀a t2 t1 k.
+          k ≠ 0 ⇒ R ((k − 1) DIV 2,if EVEN k then t1 else t2) (k,BS t1 a t2))
+     (λlookup_tupled a'.
+        case a' of
+          (k,LN) => I NONE
+        | (k,LS a) => I (if k = 0 then SOME a else NONE)
+        | (k,BN t1 t2) =>
+            I
+              (if k = 0 then NONE
+               else lookup_tupled ((k − 1) DIV 2,if EVEN k then t1 else t2))
+        | (k,BS t1' a'' t2') =>
+            I
+              (if k = 0 then SOME a''
+               else
+                 lookup_tupled ((k − 1) DIV 2,if EVEN k then t1' else t2')))
+</pre>
+
+<DT><span class="strong">lookup_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1. lookup x x1 = lookup_tupled (x,x1)
+</pre>
+
+<DT><span class="strong">insert_tupled_primitive_def</span>
+<DD>
+<pre>
+|- insert_tupled =
+   WFREC
+     (@R.
+        WF R ∧ (∀a k. k ≠ 0 ∧ ¬EVEN k ⇒ R ((k − 1) DIV 2,a,LN) (k,a,LN)) ∧
+        (∀a k. k ≠ 0 ∧ EVEN k ⇒ R ((k − 1) DIV 2,a,LN) (k,a,LN)) ∧
+        (∀a' a k. k ≠ 0 ∧ ¬EVEN k ⇒ R ((k − 1) DIV 2,a,LN) (k,a,LS a')) ∧
+        (∀a' a k. k ≠ 0 ∧ EVEN k ⇒ R ((k − 1) DIV 2,a,LN) (k,a,LS a')) ∧
+        (∀t1 t2 a k.
+           k ≠ 0 ∧ ¬EVEN k ⇒ R ((k − 1) DIV 2,a,t2) (k,a,BN t1 t2)) ∧
+        (∀t2 t1 a k. k ≠ 0 ∧ EVEN k ⇒ R ((k − 1) DIV 2,a,t1) (k,a,BN t1 t2)) ∧
+        (∀t2 a' t1 a k.
+           k ≠ 0 ∧ EVEN k ⇒ R ((k − 1) DIV 2,a,t1) (k,a,BS t1 a' t2)) ∧
+        ∀a' t1 t2 a k.
+          k ≠ 0 ∧ ¬EVEN k ⇒ R ((k − 1) DIV 2,a,t2) (k,a,BS t1 a' t2))
+     (λinsert_tupled a''.
+        case a'' of
+          (k,a,LN) =>
+            I
+              (if k = 0 then LS a
+               else if EVEN k then BN (insert_tupled ((k − 1) DIV 2,a,LN)) LN
+               else BN LN (insert_tupled ((k − 1) DIV 2,a,LN)))
+        | (k,a,LS a') =>
+            I
+              (if k = 0 then LS a
+               else if EVEN k then
+                 BS (insert_tupled ((k − 1) DIV 2,a,LN)) a' LN
+               else BS LN a' (insert_tupled ((k − 1) DIV 2,a,LN)))
+        | (k,a,BN t1 t2) =>
+            I
+              (if k = 0 then BS t1 a t2
+               else if EVEN k then BN (insert_tupled ((k − 1) DIV 2,a,t1)) t2
+               else BN t1 (insert_tupled ((k − 1) DIV 2,a,t2)))
+        | (k,a,BS t1' a''' t2') =>
+            I
+              (if k = 0 then BS t1' a t2'
+               else if EVEN k then
+                 BS (insert_tupled ((k − 1) DIV 2,a,t1')) a''' t2'
+               else BS t1' a''' (insert_tupled ((k − 1) DIV 2,a,t2'))))
+</pre>
+
+<DT><span class="strong">insert_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1 x2. insert x x1 x2 = insert_tupled (x,x1,x2)
+</pre>
+
+<DT><span class="strong">mk_BN_tupled_primitive_def</span>
+<DD>
+<pre>
+|- mk_BN_tupled =
+   WFREC (@R. WF R)
+     (λmk_BN_tupled a.
+        case a of
+          (LN,LN) => I LN
+        | (LN,LS v20) => I (BN LN (LS v20))
+        | (LN,BN v21 v22) => I (BN LN (BN v21 v22))
+        | (LN,BS v23 v24 v25) => I (BN LN (BS v23 v24 v25))
+        | (LS v8,v1) => I (BN (LS v8) v1)
+        | (BN v9 v10,v1) => I (BN (BN v9 v10) v1)
+        | (BS v11 v12 v13,v1) => I (BN (BS v11 v12 v13) v1))
+</pre>
+
+<DT><span class="strong">mk_BN_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1. mk_BN x x1 = mk_BN_tupled (x,x1)
+</pre>
+
+<DT><span class="strong">mk_BS_tupled_primitive_def</span>
+<DD>
+<pre>
+|- mk_BS_tupled =
+   WFREC (@R. WF R)
+     (λmk_BS_tupled a.
+        case a of
+          (LN,x,LN) => I (LS x)
+        | (LS v22,x,LN) => I (BS (LS v22) x LN)
+        | (BN v23 v24,x,LN) => I (BS (BN v23 v24) x LN)
+        | (BS v25 v26 v27,x,LN) => I (BS (BS v25 v26 v27) x LN)
+        | (v,x,LS v10) => I (BS v x (LS v10))
+        | (v,x,BN v11 v12) => I (BS v x (BN v11 v12))
+        | (v,x,BS v13 v14 v15) => I (BS v x (BS v13 v14 v15)))
+</pre>
+
+<DT><span class="strong">mk_BS_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1 x2. mk_BS x x1 x2 = mk_BS_tupled (x,x1,x2)
+</pre>
+
+<DT><span class="strong">delete_def</span>
+<DD>
+<pre>
+|- (∀k. isEmpty (delete k LN)) ∧
+   (∀k a. delete k (LS a) = if k = 0 then LN else LS a) ∧
+   (∀k t1 t2.
+      delete k (BN t1 t2) =
+      if k = 0 then BN t1 t2
+      else if EVEN k then mk_BN (delete ((k − 1) DIV 2) t1) t2
+      else mk_BN t1 (delete ((k − 1) DIV 2) t2)) ∧
+   ∀k t1 a t2.
+     delete k (BS t1 a t2) =
+     if k = 0 then BN t1 t2
+     else if EVEN k then mk_BS (delete ((k − 1) DIV 2) t1) a t2
+     else mk_BS t1 a (delete ((k − 1) DIV 2) t2)
+</pre>
+
+<DT><span class="strong">fromList_def</span>
+<DD>
+<pre>
+|- ∀l. fromList l = SND (FOLDL (λ(i,t) a. (i + 1,insert i a t)) (0,LN) l)
+</pre>
+
+<DT><span class="strong">size_def</span>
+<DD>
+<pre>
+|- (size LN = 0) ∧ (∀a. size (LS a) = 1) ∧
+   (∀t1 t2. size (BN t1 t2) = size t1 + size t2) ∧
+   ∀t1 a t2. size (BS t1 a t2) = size t1 + size t2 + 1
+</pre>
+
+<DT><span class="strong">union_def</span>
+<DD>
+<pre>
+|- (∀t. union LN t = t) ∧
+   (∀a t.
+      union (LS a) t =
+      case t of
+        LN => LS a
+      | LS b => LS a
+      | BN t1 t2 => BS t1 a t2
+      | BS t1' v4 t2' => BS t1' a t2') ∧
+   (∀t1 t2 t.
+      union (BN t1 t2) t =
+      case t of
+        LN => BN t1 t2
+      | LS a => BS t1 a t2
+      | BN t1' t2' => BN (union t1 t1') (union t2 t2')
+      | BS t1'' a'' t2'' => BS (union t1 t1'') a'' (union t2 t2'')) ∧
+   ∀t1 a t2 t.
+     union (BS t1 a t2) t =
+     case t of
+       LN => BS t1 a t2
+     | LS a' => BS t1 a t2
+     | BN t1' t2' => BS (union t1 t1') a (union t2 t2')
+     | BS t1'' a''' t2'' => BS (union t1 t1'') a (union t2 t2'')
+</pre>
+
+<DT><span class="strong">inter_def</span>
+<DD>
+<pre>
+|- (∀t. isEmpty (inter LN t)) ∧
+   (∀a t.
+      inter (LS a) t =
+      case t of
+        LN => LN
+      | LS b => LS a
+      | BN t1 t2 => LN
+      | BS t1' v4 t2' => LS a) ∧
+   (∀t1 t2 t.
+      inter (BN t1 t2) t =
+      case t of
+        LN => LN
+      | LS a => LN
+      | BN t1' t2' => mk_BN (inter t1 t1') (inter t2 t2')
+      | BS t1'' a'' t2'' => mk_BN (inter t1 t1'') (inter t2 t2'')) ∧
+   ∀t1 a t2 t.
+     inter (BS t1 a t2) t =
+     case t of
+       LN => LN
+     | LS a' => LS a
+     | BN t1' t2' => mk_BN (inter t1 t1') (inter t2 t2')
+     | BS t1'' a''' t2'' => mk_BS (inter t1 t1'') a (inter t2 t2'')
+</pre>
+
+<DT><span class="strong">inter_eq_def</span>
+<DD>
+<pre>
+|- (∀t. isEmpty (inter_eq LN t)) ∧
+   (∀a t.
+      inter_eq (LS a) t =
+      case t of
+        LN => LN
+      | LS b => if a = b then LS a else LN
+      | BN t1 t2 => LN
+      | BS t1' b' t2' => if a = b' then LS a else LN) ∧
+   (∀t1 t2 t.
+      inter_eq (BN t1 t2) t =
+      case t of
+        LN => LN
+      | LS a => LN
+      | BN t1' t2' => mk_BN (inter_eq t1 t1') (inter_eq t2 t2')
+      | BS t1'' a'' t2'' => mk_BN (inter_eq t1 t1'') (inter_eq t2 t2'')) ∧
+   ∀t1 a t2 t.
+     inter_eq (BS t1 a t2) t =
+     case t of
+       LN => LN
+     | LS a' => if a' = a then LS a else LN
+     | BN t1' t2' => mk_BN (inter_eq t1 t1') (inter_eq t2 t2')
+     | BS t1'' a''' t2'' =>
+         if a''' = a then mk_BS (inter_eq t1 t1'') a (inter_eq t2 t2'')
+         else mk_BN (inter_eq t1 t1'') (inter_eq t2 t2'')
+</pre>
+
+<DT><span class="strong">difference_def</span>
+<DD>
+<pre>
+|- (∀t. isEmpty (difference LN t)) ∧
+   (∀a t.
+      difference (LS a) t =
+      case t of
+        LN => LS a
+      | LS b => LN
+      | BN t1 t2 => LS a
+      | BS t1' b' t2' => LN) ∧
+   (∀t1 t2 t.
+      difference (BN t1 t2) t =
+      case t of
+        LN => BN t1 t2
+      | LS a => BN t1 t2
+      | BN t1' t2' => mk_BN (difference t1 t1') (difference t2 t2')
+      | BS t1'' a'' t2'' => mk_BN (difference t1 t1'') (difference t2 t2'')) ∧
+   ∀t1 a t2 t.
+     difference (BS t1 a t2) t =
+     case t of
+       LN => BS t1 a t2
+     | LS a' => BN t1 t2
+     | BN t1' t2' => mk_BS (difference t1 t1') a (difference t2 t2')
+     | BS t1'' a''' t2'' => mk_BN (difference t1 t1'') (difference t2 t2'')
+</pre>
+
+<DT><span class="strong">lrnext_primitive_def</span>
+<DD>
+<pre>
+|- sptree$lrnext =
+   WFREC (@R. WF R ∧ ∀n. n ≠ 0 ⇒ R ((n − 1) DIV 2) n)
+     (λlrnext n. I (if n = 0 then 1 else 2 * lrnext ((n − 1) DIV 2)))
+</pre>
+
+<DT><span class="strong">domain_def</span>
+<DD>
+<pre>
+|- (domain LN = ∅) ∧ (∀v0. domain (LS v0) = {0}) ∧
+   (∀t1 t2.
+      domain (BN t1 t2) =
+      IMAGE (λn. 2 * n + 2) (domain t1) ∪ IMAGE (λn. 2 * n + 1) (domain t2)) ∧
+   ∀t1 v1 t2.
+     domain (BS t1 v1 t2) =
+     {0} ∪ IMAGE (λn. 2 * n + 2) (domain t1) ∪
+     IMAGE (λn. 2 * n + 1) (domain t2)
+</pre>
+
+<DT><span class="strong">foldi_def</span>
+<DD>
+<pre>
+|- (∀f i acc. foldi f i acc LN = acc) ∧
+   (∀f i acc a. foldi f i acc (LS a) = f i a acc) ∧
+   (∀f i acc t1 t2.
+      foldi f i acc (BN t1 t2) =
+      (let inc = sptree$lrnext i
+       in
+         foldi f (i + inc) (foldi f (i + 2 * inc) acc t1) t2)) ∧
+   ∀f i acc t1 a t2.
+     foldi f i acc (BS t1 a t2) =
+     (let inc = sptree$lrnext i
+      in
+        foldi f (i + inc) (f i a (foldi f (i + 2 * inc) acc t1)) t2)
+</pre>
+
+<DT><span class="strong">toAList_def</span>
+<DD>
+<pre>
+|- toAList = foldi (λk v a. (k,v)::a) 0 []
+</pre>
+
+<DT><span class="strong">toListA_def</span>
+<DD>
+<pre>
+|- (∀acc. toListA acc LN = acc) ∧ (∀acc a. toListA acc (LS a) = a::acc) ∧
+   (∀acc t1 t2. toListA acc (BN t1 t2) = toListA (toListA acc t2) t1) ∧
+   ∀acc t1 a t2. toListA acc (BS t1 a t2) = toListA (a::toListA acc t2) t1
+</pre>
+
+<DT><span class="strong">toList_def</span>
+<DD>
+<pre>
+|- ∀m. toList m = toListA [] m
+</pre>
+
+<DT><span class="strong">mk_wf_def</span>
+<DD>
+<pre>
+|- isEmpty (mk_wf LN) ∧ (∀x. mk_wf (LS x) = LS x) ∧
+   (∀t1 t2. mk_wf (BN t1 t2) = mk_BN (mk_wf t1) (mk_wf t2)) ∧
+   ∀t1 x t2. mk_wf (BS t1 x t2) = mk_BS (mk_wf t1) x (mk_wf t2)
+</pre>
+
+<DT><span class="strong">fromAList_primitive_def</span>
+<DD>
+<pre>
+|- fromAList =
+   WFREC (@R. WF R ∧ ∀y x xs. R xs ((x,y)::xs))
+     (λfromAList a.
+        case a of [] => I LN | (x,y)::xs => I (insert x y (fromAList xs)))
+</pre>
+
+<DT><span class="strong">map_def</span>
+<DD>
+<pre>
+|- (∀f. isEmpty (map f LN)) ∧ (∀f a. map f (LS a) = LS (f a)) ∧
+   (∀f t1 t2. map f (BN t1 t2) = BN (map f t1) (map f t2)) ∧
+   ∀f t1 a t2. map f (BS t1 a t2) = BS (map f t1) (f a) (map f t2)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">datatype_spt</span>
+<DD>
+<pre>
+|- DATATYPE (spt LN LS BN BS)
+</pre>
+
+<DT><span class="strong">spt_11</span>
+<DD>
+<pre>
+|- (∀a a'. (LS a = LS a') ⇔ (a = a')) ∧
+   (∀a0 a1 a0' a1'. (BN a0 a1 = BN a0' a1') ⇔ (a0 = a0') ∧ (a1 = a1')) ∧
+   ∀a0 a1 a2 a0' a1' a2'.
+     (BS a0 a1 a2 = BS a0' a1' a2') ⇔ (a0 = a0') ∧ (a1 = a1') ∧ (a2 = a2')
+</pre>
+
+<DT><span class="strong">spt_distinct</span>
+<DD>
+<pre>
+|- (∀a. LN ≠ LS a) ∧ (∀a1 a0. LN ≠ BN a0 a1) ∧ (∀a2 a1 a0. LN ≠ BS a0 a1 a2) ∧
+   (∀a1 a0 a. LS a ≠ BN a0 a1) ∧ (∀a2 a1 a0 a. LS a ≠ BS a0 a1 a2) ∧
+   ∀a2 a1' a1 a0' a0. BN a0 a1 ≠ BS a0' a1' a2
+</pre>
+
+<DT><span class="strong">spt_case_cong</span>
+<DD>
+<pre>
+|- ∀M M' v f f1 f2.
+     (M = M') ∧ (isEmpty M' ⇒ (v = v')) ∧ (∀a. (M' = LS a) ⇒ (f a = f' a)) ∧
+     (∀a0 a1. (M' = BN a0 a1) ⇒ (f1 a0 a1 = f1' a0 a1)) ∧
+     (∀a0 a1 a2. (M' = BS a0 a1 a2) ⇒ (f2 a0 a1 a2 = f2' a0 a1 a2)) ⇒
+     (spt_CASE M v f f1 f2 = spt_CASE M' v' f' f1' f2')
+</pre>
+
+<DT><span class="strong">spt_nchotomy</span>
+<DD>
+<pre>
+|- ∀ss.
+     isEmpty ss ∨ (∃a. ss = LS a) ∨ (∃s s0. ss = BN s s0) ∨
+     ∃s a s0. ss = BS s a s0
+</pre>
+
+<DT><span class="strong">spt_Axiom</span>
+<DD>
+<pre>
+|- ∀f0 f1 f2 f3.
+     ∃fn.
+       (fn LN = f0) ∧ (∀a. fn (LS a) = f1 a) ∧
+       (∀a0 a1. fn (BN a0 a1) = f2 a0 a1 (fn a0) (fn a1)) ∧
+       ∀a0 a1 a2. fn (BS a0 a1 a2) = f3 a1 a0 a2 (fn a0) (fn a2)
+</pre>
+
+<DT><span class="strong">spt_induction</span>
+<DD>
+<pre>
+|- ∀P.
+     P LN ∧ (∀a. P (LS a)) ∧ (∀s s0. P s ∧ P s0 ⇒ P (BN s s0)) ∧
+     (∀s s0. P s ∧ P s0 ⇒ ∀a. P (BS s a s0)) ⇒
+     ∀s. P s
+</pre>
+
+<DT><span class="strong">lookup_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀k. P k LN) ∧ (∀k a. P k (LS a)) ∧
+     (∀k t1 t2.
+        (k ≠ 0 ⇒ P ((k − 1) DIV 2) (if EVEN k then t1 else t2)) ⇒
+        P k (BN t1 t2)) ∧
+     (∀k t1 a t2.
+        (k ≠ 0 ⇒ P ((k − 1) DIV 2) (if EVEN k then t1 else t2)) ⇒
+        P k (BS t1 a t2)) ⇒
+     ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">lookup_def</span>
+<DD>
+<pre>
+|- (∀k. lookup k LN = NONE) ∧
+   (∀k a. lookup k (LS a) = if k = 0 then SOME a else NONE) ∧
+   (∀t2 t1 k.
+      lookup k (BN t1 t2) =
+      if k = 0 then NONE
+      else lookup ((k − 1) DIV 2) (if EVEN k then t1 else t2)) ∧
+   ∀t2 t1 k a.
+     lookup k (BS t1 a t2) =
+     if k = 0 then SOME a
+     else lookup ((k − 1) DIV 2) (if EVEN k then t1 else t2)
+</pre>
+
+<DT><span class="strong">insert_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀k a.
+        (k ≠ 0 ∧ EVEN k ⇒ P ((k − 1) DIV 2) a LN) ∧
+        (k ≠ 0 ∧ ¬EVEN k ⇒ P ((k − 1) DIV 2) a LN) ⇒
+        P k a LN) ∧
+     (∀k a a'.
+        (k ≠ 0 ∧ EVEN k ⇒ P ((k − 1) DIV 2) a LN) ∧
+        (k ≠ 0 ∧ ¬EVEN k ⇒ P ((k − 1) DIV 2) a LN) ⇒
+        P k a (LS a')) ∧
+     (∀k a t1 t2.
+        (k ≠ 0 ∧ EVEN k ⇒ P ((k − 1) DIV 2) a t1) ∧
+        (k ≠ 0 ∧ ¬EVEN k ⇒ P ((k − 1) DIV 2) a t2) ⇒
+        P k a (BN t1 t2)) ∧
+     (∀k a t1 a' t2.
+        (k ≠ 0 ∧ EVEN k ⇒ P ((k − 1) DIV 2) a t1) ∧
+        (k ≠ 0 ∧ ¬EVEN k ⇒ P ((k − 1) DIV 2) a t2) ⇒
+        P k a (BS t1 a' t2)) ⇒
+     ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">insert_def</span>
+<DD>
+<pre>
+|- (∀k a.
+      insert k a LN =
+      if k = 0 then LS a
+      else if EVEN k then BN (insert ((k − 1) DIV 2) a LN) LN
+      else BN LN (insert ((k − 1) DIV 2) a LN)) ∧
+   (∀k a' a.
+      insert k a (LS a') =
+      if k = 0 then LS a
+      else if EVEN k then BS (insert ((k − 1) DIV 2) a LN) a' LN
+      else BS LN a' (insert ((k − 1) DIV 2) a LN)) ∧
+   (∀t2 t1 k a.
+      insert k a (BN t1 t2) =
+      if k = 0 then BS t1 a t2
+      else if EVEN k then BN (insert ((k − 1) DIV 2) a t1) t2
+      else BN t1 (insert ((k − 1) DIV 2) a t2)) ∧
+   ∀t2 t1 k a' a.
+     insert k a (BS t1 a' t2) =
+     if k = 0 then BS t1 a t2
+     else if EVEN k then BS (insert ((k − 1) DIV 2) a t1) a' t2
+     else BS t1 a' (insert ((k − 1) DIV 2) a t2)
+</pre>
+
+<DT><span class="strong">mk_BN_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     P LN LN ∧ (∀v14. P LN (LS v14)) ∧ (∀v15 v16. P LN (BN v15 v16)) ∧
+     (∀v17 v18 v19. P LN (BS v17 v18 v19)) ∧ (∀v2 t2. P (LS v2) t2) ∧
+     (∀v3 v4 t2. P (BN v3 v4) t2) ∧ (∀v5 v6 v7 t2. P (BS v5 v6 v7) t2) ⇒
+     ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">mk_BN_def</span>
+<DD>
+<pre>
+|- isEmpty (mk_BN LN LN) ∧ (mk_BN LN (LS v14) = BN LN (LS v14)) ∧
+   (mk_BN LN (BN v15 v16) = BN LN (BN v15 v16)) ∧
+   (mk_BN LN (BS v17 v18 v19) = BN LN (BS v17 v18 v19)) ∧
+   (mk_BN (LS v2) t2 = BN (LS v2) t2) ∧
+   (mk_BN (BN v3 v4) t2 = BN (BN v3 v4) t2) ∧
+   (mk_BN (BS v5 v6 v7) t2 = BN (BS v5 v6 v7) t2)
+</pre>
+
+<DT><span class="strong">mk_BS_ind</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀x. P LN x LN) ∧ (∀v16 x. P (LS v16) x LN) ∧
+     (∀v17 v18 x. P (BN v17 v18) x LN) ∧
+     (∀v19 v20 v21 x. P (BS v19 v20 v21) x LN) ∧ (∀t1 x v4. P t1 x (LS v4)) ∧
+     (∀t1 x v5 v6. P t1 x (BN v5 v6)) ∧
+     (∀t1 x v7 v8 v9. P t1 x (BS v7 v8 v9)) ⇒
+     ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">mk_BS_def</span>
+<DD>
+<pre>
+|- (mk_BS LN x LN = LS x) ∧ (mk_BS (LS v16) x LN = BS (LS v16) x LN) ∧
+   (mk_BS (BN v17 v18) x LN = BS (BN v17 v18) x LN) ∧
+   (mk_BS (BS v19 v20 v21) x LN = BS (BS v19 v20 v21) x LN) ∧
+   (mk_BS t1 x (LS v4) = BS t1 x (LS v4)) ∧
+   (mk_BS t1 x (BN v5 v6) = BS t1 x (BN v5 v6)) ∧
+   (mk_BS t1 x (BS v7 v8 v9) = BS t1 x (BS v7 v8 v9))
+</pre>
+
+<DT><span class="strong">insert_notEmpty</span>
+<DD>
+<pre>
+|- insert k a t ≠ LN
+</pre>
+
+<DT><span class="strong">wf_insert</span>
+<DD>
+<pre>
+|- ∀k a t. wf t ⇒ wf (insert k a t)
+</pre>
+
+<DT><span class="strong">wf_delete</span>
+<DD>
+<pre>
+|- ∀t k. wf t ⇒ wf (delete k t)
+</pre>
+
+<DT><span class="strong">lookup_insert1</span>
+<DD>
+<pre>
+|- ∀k a t. lookup k (insert k a t) = SOME a
+</pre>
+
+<DT><span class="strong">lookup_insert</span>
+<DD>
+<pre>
+|- ∀k2 v t k1.
+     lookup k1 (insert k2 v t) = if k1 = k2 then SOME v else lookup k1 t
+</pre>
+
+<DT><span class="strong">isEmpty_union</span>
+<DD>
+<pre>
+|- isEmpty (union m1 m2) ⇔ isEmpty m1 ∧ isEmpty m2
+</pre>
+
+<DT><span class="strong">wf_union</span>
+<DD>
+<pre>
+|- ∀m1 m2. wf m1 ∧ wf m2 ⇒ wf (union m1 m2)
+</pre>
+
+<DT><span class="strong">lookup_union</span>
+<DD>
+<pre>
+|- ∀m1 m2 k.
+     lookup k (union m1 m2) =
+     case lookup k m1 of NONE => lookup k m2 | SOME v => SOME v
+</pre>
+
+<DT><span class="strong">wf_inter</span>
+<DD>
+<pre>
+|- ∀m1 m2. wf (inter m1 m2)
+</pre>
+
+<DT><span class="strong">lookup_inter</span>
+<DD>
+<pre>
+|- ∀m1 m2 k.
+     lookup k (inter m1 m2) =
+     case (lookup k m1,lookup k m2) of
+       (NONE,v4) => NONE
+     | (SOME v,NONE) => NONE
+     | (SOME v,SOME w) => SOME v
+</pre>
+
+<DT><span class="strong">lookup_inter_eq</span>
+<DD>
+<pre>
+|- ∀m1 m2 k.
+     lookup k (inter_eq m1 m2) =
+     case lookup k m1 of
+       NONE => NONE
+     | SOME v => if lookup k m2 = SOME v then SOME v else NONE
+</pre>
+
+<DT><span class="strong">lookup_inter_EQ</span>
+<DD>
+<pre>
+|- ((lookup x (inter t1 t2) = SOME y) ⇔
+    (lookup x t1 = SOME y) ∧ lookup x t2 ≠ NONE) ∧
+   ((lookup x (inter t1 t2) = NONE) ⇔
+    (lookup x t1 = NONE) ∨ (lookup x t2 = NONE))
+</pre>
+
+<DT><span class="strong">lookup_inter_assoc</span>
+<DD>
+<pre>
+|- lookup x (inter t1 (inter t2 t3)) = lookup x (inter (inter t1 t2) t3)
+</pre>
+
+<DT><span class="strong">lookup_difference</span>
+<DD>
+<pre>
+|- ∀m1 m2 k.
+     lookup k (difference m1 m2) =
+     if lookup k m2 = NONE then lookup k m1 else NONE
+</pre>
+
+<DT><span class="strong">lrnext_ind</span>
+<DD>
+<pre>
+|- ∀P. (∀n. (n ≠ 0 ⇒ P ((n − 1) DIV 2)) ⇒ P n) ⇒ ∀v. P v
+</pre>
+
+<DT><span class="strong">lrnext_def</span>
+<DD>
+<pre>
+|- ∀n.
+     sptree$lrnext n = if n = 0 then 1 else 2 * sptree$lrnext ((n − 1) DIV 2)
+</pre>
+
+<DT><span class="strong">lrnext_thm</span>
+<DD>
+<pre>
+|- (∀a. sptree$lrnext 0 = 1) ∧
+   (∀n a. sptree$lrnext (NUMERAL n) = sptree$lrnext n) ∧
+   (sptree$lrnext ZERO = 1) ∧
+   (∀n. sptree$lrnext (BIT1 n) = 2 * sptree$lrnext n) ∧
+   ∀n. sptree$lrnext (BIT2 n) = 2 * sptree$lrnext n
+</pre>
+
+<DT><span class="strong">FINITE_domain</span>
+<DD>
+<pre>
+|- FINITE (domain t)
+</pre>
+
+<DT><span class="strong">lookup_fromList</span>
+<DD>
+<pre>
+|- lookup n (fromList l) = if n < LENGTH l then SOME (EL n l) else NONE
+</pre>
+
+<DT><span class="strong">domain_lookup</span>
+<DD>
+<pre>
+|- ∀t k. k ∈ domain t ⇔ ∃v. lookup k t = SOME v
+</pre>
+
+<DT><span class="strong">lookup_inter_alt</span>
+<DD>
+<pre>
+|- lookup x (inter t1 t2) = if x ∈ domain t2 then lookup x t1 else NONE
+</pre>
+
+<DT><span class="strong">lookup_NONE_domain</span>
+<DD>
+<pre>
+|- (lookup k t = NONE) ⇔ k ∉ domain t
+</pre>
+
+<DT><span class="strong">domain_union</span>
+<DD>
+<pre>
+|- domain (union t1 t2) = domain t1 ∪ domain t2
+</pre>
+
+<DT><span class="strong">domain_inter</span>
+<DD>
+<pre>
+|- domain (inter t1 t2) = domain t1 ∩ domain t2
+</pre>
+
+<DT><span class="strong">domain_insert</span>
+<DD>
+<pre>
+|- domain (insert k v t) = k INSERT domain t
+</pre>
+
+<DT><span class="strong">domain_sing</span>
+<DD>
+<pre>
+|- domain (insert k v LN) = {k}
+</pre>
+
+<DT><span class="strong">domain_fromList</span>
+<DD>
+<pre>
+|- domain (fromList l) = count (LENGTH l)
+</pre>
+
+<DT><span class="strong">lookup_delete</span>
+<DD>
+<pre>
+|- ∀t k1 k2. lookup k1 (delete k2 t) = if k1 = k2 then NONE else lookup k1 t
+</pre>
+
+<DT><span class="strong">domain_delete</span>
+<DD>
+<pre>
+|- domain (delete k t) = domain t DELETE k
+</pre>
+
+<DT><span class="strong">set_foldi_keys</span>
+<DD>
+<pre>
+|- ∀t a i.
+     foldi (λk v a. k INSERT a) i a t =
+     a ∪ IMAGE (λn. i + sptree$lrnext i * n) (domain t)
+</pre>
+
+<DT><span class="strong">domain_foldi</span>
+<DD>
+<pre>
+|- domain t = foldi (λk v a. k INSERT a) 0 ∅ t
+</pre>
+
+<DT><span class="strong">MEM_toAList</span>
+<DD>
+<pre>
+|- ∀t k v. MEM (k,v) (toAList t) ⇔ (lookup k t = SOME v)
+</pre>
+
+<DT><span class="strong">ALOOKUP_toAList</span>
+<DD>
+<pre>
+|- ∀t x. ALOOKUP (toAList t) x = lookup x t
+</pre>
+
+<DT><span class="strong">insert_union</span>
+<DD>
+<pre>
+|- ∀k v s. insert k v s = union (insert k v LN) s
+</pre>
+
+<DT><span class="strong">domain_empty</span>
+<DD>
+<pre>
+|- ∀t. wf t ⇒ (isEmpty t ⇔ (domain t = ∅))
+</pre>
+
+<DT><span class="strong">ALL_DISTINCT_MAP_FST_toAList</span>
+<DD>
+<pre>
+|- ∀t. ALL_DISTINCT (MAP FST (toAList t))
+</pre>
+
+<DT><span class="strong">foldi_FOLDR_toAList</span>
+<DD>
+<pre>
+|- ∀f a t. foldi f 0 a t = FOLDR (UNCURRY f) a (toAList t)
+</pre>
+
+<DT><span class="strong">toListA_append</span>
+<DD>
+<pre>
+|- ∀t acc. toListA acc t = toListA [] t ++ acc
+</pre>
+
+<DT><span class="strong">isEmpty_toListA</span>
+<DD>
+<pre>
+|- ∀t acc. wf t ⇒ (isEmpty t ⇔ (toListA acc t = acc))
+</pre>
+
+<DT><span class="strong">isEmpty_toList</span>
+<DD>
+<pre>
+|- ∀t. wf t ⇒ (isEmpty t ⇔ (toList t = []))
+</pre>
+
+<DT><span class="strong">MEM_toList</span>
+<DD>
+<pre>
+|- ∀x t. MEM x (toList t) ⇔ ∃k. lookup k t = SOME x
+</pre>
+
+<DT><span class="strong">spt_eq_thm</span>
+<DD>
+<pre>
+|- ∀t1 t2. wf t1 ∧ wf t2 ⇒ ((t1 = t2) ⇔ ∀n. lookup n t1 = lookup n t2)
+</pre>
+
+<DT><span class="strong">wf_mk_wf</span>
+<DD>
+<pre>
+|- ∀t. wf (mk_wf t)
+</pre>
+
+<DT><span class="strong">wf_mk_id</span>
+<DD>
+<pre>
+|- ∀t. wf t ⇒ (mk_wf t = t)
+</pre>
+
+<DT><span class="strong">lookup_mk_wf</span>
+<DD>
+<pre>
+|- ∀x t. lookup x (mk_wf t) = lookup x t
+</pre>
+
+<DT><span class="strong">domain_mk_wf</span>
+<DD>
+<pre>
+|- ∀t. domain (mk_wf t) = domain t
+</pre>
+
+<DT><span class="strong">mk_wf_eq</span>
+<DD>
+<pre>
+|- ∀t1 t2. (mk_wf t1 = mk_wf t2) ⇔ ∀x. lookup x t1 = lookup x t2
+</pre>
+
+<DT><span class="strong">inter_eq</span>
+<DD>
+<pre>
+|- ∀t1 t2 t3 t4.
+     (inter t1 t2 = inter t3 t4) ⇔
+     ∀x. lookup x (inter t1 t2) = lookup x (inter t3 t4)
+</pre>
+
+<DT><span class="strong">union_mk_wf</span>
+<DD>
+<pre>
+|- ∀t1 t2. inter (mk_wf t1) (mk_wf t2) = mk_wf (inter t1 t2)
+</pre>
+
+<DT><span class="strong">insert_mk_wf</span>
+<DD>
+<pre>
+|- ∀x v t. insert x v (mk_wf t) = mk_wf (insert x v t)
+</pre>
+
+<DT><span class="strong">delete_mk_wf</span>
+<DD>
+<pre>
+|- ∀x t. delete x (mk_wf t) = mk_wf (delete x t)
+</pre>
+
+<DT><span class="strong">union_LN</span>
+<DD>
+<pre>
+|- ∀t. (union t LN = t) ∧ (union LN t = t)
+</pre>
+
+<DT><span class="strong">inter_LN</span>
+<DD>
+<pre>
+|- ∀t. isEmpty (inter t LN) ∧ isEmpty (inter LN t)
+</pre>
+
+<DT><span class="strong">union_assoc</span>
+<DD>
+<pre>
+|- ∀t1 t2 t3. union t1 (union t2 t3) = union (union t1 t2) t3
+</pre>
+
+<DT><span class="strong">inter_assoc</span>
+<DD>
+<pre>
+|- ∀t1 t2 t3. inter t1 (inter t2 t3) = inter (inter t1 t2) t3
+</pre>
+
+<DT><span class="strong">lookup_compute</span>
+<DD>
+<pre>
+|- (lookup (NUMERAL n) t = lookup n t) ∧ (lookup 0 LN = NONE) ∧
+   (lookup 0 (LS a) = SOME a) ∧ (lookup 0 (BN t1 t2) = NONE) ∧
+   (lookup 0 (BS t1 a t2) = SOME a) ∧ (lookup ZERO LN = NONE) ∧
+   (lookup ZERO (LS a) = SOME a) ∧ (lookup ZERO (BN t1 t2) = NONE) ∧
+   (lookup ZERO (BS t1 a t2) = SOME a) ∧ (lookup (BIT1 n) LN = NONE) ∧
+   (lookup (BIT1 n) (LS a) = NONE) ∧
+   (lookup (BIT1 n) (BN t1 t2) = lookup n t2) ∧
+   (lookup (BIT1 n) (BS t1 a t2) = lookup n t2) ∧
+   (lookup (BIT2 n) LN = NONE) ∧ (lookup (BIT2 n) (LS a) = NONE) ∧
+   (lookup (BIT2 n) (BN t1 t2) = lookup n t1) ∧
+   (lookup (BIT2 n) (BS t1 a t2) = lookup n t1)
+</pre>
+
+<DT><span class="strong">insert_compute</span>
+<DD>
+<pre>
+|- (insert (NUMERAL n) a t = insert n a t) ∧ (insert 0 a LN = LS a) ∧
+   (insert 0 a (LS a') = LS a) ∧ (insert 0 a (BN t1 t2) = BS t1 a t2) ∧
+   (insert 0 a (BS t1 a' t2) = BS t1 a t2) ∧ (insert ZERO a LN = LS a) ∧
+   (insert ZERO a (LS a') = LS a) ∧ (insert ZERO a (BN t1 t2) = BS t1 a t2) ∧
+   (insert ZERO a (BS t1 a' t2) = BS t1 a t2) ∧
+   (insert (BIT1 n) a LN = BN LN (insert n a LN)) ∧
+   (insert (BIT1 n) a (LS a') = BS LN a' (insert n a LN)) ∧
+   (insert (BIT1 n) a (BN t1 t2) = BN t1 (insert n a t2)) ∧
+   (insert (BIT1 n) a (BS t1 a' t2) = BS t1 a' (insert n a t2)) ∧
+   (insert (BIT2 n) a LN = BN (insert n a LN) LN) ∧
+   (insert (BIT2 n) a (LS a') = BS (insert n a LN) a' LN) ∧
+   (insert (BIT2 n) a (BN t1 t2) = BN (insert n a t1) t2) ∧
+   (insert (BIT2 n) a (BS t1 a' t2) = BS (insert n a t1) a' t2)
+</pre>
+
+<DT><span class="strong">delete_compute</span>
+<DD>
+<pre>
+|- (delete (NUMERAL n) t = delete n t) ∧ isEmpty (delete 0 LN) ∧
+   isEmpty (delete 0 (LS a)) ∧ (delete 0 (BN t1 t2) = BN t1 t2) ∧
+   (delete 0 (BS t1 a t2) = BN t1 t2) ∧ isEmpty (delete ZERO LN) ∧
+   isEmpty (delete ZERO (LS a)) ∧ (delete ZERO (BN t1 t2) = BN t1 t2) ∧
+   (delete ZERO (BS t1 a t2) = BN t1 t2) ∧ isEmpty (delete (BIT1 n) LN) ∧
+   (delete (BIT1 n) (LS a) = LS a) ∧
+   (delete (BIT1 n) (BN t1 t2) = mk_BN t1 (delete n t2)) ∧
+   (delete (BIT1 n) (BS t1 a t2) = mk_BS t1 a (delete n t2)) ∧
+   isEmpty (delete (BIT2 n) LN) ∧ (delete (BIT2 n) (LS a) = LS a) ∧
+   (delete (BIT2 n) (BN t1 t2) = mk_BN (delete n t1) t2) ∧
+   (delete (BIT2 n) (BS t1 a t2) = mk_BS (delete n t1) a t2)
+</pre>
+
+<DT><span class="strong">fromAList_ind</span>
+<DD>
+<pre>
+|- ∀P. P [] ∧ (∀x y xs. P xs ⇒ P ((x,y)::xs)) ⇒ ∀v. P v
+</pre>
+
+<DT><span class="strong">fromAList_def</span>
+<DD>
+<pre>
+|- isEmpty (fromAList []) ∧
+   ∀y xs x. fromAList ((x,y)::xs) = insert x y (fromAList xs)
+</pre>
+
+<DT><span class="strong">lookup_fromAList</span>
+<DD>
+<pre>
+|- ∀ls x. lookup x (fromAList ls) = ALOOKUP ls x
+</pre>
+
+<DT><span class="strong">domain_fromAList</span>
+<DD>
+<pre>
+|- ∀ls. domain (fromAList ls) = LIST_TO_SET (MAP FST ls)
+</pre>
+
+<DT><span class="strong">lookup_fromAList_toAList</span>
+<DD>
+<pre>
+|- ∀t x. lookup x (fromAList (toAList t)) = lookup x t
+</pre>
+
+<DT><span class="strong">wf_fromAList</span>
+<DD>
+<pre>
+|- ∀ls. wf (fromAList ls)
+</pre>
+
+<DT><span class="strong">fromAList_toAList</span>
+<DD>
+<pre>
+|- ∀t. wf t ⇒ (fromAList (toAList t) = t)
+</pre>
+
+<DT><span class="strong">toList_map</span>
+<DD>
+<pre>
+|- ∀s. toList (map f s) = MAP f (toList s)
+</pre>
+
+<DT><span class="strong">domain_map</span>
+<DD>
+<pre>
+|- ∀s. domain (map f s) = domain s
+</pre>
+
+<DT><span class="strong">lookup_map</span>
+<DD>
+<pre>
+|- ∀s x. lookup x (map f s) = OPTION_MAP f (lookup x s)
+</pre>
+
+<DT><span class="strong">map_LN</span>
+<DD>
+<pre>
+|- ∀t. isEmpty (map f t) ⇔ isEmpty t
+</pre>
+
+<DT><span class="strong">wf_map</span>
+<DD>
+<pre>
+|- ∀t f. wf (map f t) ⇔ wf t
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>holyHammer.hh</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>hh : Thm.thm list -&gt; Term.term -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/holyHammer.html">holyHammer</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Select relevant lemmas for proving a term using premise selection
+algorithms and external provers (ATP). Additional theorems may
+optionnally be provided to help the proof search.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If an easy goal fails, consider changing predictor using
+</SPAN><SPAN class = "BRKT">set_predictors&nbsp;Mepo</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">set_predictors&nbsp;KNN</SPAN><SPAN class = "TEXT">. The default predictor
+is </SPAN><SPAN class = "BRKT">KNN</SPAN><SPAN class = "TEXT">. It is also possible to increase the default timeout of the
+provers using </SPAN><SPAN class = "BRKT">set_timeout&nbsp;5</SPAN><SPAN class = "TEXT">. Additional theorems are considered very
+important for the proof so they should be chosen carefully and their
+number should be limited.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the supplied term is not a boolean. Or if no ATP is installed.
+Or if no proof is found by the installed ATPs. Or if METIS cannot replay
+the proof from the selected lemmas in less than 30 seconds.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- load "holyHammer"; open holyHammer;
+(* output omitted *)
+&gt; val it = () : unit
+
+- hh [] ``1+1=2``;
+&gt; Minimization ...
+  val lemmas = [fetch "arithmetic" "TWO", fetch "arithmetic" "SUC_ONE_ADD"];
+  val it = (): unit
+
+- val lemmas = [fetch "arithmetic" "TWO", fetch "arithmetic" "SUC_ONE_ADD"];
+&gt; val lemmas =
+   [|- 2 = SUC 1, |- ∀n. SUC n = 1 + n]:
+
+- val thm = METIS_PROVE lemmas ``1+1=2``;
+&gt; val thm = |- 1 + 1 = 2: thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">See src/holyhammer/README for more information on how to install the provers.
+See more examples in src/holyhammer/examples.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "DB.match.html">match</A>,
+<A HREF = "DB.matchp.html">matchp</A>,
+<A HREF = "DB.matcher.html">matcher</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

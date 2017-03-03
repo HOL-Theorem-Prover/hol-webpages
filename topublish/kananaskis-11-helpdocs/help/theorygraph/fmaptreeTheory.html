@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: fmaptree</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "fmaptree"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "finite_mapTheory.html"><span class="strong">finite_map</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Type
+    <th>
+    Arity<tr><td> <span class="strong">fmaptree</span> <td> 2
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">FTNode</span>
+            <td>
+            :β -> (α |-> (α, β) fmaptree) -> (α, β) fmaptree
+    <tr><td>
+        <span class="strong">apply_path</span>
+        <td>
+        :α list -> (α, β) fmaptree -> (α, β) fmaptree option
+    <tr><td>
+        <span class="strong">construct</span>
+        <td>
+        :α -> (β |-> (β list -> α option)) -> β list -> α option
+    <tr><td>
+        <span class="strong">fmtreerec</span>
+        <td>
+        :(β -> (γ |-> α) -> (γ |-> (γ, β) fmaptree) -> α) ->
+         (γ, β) fmaptree -> α
+    <tr><td>
+        <span class="strong">fromF</span>
+        <td>
+        :('key list -> 'value option) -> ('key, 'value) fmaptree
+    <tr><td>
+        <span class="strong">fupd_at_path</span>
+        <td>
+        :α list ->
+         ((α, β) fmaptree -> (α, β) fmaptree option) ->
+         (α, β) fmaptree -> (α, β) fmaptree option
+    <tr><td> <span class="strong">item</span> <td> :(α, β) fmaptree -> β
+    <tr><td>
+        <span class="strong">map</span>
+        <td>
+        :(α, β) fmaptree -> (α |-> (α, β) fmaptree)
+    <tr><td>
+        <span class="strong">relrec</span>
+        <td>
+        :(α -> (β |-> γ) -> (β |-> (β, α) fmaptree) -> γ) ->
+         (β, α) fmaptree -> γ -> bool
+    <tr><td>
+        <span class="strong">toF</span>
+        <td>
+        :('key, 'value) fmaptree -> 'key list -> 'value option
+    <tr><td>
+        <span class="strong">update_at_path</span>
+        <td>
+        :α list -> β -> (α, β) fmaptree -> (α, β) fmaptree option
+    <tr><td> <span class="strong">wf</span> <td> :(β list -> α option) -> bool
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">construct_def</span>
+<DD>
+<pre>
+|- ∀a kfm kl.
+     construct a kfm kl =
+     case kl of
+       [] => SOME a
+     | h::t => if h ∈ FDOM kfm then kfm ' h t else NONE
+</pre>
+
+<DT><span class="strong">wf_def</span>
+<DD>
+<pre>
+|- wf =
+   (λa0.
+      ∀wf'.
+        (∀a0.
+           (∃a fm. (a0 = construct a fm) ∧ ∀k. k ∈ FDOM fm ⇒ wf' (fm ' k)) ⇒
+           wf' a0) ⇒
+        wf' a0)
+</pre>
+
+<DT><span class="strong">fmaptree_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep. TYPE_DEFINITION wf rep
+</pre>
+
+<DT><span class="strong">fmap_bij_thm</span>
+<DD>
+<pre>
+|- (∀a. fromF (toF a) = a) ∧ ∀r. wf r ⇔ (toF (fromF r) = r)
+</pre>
+
+<DT><span class="strong">FTNode_def</span>
+<DD>
+<pre>
+|- ∀i fm. FTNode i fm = fromF (construct i (toF o_f fm))
+</pre>
+
+<DT><span class="strong">item_map_def</span>
+<DD>
+<pre>
+|- ∀ft. ft = FTNode (item ft) (map ft)
+</pre>
+
+<DT><span class="strong">apply_path_def</span>
+<DD>
+<pre>
+|- (∀ft. apply_path [] ft = SOME ft) ∧
+   ∀h t ft.
+     apply_path (h::t) ft =
+     if h ∈ FDOM (map ft) then apply_path t (map ft ' h) else NONE
+</pre>
+
+<DT><span class="strong">update_at_path_def</span>
+<DD>
+<pre>
+|- (∀a ft. update_at_path [] a ft = SOME (FTNode a (map ft))) ∧
+   ∀h t a ft.
+     update_at_path (h::t) a ft =
+     if h ∈ FDOM (map ft) then
+       case update_at_path t a (map ft ' h) of
+         NONE => NONE
+       | SOME ft' => SOME (FTNode (item ft) (map ft |+ (h,ft')))
+     else NONE
+</pre>
+
+<DT><span class="strong">fupd_at_path_def</span>
+<DD>
+<pre>
+|- (∀f ft. fupd_at_path [] f ft = f ft) ∧
+   ∀h t f ft.
+     fupd_at_path (h::t) f ft =
+     if h ∈ FDOM (map ft) then
+       case fupd_at_path t f (map ft ' h) of
+         NONE => NONE
+       | SOME ft' => SOME (FTNode (item ft) (map ft |+ (h,ft')))
+     else NONE
+</pre>
+
+<DT><span class="strong">relrec_def</span>
+<DD>
+<pre>
+|- relrec =
+   (λh a0 a1.
+      ∀relrec'.
+        (∀a0 a1.
+           (∃i fm rfm.
+              (a0 = FTNode i fm) ∧ (a1 = h i rfm fm) ∧ (FDOM rfm = FDOM fm) ∧
+              ∀d. d ∈ FDOM fm ⇒ relrec' (fm ' d) (rfm ' d)) ⇒
+           relrec' a0 a1) ⇒
+        relrec' a0 a1)
+</pre>
+
+<DT><span class="strong">fmtreerec_def</span>
+<DD>
+<pre>
+|- ∀h ft. fmtreerec h ft = @r. relrec h ft r
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">wf_rules</span>
+<DD>
+<pre>
+|- ∀a fm. (∀k. k ∈ FDOM fm ⇒ wf (fm ' k)) ⇒ wf (construct a fm)
+</pre>
+
+<DT><span class="strong">wf_ind</span>
+<DD>
+<pre>
+|- ∀wf'.
+     (∀a fm. (∀k. k ∈ FDOM fm ⇒ wf' (fm ' k)) ⇒ wf' (construct a fm)) ⇒
+     ∀a0. wf a0 ⇒ wf' a0
+</pre>
+
+<DT><span class="strong">wf_strongind</span>
+<DD>
+<pre>
+|- ∀wf'.
+     (∀a fm.
+        (∀k. k ∈ FDOM fm ⇒ wf (fm ' k) ∧ wf' (fm ' k)) ⇒
+        wf' (construct a fm)) ⇒
+     ∀a0. wf a0 ⇒ wf' a0
+</pre>
+
+<DT><span class="strong">wf_cases</span>
+<DD>
+<pre>
+|- ∀a0. wf a0 ⇔ ∃a fm. (a0 = construct a fm) ∧ ∀k. k ∈ FDOM fm ⇒ wf (fm ' k)
+</pre>
+
+<DT><span class="strong">FTNode_11</span>
+<DD>
+<pre>
+|- (FTNode i1 f1 = FTNode i2 f2) ⇔ (i1 = i2) ∧ (f1 = f2)
+</pre>
+
+<DT><span class="strong">fmaptree_nchotomy</span>
+<DD>
+<pre>
+|- ∀ft. ∃i fm. ft = FTNode i fm
+</pre>
+
+<DT><span class="strong">item_thm</span>
+<DD>
+<pre>
+|- item (FTNode i fm) = i
+</pre>
+
+<DT><span class="strong">map_thm</span>
+<DD>
+<pre>
+|- map (FTNode i fm) = fm
+</pre>
+
+<DT><span class="strong">ft_ind</span>
+<DD>
+<pre>
+|- ∀P. (∀a fm. (∀k. k ∈ FDOM fm ⇒ P (fm ' k)) ⇒ P (FTNode a fm)) ⇒ ∀ft. P ft
+</pre>
+
+<DT><span class="strong">applicable_paths_FINITE</span>
+<DD>
+<pre>
+|- ∀ft. FINITE {p | ∃ft'. apply_path p ft = SOME ft'}
+</pre>
+
+<DT><span class="strong">apply_path_SNOC</span>
+<DD>
+<pre>
+|- ∀ft x p.
+     apply_path (p ++ [x]) ft =
+     case apply_path p ft of NONE => NONE | SOME ft' => FLOOKUP (map ft') x
+</pre>
+
+<DT><span class="strong">relrec_rules</span>
+<DD>
+<pre>
+|- ∀h i fm rfm.
+     (FDOM rfm = FDOM fm) ∧ (∀d. d ∈ FDOM fm ⇒ relrec h (fm ' d) (rfm ' d)) ⇒
+     relrec h (FTNode i fm) (h i rfm fm)
+</pre>
+
+<DT><span class="strong">relrec_ind</span>
+<DD>
+<pre>
+|- ∀h relrec'.
+     (∀i fm rfm.
+        (FDOM rfm = FDOM fm) ∧
+        (∀d. d ∈ FDOM fm ⇒ relrec' (fm ' d) (rfm ' d)) ⇒
+        relrec' (FTNode i fm) (h i rfm fm)) ⇒
+     ∀a0 a1. relrec h a0 a1 ⇒ relrec' a0 a1
+</pre>
+
+<DT><span class="strong">relrec_strongind</span>
+<DD>
+<pre>
+|- ∀h relrec'.
+     (∀i fm rfm.
+        (FDOM rfm = FDOM fm) ∧
+        (∀d.
+           d ∈ FDOM fm ⇒
+           relrec h (fm ' d) (rfm ' d) ∧ relrec' (fm ' d) (rfm ' d)) ⇒
+        relrec' (FTNode i fm) (h i rfm fm)) ⇒
+     ∀a0 a1. relrec h a0 a1 ⇒ relrec' a0 a1
+</pre>
+
+<DT><span class="strong">relrec_cases</span>
+<DD>
+<pre>
+|- ∀h a0 a1.
+     relrec h a0 a1 ⇔
+     ∃i fm rfm.
+       (a0 = FTNode i fm) ∧ (a1 = h i rfm fm) ∧ (FDOM rfm = FDOM fm) ∧
+       ∀d. d ∈ FDOM fm ⇒ relrec h (fm ' d) (rfm ' d)
+</pre>
+
+<DT><span class="strong">fmtreerec_thm</span>
+<DD>
+<pre>
+|- fmtreerec h (FTNode i fm) = h i (fmtreerec h o_f fm) fm
+</pre>
+
+<DT><span class="strong">fmtree_Axiom</span>
+<DD>
+<pre>
+|- ∀h. ∃f. ∀i fm. f (FTNode i fm) = h i fm (f o_f fm)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

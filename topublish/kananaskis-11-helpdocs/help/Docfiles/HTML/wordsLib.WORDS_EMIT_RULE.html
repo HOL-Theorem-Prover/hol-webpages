@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>wordsLib.WORDS_EMIT_RULE</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>WORDS_EMIT_RULE : rule</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/wordsLib.html">wordsLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">For use with </SPAN><SPAN class = "BRKT">EmitML.emitML</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When using </SPAN><SPAN class = "BRKT">EmitML.emitML</SPAN><SPAN class = "TEXT"> the rule </SPAN><SPAN class = "BRKT">WORDS_EMIT_RULE</SPAN><SPAN class = "TEXT"> should be applied to all
+definitions containing word operations.  The rule introduces type annotated
+word operations and it also handles word equality and case statements.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- val example_def = Define `example (w:1 word) = case w of 0w -&gt; 1w:word8 || _ -&gt; sw2sw w`;
+Definition has been stored under "example_def".
+&gt; val example_def = |- !w. example w = case w of 0w -&gt; 1w || v -&gt; sw2sw w : thm
+- WORDS_EMIT_RULE example_def
+&gt; val it =
+    |- !w.
+         example w =
+         case word_eq w (n2w_itself (0,(:unit))) of
+            T -&gt; n2w_itself (1,(:8))
+         || F -&gt; sw2sw_itself (:8) w : thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Before using </SPAN><SPAN class = "BRKT">EmitML.emitML</SPAN><SPAN class = "TEXT"> the references </SPAN><SPAN class = "BRKT">type_pp.pp_num_types</SPAN><SPAN class = "TEXT"> and
+</SPAN><SPAN class = "BRKT">type_pp.pp_array_types</SPAN><SPAN class = "TEXT"> should both be set to </SPAN><SPAN class = "BRKT">false</SPAN><SPAN class = "TEXT">.  In addition type
+abbreviations can be disabled with </SPAN><SPAN class = "BRKT">disable_tyabbrev_printing</SPAN><SPAN class = "TEXT"> or alternatively
+they must be handled by adding an appropriate signature entry.  For example:
+</SPAN><DIV class = "XMPL"><pre>
+- ``:word8``
+&gt; val it = ``:bool[8]`` : hol_type
+- type_pp.pp_array_types := false;
+&gt; val it = () : unit
+- type_pp.pp_num_types := false;
+&gt; val it = () : unit
+- disable_tyabbrev_printing "word8";
+&gt; val it = () : unit
+- ``:word8``;
+&gt; val it = ``:unit bit0 bit0 bit0 word`` : hol_type
+</pre></DIV>
+<SPAN class = "TEXT">
+If the type abbreviation is not disabled then add the entry
+</SPAN><DIV class = "XMPL"><pre>
+  EmitML.MLSIG "type word8 = wordsML.word8"
+</pre></DIV>
+</DIV></DD>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

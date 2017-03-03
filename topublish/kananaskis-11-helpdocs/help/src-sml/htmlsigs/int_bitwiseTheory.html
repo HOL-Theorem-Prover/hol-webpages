@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure int_bitwiseTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure int_bitwiseTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/integer/int_bitwiseScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature int_bitwiseTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#bits_bitwise_curried_def-val">bits_bitwise_curried_def</a> : thm
+<a name="line7"></a>    val <a href="#bits_bitwise_tupled_primitive_def-val">bits_bitwise_tupled_primitive_def</a> : thm
+<a name="line8"></a>    val <a href="#bits_of_int_def-val">bits_of_int_def</a> : thm
+<a name="line9"></a>    val <a href="#bits_of_num_primitive_def-val">bits_of_num_primitive_def</a> : thm
+<a name="line10"></a>    val <a href="#int_and_def-val">int_and_def</a> : thm
+<a name="line11"></a>    val <a href="#int_bit_def-val">int_bit_def</a> : thm
+<a name="line12"></a>    val <a href="#int_bitwise_def-val">int_bitwise_def</a> : thm
+<a name="line13"></a>    val <a href="#int_not_def-val">int_not_def</a> : thm
+<a name="line14"></a>    val <a href="#int_of_bits_def-val">int_of_bits_def</a> : thm
+<a name="line15"></a>    val <a href="#int_or_def-val">int_or_def</a> : thm
+<a name="line16"></a>    val <a href="#int_shift_left_def-val">int_shift_left_def</a> : thm
+<a name="line17"></a>    val <a href="#int_shift_right_def-val">int_shift_right_def</a> : thm
+<a name="line18"></a>    val <a href="#int_xor_def-val">int_xor_def</a> : thm
+<a name="line19"></a>    val <a href="#num_of_bits_primitive_def-val">num_of_bits_primitive_def</a> : thm
+<a name="line20"></a>
+<a name="line21"></a>  (*  Theorems  *)
+<a name="line22"></a>    val <a href="#bits_bitwise_def-val">bits_bitwise_def</a> : thm
+<a name="line23"></a>    val <a href="#bits_bitwise_ind-val">bits_bitwise_ind</a> : thm
+<a name="line24"></a>    val <a href="#bits_of_num_def-val">bits_of_num_def</a> : thm
+<a name="line25"></a>    val <a href="#bits_of_num_ind-val">bits_of_num_ind</a> : thm
+<a name="line26"></a>    val <a href="#int_bit_and-val">int_bit_and</a> : thm
+<a name="line27"></a>    val <a href="#int_bit_bitwise-val">int_bit_bitwise</a> : thm
+<a name="line28"></a>    val <a href="#int_bit_equiv-val">int_bit_equiv</a> : thm
+<a name="line29"></a>    val <a href="#int_bit_int_of_bits-val">int_bit_int_of_bits</a> : thm
+<a name="line30"></a>    val <a href="#int_bit_not-val">int_bit_not</a> : thm
+<a name="line31"></a>    val <a href="#int_bit_or-val">int_bit_or</a> : thm
+<a name="line32"></a>    val <a href="#int_bit_shift_left-val">int_bit_shift_left</a> : thm
+<a name="line33"></a>    val <a href="#int_bit_shift_right-val">int_bit_shift_right</a> : thm
+<a name="line34"></a>    val <a href="#int_bit_xor-val">int_bit_xor</a> : thm
+<a name="line35"></a>    val <a href="#int_not-val">int_not</a> : thm
+<a name="line36"></a>    val <a href="#int_not_not-val">int_not_not</a> : thm
+<a name="line37"></a>    val <a href="#int_of_bits_bits_of_int-val">int_of_bits_bits_of_int</a> : thm
+<a name="line38"></a>    val <a href="#num_of_bits_def-val">num_of_bits_def</a> : thm
+<a name="line39"></a>    val <a href="#num_of_bits_ind-val">num_of_bits_ind</a> : thm
+<a name="line40"></a>
+<a name="line41"></a>  val int_bitwise_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line42"></a>(*
+   [Omega] Parent theory of "int_bitwise"
+
+   [bit] Parent theory of "int_bitwise"
+
+   [int_arith] Parent theory of "int_bitwise"
+
+   [<a name="bits_bitwise_curried_def-val"><b>bits_bitwise_curried_def</b></a>]  Definition
+
+      |- ∀x x1 x2. bits_bitwise x x1 x2 = bits_bitwise_tupled (x,x1,x2)
+
+   [<a name="bits_bitwise_tupled_primitive_def-val"><b>bits_bitwise_tupled_primitive_def</b></a>]  Definition
+
+      |- bits_bitwise_tupled =
+         WFREC
+           (@R.
+              WF R ∧
+              (∀b2 r2 bs2 r1 f.
+                 R (f,([],r1),bs2,r2) (f,([],r1),b2::bs2,r2)) ∧
+              (∀b1 r2 r1 bs1 f.
+                 R (f,(bs1,r1),[],r2) (f,(b1::bs1,r1),[],r2)) ∧
+              ∀b2 b1 r2 bs2 r1 bs1 f.
+                R (f,(bs1,r1),bs2,r2) (f,(b1::bs1,r1),b2::bs2,r2))
+           (λbits_bitwise_tupled a.
+              case a of
+                (f,([],r1),[],r2) =&gt; I ([],f r1 r2)
+              | (f,(b1::bs1,r1),[],r2) =&gt;
+                  I
+                    (let (bs,r) = bits_bitwise_tupled (f,(bs1,r1),[],r2)
+                     in
+                       (f b1 r2::bs,r))
+              | (f,([],r1),b2::bs2,r2) =&gt;
+                  I
+                    (let (bs,r) = bits_bitwise_tupled (f,([],r1),bs2,r2)
+                     in
+                       (f r1 b2::bs,r))
+              | (f,(b1'::bs1',r1),b2::bs2,r2) =&gt;
+                  I
+                    (let (bs,r) = bits_bitwise_tupled (f,(bs1',r1),bs2,r2)
+                     in
+                       (f b1' b2::bs,r)))
+
+   [<a name="bits_of_int_def-val"><b>bits_of_int_def</b></a>]  Definition
+
+      |- ∀i.
+           bits_of_int i =
+           if i &lt; 0 then (MAP $~ (bits_of_num (Num (int_not i))),T)
+           else (bits_of_num (Num i),F)
+
+   [<a name="bits_of_num_primitive_def-val"><b>bits_of_num_primitive_def</b></a>]  Definition
+
+      |- bits_of_num =
+         WFREC (@R. WF R ∧ ∀n. n ≠ 0 ⇒ R (n DIV 2) n)
+           (λbits_of_num n.
+              I (if n = 0 then [] else ODD n::bits_of_num (n DIV 2)))
+
+   [<a name="int_and_def-val"><b>int_and_def</b></a>]  Definition
+
+      |- int_and = int_bitwise $/\
+
+   [<a name="int_bit_def-val"><b>int_bit_def</b></a>]  Definition
+
+      |- ∀b i.
+           int_bit b i ⇔
+           if i &lt; 0 then ¬BIT b (Num (int_not i)) else BIT b (Num i)
+
+   [<a name="int_bitwise_def-val"><b>int_bitwise_def</b></a>]  Definition
+
+      |- ∀f i j.
+           int_bitwise f i j =
+           int_of_bits (bits_bitwise f (bits_of_int i) (bits_of_int j))
+
+   [<a name="int_not_def-val"><b>int_not_def</b></a>]  Definition
+
+      |- ∀i. int_not i = 0 − i − 1
+
+   [<a name="int_of_bits_def-val"><b>int_of_bits_def</b></a>]  Definition
+
+      |- ∀bs rest.
+           int_of_bits (bs,rest) =
+           if rest then int_not (&num_of_bits (MAP $~ bs))
+           else &num_of_bits bs
+
+   [<a name="int_or_def-val"><b>int_or_def</b></a>]  Definition
+
+      |- int_or = int_bitwise $\/
+
+   [<a name="int_shift_left_def-val"><b>int_shift_left_def</b></a>]  Definition
+
+      |- ∀n i.
+           int_shift_left n i =
+           (let (bs,r) = bits_of_int i
+            in
+              int_of_bits (GENLIST (K F) n ++ bs,r))
+
+   [<a name="int_shift_right_def-val"><b>int_shift_right_def</b></a>]  Definition
+
+      |- ∀n i.
+           int_shift_right n i =
+           (let (bs,r) = bits_of_int i in int_of_bits (DROP n bs,r))
+
+   [<a name="int_xor_def-val"><b>int_xor_def</b></a>]  Definition
+
+      |- int_xor = int_bitwise (λx y. x ⇎ y)
+
+   [<a name="num_of_bits_primitive_def-val"><b>num_of_bits_primitive_def</b></a>]  Definition
+
+      |- num_of_bits =
+         WFREC (@R. WF R ∧ (∀bs. R bs (F::bs)) ∧ ∀bs. R bs (T::bs))
+           (λnum_of_bits a.
+              case a of
+                [] =&gt; I 0
+              | T::bs =&gt; I (1 + 2 * num_of_bits bs)
+              | F::bs =&gt; I (2 * num_of_bits bs))
+
+   [<a name="bits_bitwise_def-val"><b>bits_bitwise_def</b></a>]  Theorem
+
+      |- (∀r2 r1 f. bits_bitwise f ([],r1) ([],r2) = ([],f r1 r2)) ∧
+         (∀r2 r1 f bs2 b2.
+            bits_bitwise f ([],r1) (b2::bs2,r2) =
+            (let (bs,r) = bits_bitwise f ([],r1) (bs2,r2)
+             in
+               (f r1 b2::bs,r))) ∧
+         (∀r2 r1 f bs1 b1.
+            bits_bitwise f (b1::bs1,r1) ([],r2) =
+            (let (bs,r) = bits_bitwise f (bs1,r1) ([],r2)
+             in
+               (f b1 r2::bs,r))) ∧
+         ∀r2 r1 f bs2 bs1 b2 b1.
+           bits_bitwise f (b1::bs1,r1) (b2::bs2,r2) =
+           (let (bs,r) = bits_bitwise f (bs1,r1) (bs2,r2)
+            in
+              (f b1 b2::bs,r))
+
+   [<a name="bits_bitwise_ind-val"><b>bits_bitwise_ind</b></a>]  Theorem
+
+      |- ∀P.
+           (∀f r1 r2. P f ([],r1) ([],r2)) ∧
+           (∀f r1 b2 bs2 r2.
+              P f ([],r1) (bs2,r2) ⇒ P f ([],r1) (b2::bs2,r2)) ∧
+           (∀f b1 bs1 r1 r2.
+              P f (bs1,r1) ([],r2) ⇒ P f (b1::bs1,r1) ([],r2)) ∧
+           (∀f b1 bs1 r1 b2 bs2 r2.
+              P f (bs1,r1) (bs2,r2) ⇒ P f (b1::bs1,r1) (b2::bs2,r2)) ⇒
+           ∀v v1 v2 v3 v4. P v (v1,v2) (v3,v4)
+
+   [<a name="bits_of_num_def-val"><b>bits_of_num_def</b></a>]  Theorem
+
+      |- ∀n.
+           bits_of_num n =
+           if n = 0 then [] else ODD n::bits_of_num (n DIV 2)
+
+   [<a name="bits_of_num_ind-val"><b>bits_of_num_ind</b></a>]  Theorem
+
+      |- ∀P. (∀n. (n ≠ 0 ⇒ P (n DIV 2)) ⇒ P n) ⇒ ∀v. P v
+
+   [<a name="int_bit_and-val"><b>int_bit_and</b></a>]  Theorem
+
+      |- ∀n i j. int_bit n (int_and i j) ⇔ int_bit n i ∧ int_bit n j
+
+   [<a name="int_bit_bitwise-val"><b>int_bit_bitwise</b></a>]  Theorem
+
+      |- ∀n f i j.
+           int_bit n (int_bitwise f i j) ⇔ f (int_bit n i) (int_bit n j)
+
+   [<a name="int_bit_equiv-val"><b>int_bit_equiv</b></a>]  Theorem
+
+      |- ∀i j. (i = j) ⇔ ∀n. int_bit n i ⇔ int_bit n j
+
+   [<a name="int_bit_int_of_bits-val"><b>int_bit_int_of_bits</b></a>]  Theorem
+
+      |- int_bit n (int_of_bits b) ⇔
+         if n &lt; LENGTH (FST b) then EL n (FST b) else SND b
+
+   [<a name="int_bit_not-val"><b>int_bit_not</b></a>]  Theorem
+
+      |- ∀b i. int_bit b (int_not i) ⇔ ¬int_bit b i
+
+   [<a name="int_bit_or-val"><b>int_bit_or</b></a>]  Theorem
+
+      |- ∀n i j. int_bit n (int_or i j) ⇔ int_bit n i ∨ int_bit n j
+
+   [<a name="int_bit_shift_left-val"><b>int_bit_shift_left</b></a>]  Theorem
+
+      |- ∀b n i. int_bit b (int_shift_left n i) ⇔ n ≤ b ∧ int_bit (b − n) i
+
+   [<a name="int_bit_shift_right-val"><b>int_bit_shift_right</b></a>]  Theorem
+
+      |- ∀b n i. int_bit b (int_shift_right n i) ⇔ int_bit (b + n) i
+
+   [<a name="int_bit_xor-val"><b>int_bit_xor</b></a>]  Theorem
+
+      |- ∀n i j. int_bit n (int_xor i j) ⇔ (int_bit n i ⇎ int_bit n j)
+
+   [<a name="int_not-val"><b>int_not</b></a>]  Theorem
+
+      |- int_not = int_bitwise (λx y. ¬y) 0
+
+   [<a name="int_not_not-val"><b>int_not_not</b></a>]  Theorem
+
+      |- ∀i. int_not (int_not i) = i
+
+   [<a name="int_of_bits_bits_of_int-val"><b>int_of_bits_bits_of_int</b></a>]  Theorem
+
+      |- ∀i. int_of_bits (bits_of_int i) = i
+
+   [<a name="num_of_bits_def-val"><b>num_of_bits_def</b></a>]  Theorem
+
+      |- (num_of_bits [] = 0) ∧
+         (∀bs. num_of_bits (F::bs) = 2 * num_of_bits bs) ∧
+         ∀bs. num_of_bits (T::bs) = 1 + 2 * num_of_bits bs
+
+   [<a name="num_of_bits_ind-val"><b>num_of_bits_ind</b></a>]  Theorem
+
+      |- ∀P.
+           P [] ∧ (∀bs. P bs ⇒ P (F::bs)) ∧ (∀bs. P bs ⇒ P (T::bs)) ⇒
+           ∀v. P v
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/integer/int_bitwiseScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

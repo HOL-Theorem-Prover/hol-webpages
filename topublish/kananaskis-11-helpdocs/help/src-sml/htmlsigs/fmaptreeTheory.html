@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure fmaptreeTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure fmaptreeTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/finite_map/fmaptreeScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature fmaptreeTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#FTNode_def-val">FTNode_def</a> : thm
+<a name="line7"></a>    val <a href="#apply_path_def-val">apply_path_def</a> : thm
+<a name="line8"></a>    val <a href="#construct_def-val">construct_def</a> : thm
+<a name="line9"></a>    val <a href="#fmap_bij_thm-val">fmap_bij_thm</a> : thm
+<a name="line10"></a>    val <a href="#fmaptree_TY_DEF-val">fmaptree_TY_DEF</a> : thm
+<a name="line11"></a>    val <a href="#fmtreerec_def-val">fmtreerec_def</a> : thm
+<a name="line12"></a>    val <a href="#fupd_at_path_def-val">fupd_at_path_def</a> : thm
+<a name="line13"></a>    val <a href="#item_map_def-val">item_map_def</a> : thm
+<a name="line14"></a>    val <a href="#relrec_def-val">relrec_def</a> : thm
+<a name="line15"></a>    val <a href="#update_at_path_def-val">update_at_path_def</a> : thm
+<a name="line16"></a>    val <a href="#wf_def-val">wf_def</a> : thm
+<a name="line17"></a>
+<a name="line18"></a>  (*  Theorems  *)
+<a name="line19"></a>    val <a href="#FTNode_11-val">FTNode_11</a> : thm
+<a name="line20"></a>    val <a href="#applicable_paths_FINITE-val">applicable_paths_FINITE</a> : thm
+<a name="line21"></a>    val <a href="#apply_path_SNOC-val">apply_path_SNOC</a> : thm
+<a name="line22"></a>    val <a href="#fmaptree_nchotomy-val">fmaptree_nchotomy</a> : thm
+<a name="line23"></a>    val <a href="#fmtree_Axiom-val">fmtree_Axiom</a> : thm
+<a name="line24"></a>    val <a href="#fmtreerec_thm-val">fmtreerec_thm</a> : thm
+<a name="line25"></a>    val <a href="#ft_ind-val">ft_ind</a> : thm
+<a name="line26"></a>    val <a href="#item_thm-val">item_thm</a> : thm
+<a name="line27"></a>    val <a href="#map_thm-val">map_thm</a> : thm
+<a name="line28"></a>    val <a href="#relrec_cases-val">relrec_cases</a> : thm
+<a name="line29"></a>    val <a href="#relrec_ind-val">relrec_ind</a> : thm
+<a name="line30"></a>    val <a href="#relrec_rules-val">relrec_rules</a> : thm
+<a name="line31"></a>    val <a href="#relrec_strongind-val">relrec_strongind</a> : thm
+<a name="line32"></a>    val <a href="#wf_cases-val">wf_cases</a> : thm
+<a name="line33"></a>    val <a href="#wf_ind-val">wf_ind</a> : thm
+<a name="line34"></a>    val <a href="#wf_rules-val">wf_rules</a> : thm
+<a name="line35"></a>    val <a href="#wf_strongind-val">wf_strongind</a> : thm
+<a name="line36"></a>
+<a name="line37"></a>  val fmaptree_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line38"></a>(*
+   [finite_map] Parent theory of "fmaptree"
+
+   [<a name="FTNode_def-val"><b>FTNode_def</b></a>]  Definition
+
+      |- ∀i fm. FTNode i fm = fromF (construct i (toF o_f fm))
+
+   [<a name="apply_path_def-val"><b>apply_path_def</b></a>]  Definition
+
+      |- (∀ft. apply_path [] ft = SOME ft) ∧
+         ∀h t ft.
+           apply_path (h::t) ft =
+           if h ∈ FDOM (map ft) then apply_path t (map ft ' h) else NONE
+
+   [<a name="construct_def-val"><b>construct_def</b></a>]  Definition
+
+      |- ∀a kfm kl.
+           construct a kfm kl =
+           case kl of
+             [] =&gt; SOME a
+           | h::t =&gt; if h ∈ FDOM kfm then kfm ' h t else NONE
+
+   [<a name="fmap_bij_thm-val"><b>fmap_bij_thm</b></a>]  Definition
+
+      |- (∀a. fromF (toF a) = a) ∧ ∀r. wf r ⇔ (toF (fromF r) = r)
+
+   [<a name="fmaptree_TY_DEF-val"><b>fmaptree_TY_DEF</b></a>]  Definition
+
+      |- ∃rep. TYPE_DEFINITION wf rep
+
+   [<a name="fmtreerec_def-val"><b>fmtreerec_def</b></a>]  Definition
+
+      |- ∀h ft. fmtreerec h ft = @r. relrec h ft r
+
+   [<a name="fupd_at_path_def-val"><b>fupd_at_path_def</b></a>]  Definition
+
+      |- (∀f ft. fupd_at_path [] f ft = f ft) ∧
+         ∀h t f ft.
+           fupd_at_path (h::t) f ft =
+           if h ∈ FDOM (map ft) then
+             case fupd_at_path t f (map ft ' h) of
+               NONE =&gt; NONE
+             | SOME ft' =&gt; SOME (FTNode (item ft) (map ft |+ (h,ft')))
+           else NONE
+
+   [<a name="item_map_def-val"><b>item_map_def</b></a>]  Definition
+
+      |- ∀ft. ft = FTNode (item ft) (map ft)
+
+   [<a name="relrec_def-val"><b>relrec_def</b></a>]  Definition
+
+      |- relrec =
+         (λh a0 a1.
+            ∀relrec'.
+              (∀a0 a1.
+                 (∃i fm rfm.
+                    (a0 = FTNode i fm) ∧ (a1 = h i rfm fm) ∧
+                    (FDOM rfm = FDOM fm) ∧
+                    ∀d. d ∈ FDOM fm ⇒ relrec' (fm ' d) (rfm ' d)) ⇒
+                 relrec' a0 a1) ⇒
+              relrec' a0 a1)
+
+   [<a name="update_at_path_def-val"><b>update_at_path_def</b></a>]  Definition
+
+      |- (∀a ft. update_at_path [] a ft = SOME (FTNode a (map ft))) ∧
+         ∀h t a ft.
+           update_at_path (h::t) a ft =
+           if h ∈ FDOM (map ft) then
+             case update_at_path t a (map ft ' h) of
+               NONE =&gt; NONE
+             | SOME ft' =&gt; SOME (FTNode (item ft) (map ft |+ (h,ft')))
+           else NONE
+
+   [<a name="wf_def-val"><b>wf_def</b></a>]  Definition
+
+      |- wf =
+         (λa0.
+            ∀wf'.
+              (∀a0.
+                 (∃a fm.
+                    (a0 = construct a fm) ∧
+                    ∀k. k ∈ FDOM fm ⇒ wf' (fm ' k)) ⇒
+                 wf' a0) ⇒
+              wf' a0)
+
+   [<a name="FTNode_11-val"><b>FTNode_11</b></a>]  Theorem
+
+      |- (FTNode i1 f1 = FTNode i2 f2) ⇔ (i1 = i2) ∧ (f1 = f2)
+
+   [<a name="applicable_paths_FINITE-val"><b>applicable_paths_FINITE</b></a>]  Theorem
+
+      |- ∀ft. FINITE {p | ∃ft'. apply_path p ft = SOME ft'}
+
+   [<a name="apply_path_SNOC-val"><b>apply_path_SNOC</b></a>]  Theorem
+
+      |- ∀ft x p.
+           apply_path (p ++ [x]) ft =
+           case apply_path p ft of
+             NONE =&gt; NONE
+           | SOME ft' =&gt; FLOOKUP (map ft') x
+
+   [<a name="fmaptree_nchotomy-val"><b>fmaptree_nchotomy</b></a>]  Theorem
+
+      |- ∀ft. ∃i fm. ft = FTNode i fm
+
+   [<a name="fmtree_Axiom-val"><b>fmtree_Axiom</b></a>]  Theorem
+
+      |- ∀h. ∃f. ∀i fm. f (FTNode i fm) = h i fm (f o_f fm)
+
+   [<a name="fmtreerec_thm-val"><b>fmtreerec_thm</b></a>]  Theorem
+
+      |- fmtreerec h (FTNode i fm) = h i (fmtreerec h o_f fm) fm
+
+   [<a name="ft_ind-val"><b>ft_ind</b></a>]  Theorem
+
+      |- ∀P.
+           (∀a fm. (∀k. k ∈ FDOM fm ⇒ P (fm ' k)) ⇒ P (FTNode a fm)) ⇒
+           ∀ft. P ft
+
+   [<a name="item_thm-val"><b>item_thm</b></a>]  Theorem
+
+      |- item (FTNode i fm) = i
+
+   [<a name="map_thm-val"><b>map_thm</b></a>]  Theorem
+
+      |- map (FTNode i fm) = fm
+
+   [<a name="relrec_cases-val"><b>relrec_cases</b></a>]  Theorem
+
+      |- ∀h a0 a1.
+           relrec h a0 a1 ⇔
+           ∃i fm rfm.
+             (a0 = FTNode i fm) ∧ (a1 = h i rfm fm) ∧
+             (FDOM rfm = FDOM fm) ∧
+             ∀d. d ∈ FDOM fm ⇒ relrec h (fm ' d) (rfm ' d)
+
+   [<a name="relrec_ind-val"><b>relrec_ind</b></a>]  Theorem
+
+      |- ∀h relrec'.
+           (∀i fm rfm.
+              (FDOM rfm = FDOM fm) ∧
+              (∀d. d ∈ FDOM fm ⇒ relrec' (fm ' d) (rfm ' d)) ⇒
+              relrec' (FTNode i fm) (h i rfm fm)) ⇒
+           ∀a0 a1. relrec h a0 a1 ⇒ relrec' a0 a1
+
+   [<a name="relrec_rules-val"><b>relrec_rules</b></a>]  Theorem
+
+      |- ∀h i fm rfm.
+           (FDOM rfm = FDOM fm) ∧
+           (∀d. d ∈ FDOM fm ⇒ relrec h (fm ' d) (rfm ' d)) ⇒
+           relrec h (FTNode i fm) (h i rfm fm)
+
+   [<a name="relrec_strongind-val"><b>relrec_strongind</b></a>]  Theorem
+
+      |- ∀h relrec'.
+           (∀i fm rfm.
+              (FDOM rfm = FDOM fm) ∧
+              (∀d.
+                 d ∈ FDOM fm ⇒
+                 relrec h (fm ' d) (rfm ' d) ∧
+                 relrec' (fm ' d) (rfm ' d)) ⇒
+              relrec' (FTNode i fm) (h i rfm fm)) ⇒
+           ∀a0 a1. relrec h a0 a1 ⇒ relrec' a0 a1
+
+   [<a name="wf_cases-val"><b>wf_cases</b></a>]  Theorem
+
+      |- ∀a0.
+           wf a0 ⇔
+           ∃a fm. (a0 = construct a fm) ∧ ∀k. k ∈ FDOM fm ⇒ wf (fm ' k)
+
+   [<a name="wf_ind-val"><b>wf_ind</b></a>]  Theorem
+
+      |- ∀wf'.
+           (∀a fm.
+              (∀k. k ∈ FDOM fm ⇒ wf' (fm ' k)) ⇒ wf' (construct a fm)) ⇒
+           ∀a0. wf a0 ⇒ wf' a0
+
+   [<a name="wf_rules-val"><b>wf_rules</b></a>]  Theorem
+
+      |- ∀a fm. (∀k. k ∈ FDOM fm ⇒ wf (fm ' k)) ⇒ wf (construct a fm)
+
+   [<a name="wf_strongind-val"><b>wf_strongind</b></a>]  Theorem
+
+      |- ∀wf'.
+           (∀a fm.
+              (∀k. k ∈ FDOM fm ⇒ wf (fm ' k) ∧ wf' (fm ' k)) ⇒
+              wf' (construct a fm)) ⇒
+           ∀a0. wf a0 ⇒ wf' a0
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/finite_map/fmaptreeScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

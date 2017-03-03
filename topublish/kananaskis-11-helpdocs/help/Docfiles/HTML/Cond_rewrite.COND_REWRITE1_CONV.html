@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Cond_rewrite.COND_REWRITE1_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>COND_REWRITE1_CONV : thm list -&gt; thm -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Cond_rewrite.html">Cond_rewrite</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A simple conditional rewriting conversion.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">COND_REWRITE1_CONV</SPAN><SPAN class = "TEXT"> is a front end of the conditional rewriting
+conversion </SPAN><SPAN class = "BRKT">COND_REWR_CONV</SPAN><SPAN class = "TEXT">. The input theorem should be in the following form
+</SPAN><DIV class = "XMPL"><pre>
+   A |- !x11 ... . P1 ==&gt; ... !xm1 ... . Pm ==&gt; (!x ... . Q = R)
+</pre></DIV>
+<SPAN class = "TEXT">
+where each antecedent </SPAN><SPAN class = "BRKT">Pi</SPAN><SPAN class = "TEXT"> itself may be a conjunction or
+disjunction.  This theorem is transformed to a standard form expected
+by </SPAN><SPAN class = "BRKT">COND_REWR_CONV</SPAN><SPAN class = "TEXT"> which carries out the actual rewriting.  The
+transformation is performed by </SPAN><SPAN class = "BRKT">COND_REWR_CANON</SPAN><SPAN class = "TEXT">. The search function
+passed to </SPAN><SPAN class = "BRKT">COND_REWR_CONV</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">search_top_down</SPAN><SPAN class = "TEXT">. The effect of
+applying the conversion </SPAN><SPAN class = "BRKT">COND_REWRITE1_CONV&nbsp;ths&nbsp;th</SPAN><SPAN class = "TEXT"> to a term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> is
+to derive a theorem
+</SPAN><DIV class = "XMPL"><pre>
+  A' |- tm = tm[R'/Q']
+</pre></DIV>
+<SPAN class = "TEXT">
+where the right hand side of the equation is obtained by rewriting
+the input term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> with an instance of the conclusion of the input theorem.
+The theorems in the list </SPAN><SPAN class = "BRKT">ths</SPAN><SPAN class = "TEXT"> are used to discharge the assumptions
+generated from the antecedents of the input theorem.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">COND_REWRITE1_CONV&nbsp;ths&nbsp;th</SPAN><SPAN class = "TEXT">  fails if </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> cannot be transformed into the
+required form by </SPAN><SPAN class = "BRKT">COND_REWR_CANON</SPAN><SPAN class = "TEXT">. Otherwise, it fails if no match
+is found or the theorem cannot be instantiated.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following example illustrates a straightforward use of
+</SPAN><SPAN class = "BRKT">COND_REWRITE1_CONV</SPAN><SPAN class = "TEXT">.  We use the built-in theorem </SPAN><SPAN class = "BRKT">LESS_MOD</SPAN><SPAN class = "TEXT"> as the
+input theorem.
+</SPAN><DIV class = "XMPL"><pre>
+   #LESS_MOD;;
+   Theorem LESS_MOD autoloading from theory `arithmetic` ...
+   LESS_MOD = |- !n k. k &lt; n ==&gt; (k MOD n = k)
+
+   |- !n k. k &lt; n ==&gt; (k MOD n = k)
+
+   #COND_REWRITE1_CONV [] LESS_MOD "2 MOD 3";;
+   2 &lt; 3 |- 2 MOD 3 = 2
+
+   #let less_2_3 = REWRITE_RULE[LESS_MONO_EQ;LESS_0]
+   #(REDEPTH_CONV num_CONV "2 &lt; 3");;
+   less_2_3 = |- 2 &lt; 3
+
+   #COND_REWRITE1_CONV [less_2_3] LESS_MOD "2 MOD 3";;
+   |- 2 MOD 3 = 2
+
+</pre></DIV>
+<SPAN class = "TEXT">
+In the first example, an empty theorem list is supplied to
+</SPAN><SPAN class = "BRKT">COND_REWRITE1_CONV</SPAN><SPAN class = "TEXT"> so the resulting theorem has an assumption
+</SPAN><SPAN class = "BRKT">2&nbsp;&lt;&nbsp;3</SPAN><SPAN class = "TEXT">. In the second example, a list containing a theorem </SPAN><SPAN class = "BRKT">|-&nbsp;2&nbsp;&lt;&nbsp;3</SPAN><SPAN class = "TEXT">
+is supplied, the resulting theorem has no assumptions.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Cond_rewrite.COND_REWR_TAC.html">COND_REWR_TAC</A>,
+<A HREF = "Cond_rewrite.COND_REWRITE1_TAC.html">COND_REWRITE1_TAC</A>,
+<A HREF = "Cond_rewrite.COND_REWR_CONV.html">COND_REWR_CONV</A>,
+<A HREF = "Cond_rewrite.COND_REWR_CANON.html">COND_REWR_CANON</A>,
+<A HREF = "Cond_rewrite.search_top_down.html">search_top_down</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

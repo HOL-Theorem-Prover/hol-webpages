@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure alignmentTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure alignmentTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/n-bit/alignmentScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature alignmentTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#align_def-val">align_def</a> : thm
+<a name="line7"></a>    val <a href="#aligned_def-val">aligned_def</a> : thm
+<a name="line8"></a>    val <a href="#byte_align_def-val">byte_align_def</a> : thm
+<a name="line9"></a>    val <a href="#byte_aligned_def-val">byte_aligned_def</a> : thm
+<a name="line10"></a>
+<a name="line11"></a>  (*  Theorems  *)
+<a name="line12"></a>    val <a href="#align_0-val">align_0</a> : thm
+<a name="line13"></a>    val <a href="#align_align-val">align_align</a> : thm
+<a name="line14"></a>    val <a href="#align_aligned-val">align_aligned</a> : thm
+<a name="line15"></a>    val <a href="#align_bitwise_and-val">align_bitwise_and</a> : thm
+<a name="line16"></a>    val <a href="#align_shift-val">align_shift</a> : thm
+<a name="line17"></a>    val <a href="#align_sub-val">align_sub</a> : thm
+<a name="line18"></a>    val <a href="#align_w2n-val">align_w2n</a> : thm
+<a name="line19"></a>    val <a href="#aligned_0-val">aligned_0</a> : thm
+<a name="line20"></a>    val <a href="#aligned_1_lsb-val">aligned_1_lsb</a> : thm
+<a name="line21"></a>    val <a href="#aligned_add_sub-val">aligned_add_sub</a> : thm
+<a name="line22"></a>    val <a href="#aligned_add_sub_123-val">aligned_add_sub_123</a> : thm
+<a name="line23"></a>    val <a href="#aligned_add_sub_cor-val">aligned_add_sub_cor</a> : thm
+<a name="line24"></a>    val <a href="#aligned_add_sub_prod-val">aligned_add_sub_prod</a> : thm
+<a name="line25"></a>    val <a href="#aligned_align-val">aligned_align</a> : thm
+<a name="line26"></a>    val <a href="#aligned_bit_count_upto-val">aligned_bit_count_upto</a> : thm
+<a name="line27"></a>    val <a href="#aligned_bitwise_and-val">aligned_bitwise_and</a> : thm
+<a name="line28"></a>    val <a href="#aligned_extract-val">aligned_extract</a> : thm
+<a name="line29"></a>    val <a href="#aligned_ge_dim-val">aligned_ge_dim</a> : thm
+<a name="line30"></a>    val <a href="#aligned_imp-val">aligned_imp</a> : thm
+<a name="line31"></a>    val <a href="#aligned_mul_shift_1-val">aligned_mul_shift_1</a> : thm
+<a name="line32"></a>    val <a href="#aligned_numeric-val">aligned_numeric</a> : thm
+<a name="line33"></a>
+<a name="line34"></a>  val alignment_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line35"></a>(*
+   [words] Parent theory of "alignment"
+
+   [<a name="align_def-val"><b>align_def</b></a>]  Definition
+
+      |- ∀p w. align p w = (dimindex (:α) − 1 '' p) w
+
+   [<a name="aligned_def-val"><b>aligned_def</b></a>]  Definition
+
+      |- ∀p w. aligned p w ⇔ (align p w = w)
+
+   [<a name="byte_align_def-val"><b>byte_align_def</b></a>]  Definition
+
+      |- ∀w. byte_align w = align (LOG2 (dimindex (:α) DIV 8)) w
+
+   [<a name="byte_aligned_def-val"><b>byte_aligned_def</b></a>]  Definition
+
+      |- ∀w. byte_aligned w ⇔ aligned (LOG2 (dimindex (:α) DIV 8)) w
+
+   [<a name="align_0-val"><b>align_0</b></a>]  Theorem
+
+      |- ∀w. align 0 w = w
+
+   [<a name="align_align-val"><b>align_align</b></a>]  Theorem
+
+      |- ∀p w. align p (align p w) = align p w
+
+   [<a name="align_aligned-val"><b>align_aligned</b></a>]  Theorem
+
+      |- ∀p w. aligned p w ⇒ (align p w = w)
+
+   [<a name="align_bitwise_and-val"><b>align_bitwise_and</b></a>]  Theorem
+
+      |- ∀p w. align p w = w && UINT_MAXw ≪ p
+
+   [<a name="align_shift-val"><b>align_shift</b></a>]  Theorem
+
+      |- ∀p w. align p w = w ⋙ p ≪ p
+
+   [<a name="align_sub-val"><b>align_sub</b></a>]  Theorem
+
+      |- ∀p w. align p w = if p = 0 then w else w − (p − 1 &gt;&lt; 0) w
+
+   [<a name="align_w2n-val"><b>align_w2n</b></a>]  Theorem
+
+      |- ∀p w. align p w = n2w (w2n w DIV 2 ** p * 2 ** p)
+
+   [<a name="aligned_0-val"><b>aligned_0</b></a>]  Theorem
+
+      |- (∀p. aligned p 0w) ∧ ∀w. aligned 0 w
+
+   [<a name="aligned_1_lsb-val"><b>aligned_1_lsb</b></a>]  Theorem
+
+      |- ∀w. aligned 1 w ⇔ ¬word_lsb w
+
+   [<a name="aligned_add_sub-val"><b>aligned_add_sub</b></a>]  Theorem
+
+      |- ∀p a b.
+           aligned p b ⇒
+           (aligned p (a + b) ⇔ aligned p a) ∧
+           (aligned p (a − b) ⇔ aligned p a)
+
+   [<a name="aligned_add_sub_123-val"><b>aligned_add_sub_123</b></a>]  Theorem
+
+      |- (∀w x.
+            (aligned 1 (w + 2w * x) ⇔ aligned 1 w) ∧
+            (aligned 1 (w − 2w * x) ⇔ aligned 1 w)) ∧
+         (∀x. aligned 1 (2w * x) ∧ aligned 1 (-2w * x)) ∧
+         (∀w x.
+            (aligned 2 (w + 4w * x) ⇔ aligned 2 w) ∧
+            (aligned 2 (w − 4w * x) ⇔ aligned 2 w)) ∧
+         (∀x. aligned 2 (4w * x) ∧ aligned 2 (-4w * x)) ∧
+         (∀w x.
+            (aligned 3 (w + 8w * x) ⇔ aligned 3 w) ∧
+            (aligned 3 (w − 8w * x) ⇔ aligned 3 w)) ∧
+         ∀x. aligned 3 (8w * x) ∧ aligned 3 (-8w * x)
+
+   [<a name="aligned_add_sub_cor-val"><b>aligned_add_sub_cor</b></a>]  Theorem
+
+      |- ∀p a b.
+           aligned p a ∧ aligned p b ⇒
+           aligned p (a + b) ∧ aligned p (a − b)
+
+   [<a name="aligned_add_sub_prod-val"><b>aligned_add_sub_prod</b></a>]  Theorem
+
+      |- ∀p w x.
+           (aligned p (w + 1w ≪ p * x) ⇔ aligned p w) ∧
+           (aligned p (w − 1w ≪ p * x) ⇔ aligned p w)
+
+   [<a name="aligned_align-val"><b>aligned_align</b></a>]  Theorem
+
+      |- ∀p w. aligned p (align p w)
+
+   [<a name="aligned_bit_count_upto-val"><b>aligned_bit_count_upto</b></a>]  Theorem
+
+      |- ∀p w. aligned p w ⇔ (bit_count_upto (MIN (dimindex (:α)) p) w = 0)
+
+   [<a name="aligned_bitwise_and-val"><b>aligned_bitwise_and</b></a>]  Theorem
+
+      |- ∀p w. aligned p w ⇔ (w && n2w (2 ** p − 1) = 0w)
+
+   [<a name="aligned_extract-val"><b>aligned_extract</b></a>]  Theorem
+
+      |- ∀p w. aligned p w ⇔ (p = 0) ∨ ((p − 1 &gt;&lt; 0) w = 0w)
+
+   [<a name="aligned_ge_dim-val"><b>aligned_ge_dim</b></a>]  Theorem
+
+      |- ∀p w. dimindex (:α) ≤ p ⇒ (aligned p w ⇔ (w = 0w))
+
+   [<a name="aligned_imp-val"><b>aligned_imp</b></a>]  Theorem
+
+      |- ∀p q w. p &lt; q ∧ aligned q w ⇒ aligned p w
+
+   [<a name="aligned_mul_shift_1-val"><b>aligned_mul_shift_1</b></a>]  Theorem
+
+      |- ∀p w. aligned p (1w ≪ p * w)
+
+   [<a name="aligned_numeric-val"><b>aligned_numeric</b></a>]  Theorem
+
+      |- (∀x. aligned 3 (n2w (NUMERAL (BIT2 (BIT1 (BIT1 x)))))) ∧
+         (∀x. aligned 2 (n2w (NUMERAL (BIT2 (BIT1 x))))) ∧
+         (∀x. aligned 1 (n2w (NUMERAL (BIT2 x)))) ∧
+         (∀x. aligned 3 (-n2w (NUMERAL (BIT2 (BIT1 (BIT1 x)))))) ∧
+         (∀x. aligned 2 (-n2w (NUMERAL (BIT2 (BIT1 x))))) ∧
+         (∀x. aligned 1 (-n2w (NUMERAL (BIT2 x)))) ∧
+         (∀x y f.
+            aligned 3 (y + n2w (NUMERAL (BIT1 (BIT1 (BIT1 (f x)))))) ⇔
+            aligned 3 (y + 7w)) ∧
+         (∀x y f.
+            aligned 3 (y + n2w (NUMERAL (BIT1 (BIT1 (BIT2 x))))) ⇔
+            aligned 3 (y + 3w)) ∧
+         (∀x y f.
+            aligned 3 (y + n2w (NUMERAL (BIT1 (BIT2 (BIT1 x))))) ⇔
+            aligned 3 (y + 1w)) ∧
+         (∀x y f.
+            aligned 3 (y + n2w (NUMERAL (BIT1 (BIT2 (BIT2 x))))) ⇔
+            aligned 3 (y + 5w)) ∧
+         (∀x y f.
+            aligned 3 (y + n2w (NUMERAL (BIT2 (BIT1 (BIT1 x))))) ⇔
+            aligned 3 y) ∧
+         (∀x y f.
+            aligned 3 (y + n2w (NUMERAL (BIT2 (BIT1 (BIT2 x))))) ⇔
+            aligned 3 (y + 4w)) ∧
+         (∀x y f.
+            aligned 3 (y + n2w (NUMERAL (BIT2 (BIT2 (BIT1 x))))) ⇔
+            aligned 3 (y + 2w)) ∧
+         (∀x y f.
+            aligned 3 (y + n2w (NUMERAL (BIT2 (BIT2 (BIT2 x))))) ⇔
+            aligned 3 (y + 6w)) ∧
+         (∀x y f.
+            aligned 3 (y − n2w (NUMERAL (BIT1 (BIT1 (BIT1 (f x)))))) ⇔
+            aligned 3 (y − 7w)) ∧
+         (∀x y f.
+            aligned 3 (y − n2w (NUMERAL (BIT1 (BIT1 (BIT2 x))))) ⇔
+            aligned 3 (y − 3w)) ∧
+         (∀x y f.
+            aligned 3 (y − n2w (NUMERAL (BIT1 (BIT2 (BIT1 x))))) ⇔
+            aligned 3 (y − 1w)) ∧
+         (∀x y f.
+            aligned 3 (y − n2w (NUMERAL (BIT1 (BIT2 (BIT2 x))))) ⇔
+            aligned 3 (y − 5w)) ∧
+         (∀x y f.
+            aligned 3 (y − n2w (NUMERAL (BIT2 (BIT1 (BIT1 x))))) ⇔
+            aligned 3 y) ∧
+         (∀x y f.
+            aligned 3 (y − n2w (NUMERAL (BIT2 (BIT1 (BIT2 x))))) ⇔
+            aligned 3 (y − 4w)) ∧
+         (∀x y f.
+            aligned 3 (y − n2w (NUMERAL (BIT2 (BIT2 (BIT1 x))))) ⇔
+            aligned 3 (y − 2w)) ∧
+         (∀x y f.
+            aligned 3 (y − n2w (NUMERAL (BIT2 (BIT2 (BIT2 x))))) ⇔
+            aligned 3 (y − 6w)) ∧
+         (∀x y f.
+            aligned 2 (y + n2w (NUMERAL (BIT1 (BIT1 (f x))))) ⇔
+            aligned 2 (y + 3w)) ∧
+         (∀x y.
+            aligned 2 (y + n2w (NUMERAL (BIT1 (BIT2 x)))) ⇔
+            aligned 2 (y + 1w)) ∧
+         (∀x y.
+            aligned 2 (y + n2w (NUMERAL (BIT2 (BIT1 x)))) ⇔ aligned 2 y) ∧
+         (∀x y.
+            aligned 2 (y + n2w (NUMERAL (BIT2 (BIT2 x)))) ⇔
+            aligned 2 (y + 2w)) ∧
+         (∀x y f.
+            aligned 2 (y − n2w (NUMERAL (BIT1 (BIT1 (f x))))) ⇔
+            aligned 2 (y − 3w)) ∧
+         (∀x y.
+            aligned 2 (y − n2w (NUMERAL (BIT1 (BIT2 x)))) ⇔
+            aligned 2 (y − 1w)) ∧
+         (∀x y.
+            aligned 2 (y − n2w (NUMERAL (BIT2 (BIT1 x)))) ⇔ aligned 2 y) ∧
+         (∀x y.
+            aligned 2 (y − n2w (NUMERAL (BIT2 (BIT2 x)))) ⇔
+            aligned 2 (y − 2w)) ∧
+         (∀x y f.
+            aligned 1 (y + n2w (NUMERAL (BIT1 (f x)))) ⇔
+            aligned 1 (y + 1w)) ∧
+         (∀x y f.
+            aligned 1 (y − n2w (NUMERAL (BIT1 (f x)))) ⇔
+            aligned 1 (y − 1w)) ∧
+         (∀x y. aligned 1 (y + n2w (NUMERAL (BIT2 x))) ⇔ aligned 1 y) ∧
+         ∀x y. aligned 1 (y − n2w (NUMERAL (BIT2 x))) ⇔ aligned 1 y
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/n-bit/alignmentScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

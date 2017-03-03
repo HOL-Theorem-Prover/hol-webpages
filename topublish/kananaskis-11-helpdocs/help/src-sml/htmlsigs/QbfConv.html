@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure QbfConv</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure QbfConv</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/HolQbf/QbfConv.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature QbfConv = sig
+<a name="line2"></a>  type conv = Abbrev.conv
+<a name="line3"></a>
+<a name="line4"></a>  (* put an arbitrary QBF into the required form *)
+<a name="line5"></a>  (* specifically,
+<a name="line6"></a>     input term:
+<a name="line7"></a>       - has type bool
+<a name="line8"></a>       - is closed
+<a name="line9"></a>       - contains only:
+<a name="line10"></a>         - first order connectives (/\,\/,==&gt;,~)
+<a name="line11"></a>            (TODO: allow equality?)
+<a name="line12"></a>         - quantifiers (!,?)
+<a name="line13"></a>         - variables
+<a name="line14"></a>     output term:
+<a name="line15"></a>       - of the form Q_1 x_1. ... Q_n x_n. phi
+<a name="line16"></a>       - each Q_i is either ! or ?
+<a name="line17"></a>       - Q_n is ?
+<a name="line18"></a>       - each x_i appears in phi
+<a name="line19"></a>       - phi is closed and in CNF
+<a name="line20"></a>     alternatively, the output term might simply be 'T' or 'F'
+<a name="line21"></a>  *)
+<a name="line22"></a>  val qbf_prenex_conv : conv
+<a name="line23"></a>
+<a name="line24"></a>  (* simplifies clauses (specialisation of SIMP_CONV). In particular, does the following rewrites:
+<a name="line25"></a>    (∀x. x ∨ P) = P, (∀x. ¬x ∨ P) = P, (∀x. x) = F, (∀x. ¬x) = F,
+<a name="line26"></a>    and associativity/commutativity normalisation for conjunction and disjunction *)
+<a name="line27"></a>  val simp_clauses : conv
+<a name="line28"></a>
+<a name="line29"></a>  (* conversion that takes [!x:bool. t] where t is in CNF and may contain x and
+<a name="line30"></a>  removes the quantifier and all occurrences of x. also simplifies clauses (as above). *)
+<a name="line31"></a>  val remove_forall : conv
+<a name="line32"></a>
+<a name="line33"></a>  (* [last_quant_conv c] strips a quantifier (! and ? only) prefix down
+<a name="line34"></a>     to the last quantifier then applies c to the (singly quantified) body *)
+<a name="line35"></a>  val last_quant_conv : conv -&gt; conv
+<a name="line36"></a>
+<a name="line37"></a>  (* applies a conversion under a quantifier prefix of foralls and exists *)
+<a name="line38"></a>  val strip_prefix_conv : conv -&gt; conv
+<a name="line39"></a>
+<a name="line40"></a>  (* [last_quant_seq_conv cq cb] applies cb under the quantifier prefix and
+<a name="line41"></a>    then cq before each quantifier. That is:
+<a name="line42"></a>      Q1 x1. Q2 x2. ... Qn xn. P --&gt; cq (Q1 x1. cq (Q2 x2. ... cq (Qn. xn. cb P))))
+<a name="line43"></a>  *)
+<a name="line44"></a>  val last_quant_seq_conv : conv -&gt; conv -&gt; conv
+<a name="line45"></a>
+<a name="line46"></a>  (* applies cb under the quantifier prefix, and then, if the innermost
+<a name="line47"></a>    quantifiers are all universal, applies cq before each of them *)
+<a name="line48"></a>  val last_forall_seq_conv : conv -&gt; conv -&gt; conv
+<a name="line49"></a>
+<a name="line50"></a>end
+<a name="line51"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/HolQbf/QbfConv.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

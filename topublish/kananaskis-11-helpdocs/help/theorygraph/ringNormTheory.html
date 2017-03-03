@@ -1,0 +1,685 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: ringNorm</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "ringNorm"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "ringTheory.html"><span class="strong">ring</span></a>&nbsp;&nbsp;
+    <a href = "canonicalTheory.html"><span class="strong">canonical</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Type
+    <th>
+    Arity<tr><td> <span class="strong">polynom</span> <td> 1
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">Pconst</span> <td> :α -> α polynom
+    <tr><td>
+        <span class="strong">Pmult</span>
+        <td>
+        :α polynom -> α polynom -> α polynom
+    <tr><td> <span class="strong">Popp</span> <td> :α polynom -> α polynom
+    <tr><td>
+        <span class="strong">Pplus</span>
+        <td>
+        :α polynom -> α polynom -> α polynom
+    <tr><td> <span class="strong">Pvar</span> <td> :index -> α polynom
+    <tr><td>
+        <span class="strong">interp_p</span>
+        <td>
+        :α ring -> α varmap -> α polynom -> α
+    <tr><td>
+        <span class="strong">polynom_CASE</span>
+        <td>
+        :α polynom ->
+         (index -> β) ->
+         (α -> β) ->
+         (α polynom -> α polynom -> β) ->
+         (α polynom -> α polynom -> β) -> (α polynom -> β) -> β
+    <tr><td>
+        <span class="strong">polynom_normalize</span>
+        <td>
+        :α ring -> α polynom -> α canonical_sum
+    <tr><td>
+        <span class="strong">polynom_simplify</span>
+        <td>
+        :α ring -> α polynom -> α canonical_sum
+    <tr><td>
+        <span class="strong">polynom_size</span>
+        <td>
+        :(α -> num) -> α polynom -> num
+    <tr><td>
+        <span class="strong">r_canonical_sum_merge</span>
+        <td>
+        :α ring -> α canonical_sum -> α canonical_sum -> α canonical_sum
+    <tr><td>
+        <span class="strong">r_canonical_sum_prod</span>
+        <td>
+        :α ring -> α canonical_sum -> α canonical_sum -> α canonical_sum
+    <tr><td>
+        <span class="strong">r_canonical_sum_scalar</span>
+        <td>
+        :α ring -> α -> α canonical_sum -> α canonical_sum
+    <tr><td>
+        <span class="strong">r_canonical_sum_scalar2</span>
+        <td>
+        :α ring -> index list -> α canonical_sum -> α canonical_sum
+    <tr><td>
+        <span class="strong">r_canonical_sum_scalar3</span>
+        <td>
+        :α ring -> α -> index list -> α canonical_sum -> α canonical_sum
+    <tr><td>
+        <span class="strong">r_canonical_sum_simplify</span>
+        <td>
+        :α ring -> α canonical_sum -> α canonical_sum
+    <tr><td>
+        <span class="strong">r_ics_aux</span>
+        <td>
+        :α ring -> α varmap -> α -> α canonical_sum -> α
+    <tr><td>
+        <span class="strong">r_interp_cs</span>
+        <td>
+        :α ring -> α varmap -> α canonical_sum -> α
+    <tr><td>
+        <span class="strong">r_interp_m</span>
+        <td>
+        :α ring -> α varmap -> α -> index list -> α
+    <tr><td>
+        <span class="strong">r_interp_sp</span>
+        <td>
+        :α ring -> α varmap -> α spolynom -> α
+    <tr><td>
+        <span class="strong">r_interp_vl</span>
+        <td>
+        :α ring -> α varmap -> index list -> α
+    <tr><td>
+        <span class="strong">r_ivl_aux</span>
+        <td>
+        :α ring -> α varmap -> index -> index list -> α
+    <tr><td>
+        <span class="strong">r_monom_insert</span>
+        <td>
+        :α ring -> α -> index list -> α canonical_sum -> α canonical_sum
+    <tr><td>
+        <span class="strong">r_spolynom_normalize</span>
+        <td>
+        :α ring -> α spolynom -> α canonical_sum
+    <tr><td>
+        <span class="strong">r_spolynom_simplify</span>
+        <td>
+        :α ring -> α spolynom -> α canonical_sum
+    <tr><td>
+        <span class="strong">r_varlist_insert</span>
+        <td>
+        :α ring -> index list -> α canonical_sum -> α canonical_sum
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">r_interp_sp_def</span>
+<DD>
+<pre>
+|- ∀r. r_interp_sp r = interp_sp (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_spolynom_simplify_def</span>
+<DD>
+<pre>
+|- ∀r. r_spolynom_simplify r = spolynom_simplify (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_spolynom_normalize_def</span>
+<DD>
+<pre>
+|- ∀r. r_spolynom_normalize r = spolynom_normalize (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_interp_cs_def</span>
+<DD>
+<pre>
+|- ∀r. r_interp_cs r = interp_cs (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_ics_aux_def</span>
+<DD>
+<pre>
+|- ∀r. r_ics_aux r = ics_aux (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_interp_m_def</span>
+<DD>
+<pre>
+|- ∀r. r_interp_m r = interp_m (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_interp_vl_def</span>
+<DD>
+<pre>
+|- ∀r. r_interp_vl r = interp_vl (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_ivl_aux_def</span>
+<DD>
+<pre>
+|- ∀r. r_ivl_aux r = ivl_aux (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_canonical_sum_simplify_def</span>
+<DD>
+<pre>
+|- ∀r. r_canonical_sum_simplify r = canonical_sum_simplify (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_canonical_sum_prod_def</span>
+<DD>
+<pre>
+|- ∀r. r_canonical_sum_prod r = canonical_sum_prod (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_canonical_sum_scalar3_def</span>
+<DD>
+<pre>
+|- ∀r. r_canonical_sum_scalar3 r = canonical_sum_scalar3 (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_canonical_sum_scalar2_def</span>
+<DD>
+<pre>
+|- ∀r. r_canonical_sum_scalar2 r = canonical_sum_scalar2 (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_canonical_sum_scalar_def</span>
+<DD>
+<pre>
+|- ∀r. r_canonical_sum_scalar r = canonical_sum_scalar (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_varlist_insert_def</span>
+<DD>
+<pre>
+|- ∀r. r_varlist_insert r = varlist_insert (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_monom_insert_def</span>
+<DD>
+<pre>
+|- ∀r. r_monom_insert r = monom_insert (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">r_canonical_sum_merge_def</span>
+<DD>
+<pre>
+|- ∀r. r_canonical_sum_merge r = canonical_sum_merge (semi_ring_of r)
+</pre>
+
+<DT><span class="strong">polynom_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep.
+     TYPE_DEFINITION
+       (λa0'.
+          ∀'polynom' .
+            (∀a0'.
+               (∃a.
+                  a0' =
+                  (λa. ind_type$CONSTR 0 (a,ARB) (λn. ind_type$BOTTOM)) a) ∨
+               (∃a.
+                  a0' =
+                  (λa. ind_type$CONSTR (SUC 0) (ARB,a) (λn. ind_type$BOTTOM))
+                    a) ∨
+               (∃a0 a1.
+                  (a0' =
+                   (λa0 a1.
+                      ind_type$CONSTR (SUC (SUC 0)) (ARB,ARB)
+                        (ind_type$FCONS a0
+                           (ind_type$FCONS a1 (λn. ind_type$BOTTOM)))) a0
+                     a1) ∧ 'polynom' a0 ∧ 'polynom' a1) ∨
+               (∃a0 a1.
+                  (a0' =
+                   (λa0 a1.
+                      ind_type$CONSTR (SUC (SUC (SUC 0))) (ARB,ARB)
+                        (ind_type$FCONS a0
+                           (ind_type$FCONS a1 (λn. ind_type$BOTTOM)))) a0
+                     a1) ∧ 'polynom' a0 ∧ 'polynom' a1) ∨
+               (∃a.
+                  (a0' =
+                   (λa.
+                      ind_type$CONSTR (SUC (SUC (SUC (SUC 0)))) (ARB,ARB)
+                        (ind_type$FCONS a (λn. ind_type$BOTTOM))) a) ∧
+                  'polynom' a) ⇒
+               'polynom' a0') ⇒
+            'polynom' a0') rep
+</pre>
+
+<DT><span class="strong">polynom_case_def</span>
+<DD>
+<pre>
+|- (∀a f f1 f2 f3 f4. polynom_CASE (Pvar a) f f1 f2 f3 f4 = f a) ∧
+   (∀a f f1 f2 f3 f4. polynom_CASE (Pconst a) f f1 f2 f3 f4 = f1 a) ∧
+   (∀a0 a1 f f1 f2 f3 f4.
+      polynom_CASE (Pplus a0 a1) f f1 f2 f3 f4 = f2 a0 a1) ∧
+   (∀a0 a1 f f1 f2 f3 f4.
+      polynom_CASE (Pmult a0 a1) f f1 f2 f3 f4 = f3 a0 a1) ∧
+   ∀a f f1 f2 f3 f4. polynom_CASE (Popp a) f f1 f2 f3 f4 = f4 a
+</pre>
+
+<DT><span class="strong">polynom_size_def</span>
+<DD>
+<pre>
+|- (∀f a. polynom_size f (Pvar a) = 1 + index_size a) ∧
+   (∀f a. polynom_size f (Pconst a) = 1 + f a) ∧
+   (∀f a0 a1.
+      polynom_size f (Pplus a0 a1) =
+      1 + (polynom_size f a0 + polynom_size f a1)) ∧
+   (∀f a0 a1.
+      polynom_size f (Pmult a0 a1) =
+      1 + (polynom_size f a0 + polynom_size f a1)) ∧
+   ∀f a. polynom_size f (Popp a) = 1 + polynom_size f a
+</pre>
+
+<DT><span class="strong">polynom_normalize_def</span>
+<DD>
+<pre>
+|- (∀r i. polynom_normalize r (Pvar i) = Cons_varlist [i] Nil_monom) ∧
+   (∀r c. polynom_normalize r (Pconst c) = Cons_monom c [] Nil_monom) ∧
+   (∀r pl pr.
+      polynom_normalize r (Pplus pl pr) =
+      r_canonical_sum_merge r (polynom_normalize r pl)
+        (polynom_normalize r pr)) ∧
+   (∀r pl pr.
+      polynom_normalize r (Pmult pl pr) =
+      r_canonical_sum_prod r (polynom_normalize r pl)
+        (polynom_normalize r pr)) ∧
+   ∀r p.
+     polynom_normalize r (Popp p) =
+     r_canonical_sum_scalar3 r (r.RN r.R1) [] (polynom_normalize r p)
+</pre>
+
+<DT><span class="strong">polynom_simplify_def</span>
+<DD>
+<pre>
+|- ∀r x.
+     polynom_simplify r x = r_canonical_sum_simplify r (polynom_normalize r x)
+</pre>
+
+<DT><span class="strong">interp_p_def</span>
+<DD>
+<pre>
+|- (∀r vm c. interp_p r vm (Pconst c) = c) ∧
+   (∀r vm i. interp_p r vm (Pvar i) = varmap_find i vm) ∧
+   (∀r vm p1 p2.
+      interp_p r vm (Pplus p1 p2) =
+      r.RP (interp_p r vm p1) (interp_p r vm p2)) ∧
+   (∀r vm p1 p2.
+      interp_p r vm (Pmult p1 p2) =
+      r.RM (interp_p r vm p1) (interp_p r vm p2)) ∧
+   ∀r vm p1. interp_p r vm (Popp p1) = r.RN (interp_p r vm p1)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">interp_sp_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀vm c. r_interp_sp r vm (SPconst c) = c) ∧
+     (∀vm i. r_interp_sp r vm (SPvar i) = varmap_find i vm) ∧
+     (∀vm p1 p2.
+        r_interp_sp r vm (SPplus p1 p2) =
+        r.RP (r_interp_sp r vm p1) (r_interp_sp r vm p2)) ∧
+     ∀vm p1 p2.
+       r_interp_sp r vm (SPmult p1 p2) =
+       r.RM (r_interp_sp r vm p1) (r_interp_sp r vm p2)
+</pre>
+
+<DT><span class="strong">canonical_sum_merge_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀t2 t1 l2 l1 c2 c1.
+        r_canonical_sum_merge r (Cons_monom c1 l1 t1) (Cons_monom c2 l2 t2) =
+        compare (list_compare index_compare l1 l2)
+          (Cons_monom c1 l1
+             (r_canonical_sum_merge r t1 (Cons_monom c2 l2 t2)))
+          (Cons_monom (r.RP c1 c2) l1 (r_canonical_sum_merge r t1 t2))
+          (Cons_monom c2 l2
+             (r_canonical_sum_merge r (Cons_monom c1 l1 t1) t2))) ∧
+     (∀t2 t1 l2 l1 c1.
+        r_canonical_sum_merge r (Cons_monom c1 l1 t1) (Cons_varlist l2 t2) =
+        compare (list_compare index_compare l1 l2)
+          (Cons_monom c1 l1 (r_canonical_sum_merge r t1 (Cons_varlist l2 t2)))
+          (Cons_monom (r.RP c1 r.R1) l1 (r_canonical_sum_merge r t1 t2))
+          (Cons_varlist l2
+             (r_canonical_sum_merge r (Cons_monom c1 l1 t1) t2))) ∧
+     (∀t2 t1 l2 l1 c2.
+        r_canonical_sum_merge r (Cons_varlist l1 t1) (Cons_monom c2 l2 t2) =
+        compare (list_compare index_compare l1 l2)
+          (Cons_varlist l1 (r_canonical_sum_merge r t1 (Cons_monom c2 l2 t2)))
+          (Cons_monom (r.RP r.R1 c2) l1 (r_canonical_sum_merge r t1 t2))
+          (Cons_monom c2 l2
+             (r_canonical_sum_merge r (Cons_varlist l1 t1) t2))) ∧
+     (∀t2 t1 l2 l1.
+        r_canonical_sum_merge r (Cons_varlist l1 t1) (Cons_varlist l2 t2) =
+        compare (list_compare index_compare l1 l2)
+          (Cons_varlist l1 (r_canonical_sum_merge r t1 (Cons_varlist l2 t2)))
+          (Cons_monom (r.RP r.R1 r.R1) l1 (r_canonical_sum_merge r t1 t2))
+          (Cons_varlist l2
+             (r_canonical_sum_merge r (Cons_varlist l1 t1) t2))) ∧
+     (∀s1. r_canonical_sum_merge r s1 Nil_monom = s1) ∧
+     (∀v6 v5 v4.
+        r_canonical_sum_merge r Nil_monom (Cons_monom v4 v5 v6) =
+        Cons_monom v4 v5 v6) ∧
+     ∀v8 v7.
+       r_canonical_sum_merge r Nil_monom (Cons_varlist v7 v8) =
+       Cons_varlist v7 v8
+</pre>
+
+<DT><span class="strong">monom_insert_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀t2 l2 l1 c2 c1.
+        r_monom_insert r c1 l1 (Cons_monom c2 l2 t2) =
+        compare (list_compare index_compare l1 l2)
+          (Cons_monom c1 l1 (Cons_monom c2 l2 t2))
+          (Cons_monom (r.RP c1 c2) l1 t2)
+          (Cons_monom c2 l2 (r_monom_insert r c1 l1 t2))) ∧
+     (∀t2 l2 l1 c1.
+        r_monom_insert r c1 l1 (Cons_varlist l2 t2) =
+        compare (list_compare index_compare l1 l2)
+          (Cons_monom c1 l1 (Cons_varlist l2 t2))
+          (Cons_monom (r.RP c1 r.R1) l1 t2)
+          (Cons_varlist l2 (r_monom_insert r c1 l1 t2))) ∧
+     ∀l1 c1. r_monom_insert r c1 l1 Nil_monom = Cons_monom c1 l1 Nil_monom
+</pre>
+
+<DT><span class="strong">varlist_insert_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀t2 l2 l1 c2.
+        r_varlist_insert r l1 (Cons_monom c2 l2 t2) =
+        compare (list_compare index_compare l1 l2)
+          (Cons_varlist l1 (Cons_monom c2 l2 t2))
+          (Cons_monom (r.RP r.R1 c2) l1 t2)
+          (Cons_monom c2 l2 (r_varlist_insert r l1 t2))) ∧
+     (∀t2 l2 l1.
+        r_varlist_insert r l1 (Cons_varlist l2 t2) =
+        compare (list_compare index_compare l1 l2)
+          (Cons_varlist l1 (Cons_varlist l2 t2))
+          (Cons_monom (r.RP r.R1 r.R1) l1 t2)
+          (Cons_varlist l2 (r_varlist_insert r l1 t2))) ∧
+     ∀l1. r_varlist_insert r l1 Nil_monom = Cons_varlist l1 Nil_monom
+</pre>
+
+<DT><span class="strong">canonical_sum_scalar_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀c0 c l t.
+        r_canonical_sum_scalar r c0 (Cons_monom c l t) =
+        Cons_monom (r.RM c0 c) l (r_canonical_sum_scalar r c0 t)) ∧
+     (∀c0 l t.
+        r_canonical_sum_scalar r c0 (Cons_varlist l t) =
+        Cons_monom c0 l (r_canonical_sum_scalar r c0 t)) ∧
+     ∀c0. r_canonical_sum_scalar r c0 Nil_monom = Nil_monom
+</pre>
+
+<DT><span class="strong">canonical_sum_scalar2_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀l0 c l t.
+        r_canonical_sum_scalar2 r l0 (Cons_monom c l t) =
+        r_monom_insert r c (list_merge index_lt l0 l)
+          (r_canonical_sum_scalar2 r l0 t)) ∧
+     (∀l0 l t.
+        r_canonical_sum_scalar2 r l0 (Cons_varlist l t) =
+        r_varlist_insert r (list_merge index_lt l0 l)
+          (r_canonical_sum_scalar2 r l0 t)) ∧
+     ∀l0. r_canonical_sum_scalar2 r l0 Nil_monom = Nil_monom
+</pre>
+
+<DT><span class="strong">canonical_sum_scalar3_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀c0 l0 c l t.
+        r_canonical_sum_scalar3 r c0 l0 (Cons_monom c l t) =
+        r_monom_insert r (r.RM c0 c) (list_merge index_lt l0 l)
+          (r_canonical_sum_scalar3 r c0 l0 t)) ∧
+     (∀c0 l0 l t.
+        r_canonical_sum_scalar3 r c0 l0 (Cons_varlist l t) =
+        r_monom_insert r c0 (list_merge index_lt l0 l)
+          (r_canonical_sum_scalar3 r c0 l0 t)) ∧
+     ∀c0 l0. r_canonical_sum_scalar3 r c0 l0 Nil_monom = Nil_monom
+</pre>
+
+<DT><span class="strong">canonical_sum_prod_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀c1 l1 t1 s2.
+        r_canonical_sum_prod r (Cons_monom c1 l1 t1) s2 =
+        r_canonical_sum_merge r (r_canonical_sum_scalar3 r c1 l1 s2)
+          (r_canonical_sum_prod r t1 s2)) ∧
+     (∀l1 t1 s2.
+        r_canonical_sum_prod r (Cons_varlist l1 t1) s2 =
+        r_canonical_sum_merge r (r_canonical_sum_scalar2 r l1 s2)
+          (r_canonical_sum_prod r t1 s2)) ∧
+     ∀s2. r_canonical_sum_prod r Nil_monom s2 = Nil_monom
+</pre>
+
+<DT><span class="strong">canonical_sum_simplify_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀c l t.
+        r_canonical_sum_simplify r (Cons_monom c l t) =
+        if c = r.R0 then r_canonical_sum_simplify r t
+        else if c = r.R1 then Cons_varlist l (r_canonical_sum_simplify r t)
+        else Cons_monom c l (r_canonical_sum_simplify r t)) ∧
+     (∀l t.
+        r_canonical_sum_simplify r (Cons_varlist l t) =
+        Cons_varlist l (r_canonical_sum_simplify r t)) ∧
+     (r_canonical_sum_simplify r Nil_monom = Nil_monom)
+</pre>
+
+<DT><span class="strong">ivl_aux_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀vm x. r_ivl_aux r vm x [] = varmap_find x vm) ∧
+     ∀vm x x' t'.
+       r_ivl_aux r vm x (x'::t') =
+       r.RM (varmap_find x vm) (r_ivl_aux r vm x' t')
+</pre>
+
+<DT><span class="strong">interp_vl_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀vm. r_interp_vl r vm [] = r.R1) ∧
+     ∀vm x t. r_interp_vl r vm (x::t) = r_ivl_aux r vm x t
+</pre>
+
+<DT><span class="strong">interp_m_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀vm c. r_interp_m r vm c [] = c) ∧
+     ∀vm c x t. r_interp_m r vm c (x::t) = r.RM c (r_ivl_aux r vm x t)
+</pre>
+
+<DT><span class="strong">ics_aux_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀vm a. r_ics_aux r vm a Nil_monom = a) ∧
+     (∀vm a l t.
+        r_ics_aux r vm a (Cons_varlist l t) =
+        r.RP a (r_ics_aux r vm (r_interp_vl r vm l) t)) ∧
+     ∀vm a c l t.
+       r_ics_aux r vm a (Cons_monom c l t) =
+       r.RP a (r_ics_aux r vm (r_interp_m r vm c l) t)
+</pre>
+
+<DT><span class="strong">interp_cs_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀vm. r_interp_cs r vm Nil_monom = r.R0) ∧
+     (∀vm l t.
+        r_interp_cs r vm (Cons_varlist l t) =
+        r_ics_aux r vm (r_interp_vl r vm l) t) ∧
+     ∀vm c l t.
+       r_interp_cs r vm (Cons_monom c l t) =
+       r_ics_aux r vm (r_interp_m r vm c l) t
+</pre>
+
+<DT><span class="strong">spolynom_normalize_def</span>
+<DD>
+<pre>
+|- ∀r.
+     (∀i. r_spolynom_normalize r (SPvar i) = Cons_varlist [i] Nil_monom) ∧
+     (∀c. r_spolynom_normalize r (SPconst c) = Cons_monom c [] Nil_monom) ∧
+     (∀l r'.
+        r_spolynom_normalize r (SPplus l r') =
+        r_canonical_sum_merge r (r_spolynom_normalize r l)
+          (r_spolynom_normalize r r')) ∧
+     ∀l r'.
+       r_spolynom_normalize r (SPmult l r') =
+       r_canonical_sum_prod r (r_spolynom_normalize r l)
+         (r_spolynom_normalize r r')
+</pre>
+
+<DT><span class="strong">spolynom_simplify_def</span>
+<DD>
+<pre>
+|- ∀r x.
+     r_spolynom_simplify r x =
+     r_canonical_sum_simplify r (r_spolynom_normalize r x)
+</pre>
+
+<DT><span class="strong">datatype_polynom</span>
+<DD>
+<pre>
+|- DATATYPE (polynom Pvar Pconst Pplus Pmult Popp)
+</pre>
+
+<DT><span class="strong">polynom_11</span>
+<DD>
+<pre>
+|- (∀a a'. (Pvar a = Pvar a') ⇔ (a = a')) ∧
+   (∀a a'. (Pconst a = Pconst a') ⇔ (a = a')) ∧
+   (∀a0 a1 a0' a1'. (Pplus a0 a1 = Pplus a0' a1') ⇔ (a0 = a0') ∧ (a1 = a1')) ∧
+   (∀a0 a1 a0' a1'. (Pmult a0 a1 = Pmult a0' a1') ⇔ (a0 = a0') ∧ (a1 = a1')) ∧
+   ∀a a'. (Popp a = Popp a') ⇔ (a = a')
+</pre>
+
+<DT><span class="strong">polynom_distinct</span>
+<DD>
+<pre>
+|- (∀a' a. Pvar a ≠ Pconst a') ∧ (∀a1 a0 a. Pvar a ≠ Pplus a0 a1) ∧
+   (∀a1 a0 a. Pvar a ≠ Pmult a0 a1) ∧ (∀a' a. Pvar a ≠ Popp a') ∧
+   (∀a1 a0 a. Pconst a ≠ Pplus a0 a1) ∧ (∀a1 a0 a. Pconst a ≠ Pmult a0 a1) ∧
+   (∀a' a. Pconst a ≠ Popp a') ∧
+   (∀a1' a1 a0' a0. Pplus a0 a1 ≠ Pmult a0' a1') ∧
+   (∀a1 a0 a. Pplus a0 a1 ≠ Popp a) ∧ ∀a1 a0 a. Pmult a0 a1 ≠ Popp a
+</pre>
+
+<DT><span class="strong">polynom_case_cong</span>
+<DD>
+<pre>
+|- ∀M M' f f1 f2 f3 f4.
+     (M = M') ∧ (∀a. (M' = Pvar a) ⇒ (f a = f' a)) ∧
+     (∀a. (M' = Pconst a) ⇒ (f1 a = f1' a)) ∧
+     (∀a0 a1. (M' = Pplus a0 a1) ⇒ (f2 a0 a1 = f2' a0 a1)) ∧
+     (∀a0 a1. (M' = Pmult a0 a1) ⇒ (f3 a0 a1 = f3' a0 a1)) ∧
+     (∀a. (M' = Popp a) ⇒ (f4 a = f4' a)) ⇒
+     (polynom_CASE M f f1 f2 f3 f4 = polynom_CASE M' f' f1' f2' f3' f4')
+</pre>
+
+<DT><span class="strong">polynom_nchotomy</span>
+<DD>
+<pre>
+|- ∀pp.
+     (∃i. pp = Pvar i) ∨ (∃a. pp = Pconst a) ∨ (∃p p0. pp = Pplus p p0) ∨
+     (∃p p0. pp = Pmult p p0) ∨ ∃p. pp = Popp p
+</pre>
+
+<DT><span class="strong">polynom_Axiom</span>
+<DD>
+<pre>
+|- ∀f0 f1 f2 f3 f4.
+     ∃fn.
+       (∀a. fn (Pvar a) = f0 a) ∧ (∀a. fn (Pconst a) = f1 a) ∧
+       (∀a0 a1. fn (Pplus a0 a1) = f2 a0 a1 (fn a0) (fn a1)) ∧
+       (∀a0 a1. fn (Pmult a0 a1) = f3 a0 a1 (fn a0) (fn a1)) ∧
+       ∀a. fn (Popp a) = f4 a (fn a)
+</pre>
+
+<DT><span class="strong">polynom_induction</span>
+<DD>
+<pre>
+|- ∀P.
+     (∀i. P (Pvar i)) ∧ (∀a. P (Pconst a)) ∧
+     (∀p p0. P p ∧ P p0 ⇒ P (Pplus p p0)) ∧
+     (∀p p0. P p ∧ P p0 ⇒ P (Pmult p p0)) ∧ (∀p. P p ⇒ P (Popp p)) ⇒
+     ∀p. P p
+</pre>
+
+<DT><span class="strong">polynom_normalize_ok</span>
+<DD>
+<pre>
+|- ∀r.
+     is_ring r ⇒
+     ∀vm p. r_interp_cs r vm (polynom_normalize r p) = interp_p r vm p
+</pre>
+
+<DT><span class="strong">polynom_simplify_ok</span>
+<DD>
+<pre>
+|- ∀r.
+     is_ring r ⇒
+     ∀vm p. r_interp_cs r vm (polynom_simplify r p) = interp_p r vm p
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

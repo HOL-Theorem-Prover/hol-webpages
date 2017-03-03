@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>bossLib.FULL_SIMP_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>simpLib.FULL_SIMP_TAC : simpset -&gt; thm list -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Simplifies the goal (assumptions as well as conclusion) with the given
+simpset.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">simpLib</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">FULL_SIMP_TAC</SPAN><SPAN class = "TEXT"> is a powerful simplification tactic that simplifies
+all of a goal.  It proceeds by applying simplification to each
+assumption of the goal in turn, accumulating simplified assumptions as
+it goes.  These simplified assumptions are used to simplify further
+assumptions, and all of the simplified assumptions are used as
+additional rewrites when the conclusion of the goal is simplified.</SPAN>
+<P>
+<SPAN class = "TEXT">In addition, simplified assumptions are added back onto the goal using
+the equivalent of </SPAN><SPAN class = "BRKT">STRIP_ASSUME_TAC</SPAN><SPAN class = "TEXT"> and this causes automatic
+skolemization of existential assumptions, case splits on disjunctions,
+and the separate assumption of conjunctions.  If an assumption is
+simplified to </SPAN><SPAN class = "BRKT">TRUTH</SPAN><SPAN class = "TEXT">, then this is left on the assumption list.  If
+an assumption is simplified to falsity, this proves the goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">FULL_SIMP_TAC</SPAN><SPAN class = "TEXT"> never fails, but it may diverge.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Here </SPAN><SPAN class = "BRKT">FULL_SIMP_TAC</SPAN><SPAN class = "TEXT"> is used to prove a goal:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; FULL_SIMP_TAC arith_ss [] (map Term [`x = 3`, `x &lt; 2`],
+                              Term `?y. x * y = 51`)
+   - val it = ([], fn) : tactic_result
+</pre></DIV>
+<SPAN class = "TEXT">
+Using </SPAN><SPAN class = "BRKT">LESS_OR_EQ</SPAN><SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">|-&nbsp;!m&nbsp;n.&nbsp;m&nbsp;&lt;=&nbsp;n&nbsp;=&nbsp;m&nbsp;&lt;&nbsp;n&nbsp;\/&nbsp;(m&nbsp;=&nbsp;n)</SPAN><SPAN class = "TEXT">, a
+useful case split can be induced in the next goal:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; FULL_SIMP_TAC bool_ss [LESS_OR_EQ] (map Term [`x &lt;= y`, `x &lt; z`],
+                                         Term `x + y &lt; z`);
+   - val it =
+       ([([`x &lt; y`, `x &lt; z`], `x + y &lt; z`),
+         ([`x = y`, `x &lt; z`], `y + y &lt; z`)], fn)
+       : tactic_result
+</pre></DIV>
+<SPAN class = "TEXT">
+Note that the equality </SPAN><SPAN class = "BRKT">x&nbsp;=&nbsp;y</SPAN><SPAN class = "TEXT"> is not used to simplify the
+subsequent assumptions, but is used to simplify the conclusion of the
+goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The application of </SPAN><SPAN class = "BRKT">STRIP_ASSUME_TAC</SPAN><SPAN class = "TEXT"> to simplified
+assumptions means that </SPAN><SPAN class = "BRKT">FULL_SIMP_TAC</SPAN><SPAN class = "TEXT"> can cause unwanted case-splits
+and other undesirable transformations to occur in one&rsquo;s assumption
+list.  If one wants to apply the simplifier to assumptions without
+this occurring, the best approach seems to be the use of
+</SPAN><SPAN class = "BRKT">RULE_ASSUM_TAC</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">SIMP_RULE</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Each assumption is used to rewrite lower-numbered assumptions.
+To get the opposite effect, where
+each assumption is used to rewrite higher-numbered assumptions,
+use </SPAN><SPAN class = "BRKT">REV_FULL_SIMP_TAC</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.REV_FULL_SIMP_TAC.html">REV_FULL_SIMP_TAC</A>,
+<A HREF = "bossLib.ASM_SIMP_TAC.html">ASM_SIMP_TAC</A>,
+<A HREF = "bossLib.SIMP_CONV.html">SIMP_CONV</A>,
+<A HREF = "bossLib.SIMP_RULE.html">SIMP_RULE</A>,
+<A HREF = "bossLib.SIMP_TAC.html">SIMP_TAC</A>,
+<A HREF = "BasicProvers.VAR_EQ_TAC.html">VAR_EQ_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

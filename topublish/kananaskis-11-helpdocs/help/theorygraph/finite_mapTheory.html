@@ -1,0 +1,1918 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: finite_map</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "finite_map"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "sortingTheory.html"><span class="strong">sorting</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">fmap</span> <td> 2
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">DRESTRICT</span>
+            <td>
+            :(α |-> β) -> (α -> bool) -> (α |-> β)
+    <tr><td> <span class="strong">FAPPLY</span> <td> :(α |-> β) -> α -> β
+    <tr><td> <span class="strong">FCARD</span> <td> :(α |-> β) -> num
+    <tr><td> <span class="strong">FDOM</span> <td> :(α |-> β) -> α -> bool
+    <tr><td> <span class="strong">FEMPTY</span> <td> :α |-> β
+    <tr><td>
+        <span class="strong">FEVERY</span>
+        <td>
+        :(α # β -> bool) -> (α |-> β) -> bool
+    <tr><td>
+        <span class="strong">FLOOKUP</span>
+        <td>
+        :(α |-> β) -> α -> β option
+    <tr><td>
+        <span class="strong">FMAP_MAP2</span>
+        <td>
+        :(α # γ -> β) -> (α |-> γ) -> (α |-> β)
+    <tr><td>
+        <span class="strong">FMERGE</span>
+        <td>
+        :(α -> α -> α) -> (β |-> α) -> (β |-> α) -> (β |-> α)
+    <tr><td> <span class="strong">FRANGE</span> <td> :(α |-> β) -> β -> bool
+    <tr><td>
+        <span class="strong">FUNION</span>
+        <td>
+        :(α |-> β) -> (α |-> β) -> (α |-> β)
+    <tr><td>
+        <span class="strong">FUN_FMAP</span>
+        <td>
+        :(α -> β) -> (α -> bool) -> (α |-> β)
+    <tr><td>
+        <span class="strong">FUPDATE</span>
+        <td>
+        :(α |-> β) -> α # β -> (α |-> β)
+    <tr><td>
+        <span class="strong">FUPDATE_LIST</span>
+        <td>
+        :(α |-> β) -> (α, β) alist -> (α |-> β)
+    <tr><td>
+        <span class="strong">MAP_KEYS</span>
+        <td>
+        :(α -> β) -> (α |-> γ) -> (β |-> γ)
+    <tr><td>
+        <span class="strong">RRESTRICT</span>
+        <td>
+        :(α |-> β) -> (β -> bool) -> (α |-> β)
+    <tr><td> <span class="strong">SUBMAP</span> <td> :(α |-> β) toto$reln
+    <tr><td>
+        <span class="strong">f_o</span>
+        <td>
+        :(β |-> γ) -> (α -> β) -> (α |-> γ)
+    <tr><td>
+        <span class="strong">f_o_f</span>
+        <td>
+        :(β |-> γ) -> (α |-> β) -> (α |-> γ)
+    <tr><td>
+        <span class="strong">fdomsub</span>
+        <td>
+        :(α |-> β) -> α -> (α |-> β)
+    <tr><td>
+        <span class="strong">fmap_ABS</span>
+        <td>
+        :(α -> β + unit) -> (α |-> β)
+    <tr><td>
+        <span class="strong">fmap_EQ_UPTO</span>
+        <td>
+        :(α |-> β) -> (α |-> β) -> (α -> bool) -> bool
+    <tr><td>
+        <span class="strong">fmap_REP</span>
+        <td>
+        :(α |-> β) -> α -> β + unit
+    <tr><td>
+        <span class="strong">fmap_inverse</span>
+        <td>
+        :(α |-> β) -> (β |-> α) -> bool
+    <tr><td>
+        <span class="strong">fmap_rel</span>
+        <td>
+        :(α -> β -> bool) -> (γ |-> α) -> (γ |-> β) -> bool
+    <tr><td>
+        <span class="strong">fmap_size</span>
+        <td>
+        :(α -> num) -> (β -> num) -> (α |-> β) -> num
+    <tr><td> <span class="strong">is_fmap</span> <td> :(α -> β + unit) -> bool
+    <tr><td>
+        <span class="strong">o_f</span>
+        <td>
+        :(β -> γ) -> (α |-> β) -> (α |-> γ)
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">fmap_inverse_def</span>
+<DD>
+<pre>
+|- ∀m1 m2.
+     fmap_inverse m1 m2 ⇔
+     ∀k. k ∈ FDOM m1 ⇒ ∃v. (FLOOKUP m1 k = SOME v) ∧ (FLOOKUP m2 v = SOME k)
+</pre>
+
+<DT><span class="strong">FMAP_MAP2_def</span>
+<DD>
+<pre>
+|- ∀f m. FMAP_MAP2 f m = FUN_FMAP (λx. f (x,m ' x)) (FDOM m)
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST</span>
+<DD>
+<pre>
+|- $|++ = FOLDL $|+
+</pre>
+
+<DT><span class="strong">SUBMAP_DEF</span>
+<DD>
+<pre>
+|- ∀f g. f ⊑ g ⇔ ∀x. x ∈ FDOM f ⇒ x ∈ FDOM g ∧ (f ' x = g ' x)
+</pre>
+
+<DT><span class="strong">FCARD_DEF</span>
+<DD>
+<pre>
+|- ∀fm. FCARD fm = CARD (FDOM fm)
+</pre>
+
+<DT><span class="strong">FDOM_DEF</span>
+<DD>
+<pre>
+|- ∀f x. FDOM f x ⇔ ISL (fmap_REP f x)
+</pre>
+
+<DT><span class="strong">FAPPLY_DEF</span>
+<DD>
+<pre>
+|- ∀f x. f ' x = OUTL (fmap_REP f x)
+</pre>
+
+<DT><span class="strong">FEMPTY_DEF</span>
+<DD>
+<pre>
+|- FEMPTY = fmap_ABS (λa. INR ())
+</pre>
+
+<DT><span class="strong">FUPDATE_DEF</span>
+<DD>
+<pre>
+|- ∀f x y. f |+ (x,y) = fmap_ABS (λa. if a = x then INL y else fmap_REP f a)
+</pre>
+
+<DT><span class="strong">fmap_ISO_DEF</span>
+<DD>
+<pre>
+|- (∀a. fmap_ABS (fmap_REP a) = a) ∧
+   ∀r. is_fmap r ⇔ (fmap_REP (fmap_ABS r) = r)
+</pre>
+
+<DT><span class="strong">fmap_TY_DEF</span>
+<DD>
+<pre>
+|- ∃rep. TYPE_DEFINITION is_fmap rep
+</pre>
+
+<DT><span class="strong">is_fmap_def</span>
+<DD>
+<pre>
+|- is_fmap =
+   (λa0.
+      ∀is_fmap'.
+        (∀a0.
+           (a0 = (λa. INR ())) ∨
+           (∃f a b. (a0 = (λx. if x = a then INL b else f x)) ∧ is_fmap' f) ⇒
+           is_fmap' a0) ⇒
+        is_fmap' a0)
+</pre>
+
+<DT><span class="strong">DRESTRICT_DEF</span>
+<DD>
+<pre>
+|- ∀f r.
+     (FDOM (DRESTRICT f r) = FDOM f ∩ r) ∧
+     ∀x. DRESTRICT f r ' x = if x ∈ FDOM f ∩ r then f ' x else FEMPTY ' x
+</pre>
+
+<DT><span class="strong">FUNION_DEF</span>
+<DD>
+<pre>
+|- ∀f g.
+     (FDOM (f ⊌ g) = FDOM f ∪ FDOM g) ∧
+     ∀x. (f ⊌ g) ' x = if x ∈ FDOM f then f ' x else g ' x
+</pre>
+
+<DT><span class="strong">fmap_domsub</span>
+<DD>
+<pre>
+|- ∀fm k. fm \\ k = DRESTRICT fm (COMPL {k})
+</pre>
+
+<DT><span class="strong">f_o_DEF</span>
+<DD>
+<pre>
+|- ∀f g. f f_o g = f f_o_f FUN_FMAP g {x | g x ∈ FDOM f}
+</pre>
+
+<DT><span class="strong">FUN_FMAP_DEF</span>
+<DD>
+<pre>
+|- ∀f P.
+     FINITE P ⇒
+     (FDOM (FUN_FMAP f P) = P) ∧ ∀x. x ∈ P ⇒ (FUN_FMAP f P ' x = f x)
+</pre>
+
+<DT><span class="strong">RRESTRICT_DEF</span>
+<DD>
+<pre>
+|- ∀f r.
+     (FDOM (RRESTRICT f r) = {x | x ∈ FDOM f ∧ f ' x ∈ r}) ∧
+     ∀x.
+       RRESTRICT f r ' x =
+       if x ∈ FDOM f ∧ f ' x ∈ r then f ' x else FEMPTY ' x
+</pre>
+
+<DT><span class="strong">FRANGE_DEF</span>
+<DD>
+<pre>
+|- ∀f. FRANGE f = {y | ∃x. x ∈ FDOM f ∧ (f ' x = y)}
+</pre>
+
+<DT><span class="strong">o_f_DEF</span>
+<DD>
+<pre>
+|- ∀f g.
+     (FDOM (f o_f g) = FDOM g) ∧
+     ∀x. x ∈ FDOM (f o_f g) ⇒ ((f o_f g) ' x = f (g ' x))
+</pre>
+
+<DT><span class="strong">f_o_f_DEF</span>
+<DD>
+<pre>
+|- ∀f g.
+     (FDOM (f f_o_f g) = FDOM g ∩ {x | g ' x ∈ FDOM f}) ∧
+     ∀x. x ∈ FDOM (f f_o_f g) ⇒ ((f f_o_f g) ' x = f ' (g ' x))
+</pre>
+
+<DT><span class="strong">FEVERY_DEF</span>
+<DD>
+<pre>
+|- ∀P f. FEVERY P f ⇔ ∀x. x ∈ FDOM f ⇒ P (x,f ' x)
+</pre>
+
+<DT><span class="strong">FLOOKUP_DEF</span>
+<DD>
+<pre>
+|- ∀f x. FLOOKUP f x = if x ∈ FDOM f then SOME (f ' x) else NONE
+</pre>
+
+<DT><span class="strong">FMERGE_DEF</span>
+<DD>
+<pre>
+|- ∀m f g.
+     (FDOM (FMERGE m f g) = FDOM f ∪ FDOM g) ∧
+     ∀x.
+       FMERGE m f g ' x =
+       if x ∉ FDOM f then g ' x
+       else if x ∉ FDOM g then f ' x
+       else m (f ' x) (g ' x)
+</pre>
+
+<DT><span class="strong">MAP_KEYS_def</span>
+<DD>
+<pre>
+|- ∀f fm.
+     (FDOM (MAP_KEYS f fm) = IMAGE f (FDOM fm)) ∧
+     (INJ f (FDOM fm) 𝕌(:β) ⇒
+      ∀x. x ∈ FDOM fm ⇒ (MAP_KEYS f fm ' (f x) = fm ' x))
+</pre>
+
+<DT><span class="strong">fmap_rel_def</span>
+<DD>
+<pre>
+|- ∀R f1 f2.
+     fmap_rel R f1 f2 ⇔
+     (FDOM f2 = FDOM f1) ∧ ∀x. x ∈ FDOM f1 ⇒ R (f1 ' x) (f2 ' x)
+</pre>
+
+<DT><span class="strong">fmap_EQ_UPTO_def</span>
+<DD>
+<pre>
+|- ∀f1 f2 vs.
+     fmap_EQ_UPTO f1 f2 vs ⇔
+     (FDOM f1 ∩ COMPL vs = FDOM f2 ∩ COMPL vs) ∧
+     ∀x. x ∈ FDOM f1 ∩ COMPL vs ⇒ (f1 ' x = f2 ' x)
+</pre>
+
+<DT><span class="strong">fmap_size_def</span>
+<DD>
+<pre>
+|- ∀kz vz fm. fmap_size kz vz fm = ∑ (λk. kz k + vz (fm ' k)) (FDOM fm)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">fevery_funion</span>
+<DD>
+<pre>
+|- ∀P m1 m2. FEVERY P m1 ∧ FEVERY P m2 ⇒ FEVERY P (m1 ⊌ m2)
+</pre>
+
+<DT><span class="strong">drestrict_iter_list</span>
+<DD>
+<pre>
+|- ∀m l. FOLDR (λk m. m \\ k) m l = DRESTRICT m (COMPL (LIST_TO_SET l))
+</pre>
+
+<DT><span class="strong">disjoint_drestrict</span>
+<DD>
+<pre>
+|- ∀s m. DISJOINT s (FDOM m) ⇒ (DRESTRICT m (COMPL s) = m)
+</pre>
+
+<DT><span class="strong">fmap_to_list</span>
+<DD>
+<pre>
+|- ∀m. ∃l. ALL_DISTINCT (MAP FST l) ∧ (m = FEMPTY |++ l)
+</pre>
+
+<DT><span class="strong">fupdate_list_foldl</span>
+<DD>
+<pre>
+|- ∀m l. FOLDL (λenv (k,v). env |+ (k,v)) m l = m |++ l
+</pre>
+
+<DT><span class="strong">fupdate_list_foldr</span>
+<DD>
+<pre>
+|- ∀m l. FOLDR (λ(k,v) env. env |+ (k,v)) m l = m |++ REVERSE l
+</pre>
+
+<DT><span class="strong">FUPDATE_EQ_FUPDATE_LIST</span>
+<DD>
+<pre>
+|- ∀fm kv. fm |+ kv = fm |++ [kv]
+</pre>
+
+<DT><span class="strong">flookup_thm</span>
+<DD>
+<pre>
+|- ∀f x v.
+     ((FLOOKUP f x = NONE) ⇔ x ∉ FDOM f) ∧
+     ((FLOOKUP f x = SOME v) ⇔ x ∈ FDOM f ∧ (f ' x = v))
+</pre>
+
+<DT><span class="strong">fdom_fupdate_list2</span>
+<DD>
+<pre>
+|- ∀kvl fm.
+     FDOM (fm |++ kvl) =
+     FDOM fm DIFF LIST_TO_SET (MAP FST kvl) ∪ LIST_TO_SET (MAP FST kvl)
+</pre>
+
+<DT><span class="strong">fupdate_list_map</span>
+<DD>
+<pre>
+|- ∀l f x y.
+     x ∈ FDOM (FEMPTY |++ l) ⇒
+     ((FEMPTY |++ MAP (λ(a,b). (a,f b)) l) ' x = f ((FEMPTY |++ l) ' x))
+</pre>
+
+<DT><span class="strong">fmap_eq_flookup</span>
+<DD>
+<pre>
+|- ∀m1 m2. (m1 = m2) ⇔ ∀k. FLOOKUP m1 k = FLOOKUP m2 k
+</pre>
+
+<DT><span class="strong">fmap_rel_sym</span>
+<DD>
+<pre>
+|- (∀x y. R x y ⇒ R y x) ⇒ ∀x y. fmap_rel R x y ⇒ fmap_rel R y x
+</pre>
+
+<DT><span class="strong">fmap_rel_trans</span>
+<DD>
+<pre>
+|- (∀x y z. R x y ∧ R y z ⇒ R x z) ⇒
+   ∀x y z. fmap_rel R x y ∧ fmap_rel R y z ⇒ fmap_rel R x z
+</pre>
+
+<DT><span class="strong">f_o_f_FUPDATE_compose</span>
+<DD>
+<pre>
+|- ∀f1 f2 k x v.
+     x ∉ FDOM f1 ∧ x ∉ FRANGE f2 ⇒
+     (f1 |+ (x,v) f_o_f f2 |+ (k,x) = (f1 f_o_f f2) |+ (k,v))
+</pre>
+
+<DT><span class="strong">DRESTRICT_SUBSET</span>
+<DD>
+<pre>
+|- ∀f1 f2 s t.
+     (DRESTRICT f1 s = DRESTRICT f2 s) ∧ t ⊆ s ⇒
+     (DRESTRICT f1 t = DRESTRICT f2 t)
+</pre>
+
+<DT><span class="strong">DRESTRICT_FDOM</span>
+<DD>
+<pre>
+|- ∀f. DRESTRICT f (FDOM f) = f
+</pre>
+
+<DT><span class="strong">FRANGE_DRESTRICT_SUBSET</span>
+<DD>
+<pre>
+|- FRANGE (DRESTRICT fm s) ⊆ FRANGE fm
+</pre>
+
+<DT><span class="strong">IN_FRANGE_DOMSUB_suff</span>
+<DD>
+<pre>
+|- (∀v. v ∈ FRANGE fm ⇒ P v) ⇒ ∀v. v ∈ FRANGE (fm \\ k) ⇒ P v
+</pre>
+
+<DT><span class="strong">FRANGE_DOMSUB_SUBSET</span>
+<DD>
+<pre>
+|- FRANGE (fm \\ k) ⊆ FRANGE fm
+</pre>
+
+<DT><span class="strong">IN_FRANGE_FUNION_suff</span>
+<DD>
+<pre>
+|- (∀v. v ∈ FRANGE f1 ⇒ P v) ∧ (∀v. v ∈ FRANGE f2 ⇒ P v) ⇒
+   ∀v. v ∈ FRANGE (f1 ⊌ f2) ⇒ P v
+</pre>
+
+<DT><span class="strong">FRANGE_FUNION_SUBSET</span>
+<DD>
+<pre>
+|- FRANGE (f1 ⊌ f2) ⊆ FRANGE f1 ∪ FRANGE f2
+</pre>
+
+<DT><span class="strong">IN_FRANGE_FUPDATE_LIST_suff</span>
+<DD>
+<pre>
+|- (∀v. v ∈ FRANGE fm ⇒ P v) ∧ (∀v. MEM v (MAP SND ls) ⇒ P v) ⇒
+   ∀v. v ∈ FRANGE (fm |++ ls) ⇒ P v
+</pre>
+
+<DT><span class="strong">FRANGE_FUPDATE_LIST_SUBSET</span>
+<DD>
+<pre>
+|- ∀ls fm. FRANGE (fm |++ ls) ⊆ FRANGE fm ∪ LIST_TO_SET (MAP SND ls)
+</pre>
+
+<DT><span class="strong">IN_FRANGE_FLOOKUP</span>
+<DD>
+<pre>
+|- ∀f v. v ∈ FRANGE f ⇔ ∃k. FLOOKUP f k = SOME v
+</pre>
+
+<DT><span class="strong">IN_FRANGE</span>
+<DD>
+<pre>
+|- ∀f v. v ∈ FRANGE f ⇔ ∃k. k ∈ FDOM f ∧ (f ' k = v)
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_ALL_DISTINCT_REVERSE</span>
+<DD>
+<pre>
+|- ∀ls. ALL_DISTINCT (MAP FST ls) ⇒ ∀fm. fm |++ REVERSE ls = fm |++ ls
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_ALL_DISTINCT_APPLY_MEM</span>
+<DD>
+<pre>
+|- ∀P ls k v fm.
+     ALL_DISTINCT (MAP FST ls) ∧ MEM (k,v) ls ∧ P v ⇒ P ((fm |++ ls) ' k)
+</pre>
+
+<DT><span class="strong">FUPDATE_SAME_LIST_APPLY</span>
+<DD>
+<pre>
+|- ∀kvl fm1 fm2 x.
+     MEM x (MAP FST kvl) ⇒ ((fm1 |++ kvl) ' x = (fm2 |++ kvl) ' x)
+</pre>
+
+<DT><span class="strong">FUPDATE_SAME_APPLY</span>
+<DD>
+<pre>
+|- (x = FST kv) ∨ (fm1 ' x = fm2 ' x) ⇒ ((fm1 |+ kv) ' x = (fm2 |+ kv) ' x)
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_APPLY_HO_THM</span>
+<DD>
+<pre>
+|- ∀P f kvl k.
+     (∃n.
+        n < LENGTH kvl ∧ (k = EL n (MAP FST kvl)) ∧ P (EL n (MAP SND kvl)) ∧
+        ∀m. n < m ∧ m < LENGTH kvl ⇒ EL m (MAP FST kvl) ≠ k) ∨
+     ¬MEM k (MAP FST kvl) ∧ P (f ' k) ⇒
+     P ((f |++ kvl) ' k)
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_APPLY_NOT_MEM_matchable</span>
+<DD>
+<pre>
+|- ∀kvl f k v. ¬MEM k (MAP FST kvl) ∧ (v = f ' k) ⇒ ((f |++ kvl) ' k = v)
+</pre>
+
+<DT><span class="strong">DRESTRICT_FUNION_SUBSET</span>
+<DD>
+<pre>
+|- s2 ⊆ s1 ⇒ ∃h. DRESTRICT f s1 ⊌ g = DRESTRICT f s2 ⊌ h
+</pre>
+
+<DT><span class="strong">FOLDL2_FUPDATE_LIST_paired</span>
+<DD>
+<pre>
+|- ∀f1 f2 bs cs a.
+     (LENGTH bs = LENGTH cs) ⇒
+     (FOLDL2 (λfm b (c,d). fm |+ (f1 b c d,f2 b c d)) a bs cs =
+      a |++
+      ZIP (MAP2 (λb. UNCURRY (f1 b)) bs cs,MAP2 (λb. UNCURRY (f2 b)) bs cs))
+</pre>
+
+<DT><span class="strong">FOLDL2_FUPDATE_LIST</span>
+<DD>
+<pre>
+|- ∀f1 f2 bs cs a.
+     (LENGTH bs = LENGTH cs) ⇒
+     (FOLDL2 (λfm b c. fm |+ (f1 b c,f2 b c)) a bs cs =
+      a |++ ZIP (MAP2 f1 bs cs,MAP2 f2 bs cs))
+</pre>
+
+<DT><span class="strong">DRESTRICT_EQ_DRESTRICT_SAME</span>
+<DD>
+<pre>
+|- (DRESTRICT f1 s = DRESTRICT f2 s) ⇔
+   (s ∩ FDOM f1 = s ∩ FDOM f2) ∧ ∀x. x ∈ FDOM f1 ∧ x ∈ s ⇒ (f1 ' x = f2 ' x)
+</pre>
+
+<DT><span class="strong">DRESTRICT_FUNION_SAME</span>
+<DD>
+<pre>
+|- ∀fm s. DRESTRICT fm s ⊌ fm = fm
+</pre>
+
+<DT><span class="strong">DRESTRICT_SUBSET_SUBMAP_gen</span>
+<DD>
+<pre>
+|- ∀f1 f2 s t.
+     DRESTRICT f1 s ⊑ DRESTRICT f2 s ∧ t ⊆ s ⇒ DRESTRICT f1 t ⊑ DRESTRICT f2 t
+</pre>
+
+<DT><span class="strong">DRESTRICT_DOMSUB</span>
+<DD>
+<pre>
+|- ∀f s k. DRESTRICT f s \\ k = DRESTRICT f (s DELETE k)
+</pre>
+
+<DT><span class="strong">DOMSUB_SUBMAP</span>
+<DD>
+<pre>
+|- ∀f g x. f ⊑ g ∧ x ∉ FDOM f ⇒ f ⊑ g \\ x
+</pre>
+
+<DT><span class="strong">SUBMAP_DOMSUB_gen</span>
+<DD>
+<pre>
+|- ∀f g k. f \\ k ⊑ g ⇔ f \\ k ⊑ g \\ k
+</pre>
+
+<DT><span class="strong">SUBMAP_mono_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f g x y. f \\ x ⊑ g \\ x ⇒ f |+ (x,y) ⊑ g |+ (x,y)
+</pre>
+
+<DT><span class="strong">IMAGE_FRANGE</span>
+<DD>
+<pre>
+|- ∀f fm. IMAGE f (FRANGE fm) = FRANGE (f o_f fm)
+</pre>
+
+<DT><span class="strong">DRESTRICTED_FUNION</span>
+<DD>
+<pre>
+|- ∀f1 f2 s.
+     DRESTRICT (f1 ⊌ f2) s = DRESTRICT f1 s ⊌ DRESTRICT f2 (s DIFF FDOM f1)
+</pre>
+
+<DT><span class="strong">DRESTRICT_SUBSET_SUBMAP</span>
+<DD>
+<pre>
+|- s1 ⊆ s2 ⇒ DRESTRICT f s1 ⊑ DRESTRICT f s2
+</pre>
+
+<DT><span class="strong">DRESTRICT_SUBMAP_gen</span>
+<DD>
+<pre>
+|- f ⊑ g ⇒ DRESTRICT f P ⊑ g
+</pre>
+
+<DT><span class="strong">IN_FRANGE_o_f_suff</span>
+<DD>
+<pre>
+|- (∀v. v ∈ FRANGE fm ⇒ P (f v)) ⇒ ∀v. v ∈ FRANGE (f o_f fm) ⇒ P v
+</pre>
+
+<DT><span class="strong">IN_FRANGE_FUPDATE_suff</span>
+<DD>
+<pre>
+|- (∀v. v ∈ FRANGE fm ⇒ P v) ∧ P (SND kv) ⇒ ∀v. v ∈ FRANGE (fm |+ kv) ⇒ P v
+</pre>
+
+<DT><span class="strong">FRANGE_FUPDATE_SUBSET</span>
+<DD>
+<pre>
+|- FRANGE (fm |+ kv) ⊆ FRANGE fm ∪ {SND kv}
+</pre>
+
+<DT><span class="strong">IN_FRANGE_DRESTRICT_suff</span>
+<DD>
+<pre>
+|- (∀v. v ∈ FRANGE fm ⇒ P v) ⇒ ∀v. v ∈ FRANGE (DRESTRICT fm s) ⇒ P v
+</pre>
+
+<DT><span class="strong">FUNION_ASSOC</span>
+<DD>
+<pre>
+|- ∀f g h. f ⊌ (g ⊌ h) = f ⊌ g ⊌ h
+</pre>
+
+<DT><span class="strong">FUNION_COMM</span>
+<DD>
+<pre>
+|- ∀f g. DISJOINT (FDOM f) (FDOM g) ⇒ (f ⊌ g = g ⊌ f)
+</pre>
+
+<DT><span class="strong">DOMSUB_FUNION</span>
+<DD>
+<pre>
+|- (f ⊌ g) \\ k = f \\ k ⊌ g \\ k
+</pre>
+
+<DT><span class="strong">FUNION_EQ_IMPL</span>
+<DD>
+<pre>
+|- ∀f1 f2 f3.
+     DISJOINT (FDOM f1) (FDOM f2) ∧ DISJOINT (FDOM f1) (FDOM f3) ∧ (f2 = f3) ⇒
+     (f1 ⊌ f2 = f1 ⊌ f3)
+</pre>
+
+<DT><span class="strong">FUNION_EQ</span>
+<DD>
+<pre>
+|- ∀f1 f2 f3.
+     DISJOINT (FDOM f1) (FDOM f2) ∧ DISJOINT (FDOM f1) (FDOM f3) ⇒
+     ((f1 ⊌ f2 = f1 ⊌ f3) ⇔ (f2 = f3))
+</pre>
+
+<DT><span class="strong">FEMPTY_SUBMAP</span>
+<DD>
+<pre>
+|- ∀h. h ⊑ FEMPTY ⇔ (h = FEMPTY)
+</pre>
+
+<DT><span class="strong">SUBMAP_FUNION_ID</span>
+<DD>
+<pre>
+|- (∀f1 f2. f1 ⊑ f1 ⊌ f2) ∧
+   ∀f1 f2. DISJOINT (FDOM f1) (FDOM f2) ⇒ f2 ⊑ f1 ⊌ f2
+</pre>
+
+<DT><span class="strong">SUBMAP_FUNION</span>
+<DD>
+<pre>
+|- ∀f1 f2 f3. f1 ⊑ f2 ∨ DISJOINT (FDOM f1) (FDOM f2) ∧ f1 ⊑ f3 ⇒ f1 ⊑ f2 ⊌ f3
+</pre>
+
+<DT><span class="strong">SUBMAP_FUNION_EQ</span>
+<DD>
+<pre>
+|- (∀f1 f2 f3. DISJOINT (FDOM f1) (FDOM f2) ⇒ (f1 ⊑ f2 ⊌ f3 ⇔ f1 ⊑ f3)) ∧
+   ∀f1 f2 f3.
+     DISJOINT (FDOM f1) (FDOM f3 DIFF FDOM f2) ⇒ (f1 ⊑ f2 ⊌ f3 ⇔ f1 ⊑ f2)
+</pre>
+
+<DT><span class="strong">FUNION_EQ_FEMPTY</span>
+<DD>
+<pre>
+|- ∀h1 h2. (h1 ⊌ h2 = FEMPTY) ⇔ (h1 = FEMPTY) ∧ (h2 = FEMPTY)
+</pre>
+
+<DT><span class="strong">FEVERY_DRESTRICT_COMPL</span>
+<DD>
+<pre>
+|- FEVERY P (DRESTRICT (f |+ (k,v)) (COMPL s)) ⇔
+   (k ∉ s ⇒ P (k,v)) ∧ FEVERY P (DRESTRICT f (COMPL (k INSERT s)))
+</pre>
+
+<DT><span class="strong">FUPDATE_ELIM</span>
+<DD>
+<pre>
+|- ∀k v f. k ∈ FDOM f ∧ (f ' k = v) ⇒ (f |+ (k,v) = f)
+</pre>
+
+<DT><span class="strong">FEVERY_STRENGTHEN_THM</span>
+<DD>
+<pre>
+|- FEVERY P FEMPTY ∧ (FEVERY P f ∧ P (x,y) ⇒ FEVERY P (f |+ (x,y)))
+</pre>
+
+<DT><span class="strong">FMAP_MAP2_FUPDATE</span>
+<DD>
+<pre>
+|- FMAP_MAP2 f (m |+ (x,v)) = FMAP_MAP2 f m |+ (x,f (x,v))
+</pre>
+
+<DT><span class="strong">FMAP_MAP2_FEMPTY</span>
+<DD>
+<pre>
+|- FMAP_MAP2 f FEMPTY = FEMPTY
+</pre>
+
+<DT><span class="strong">FMAP_MAP2_THM</span>
+<DD>
+<pre>
+|- (FDOM (FMAP_MAP2 f m) = FDOM m) ∧
+   ∀x. x ∈ FDOM m ⇒ (FMAP_MAP2 f m ' x = f (x,m ' x))
+</pre>
+
+<DT><span class="strong">FUPDATE_PURGE</span>
+<DD>
+<pre>
+|- ∀f x y. f |+ (x,y) = f \\ x |+ (x,y)
+</pre>
+
+<DT><span class="strong">FMEQ_SINGLE_SIMPLE_DISJ_ELIM</span>
+<DD>
+<pre>
+|- ∀fm k v ck cv.
+     (fm |+ (k,v) = FEMPTY |+ (ck,cv)) ⇔
+     (k = ck) ∧ (v = cv) ∧ ((fm = FEMPTY) ∨ ∃v'. fm = FEMPTY |+ (k,v'))
+</pre>
+
+<DT><span class="strong">FMEQ_SINGLE_SIMPLE_ELIM</span>
+<DD>
+<pre>
+|- ∀P k v ck cv nv.
+     (∃fm. (fm |+ (k,v) = FEMPTY |+ (ck,cv)) ∧ P (fm |+ (k,nv))) ⇔
+     (k = ck) ∧ (v = cv) ∧ P (FEMPTY |+ (ck,nv))
+</pre>
+
+<DT><span class="strong">FMEQ_ENUMERATE_CASES</span>
+<DD>
+<pre>
+|- ∀f1 kvl p. (f1 |+ p = FEMPTY |++ kvl) ⇒ MEM p kvl
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_SAME_KEYS_UNWIND</span>
+<DD>
+<pre>
+|- ∀f1 f2 kvl1 kvl2.
+     (f1 |++ kvl1 = f2 |++ kvl2) ∧ (MAP FST kvl1 = MAP FST kvl2) ∧
+     ALL_DISTINCT (MAP FST kvl1) ⇒
+     (kvl1 = kvl2) ∧
+     ∀kvl. (MAP FST kvl = MAP FST kvl1) ⇒ (f1 |++ kvl = f2 |++ kvl)
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_SAME_UPDATE</span>
+<DD>
+<pre>
+|- ∀kvl f1 f2.
+     (f1 |++ kvl = f2 |++ kvl) ⇔
+     (DRESTRICT f1 (COMPL (LIST_TO_SET (MAP FST kvl))) =
+      DRESTRICT f2 (COMPL (LIST_TO_SET (MAP FST kvl))))
+</pre>
+
+<DT><span class="strong">FDOM_FUPDATE_LIST</span>
+<DD>
+<pre>
+|- ∀kvl fm. FDOM (fm |++ kvl) = FDOM fm ∪ LIST_TO_SET (MAP FST kvl)
+</pre>
+
+<DT><span class="strong">FUPD11_SAME_UPDATE</span>
+<DD>
+<pre>
+|- ∀f1 f2 k v.
+     (f1 |+ (k,v) = f2 |+ (k,v)) ⇔
+     (DRESTRICT f1 (COMPL {k}) = DRESTRICT f2 (COMPL {k}))
+</pre>
+
+<DT><span class="strong">FUPD_SAME_KEY_UNWIND</span>
+<DD>
+<pre>
+|- ∀f1 f2 k v1 v2.
+     (f1 |+ (k,v1) = f2 |+ (k,v2)) ⇒ (v1 = v2) ∧ ∀v. f1 |+ (k,v) = f2 |+ (k,v)
+</pre>
+
+<DT><span class="strong">FUPD11_SAME_BASE</span>
+<DD>
+<pre>
+|- ∀f k1 v1 k2 v2.
+     (f |+ (k1,v1) = f |+ (k2,v2)) ⇔
+     (k1 = k2) ∧ (v1 = v2) ∨
+     k1 ≠ k2 ∧ k1 ∈ FDOM f ∧ k2 ∈ FDOM f ∧ (f |+ (k1,v1) = f) ∧
+     (f |+ (k2,v2) = f)
+</pre>
+
+<DT><span class="strong">SAME_KEY_UPDATES_DIFFER</span>
+<DD>
+<pre>
+|- ∀f1 f2 k v1 v2. v1 ≠ v2 ⇒ f1 |+ (k,v1) ≠ f2 |+ (k,v2)
+</pre>
+
+<DT><span class="strong">FUPD11_SAME_NEW_KEY</span>
+<DD>
+<pre>
+|- ∀f1 f2 k v1 v2.
+     k ∉ FDOM f1 ∧ k ∉ FDOM f2 ⇒
+     ((f1 |+ (k,v1) = f2 |+ (k,v2)) ⇔ (f1 = f2) ∧ (v1 = v2))
+</pre>
+
+<DT><span class="strong">FUPD11_SAME_KEY_AND_BASE</span>
+<DD>
+<pre>
+|- ∀f k v1 v2. (f |+ (k,v1) = f |+ (k,v2)) ⇔ (v1 = v2)
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_SNOC</span>
+<DD>
+<pre>
+|- ∀xs x fm. fm |++ SNOC x xs = (fm |++ xs) |+ x
+</pre>
+
+<DT><span class="strong">FOLDL_FUPDATE_LIST</span>
+<DD>
+<pre>
+|- ∀f1 f2 ls a.
+     FOLDL (λfm k. fm |+ (f1 k,f2 k)) a ls = a |++ MAP (λk. (f1 k,f2 k)) ls
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_APPLY_MEM</span>
+<DD>
+<pre>
+|- ∀kvl f k v n.
+     n < LENGTH kvl ∧ (k = EL n (MAP FST kvl)) ∧ (v = EL n (MAP SND kvl)) ∧
+     (∀m. n < m ∧ m < LENGTH kvl ⇒ EL m (MAP FST kvl) ≠ k) ⇒
+     ((f |++ kvl) ' k = v)
+</pre>
+
+<DT><span class="strong">FEVERY_FUPDATE_LIST</span>
+<DD>
+<pre>
+|- ALL_DISTINCT (MAP FST kvl) ⇒
+   (FEVERY P (fm |++ kvl) ⇔
+    EVERY P kvl ∧ FEVERY P (DRESTRICT fm (COMPL (LIST_TO_SET (MAP FST kvl)))))
+</pre>
+
+<DT><span class="strong">FUPDATE_FUPDATE_LIST_MEM</span>
+<DD>
+<pre>
+|- MEM k (MAP FST kvl) ⇒ (fm |+ (k,v) |++ kvl = fm |++ kvl)
+</pre>
+
+<DT><span class="strong">FUPDATE_FUPDATE_LIST_COMMUTES</span>
+<DD>
+<pre>
+|- ¬MEM k (MAP FST kvl) ⇒ (fm |+ (k,v) |++ kvl = (fm |++ kvl) |+ (k,v))
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_APPEND</span>
+<DD>
+<pre>
+|- fm |++ (kvl1 ++ kvl2) = fm |++ kvl1 |++ kvl2
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_APPLY_NOT_MEM</span>
+<DD>
+<pre>
+|- ∀kvl f k. ¬MEM k (MAP FST kvl) ⇒ ((f |++ kvl) ' k = f ' k)
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_THM</span>
+<DD>
+<pre>
+|- ∀f. (f |++ [] = f) ∧ ∀h t. f |++ (h::t) = f |+ h |++ t
+</pre>
+
+<DT><span class="strong">SUBMAP_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f g x y. f |+ (x,y) ⊑ g ⇔ x ∈ FDOM g ∧ (g ' x = y) ∧ f \\ x ⊑ g \\ x
+</pre>
+
+<DT><span class="strong">SUBMAP_TRANS</span>
+<DD>
+<pre>
+|- ∀f g h. f ⊑ g ∧ g ⊑ h ⇒ f ⊑ h
+</pre>
+
+<DT><span class="strong">SUBMAP_ANTISYM</span>
+<DD>
+<pre>
+|- ∀f g. f ⊑ g ∧ g ⊑ f ⇔ (f = g)
+</pre>
+
+<DT><span class="strong">SUBMAP_REFL</span>
+<DD>
+<pre>
+|- ∀f. f ⊑ f
+</pre>
+
+<DT><span class="strong">SUBMAP_FEMPTY</span>
+<DD>
+<pre>
+|- ∀f. FEMPTY ⊑ f
+</pre>
+
+<DT><span class="strong">fmap_EXT</span>
+<DD>
+<pre>
+|- ∀f g. (f = g) ⇔ (FDOM f = FDOM g) ∧ ∀x. x ∈ FDOM f ⇒ (f ' x = g ' x)
+</pre>
+
+<DT><span class="strong">fmap_EQ_THM</span>
+<DD>
+<pre>
+|- ∀f g. (FDOM f = FDOM g) ∧ (∀x. x ∈ FDOM f ⇒ (f ' x = g ' x)) ⇔ (f = g)
+</pre>
+
+<DT><span class="strong">fmap_EQ</span>
+<DD>
+<pre>
+|- ∀f g. (FDOM f = FDOM g) ∧ ($' f = $' g) ⇔ (f = g)
+</pre>
+
+<DT><span class="strong">NOT_FDOM_FAPPLY_FEMPTY</span>
+<DD>
+<pre>
+|- ∀f x. x ∉ FDOM f ⇒ (f ' x = FEMPTY ' x)
+</pre>
+
+<DT><span class="strong">FM_PULL_APART</span>
+<DD>
+<pre>
+|- ∀fm k. k ∈ FDOM fm ⇒ ∃fm0 v. (fm = fm0 |+ (k,v)) ∧ k ∉ FDOM fm0
+</pre>
+
+<DT><span class="strong">fmap_INDUCT</span>
+<DD>
+<pre>
+|- ∀P. P FEMPTY ∧ (∀f. P f ⇒ ∀x y. x ∉ FDOM f ⇒ P (f |+ (x,y))) ⇒ ∀f. P f
+</pre>
+
+<DT><span class="strong">FCARD_SUC</span>
+<DD>
+<pre>
+|- ∀f n.
+     (FCARD f = SUC n) ⇔
+     ∃f' x y. x ∉ FDOM f' ∧ (FCARD f' = n) ∧ (f = f' |+ (x,y))
+</pre>
+
+<DT><span class="strong">FCARD_0_FEMPTY</span>
+<DD>
+<pre>
+|- ∀f. (FCARD f = 0) ⇔ (f = FEMPTY)
+</pre>
+
+<DT><span class="strong">FCARD_FUPDATE</span>
+<DD>
+<pre>
+|- ∀fm a b.
+     FCARD (fm |+ (a,b)) = if a ∈ FDOM fm then FCARD fm else 1 + FCARD fm
+</pre>
+
+<DT><span class="strong">FCARD_FEMPTY</span>
+<DD>
+<pre>
+|- FCARD FEMPTY = 0
+</pre>
+
+<DT><span class="strong">FDOM_FINITE</span>
+<DD>
+<pre>
+|- ∀fm. FINITE (FDOM fm)
+</pre>
+
+<DT><span class="strong">FDOM_F_FEMPTY1</span>
+<DD>
+<pre>
+|- ∀f. (∀a. a ∉ FDOM f) ⇔ (f = FEMPTY)
+</pre>
+
+<DT><span class="strong">FDOM_EQ_EMPTY_SYM</span>
+<DD>
+<pre>
+|- ∀f. (∅ = FDOM f) ⇔ (f = FEMPTY)
+</pre>
+
+<DT><span class="strong">FDOM_EQ_EMPTY</span>
+<DD>
+<pre>
+|- ∀f. (FDOM f = ∅) ⇔ (f = FEMPTY)
+</pre>
+
+<DT><span class="strong">fmap_SIMPLE_INDUCT</span>
+<DD>
+<pre>
+|- ∀P. P FEMPTY ∧ (∀f. P f ⇒ ∀x y. P (f |+ (x,y))) ⇒ ∀f. P f
+</pre>
+
+<DT><span class="strong">FDOM_EQ_FDOM_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f x. x ∈ FDOM f ⇒ ∀y. FDOM (f |+ (x,y)) = FDOM f
+</pre>
+
+<DT><span class="strong">NOT_EQ_FEMPTY_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f a b. FEMPTY ≠ f |+ (a,b)
+</pre>
+
+<DT><span class="strong">FAPPLY_FUPDATE_THM</span>
+<DD>
+<pre>
+|- ∀f a b x. (f |+ (a,b)) ' x = if x = a then b else f ' x
+</pre>
+
+<DT><span class="strong">FDOM_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f a b. FDOM (f |+ (a,b)) = a INSERT FDOM f
+</pre>
+
+<DT><span class="strong">FDOM_FEMPTY</span>
+<DD>
+<pre>
+|- FDOM FEMPTY = ∅
+</pre>
+
+<DT><span class="strong">FUPDATE_EQ</span>
+<DD>
+<pre>
+|- ∀f a b c. f |+ (a,b) |+ (a,c) = f |+ (a,c)
+</pre>
+
+<DT><span class="strong">FUPDATE_COMMUTES</span>
+<DD>
+<pre>
+|- ∀f a b c d. a ≠ c ⇒ (f |+ (a,b) |+ (c,d) = f |+ (c,d) |+ (a,b))
+</pre>
+
+<DT><span class="strong">NOT_EQ_FAPPLY</span>
+<DD>
+<pre>
+|- ∀f a x y. a ≠ x ⇒ ((f |+ (x,y)) ' a = f ' a)
+</pre>
+
+<DT><span class="strong">FAPPLY_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f x y. (f |+ (x,y)) ' x = y
+</pre>
+
+<DT><span class="strong">is_fmap_cases</span>
+<DD>
+<pre>
+|- ∀a0.
+     is_fmap a0 ⇔
+     (a0 = (λa. INR ())) ∨
+     ∃f a b. (a0 = (λx. if x = a then INL b else f x)) ∧ is_fmap f
+</pre>
+
+<DT><span class="strong">is_fmap_strongind</span>
+<DD>
+<pre>
+|- ∀is_fmap'.
+     is_fmap' (λa. INR ()) ∧
+     (∀f a b.
+        is_fmap f ∧ is_fmap' f ⇒
+        is_fmap' (λx. if x = a then INL b else f x)) ⇒
+     ∀a0. is_fmap a0 ⇒ is_fmap' a0
+</pre>
+
+<DT><span class="strong">is_fmap_ind</span>
+<DD>
+<pre>
+|- ∀is_fmap'.
+     is_fmap' (λa. INR ()) ∧
+     (∀f a b. is_fmap' f ⇒ is_fmap' (λx. if x = a then INL b else f x)) ⇒
+     ∀a0. is_fmap a0 ⇒ is_fmap' a0
+</pre>
+
+<DT><span class="strong">is_fmap_rules</span>
+<DD>
+<pre>
+|- is_fmap (λa. INR ()) ∧
+   ∀f a b. is_fmap f ⇒ is_fmap (λx. if x = a then INL b else f x)
+</pre>
+
+<DT><span class="strong">FUNION_FEMPTY_1</span>
+<DD>
+<pre>
+|- ∀g. FEMPTY ⊌ g = g
+</pre>
+
+<DT><span class="strong">FUNION_FEMPTY_2</span>
+<DD>
+<pre>
+|- ∀f. f ⊌ FEMPTY = f
+</pre>
+
+<DT><span class="strong">FUNION_FUPDATE_1</span>
+<DD>
+<pre>
+|- ∀f g x y. f |+ (x,y) ⊌ g = (f ⊌ g) |+ (x,y)
+</pre>
+
+<DT><span class="strong">FUNION_FUPDATE_2</span>
+<DD>
+<pre>
+|- ∀f g x y. f ⊌ g |+ (x,y) = if x ∈ FDOM f then f ⊌ g else (f ⊌ g) |+ (x,y)
+</pre>
+
+<DT><span class="strong">EQ_FDOM_SUBMAP</span>
+<DD>
+<pre>
+|- (f = g) ⇔ f ⊑ g ∧ (FDOM f = FDOM g)
+</pre>
+
+<DT><span class="strong">SUBMAP_FUPDATE_EQN</span>
+<DD>
+<pre>
+|- f ⊑ f |+ (x,y) ⇔ x ∉ FDOM f ∨ (f ' x = y) ∧ x ∈ FDOM f
+</pre>
+
+<DT><span class="strong">DRESTRICT_FEMPTY</span>
+<DD>
+<pre>
+|- ∀r. DRESTRICT FEMPTY r = FEMPTY
+</pre>
+
+<DT><span class="strong">DRESTRICT_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f r x y.
+     DRESTRICT (f |+ (x,y)) r =
+     if x ∈ r then DRESTRICT f r |+ (x,y) else DRESTRICT f r
+</pre>
+
+<DT><span class="strong">STRONG_DRESTRICT_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f r x y.
+     x ∈ r ⇒ (DRESTRICT (f |+ (x,y)) r = DRESTRICT f (r DELETE x) |+ (x,y))
+</pre>
+
+<DT><span class="strong">FDOM_DRESTRICT</span>
+<DD>
+<pre>
+|- ∀f r x. FDOM (DRESTRICT f r) = FDOM f ∩ r
+</pre>
+
+<DT><span class="strong">NOT_FDOM_DRESTRICT</span>
+<DD>
+<pre>
+|- ∀f x. x ∉ FDOM f ⇒ (DRESTRICT f (COMPL {x}) = f)
+</pre>
+
+<DT><span class="strong">DRESTRICT_SUBMAP</span>
+<DD>
+<pre>
+|- ∀f r. DRESTRICT f r ⊑ f
+</pre>
+
+<DT><span class="strong">DRESTRICT_DRESTRICT</span>
+<DD>
+<pre>
+|- ∀f P Q. DRESTRICT (DRESTRICT f P) Q = DRESTRICT f (P ∩ Q)
+</pre>
+
+<DT><span class="strong">DRESTRICT_IS_FEMPTY</span>
+<DD>
+<pre>
+|- ∀f. DRESTRICT f ∅ = FEMPTY
+</pre>
+
+<DT><span class="strong">FUPDATE_DRESTRICT</span>
+<DD>
+<pre>
+|- ∀f x y. f |+ (x,y) = DRESTRICT f (COMPL {x}) |+ (x,y)
+</pre>
+
+<DT><span class="strong">STRONG_DRESTRICT_FUPDATE_THM</span>
+<DD>
+<pre>
+|- ∀f r x y.
+     DRESTRICT (f |+ (x,y)) r =
+     if x ∈ r then DRESTRICT f (COMPL {x} ∩ r) |+ (x,y)
+     else DRESTRICT f (COMPL {x} ∩ r)
+</pre>
+
+<DT><span class="strong">DRESTRICT_UNIV</span>
+<DD>
+<pre>
+|- ∀f. DRESTRICT f 𝕌(:α) = f
+</pre>
+
+<DT><span class="strong">SUBMAP_DRESTRICT</span>
+<DD>
+<pre>
+|- DRESTRICT f P ⊑ f
+</pre>
+
+<DT><span class="strong">DRESTRICT_EQ_DRESTRICT</span>
+<DD>
+<pre>
+|- ∀f1 f2 s1 s2.
+     (DRESTRICT f1 s1 = DRESTRICT f2 s2) ⇔
+     DRESTRICT f1 s1 ⊑ f2 ∧ DRESTRICT f2 s2 ⊑ f1 ∧
+     (s1 ∩ FDOM f1 = s2 ∩ FDOM f2)
+</pre>
+
+<DT><span class="strong">FDOM_FUNION</span>
+<DD>
+<pre>
+|- ∀f g x. FDOM (f ⊌ g) = FDOM f ∪ FDOM g
+</pre>
+
+<DT><span class="strong">FMERGE_DOMSUB</span>
+<DD>
+<pre>
+|- ∀m m1 m2 k. FMERGE m m1 m2 \\ k = FMERGE m (m1 \\ k) (m2 \\ k)
+</pre>
+
+<DT><span class="strong">SUBMAP_DOMSUB</span>
+<DD>
+<pre>
+|- f \\ k ⊑ f
+</pre>
+
+<DT><span class="strong">fmap_CASES</span>
+<DD>
+<pre>
+|- ∀f. (f = FEMPTY) ∨ ∃g x y. f = g |+ (x,y)
+</pre>
+
+<DT><span class="strong">DOMSUB_NOT_IN_DOM</span>
+<DD>
+<pre>
+|- k ∉ FDOM fm ⇒ (fm \\ k = fm)
+</pre>
+
+<DT><span class="strong">o_f_FUPDATE</span>
+<DD>
+<pre>
+|- f o_f fm |+ (k,v) = (f o_f fm \\ k) |+ (k,f v)
+</pre>
+
+<DT><span class="strong">DOMSUB_COMMUTES</span>
+<DD>
+<pre>
+|- fm \\ k1 \\ k2 = fm \\ k2 \\ k1
+</pre>
+
+<DT><span class="strong">DOMSUB_IDEM</span>
+<DD>
+<pre>
+|- fm \\ k \\ k = fm \\ k
+</pre>
+
+<DT><span class="strong">o_f_DOMSUB</span>
+<DD>
+<pre>
+|- (g o_f fm) \\ k = g o_f fm \\ k
+</pre>
+
+<DT><span class="strong">FRANGE_FUPDATE_DOMSUB</span>
+<DD>
+<pre>
+|- ∀fm k v. FRANGE (fm |+ (k,v)) = v INSERT FRANGE (fm \\ k)
+</pre>
+
+<DT><span class="strong">DOMSUB_FLOOKUP_THM</span>
+<DD>
+<pre>
+|- ∀fm k1 k2. FLOOKUP (fm \\ k1) k2 = if k1 = k2 then NONE else FLOOKUP fm k2
+</pre>
+
+<DT><span class="strong">DOMSUB_FLOOKUP_NEQ</span>
+<DD>
+<pre>
+|- ∀fm k1 k2. k1 ≠ k2 ⇒ (FLOOKUP (fm \\ k1) k2 = FLOOKUP fm k2)
+</pre>
+
+<DT><span class="strong">DOMSUB_FLOOKUP</span>
+<DD>
+<pre>
+|- ∀fm k. FLOOKUP (fm \\ k) k = NONE
+</pre>
+
+<DT><span class="strong">DOMSUB_FAPPLY_THM</span>
+<DD>
+<pre>
+|- ∀fm k1 k2. (fm \\ k1) ' k2 = if k1 = k2 then FEMPTY ' k2 else fm ' k2
+</pre>
+
+<DT><span class="strong">DOMSUB_FAPPLY_NEQ</span>
+<DD>
+<pre>
+|- ∀fm k1 k2. k1 ≠ k2 ⇒ ((fm \\ k1) ' k2 = fm ' k2)
+</pre>
+
+<DT><span class="strong">DOMSUB_FAPPLY</span>
+<DD>
+<pre>
+|- ∀fm k. (fm \\ k) ' k = FEMPTY ' k
+</pre>
+
+<DT><span class="strong">FDOM_DOMSUB</span>
+<DD>
+<pre>
+|- ∀fm k. FDOM (fm \\ k) = FDOM fm DELETE k
+</pre>
+
+<DT><span class="strong">DOMSUB_FUPDATE_THM</span>
+<DD>
+<pre>
+|- ∀fm k1 k2 v.
+     fm |+ (k1,v) \\ k2 = if k1 = k2 then fm \\ k2 else fm \\ k2 |+ (k1,v)
+</pre>
+
+<DT><span class="strong">DOMSUB_FUPDATE_NEQ</span>
+<DD>
+<pre>
+|- ∀fm k1 k2 v. k1 ≠ k2 ⇒ (fm |+ (k1,v) \\ k2 = fm \\ k2 |+ (k1,v))
+</pre>
+
+<DT><span class="strong">DOMSUB_FUPDATE</span>
+<DD>
+<pre>
+|- ∀fm k v. fm |+ (k,v) \\ k = fm \\ k
+</pre>
+
+<DT><span class="strong">DOMSUB_FEMPTY</span>
+<DD>
+<pre>
+|- ∀k. FEMPTY \\ k = FEMPTY
+</pre>
+
+<DT><span class="strong">FINITE_PRED_11</span>
+<DD>
+<pre>
+|- ∀g. (∀x y. (g x = g y) ⇔ (x = y)) ⇒ ∀f. FINITE {x | g x ∈ FDOM f}
+</pre>
+
+<DT><span class="strong">FAPPLY_f_o</span>
+<DD>
+<pre>
+|- ∀f g.
+     FINITE {x | g x ∈ FDOM f} ⇒
+     ∀x. x ∈ FDOM (f f_o g) ⇒ ((f f_o g) ' x = f ' (g x))
+</pre>
+
+<DT><span class="strong">f_o_FUPDATE</span>
+<DD>
+<pre>
+|- ∀fm k v g.
+     FINITE {x | g x ∈ FDOM fm} ∧ FINITE {x | g x = k} ⇒
+     (fm |+ (k,v) f_o g =
+      FMERGE (combin$C K) (fm f_o g) (FUN_FMAP (K v) {x | g x = k}))
+</pre>
+
+<DT><span class="strong">f_o_FEMPTY</span>
+<DD>
+<pre>
+|- ∀g. FEMPTY f_o g = FEMPTY
+</pre>
+
+<DT><span class="strong">FDOM_f_o</span>
+<DD>
+<pre>
+|- ∀f g. FINITE {x | g x ∈ FDOM f} ⇒ (FDOM (f f_o g) = {x | g x ∈ FDOM f})
+</pre>
+
+<DT><span class="strong">FLOOKUP_FUN_FMAP</span>
+<DD>
+<pre>
+|- FINITE P ⇒ (FLOOKUP (FUN_FMAP f P) k = if k ∈ P then SOME (f k) else NONE)
+</pre>
+
+<DT><span class="strong">FDOM_FMAP</span>
+<DD>
+<pre>
+|- ∀f s. FINITE s ⇒ (FDOM (FUN_FMAP f s) = s)
+</pre>
+
+<DT><span class="strong">FRANGE_FMAP</span>
+<DD>
+<pre>
+|- FINITE P ⇒ (FRANGE (FUN_FMAP f P) = IMAGE f P)
+</pre>
+
+<DT><span class="strong">FUN_FMAP_EMPTY</span>
+<DD>
+<pre>
+|- FUN_FMAP f ∅ = FEMPTY
+</pre>
+
+<DT><span class="strong">RRESTRICT_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f r x y.
+     RRESTRICT (f |+ (x,y)) r =
+     if y ∈ r then RRESTRICT f r |+ (x,y)
+     else RRESTRICT (DRESTRICT f (COMPL {x})) r
+</pre>
+
+<DT><span class="strong">RRESTRICT_FEMPTY</span>
+<DD>
+<pre>
+|- ∀r. RRESTRICT FEMPTY r = FEMPTY
+</pre>
+
+<DT><span class="strong">FRANGE_FUNION</span>
+<DD>
+<pre>
+|- DISJOINT (FDOM fm1) (FDOM fm2) ⇒
+   (FRANGE (fm1 ⊌ fm2) = FRANGE fm1 ∪ FRANGE fm2)
+</pre>
+
+<DT><span class="strong">FRANGE_FLOOKUP</span>
+<DD>
+<pre>
+|- v ∈ FRANGE f ⇔ ∃k. FLOOKUP f k = SOME v
+</pre>
+
+<DT><span class="strong">o_f_FRANGE</span>
+<DD>
+<pre>
+|- x ∈ FRANGE g ⇒ f x ∈ FRANGE (f o_f g)
+</pre>
+
+<DT><span class="strong">FINITE_FRANGE</span>
+<DD>
+<pre>
+|- ∀fm. FINITE (FRANGE fm)
+</pre>
+
+<DT><span class="strong">SUBMAP_FRANGE</span>
+<DD>
+<pre>
+|- ∀f g. f ⊑ g ⇒ FRANGE f ⊆ FRANGE g
+</pre>
+
+<DT><span class="strong">FRANGE_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f x y. FRANGE (f |+ (x,y)) = y INSERT FRANGE (DRESTRICT f (COMPL {x}))
+</pre>
+
+<DT><span class="strong">FRANGE_FEMPTY</span>
+<DD>
+<pre>
+|- FRANGE FEMPTY = ∅
+</pre>
+
+<DT><span class="strong">FLOOKUP_o_f</span>
+<DD>
+<pre>
+|- FLOOKUP (f o_f fm) k =
+   case FLOOKUP fm k of NONE => NONE | SOME v => SOME (f v)
+</pre>
+
+<DT><span class="strong">o_f_o_f</span>
+<DD>
+<pre>
+|- f o_f (g o_f h) = f o g o_f h
+</pre>
+
+<DT><span class="strong">FEVERY_o_f</span>
+<DD>
+<pre>
+|- ∀m P f. FEVERY P (f o_f m) ⇔ FEVERY (λx. P (FST x,f (SND x))) m
+</pre>
+
+<DT><span class="strong">o_f_FEMPTY</span>
+<DD>
+<pre>
+|- f o_f FEMPTY = FEMPTY
+</pre>
+
+<DT><span class="strong">o_f_FAPPLY</span>
+<DD>
+<pre>
+|- ∀f g x. x ∈ FDOM g ⇒ ((f o_f g) ' x = f (g ' x))
+</pre>
+
+<DT><span class="strong">FDOM_o_f</span>
+<DD>
+<pre>
+|- ∀f g. FDOM (f o_f g) = FDOM g
+</pre>
+
+<DT><span class="strong">o_f_FDOM</span>
+<DD>
+<pre>
+|- ∀f g. FDOM g = FDOM (f o_f g)
+</pre>
+
+<DT><span class="strong">f_o_f_FEMPTY_2</span>
+<DD>
+<pre>
+|- ∀f. f f_o_f FEMPTY = FEMPTY
+</pre>
+
+<DT><span class="strong">f_o_f_FEMPTY_1</span>
+<DD>
+<pre>
+|- ∀f. FEMPTY f_o_f f = FEMPTY
+</pre>
+
+<DT><span class="strong">FEVERY_FLOOKUP</span>
+<DD>
+<pre>
+|- FEVERY P f ∧ (FLOOKUP f k = SOME v) ⇒ P (k,v)
+</pre>
+
+<DT><span class="strong">FEVERY_FUPDATE</span>
+<DD>
+<pre>
+|- ∀P f x y.
+     FEVERY P (f |+ (x,y)) ⇔ P (x,y) ∧ FEVERY P (DRESTRICT f (COMPL {x}))
+</pre>
+
+<DT><span class="strong">FEVERY_FEMPTY</span>
+<DD>
+<pre>
+|- ∀P. FEVERY P FEMPTY
+</pre>
+
+<DT><span class="strong">FLOOKUP_EXT</span>
+<DD>
+<pre>
+|- (f1 = f2) ⇔ (FLOOKUP f1 = FLOOKUP f2)
+</pre>
+
+<DT><span class="strong">FLOOKUP_FUNION</span>
+<DD>
+<pre>
+|- FLOOKUP (f1 ⊌ f2) k =
+   case FLOOKUP f1 k of NONE => FLOOKUP f2 k | SOME v => SOME v
+</pre>
+
+<DT><span class="strong">SUBMAP_FUPDATE_FLOOKUP</span>
+<DD>
+<pre>
+|- f ⊑ f |+ (x,y) ⇔ (FLOOKUP f x = NONE) ∨ (FLOOKUP f x = SOME y)
+</pre>
+
+<DT><span class="strong">FLOOKUP_SUBMAP</span>
+<DD>
+<pre>
+|- f ⊑ g ∧ (FLOOKUP f k = SOME v) ⇒ (FLOOKUP g k = SOME v)
+</pre>
+
+<DT><span class="strong">FLOOKUP_UPDATE</span>
+<DD>
+<pre>
+|- FLOOKUP (fm |+ (k1,v)) k2 = if k1 = k2 then SOME v else FLOOKUP fm k2
+</pre>
+
+<DT><span class="strong">FLOOKUP_EMPTY</span>
+<DD>
+<pre>
+|- FLOOKUP FEMPTY k = NONE
+</pre>
+
+<DT><span class="strong">FMERGE_EQ_FEMPTY</span>
+<DD>
+<pre>
+|- (FMERGE m f g = FEMPTY) ⇔ (f = FEMPTY) ∧ (g = FEMPTY)
+</pre>
+
+<DT><span class="strong">FMERGE_DRESTRICT</span>
+<DD>
+<pre>
+|- DRESTRICT (FMERGE f st1 st2) vs =
+   FMERGE f (DRESTRICT st1 vs) (DRESTRICT st2 vs)
+</pre>
+
+<DT><span class="strong">FMERGE_ASSOC</span>
+<DD>
+<pre>
+|- ASSOC (FMERGE m) ⇔ ASSOC m
+</pre>
+
+<DT><span class="strong">FMERGE_COMM</span>
+<DD>
+<pre>
+|- COMM (FMERGE m) ⇔ COMM m
+</pre>
+
+<DT><span class="strong">FMERGE_NO_CHANGE</span>
+<DD>
+<pre>
+|- ((FMERGE m f1 f2 = f1) ⇔
+    ∀x. x ∈ FDOM f2 ⇒ x ∈ FDOM f1 ∧ (m (f1 ' x) (f2 ' x) = f1 ' x)) ∧
+   ((FMERGE m f1 f2 = f2) ⇔
+    ∀x. x ∈ FDOM f1 ⇒ x ∈ FDOM f2 ∧ (m (f1 ' x) (f2 ' x) = f2 ' x))
+</pre>
+
+<DT><span class="strong">FUNION_FMERGE</span>
+<DD>
+<pre>
+|- ∀f1 f2 m. DISJOINT (FDOM f1) (FDOM f2) ⇒ (FMERGE m f1 f2 = f1 ⊌ f2)
+</pre>
+
+<DT><span class="strong">FMERGE_FUNION</span>
+<DD>
+<pre>
+|- $⊌ = FMERGE (λx y. x)
+</pre>
+
+<DT><span class="strong">FDOM_FMERGE</span>
+<DD>
+<pre>
+|- ∀m f g. FDOM (FMERGE m f g) = FDOM f ∪ FDOM g
+</pre>
+
+<DT><span class="strong">FMERGE_FEMPTY</span>
+<DD>
+<pre>
+|- (FMERGE m f FEMPTY = f) ∧ (FMERGE m FEMPTY f = f)
+</pre>
+
+<DT><span class="strong">FUNION_IDEMPOT</span>
+<DD>
+<pre>
+|- fm ⊌ fm = fm
+</pre>
+
+<DT><span class="strong">DRESTRICT_FUNION</span>
+<DD>
+<pre>
+|- ∀h s1 s2. DRESTRICT h s1 ⊌ DRESTRICT h s2 = DRESTRICT h (s1 ∪ s2)
+</pre>
+
+<DT><span class="strong">DRESTRICT_EQ_FUNION</span>
+<DD>
+<pre>
+|- ∀h h1 h2.
+     DISJOINT (FDOM h1) (FDOM h2) ∧ (h1 ⊌ h2 = h) ⇒
+     (h2 = DRESTRICT h (COMPL (FDOM h1)))
+</pre>
+
+<DT><span class="strong">IN_FDOM_FOLDR_UNION</span>
+<DD>
+<pre>
+|- ∀x hL. x ∈ FDOM (FOLDR $⊌ FEMPTY hL) ⇔ ∃h. MEM h hL ∧ x ∈ FDOM h
+</pre>
+
+<DT><span class="strong">DRESTRICT_FUNION_DRESTRICT_COMPL</span>
+<DD>
+<pre>
+|- DRESTRICT f s ⊌ DRESTRICT f (COMPL s) = f
+</pre>
+
+<DT><span class="strong">DRESTRICT_IDEMPOT</span>
+<DD>
+<pre>
+|- ∀s vs. DRESTRICT (DRESTRICT s vs) vs = DRESTRICT s vs
+</pre>
+
+<DT><span class="strong">SUBMAP_FUNION_ABSORPTION</span>
+<DD>
+<pre>
+|- ∀f g. f ⊑ g ⇔ (f ⊌ g = g)
+</pre>
+
+<DT><span class="strong">MAP_KEYS_witness</span>
+<DD>
+<pre>
+|- let m f fm =
+         if INJ f (FDOM fm) 𝕌(:β) then
+           fm f_o_f FUN_FMAP (LINV f (FDOM fm)) (IMAGE f (FDOM fm))
+         else FUN_FMAP ARB (IMAGE f (FDOM fm))
+   in
+     ∀f fm.
+       (FDOM (m f fm) = IMAGE f (FDOM fm)) ∧
+       (INJ f (FDOM fm) 𝕌(:β) ⇒ ∀x. x ∈ FDOM fm ⇒ (m f fm ' (f x) = fm ' x))
+</pre>
+
+<DT><span class="strong">MAP_KEYS_FEMPTY</span>
+<DD>
+<pre>
+|- ∀f. MAP_KEYS f FEMPTY = FEMPTY
+</pre>
+
+<DT><span class="strong">MAP_KEYS_FUPDATE</span>
+<DD>
+<pre>
+|- ∀f fm k v.
+     INJ f (k INSERT FDOM fm) 𝕌(:β) ⇒
+     (MAP_KEYS f (fm |+ (k,v)) = MAP_KEYS f fm |+ (f k,v))
+</pre>
+
+<DT><span class="strong">MAP_KEYS_using_LINV</span>
+<DD>
+<pre>
+|- ∀f fm.
+     INJ f (FDOM fm) 𝕌(:β) ⇒
+     (MAP_KEYS f fm =
+      fm f_o_f FUN_FMAP (LINV f (FDOM fm)) (IMAGE f (FDOM fm)))
+</pre>
+
+<DT><span class="strong">fmap_rel_FUPDATE_same</span>
+<DD>
+<pre>
+|- fmap_rel R f1 f2 ∧ R v1 v2 ⇒ fmap_rel R (f1 |+ (k,v1)) (f2 |+ (k,v2))
+</pre>
+
+<DT><span class="strong">fmap_rel_FUPDATE_LIST_same</span>
+<DD>
+<pre>
+|- ∀R ls1 ls2 f1 f2.
+     fmap_rel R f1 f2 ∧ (MAP FST ls1 = MAP FST ls2) ∧
+     LIST_REL R (MAP SND ls1) (MAP SND ls2) ⇒
+     fmap_rel R (f1 |++ ls1) (f2 |++ ls2)
+</pre>
+
+<DT><span class="strong">fmap_rel_FEMPTY</span>
+<DD>
+<pre>
+|- fmap_rel R FEMPTY FEMPTY
+</pre>
+
+<DT><span class="strong">fmap_rel_FEMPTY2</span>
+<DD>
+<pre>
+|- (fmap_rel R FEMPTY f ⇔ (f = FEMPTY)) ∧ (fmap_rel R f FEMPTY ⇔ (f = FEMPTY))
+</pre>
+
+<DT><span class="strong">fmap_rel_refl</span>
+<DD>
+<pre>
+|- (∀x. R x x) ⇒ fmap_rel R x x
+</pre>
+
+<DT><span class="strong">fmap_rel_FUNION_rels</span>
+<DD>
+<pre>
+|- fmap_rel R f1 f2 ∧ fmap_rel R f3 f4 ⇒ fmap_rel R (f1 ⊌ f3) (f2 ⊌ f4)
+</pre>
+
+<DT><span class="strong">fmap_rel_FUPDATE_I</span>
+<DD>
+<pre>
+|- fmap_rel R (f1 \\ k) (f2 \\ k) ∧ R v1 v2 ⇒
+   fmap_rel R (f1 |+ (k,v1)) (f2 |+ (k,v2))
+</pre>
+
+<DT><span class="strong">fmap_rel_mono</span>
+<DD>
+<pre>
+|- (∀x y. R1 x y ⇒ R2 x y) ⇒ fmap_rel R1 f1 f2 ⇒ fmap_rel R2 f1 f2
+</pre>
+
+<DT><span class="strong">fmap_EQ_UPTO___EMPTY</span>
+<DD>
+<pre>
+|- ∀f1 f2. fmap_EQ_UPTO f1 f2 ∅ ⇔ (f1 = f2)
+</pre>
+
+<DT><span class="strong">fmap_EQ_UPTO___EQ</span>
+<DD>
+<pre>
+|- ∀vs f. fmap_EQ_UPTO f f vs
+</pre>
+
+<DT><span class="strong">fmap_EQ_UPTO___FUPDATE_BOTH</span>
+<DD>
+<pre>
+|- ∀f1 f2 ks k v.
+     fmap_EQ_UPTO f1 f2 ks ⇒
+     fmap_EQ_UPTO (f1 |+ (k,v)) (f2 |+ (k,v)) (ks DELETE k)
+</pre>
+
+<DT><span class="strong">fmap_EQ_UPTO___FUPDATE_BOTH___NO_DELETE</span>
+<DD>
+<pre>
+|- ∀f1 f2 ks k v.
+     fmap_EQ_UPTO f1 f2 ks ⇒ fmap_EQ_UPTO (f1 |+ (k,v)) (f2 |+ (k,v)) ks
+</pre>
+
+<DT><span class="strong">fmap_EQ_UPTO___FUPDATE_SING</span>
+<DD>
+<pre>
+|- ∀f1 f2 ks k v.
+     fmap_EQ_UPTO f1 f2 ks ⇒ fmap_EQ_UPTO (f1 |+ (k,v)) f2 (k INSERT ks)
+</pre>
+
+<DT><span class="strong">o_f_FUNION</span>
+<DD>
+<pre>
+|- f o_f (f1 ⊌ f2) = f o_f f1 ⊌ (f o_f f2)
+</pre>
+
+<DT><span class="strong">FDOM_FOLDR_DOMSUB</span>
+<DD>
+<pre>
+|- ∀ls fm. FDOM (FOLDR (λk m. m \\ k) fm ls) = FDOM fm DIFF LIST_TO_SET ls
+</pre>
+
+<DT><span class="strong">FEVERY_SUBMAP</span>
+<DD>
+<pre>
+|- FEVERY P fm ∧ fm0 ⊑ fm ⇒ FEVERY P fm0
+</pre>
+
+<DT><span class="strong">FEVERY_ALL_FLOOKUP</span>
+<DD>
+<pre>
+|- ∀P f. FEVERY P f ⇔ ∀k v. (FLOOKUP f k = SOME v) ⇒ P (k,v)
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_CANCEL</span>
+<DD>
+<pre>
+|- ∀ls1 fm ls2.
+     (∀k. MEM k (MAP FST ls1) ⇒ MEM k (MAP FST ls2)) ⇒
+     (fm |++ ls1 |++ ls2 = fm |++ ls2)
+</pre>
+
+<DT><span class="strong">FUPDATE_EQ_FUNION</span>
+<DD>
+<pre>
+|- ∀fm kv. fm |+ kv = FEMPTY |+ kv ⊌ fm
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_APPEND_COMMUTES</span>
+<DD>
+<pre>
+|- ∀l1 l2 fm.
+     DISJOINT (LIST_TO_SET (MAP FST l1)) (LIST_TO_SET (MAP FST l2)) ⇒
+     (fm |++ l1 |++ l2 = fm |++ l2 |++ l1)
+</pre>
+
+<DT><span class="strong">fmap_rel_OPTREL_FLOOKUP</span>
+<DD>
+<pre>
+|- fmap_rel R f1 f2 ⇔ ∀k. OPTREL R (FLOOKUP f1 k) (FLOOKUP f2 k)
+</pre>
+
+<DT><span class="strong">FLOOKUP_DRESTRICT</span>
+<DD>
+<pre>
+|- ∀fm s k. FLOOKUP (DRESTRICT fm s) k = if k ∈ s then FLOOKUP fm k else NONE
+</pre>
+
+<DT><span class="strong">FUPDATE_LIST_ALL_DISTINCT_PERM</span>
+<DD>
+<pre>
+|- ∀ls ls' fm.
+     ALL_DISTINCT (MAP FST ls) ∧ PERM ls ls' ⇒ (fm |++ ls = fm |++ ls')
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

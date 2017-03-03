@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>listLib.MAP_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>MAP_CONV : conv -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/listLib.html">listLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Compute the result of mapping a function down a list.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">MAP_CONV</SPAN><SPAN class = "TEXT"> is a parameterized conversion for computing the result
+of mapping a function </SPAN><SPAN class = "BRKT">f:ty1-&gt;ty2</SPAN><SPAN class = "TEXT"> down a list </SPAN><SPAN class = "BRKT">--`[t1;...;tn]`--</SPAN><SPAN class = "TEXT"> of elements of
+type </SPAN><SPAN class = "BRKT">ty1</SPAN><SPAN class = "TEXT">.  The first argument to </SPAN><SPAN class = "BRKT">MAP_CONV</SPAN><SPAN class = "TEXT"> is expected to be a conversion
+that computes the result of applying the function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to an element of this
+list. When applied to a term </SPAN><SPAN class = "BRKT">--`f&nbsp;ti`--</SPAN><SPAN class = "TEXT">, this conversion should return a theorem
+of the form </SPAN><SPAN class = "BRKT">|-&nbsp;(f&nbsp;ti)&nbsp;=&nbsp;ri</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">ri</SPAN><SPAN class = "TEXT"> is the result of applying the function
+</SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to the element </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Given an appropriate </SPAN><SPAN class = "BRKT">conv</SPAN><SPAN class = "TEXT">, the conversion </SPAN><SPAN class = "BRKT">MAP_CONV&nbsp;conv</SPAN><SPAN class = "TEXT"> takes a
+term of the form </SPAN><SPAN class = "BRKT">--`MAP&nbsp;f&nbsp;[t1;...;tn]`--</SPAN><SPAN class = "TEXT"> to the theorem
+</SPAN><DIV class = "XMPL"><pre>
+   |- MAP f [t1;...;tn] = [r1;...;rn]
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">conv&nbsp;(--`f&nbsp;ti`--)</SPAN><SPAN class = "TEXT"> returns </SPAN><SPAN class = "BRKT">|-&nbsp;(f&nbsp;ti)&nbsp;=&nbsp;ri</SPAN><SPAN class = "TEXT"> for </SPAN><SPAN class = "BRKT">i</SPAN><SPAN class = "TEXT"> from </SPAN><SPAN class = "BRKT">1</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following is a very simple example in which no computation is done for
+applications of the function being mapped down a list:
+</SPAN><DIV class = "XMPL"><pre>
+   - MAP_CONV ALL_CONV (--`MAP SUC [1;2;1;4]`--);
+   |- MAP SUC[1;2;1;4] = [SUC 1;SUC 2;SUC 1;SUC 4]
+</pre></DIV>
+<SPAN class = "TEXT">
+The result just contains applications of </SPAN><SPAN class = "BRKT">SUC</SPAN><SPAN class = "TEXT">, since the supplied
+conversion </SPAN><SPAN class = "BRKT">ALL_CONV</SPAN><SPAN class = "TEXT"> does no evaulation.</SPAN>
+<P>
+<SPAN class = "TEXT">We now construct a conversion that maps </SPAN><SPAN class = "BRKT">SUC&nbsp;n</SPAN><SPAN class = "TEXT"> for any numeral </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> to the
+numeral standing for the successor of </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   - fun SUC_CONV tm =
+        let val n = string_to_int(#Name(dest_const(rand tm)))
+            val sucn = mk_const{{Name =int_to_string(n+1), Ty=(==`:num`==)}}
+         in
+            SYM (num_CONV sucn)
+         end;
+   SUC_CONV = - : conv
+</pre></DIV>
+<SPAN class = "TEXT">
+The result is a conversion that inverts </SPAN><SPAN class = "BRKT">num_CONV</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   - num_CONV (--`4`--);
+   |- 4 = SUC 3
+
+   - SUC_CONV (--`SUC 3`--);
+   |- SUC 3 = 4
+</pre></DIV>
+<SPAN class = "TEXT">
+The conversion </SPAN><SPAN class = "BRKT">SUC_CONV</SPAN><SPAN class = "TEXT"> can then be used to compute the
+result of mapping the successor function down a list of numerals:
+</SPAN><DIV class = "XMPL"><pre>
+   - MAP_CONV SUC_CONV (--`MAP SUC [1;2;1;4]`--);
+   |- MAP SUC[1;2;1;4] = [2;3;2;5]
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">MAP_CONV&nbsp;conv</SPAN><SPAN class = "TEXT"> fails if applied to a term not of the form
+</SPAN><SPAN class = "BRKT">--`MAP&nbsp;f&nbsp;[t1;...;tn]`--</SPAN><SPAN class = "TEXT">.  An application of </SPAN><SPAN class = "BRKT">MAP_CONV&nbsp;conv</SPAN><SPAN class = "TEXT"> to a term
+</SPAN><SPAN class = "BRKT">--`MAP&nbsp;f&nbsp;[t1;...;tn]`--</SPAN><SPAN class = "TEXT"> fails unless for all </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> in the list </SPAN><SPAN class = "BRKT">[t1;...;tn]</SPAN><SPAN class = "TEXT">,
+evaluating </SPAN><SPAN class = "BRKT">conv&nbsp;(--`f&nbsp;ti`--)</SPAN><SPAN class = "TEXT"> returns </SPAN><SPAN class = "BRKT">|-&nbsp;(f&nbsp;ti)&nbsp;=&nbsp;ri</SPAN><SPAN class = "TEXT"> for some </SPAN><SPAN class = "BRKT">ri</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Tactical.PAT_ASSUM</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>PAT_ASSUM : term -&gt; thm_tactic -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactical.html">Tactical</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Finds the first assumption that matches the term argument, applies
+the theorem tactic to it, and removes this assumption.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The tactic
+</SPAN><DIV class = "XMPL"><pre>
+   PAT_ASSUM tm ttac ([A1, ..., An], g)
+</pre></DIV>
+<SPAN class = "TEXT">
+finds the first </SPAN><SPAN class = "BRKT">Ai</SPAN><SPAN class = "TEXT"> which matches </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> using higher-order
+pattern matching in the sense of </SPAN><SPAN class = "BRKT">ho_match_term</SPAN><SPAN class = "TEXT">.  Unless there is just
+one match otherwise, free variables in the pattern that are also free
+in the assumptions or the goal must not be bound by the match.  In
+effect, these variables are being treated as local constants.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the term doesn&rsquo;t match any of the assumptions, or if the
+theorem-tactic fails when applied to the first assumption that does
+match the term.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The tactic
+</SPAN><DIV class = "XMPL"><pre>
+   PAT_ASSUM (Term`x:num = y`) SUBST_ALL_TAC
+</pre></DIV>
+<SPAN class = "TEXT">
+searches the assumptions for an equality over numbers and
+causes its right hand side to be substituted for its left hand side
+throughout the goal and assumptions.  It also removes the equality
+from the assumption list.  Trying to use </SPAN><SPAN class = "BRKT">FIRST_ASSUM</SPAN><SPAN class = "TEXT"> above (i.e.,
+replacing </SPAN><SPAN class = "BRKT">PAT_ASSUM</SPAN><SPAN class = "TEXT"> with </SPAN><SPAN class = "BRKT">FIRST_ASSUM</SPAN><SPAN class = "TEXT"> and dropping the term
+argument entirely) would require that the desired equality was the first
+such on the list of assumptions, and would leave an equality on the
+assumption list of the form </SPAN><SPAN class = "BRKT">x&nbsp;=&nbsp;x</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">If one is trying to solve the goal
+</SPAN><DIV class = "XMPL"><pre>
+   { !x. f x = g (x + 1), !x. g x = f0 (f x)} ?- f x = g y
+</pre></DIV>
+<SPAN class = "TEXT">
+rewriting with the assumptions directly will cause a loop.
+Instead, one might want to rewrite with the formula for </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">.  This can
+be done in an assumption-order-independent way with
+</SPAN><DIV class = "XMPL"><pre>
+   PAT_ASSUM (Term`!x. f x = f' x`) (fn th =&gt; REWRITE_TAC [th])
+</pre></DIV>
+<SPAN class = "TEXT">
+This use of the tactic exploits higher order matching to
+match the RHS of the assumption, and the fact that </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> is effectively
+a local constant in the goal to find the correct assumption.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactical.ASSUM_LIST.html">ASSUM_LIST</A>,
+<A HREF = "Tactical.EVERY.html">EVERY</A>,
+<A HREF = "Tactical.EVERY_ASSUM.html">EVERY_ASSUM</A>,
+<A HREF = "Tactical.FIRST.html">FIRST</A>,
+<A HREF = "Tactical.MAP_EVERY.html">MAP_EVERY</A>,
+<A HREF = "Tactical.MAP_FIRST.html">MAP_FIRST</A>,
+<A HREF = "Thm_cont.UNDISCH_THEN.html">UNDISCH_THEN</A>,
+<A HREF = "Term.match_term.html">match_term</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

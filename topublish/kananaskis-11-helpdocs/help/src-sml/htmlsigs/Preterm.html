@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Preterm</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Preterm</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Preterm.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Preterm =
+<a name="line2"></a>sig
+<a name="line3"></a>  type pretype = Pretype.pretype
+<a name="line4"></a>  type hol_type = Type.hol_type
+<a name="line5"></a>  type term = Term.term
+<a name="line6"></a>  type overinfo = {Name : string,
+<a name="line7"></a>                   Ty : pretype,
+<a name="line8"></a>                   Info : Overload.overloaded_op_info,
+<a name="line9"></a>                   Locn : locn.locn}
+<a name="line10"></a>
+<a name="line11"></a>  datatype preterm =
+<a name="line12"></a>    Var of   {Name : string, Ty : pretype, Locn : locn.locn}
+<a name="line13"></a>  | Const of {Name : string, Thy : string, Ty : pretype, Locn : locn.locn}
+<a name="line14"></a>  | Overloaded of overinfo
+<a name="line15"></a>  | Comb of  {Rator: preterm, Rand : preterm, Locn : locn.locn}
+<a name="line16"></a>  | Abs of   {Bvar : preterm, Body : preterm, Locn : locn.locn}
+<a name="line17"></a>  | Constrained of {Ptm:preterm, Ty:pretype, Locn:locn.locn}
+<a name="line18"></a>  | Antiq of {Tm:term, Locn:locn.locn}
+<a name="line19"></a>  | Pattern of {Ptm:preterm, Locn:locn.locn}
+<a name="line20"></a>  (* | HackHack of bool -&gt; bool *)
+<a name="line21"></a>  (* Because of the Locn fields, preterms should *not* be compared
+<a name="line22"></a>     with the built-in equality, but should use eq defined below.
+<a name="line23"></a>     To check this has been done everywhere, uncomment this constructor. *)
+<a name="line24"></a>
+<a name="line25"></a>  val locn : preterm -&gt; locn.locn
+<a name="line26"></a>  val term_to_preterm : string list -&gt; term -&gt; preterm
+<a name="line27"></a>
+<a name="line28"></a>  val eq : preterm -&gt; preterm -&gt; bool
+<a name="line29"></a>  val pdest_eq : preterm -&gt; preterm * preterm
+<a name="line30"></a>  val lhs : preterm -&gt; preterm
+<a name="line31"></a>  val head_var : preterm -&gt; preterm
+<a name="line32"></a>  val ptype_of : preterm -&gt; pretype
+<a name="line33"></a>  val dest_ptvar : preterm -&gt; (string * pretype * locn.locn)
+<a name="line34"></a>  val plist_mk_rbinop : preterm -&gt; preterm list -&gt; preterm
+<a name="line35"></a>  val strip_pcomb : preterm -&gt; preterm * preterm list
+<a name="line36"></a>  val strip_pforall : preterm -&gt; preterm list * preterm
+<a name="line37"></a>  val ptfvs : preterm -&gt; preterm list
+<a name="line38"></a>   (* ptfvs ignores free variables that might be hiding in Pattern, Overload
+<a name="line39"></a>      or Antiq constructors because these are all of fixed type that can't
+<a name="line40"></a>      vary; ptfvs is designed to find free variables that might have
+<a name="line41"></a>      unifiable type variables in their types *)
+<a name="line42"></a>
+<a name="line43"></a>
+<a name="line44"></a>  (* Performs the first phase of type-checking, altering the types
+<a name="line45"></a>     attached to the various components of the preterm, but without
+<a name="line46"></a>     resolving overloading.  The two printing functions are used to
+<a name="line47"></a>     report errors. *)
+<a name="line48"></a>
+<a name="line49"></a>  val typecheck_phase1 :
+<a name="line50"></a>    ((term -&gt; string) * (hol_type -&gt; string)) option -&gt; preterm -&gt; unit
+<a name="line51"></a>
+<a name="line52"></a>  (* performs overloading resolution, possibly guessing overloads if
+<a name="line53"></a>     this is both allowed by Globals.guessing_overloads and required by
+<a name="line54"></a>     ambiguity in the term *)
+<a name="line55"></a>
+<a name="line56"></a>  val overloading_resolution : preterm -&gt; preterm
+<a name="line57"></a>
+<a name="line58"></a>
+<a name="line59"></a>  (* converts a preterm into a term.  Will guess type variables for
+<a name="line60"></a>     unassigned pretypes if Globals.guessing_tyvars is true.
+<a name="line61"></a>     Will fail if the preterm contains any Overloaded constructors, or
+<a name="line62"></a>     if the types attached to the leaves aren't valid for the kernel.  *)
+<a name="line63"></a>  val to_term : preterm -&gt; term
+<a name="line64"></a>
+<a name="line65"></a>
+<a name="line66"></a>  (* deals with case expressions, which need to be properly typed and
+<a name="line67"></a>     analysed before they can be converted into type-specific case-
+<a name="line68"></a>     constants *)
+<a name="line69"></a>  val remove_case_magic : term -&gt; term
+<a name="line70"></a>
+<a name="line71"></a>  val post_process_term : (term -&gt; term) ref
+<a name="line72"></a>
+<a name="line73"></a>  (* essentially the composition of all four of the above *)
+<a name="line74"></a>  val typecheck:
+<a name="line75"></a>    ((term -&gt; string) * (hol_type -&gt; string)) option -&gt; preterm -&gt; term
+<a name="line76"></a>
+<a name="line77"></a>  datatype tcheck_error =
+<a name="line78"></a>           ConstrainFail of term * hol_type
+<a name="line79"></a>         | AppFail of term * term
+<a name="line80"></a>         | OvlNoType of string * hol_type
+<a name="line81"></a>
+<a name="line82"></a>  val last_tcerror : (tcheck_error * locn.locn) option ref
+<a name="line83"></a>
+<a name="line84"></a>end
+<a name="line85"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Preterm.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

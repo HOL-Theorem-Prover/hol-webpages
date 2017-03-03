@@ -1,0 +1,348 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: numposrep</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "numposrep"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "rich_listTheory.html"><span class="strong">rich_list</span></a>&nbsp;&nbsp;
+    <a href = "bitTheory.html"><span class="strong">bit</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td>
+            <span class="strong">BOOLIFY</span>
+            <td>
+            :num -> num -> bitstring -> bitstring
+    <tr><td> <span class="strong">l2n</span> <td> :num -> num list -> num
+    <tr><td> <span class="strong">l2n2</span> <td> :num list -> num
+    <tr><td> <span class="strong">n2l</span> <td> :num -> num -> num list
+    <tr><td>
+        <span class="strong">n2l_tupled</span>
+        <td>
+        :num # num -> num list
+    <tr><td>
+        <span class="strong">num_from_bin_list</span>
+        <td>
+        :num list -> num
+    <tr><td>
+        <span class="strong">num_from_dec_list</span>
+        <td>
+        :num list -> num
+    <tr><td>
+        <span class="strong">num_from_hex_list</span>
+        <td>
+        :num list -> num
+    <tr><td>
+        <span class="strong">num_from_oct_list</span>
+        <td>
+        :num list -> num
+    <tr><td> <span class="strong">num_to_bin_list</span> <td> :num -> num list
+    <tr><td> <span class="strong">num_to_dec_list</span> <td> :num -> num list
+    <tr><td> <span class="strong">num_to_hex_list</span> <td> :num -> num list
+    <tr><td> <span class="strong">num_to_oct_list</span> <td> :num -> num list
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">l2n_def</span>
+<DD>
+<pre>
+|- (∀b. l2n b [] = 0) ∧ ∀b h t. l2n b (h::t) = h MOD b + b * l2n b t
+</pre>
+
+<DT><span class="strong">n2l_tupled_primitive_def</span>
+<DD>
+<pre>
+|- n2l_tupled =
+   WFREC (@R. WF R ∧ ∀b n. ¬(n < b ∨ b < 2) ⇒ R (b,n DIV b) (b,n))
+     (λn2l_tupled a.
+        case a of
+          (b,n) =>
+            I
+              (if n < b ∨ b < 2 then [n MOD b]
+               else n MOD b::n2l_tupled (b,n DIV b)))
+</pre>
+
+<DT><span class="strong">n2l_curried_def</span>
+<DD>
+<pre>
+|- ∀x x1. n2l x x1 = n2l_tupled (x,x1)
+</pre>
+
+<DT><span class="strong">num_from_bin_list_def</span>
+<DD>
+<pre>
+|- num_from_bin_list = l2n 2
+</pre>
+
+<DT><span class="strong">num_from_oct_list_def</span>
+<DD>
+<pre>
+|- num_from_oct_list = l2n 8
+</pre>
+
+<DT><span class="strong">num_from_dec_list_def</span>
+<DD>
+<pre>
+|- num_from_dec_list = l2n 10
+</pre>
+
+<DT><span class="strong">num_from_hex_list_def</span>
+<DD>
+<pre>
+|- num_from_hex_list = l2n 16
+</pre>
+
+<DT><span class="strong">num_to_bin_list_def</span>
+<DD>
+<pre>
+|- num_to_bin_list = n2l 2
+</pre>
+
+<DT><span class="strong">num_to_oct_list_def</span>
+<DD>
+<pre>
+|- num_to_oct_list = n2l 8
+</pre>
+
+<DT><span class="strong">num_to_dec_list_def</span>
+<DD>
+<pre>
+|- num_to_dec_list = n2l 10
+</pre>
+
+<DT><span class="strong">num_to_hex_list_def</span>
+<DD>
+<pre>
+|- num_to_hex_list = n2l 16
+</pre>
+
+<DT><span class="strong">BOOLIFY_def</span>
+<DD>
+<pre>
+|- (∀m a. BOOLIFY 0 m a = a) ∧
+   ∀n m a. BOOLIFY (SUC n) m a = BOOLIFY n (DIV2 m) (ODD m::a)
+</pre>
+
+<DT><span class="strong">l2n2</span>
+<DD>
+<pre>
+|- numposrep$l2n2 = l2n 2
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">n2l_ind</span>
+<DD>
+<pre>
+|- ∀P. (∀b n. (¬(n < b ∨ b < 2) ⇒ P b (n DIV b)) ⇒ P b n) ⇒ ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">n2l_def</span>
+<DD>
+<pre>
+|- ∀n b.
+     n2l b n = if n < b ∨ b < 2 then [n MOD b] else n MOD b::n2l b (n DIV b)
+</pre>
+
+<DT><span class="strong">LENGTH_n2l</span>
+<DD>
+<pre>
+|- ∀b n. 1 < b ⇒ (LENGTH (n2l b n) = if n = 0 then 1 else SUC (LOG b n))
+</pre>
+
+<DT><span class="strong">l2n_n2l</span>
+<DD>
+<pre>
+|- ∀b n. 1 < b ⇒ (l2n b (n2l b n) = n)
+</pre>
+
+<DT><span class="strong">l2n_lt</span>
+<DD>
+<pre>
+|- ∀l b. 0 < b ⇒ l2n b l < b ** LENGTH l
+</pre>
+
+<DT><span class="strong">LENGTH_l2n</span>
+<DD>
+<pre>
+|- ∀b l.
+     1 < b ∧ EVERY ($> b) l ∧ l2n b l ≠ 0 ⇒ SUC (LOG b (l2n b l)) ≤ LENGTH l
+</pre>
+
+<DT><span class="strong">l2n_DIGIT</span>
+<DD>
+<pre>
+|- ∀b l x.
+     1 < b ∧ EVERY ($> b) l ∧ x < LENGTH l ⇒
+     ((l2n b l DIV b ** x) MOD b = EL x l)
+</pre>
+
+<DT><span class="strong">DIV_0_IMP_LT</span>
+<DD>
+<pre>
+|- ∀b n. 1 < b ∧ (n DIV b = 0) ⇒ n < b
+</pre>
+
+<DT><span class="strong">EL_n2l</span>
+<DD>
+<pre>
+|- ∀b x n.
+     1 < b ∧ x < LENGTH (n2l b n) ⇒ (EL x (n2l b n) = (n DIV b ** x) MOD b)
+</pre>
+
+<DT><span class="strong">n2l_l2n</span>
+<DD>
+<pre>
+|- ∀b l.
+     1 < b ∧ EVERY ($> b) l ⇒
+     (n2l b (l2n b l) =
+      if l2n b l = 0 then [0] else TAKE (SUC (LOG b (l2n b l))) l)
+</pre>
+
+<DT><span class="strong">l2n_eq_0</span>
+<DD>
+<pre>
+|- ∀b. 0 < b ⇒ ∀l. (l2n b l = 0) ⇔ EVERY ($= 0 o combin$C $MOD b) l
+</pre>
+
+<DT><span class="strong">l2n_SNOC_0</span>
+<DD>
+<pre>
+|- ∀b ls. 0 < b ⇒ (l2n b (SNOC 0 ls) = l2n b ls)
+</pre>
+
+<DT><span class="strong">LOG_l2n</span>
+<DD>
+<pre>
+|- ∀b.
+     1 < b ⇒
+     ∀l.
+       l ≠ [] ∧ 0 < LAST l ∧ EVERY ($> b) l ⇒
+       (LOG b (l2n b l) = PRE (LENGTH l))
+</pre>
+
+<DT><span class="strong">l2n_dropWhile_0</span>
+<DD>
+<pre>
+|- ∀b ls. 0 < b ⇒ (l2n b (REVERSE (dropWhile ($= 0) (REVERSE ls))) = l2n b ls)
+</pre>
+
+<DT><span class="strong">LOG_l2n_dropWhile</span>
+<DD>
+<pre>
+|- ∀b l.
+     1 < b ∧ EXISTS (λy. 0 ≠ y) l ∧ EVERY ($> b) l ⇒
+     (LOG b (l2n b l) = PRE (LENGTH (dropWhile ($= 0) (REVERSE l))))
+</pre>
+
+<DT><span class="strong">n2l_BOUND</span>
+<DD>
+<pre>
+|- ∀b n. 0 < b ⇒ EVERY ($> b) (n2l b n)
+</pre>
+
+<DT><span class="strong">l2n_pow2_compute</span>
+<DD>
+<pre>
+|- (∀p. l2n (2 ** p) [] = 0) ∧
+   ∀p h t. l2n (2 ** p) (h::t) = MOD_2EXP p h + TIMES_2EXP p (l2n (2 ** p) t)
+</pre>
+
+<DT><span class="strong">n2l_pow2_compute</span>
+<DD>
+<pre>
+|- ∀p n.
+     0 < p ⇒
+     (n2l (2 ** p) n =
+      (let (q,r) = DIVMOD_2EXP p n
+       in
+         if q = 0 then [r] else r::n2l (2 ** p) q))
+</pre>
+
+<DT><span class="strong">l2n_2_thms</span>
+<DD>
+<pre>
+|- (∀t. l2n 2 (0::t) = NUMERAL (numposrep$l2n2 (0::t))) ∧
+   (∀t. l2n 2 (1::t) = NUMERAL (numposrep$l2n2 (1::t))) ∧
+   (numposrep$l2n2 [] = ZERO) ∧
+   (∀t. numposrep$l2n2 (0::t) = numeral$iDUB (numposrep$l2n2 t)) ∧
+   ∀t. numposrep$l2n2 (1::t) = BIT1 (numposrep$l2n2 t)
+</pre>
+
+<DT><span class="strong">BIT_num_from_bin_list</span>
+<DD>
+<pre>
+|- ∀x l.
+     EVERY ($> 2) l ∧ x < LENGTH l ⇒
+     (BIT x (num_from_bin_list l) ⇔ (EL x l = 1))
+</pre>
+
+<DT><span class="strong">EL_num_to_bin_list</span>
+<DD>
+<pre>
+|- ∀x n.
+     x < LENGTH (num_to_bin_list n) ⇒ (EL x (num_to_bin_list n) = BITV n x)
+</pre>
+
+<DT><span class="strong">num_bin_list</span>
+<DD>
+<pre>
+|- num_from_bin_list o num_to_bin_list = I
+</pre>
+
+<DT><span class="strong">num_oct_list</span>
+<DD>
+<pre>
+|- num_from_oct_list o num_to_oct_list = I
+</pre>
+
+<DT><span class="strong">num_dec_list</span>
+<DD>
+<pre>
+|- num_from_dec_list o num_to_dec_list = I
+</pre>
+
+<DT><span class="strong">num_hex_list</span>
+<DD>
+<pre>
+|- num_from_hex_list o num_to_hex_list = I
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

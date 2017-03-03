@@ -1,0 +1,1554 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: complex</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "complex"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "transcTheory.html"><span class="strong">transc</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">IM</span> <td> :complex -> real
+    <tr><td> <span class="strong">RE</span> <td> :complex -> real
+    <tr><td> <span class="strong">arg</span> <td> :complex -> real
+    <tr><td>
+        <span class="strong">complex_add</span>
+        <td>
+        :complex -> complex -> complex
+    <tr><td>
+        <span class="strong">complex_div</span>
+        <td>
+        :complex -> complex -> complex
+    <tr><td> <span class="strong">complex_exp</span> <td> :complex -> complex
+    <tr><td> <span class="strong">complex_inv</span> <td> :complex -> complex
+    <tr><td>
+        <span class="strong">complex_mul</span>
+        <td>
+        :complex -> complex -> complex
+    <tr><td> <span class="strong">complex_neg</span> <td> :complex -> complex
+    <tr><td> <span class="strong">complex_of_num</span> <td> :num -> complex
+    <tr><td> <span class="strong">complex_of_real</span> <td> :real -> complex
+    <tr><td>
+        <span class="strong">complex_pow</span>
+        <td>
+        :complex -> num -> complex
+    <tr><td>
+        <span class="strong">complex_scalar_lmul</span>
+        <td>
+        :real -> complex -> complex
+    <tr><td>
+        <span class="strong">complex_scalar_rmul</span>
+        <td>
+        :complex -> real -> complex
+    <tr><td>
+        <span class="strong">complex_sub</span>
+        <td>
+        :complex -> complex -> complex
+    <tr><td> <span class="strong">conj</span> <td> :complex -> complex
+    <tr><td> <span class="strong">i</span> <td> :complex
+    <tr><td> <span class="strong">modu</span> <td> :complex -> real
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">RE</span>
+<DD>
+<pre>
+|- ∀z. RE z = FST z
+</pre>
+
+<DT><span class="strong">IM</span>
+<DD>
+<pre>
+|- ∀z. IM z = SND z
+</pre>
+
+<DT><span class="strong">complex_of_real</span>
+<DD>
+<pre>
+|- ∀x. complex_of_real x = (x,0)
+</pre>
+
+<DT><span class="strong">complex_of_num</span>
+<DD>
+<pre>
+|- ∀n. &n = complex_of_real (&n)
+</pre>
+
+<DT><span class="strong">i</span>
+<DD>
+<pre>
+|- i = (0,1)
+</pre>
+
+<DT><span class="strong">complex_add</span>
+<DD>
+<pre>
+|- ∀z w. z + w = (RE z + RE w,IM z + IM w)
+</pre>
+
+<DT><span class="strong">complex_neg</span>
+<DD>
+<pre>
+|- ∀z. -z = (-RE z,-IM z)
+</pre>
+
+<DT><span class="strong">complex_mul</span>
+<DD>
+<pre>
+|- ∀z w. z * w = (RE z * RE w − IM z * IM w,RE z * IM w + IM z * RE w)
+</pre>
+
+<DT><span class="strong">complex_inv</span>
+<DD>
+<pre>
+|- ∀z.
+     inv z =
+     (RE z / (RE z pow 2 + IM z pow 2),-IM z / (RE z pow 2 + IM z pow 2))
+</pre>
+
+<DT><span class="strong">complex_sub</span>
+<DD>
+<pre>
+|- ∀z w. z − w = z + -w
+</pre>
+
+<DT><span class="strong">complex_div</span>
+<DD>
+<pre>
+|- ∀z w. z / w = z * inv w
+</pre>
+
+<DT><span class="strong">complex_scalar_lmul</span>
+<DD>
+<pre>
+|- ∀k z. k * z = (k * RE z,k * IM z)
+</pre>
+
+<DT><span class="strong">complex_scalar_rmul</span>
+<DD>
+<pre>
+|- ∀z k. z * k = (RE z * k,IM z * k)
+</pre>
+
+<DT><span class="strong">conj</span>
+<DD>
+<pre>
+|- ∀z. conj z = (RE z,-IM z)
+</pre>
+
+<DT><span class="strong">modu</span>
+<DD>
+<pre>
+|- ∀z. modu z = sqrt (RE z pow 2 + IM z pow 2)
+</pre>
+
+<DT><span class="strong">arg</span>
+<DD>
+<pre>
+|- ∀z.
+     arg z =
+     if 0 ≤ IM z then acs (RE z / modu z) else -acs (RE z / modu z) + 2 * pi
+</pre>
+
+<DT><span class="strong">complex_pow_def</span>
+<DD>
+<pre>
+|- (∀z. z pow 0 = 1) ∧ ∀z n. z pow SUC n = z * z pow n
+</pre>
+
+<DT><span class="strong">complex_exp</span>
+<DD>
+<pre>
+|- ∀z. exp z = exp (RE z) * (cos (IM z),sin (IM z))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">COMPLEX_LEMMA1</span>
+<DD>
+<pre>
+|- ∀a b c d.
+     (a * c − b * d) pow 2 + (a * d + b * c) pow 2 =
+     (a pow 2 + b pow 2) * (c pow 2 + d pow 2)
+</pre>
+
+<DT><span class="strong">COMPLEX_LEMMA2</span>
+<DD>
+<pre>
+|- ∀x y. abs x ≤ sqrt (x pow 2 + y pow 2)
+</pre>
+
+<DT><span class="strong">COMPLEX</span>
+<DD>
+<pre>
+|- ∀z. (RE z,IM z) = z
+</pre>
+
+<DT><span class="strong">COMPLEX_RE_IM_EQ</span>
+<DD>
+<pre>
+|- ∀z w. (z = w) ⇔ (RE z = RE w) ∧ (IM z = IM w)
+</pre>
+
+<DT><span class="strong">RE_COMPLEX_OF_REAL</span>
+<DD>
+<pre>
+|- ∀x. RE (complex_of_real x) = x
+</pre>
+
+<DT><span class="strong">IM_COMPLEX_OF_REAL</span>
+<DD>
+<pre>
+|- ∀x. IM (complex_of_real x) = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_0</span>
+<DD>
+<pre>
+|- 0 = complex_of_real 0
+</pre>
+
+<DT><span class="strong">COMPLEX_1</span>
+<DD>
+<pre>
+|- 1 = complex_of_real 1
+</pre>
+
+<DT><span class="strong">COMPLEX_10</span>
+<DD>
+<pre>
+|- 1 ≠ 0
+</pre>
+
+<DT><span class="strong">COMPLEX_0_THM</span>
+<DD>
+<pre>
+|- ∀z. (z = 0) ⇔ (RE z pow 2 + IM z pow 2 = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_COMM</span>
+<DD>
+<pre>
+|- ∀z w. z + w = w + z
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_ASSOC</span>
+<DD>
+<pre>
+|- ∀z w v. z + (w + v) = z + w + v
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_RID</span>
+<DD>
+<pre>
+|- ∀z. z + 0 = z
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_LID</span>
+<DD>
+<pre>
+|- ∀z. 0 + z = z
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_RINV</span>
+<DD>
+<pre>
+|- ∀z. z + -z = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_LINV</span>
+<DD>
+<pre>
+|- ∀z. -z + z = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_COMM</span>
+<DD>
+<pre>
+|- ∀z w. z * w = w * z
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_ASSOC</span>
+<DD>
+<pre>
+|- ∀z w v. z * (w * v) = z * w * v
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_RID</span>
+<DD>
+<pre>
+|- ∀z. z * 1 = z
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_LID</span>
+<DD>
+<pre>
+|- ∀z. 1 * z = z
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_RINV</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ (z * inv z = 1)
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_LINV</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ (inv z * z = 1)
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_LDISTRIB</span>
+<DD>
+<pre>
+|- ∀z w v. z * (w + v) = z * w + z * v
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_RDISTRIB</span>
+<DD>
+<pre>
+|- ∀z w v. (z + w) * v = z * v + w * v
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_LADD</span>
+<DD>
+<pre>
+|- ∀z w v. (z + w = z + v) ⇔ (w = v)
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_RADD</span>
+<DD>
+<pre>
+|- ∀z w v. (z + v = w + v) ⇔ (z = w)
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_RID_UNIQ</span>
+<DD>
+<pre>
+|- ∀z w. (z + w = z) ⇔ (w = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_LID_UNIQ</span>
+<DD>
+<pre>
+|- ∀z w. (z + w = w) ⇔ (z = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_NEGNEG</span>
+<DD>
+<pre>
+|- ∀z. - -z = z
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_EQ</span>
+<DD>
+<pre>
+|- ∀z w. (-z = w) ⇔ (z = -w)
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_NEG</span>
+<DD>
+<pre>
+|- ∀z w. (-z = -w) ⇔ (z = w)
+</pre>
+
+<DT><span class="strong">COMPLEX_RNEG_UNIQ</span>
+<DD>
+<pre>
+|- ∀z w. (z + w = 0) ⇔ (w = -z)
+</pre>
+
+<DT><span class="strong">COMPLEX_LNEG_UNIQ</span>
+<DD>
+<pre>
+|- ∀z w. (z + w = 0) ⇔ (z = -w)
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_ADD</span>
+<DD>
+<pre>
+|- ∀z w. -(z + w) = -z + -w
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_RZERO</span>
+<DD>
+<pre>
+|- ∀z. z * 0 = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_LZERO</span>
+<DD>
+<pre>
+|- ∀z. 0 * z = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_LMUL</span>
+<DD>
+<pre>
+|- ∀z w. -(z * w) = -z * w
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_RMUL</span>
+<DD>
+<pre>
+|- ∀z w. -(z * w) = z * -w
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_MUL2</span>
+<DD>
+<pre>
+|- ∀z w. -z * -w = z * w
+</pre>
+
+<DT><span class="strong">COMPLEX_ENTIRE</span>
+<DD>
+<pre>
+|- ∀z w. (z * w = 0) ⇔ (z = 0) ∨ (w = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_0</span>
+<DD>
+<pre>
+|- -0 = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_EQ0</span>
+<DD>
+<pre>
+|- ∀z. (-z = 0) ⇔ (z = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_REFL</span>
+<DD>
+<pre>
+|- ∀z. z − z = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_RZERO</span>
+<DD>
+<pre>
+|- ∀z. z − 0 = z
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_LZERO</span>
+<DD>
+<pre>
+|- ∀z. 0 − z = -z
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_LNEG</span>
+<DD>
+<pre>
+|- ∀z w. -z − w = -(z + w)
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_NEG2</span>
+<DD>
+<pre>
+|- ∀z w. -z − -w = w − z
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_SUB</span>
+<DD>
+<pre>
+|- ∀z w. -(z − w) = w − z
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_RNEG</span>
+<DD>
+<pre>
+|- ∀z w. z − -w = z + w
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_ADD</span>
+<DD>
+<pre>
+|- ∀z w. z − w + w = z
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_ADD2</span>
+<DD>
+<pre>
+|- ∀z w. w + (z − w) = z
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_SUB</span>
+<DD>
+<pre>
+|- ∀z w. z + w − z = w
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_SUB</span>
+<DD>
+<pre>
+|- ∀z w. z − w − z = -w
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_SUB2</span>
+<DD>
+<pre>
+|- ∀z w. z − (z − w) = w
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_SUB2</span>
+<DD>
+<pre>
+|- ∀z w. z − (z + w) = -w
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD2_SUB2</span>
+<DD>
+<pre>
+|- ∀z w u v. z + w − (u + v) = z − u + (w − v)
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_TRIANGLE</span>
+<DD>
+<pre>
+|- ∀z w v. z − w + (w − v) = z − v
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_0</span>
+<DD>
+<pre>
+|- ∀z w. (z − w = 0) ⇔ (z = w)
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_SUB_LADD</span>
+<DD>
+<pre>
+|- ∀z w v. (z = w − v) ⇔ (z + v = w)
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_SUB_RADD</span>
+<DD>
+<pre>
+|- ∀z w v. (z − w = v) ⇔ (z = v + w)
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_RNEG</span>
+<DD>
+<pre>
+|- ∀z w. z * -w = -(z * w)
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_LNEG</span>
+<DD>
+<pre>
+|- ∀z w. -z * w = -(z * w)
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_LDISTRIB</span>
+<DD>
+<pre>
+|- ∀z w v. z * (w − v) = z * w − z * v
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_RDISTRIB</span>
+<DD>
+<pre>
+|- ∀z w v. (z − w) * v = z * v − w * v
+</pre>
+
+<DT><span class="strong">COMPLEX_DIFFSQ</span>
+<DD>
+<pre>
+|- ∀z w. (z + w) * (z − w) = z * z − w * w
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_LMUL</span>
+<DD>
+<pre>
+|- ∀z w v. (z * w = z * v) ⇔ (z = 0) ∨ (w = v)
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_RMUL</span>
+<DD>
+<pre>
+|- ∀z w v. (z * v = w * v) ⇔ (v = 0) ∨ (z = w)
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_LMUL2</span>
+<DD>
+<pre>
+|- ∀z w v. z ≠ 0 ⇒ ((w = v) ⇔ (z * w = z * v))
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_RMUL_IMP</span>
+<DD>
+<pre>
+|- ∀z w v. z ≠ 0 ∧ (w * z = v * z) ⇒ (w = v)
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_LMUL_IMP</span>
+<DD>
+<pre>
+|- ∀z w v. z ≠ 0 ∧ (z * w = z * v) ⇒ (w = v)
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_INV</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ (inv (-z) = -inv z)
+</pre>
+
+<DT><span class="strong">COMPLEX_INV_MUL</span>
+<DD>
+<pre>
+|- ∀z w. z ≠ 0 ∧ w ≠ 0 ⇒ (inv (z * w) = inv z * inv w)
+</pre>
+
+<DT><span class="strong">COMPLEX_INVINV</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ (inv (inv z) = z)
+</pre>
+
+<DT><span class="strong">COMPLEX_LINV_UNIQ</span>
+<DD>
+<pre>
+|- ∀z w. (z * w = 1) ⇒ (z = inv w)
+</pre>
+
+<DT><span class="strong">COMPLEX_RINV_UNIQ</span>
+<DD>
+<pre>
+|- ∀z w. (z * w = 1) ⇒ (w = inv z)
+</pre>
+
+<DT><span class="strong">COMPLEX_INV_0</span>
+<DD>
+<pre>
+|- inv 0 = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_INV1</span>
+<DD>
+<pre>
+|- inv 1 = 1
+</pre>
+
+<DT><span class="strong">COMPLEX_INV_INV</span>
+<DD>
+<pre>
+|- ∀z. inv (inv z) = z
+</pre>
+
+<DT><span class="strong">COMPLEX_INV_NEG</span>
+<DD>
+<pre>
+|- ∀z. inv (-z) = -inv z
+</pre>
+
+<DT><span class="strong">COMPLEX_INV_EQ_0</span>
+<DD>
+<pre>
+|- ∀z. (inv z = 0) ⇔ (z = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_INV_NZ</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ inv z ≠ 0
+</pre>
+
+<DT><span class="strong">COMPLEX_INV_INJ</span>
+<DD>
+<pre>
+|- ∀z w. (inv z = inv w) ⇔ (z = w)
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_LDIV</span>
+<DD>
+<pre>
+|- ∀z w. -(z / w) = -z / w
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_RDIV</span>
+<DD>
+<pre>
+|- ∀z w. -(z / w) = z / -w
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_DIV2</span>
+<DD>
+<pre>
+|- ∀z w. -z / -w = z / w
+</pre>
+
+<DT><span class="strong">COMPLEX_INV_1OVER</span>
+<DD>
+<pre>
+|- ∀z. inv z = 1 / z
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV1</span>
+<DD>
+<pre>
+|- ∀z. z / 1 = z
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_ADD</span>
+<DD>
+<pre>
+|- ∀z w v. z / v + w / v = (z + w) / v
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_SUB</span>
+<DD>
+<pre>
+|- ∀z w v. z / v − w / v = (z − w) / v
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_RMUL_CANCEL</span>
+<DD>
+<pre>
+|- ∀v z w. v ≠ 0 ⇒ (z * v / (w * v) = z / w)
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_LMUL_CANCEL</span>
+<DD>
+<pre>
+|- ∀v z w. v ≠ 0 ⇒ (v * z / (v * w) = z / w)
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_DENOM_CANCEL</span>
+<DD>
+<pre>
+|- ∀z w v. z ≠ 0 ⇒ (w / z / (v / z) = w / v)
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_INNER_CANCEL</span>
+<DD>
+<pre>
+|- ∀z w v. z ≠ 0 ⇒ (w / z * (z / v) = w / v)
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_OUTER_CANCEL</span>
+<DD>
+<pre>
+|- ∀z w v. z ≠ 0 ⇒ (z / w * (v / z) = v / w)
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_MUL2</span>
+<DD>
+<pre>
+|- ∀z w. z ≠ 0 ∧ w ≠ 0 ⇒ ∀v. v / w = z * v / (z * w)
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_RAT</span>
+<DD>
+<pre>
+|- ∀z w u v. w ≠ 0 ∧ v ≠ 0 ⇒ (z / w + u / v = (z * v + w * u) / (w * v))
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_RAT</span>
+<DD>
+<pre>
+|- ∀z w u v. w ≠ 0 ∧ v ≠ 0 ⇒ (z / w − u / v = (z * v − w * u) / (w * v))
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_LZERO</span>
+<DD>
+<pre>
+|- ∀z. 0 / z = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_REFL</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ (z / z = 1)
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_INV2</span>
+<DD>
+<pre>
+|- ∀z w. z ≠ 0 ∧ w ≠ 0 ⇒ (inv z − inv w = (w − z) / (z * w))
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_RDIV_EQ</span>
+<DD>
+<pre>
+|- ∀z w v. v ≠ 0 ⇒ ((z = w / v) ⇔ (z * v = w))
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_LDIV_EQ</span>
+<DD>
+<pre>
+|- ∀z w v. v ≠ 0 ⇒ ((z / v = w) ⇔ (z = w * v))
+</pre>
+
+<DT><span class="strong">COMPLEX_OF_REAL_EQ</span>
+<DD>
+<pre>
+|- ∀x y. (complex_of_real x = complex_of_real y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">COMPLEX_OF_REAL_ADD</span>
+<DD>
+<pre>
+|- ∀x y. complex_of_real x + complex_of_real y = complex_of_real (x + y)
+</pre>
+
+<DT><span class="strong">COMPLEX_OF_REAL_NEG</span>
+<DD>
+<pre>
+|- ∀x. -complex_of_real x = complex_of_real (-x)
+</pre>
+
+<DT><span class="strong">COMPLEX_OF_REAL_MUL</span>
+<DD>
+<pre>
+|- ∀x y. complex_of_real x * complex_of_real y = complex_of_real (x * y)
+</pre>
+
+<DT><span class="strong">COMPLEX_OF_REAL_INV</span>
+<DD>
+<pre>
+|- ∀x. inv (complex_of_real x) = complex_of_real (inv x)
+</pre>
+
+<DT><span class="strong">COMPLEX_OF_REAL_SUB</span>
+<DD>
+<pre>
+|- ∀x y. complex_of_real x − complex_of_real y = complex_of_real (x − y)
+</pre>
+
+<DT><span class="strong">COMPLEX_OF_REAL_DIV</span>
+<DD>
+<pre>
+|- ∀x y. complex_of_real x / complex_of_real y = complex_of_real (x / y)
+</pre>
+
+<DT><span class="strong">COMPLEX_OF_NUM_EQ</span>
+<DD>
+<pre>
+|- ∀m n. (&m = &n) ⇔ (m = n)
+</pre>
+
+<DT><span class="strong">COMPLEX_OF_NUM_ADD</span>
+<DD>
+<pre>
+|- ∀m n. &m + &n = &(m + n)
+</pre>
+
+<DT><span class="strong">COMPLEX_OF_NUM_MUL</span>
+<DD>
+<pre>
+|- ∀m n. &m * &n = &(m * n)
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k l z. k * (l * z) = k * l * z
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL_NEG</span>
+<DD>
+<pre>
+|- ∀k z. -(k * z) = -k * z
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k z. k * -z = -k * z
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL_ADD</span>
+<DD>
+<pre>
+|- ∀k l z. (k + l) * z = k * z + l * z
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL_SUB</span>
+<DD>
+<pre>
+|- ∀k l z. (k − l) * z = k * z − l * z
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k z w. k * (z + w) = k * z + k * w
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k z w. k * (z − w) = k * z − k * w
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_SCALAR_LMUL2</span>
+<DD>
+<pre>
+|- ∀k l z w. k * z * (l * w) = k * l * (z * w)
+</pre>
+
+<DT><span class="strong">COMPLEX_LMUL_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k z w. k * z * w = k * (z * w)
+</pre>
+
+<DT><span class="strong">COMPLEX_RMUL_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k z w. z * (k * w) = k * (z * w)
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL_ZERO</span>
+<DD>
+<pre>
+|- ∀z. 0 * z = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_ZERO_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k. k * 0 = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL_ONE</span>
+<DD>
+<pre>
+|- ∀z. 1 * z = z
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL_NEG1</span>
+<DD>
+<pre>
+|- ∀z. -1 * z = -z
+</pre>
+
+<DT><span class="strong">COMPLEX_DOUBLE</span>
+<DD>
+<pre>
+|- ∀z. z + z = 2 * z
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL_ENTIRE</span>
+<DD>
+<pre>
+|- ∀k z. (k * z = 0) ⇔ (k = 0) ∨ (z = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_EQ_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k z w. (k * z = k * w) ⇔ (k = 0) ∨ (z = w)
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL_EQ</span>
+<DD>
+<pre>
+|- ∀k l z. (k * z = l * z) ⇔ (k = l) ∨ (z = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL_EQ1</span>
+<DD>
+<pre>
+|- ∀k z. (k * z = z) ⇔ (k = 1) ∨ (z = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_INV_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k z. k ≠ 0 ∧ z ≠ 0 ⇒ (inv (k * z) = inv k * inv z)
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_LMUL_DIV2</span>
+<DD>
+<pre>
+|- ∀k l z w. l ≠ 0 ∧ w ≠ 0 ⇒ (k * z / (l * w) = k / l * (z / w))
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_MUL_COMM</span>
+<DD>
+<pre>
+|- ∀k z. k * z = z * k
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_RMUL</span>
+<DD>
+<pre>
+|- ∀k l z. z * k * l = z * (k * l)
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_RMUL_NEG</span>
+<DD>
+<pre>
+|- ∀k z. -(z * k) = z * -k
+</pre>
+
+<DT><span class="strong">COMPLEX_NEG_SCALAR_RMUL</span>
+<DD>
+<pre>
+|- ∀k z. -z * k = z * -k
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_RMUL_ADD</span>
+<DD>
+<pre>
+|- ∀k l z. z * (k + l) = z * k + z * l
+</pre>
+
+<DT><span class="strong">COMPLEX_RSCALAR_RMUL_SUB</span>
+<DD>
+<pre>
+|- ∀k l z. z * (k − l) = z * k − z * l
+</pre>
+
+<DT><span class="strong">COMPLEX_ADD_RSCALAR_RMUL</span>
+<DD>
+<pre>
+|- ∀k z w. (z + w) * k = z * k + w * k
+</pre>
+
+<DT><span class="strong">COMPLEX_SUB_SCALAR_RMUL</span>
+<DD>
+<pre>
+|- ∀k z w. (z − w) * k = z * k − w * k
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_RMUL_ZERO</span>
+<DD>
+<pre>
+|- ∀z. z * 0 = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_ZERO_SCALAR_RMUL</span>
+<DD>
+<pre>
+|- ∀k. 0 * k = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_RMUL_ONE</span>
+<DD>
+<pre>
+|- ∀z. z * 1 = z
+</pre>
+
+<DT><span class="strong">COMPLEX_SCALAR_RMUL_NEG1</span>
+<DD>
+<pre>
+|- ∀z. z * -1 = -z
+</pre>
+
+<DT><span class="strong">CONJ_REAL_REFL</span>
+<DD>
+<pre>
+|- ∀x. conj (complex_of_real x) = complex_of_real x
+</pre>
+
+<DT><span class="strong">CONJ_NUM_REFL</span>
+<DD>
+<pre>
+|- ∀n. conj (&n) = &n
+</pre>
+
+<DT><span class="strong">CONJ_ADD</span>
+<DD>
+<pre>
+|- ∀z w. conj (z + w) = conj z + conj w
+</pre>
+
+<DT><span class="strong">CONJ_NEG</span>
+<DD>
+<pre>
+|- ∀z. conj (-z) = -conj z
+</pre>
+
+<DT><span class="strong">CONJ_SUB</span>
+<DD>
+<pre>
+|- ∀z w. conj (z − w) = conj z − conj w
+</pre>
+
+<DT><span class="strong">CONJ_MUL</span>
+<DD>
+<pre>
+|- ∀z w. conj (z * w) = conj z * conj w
+</pre>
+
+<DT><span class="strong">CONJ_INV</span>
+<DD>
+<pre>
+|- ∀z. conj (inv z) = inv (conj z)
+</pre>
+
+<DT><span class="strong">CONJ_DIV</span>
+<DD>
+<pre>
+|- ∀z w. conj (z / w) = conj z / conj w
+</pre>
+
+<DT><span class="strong">CONJ_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k z. conj (k * z) = k * conj z
+</pre>
+
+<DT><span class="strong">CONJ_CONJ</span>
+<DD>
+<pre>
+|- ∀z. conj (conj z) = z
+</pre>
+
+<DT><span class="strong">CONJ_EQ</span>
+<DD>
+<pre>
+|- ∀z w. (conj z = w) ⇔ (z = conj w)
+</pre>
+
+<DT><span class="strong">CONJ_EQ2</span>
+<DD>
+<pre>
+|- ∀z w. (conj z = conj w) ⇔ (z = w)
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_RCONJ</span>
+<DD>
+<pre>
+|- ∀z. conj z * z = complex_of_real (RE z pow 2 + IM z pow 2)
+</pre>
+
+<DT><span class="strong">CONJ_ZERO</span>
+<DD>
+<pre>
+|- conj 0 = 0
+</pre>
+
+<DT><span class="strong">MODU_POW2</span>
+<DD>
+<pre>
+|- ∀z. modu z pow 2 = RE z pow 2 + IM z pow 2
+</pre>
+
+<DT><span class="strong">RE_IM_LE_MODU</span>
+<DD>
+<pre>
+|- ∀z. abs (RE z) ≤ modu z ∧ abs (IM z) ≤ modu z
+</pre>
+
+<DT><span class="strong">MODU_POS</span>
+<DD>
+<pre>
+|- ∀z. 0 ≤ modu z
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_RCONJ1</span>
+<DD>
+<pre>
+|- ∀z. z * conj z = complex_of_real (modu z pow 2)
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_LCONJ1</span>
+<DD>
+<pre>
+|- ∀z. conj z * z = complex_of_real (modu z pow 2)
+</pre>
+
+<DT><span class="strong">MODU_NEG</span>
+<DD>
+<pre>
+|- ∀z. modu (-z) = modu z
+</pre>
+
+<DT><span class="strong">MODU_SUB</span>
+<DD>
+<pre>
+|- ∀z w. modu (z − w) = modu (w − z)
+</pre>
+
+<DT><span class="strong">MODU_CONJ</span>
+<DD>
+<pre>
+|- ∀z. modu (conj z) = modu z
+</pre>
+
+<DT><span class="strong">MODU_MUL</span>
+<DD>
+<pre>
+|- ∀z w. modu (z * w) = modu z * modu w
+</pre>
+
+<DT><span class="strong">MODU_0</span>
+<DD>
+<pre>
+|- modu 0 = 0
+</pre>
+
+<DT><span class="strong">MODU_1</span>
+<DD>
+<pre>
+|- modu 1 = 1
+</pre>
+
+<DT><span class="strong">MODU_COMPLEX_INV</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ (modu (inv z) = inv (modu z))
+</pre>
+
+<DT><span class="strong">MODU_DIV</span>
+<DD>
+<pre>
+|- ∀z w. w ≠ 0 ⇒ (modu (z / w) = modu z / modu w)
+</pre>
+
+<DT><span class="strong">MODU_SCALAR_LMUL</span>
+<DD>
+<pre>
+|- ∀k z. modu (k * z) = abs k * modu z
+</pre>
+
+<DT><span class="strong">MODU_REAL</span>
+<DD>
+<pre>
+|- ∀x. modu (complex_of_real x) = abs x
+</pre>
+
+<DT><span class="strong">MODU_NUM</span>
+<DD>
+<pre>
+|- ∀n. modu (&n) = &n
+</pre>
+
+<DT><span class="strong">MODU_ZERO</span>
+<DD>
+<pre>
+|- ∀z. (z = 0) ⇔ (modu z = 0)
+</pre>
+
+<DT><span class="strong">MODU_NZ</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇔ 0 < modu z
+</pre>
+
+<DT><span class="strong">MODU_CASES</span>
+<DD>
+<pre>
+|- ∀z. (z = 0) ∨ 0 < modu z
+</pre>
+
+<DT><span class="strong">RE_DIV_MODU_BOUNDS</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ -1 ≤ RE z / modu z ∧ RE z / modu z ≤ 1
+</pre>
+
+<DT><span class="strong">IM_DIV_MODU_BOUNDS</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ -1 ≤ IM z / modu z ∧ IM z / modu z ≤ 1
+</pre>
+
+<DT><span class="strong">RE_DIV_MODU_ACS_BOUNDS</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ 0 ≤ acs (RE z / modu z) ∧ acs (RE z / modu z) ≤ pi
+</pre>
+
+<DT><span class="strong">IM_DIV_MODU_ASN_BOUNDS</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ -(pi / 2) ≤ asn (IM z / modu z) ∧ asn (IM z / modu z) ≤ pi / 2
+</pre>
+
+<DT><span class="strong">RE_DIV_MODU_ACS_COS</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ (cos (acs (RE z / modu z)) = RE z / modu z)
+</pre>
+
+<DT><span class="strong">IM_DIV_MODU_ASN_SIN</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ (sin (asn (IM z / modu z)) = IM z / modu z)
+</pre>
+
+<DT><span class="strong">ARG_COS</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ (cos (arg z) = RE z / modu z)
+</pre>
+
+<DT><span class="strong">ARG_SIN</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ (sin (arg z) = IM z / modu z)
+</pre>
+
+<DT><span class="strong">RE_MODU_ARG</span>
+<DD>
+<pre>
+|- ∀z. RE z = modu z * cos (arg z)
+</pre>
+
+<DT><span class="strong">IM_MODU_ARG</span>
+<DD>
+<pre>
+|- ∀z. IM z = modu z * sin (arg z)
+</pre>
+
+<DT><span class="strong">COMPLEX_TRIANGLE</span>
+<DD>
+<pre>
+|- ∀z. modu z * (cos (arg z),sin (arg z)) = z
+</pre>
+
+<DT><span class="strong">COMPLEX_MODU_ARG_EQ</span>
+<DD>
+<pre>
+|- ∀z w. (z = w) ⇔ (modu z = modu w) ∧ (arg z = arg w)
+</pre>
+
+<DT><span class="strong">MODU_UNIT</span>
+<DD>
+<pre>
+|- ∀x y. modu (cos x,sin x) = 1
+</pre>
+
+<DT><span class="strong">COMPLEX_MUL_ARG</span>
+<DD>
+<pre>
+|- ∀x y. (cos x,sin x) * (cos y,sin y) = (cos (x + y),sin (x + y))
+</pre>
+
+<DT><span class="strong">COMPLEX_INV_ARG</span>
+<DD>
+<pre>
+|- ∀x. inv (cos x,sin x) = (cos (-x),sin (-x))
+</pre>
+
+<DT><span class="strong">COMPLEX_DIV_ARG</span>
+<DD>
+<pre>
+|- ∀x y. (cos x,sin x) / (cos y,sin y) = (cos (x − y),sin (x − y))
+</pre>
+
+<DT><span class="strong">complex_pow_def_compute</span>
+<DD>
+<pre>
+|- (∀z. z pow 0 = 1) ∧
+   (∀z n. z pow NUMERAL (BIT1 n) = z * z pow (NUMERAL (BIT1 n) − 1)) ∧
+   ∀z n. z pow NUMERAL (BIT2 n) = z * z pow NUMERAL (BIT1 n)
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_0</span>
+<DD>
+<pre>
+|- ∀n. 0 pow SUC n = 0
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_NZ</span>
+<DD>
+<pre>
+|- ∀z n. z ≠ 0 ⇒ z pow n ≠ 0
+</pre>
+
+<DT><span class="strong">COMPLEX_POWINV</span>
+<DD>
+<pre>
+|- ∀z. z ≠ 0 ⇒ ∀n. inv (z pow n) = inv z pow n
+</pre>
+
+<DT><span class="strong">MODU_COMPLEX_POW</span>
+<DD>
+<pre>
+|- ∀z n. modu (z pow n) = modu z pow n
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_ADD</span>
+<DD>
+<pre>
+|- ∀z m n. z pow (m + n) = z pow m * z pow n
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_1</span>
+<DD>
+<pre>
+|- ∀z. z pow 1 = z
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_2</span>
+<DD>
+<pre>
+|- ∀z. z pow 2 = z * z
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_ONE</span>
+<DD>
+<pre>
+|- ∀n. 1 pow n = 1
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_MUL</span>
+<DD>
+<pre>
+|- ∀n z w. (z * w) pow n = z pow n * w pow n
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_INV</span>
+<DD>
+<pre>
+|- ∀z n. inv z pow n = inv (z pow n)
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_DIV</span>
+<DD>
+<pre>
+|- ∀z w n. (z / w) pow n = z pow n / w pow n
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_L</span>
+<DD>
+<pre>
+|- ∀n k z. (k * z) pow n = k pow n * z pow n
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_ZERO</span>
+<DD>
+<pre>
+|- ∀n z. (z pow n = 0) ⇒ (z = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_ZERO_EQ</span>
+<DD>
+<pre>
+|- ∀n z. (z pow SUC n = 0) ⇔ (z = 0)
+</pre>
+
+<DT><span class="strong">COMPLEX_POW_POW</span>
+<DD>
+<pre>
+|- ∀z m n. (z pow m) pow n = z pow (m * n)
+</pre>
+
+<DT><span class="strong">DE_MOIVRE_LEMMA</span>
+<DD>
+<pre>
+|- ∀x n. (cos x,sin x) pow n = (cos (&n * x),sin (&n * x))
+</pre>
+
+<DT><span class="strong">DE_MOIVRE_THM</span>
+<DD>
+<pre>
+|- ∀z n.
+     (modu z * (cos (arg z),sin (arg z))) pow n =
+     modu z pow n * (cos (&n * arg z),sin (&n * arg z))
+</pre>
+
+<DT><span class="strong">EXP_IMAGINARY</span>
+<DD>
+<pre>
+|- ∀x. exp (i * x) = (cos x,sin x)
+</pre>
+
+<DT><span class="strong">EULER_FORMULE</span>
+<DD>
+<pre>
+|- ∀z. modu z * exp (i * arg z) = z
+</pre>
+
+<DT><span class="strong">COMPLEX_EXP_ADD</span>
+<DD>
+<pre>
+|- ∀z w. exp (z + w) = exp z * exp w
+</pre>
+
+<DT><span class="strong">COMPLEX_EXP_NEG</span>
+<DD>
+<pre>
+|- ∀z. exp (-z) = inv (exp z)
+</pre>
+
+<DT><span class="strong">COMPLEX_EXP_SUB</span>
+<DD>
+<pre>
+|- ∀z w. exp (z − w) = exp z / exp w
+</pre>
+
+<DT><span class="strong">COMPLEX_EXP_N</span>
+<DD>
+<pre>
+|- ∀z n. exp (&n * z) = exp z pow n
+</pre>
+
+<DT><span class="strong">COMPLEX_EXP_N2</span>
+<DD>
+<pre>
+|- ∀z n. exp (&n * z) = exp z pow n
+</pre>
+
+<DT><span class="strong">COMPLEX_EXP_0</span>
+<DD>
+<pre>
+|- exp 0 = 1
+</pre>
+
+<DT><span class="strong">COMPLEX_EXP_NZ</span>
+<DD>
+<pre>
+|- ∀z. exp z ≠ 0
+</pre>
+
+<DT><span class="strong">COMPLEX_EXP_ADD_MUL</span>
+<DD>
+<pre>
+|- ∀z w. exp (z + w) * exp (-z) = exp w
+</pre>
+
+<DT><span class="strong">COMPLEX_EXP_NEG_MUL</span>
+<DD>
+<pre>
+|- ∀z. exp z * exp (-z) = 1
+</pre>
+
+<DT><span class="strong">COMPLEX_EXP_NEG_MUL2</span>
+<DD>
+<pre>
+|- ∀z. exp (-z) * exp z = 1
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

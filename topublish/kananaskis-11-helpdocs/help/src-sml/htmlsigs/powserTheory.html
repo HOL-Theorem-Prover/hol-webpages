@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure powserTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure powserTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/real/powserScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature powserTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#diffs-val">diffs</a> : thm
+<a name="line7"></a>
+<a name="line8"></a>  (*  Theorems  *)
+<a name="line9"></a>    val <a href="#DIFFS_EQUIV-val">DIFFS_EQUIV</a> : thm
+<a name="line10"></a>    val <a href="#DIFFS_LEMMA-val">DIFFS_LEMMA</a> : thm
+<a name="line11"></a>    val <a href="#DIFFS_LEMMA2-val">DIFFS_LEMMA2</a> : thm
+<a name="line12"></a>    val <a href="#DIFFS_NEG-val">DIFFS_NEG</a> : thm
+<a name="line13"></a>    val <a href="#POWDIFF-val">POWDIFF</a> : thm
+<a name="line14"></a>    val <a href="#POWDIFF_LEMMA-val">POWDIFF_LEMMA</a> : thm
+<a name="line15"></a>    val <a href="#POWREV-val">POWREV</a> : thm
+<a name="line16"></a>    val <a href="#POWSER_INSIDE-val">POWSER_INSIDE</a> : thm
+<a name="line17"></a>    val <a href="#POWSER_INSIDEA-val">POWSER_INSIDEA</a> : thm
+<a name="line18"></a>    val <a href="#TERMDIFF-val">TERMDIFF</a> : thm
+<a name="line19"></a>    val <a href="#TERMDIFF_LEMMA1-val">TERMDIFF_LEMMA1</a> : thm
+<a name="line20"></a>    val <a href="#TERMDIFF_LEMMA2-val">TERMDIFF_LEMMA2</a> : thm
+<a name="line21"></a>    val <a href="#TERMDIFF_LEMMA3-val">TERMDIFF_LEMMA3</a> : thm
+<a name="line22"></a>    val <a href="#TERMDIFF_LEMMA4-val">TERMDIFF_LEMMA4</a> : thm
+<a name="line23"></a>    val <a href="#TERMDIFF_LEMMA5-val">TERMDIFF_LEMMA5</a> : thm
+<a name="line24"></a>
+<a name="line25"></a>  val powser_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line26"></a>(*
+   [lim] Parent theory of "powser"
+
+   [<a name="diffs-val"><b>diffs</b></a>]  Definition
+
+      |- ∀c. diffs c = (λn. &SUC n * c (SUC n))
+
+   [<a name="DIFFS_EQUIV-val"><b>DIFFS_EQUIV</b></a>]  Theorem
+
+      |- ∀c x.
+           summable (λn. diffs c n * x pow n) ⇒
+           (λn. &n * (c n * x pow (n − 1))) sums
+           suminf (λn. diffs c n * x pow n)
+
+   [<a name="DIFFS_LEMMA-val"><b>DIFFS_LEMMA</b></a>]  Theorem
+
+      |- ∀n c x.
+           sum (0,n) (λn. diffs c n * x pow n) =
+           sum (0,n) (λn. &n * (c n * x pow (n − 1))) +
+           &n * (c n * x pow (n − 1))
+
+   [<a name="DIFFS_LEMMA2-val"><b>DIFFS_LEMMA2</b></a>]  Theorem
+
+      |- ∀n c x.
+           sum (0,n) (λn. &n * (c n * x pow (n − 1))) =
+           sum (0,n) (λn. diffs c n * x pow n) − &n * (c n * x pow (n − 1))
+
+   [<a name="DIFFS_NEG-val"><b>DIFFS_NEG</b></a>]  Theorem
+
+      |- ∀c. diffs (λn. -c n) = (λn. -diffs c n)
+
+   [<a name="POWDIFF-val"><b>POWDIFF</b></a>]  Theorem
+
+      |- ∀n x y.
+           x pow SUC n − y pow SUC n =
+           (x − y) * sum (0,SUC n) (λp. x pow p * y pow (n − p))
+
+   [<a name="POWDIFF_LEMMA-val"><b>POWDIFF_LEMMA</b></a>]  Theorem
+
+      |- ∀n x y.
+           sum (0,SUC n) (λp. x pow p * y pow (SUC n − p)) =
+           y * sum (0,SUC n) (λp. x pow p * y pow (n − p))
+
+   [<a name="POWREV-val"><b>POWREV</b></a>]  Theorem
+
+      |- ∀n x y.
+           sum (0,SUC n) (λp. x pow p * y pow (n − p)) =
+           sum (0,SUC n) (λp. x pow (n − p) * y pow p)
+
+   [<a name="POWSER_INSIDE-val"><b>POWSER_INSIDE</b></a>]  Theorem
+
+      |- ∀f x z.
+           summable (λn. f n * x pow n) ∧ abs z &lt; abs x ⇒
+           summable (λn. f n * z pow n)
+
+   [<a name="POWSER_INSIDEA-val"><b>POWSER_INSIDEA</b></a>]  Theorem
+
+      |- ∀f x z.
+           summable (λn. f n * x pow n) ∧ abs z &lt; abs x ⇒
+           summable (λn. abs (f n) * z pow n)
+
+   [<a name="TERMDIFF-val"><b>TERMDIFF</b></a>]  Theorem
+
+      |- ∀c k' x.
+           summable (λn. c n * k' pow n) ∧
+           summable (λn. diffs c n * k' pow n) ∧
+           summable (λn. diffs (diffs c) n * k' pow n) ∧ abs x &lt; abs k' ⇒
+           ((λx. suminf (λn. c n * x pow n)) diffl
+            suminf (λn. diffs c n * x pow n)) x
+
+   [<a name="TERMDIFF_LEMMA1-val"><b>TERMDIFF_LEMMA1</b></a>]  Theorem
+
+      |- ∀m z h.
+           sum (0,m) (λp. (z + h) pow (m − p) * z pow p − z pow m) =
+           sum (0,m) (λp. z pow p * ((z + h) pow (m − p) − z pow (m − p)))
+
+   [<a name="TERMDIFF_LEMMA2-val"><b>TERMDIFF_LEMMA2</b></a>]  Theorem
+
+      |- ∀z h n.
+           h ≠ 0 ⇒
+           (((z + h) pow n − z pow n) / h − &n * z pow (n − 1) =
+            h *
+            sum (0,n − 1)
+              (λp.
+                 z pow p *
+                 sum (0,n − 1 − p)
+                   (λq. (z + h) pow q * z pow (n − 2 − p − q))))
+
+   [<a name="TERMDIFF_LEMMA3-val"><b>TERMDIFF_LEMMA3</b></a>]  Theorem
+
+      |- ∀z h n k'.
+           h ≠ 0 ∧ abs z ≤ k' ∧ abs (z + h) ≤ k' ⇒
+           abs (((z + h) pow n − z pow n) / h − &n * z pow (n − 1)) ≤
+           &n * (&(n − 1) * (k' pow (n − 2) * abs h))
+
+   [<a name="TERMDIFF_LEMMA4-val"><b>TERMDIFF_LEMMA4</b></a>]  Theorem
+
+      |- ∀f k' k.
+           0 &lt; k ∧ (∀h. 0 &lt; abs h ∧ abs h &lt; k ⇒ abs (f h) ≤ k' * abs h) ⇒
+           (f -&gt; 0) 0
+
+   [<a name="TERMDIFF_LEMMA5-val"><b>TERMDIFF_LEMMA5</b></a>]  Theorem
+
+      |- ∀f g k.
+           0 &lt; k ∧ summable f ∧
+           (∀h. 0 &lt; abs h ∧ abs h &lt; k ⇒ ∀n. abs (g h n) ≤ f n * abs h) ⇒
+           ((λh. suminf (g h)) -&gt; 0) 0
+
+
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/real/powserScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

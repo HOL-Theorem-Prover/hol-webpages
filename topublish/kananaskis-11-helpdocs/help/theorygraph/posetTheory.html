@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: poset</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "poset"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "pairTheory.html"><span class="strong">pair</span></a>
+
+<h1>Signature</h1>
+<center>
+<table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+
+    <tr>
+    <th>
+    Constant
+    <th>
+    Type<tr><td> <span class="strong">bottom</span> <td> :α poset -> α -> bool
+    <tr><td> <span class="strong">carrier</span> <td> :α poset -> α -> bool
+    <tr><td>
+        <span class="strong">chain</span>
+        <td>
+        :α poset -> (α -> bool) -> bool
+    <tr><td> <span class="strong">complete</span> <td> :α poset -> bool
+    <tr><td>
+        <span class="strong">continuous</span>
+        <td>
+        :α poset -> (α -> α) -> bool
+    <tr><td>
+        <span class="strong">down_continuous</span>
+        <td>
+        :α poset -> (α -> α) -> bool
+    <tr><td>
+        <span class="strong">function</span>
+        <td>
+        :(α -> bool) -> (β -> bool) -> (α -> β) -> bool
+    <tr><td>
+        <span class="strong">gfp</span>
+        <td>
+        :α poset -> (α -> α) -> α -> bool
+    <tr><td>
+        <span class="strong">glb</span>
+        <td>
+        :α poset -> (α -> bool) -> α -> bool
+    <tr><td>
+        <span class="strong">lfp</span>
+        <td>
+        :α poset -> (α -> α) -> α -> bool
+    <tr><td>
+        <span class="strong">lub</span>
+        <td>
+        :α poset -> (α -> bool) -> α -> bool
+    <tr><td>
+        <span class="strong">monotonic</span>
+        <td>
+        :α poset -> (α -> α) -> bool
+    <tr><td>
+        <span class="strong">pointwise_lift</span>
+        <td>
+        :(α -> bool) -> β poset -> (α -> β) poset
+    <tr><td> <span class="strong">poset</span> <td> :α poset -> bool
+    <tr><td> <span class="strong">relation</span> <td> :α poset -> α toto$reln
+    <tr><td> <span class="strong">top</span> <td> :α poset -> α -> bool
+    <tr><td>
+        <span class="strong">up_continuous</span>
+        <td>
+        :α poset -> (α -> α) -> bool
+
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">function_def</span>
+<DD>
+<pre>
+|- ∀a b f. function a b f ⇔ ∀x. a x ⇒ b (f x)
+</pre>
+
+<DT><span class="strong">poset_def</span>
+<DD>
+<pre>
+|- ∀s r.
+     poset (s,r) ⇔
+     (∃x. s x) ∧ (∀x. s x ⇒ r x x) ∧
+     (∀x y. s x ∧ s y ∧ r x y ∧ r y x ⇒ (x = y)) ∧
+     ∀x y z. s x ∧ s y ∧ s z ∧ r x y ∧ r y z ⇒ r x z
+</pre>
+
+<DT><span class="strong">carrier_def</span>
+<DD>
+<pre>
+|- ∀s r. carrier (s,r) = s
+</pre>
+
+<DT><span class="strong">relation_def</span>
+<DD>
+<pre>
+|- ∀s r. relation (s,r) = r
+</pre>
+
+<DT><span class="strong">top_def</span>
+<DD>
+<pre>
+|- ∀s r x. top (s,r) x ⇔ s x ∧ ∀y. s y ⇒ r y x
+</pre>
+
+<DT><span class="strong">bottom_def</span>
+<DD>
+<pre>
+|- ∀s r x. bottom (s,r) x ⇔ s x ∧ ∀y. s y ⇒ r x y
+</pre>
+
+<DT><span class="strong">chain_def</span>
+<DD>
+<pre>
+|- ∀s r c. chain (s,r) c ⇔ ∀x y. s x ∧ s y ∧ c x ∧ c y ⇒ r x y ∨ r y x
+</pre>
+
+<DT><span class="strong">lub_def</span>
+<DD>
+<pre>
+|- ∀s r p x.
+     lub (s,r) p x ⇔
+     s x ∧ (∀y. s y ∧ p y ⇒ r y x) ∧ ∀z. s z ∧ (∀y. s y ∧ p y ⇒ r y z) ⇒ r x z
+</pre>
+
+<DT><span class="strong">glb_def</span>
+<DD>
+<pre>
+|- ∀s r p x.
+     glb (s,r) p x ⇔
+     s x ∧ (∀y. s y ∧ p y ⇒ r x y) ∧ ∀z. s z ∧ (∀y. s y ∧ p y ⇒ r z y) ⇒ r z x
+</pre>
+
+<DT><span class="strong">complete_def</span>
+<DD>
+<pre>
+|- ∀p. complete p ⇔ ∀c. (∃x. lub p c x) ∧ ∃x. glb p c x
+</pre>
+
+<DT><span class="strong">pointwise_lift_def</span>
+<DD>
+<pre>
+|- ∀t s r.
+     pointwise_lift t (s,r) = (function t s,(λf g. ∀x. t x ⇒ r (f x) (g x)))
+</pre>
+
+<DT><span class="strong">monotonic_def</span>
+<DD>
+<pre>
+|- ∀s r f. monotonic (s,r) f ⇔ ∀x y. s x ∧ s y ∧ r x y ⇒ r (f x) (f y)
+</pre>
+
+<DT><span class="strong">up_continuous_def</span>
+<DD>
+<pre>
+|- ∀s r f.
+     up_continuous (s,r) f ⇔
+     ∀c x.
+       chain (s,r) c ∧ lub (s,r) c x ⇒
+       lub (s,r) (λy. ∃z. (s z ∧ c z) ∧ (y = f z)) (f x)
+</pre>
+
+<DT><span class="strong">down_continuous_def</span>
+<DD>
+<pre>
+|- ∀s r f.
+     down_continuous (s,r) f ⇔
+     ∀c x.
+       chain (s,r) c ∧ glb (s,r) c x ⇒
+       glb (s,r) (λy. ∃z. (s z ∧ c z) ∧ (y = f z)) (f x)
+</pre>
+
+<DT><span class="strong">continuous_def</span>
+<DD>
+<pre>
+|- ∀p f. continuous p f ⇔ up_continuous p f ∧ down_continuous p f
+</pre>
+
+<DT><span class="strong">lfp_def</span>
+<DD>
+<pre>
+|- ∀s r f x. lfp (s,r) f x ⇔ s x ∧ (f x = x) ∧ ∀y. s y ∧ r (f y) y ⇒ r x y
+</pre>
+
+<DT><span class="strong">gfp_def</span>
+<DD>
+<pre>
+|- ∀s r f x. gfp (s,r) f x ⇔ s x ∧ (f x = x) ∧ ∀y. s y ∧ r y (f y) ⇒ r y x
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">poset_nonempty</span>
+<DD>
+<pre>
+|- ∀s r. poset (s,r) ⇒ ∃x. s x
+</pre>
+
+<DT><span class="strong">poset_refl</span>
+<DD>
+<pre>
+|- ∀s r x. poset (s,r) ∧ s x ⇒ r x x
+</pre>
+
+<DT><span class="strong">poset_antisym</span>
+<DD>
+<pre>
+|- ∀s r x y. poset (s,r) ∧ s x ∧ s y ∧ r x y ∧ r y x ⇒ (x = y)
+</pre>
+
+<DT><span class="strong">poset_trans</span>
+<DD>
+<pre>
+|- ∀s r x y z. poset (s,r) ∧ s x ∧ s y ∧ s z ∧ r x y ∧ r y z ⇒ r x z
+</pre>
+
+<DT><span class="strong">lub_pred</span>
+<DD>
+<pre>
+|- ∀s r p x. lub (s,r) (λj. s j ∧ p j) x ⇔ lub (s,r) p x
+</pre>
+
+<DT><span class="strong">glb_pred</span>
+<DD>
+<pre>
+|- ∀s r p x. glb (s,r) (λj. s j ∧ p j) x ⇔ glb (s,r) p x
+</pre>
+
+<DT><span class="strong">complete_up</span>
+<DD>
+<pre>
+|- ∀p c. complete p ⇒ ∃x. lub p c x
+</pre>
+
+<DT><span class="strong">complete_down</span>
+<DD>
+<pre>
+|- ∀p c. complete p ⇒ ∃x. glb p c x
+</pre>
+
+<DT><span class="strong">complete_top</span>
+<DD>
+<pre>
+|- ∀p. poset p ∧ complete p ⇒ ∃x. top p x
+</pre>
+
+<DT><span class="strong">complete_bottom</span>
+<DD>
+<pre>
+|- ∀p. poset p ∧ complete p ⇒ ∃x. bottom p x
+</pre>
+
+<DT><span class="strong">complete_pointwise</span>
+<DD>
+<pre>
+|- ∀p t. complete p ⇒ complete (pointwise_lift t p)
+</pre>
+
+<DT><span class="strong">lfp_unique</span>
+<DD>
+<pre>
+|- ∀p f x x'. poset p ∧ lfp p f x ∧ lfp p f x' ⇒ (x = x')
+</pre>
+
+<DT><span class="strong">gfp_unique</span>
+<DD>
+<pre>
+|- ∀p f x x'. poset p ∧ gfp p f x ∧ gfp p f x' ⇒ (x = x')
+</pre>
+
+<DT><span class="strong">knaster_tarski_lfp</span>
+<DD>
+<pre>
+|- ∀p f.
+     poset p ∧ complete p ∧ function (carrier p) (carrier p) f ∧
+     monotonic p f ⇒
+     ∃x. lfp p f x
+</pre>
+
+<DT><span class="strong">knaster_tarski_gfp</span>
+<DD>
+<pre>
+|- ∀p f.
+     poset p ∧ complete p ∧ function (carrier p) (carrier p) f ∧
+     monotonic p f ⇒
+     ∃x. gfp p f x
+</pre>
+
+<DT><span class="strong">knaster_tarski</span>
+<DD>
+<pre>
+|- ∀p f.
+     poset p ∧ complete p ∧ function (carrier p) (carrier p) f ∧
+     monotonic p f ⇒
+     (∃x. lfp p f x) ∧ ∃x. gfp p f x
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

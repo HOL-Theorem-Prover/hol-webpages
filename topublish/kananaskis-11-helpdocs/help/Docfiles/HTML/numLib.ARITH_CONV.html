@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>numLib.ARITH_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>ARITH_CONV : conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/numLib.html">numLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Partial decision procedure for a subset of linear natural number arithmetic.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Arith</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">ARITH_CONV</SPAN><SPAN class = "TEXT"> is a partial decision procedure for Presburger natural
+arithmetic. Presburger natural arithmetic is the subset of arithmetic formulae
+made up from natural number constants, numeric variables, addition,
+multiplication by a constant, the relations </SPAN><SPAN class = "BRKT">&lt;</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">&lt;=</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">=</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">&gt;=</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">&gt;</SPAN><SPAN class = "TEXT"> and the
+logical connectives </SPAN><SPAN class = "BRKT">~</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">/\</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">\/</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">==&gt;</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">=</SPAN><SPAN class = "TEXT"> (if-and-only-if), </SPAN><SPAN class = "BRKT">!</SPAN><SPAN class = "TEXT"> (&lsquo;forall&rsquo;)
+and </SPAN><SPAN class = "BRKT">?</SPAN><SPAN class = "TEXT"> (&lsquo;there exists&rsquo;). Products of two expressions which both contain
+variables are not included in the subset, but the functions </SPAN><SPAN class = "BRKT">SUC</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">PRE</SPAN><SPAN class = "TEXT">
+which are not normally included in a specification of Presburger arithmetic
+are allowed in this HOL implementation.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">ARITH_CONV</SPAN><SPAN class = "TEXT"> further restricts the subset as follows: when the formula has been
+put in prenex normal form it must contain only one kind of quantifier, that is
+the quantifiers must either all be universal (&lsquo;forall&rsquo;) or all existential.
+Variables may appear free (unquantified) provided any quantifiers that do
+appear in the prenex normal form are universal; free variables are taken as
+being implicitly universally quantified so mixing them with existential
+quantifiers would violate the above restriction.</SPAN>
+<P>
+<SPAN class = "TEXT">Given a formula in the permitted subset, </SPAN><SPAN class = "BRKT">ARITH_CONV</SPAN><SPAN class = "TEXT"> attempts to prove that
+it is equal to </SPAN><SPAN class = "BRKT">T</SPAN><SPAN class = "TEXT"> (true). For universally quantified formulae the procedure
+only works if the formula would also be true of the non-negative rationals;
+it cannot prove formulae whose truth depends on the integral properties of the
+natural numbers. The procedure is also incomplete for existentially quantified
+formulae, but in this case there is no rule-of-thumb for determining whether
+the procedure will work.</SPAN>
+<P>
+<SPAN class = "TEXT">The function features a number of preprocessors which extend the coverage
+beyond the subset specified above. In particular, natural number subtraction
+and conditional statements are allowed. Another permits substitution instances
+of universally quantified formulae to be accepted. Note that Boolean-valued
+variables are not allowed.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function can fail in two ways. It fails if the argument term is not a
+formula in the specified subset, and it also fails if it is unable to prove
+the formula. The failure strings are different in each case. However, the
+function may announce that it is unable to prove a formula that one would
+expect it to reject as being outside the subset. This is due to it looking for
+substitution instances; it has generalised the formula so that the new formula
+is in the subset but is not valid.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A simple example containing a free variable:
+</SPAN><DIV class = "XMPL"><pre>
+   - ARITH_CONV ``m &lt; SUC m``;
+   &gt; val it = |- m &lt; (SUC m) = T : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+A more complex example with subtraction and universal quantifiers, and
+which is not initially in prenex normal form:
+</SPAN><DIV class = "XMPL"><pre>
+   - ARITH_CONV
+     ``!m p. p &lt; m ==&gt; !q r. (m &lt; (p + q) + r) ==&gt; ((m - p) &lt; q + r)``;
+   &gt; val it = |- (!m p. p &lt; m ==&gt; (!q r. m &lt; ((p + q) + r) ==&gt; (m - p) &lt; (q + r))) = T
+</pre></DIV>
+<SPAN class = "TEXT">
+Two examples with existential quantifiers:
+</SPAN><DIV class = "XMPL"><pre>
+   - ARITH_CONV ``?m n. m &lt; n``;
+   &gt; val it = |- (?m n. m &lt; n) = T
+
+   - ARITH_CONV ``?m n. (2 * m) + (3 * n) = 10``;
+   &gt; val it = |- (?m n. (2 * m) + (3 * n) = 10) = T
+</pre></DIV>
+<SPAN class = "TEXT">
+An instance of a universally quantified formula involving a conditional
+statement and subtraction:
+</SPAN><DIV class = "XMPL"><pre>
+   - ARITH_CONV
+     ``((p + 3) &lt;= n) ==&gt; (!m. ((m EXP 2 = 0) =&gt; (n - 1) | (n - 2)) &gt; p)``;
+   &gt; val it = |- (p + 3) &lt;= n ==&gt; (!m. ((m EXP 2 = 0) =&gt; n - 1 | n - 2) &gt; p) = T
+</pre></DIV>
+<SPAN class = "TEXT">
+Failure due to mixing quantifiers:
+</SPAN><DIV class = "XMPL"><pre>
+   - ARITH_CONV ``!m. ?n. m &lt; n``;
+   evaluation failed     ARITH_CONV -- formula not in the allowed subset
+</pre></DIV>
+<SPAN class = "TEXT">
+Failure because the truth of the formula relies on the fact that the
+variables cannot have fractional values:
+</SPAN><DIV class = "XMPL"><pre>
+   - ARITH_CONV ``!m n. ~(SUC (2 * m) = 2 * n)``;
+   evaluation failed     ARITH_CONV -- cannot prove formula
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Arith.NEGATE_CONV.html">NEGATE_CONV</A>,
+<A HREF = "Arith.EXISTS_ARITH_CONV.html">EXISTS_ARITH_CONV</A>,
+<A HREF = "Arith.FORALL_ARITH_CONV.html">FORALL_ARITH_CONV</A>,
+<A HREF = "Arith.INSTANCE_T_CONV.html">INSTANCE_T_CONV</A>,
+<A HREF = "Arith.PRENEX_CONV.html">PRENEX_CONV</A>,
+<A HREF = "Arith.SUB_AND_COND_ELIM_CONV.html">SUB_AND_COND_ELIM_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

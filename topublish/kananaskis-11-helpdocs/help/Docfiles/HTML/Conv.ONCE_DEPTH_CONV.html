@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Conv.ONCE_DEPTH_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>ONCE_DEPTH_CONV : (conv -&gt; conv)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Conv.html">Conv</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Applies a conversion once to the first suitable sub-term(s) encountered in
+top-down order.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">ONCE_DEPTH_CONV&nbsp;c&nbsp;tm</SPAN><SPAN class = "TEXT"> applies the conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> once to the first subterm or
+subterms encountered in a top-down &lsquo;parallel&rsquo; search of the term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> for which
+</SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> succeeds.  If the conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> fails on all subterms of </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT">, the theorem
+returned is </SPAN><SPAN class = "BRKT">|-&nbsp;tm&nbsp;=&nbsp;tm</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following example shows how </SPAN><SPAN class = "BRKT">ONCE_DEPTH_CONV</SPAN><SPAN class = "TEXT"> applies a conversion to only
+the first suitable subterm(s) found in a top-down search:
+</SPAN><DIV class = "XMPL"><pre>
+   - ONCE_DEPTH_CONV BETA_CONV (Term `(\x. (\y. y + x) 1) 2`);
+   &gt; val it = |- (\x. (\y. y + x)1)2 = (\y. y + 2) 1 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Here, there are two beta-redexes in the input term. One of these
+occurs within the other, so </SPAN><SPAN class = "BRKT">BETA_CONV</SPAN><SPAN class = "TEXT"> is applied only to the outermost one.</SPAN>
+<P>
+<SPAN class = "TEXT">Note that the supplied conversion is applied by </SPAN><SPAN class = "BRKT">ONCE_DEPTH_CONV</SPAN><SPAN class = "TEXT"> to all
+independent subterms at which it succeeds.  That is, the conversion is applied
+to every suitable subterm not contained in some other subterm for which the
+conversions also succeeds, as illustrated by the following example:
+</SPAN><DIV class = "XMPL"><pre>
+   - ONCE_DEPTH_CONV numLib.num_CONV (Term `(\x. (\y. y + x) 1) 2`);
+   &gt; val it = |- (\x. (\y. y + x)1)2 = (\x. (\y. y + x)(SUC 0))(SUC 1) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Here </SPAN><SPAN class = "BRKT">num_CONV</SPAN><SPAN class = "TEXT"> is applied to both </SPAN><SPAN class = "BRKT">1</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">2</SPAN><SPAN class = "TEXT">, since neither term
+occurs within a larger subterm for which the conversion </SPAN><SPAN class = "BRKT">num_CONV</SPAN><SPAN class = "TEXT"> succeeds.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">ONCE_DEPTH_CONV</SPAN><SPAN class = "TEXT"> is frequently used when there is only one subterm to which
+the desired conversion applies. This can be much faster than using other
+functions that attempt to apply a conversion to all subterms of a term (e.g.
+</SPAN><SPAN class = "BRKT">DEPTH_CONV</SPAN><SPAN class = "TEXT">).  If, for example, the current goal in a goal-directed proof
+contains only one beta-redex, and one wishes to apply </SPAN><SPAN class = "BRKT">BETA_CONV</SPAN><SPAN class = "TEXT"> to it, then
+the tactic
+</SPAN><DIV class = "XMPL"><pre>
+   CONV_TAC (ONCE_DEPTH_CONV BETA_CONV)
+</pre></DIV>
+<SPAN class = "TEXT">
+may, depending on where the beta-redex occurs, be much faster than
+</SPAN><DIV class = "XMPL"><pre>
+   CONV_TAC (TOP_DEPTH_CONV BETA_CONV)
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">ONCE_DEPTH_CONV&nbsp;c</SPAN><SPAN class = "TEXT"> may also be used when the supplied conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> never
+fails, in which case using a conversion such as </SPAN><SPAN class = "BRKT">DEPTH_CONV&nbsp;c</SPAN><SPAN class = "TEXT">, which
+applies </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> repeatedly would never terminate.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The implementation of this function uses failure to avoid rebuilding
+unchanged subterms. That is to say, during execution the exception
+</SPAN><SPAN class = "BRKT">QConv.UNCHANGED</SPAN><SPAN class = "TEXT"> may be generated and later trapped. The behaviour of
+the function is dependent on this use of failure. So, if the
+conversion given as an argument happens to generate the same
+exception, the operation of </SPAN><SPAN class = "BRKT">ONCE_DEPTH_CONV</SPAN><SPAN class = "TEXT"> will be unpredictable.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Conv.DEPTH_CONV.html">DEPTH_CONV</A>,
+<A HREF = "Conv.REDEPTH_CONV.html">REDEPTH_CONV</A>,
+<A HREF = "Conv.TOP_DEPTH_CONV.html">TOP_DEPTH_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>
