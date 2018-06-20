@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Portable</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Portable</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/Portable.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Portable =
+<a name="line2"></a>sig
+<a name="line3"></a>  val curry : ('a * 'b -&gt; 'c) -&gt; 'a -&gt; 'b -&gt; 'c
+<a name="line4"></a>  val uncurry : ('a -&gt; 'b -&gt; 'c) -&gt; 'a * 'b -&gt; 'c
+<a name="line5"></a>  val ## : ('a -&gt; 'b) * ('c -&gt; 'd) -&gt; 'a * 'c -&gt; 'b * 'd
+<a name="line6"></a>  val apfst : ('a -&gt; 'b) -&gt; 'a * 'c -&gt; 'b * 'c
+<a name="line7"></a>  val apsnd : ('a -&gt; 'b) -&gt; 'c * 'a -&gt; 'c * 'b
+<a name="line8"></a>  val $  : ('a -&gt; 'b) * 'a -&gt; 'b
+<a name="line9"></a>  val |> : 'a * ('a -&gt; 'b) -&gt; 'b
+<a name="line10"></a>  val C : ('a -&gt; 'b -&gt; 'c) -&gt; 'b -&gt; 'a -&gt; 'c
+<a name="line11"></a>  val I : 'a -&gt; 'a
+<a name="line12"></a>  val K : 'a -&gt; 'b -&gt; 'a
+<a name="line13"></a>  val S : ('a -&gt; 'b -&gt; 'c) -&gt; ('a -&gt; 'b) -&gt; 'a -&gt; 'c
+<a name="line14"></a>  val W : ('a -&gt; 'a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line15"></a>
+<a name="line16"></a>  val append : 'a list -&gt; 'a list -&gt; 'a list
+<a name="line17"></a>  val equal : ''a -&gt; ''a -&gt; bool
+<a name="line18"></a>  val strcat : string -&gt; string -&gt; string
+<a name="line19"></a>  val cons : 'a -&gt; 'a list -&gt; 'a list
+<a name="line20"></a>  val pair : 'a -&gt; 'b -&gt; 'a * 'b
+<a name="line21"></a>
+<a name="line22"></a>  val rpair : 'a -&gt; 'b -&gt; 'b * 'a
+<a name="line23"></a>  val swap : 'a * 'b -&gt; 'b * 'a
+<a name="line24"></a>  val fst : 'a * 'b -&gt; 'a
+<a name="line25"></a>  val snd : 'a * 'b -&gt; 'b
+<a name="line26"></a>  val triple : 'a -&gt; 'b -&gt; 'c -&gt; 'a * 'b * 'c
+<a name="line27"></a>  val quadruple : 'a -&gt; 'b -&gt; 'c -&gt; 'd -&gt; 'a * 'b * 'c * 'd
+<a name="line28"></a>
+<a name="line29"></a>  val can : ('a -&gt; 'b) -&gt; 'a -&gt; bool
+<a name="line30"></a>  val total : ('a -&gt; 'b) -&gt; 'a -&gt; 'b option
+<a name="line31"></a>  val partial : exn -&gt; ('a -&gt; 'b option) -&gt; 'a -&gt; 'b
+<a name="line32"></a>
+<a name="line33"></a>  val assert_exn : ('a -&gt; bool) -&gt; 'a -&gt; exn -&gt; 'a
+<a name="line34"></a>  val with_exn : ('a -&gt; 'b) -&gt; 'a -&gt; exn -&gt; 'b
+<a name="line35"></a>
+<a name="line36"></a>  val list_of_singleton : 'a -&gt; 'a list
+<a name="line37"></a>  val list_of_pair : 'a * 'a -&gt; 'a list
+<a name="line38"></a>  val list_of_triple : 'a * 'a * 'a -&gt; 'a list
+<a name="line39"></a>  val list_of_quadruple : 'a * 'a * 'a * 'a -&gt; 'a list
+<a name="line40"></a>
+<a name="line41"></a>  val all : ('a -&gt; bool) -&gt; 'a list -&gt; bool
+<a name="line42"></a>  val exists : ('a -&gt; bool) -&gt; 'a list -&gt; bool
+<a name="line43"></a>  val first_opt : (int -&gt; 'a -&gt; 'b option) -&gt; 'a list -&gt; 'b option
+<a name="line44"></a>  val itlist : ('a -&gt; 'b -&gt; 'b) -&gt; 'a list -&gt; 'b -&gt; 'b
+<a name="line45"></a>  val rev_itlist : ('a -&gt; 'b -&gt; 'b) -&gt; 'a list -&gt; 'b -&gt; 'b
+<a name="line46"></a>  val foldl_map : ('a * 'b -&gt; 'a * 'c) -&gt; 'a * 'b list -&gt; 'a * 'c list
+<a name="line47"></a>  val separate : 'a -&gt; 'a list -&gt; 'a list
+<a name="line48"></a>  val filter : ('a -&gt; bool) -&gt; 'a list -&gt; 'a list
+<a name="line49"></a>  val partition : ('a -&gt; bool) -&gt; 'a list -&gt; 'a list * 'a list
+<a name="line50"></a>  val unzip : ('a * 'b) list -&gt; 'a list * 'b list
+<a name="line51"></a>  val split : ('a * 'b) list -&gt; 'a list * 'b list
+<a name="line52"></a>  val mapfilter : ('a -&gt; 'b) -&gt; 'a list -&gt; 'b list
+<a name="line53"></a>  val flatten : 'a list list -&gt; 'a list
+<a name="line54"></a>  val trypluck': ('a -&gt; 'b option) -&gt; 'a list -&gt; ('b option * 'a list)
+<a name="line55"></a>  val funpow : int -&gt; ('a -&gt; 'a) -&gt; 'a -&gt; 'a
+<a name="line56"></a>  val repeat : ('a -&gt; 'a) -&gt; 'a -&gt; 'a
+<a name="line57"></a>  val enumerate : int -&gt; 'a list -&gt; (int * 'a) list
+<a name="line58"></a>  val upto : int -&gt; int -&gt; int list
+<a name="line59"></a>  val appi : (int -&gt; 'a -&gt; unit) -&gt; 'a list -&gt; unit
+<a name="line60"></a>  val mapi : (int -&gt; 'a -&gt; 'b) -&gt; 'a list -&gt; 'b list
+<a name="line61"></a>
+<a name="line62"></a>  type 'a cmp = 'a * 'a -&gt; order
+<a name="line63"></a>  val flip_order : order -&gt; order
+<a name="line64"></a>  val flip_cmp : 'a cmp -&gt; 'a cmp
+<a name="line65"></a>  val bool_compare : bool cmp
+<a name="line66"></a>  val list_compare : 'a cmp -&gt; 'a list cmp
+<a name="line67"></a>  val option_compare : 'a cmp -&gt; 'a option cmp
+<a name="line68"></a>  val pair_compare : ('a cmp * 'b cmp) -&gt; ('a * 'b) cmp
+<a name="line69"></a>  val measure_cmp : ('a -&gt; int) -&gt; 'a cmp
+<a name="line70"></a>  val inv_img_cmp : ('b -&gt; 'a) -&gt; 'a cmp -&gt; 'b cmp
+<a name="line71"></a>  val lex_cmp : ('b cmp * 'c cmp) -&gt; (('a -&gt; 'b) * ('a -&gt; 'c)) -&gt; 'a cmp
+<a name="line72"></a>
+<a name="line73"></a>  val for : int -&gt; int -&gt; (int -&gt; 'a) -&gt; 'a list
+<a name="line74"></a>  val for_se : int -&gt; int -&gt; (int -&gt; unit) -&gt; unit
+<a name="line75"></a>
+<a name="line76"></a>  val assoc1 : ''a -&gt; (''a * 'b) list -&gt; (''a * 'b) option
+<a name="line77"></a>  val assoc2 : ''a -&gt; ('b * ''a) list -&gt; ('b * ''a) option
+<a name="line78"></a>
+<a name="line79"></a>  val sort : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a list
+<a name="line80"></a>  val int_sort : int list -&gt; int list
+<a name="line81"></a>  val vector_topsort : int list vector -&gt; int list
+<a name="line82"></a>
+<a name="line83"></a>  type ('a, 'b) subst = {redex: 'a, residue: 'b} list
+<a name="line84"></a>  val subst_assoc : ('a -&gt; bool) -&gt; ('a, 'b)subst -&gt; 'b option
+<a name="line85"></a>  val |-> : ('a * 'b) -&gt; {redex: 'a, residue: 'b}
+<a name="line86"></a>
+<a name="line87"></a>  val mem : ''a -&gt; ''a list -&gt; bool
+<a name="line88"></a>  val insert : ''a -&gt; ''a list -&gt; ''a list
+<a name="line89"></a>  val mk_set : ''a list -&gt; ''a list
+<a name="line90"></a>  val union : ''a list -&gt; ''a list -&gt; ''a list
+<a name="line91"></a>  val U : ''a list list -&gt; ''a list
+<a name="line92"></a>  val set_diff : ''a list -&gt; ''a list -&gt; ''a list
+<a name="line93"></a>  val subtract : ''a list -&gt; ''a list -&gt; ''a list
+<a name="line94"></a>  val intersect : ''a list -&gt; ''a list -&gt; ''a list
+<a name="line95"></a>  val null_intersection : ''a list -&gt; ''a list -&gt; bool
+<a name="line96"></a>  val set_eq : ''a list -&gt; ''a list -&gt; bool
+<a name="line97"></a>
+<a name="line98"></a>  type 'a eqf = 'a -&gt; 'a -&gt; bool
+<a name="line99"></a>  val pair_eq : 'a eqf -&gt; 'b eqf -&gt; ('a * 'b) eqf
+<a name="line100"></a>  val option_eq : 'a eqf -&gt; 'a option eqf
+<a name="line101"></a>  val list_eq : 'a eqf -&gt; 'a list eqf
+<a name="line102"></a>  val redres_eq : 'a eqf -&gt; 'b eqf -&gt; {redex:'a,residue:'b} eqf
+<a name="line103"></a>
+<a name="line104"></a>  val op_assoc1 : 'a eqf -&gt; 'a -&gt; ('a * 'b) list -&gt; 'b option
+<a name="line105"></a>  val op_mem : ('a -&gt; 'a -&gt; bool) -&gt; 'a -&gt; 'a list -&gt; bool
+<a name="line106"></a>  val op_insert : ('a -&gt; 'a -&gt; bool) -&gt; 'a -&gt; 'a list -&gt; 'a list
+<a name="line107"></a>  val op_mk_set : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a list
+<a name="line108"></a>  val op_union : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a list -&gt; 'a list
+<a name="line109"></a>  val op_U : ('a -&gt; 'a -&gt; bool) -&gt; 'a list list -&gt; 'a list
+<a name="line110"></a>  val op_intersect : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a list -&gt; 'a list
+<a name="line111"></a>  val op_set_diff : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a list -&gt; 'a list
+<a name="line112"></a>
+<a name="line113"></a>  val int_to_string : int -&gt; string
+<a name="line114"></a>  val quote : string -&gt; string
+<a name="line115"></a>  val mlquote : string -&gt; string
+<a name="line116"></a>  val is_substring : string -&gt; string -&gt; bool
+<a name="line117"></a>  val prime : string -&gt; string
+<a name="line118"></a>  val commafy : string list -&gt; string list
+<a name="line119"></a>  val words2 : string -&gt; string -&gt; string list
+<a name="line120"></a>  val str_all : (char -&gt; bool) -&gt; string -&gt; bool
+<a name="line121"></a>
+<a name="line122"></a>  val hash : int -&gt; string -&gt; int * int -&gt; int
+<a name="line123"></a>
+<a name="line124"></a>  val with_flag : 'a ref * 'a -&gt; ('b -&gt; 'c) -&gt; 'b -&gt; 'c
+<a name="line125"></a>
+<a name="line126"></a>  type ('a, 'b) istream
+<a name="line127"></a>  val mk_istream : ('a -&gt; 'a) -&gt; 'a -&gt; ('a -&gt; 'b) -&gt; ('a, 'b) istream
+<a name="line128"></a>  val next : ('a, 'b) istream -&gt; ('a, 'b) istream
+<a name="line129"></a>  val state : ('a, 'b) istream -&gt; 'b
+<a name="line130"></a>  val reset : ('a, 'b) istream -&gt; ('a, 'b) istream
+<a name="line131"></a>
+<a name="line132"></a>  datatype 'a delta = SAME | DIFF of 'a
+<a name="line133"></a>  val delta_apply : ('a -&gt; 'a delta) -&gt; 'a -&gt; 'a
+<a name="line134"></a>  val delta_map : ('a -&gt; 'a delta) -&gt; 'a list -&gt; 'a list delta
+<a name="line135"></a>  val delta_pair :
+<a name="line136"></a>    ('a -&gt; 'a delta) -&gt; ('b -&gt; 'b delta) -&gt; 'a * 'b -&gt; ('a * 'b) delta
+<a name="line137"></a>
+<a name="line138"></a>  val deinitcomment : string -&gt; string
+<a name="line139"></a>  val deinitcommentss : substring -&gt; substring
+<a name="line140"></a>
+<a name="line141"></a>  datatype ('a, 'b) verdict = PASS of 'a | FAIL of 'b
+<a name="line142"></a>  val verdict : ('a -&gt; 'b) -&gt; ('a -&gt; 'c) -&gt; 'a -&gt; ('b, 'c * exn)verdict
+<a name="line143"></a>  val ?> : ('a, 'c)verdict * ('a -&gt; ('b, 'c)verdict) -&gt; ('b, 'c)verdict
+<a name="line144"></a>
+<a name="line145"></a>  type time      = Time.time
+<a name="line146"></a>  type instream  = TextIO.instream
+<a name="line147"></a>  type outstream = TextIO.outstream
+<a name="line148"></a>
+<a name="line149"></a>  datatype frag = datatype HOLPP.frag
+<a name="line150"></a>  datatype break_style = datatype HOLPP.break_style
+<a name="line151"></a>  val with_ppstream : OldPP.ppstream
+<a name="line152"></a>                       -&gt; {add_break      : int * int -&gt; unit,
+<a name="line153"></a>                           add_newline    : unit -&gt; unit,
+<a name="line154"></a>                           add_string     : string -&gt; unit,
+<a name="line155"></a>                           begin_block    : HOLPP.break_style -&gt; int -&gt; unit,
+<a name="line156"></a>                           clear_ppstream : unit -&gt; unit,
+<a name="line157"></a>                           end_block      : unit -&gt; unit,
+<a name="line158"></a>                           flush_ppstream : unit -&gt; unit}
+<a name="line159"></a>
+<a name="line160"></a>  val dec: int ref -&gt; unit
+<a name="line161"></a>  val inc: int ref -&gt; unit
+<a name="line162"></a>
+<a name="line163"></a>  val pull_prefix : ('a -&gt; bool) list -&gt; 'a list -&gt; 'a list
+<a name="line164"></a>
+<a name="line165"></a>  val explode: string -&gt; string list
+<a name="line166"></a>  val implode: string list -&gt; string
+<a name="line167"></a>  val ordof: string * int -&gt; int
+<a name="line168"></a>  val replace_string : {from:string,to:string} -&gt; string -&gt; string
+<a name="line169"></a>
+<a name="line170"></a>  val time_eq: time -&gt; time -&gt; bool
+<a name="line171"></a>  val timestamp: unit -&gt; time
+<a name="line172"></a>  val mk_time: {sec : Arbnum.num, usec : Arbnum.num} -&gt; time
+<a name="line173"></a>  val time_to_string: time -&gt; string
+<a name="line174"></a>  val dest_time: time -&gt; {sec : Arbnum.num, usec : Arbnum.num}
+<a name="line175"></a>  val time_lt: time -&gt; time -&gt; bool
+<a name="line176"></a>  val time_max : time * time -&gt; time
+<a name="line177"></a>  val time_maxl : time list -&gt; time
+<a name="line178"></a>  val time : ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line179"></a>
+<a name="line180"></a>  val getEnv: string -&gt; string option
+<a name="line181"></a>  val getArgs: unit -&gt; string list
+<a name="line182"></a>  val argv: unit -&gt; string list
+<a name="line183"></a>  val system: string -&gt; int
+<a name="line184"></a>  val cd: string -&gt; unit
+<a name="line185"></a>  val pwd: unit -&gt; string
+<a name="line186"></a>  val listDir: string -&gt; string list
+<a name="line187"></a>  val exit: unit -&gt; 'a
+<a name="line188"></a>
+<a name="line189"></a>  val pointer_eq : 'a * 'a -&gt; bool
+<a name="line190"></a>  val ref_to_int : 'a ref -&gt; int
+<a name="line191"></a>
+<a name="line192"></a>  val end_of_stream: instream -&gt; bool
+<a name="line193"></a>  val flush_out: outstream -&gt; unit
+<a name="line194"></a>  val stdin   : instream
+<a name="line195"></a>  val std_out : outstream
+<a name="line196"></a>  val close_out: outstream -&gt; unit
+<a name="line197"></a>  val output: outstream * string -&gt; unit
+<a name="line198"></a>  val close_in: instream -&gt; unit
+<a name="line199"></a>  val open_out: string -&gt; outstream
+<a name="line200"></a>  val outputc: outstream -&gt; string -&gt; unit
+<a name="line201"></a>  val input_line: instream -&gt; string
+<a name="line202"></a>  val open_in : string -&gt; instream
+<a name="line203"></a>  exception Io of string
+<a name="line204"></a>
+<a name="line205"></a>  exception Mod
+<a name="line206"></a>  exception Div
+<a name="line207"></a>  exception Interrupt
+<a name="line208"></a>
+<a name="line209"></a>  type 'a quotation = 'a HOLPP.quotation
+<a name="line210"></a>  val <a href="../../Docfiles/HTML/Portable.pprint.html">pprint</a> : 'a HOLPP.pprinter -&gt; 'a -&gt; unit
+<a name="line211"></a>  val norm_quote : 'a quotation -&gt; 'a quotation
+<a name="line212"></a>  val quote_to_string : ('a -&gt; string) -&gt; 'a quotation -&gt; string
+<a name="line213"></a>  val quote_to_string_list : string quotation -&gt; string list
+<a name="line214"></a>
+<a name="line215"></a>  val catch_SIGINT : unit -&gt; unit
+<a name="line216"></a>  val md5sum : string -&gt; string
+<a name="line217"></a>
+<a name="line218"></a>  structure HOLSusp : sig
+<a name="line219"></a>    type 'a susp
+<a name="line220"></a>    val delay : (unit -&gt; 'a) -&gt; 'a susp
+<a name="line221"></a>    val force : 'a susp -&gt; 'a
+<a name="line222"></a>  end
+<a name="line223"></a>end
+<a name="line224"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/Portable.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

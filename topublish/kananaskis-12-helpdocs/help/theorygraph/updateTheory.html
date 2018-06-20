@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: update</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "update"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "sortingTheory.html"><span class="strong">sorting</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">FIND</span>
+    <td>
+    :(α -> bool) -> α list -> α option
+    <tr><td>
+    <span class="strong">LIST_UPDATE</span>
+    <td>
+    :(α, β) alist -> (α -> β) -> α -> β
+    <tr><td>
+    <span class="strong">OVERRIDE</span>
+    <td>
+    :(α, β) alist -> (α, β) alist
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">FIND_def</span>
+<DD>
+<pre>
+⊢ (∀P. FIND P [] = NONE) ∧
+  ∀P h t. FIND P (h::t) = if P h then SOME h else FIND P t
+</pre>
+
+<DT><span class="strong">OVERRIDE_primitive_def</span>
+<DD>
+<pre>
+⊢ OVERRIDE =
+  WFREC (@R. WF R ∧ ∀t x. R (FILTER (λy. FST x ≠ FST y) t) (x::t))
+    (λOVERRIDE a.
+         case a of
+           [] => I []
+         | x::t => I (x::OVERRIDE (FILTER (λy. FST x ≠ FST y) t)))
+</pre>
+
+<DT><span class="strong">LIST_UPDATE_def</span>
+<DD>
+<pre>
+⊢ LIST_UPDATE [] = I ∧
+  ∀h t. LIST_UPDATE (h::t) = (FST h =+ SND h) ∘ LIST_UPDATE t
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">OVERRIDE_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P [] ∧ (∀x t. P (FILTER (λy. FST x ≠ FST y) t) ⇒ P (x::t)) ⇒ ∀v. P v
+</pre>
+
+<DT><span class="strong">OVERRIDE_def</span>
+<DD>
+<pre>
+⊢ OVERRIDE [] = [] ∧
+  ∀x t. OVERRIDE (x::t) = x::OVERRIDE (FILTER (λy. FST x ≠ FST y) t)
+</pre>
+
+<DT><span class="strong">LIST_UPDATE_LOOKUP</span>
+<DD>
+<pre>
+⊢ ∀l f i.
+      LIST_UPDATE l f i =
+      case FIND (λx. FST x = i) l of NONE => f i | SOME (v1,e) => e
+</pre>
+
+<DT><span class="strong">LIST_UPDATE_OVERRIDE</span>
+<DD>
+<pre>
+⊢ ∀l. LIST_UPDATE l = LIST_UPDATE (OVERRIDE l)
+</pre>
+
+<DT><span class="strong">LIST_UPDATE_ALL_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀l1 l2.
+      ALL_DISTINCT (MAP FST l2) ∧ PERM l1 l2 ⇒ LIST_UPDATE l1 = LIST_UPDATE l2
+</pre>
+
+<DT><span class="strong">LIST_UPDATE_SORT_OVERRIDE</span>
+<DD>
+<pre>
+⊢ ∀R l. LIST_UPDATE l = LIST_UPDATE (QSORT R (OVERRIDE l))
+</pre>
+
+<DT><span class="strong">LIST_UPDATE_THMS</span>
+<DD>
+<pre>
+⊢ ((∀l1 l2 r1 r2. (l1 =+ r1) ∘ (l2 =+ r2) = LIST_UPDATE [(l1,r1); (l2,r2)]) ∧
+   (∀l r t. (l =+ r) ∘ LIST_UPDATE t = LIST_UPDATE ((l,r)::t)) ∧
+   (∀l1 l2 r1 r2 f.
+        (l1 =+ r1) ((l2 =+ r2) f) = LIST_UPDATE [(l1,r1); (l2,r2)] f) ∧
+   ∀l r t f. (l =+ r) (LIST_UPDATE t f) = LIST_UPDATE ((l,r)::t) f) ∧
+  (∀l1 l2. LIST_UPDATE l1 ∘ LIST_UPDATE l2 = LIST_UPDATE (l1 ++ l2)) ∧
+  (∀l1 l2 r. LIST_UPDATE l1 ∘ (l2 =+ r) = LIST_UPDATE (SNOC (l2,r) l1)) ∧
+  (∀l1 l2 f. LIST_UPDATE l1 (LIST_UPDATE l2 f) = LIST_UPDATE (l1 ++ l2) f) ∧
+  ∀l1 l2 r f. LIST_UPDATE l1 ((l2 =+ r) f) = LIST_UPDATE (SNOC (l2,r) l1) f
+</pre>
+
+<DT><span class="strong">APPLY_UPDATE_ID</span>
+<DD>
+<pre>
+⊢ ∀f a. (a =+ f a) f = f
+</pre>
+
+<DT><span class="strong">APPLY_UPDATE_THM</span>
+<DD>
+<pre>
+⊢ ∀f a b c. (a =+ b) f c = if a = c then b else f c
+</pre>
+
+<DT><span class="strong">SAME_KEY_UPDATE_DIFFER</span>
+<DD>
+<pre>
+⊢ ∀f1 f2 a b c. b ≠ c ⇒ (a =+ b) f ≠ (a =+ c) f
+</pre>
+
+<DT><span class="strong">UPDATE_APPLY_ID</span>
+<DD>
+<pre>
+⊢ ∀f a b. f a = b ⇔ (a =+ b) f = f
+</pre>
+
+<DT><span class="strong">UPDATE_APPLY_IMP_ID</span>
+<DD>
+<pre>
+⊢ ∀f b a. f a = b ⇒ (a =+ b) f = f
+</pre>
+
+<DT><span class="strong">UPDATE_COMMUTES</span>
+<DD>
+<pre>
+⊢ ∀f a b c d. a ≠ b ⇒ (a =+ c) ((b =+ d) f) = (b =+ d) ((a =+ c) f)
+</pre>
+
+<DT><span class="strong">UPDATE_EQ</span>
+<DD>
+<pre>
+⊢ ∀f a b c. (a =+ c) ((a =+ b) f) = (a =+ c) f
+</pre>
+
+<DT><span class="strong">UPDATE_def</span>
+<DD>
+<pre>
+⊢ ∀a b. (a =+ b) = (λf c. if a = c then b else f c)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

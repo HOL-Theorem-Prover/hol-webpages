@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Release notes for HOL4, Kananaskis-12</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="index.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Release notes for HOL4, Kananaskis-12</h1>
+</header>
+<!-- search and replace ?????? strings corresponding to release name -->
+<!-- indent code within bulleted lists to column 11 -->
+<p>(Released: 20 June 2018)</p>
+<p>We are pleased to announce the Kananaskis-12 release of HOL 4.</p>
+<p>We would like to dedicate this release to the memory of Mike Gordon (1948–2017), HOL’s first developer and the leader of the research group to which many of us were attached at various stages of our careers.</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><a href="#new-features">New features</a></li>
+<li><a href="#bugs-fixed">Bugs fixed</a></li>
+<li><a href="#new-theories">New theories</a></li>
+<li><a href="#new-tools">New tools</a></li>
+<li><a href="#new-examples">New Examples</a></li>
+<li><a href="#incompatibilities">Incompatibilities</a></li>
+</ul>
+<h2 id="new-features">New features:</h2>
+<ul>
+<li><p><code>Holmake</code> under Poly/ML (<em>i.e.</em>, for the moment only Unix-like systems (including OSX/MacOS, and Windows with Cygwin or the Linux subsystem)) now runs build scripts concurrently when targets do not depend on each other. The degree of parallelisation depends on the <code>-j</code> flag, and is set to 4 by default. Output from the build processes is logged into a <code>.hollogs</code> sub-directory rather than interleaved randomly to standard out.</p></li>
+<li><p>Theory files generated from script files now load faster. The machinery enabling this generates <code>xTheory.dat</code> files alongside <code>xTheory.sig</code> and <code>xTheory.sml</code> files. Thanks to Thibault Gauthier for the work implementing this.</p></li>
+<li><p>We now support monadic syntax with a <code>do</code>-notation inspired by Haskell’s. For example, the <code>mapM</code> function might be defined:</p>
+<pre><code>   Define‘(mapM f [] = return []) ∧
+          (mapM f (x::xs) =
+                 do
+                   y &lt;- f x;
+                   ys &lt;- mapM f xs;
+                   return (y::ys);
+                 od)’;</code></pre>
+<p>The HOL type system cannot support this definition in its full polymorphic generality. In particular, the above definition will actually be made with respect to a specific monad instance (list, option, state, reader, <em>etc</em>). There are API entry-points for declaring and enabling monads in the <code>monadsyntax</code> module. For more details see the <em>DESCRIPTION</em> manual.</p></li>
+<li><p>Users can define their own colours for printing types, and free and bound variables when printing to ANSI terminals by using the <code>PPBackEnd.ansi_terminal</code> backend. (The default behaviour on what is called the <code>vt100_terminal</code> is to have free variables blue, bound variables green, type variables purple and type operators “blue-green”.) Thanks to Adam Nelson for this feature. Configuring colours under <code>emacs</code> is done within <code>emacs</code> by configuring faces such as <code>hol-bound-variable</code>.</p></li>
+<li><p>We now support the infix <code>$</code> notation for function application from Haskell. For example</p>
+<pre><code>   f $ g x $ h y</code></pre>
+<p>is a low-parenthesis way of writing <code>f (g x (h y))</code>. The dollar-operator is a low-precedence (tighter than infix <code>,</code> but looser than other standard operators), right-associative infix. This is a “parse-only technology”; the pretty-printer will always use the “traditional” syntax with parentheses as necessary and what might be viewed as an invisible infix application operator.</p></li>
+</ul>
+<h2 id="bugs-fixed">Bugs fixed:</h2>
+<ul>
+<li><p>Pretty-printing of record type declarations to TeX now works even if there are multiple types with the same name (necessarily from different theory segments) in the overall theory.</p></li>
+<li><p>Pretty-printing has changed to better mesh with Poly/ML’s native printing, meaning that HOL values embedded in other values (<em>e.g.</em>, lists, records) should print better.</p></li>
+</ul>
+<h2 id="new-theories">New theories:</h2>
+<ul>
+<li>We have promoted the theories of cardinality results for various flavours of infinite sets, and of ordinal numbers to <code>src</code> from <code>examples</code>. There is a minor backwards-incompatibility: references to <code>examples/set-theory/hol_sets</code> (in Holmakefile <code>INCLUDES</code> specifications for example) should simply be deleted. Any theory can build on these theories (<code>cardinalTheory</code>, <code>ordinalTheory</code>) simply by <code>open</code>-ing them in the relevant script file.</li>
+</ul>
+<h2 id="new-tools">New tools:</h2>
+<ul>
+<li><p>For every algebraic type, the <code>TypeBase</code> now automatically proves what we term “case-equality” rewrite theorems that have LHSes of the form</p>
+<pre><code>  ((case x of con1_pattern =&gt; e1 | con2_pattern =&gt; e2 ...) = v)</code></pre>
+<p>For example, the case-equality theorem for the <code>α option</code> type is</p>
+<pre><code>  (option_CASE opt nc sc = v) ⇔
+     (opt = NONE) ∧ (nc = v) ∨
+     ∃x. (opt = SOME x) ∧ (sc x = v)</code></pre>
+<p>where <code>option_CASE opt nc sc</code> is the general form of the term that underlies a case expression over an option value <code>opt</code>.</p>
+<p>These theorems can be powerful aids in simplifications (imagine for example that <code>v</code> is <code>T</code> and <code>nc</code> is <code>F</code>), so we have made it easy to include them in arguments to <code>simp</code>, <code>fs</code>, <code>rw</code> <em>etc</em>. The <code>CaseEq</code> function takes a string and returns the corresponding theorem, so that <code>CaseEq &quot;option&quot;</code> will return the theorem above. The <code>CaseEqs</code> function takes a list of strings so that the simplifier-argument list doesn’t need to repeat <code>CaseEq</code> invocations, and finally, <code>AllCaseEqs()</code> returns a conjunction of all the <code>TypeBase</code>’s case-equality theorems. Then one might write something like</p>
+<pre><code>   simp[AllCaseEqs(), thm1, thm2]</code></pre>
+<p>for example.</p></li>
+</ul>
+<h2 id="new-examples">New examples:</h2>
+<ul>
+<li><p>We have resurrected Monica Nesi’s CCS example (from the days of HOL88, in <code>examples/CCS</code>), ported and extended by Chun Tian (based on HOL4’s co-induction package <code>Hol_coreln</code>). This includes all classical results of strong/weak bisimilarities and observation congruence, the theory of congruence for CCS, several versions of “bisimulation up to”, “coarsest congruence contained in weak bisimilarity”, and “unique solution of equations” theorems, mainly from Robin Milner’s book, and Davide Sangiorgi’s “unique solutions of contractions” theorem published in 2017. There’s also a decision procedure written in SML for computing CCS transitions with the result automatically proved.</p></li>
+<li><p>Speaking of HOL88, we have also recovered an old hardware example. This work is the verification of a version of a “toy microprocessor” that came to be called <em>Tamarack</em> (see Section 5 of the <a href="https://www.cl.cam.ac.uk/archive/mjcg/papers/HolHistory.pdf">HOL history paper</a>). First done in a system called <code>LCF_LSM</code> by Mike Gordon (around 1983), this was then redone in HOL88 by Jeff Joyce in 1989, and these sources are now ported and available under <code>examples/hardware</code>. Thanks to Larry Paulson for finding the HOL88 originals, and to Ramana Kumar and Thomas Tuerk for doing the work porting these to HOL4.</p></li>
+<li><p>A theory of the basic syntax and semantics of Linear Temporal Logic formulas, along with a verified translation of such formulas into Generalised Büchi Automata <em>via</em> alternating automata (in <code>examples/logic/ltl</code>). This work is by Simon Jantsch.</p></li>
+<li><p>A theory of Lambek calculus (categorial grammars of natural or formal languages), in <code>examples/formal-languages/lambek</code>. Ported from <a href="https://github.com/coq-contribs/lambek">Coq contribs</a> by Chun Tian. c.f. &quot;The Logic of Categorial Grammars&quot; by Richard Moot and Christian Retoré.</p></li>
+<li><p>A library for regular expressions (<code>examples/formal-languages/regular</code>), including a compiler from regexps to table-driven DFAs. Proofs include standard regexp identities along with the correctness of the compiler. Also, there is a standalone tool <code>regexp2dfa</code> that generates DFAs in a variety of languages. The library also supplies (informal and formal) parsers for regexps in Python syntax. See the README for more details.</p></li>
+</ul>
+<h2 id="incompatibilities">Incompatibilities:</h2>
+<ul>
+<li><p>We have decided that the behaviour of <code>irule</code> (<em>aka</em> <code>IRULE_TAC</code>) should not include the finishing <code>rpt conj_tac</code>. If users want that after the implicational theorem has been matched against, it is easy enough to add. See the <a href="https://github.com/HOL-Theorem-Prover/HOL/issues/465">Github issue</a>.</p></li>
+<li><p>The behaviour of the <code>by</code> and <code>suffices_by</code> tactics has changed. Previously, a tactic of the form <code>`term quotation` by tac</code> allowed <code>tac</code> to fail to prove the sub-goal of the term quotation. (The result would then be two or more sub-goals, where the first few of these correspond to the state of trying to prove the term quotation after applying <code>tac</code>.) This is no longer the case: if <code>tac</code> does not prove the new sub-goal then the overall tactic fails.</p>
+<p>The old implementation of <code>by</code> is available under the name <code>BasicProvers.byA</code>, so it is possible to revert to the old behaviour with the following declaration at the head of one’s script file:</p>
+<pre><code>   val op by = BasicProvers.byA</code></pre>
+<p>If one wanted to fix possibly broken occurrences to use the new semantics, the following Perl script might be helpful (it was used to adjust the core HOL sources):</p>
+<pre><code>   $/ = &quot;\n\n&quot;;
+
+   while (&lt;&gt;) {
+       s/(`[^`]+`)(\s*)by(\s*)(ALL_TAC|all_tac)(\s*)(&gt;-|THEN1)/\1 by/g;
+       s/(Tactical\.)?REVERSE(\s*)\((`[^`]+`)(\s*)by(\s*)(ALL_TAC|all_tac)(\s*)\)(\s*)(THEN1|&gt;-)(\s*)\(/\3 suffices_by\8(STRIP_TAC THEN /g;
+       s/(Tactical\.)?REVERSE(\s*)\((`[^`]+`)(\s*)by(\s*)(ALL_TAC|all_tac)(\s*)\)(\s*)(THEN1|&gt;-)(\s*)/\3 suffices_by /g;
+       s/(`[^`]+`)(\s*)by(\s*)(ALL_TAC|all_tac)(\s*)/sg \1\5/g;
+       print;
+   }</code></pre>
+<p>If the above is called <code>byfix.pl</code> (for example), then a reasonable invocation would be</p>
+<pre><code>   perl -i byfix.pl *Script.sml</code></pre>
+<p>If one’s workflow was to write things like</p>
+<pre><code>   `subgoal` by ALL_TAC THEN1 (tac1 THEN tac2 THEN ...)</code></pre>
+<p>and the same workflow makes</p>
+<pre><code>   `subgoal` by (tac1 THEN tac2 THEN ...)</code></pre>
+<p>difficult (perhaps because the flow calls for cutting and pasting the <code>... by ALL_TAC</code> sub-string), we recommend</p>
+<pre><code>   sg `subgoal` THEN1 (tac1 THEN tac2 THEN ...)</code></pre>
+<p>where <code>sg `subgoal`</code> has the same effect as the old <code>`subgoal` by ALL_TAC</code>.</p></li>
+<li><p>The type of the “system printer” used by user-defined pretty-printers to pass control back to the default printer has changed. This function now gets passed an additional parameter corresponding to whether or not the default printer should treat the term to be printed as if it were in a binding position or not. (This <code>binderp</code> parameter is in addition to the parameters indicating the “depth” of the printing, and the precedence gravities.) See the <em>REFERENCE</em> manual for more details.</p></li>
+<li><p>The <code>PAT_ASSUM</code> tactics (<code>Tactical.PAT_ASSUM</code>, <code>Q.PAT_ASSUM</code> and <code>bossLib.qpat_assum</code>) have all been renamed to pick up an internal <code>_X_</code> (or <code>_x_</code>). Thus, the first becomes <code>PAT_X_ASSUM</code>, and the last becomes <code>qpat_x_assum</code>). This makes the names consistent with other theorem-tactics (<em>e.g.</em>, <code>first_x_assum</code>): the <code>X</code> (or <code>x</code>) indicates that the matching assumption is removed from the assumption list. Using the old names, we also now have versions that <em>don’t</em> remove the theorems from the assumption list.</p>
+<p>The behaviour of the quoting versions of the tactics is also slightly different: they will always respect names that occur both in the pattern and in the goal. Again, this is for consistency with similar functions such as <code>qspec_then</code>. This means, for example, that <code>qpat_assum `a &lt; b`</code> will fail if the actual theorem being matched is something <code>c &lt; f a</code>. (This is because the pattern and the goal share the name <code>a</code>, so that the pattern is implicitly requiring the first argument to <code>&lt;</code> to be exactly <code>a</code>, which is not the case.) This example would have previously worked if there was exactly one assumption with <code>&lt;</code>. The fix in cases like this is to use more underscores in one’s patterns.</p></li>
+<li><p>The functions <code>Parse.Unicode.uoverload_on</code> and <code>Parse.Unicode.uset_fixity</code> have been removed because their functionality should be accessed <em>via</em> the standard <code>overload_on</code> and <code>set_fixity</code> functions. The “temporary” versions of these functions (<em>e.g.</em>, <code>Parse.Unicode.temp_uoverload_on</code>) have also been removed, analogously. The <code>Parse.Unicode.unicode_version</code> function remains, as does its temporary counterpart.</p></li>
+<li><p>The simpset fragment <code>MOD_ss</code> has been added to the standard stateful simpset. This fragment does smart things with terms involving (natural number) <code>MOD</code>, allowing, for example, something like <code>((7 + y) * 100 + 5 * (z MOD 6)) MOD 6</code> to simplify to <code>((1 + y) * 4 + 5 * z) MOD 6</code>. If this breaks existing proofs in a script file, the fragment can be removed (for the rest of the execution of the script) with the command</p>
+<pre><code>   val _ = diminish_srw_ss [&quot;MOD_ss&quot;]</code></pre></li>
+<li><p>The rewrites <code>listTheory.TAKE_def</code> and <code>listTheory.DROP_def</code> have been removed from the standard stateful simpset. These rewrites introduce conditional expressions that are often painful to work with. Other more specific rewrites have been added to the simpset in their place. If the old behaviour is desired in a script file, the following will restore it</p>
+<pre><code>   val _ = augment_srw_ss
+            [rewrites [listTheory.DROP_def, listTheory.TAKE_def]]</code></pre></li>
+<li><p>The rewrite that takes <code>LENGTH l = 0</code> to <code>l = []</code> (as well as that which does the same thing to <code>0 = LENGTH l</code>) is now an automatic simplification in <code>srw_ss</code>.</p></li>
+<li><p>The command-line options to the <code>build</code> tool have changed in some of their details. The standard usage by most users, which is to simply type <code>build</code> with no options at all, behaves as it did previously. For details on the options that are now handled, see the output of <code>build -h</code>.</p></li>
+<li><p>The associativity and precedence level of the finite-map composition operators (of which there are three: <code>f_o_f</code>, <code>f_o</code> and <code>o_f</code>) have been changed to match that of normal function composition (infix <code>o</code>, or <code>∘</code>), which is a right-associative infix at precedence level 800. This level is tighter than exponentiation, multiplication and addition. This also matches the syntactic details for relation composition (which is written <code>O</code>, or <code>∘ᵣ</code>). If this causes problems within a script file, the old behaviour can be restored with, for example:</p>
+<pre><code>   val _ = set_fixity &quot;o_f&quot; (Infixl 500)</code></pre>
+<p>This call will change the grammar used in all descendant theories as well; if the change is wanted only for the current script, use <code>temp_set_fixity</code> instead.</p></li>
+<li><p>The tactic <code>ID_EX_TAC</code> has been moved from module <code>Q</code> to <code>Tactic</code>.</p></li>
+<li><p>The tactic <code>Q.GENL</code> now processes its list of arguments (corresponding to variable names) in the same way as <code>GENL</code>. If one writes <code>Q.GENL [`a`, `b`, `c`] th</code>, the result will be a theorem with conclusion <code>!a b c. &lt;concl-of-th&gt;</code>, rather than <code>!c b a. &lt;concl-of-th&gt;</code>.</p></li>
+<li><p>The constant <code>words$word_sdiv</code> has been renamed to <code>words$word_quot</code> and <code>words$word_srem</code> has been renamed to <code>words$word_rem</code>. The constant <code>words$word_smod</code> has been moved to <code>integer_word$word_smod</code> and has been given a simpler definition. (There is also a new constant <code>integer_word$word_sdiv</code> whose definition differs from the old <code>words$word_sdiv</code>.)</p></li>
+<li><p>The <code>--</code> function for doing term-parsing (typically written as, <em>e.g.</em>, <code>(--`p /\ q`--)</code>) has been removed so that the <code>--</code> name can be used as an infix set-difference operator. We have long preferred either <code>Term`p /\ q`</code>, or <code>``p /\ q``</code>, or <code>“p /\ q”</code> for invoking the term-parser.</p></li>
+</ul>
+<hr />
+<div class="footer">
+<p><em><a href="http://hol-theorem-prover.org">HOL4, Kananaskis-12</a></em></p>
+<p><a href="kananaskis-11.release.html">Release notes for the previous version</a></p>
+</div>
+</body>
+</html>

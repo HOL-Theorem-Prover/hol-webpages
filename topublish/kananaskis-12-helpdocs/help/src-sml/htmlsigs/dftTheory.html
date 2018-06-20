@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure dftTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure dftTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/search/dftScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature dftTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#Rel_def-val">Rel_def</a> : thm
+<a name="line7"></a>  
+<a name="line8"></a>  (*  Theorems  *)
+<a name="line9"></a>    val <a href="#DFT_ALL_DISTINCT-val">DFT_ALL_DISTINCT</a> : thm
+<a name="line10"></a>    val <a href="#DFT_CONS-val">DFT_CONS</a> : thm
+<a name="line11"></a>    val <a href="#DFT_FOLD-val">DFT_FOLD</a> : thm
+<a name="line12"></a>    val <a href="#DFT_REACH_1-val">DFT_REACH_1</a> : thm
+<a name="line13"></a>    val <a href="#DFT_REACH_2-val">DFT_REACH_2</a> : thm
+<a name="line14"></a>    val <a href="#DFT_REACH_THM-val">DFT_REACH_THM</a> : thm
+<a name="line15"></a>    val <a href="#DFT_def-val">DFT_def</a> : thm
+<a name="line16"></a>    val <a href="#DFT_ind-val">DFT_ind</a> : thm
+<a name="line17"></a>  
+<a name="line18"></a>  val dft_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line19"></a>(*
+   [dirGraph] Parent theory of "dft"
+   
+   [<a name="Rel_def-val"><b>Rel_def</b></a>]  Definition
+      
+      ⊢ ∀G f seen to_visit acc.
+            Rel (G,f,seen,to_visit,acc) =
+            (CARD (Parents G DIFF set seen),LENGTH to_visit)
+   
+   [<a name="DFT_ALL_DISTINCT-val"><b>DFT_ALL_DISTINCT</b></a>]  Theorem
+      
+      ⊢ ∀G seen to_visit.
+            FINITE (Parents G) ⇒ ALL_DISTINCT (DFT G CONS seen to_visit [])
+   
+   [<a name="DFT_CONS-val"><b>DFT_CONS</b></a>]  Theorem
+      
+      ⊢ ∀G f seen to_visit acc a b.
+            FINITE (Parents G) ∧ (f = CONS) ∧ (acc = a ⧺ b) ⇒
+            (DFT G f seen to_visit acc = DFT G f seen to_visit a ⧺ b)
+   
+   [<a name="DFT_FOLD-val"><b>DFT_FOLD</b></a>]  Theorem
+      
+      ⊢ ∀G f seen to_visit acc.
+            FINITE (Parents G) ⇒
+            (DFT G f seen to_visit acc =
+             FOLDR f acc (DFT G CONS seen to_visit []))
+   
+   [<a name="DFT_REACH_1-val"><b>DFT_REACH_1</b></a>]  Theorem
+      
+      ⊢ ∀G f seen to_visit acc.
+            FINITE (Parents G) ∧ (f = CONS) ⇒
+            ∀x.
+                MEM x (DFT G f seen to_visit acc) ⇒
+                x ∈ REACH_LIST G to_visit ∨ MEM x acc
+   
+   [<a name="DFT_REACH_2-val"><b>DFT_REACH_2</b></a>]  Theorem
+      
+      ⊢ ∀G f seen to_visit acc x.
+            FINITE (Parents G) ∧ (f = CONS) ∧
+            x ∈ REACH_LIST (EXCLUDE G (set seen)) to_visit ∧ ¬MEM x seen ⇒
+            MEM x (DFT G f seen to_visit acc)
+   
+   [<a name="DFT_REACH_THM-val"><b>DFT_REACH_THM</b></a>]  Theorem
+      
+      ⊢ ∀G to_visit.
+            FINITE (Parents G) ⇒
+            ∀x.
+                x ∈ REACH_LIST G to_visit ⇔
+                MEM x (DFT G CONS [] to_visit [])
+   
+   [<a name="DFT_def-val"><b>DFT_def</b></a>]  Theorem
+      
+      ⊢ FINITE (Parents G) ⇒
+        (DFT G f seen [] acc = acc) ∧
+        (DFT G f seen (visit_now::visit_later) acc =
+         if MEM visit_now seen then DFT G f seen visit_later acc
+         else
+           DFT G f (visit_now::seen) (G visit_now ⧺ visit_later)
+             (f visit_now acc))
+   
+   [<a name="DFT_ind-val"><b>DFT_ind</b></a>]  Theorem
+      
+      ⊢ ∀P.
+            (∀G f seen visit_now visit_later acc.
+                 P G f seen [] acc ∧
+                 ((FINITE (Parents G) ∧ ¬MEM visit_now seen ⇒
+                   P G f (visit_now::seen) (G visit_now ⧺ visit_later)
+                     (f visit_now acc)) ∧
+                  (FINITE (Parents G) ∧ MEM visit_now seen ⇒
+                   P G f seen visit_later acc) ⇒
+                  P G f seen (visit_now::visit_later) acc)) ⇒
+            ∀v v1 v2 v3 v4. P v v1 v2 v3 v4
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/search/dftScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

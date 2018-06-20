@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Drule.BODY_CONJUNCTS</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>BODY_CONJUNCTS : (thm -&gt; thm list)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Drule.html">Drule</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Splits up conjuncts recursively, stripping away universal quantifiers.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to a theorem, </SPAN><SPAN class = "BRKT">BODY_CONJUNCTS</SPAN><SPAN class = "TEXT"> recursively strips off universal
+quantifiers by specialization, and breaks conjunctions into a list of
+conjuncts.
+</SPAN><DIV class = "XMPL"><pre>
+    A |- !x1...xn. t1 /\ (!y1...ym. t2 /\ t3) /\ ...
+   --------------------------------------------------  BODY_CONJUNCTS
+          [A |- t1, A |- t2, A |- t3, ...]
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails, but has no effect if there are no top-level universal quantifiers
+or conjuncts.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following illustrates how a typical term will be split:
+</SPAN><DIV class = "XMPL"><pre>
+   - local val tm = Parser.term_parser
+                        `!x:bool. A /\ (B \/ (C /\ D)) /\ ((!y:bool. E) /\ F)`
+     in
+     val x = ASSUME tm
+     end;
+
+     val x = . |- !x. A /\ (B \/ C /\ D) /\ (!y. E) /\ F : thm
+
+   - BODY_CONJUNCTS x;
+   val it = [. |- A, . |- B \/ C /\ D, . |- E, . |- F] : thm list
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Thm.CONJ.html">CONJ</A>,
+<A HREF = "Thm.CONJUNCT1.html">CONJUNCT1</A>,
+<A HREF = "Thm.CONJUNCT2.html">CONJUNCT2</A>,
+<A HREF = "Drule.CONJUNCTS.html">CONJUNCTS</A>,
+<A HREF = "Tactic.CONJ_TAC.html">CONJ_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

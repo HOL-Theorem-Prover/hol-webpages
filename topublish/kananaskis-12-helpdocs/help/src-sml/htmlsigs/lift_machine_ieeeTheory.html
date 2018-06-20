@@ -1,0 +1,352 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure lift_machine_ieeeTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure lift_machine_ieeeTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/floating-point/lift_machine_ieeeScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature lift_machine_ieeeTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#fp16_to_real_value_def-val">fp16_to_real_value_def</a> : thm
+<a name="line7"></a>    val <a href="#fp32_to_real_value_def-val">fp32_to_real_value_def</a> : thm
+<a name="line8"></a>    val <a href="#fp64_to_real_value_def-val">fp64_to_real_value_def</a> : thm
+<a name="line9"></a>    val <a href="#interval_def-val">interval_def</a> : thm
+<a name="line10"></a>  
+<a name="line11"></a>  (*  Theorems  *)
+<a name="line12"></a>    val <a href="#fp16_float_add_relative-val">fp16_float_add_relative</a> : thm
+<a name="line13"></a>    val <a href="#fp16_float_div_relative-val">fp16_float_div_relative</a> : thm
+<a name="line14"></a>    val <a href="#fp16_float_mul_add_relative-val">fp16_float_mul_add_relative</a> : thm
+<a name="line15"></a>    val <a href="#fp16_float_mul_relative-val">fp16_float_mul_relative</a> : thm
+<a name="line16"></a>    val <a href="#fp16_float_mul_sub_relative-val">fp16_float_mul_sub_relative</a> : thm
+<a name="line17"></a>    val <a href="#fp16_float_sqrt_relative-val">fp16_float_sqrt_relative</a> : thm
+<a name="line18"></a>    val <a href="#fp16_float_sub_relative-val">fp16_float_sub_relative</a> : thm
+<a name="line19"></a>    val <a href="#fp32_float_add_relative-val">fp32_float_add_relative</a> : thm
+<a name="line20"></a>    val <a href="#fp32_float_div_relative-val">fp32_float_div_relative</a> : thm
+<a name="line21"></a>    val <a href="#fp32_float_mul_add_relative-val">fp32_float_mul_add_relative</a> : thm
+<a name="line22"></a>    val <a href="#fp32_float_mul_relative-val">fp32_float_mul_relative</a> : thm
+<a name="line23"></a>    val <a href="#fp32_float_mul_sub_relative-val">fp32_float_mul_sub_relative</a> : thm
+<a name="line24"></a>    val <a href="#fp32_float_sqrt_relative-val">fp32_float_sqrt_relative</a> : thm
+<a name="line25"></a>    val <a href="#fp32_float_sub_relative-val">fp32_float_sub_relative</a> : thm
+<a name="line26"></a>    val <a href="#fp64_float_add_relative-val">fp64_float_add_relative</a> : thm
+<a name="line27"></a>    val <a href="#fp64_float_div_relative-val">fp64_float_div_relative</a> : thm
+<a name="line28"></a>    val <a href="#fp64_float_mul_add_relative-val">fp64_float_mul_add_relative</a> : thm
+<a name="line29"></a>    val <a href="#fp64_float_mul_relative-val">fp64_float_mul_relative</a> : thm
+<a name="line30"></a>    val <a href="#fp64_float_mul_sub_relative-val">fp64_float_mul_sub_relative</a> : thm
+<a name="line31"></a>    val <a href="#fp64_float_sqrt_relative-val">fp64_float_sqrt_relative</a> : thm
+<a name="line32"></a>    val <a href="#fp64_float_sub_relative-val">fp64_float_sub_relative</a> : thm
+<a name="line33"></a>  
+<a name="line34"></a>  val lift_machine_ieee_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line35"></a>(*
+   [lift_ieee] Parent theory of "lift_machine_ieee"
+   
+   [machine_ieee] Parent theory of "lift_machine_ieee"
+   
+   [<a name="fp16_to_real_value_def-val"><b>fp16_to_real_value_def</b></a>]  Definition
+      
+      ⊢ fp16_to_real_value = float_to_real ∘ fp16_to_float
+   
+   [<a name="fp32_to_real_value_def-val"><b>fp32_to_real_value_def</b></a>]  Definition
+      
+      ⊢ fp32_to_real_value = float_to_real ∘ fp32_to_float
+   
+   [<a name="fp64_to_real_value_def-val"><b>fp64_to_real_value_def</b></a>]  Definition
+      
+      ⊢ fp64_to_real_value = float_to_real ∘ fp64_to_float
+   
+   [<a name="interval_def-val"><b>interval_def</b></a>]  Definition
+      
+      ⊢ ∀a b. a .. b = {x | a ≤ x ∧ x &lt; b}
+   
+   [<a name="fp16_float_add_relative-val"><b>fp16_float_add_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp16_isFinite a ∧ fp16_isFinite b ∧
+            abs (fp16_to_real_value a + fp16_to_real_value b) ∈
+            (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+            fp16_isFinite (fp16_add roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 11 ∧
+                (fp16_to_real_value (fp16_add roundTiesToEven a b) =
+                 (fp16_to_real_value a + fp16_to_real_value b) * (1 + e))
+   
+   [<a name="fp16_float_div_relative-val"><b>fp16_float_div_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp16_isFinite a ∧ fp16_isFinite b ∧ ¬fp16_isZero b ∧
+            abs (fp16_to_real_value a / fp16_to_real_value b) ∈
+            (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+            fp16_isFinite (fp16_div roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 11 ∧
+                (fp16_to_real_value (fp16_div roundTiesToEven a b) =
+                 fp16_to_real_value a / fp16_to_real_value b * (1 + e))
+   
+   [<a name="fp16_float_mul_add_relative-val"><b>fp16_float_mul_add_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b c.
+            fp16_isFinite a ∧ fp16_isFinite b ∧ fp16_isFinite c ∧
+            abs
+              (fp16_to_real_value a * fp16_to_real_value b +
+               fp16_to_real_value c) ∈
+            (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+            fp16_isFinite (fp16_mul_add roundTiesToEven a b c) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 11 ∧
+                (fp16_to_real_value (fp16_mul_add roundTiesToEven a b c) =
+                 (fp16_to_real_value a * fp16_to_real_value b +
+                  fp16_to_real_value c) * (1 + e))
+   
+   [<a name="fp16_float_mul_relative-val"><b>fp16_float_mul_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp16_isFinite a ∧ fp16_isFinite b ∧
+            abs (fp16_to_real_value a * fp16_to_real_value b) ∈
+            (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+            fp16_isFinite (fp16_mul roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 11 ∧
+                (fp16_to_real_value (fp16_mul roundTiesToEven a b) =
+                 fp16_to_real_value a * fp16_to_real_value b * (1 + e))
+   
+   [<a name="fp16_float_mul_sub_relative-val"><b>fp16_float_mul_sub_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b c.
+            fp16_isFinite a ∧ fp16_isFinite b ∧ fp16_isFinite c ∧
+            abs
+              (fp16_to_real_value a * fp16_to_real_value b −
+               fp16_to_real_value c) ∈
+            (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+            fp16_isFinite (fp16_mul_sub roundTiesToEven a b c) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 11 ∧
+                (fp16_to_real_value (fp16_mul_sub roundTiesToEven a b c) =
+                 (fp16_to_real_value a * fp16_to_real_value b −
+                  fp16_to_real_value c) * (1 + e))
+   
+   [<a name="fp16_float_sqrt_relative-val"><b>fp16_float_sqrt_relative</b></a>]  Theorem
+      
+      ⊢ ∀a.
+            fp16_isFinite a ∧ ¬word_msb a ∧
+            abs (sqrt (fp16_to_real_value a)) ∈
+            (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+            fp16_isFinite (fp16_sqrt roundTiesToEven a) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 11 ∧
+                (fp16_to_real_value (fp16_sqrt roundTiesToEven a) =
+                 sqrt (fp16_to_real_value a) * (1 + e))
+   
+   [<a name="fp16_float_sub_relative-val"><b>fp16_float_sub_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp16_isFinite a ∧ fp16_isFinite b ∧
+            abs (fp16_to_real_value a − fp16_to_real_value b) ∈
+            (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+            fp16_isFinite (fp16_sub roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 11 ∧
+                (fp16_to_real_value (fp16_sub roundTiesToEven a b) =
+                 (fp16_to_real_value a − fp16_to_real_value b) * (1 + e))
+   
+   [<a name="fp32_float_add_relative-val"><b>fp32_float_add_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp32_isFinite a ∧ fp32_isFinite b ∧
+            abs (fp32_to_real_value a + fp32_to_real_value b) ∈
+            (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+            fp32_isFinite (fp32_add roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 24 ∧
+                (fp32_to_real_value (fp32_add roundTiesToEven a b) =
+                 (fp32_to_real_value a + fp32_to_real_value b) * (1 + e))
+   
+   [<a name="fp32_float_div_relative-val"><b>fp32_float_div_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp32_isFinite a ∧ fp32_isFinite b ∧ ¬fp32_isZero b ∧
+            abs (fp32_to_real_value a / fp32_to_real_value b) ∈
+            (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+            fp32_isFinite (fp32_div roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 24 ∧
+                (fp32_to_real_value (fp32_div roundTiesToEven a b) =
+                 fp32_to_real_value a / fp32_to_real_value b * (1 + e))
+   
+   [<a name="fp32_float_mul_add_relative-val"><b>fp32_float_mul_add_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b c.
+            fp32_isFinite a ∧ fp32_isFinite b ∧ fp32_isFinite c ∧
+            abs
+              (fp32_to_real_value a * fp32_to_real_value b +
+               fp32_to_real_value c) ∈
+            (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+            fp32_isFinite (fp32_mul_add roundTiesToEven a b c) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 24 ∧
+                (fp32_to_real_value (fp32_mul_add roundTiesToEven a b c) =
+                 (fp32_to_real_value a * fp32_to_real_value b +
+                  fp32_to_real_value c) * (1 + e))
+   
+   [<a name="fp32_float_mul_relative-val"><b>fp32_float_mul_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp32_isFinite a ∧ fp32_isFinite b ∧
+            abs (fp32_to_real_value a * fp32_to_real_value b) ∈
+            (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+            fp32_isFinite (fp32_mul roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 24 ∧
+                (fp32_to_real_value (fp32_mul roundTiesToEven a b) =
+                 fp32_to_real_value a * fp32_to_real_value b * (1 + e))
+   
+   [<a name="fp32_float_mul_sub_relative-val"><b>fp32_float_mul_sub_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b c.
+            fp32_isFinite a ∧ fp32_isFinite b ∧ fp32_isFinite c ∧
+            abs
+              (fp32_to_real_value a * fp32_to_real_value b −
+               fp32_to_real_value c) ∈
+            (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+            fp32_isFinite (fp32_mul_sub roundTiesToEven a b c) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 24 ∧
+                (fp32_to_real_value (fp32_mul_sub roundTiesToEven a b c) =
+                 (fp32_to_real_value a * fp32_to_real_value b −
+                  fp32_to_real_value c) * (1 + e))
+   
+   [<a name="fp32_float_sqrt_relative-val"><b>fp32_float_sqrt_relative</b></a>]  Theorem
+      
+      ⊢ ∀a.
+            fp32_isFinite a ∧ ¬word_msb a ∧
+            abs (sqrt (fp32_to_real_value a)) ∈
+            (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+            fp32_isFinite (fp32_sqrt roundTiesToEven a) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 24 ∧
+                (fp32_to_real_value (fp32_sqrt roundTiesToEven a) =
+                 sqrt (fp32_to_real_value a) * (1 + e))
+   
+   [<a name="fp32_float_sub_relative-val"><b>fp32_float_sub_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp32_isFinite a ∧ fp32_isFinite b ∧
+            abs (fp32_to_real_value a − fp32_to_real_value b) ∈
+            (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+            fp32_isFinite (fp32_sub roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 24 ∧
+                (fp32_to_real_value (fp32_sub roundTiesToEven a b) =
+                 (fp32_to_real_value a − fp32_to_real_value b) * (1 + e))
+   
+   [<a name="fp64_float_add_relative-val"><b>fp64_float_add_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp64_isFinite a ∧ fp64_isFinite b ∧
+            abs (fp64_to_real_value a + fp64_to_real_value b) ∈
+            (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+            fp64_isFinite (fp64_add roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 53 ∧
+                (fp64_to_real_value (fp64_add roundTiesToEven a b) =
+                 (fp64_to_real_value a + fp64_to_real_value b) * (1 + e))
+   
+   [<a name="fp64_float_div_relative-val"><b>fp64_float_div_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp64_isFinite a ∧ fp64_isFinite b ∧ ¬fp64_isZero b ∧
+            abs (fp64_to_real_value a / fp64_to_real_value b) ∈
+            (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+            fp64_isFinite (fp64_div roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 53 ∧
+                (fp64_to_real_value (fp64_div roundTiesToEven a b) =
+                 fp64_to_real_value a / fp64_to_real_value b * (1 + e))
+   
+   [<a name="fp64_float_mul_add_relative-val"><b>fp64_float_mul_add_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b c.
+            fp64_isFinite a ∧ fp64_isFinite b ∧ fp64_isFinite c ∧
+            abs
+              (fp64_to_real_value a * fp64_to_real_value b +
+               fp64_to_real_value c) ∈
+            (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+            fp64_isFinite (fp64_mul_add roundTiesToEven a b c) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 53 ∧
+                (fp64_to_real_value (fp64_mul_add roundTiesToEven a b c) =
+                 (fp64_to_real_value a * fp64_to_real_value b +
+                  fp64_to_real_value c) * (1 + e))
+   
+   [<a name="fp64_float_mul_relative-val"><b>fp64_float_mul_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp64_isFinite a ∧ fp64_isFinite b ∧
+            abs (fp64_to_real_value a * fp64_to_real_value b) ∈
+            (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+            fp64_isFinite (fp64_mul roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 53 ∧
+                (fp64_to_real_value (fp64_mul roundTiesToEven a b) =
+                 fp64_to_real_value a * fp64_to_real_value b * (1 + e))
+   
+   [<a name="fp64_float_mul_sub_relative-val"><b>fp64_float_mul_sub_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b c.
+            fp64_isFinite a ∧ fp64_isFinite b ∧ fp64_isFinite c ∧
+            abs
+              (fp64_to_real_value a * fp64_to_real_value b −
+               fp64_to_real_value c) ∈
+            (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+            fp64_isFinite (fp64_mul_sub roundTiesToEven a b c) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 53 ∧
+                (fp64_to_real_value (fp64_mul_sub roundTiesToEven a b c) =
+                 (fp64_to_real_value a * fp64_to_real_value b −
+                  fp64_to_real_value c) * (1 + e))
+   
+   [<a name="fp64_float_sqrt_relative-val"><b>fp64_float_sqrt_relative</b></a>]  Theorem
+      
+      ⊢ ∀a.
+            fp64_isFinite a ∧ ¬word_msb a ∧
+            abs (sqrt (fp64_to_real_value a)) ∈
+            (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+            fp64_isFinite (fp64_sqrt roundTiesToEven a) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 53 ∧
+                (fp64_to_real_value (fp64_sqrt roundTiesToEven a) =
+                 sqrt (fp64_to_real_value a) * (1 + e))
+   
+   [<a name="fp64_float_sub_relative-val"><b>fp64_float_sub_relative</b></a>]  Theorem
+      
+      ⊢ ∀a b.
+            fp64_isFinite a ∧ fp64_isFinite b ∧
+            abs (fp64_to_real_value a − fp64_to_real_value b) ∈
+            (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+            fp64_isFinite (fp64_sub roundTiesToEven a b) ∧
+            ∃e.
+                abs e ≤ 1 / 2 pow 53 ∧
+                (fp64_to_real_value (fp64_sub roundTiesToEven a b) =
+                 (fp64_to_real_value a − fp64_to_real_value b) * (1 + e))
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/floating-point/lift_machine_ieeeScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

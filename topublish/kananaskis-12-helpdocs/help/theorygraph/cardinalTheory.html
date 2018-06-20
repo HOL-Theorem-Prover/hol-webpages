@@ -1,0 +1,557 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: cardinal</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "cardinal"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "wellorderTheory.html"><span class="strong">wellorder</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">bijns</span>
+    <td>
+    :(α -> bool) -> (α -> α option) -> bool
+    <tr><td>
+    <span class="strong">cardeq</span>
+    <td>
+    :(α -> bool) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">cardleq</span>
+    <td>
+    :(α -> bool) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">list</span>
+    <td>
+    :(α -> bool) -> α list -> bool
+    <tr><td>
+    <span class="strong">set_exp</span>
+    <td>
+    :(β -> bool) -> (α -> bool) -> (α -> β option) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">cardeq_def</span>
+<DD>
+<pre>
+⊢ ∀s1 s2. s1 ≈ s2 ⇔ ∃f. BIJ f s1 s2
+</pre>
+
+<DT><span class="strong">cardleq_def</span>
+<DD>
+<pre>
+⊢ ∀s1 s2. s1 ≼ s2 ⇔ ∃f. INJ f s1 s2
+</pre>
+
+<DT><span class="strong">set_exp_def</span>
+<DD>
+<pre>
+⊢ ∀A B.
+      A ** B =
+      {f | (∀b. b ∈ B ⇒ ∃a. a ∈ A ∧ f b = SOME a) ∧ ∀b. b ∉ B ⇒ f b = NONE}
+</pre>
+
+<DT><span class="strong">list_def</span>
+<DD>
+<pre>
+⊢ ∀A. list A = {l | ∀e. MEM e l ⇒ e ∈ A}
+</pre>
+
+<DT><span class="strong">bijns_def</span>
+<DD>
+<pre>
+⊢ ∀A. bijns A = {f | THE ∘ f PERMUTES A ∧ ∀a. a ∈ A ⇔ ∃b. f a = SOME b}
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">cardeq_REFL</span>
+<DD>
+<pre>
+⊢ ∀s. s ≈ s
+</pre>
+
+<DT><span class="strong">cardeq_SYM</span>
+<DD>
+<pre>
+⊢ ∀s t. s ≈ t ⇔ t ≈ s
+</pre>
+
+<DT><span class="strong">cardeq_TRANS</span>
+<DD>
+<pre>
+⊢ ∀s t u. s ≈ t ∧ t ≈ u ⇒ s ≈ u
+</pre>
+
+<DT><span class="strong">cardleq_REFL</span>
+<DD>
+<pre>
+⊢ ∀s. s ≼ s
+</pre>
+
+<DT><span class="strong">cardleq_TRANS</span>
+<DD>
+<pre>
+⊢ ∀s t u. s ≼ t ∧ t ≼ u ⇒ s ≼ u
+</pre>
+
+<DT><span class="strong">cardleq_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀s t. s ≼ t ∧ t ≼ s ⇒ s ≈ t
+</pre>
+
+<DT><span class="strong">CARDEQ_FINITE</span>
+<DD>
+<pre>
+⊢ s1 ≈ s2 ⇒ (FINITE s1 ⇔ FINITE s2)
+</pre>
+
+<DT><span class="strong">CARDEQ_CARD</span>
+<DD>
+<pre>
+⊢ s1 ≈ s2 ∧ FINITE s1 ⇒ CARD s1 = CARD s2
+</pre>
+
+<DT><span class="strong">CARDEQ_0</span>
+<DD>
+<pre>
+⊢ (x ≈ ∅ ⇔ x = ∅) ∧ (∅ ≈ x ⇔ x = ∅)
+</pre>
+
+<DT><span class="strong">cardeq_INSERT</span>
+<DD>
+<pre>
+⊢ x INSERT s ≈ s ⇔ x ∈ s ∨ INFINITE s
+</pre>
+
+<DT><span class="strong">CARDEQ_INSERT_RWT</span>
+<DD>
+<pre>
+⊢ ∀s. INFINITE s ⇒ x INSERT s ≈ s
+</pre>
+
+<DT><span class="strong">EMPTY_CARDLEQ</span>
+<DD>
+<pre>
+⊢ ∅ ≼ t
+</pre>
+
+<DT><span class="strong">FINITE_CLE_INFINITE</span>
+<DD>
+<pre>
+⊢ FINITE s ∧ INFINITE t ⇒ s ≼ t
+</pre>
+
+<DT><span class="strong">CARDEQ_CROSS</span>
+<DD>
+<pre>
+⊢ s1 ≈ s2 ∧ t1 ≈ t2 ⇒ s1 × t1 ≈ s2 × t2
+</pre>
+
+<DT><span class="strong">CARDEQ_CROSS_SYM</span>
+<DD>
+<pre>
+⊢ s × t ≈ t × s
+</pre>
+
+<DT><span class="strong">CARDEQ_SUBSET_CARDLEQ</span>
+<DD>
+<pre>
+⊢ s ≈ t ⇒ s ≼ t
+</pre>
+
+<DT><span class="strong">CARDEQ_CARDLEQ</span>
+<DD>
+<pre>
+⊢ s1 ≈ s2 ∧ t1 ≈ t2 ⇒ (s1 ≼ t1 ⇔ s2 ≼ t2)
+</pre>
+
+<DT><span class="strong">CARDLEQ_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s1 s2. FINITE s2 ∧ s1 ≼ s2 ⇒ FINITE s1
+</pre>
+
+<DT><span class="strong">INFINITE_UNIV_INF</span>
+<DD>
+<pre>
+⊢ INFINITE 𝕌(:α inf)
+</pre>
+
+<DT><span class="strong">IMAGE_cardleq</span>
+<DD>
+<pre>
+⊢ IMAGE f s ≼ s
+</pre>
+
+<DT><span class="strong">CARDLEQ_CROSS_CONG</span>
+<DD>
+<pre>
+⊢ x1 ≼ x2 ∧ y1 ≼ y2 ⇒ x1 × y1 ≼ x2 × y2
+</pre>
+
+<DT><span class="strong">SUBSET_CARDLEQ</span>
+<DD>
+<pre>
+⊢ x ⊆ y ⇒ x ≼ y
+</pre>
+
+<DT><span class="strong">IMAGE_cardleq_rwt</span>
+<DD>
+<pre>
+⊢ s ≼ t ⇒ IMAGE f s ≼ t
+</pre>
+
+<DT><span class="strong">countable_thm</span>
+<DD>
+<pre>
+⊢ countable s ⇔ s ≼ 𝕌(:num)
+</pre>
+
+<DT><span class="strong">countable_cardeq</span>
+<DD>
+<pre>
+⊢ s ≈ t ⇒ (countable s ⇔ countable t)
+</pre>
+
+<DT><span class="strong">cardleq_dichotomy</span>
+<DD>
+<pre>
+⊢ s ≼ t ∨ t ≼ s
+</pre>
+
+<DT><span class="strong">cardleq_lteq</span>
+<DD>
+<pre>
+⊢ s1 ≼ s2 ⇔ s1 <</= s2 ∨ s1 ≈ s2
+</pre>
+
+<DT><span class="strong">cardlt_REFL</span>
+<DD>
+<pre>
+⊢ ¬(s <</= s)
+</pre>
+
+<DT><span class="strong">cardlt_lenoteq</span>
+<DD>
+<pre>
+⊢ s <</= t ⇔ s ≼ t ∧ ¬(s ≈ t)
+</pre>
+
+<DT><span class="strong">cardlt_TRANS</span>
+<DD>
+<pre>
+⊢ ∀s t u. s <</= t ∧ t <</= u ⇒ s <</= u
+</pre>
+
+<DT><span class="strong">cardlt_leq_trans</span>
+<DD>
+<pre>
+⊢ ∀r s t. r <</= s ∧ s ≼ t ⇒ r <</= t
+</pre>
+
+<DT><span class="strong">cardleq_lt_trans</span>
+<DD>
+<pre>
+⊢ ∀r s t. r ≼ s ∧ s <</= t ⇒ r <</= t
+</pre>
+
+<DT><span class="strong">cardleq_empty</span>
+<DD>
+<pre>
+⊢ x ≼ ∅ ⇔ x = ∅
+</pre>
+
+<DT><span class="strong">set_binomial2</span>
+<DD>
+<pre>
+⊢ (A ∪ B) × (A ∪ B) = A × A ∪ A × B ∪ B × A ∪ B × B
+</pre>
+
+<DT><span class="strong">SET_SQUARED_CARDEQ_SET</span>
+<DD>
+<pre>
+⊢ INFINITE s ⇒ s × s ≈ s
+</pre>
+
+<DT><span class="strong">SET_SUM_CARDEQ_SET</span>
+<DD>
+<pre>
+⊢ INFINITE s ⇒ s ≈ {T; F} × s ∧ ∀A B. DISJOINT A B ∧ A ≈ s ∧ B ≈ s ⇒ A ∪ B ≈ s
+</pre>
+
+<DT><span class="strong">CARD_BIGUNION</span>
+<DD>
+<pre>
+⊢ INFINITE k ∧ s1 ≼ k ∧ (∀e. e ∈ s1 ⇒ e ≼ k) ⇒ BIGUNION s1 ≼ k
+</pre>
+
+<DT><span class="strong">CARD_MUL_ABSORB_LE</span>
+<DD>
+<pre>
+⊢ ∀s t. INFINITE t ∧ s ≼ t ⇒ s × t ≼ t
+</pre>
+
+<DT><span class="strong">CARD_MUL_LT_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀s t. s ≼ t ∧ t <</= u ∧ INFINITE u ⇒ s × t <</= u
+</pre>
+
+<DT><span class="strong">CARD_MUL_LT_INFINITE</span>
+<DD>
+<pre>
+⊢ ∀s t. s <</= t ∧ t <</= u ∧ INFINITE u ⇒ s × t <</= u
+</pre>
+
+<DT><span class="strong">BIJ_functions_agree</span>
+<DD>
+<pre>
+⊢ ∀f g s t. BIJ f s t ∧ (∀x. x ∈ s ⇒ f x = g x) ⇒ BIJ g s t
+</pre>
+
+<DT><span class="strong">CARD_CARDEQ_I</span>
+<DD>
+<pre>
+⊢ FINITE s1 ∧ FINITE s2 ∧ CARD s1 = CARD s2 ⇒ s1 ≈ s2
+</pre>
+
+<DT><span class="strong">CARDEQ_CARD_EQN</span>
+<DD>
+<pre>
+⊢ FINITE s1 ∧ FINITE s2 ⇒ (s1 ≈ s2 ⇔ CARD s1 = CARD s2)
+</pre>
+
+<DT><span class="strong">CARDLEQ_CARD</span>
+<DD>
+<pre>
+⊢ FINITE s1 ∧ FINITE s2 ⇒ (s1 ≼ s2 ⇔ CARD s1 ≤ CARD s2)
+</pre>
+
+<DT><span class="strong">CARD_LT_CARD</span>
+<DD>
+<pre>
+⊢ FINITE s1 ∧ FINITE s2 ⇒ (s1 <</= s2 ⇔ CARD s1 < CARD s2)
+</pre>
+
+<DT><span class="strong">EMPTY_set_exp</span>
+<DD>
+<pre>
+⊢ A ** ∅ = {K NONE} ∧ (B ≠ ∅ ⇒ ∅ ** B = ∅)
+</pre>
+
+<DT><span class="strong">EMPTY_set_exp_CARD</span>
+<DD>
+<pre>
+⊢ A ** ∅ ≈ count 1
+</pre>
+
+<DT><span class="strong">SING_set_exp</span>
+<DD>
+<pre>
+⊢ {x} ** B = {(λb. if b ∈ B then SOME x else NONE)} ∧
+  A ** {x} = {(λb. if b = x then SOME a else NONE) | a ∈ A}
+</pre>
+
+<DT><span class="strong">SING_set_exp_CARD</span>
+<DD>
+<pre>
+⊢ {x} ** B ≈ count 1 ∧ A ** {x} ≈ A
+</pre>
+
+<DT><span class="strong">POW_TWO_set_exp</span>
+<DD>
+<pre>
+⊢ POW A ≈ count 2 ** A
+</pre>
+
+<DT><span class="strong">set_exp_count</span>
+<DD>
+<pre>
+⊢ A ** count n ≈ {l | LENGTH l = n ∧ ∀e. MEM e l ⇒ e ∈ A}
+</pre>
+
+<DT><span class="strong">set_exp_card_cong</span>
+<DD>
+<pre>
+⊢ a1 ≈ a2 ⇒ b1 ≈ b2 ⇒ a1 ** b1 ≈ a2 ** b2
+</pre>
+
+<DT><span class="strong">set_exp_cardle_cong</span>
+<DD>
+<pre>
+⊢ (b = ∅ ⇒ d = ∅) ⇒ a ≼ b ∧ c ≼ d ⇒ a ** c ≼ b ** d
+</pre>
+
+<DT><span class="strong">exp_INSERT_cardeq</span>
+<DD>
+<pre>
+⊢ e ∉ s ⇒ A ** (e INSERT s) ≈ A × A ** s
+</pre>
+
+<DT><span class="strong">exp_count_cardeq</span>
+<DD>
+<pre>
+⊢ INFINITE A ∧ 0 < n ⇒ A ** count n ≈ A
+</pre>
+
+<DT><span class="strong">INFINITE_Unum</span>
+<DD>
+<pre>
+⊢ INFINITE A ⇔ 𝕌(:num) ≼ A
+</pre>
+
+<DT><span class="strong">cardleq_SURJ</span>
+<DD>
+<pre>
+⊢ A ≼ B ⇔ (∃f. SURJ f B A) ∨ A = ∅
+</pre>
+
+<DT><span class="strong">INFINITE_cardleq_INSERT</span>
+<DD>
+<pre>
+⊢ INFINITE A ⇒ (x INSERT s ≼ A ⇔ s ≼ A)
+</pre>
+
+<DT><span class="strong">list_EMPTY</span>
+<DD>
+<pre>
+⊢ list ∅ = {[]}
+</pre>
+
+<DT><span class="strong">list_SING</span>
+<DD>
+<pre>
+⊢ list {e} ≈ 𝕌(:num)
+</pre>
+
+<DT><span class="strong">UNIV_list</span>
+<DD>
+<pre>
+⊢ 𝕌(:α list) = list 𝕌(:α)
+</pre>
+
+<DT><span class="strong">list_BIGUNION_EXP</span>
+<DD>
+<pre>
+⊢ list A ≈ BIGUNION (IMAGE (λn. A ** count n) 𝕌(:num))
+</pre>
+
+<DT><span class="strong">INFINITE_A_list_BIJ_A</span>
+<DD>
+<pre>
+⊢ INFINITE A ⇒ list A ≈ A
+</pre>
+
+<DT><span class="strong">finite_subsets_bijection</span>
+<DD>
+<pre>
+⊢ INFINITE A ⇒ A ≈ {s | FINITE s ∧ s ⊆ A}
+</pre>
+
+<DT><span class="strong">FINITE_IMAGE_INJ'</span>
+<DD>
+<pre>
+⊢ (∀x y. x ∈ s ∧ y ∈ s ⇒ (f x = f y ⇔ x = y)) ⇒
+  (FINITE (IMAGE f s) ⇔ FINITE s)
+</pre>
+
+<DT><span class="strong">countable_decomposition</span>
+<DD>
+<pre>
+⊢ ∀s. INFINITE s ⇒ ∃A. BIGUNION A = s ∧ ∀a. a ∈ A ⇒ INFINITE a ∧ countable a
+</pre>
+
+<DT><span class="strong">disjoint_countable_decomposition</span>
+<DD>
+<pre>
+⊢ ∀s.
+      INFINITE s ⇒
+      ∃A.
+          BIGUNION A = s ∧ (∀a. a ∈ A ⇒ INFINITE a ∧ countable a) ∧
+          ∀a1 a2. a1 ∈ A ∧ a2 ∈ A ∧ a1 ≠ a2 ⇒ DISJOINT a1 a2
+</pre>
+
+<DT><span class="strong">count_cardle</span>
+<DD>
+<pre>
+⊢ count n ≼ A ⇔ FINITE A ⇒ n ≤ CARD A
+</pre>
+
+<DT><span class="strong">CANTOR</span>
+<DD>
+<pre>
+⊢ A <</= POW A
+</pre>
+
+<DT><span class="strong">cardlt_cardle</span>
+<DD>
+<pre>
+⊢ A <</= B ⇒ A ≼ B
+</pre>
+
+<DT><span class="strong">set_exp_product</span>
+<DD>
+<pre>
+⊢ (A ** B1) ** B2 ≈ A ** (B1 × B2)
+</pre>
+
+<DT><span class="strong">COUNT_EQ_EMPTY</span>
+<DD>
+<pre>
+⊢ count n = ∅ ⇔ n = 0
+</pre>
+
+<DT><span class="strong">POW_EQ_X_EXP_X</span>
+<DD>
+<pre>
+⊢ INFINITE A ⇒ POW A ≈ A ** A
+</pre>
+
+<DT><span class="strong">cardeq_bijns_cong</span>
+<DD>
+<pre>
+⊢ A ≈ B ⇒ bijns A ≈ bijns B
+</pre>
+
+<DT><span class="strong">bijections_cardeq</span>
+<DD>
+<pre>
+⊢ INFINITE s ⇒ bijns s ≈ POW s
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

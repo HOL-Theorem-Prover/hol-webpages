@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure Cond_rewr</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Cond_rewr</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/Cond_rewr.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ----------------------------------------------------------------------
+<a name="line2"></a>    COND_REWR_CONV : thm -&gt; bool -&gt; (term -&gt; thm) -&gt; conv
+<a name="line3"></a>
+<a name="line4"></a>    Build a conversion based on a conditional rewrite theorem.  The
+<a name="line5"></a>    theorem must be of the form
+<a name="line6"></a>
+<a name="line7"></a>          A |- P1 ==&gt; ... Pm ==&gt; (Q[x1,...,xn] = R[x1,...,xn])
+<a name="line8"></a>
+<a name="line9"></a>    The conversion matches the input term against Q, using limited
+<a name="line10"></a>    higher order matching.  This instantiates x1 ... xn, which the
+<a name="line11"></a>    conversion then solves with the solver provided.  If any of the
+<a name="line12"></a>    conditions are not solved COND_REWR_CONV fails.
+<a name="line13"></a>
+<a name="line14"></a>    The theorem can be a permutative rewrite, such as
+<a name="line15"></a>         |- (x = y) = (y = x)
+<a name="line16"></a>         |- (x + y) = (y + x)
+<a name="line17"></a>
+<a name="line18"></a>    In these cases the rewrite will be applied if
+<a name="line19"></a>
+<a name="line20"></a>      * the ordering of the variables in the term is not in strictly
+<a name="line21"></a>        ascending order, according to a term_lt function which places
+<a name="line22"></a>        a total ordering on terms (Nb. The term ordering needs to be
+<a name="line23"></a>        "AC" compatible - see Termord); or
+<a name="line24"></a>      * if the boolean argument is true, which happens if the theorem
+<a name="line25"></a>        being used is a bounded rewrite, and so cannot cause a loop
+<a name="line26"></a>        when it is used.
+<a name="line27"></a>
+<a name="line28"></a>    FAILURE CONDITIONS
+<a name="line29"></a>
+<a name="line30"></a>    Fails if any of the assumptions cannot be solved by the solver,
+<a name="line31"></a>    or if the term does not match the rewrite in the first place.
+<a name="line32"></a>   ---------------------------------------------------------------------- *)
+<a name="line33"></a>
+<a name="line34"></a>signature Cond_rewr =
+<a name="line35"></a>sig
+<a name="line36"></a>
+<a name="line37"></a>  include Abbrev
+<a name="line38"></a>  type controlled_thm = BoundedRewrites.controlled_thm
+<a name="line39"></a>  val ac_term_ord    : term * term -&gt; order
+<a name="line40"></a>  val mk_cond_rewrs  : controlled_thm -&gt; controlled_thm list
+<a name="line41"></a>  val IMP_EQ_CANON   : controlled_thm -&gt; controlled_thm list
+<a name="line42"></a>  val COND_REWR_CONV : thm -&gt; bool -&gt;
+<a name="line43"></a>                       (term list -&gt; term -&gt; thm) -&gt; term list -&gt; conv
+<a name="line44"></a>  val QUANTIFY_CONDITIONS : controlled_thm -&gt; controlled_thm list
+<a name="line45"></a>  val stack_limit : int ref
+<a name="line46"></a>
+<a name="line47"></a>  val used_rewrites : thm list ref
+<a name="line48"></a>  val track_rewrites : bool ref
+<a name="line49"></a>
+<a name="line50"></a>end
+<a name="line51"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/Cond_rewr.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

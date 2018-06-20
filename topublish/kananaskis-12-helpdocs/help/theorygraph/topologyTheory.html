@@ -1,0 +1,367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: topology</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "topology"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "realTheory.html"><span class="strong">real</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">metric</span>
+    <td>
+    1
+    <tr><td> <span class="strong">topology</span> <td> 1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">B</span>
+    <td>
+    :α metric -> α # real -> α -> bool
+    <tr><td>
+    <span class="strong">closed</span>
+    <td>
+    :α topology -> (α -> bool) -> bool
+    <tr><td> <span class="strong">dist</span> <td> :α metric -> α # α -> real
+    <tr><td> <span class="strong">ismet</span> <td> :(α # α -> real) -> bool
+    <tr><td>
+    <span class="strong">istopology</span>
+    <td>
+    :((α -> bool) -> bool) -> bool
+    <tr><td>
+    <span class="strong">limpt</span>
+    <td>
+    :α topology -> α -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">metric</span>
+    <td>
+    :(α # α -> real) -> α metric
+    <tr><td> <span class="strong">mr1</span> <td> :real metric
+    <tr><td> <span class="strong">mtop</span> <td> :α metric -> α topology
+    <tr><td>
+    <span class="strong">neigh</span>
+    <td>
+    :α topology -> (α -> bool) # α -> bool
+    <tr><td>
+    <span class="strong">open</span>
+    <td>
+    :α topology -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">re_intersect</span>
+    <td>
+    :(α -> bool) -> (α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">re_union</span>
+    <td>
+    :(α -> bool) -> (α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">topology</span>
+    <td>
+    :((α -> bool) -> bool) -> α topology
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">re_union</span>
+<DD>
+<pre>
+⊢ ∀P Q. P re_union Q = (λx. P x ∨ Q x)
+</pre>
+
+<DT><span class="strong">re_intersect</span>
+<DD>
+<pre>
+⊢ ∀P Q. P re_intersect Q = (λx. P x ∧ Q x)
+</pre>
+
+<DT><span class="strong">istopology</span>
+<DD>
+<pre>
+⊢ ∀L.
+      istopology L ⇔
+      L ∅ ∧ L 𝕌(:α) ∧ (∀a b. L a ∧ L b ⇒ L (a re_intersect b)) ∧
+      ∀P. P ⊆ L ⇒ L (BIGUNION P)
+</pre>
+
+<DT><span class="strong">topology_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION istopology rep
+</pre>
+
+<DT><span class="strong">topology_tybij</span>
+<DD>
+<pre>
+⊢ (∀a. topology (open a) = a) ∧ ∀r. istopology r ⇔ open (topology r) = r
+</pre>
+
+<DT><span class="strong">neigh</span>
+<DD>
+<pre>
+⊢ ∀top N x. neigh top (N,x) ⇔ ∃P. open top P ∧ P ⊆ N ∧ P x
+</pre>
+
+<DT><span class="strong">closed</span>
+<DD>
+<pre>
+⊢ ∀L S'. closed L S' ⇔ open L (COMPL S')
+</pre>
+
+<DT><span class="strong">limpt</span>
+<DD>
+<pre>
+⊢ ∀top x S'. limpt top x S' ⇔ ∀N. neigh top (N,x) ⇒ ∃y. x ≠ y ∧ S' y ∧ N y
+</pre>
+
+<DT><span class="strong">ismet</span>
+<DD>
+<pre>
+⊢ ∀m.
+      ismet m ⇔
+      (∀x y. m (x,y) = 0 ⇔ x = y) ∧ ∀x y z. m (y,z) ≤ m (x,y) + m (x,z)
+</pre>
+
+<DT><span class="strong">metric_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION ismet rep
+</pre>
+
+<DT><span class="strong">metric_tybij</span>
+<DD>
+<pre>
+⊢ (∀a. metric (dist a) = a) ∧ ∀r. ismet r ⇔ dist (metric r) = r
+</pre>
+
+<DT><span class="strong">mtop</span>
+<DD>
+<pre>
+⊢ ∀m.
+      mtop m =
+      topology (λS'. ∀x. S' x ⇒ ∃e. 0 < e ∧ ∀y. dist m (x,y) < e ⇒ S' y)
+</pre>
+
+<DT><span class="strong">ball</span>
+<DD>
+<pre>
+⊢ ∀m x e. topology$B m (x,e) = (λy. dist m (x,y) < e)
+</pre>
+
+<DT><span class="strong">mr1</span>
+<DD>
+<pre>
+⊢ mr1 = metric (λ(x,y). abs (y − x))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">TOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀L.
+      open L ∅ ∧ open L 𝕌(:α) ∧
+      (∀x y. open L x ∧ open L y ⇒ open L (x re_intersect y)) ∧
+      ∀P. P ⊆ open L ⇒ open L (BIGUNION P)
+</pre>
+
+<DT><span class="strong">TOPOLOGY_UNION</span>
+<DD>
+<pre>
+⊢ ∀L P. P ⊆ open L ⇒ open L (BIGUNION P)
+</pre>
+
+<DT><span class="strong">OPEN_OWN_NEIGH</span>
+<DD>
+<pre>
+⊢ ∀S' top x. open top S' ∧ S' x ⇒ neigh top (S',x)
+</pre>
+
+<DT><span class="strong">OPEN_UNOPEN</span>
+<DD>
+<pre>
+⊢ ∀S' top. open top S' ⇔ BIGUNION {P | open top P ∧ P ⊆ S'} = S'
+</pre>
+
+<DT><span class="strong">OPEN_SUBOPEN</span>
+<DD>
+<pre>
+⊢ ∀S' top. open top S' ⇔ ∀x. S' x ⇒ ∃P. P x ∧ open top P ∧ P ⊆ S'
+</pre>
+
+<DT><span class="strong">OPEN_NEIGH</span>
+<DD>
+<pre>
+⊢ ∀S' top. open top S' ⇔ ∀x. S' x ⇒ ∃N. neigh top (N,x) ∧ N ⊆ S'
+</pre>
+
+<DT><span class="strong">CLOSED_LIMPT</span>
+<DD>
+<pre>
+⊢ ∀top S'. closed top S' ⇔ ∀x. limpt top x S' ⇒ S' x
+</pre>
+
+<DT><span class="strong">METRIC_ISMET</span>
+<DD>
+<pre>
+⊢ ∀m. ismet (dist m)
+</pre>
+
+<DT><span class="strong">METRIC_ZERO</span>
+<DD>
+<pre>
+⊢ ∀m x y. dist m (x,y) = 0 ⇔ x = y
+</pre>
+
+<DT><span class="strong">METRIC_SAME</span>
+<DD>
+<pre>
+⊢ ∀m x. dist m (x,x) = 0
+</pre>
+
+<DT><span class="strong">METRIC_POS</span>
+<DD>
+<pre>
+⊢ ∀m x y. 0 ≤ dist m (x,y)
+</pre>
+
+<DT><span class="strong">METRIC_SYM</span>
+<DD>
+<pre>
+⊢ ∀m x y. dist m (x,y) = dist m (y,x)
+</pre>
+
+<DT><span class="strong">METRIC_TRIANGLE</span>
+<DD>
+<pre>
+⊢ ∀m x y z. dist m (x,z) ≤ dist m (x,y) + dist m (y,z)
+</pre>
+
+<DT><span class="strong">METRIC_NZ</span>
+<DD>
+<pre>
+⊢ ∀m x y. x ≠ y ⇒ 0 < dist m (x,y)
+</pre>
+
+<DT><span class="strong">mtop_istopology</span>
+<DD>
+<pre>
+⊢ ∀m. istopology (λS'. ∀x. S' x ⇒ ∃e. 0 < e ∧ ∀y. dist m (x,y) < e ⇒ S' y)
+</pre>
+
+<DT><span class="strong">MTOP_OPEN</span>
+<DD>
+<pre>
+⊢ ∀S' m. open (mtop m) S' ⇔ ∀x. S' x ⇒ ∃e. 0 < e ∧ ∀y. dist m (x,y) < e ⇒ S' y
+</pre>
+
+<DT><span class="strong">BALL_OPEN</span>
+<DD>
+<pre>
+⊢ ∀m x e. 0 < e ⇒ open (mtop m) (topology$B m (x,e))
+</pre>
+
+<DT><span class="strong">BALL_NEIGH</span>
+<DD>
+<pre>
+⊢ ∀m x e. 0 < e ⇒ neigh (mtop m) (topology$B m (x,e),x)
+</pre>
+
+<DT><span class="strong">MTOP_LIMPT</span>
+<DD>
+<pre>
+⊢ ∀m x S'.
+      limpt (mtop m) x S' ⇔ ∀e. 0 < e ⇒ ∃y. x ≠ y ∧ S' y ∧ dist m (x,y) < e
+</pre>
+
+<DT><span class="strong">ISMET_R1</span>
+<DD>
+<pre>
+⊢ ismet (λ(x,y). abs (y − x))
+</pre>
+
+<DT><span class="strong">MR1_DEF</span>
+<DD>
+<pre>
+⊢ ∀x y. dist mr1 (x,y) = abs (y − x)
+</pre>
+
+<DT><span class="strong">MR1_ADD</span>
+<DD>
+<pre>
+⊢ ∀x d. dist mr1 (x,x + d) = abs d
+</pre>
+
+<DT><span class="strong">MR1_SUB</span>
+<DD>
+<pre>
+⊢ ∀x d. dist mr1 (x,x − d) = abs d
+</pre>
+
+<DT><span class="strong">MR1_ADD_POS</span>
+<DD>
+<pre>
+⊢ ∀x d. 0 ≤ d ⇒ dist mr1 (x,x + d) = d
+</pre>
+
+<DT><span class="strong">MR1_SUB_LE</span>
+<DD>
+<pre>
+⊢ ∀x d. 0 ≤ d ⇒ dist mr1 (x,x − d) = d
+</pre>
+
+<DT><span class="strong">MR1_ADD_LT</span>
+<DD>
+<pre>
+⊢ ∀x d. 0 < d ⇒ dist mr1 (x,x + d) = d
+</pre>
+
+<DT><span class="strong">MR1_SUB_LT</span>
+<DD>
+<pre>
+⊢ ∀x d. 0 < d ⇒ dist mr1 (x,x − d) = d
+</pre>
+
+<DT><span class="strong">MR1_BETWEEN1</span>
+<DD>
+<pre>
+⊢ ∀x y z. x < z ∧ dist mr1 (x,y) < z − x ⇒ y < z
+</pre>
+
+<DT><span class="strong">MR1_LIMPT</span>
+<DD>
+<pre>
+⊢ ∀x. limpt (mtop mr1) x 𝕌(:real)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

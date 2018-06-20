@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>boolSyntax.mk_icomb</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>mk_icomb : term * term -&gt; term</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/boolSyntax.html">boolSyntax</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Forms an application term, possibly instantiating the function.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">mk_icomb(f,x)</SPAN><SPAN class = "TEXT"> checks to see if the term </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">, which must
+have function type, can have any of its type variables instantiated so
+as to make the domain of the function match the type of </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT">.  If so,
+then the call returns the application of the instantiated </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if there is no way to instantiate the function term to make its
+domain match the argument&rsquo;s type.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Note how both the S combinator and the argument have type variables
+invented for them when the two quotations are parsed.
+</SPAN><DIV class = "XMPL"><pre>
+   - val t = mk_icomb(``S``, ``\n:num b. (n,b)``);
+  &lt;&lt;HOL message: inventing new type variable names: 'a, 'b, 'c&gt;&gt;
+  &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
+   &gt; val t = ``S (\n b. (n,b))`` : term
+</pre></DIV>
+<SPAN class = "TEXT">
+The resulting term </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> has only the type variable </SPAN><SPAN class = "BRKT">:'a</SPAN><SPAN class = "TEXT"> left after
+instantiation.
+</SPAN><DIV class = "XMPL"><pre>
+   - type_of t;
+   &gt; val it = ``:(num -&gt; 'a) -&gt; num -&gt; num # 'a`` : hol_type
+</pre></DIV>
+<SPAN class = "TEXT">
+This term can now be combined with an argument and the final type
+variable instantiated:
+</SPAN><DIV class = "XMPL"><pre>
+   - mk_icomb(t, ``ODD``);
+   &gt; val it = ``S (\n b. (n,b)) ODD`` : term
+
+   - type_of it;
+   &gt; val it = ``:num -&gt; num # bool``;
+</pre></DIV>
+<SPAN class = "TEXT">
+Attempting to use </SPAN><SPAN class = "BRKT">mk_comb</SPAN><SPAN class = "TEXT"> above results in immediate error because
+it requires domain and arguments types to be identical:
+</SPAN><DIV class = "XMPL"><pre>
+   - mk_comb(``S``, ``\n:num b. (n,b)``) handle e =&gt; Raise e;
+   &lt;&lt;HOL message: inventing new type variable names: 'a, 'b, 'c&gt;&gt;
+   &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
+
+   Exception raised at Term.mk_comb:
+   incompatible types
+   ! Uncaught exception:
+   ! HOL_ERR
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "boolSyntax.list_mk_icomb.html">list_mk_icomb</A>,
+<A HREF = "Term.mk_comb.html">mk_comb</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

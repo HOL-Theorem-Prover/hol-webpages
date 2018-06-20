@@ -1,0 +1,609 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: util_prob</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "util_prob"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "real_sigmaTheory.html"><span class="strong">real_sigma</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">lg</span>
+    <td>
+    :real -> real
+    <tr><td> <span class="strong">logr</span> <td> :real -> real -> real
+    <tr><td> <span class="strong">minimal</span> <td> :(num -> bool) -> num
+    <tr><td>
+    <span class="strong">pair</span>
+    <td>
+    :(α -> bool) -> (β -> bool) -> α # β -> bool
+    <tr><td> <span class="strong">powr</span> <td> :real -> real -> real
+    <tr><td>
+    <span class="strong">prod_sets</span>
+    <td>
+    :((α -> bool) -> bool) -> ((β -> bool) -> bool) -> (α # β -> bool) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">pair_def</span>
+<DD>
+<pre>
+⊢ ∀X Y. pair X Y = (λ(x,y). x ∈ X ∧ y ∈ Y)
+</pre>
+
+<DT><span class="strong">powr_def</span>
+<DD>
+<pre>
+⊢ ∀x a. x powr a = exp (a * ln x)
+</pre>
+
+<DT><span class="strong">logr_def</span>
+<DD>
+<pre>
+⊢ ∀a x. logr a x = ln x / ln a
+</pre>
+
+<DT><span class="strong">lg_def</span>
+<DD>
+<pre>
+⊢ ∀x. lg x = logr 2 x
+</pre>
+
+<DT><span class="strong">prod_sets_def</span>
+<DD>
+<pre>
+⊢ ∀a b. prod_sets a b = {s × t | s ∈ a ∧ t ∈ b}
+</pre>
+
+<DT><span class="strong">minimal_def</span>
+<DD>
+<pre>
+⊢ ∀p. minimal p = @n. p n ∧ ∀m. m < n ⇒ ¬p m
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">EQ_T_IMP</span>
+<DD>
+<pre>
+⊢ ∀x. x ⇔ T ⇒ x
+</pre>
+
+<DT><span class="strong">IN_PAIR</span>
+<DD>
+<pre>
+⊢ ∀x X Y. x ∈ pair X Y ⇔ FST x ∈ X ∧ SND x ∈ Y
+</pre>
+
+<DT><span class="strong">PAIR_UNIV</span>
+<DD>
+<pre>
+⊢ pair 𝕌(:α) 𝕌(:β) = 𝕌(:α # β)
+</pre>
+
+<DT><span class="strong">PAIRED_BETA_THM</span>
+<DD>
+<pre>
+⊢ ∀f z. UNCURRY f z = f (FST z) (SND z)
+</pre>
+
+<DT><span class="strong">MAX_LE_X</span>
+<DD>
+<pre>
+⊢ ∀m n k. MAX m n ≤ k ⇔ m ≤ k ∧ n ≤ k
+</pre>
+
+<DT><span class="strong">X_LE_MAX</span>
+<DD>
+<pre>
+⊢ ∀m n k. k ≤ MAX m n ⇔ k ≤ m ∨ k ≤ n
+</pre>
+
+<DT><span class="strong">TRANSFORM_2D_NUM</span>
+<DD>
+<pre>
+⊢ ∀P. (∀m n. P m n ⇒ P n m) ∧ (∀m n. P m (m + n)) ⇒ ∀m n. P m n
+</pre>
+
+<DT><span class="strong">TRIANGLE_2D_NUM</span>
+<DD>
+<pre>
+⊢ ∀P. (∀d n. P n (d + n)) ⇒ ∀m n. m ≤ n ⇒ P m n
+</pre>
+
+<DT><span class="strong">lg_1</span>
+<DD>
+<pre>
+⊢ lg 1 = 0
+</pre>
+
+<DT><span class="strong">logr_1</span>
+<DD>
+<pre>
+⊢ ∀b. logr b 1 = 0
+</pre>
+
+<DT><span class="strong">lg_nonzero</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ∧ 0 ≤ x ⇒ (lg x ≠ 0 ⇔ x ≠ 1)
+</pre>
+
+<DT><span class="strong">lg_mul</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ lg (x * y) = lg x + lg y
+</pre>
+
+<DT><span class="strong">logr_mul</span>
+<DD>
+<pre>
+⊢ ∀b x y. 0 < x ∧ 0 < y ⇒ logr b (x * y) = logr b x + logr b y
+</pre>
+
+<DT><span class="strong">lg_2</span>
+<DD>
+<pre>
+⊢ lg 2 = 1
+</pre>
+
+<DT><span class="strong">lg_inv</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ lg x⁻¹ = -lg x
+</pre>
+
+<DT><span class="strong">logr_inv</span>
+<DD>
+<pre>
+⊢ ∀b x. 0 < x ⇒ logr b x⁻¹ = -logr b x
+</pre>
+
+<DT><span class="strong">logr_div</span>
+<DD>
+<pre>
+⊢ ∀b x y. 0 < x ∧ 0 < y ⇒ logr b (x / y) = logr b x − logr b y
+</pre>
+
+<DT><span class="strong">neg_lg</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ -lg x = lg x⁻¹
+</pre>
+
+<DT><span class="strong">neg_logr</span>
+<DD>
+<pre>
+⊢ ∀b x. 0 < x ⇒ -logr b x = logr b x⁻¹
+</pre>
+
+<DT><span class="strong">lg_pow</span>
+<DD>
+<pre>
+⊢ ∀n. lg (2 pow n) = &n
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ</span>
+<DD>
+<pre>
+⊢ ∃f. BIJ f (𝕌(:num) × 𝕌(:num)) 𝕌(:num)
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_INV</span>
+<DD>
+<pre>
+⊢ ∃f. BIJ f 𝕌(:num) (𝕌(:num) × 𝕌(:num))
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_NZ</span>
+<DD>
+<pre>
+⊢ ∃f. BIJ f (𝕌(:num) × (𝕌(:num) DIFF {0})) 𝕌(:num)
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_NZ_INV</span>
+<DD>
+<pre>
+⊢ ∃f. BIJ f 𝕌(:num) (𝕌(:num) × (𝕌(:num) DIFF {0}))
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_NZ_ALT</span>
+<DD>
+<pre>
+⊢ ∃f. BIJ f (𝕌(:num) × 𝕌(:num)) (𝕌(:num) DIFF {0})
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_NZ_ALT_INV</span>
+<DD>
+<pre>
+⊢ ∃f. BIJ f (𝕌(:num) DIFF {0}) (𝕌(:num) × 𝕌(:num))
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_NZ_ALT2</span>
+<DD>
+<pre>
+⊢ ∃f. BIJ f ((𝕌(:num) DIFF {0}) × (𝕌(:num) DIFF {0})) 𝕌(:num)
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_NZ_ALT2_INV</span>
+<DD>
+<pre>
+⊢ ∃f. BIJ f 𝕌(:num) ((𝕌(:num) DIFF {0}) × (𝕌(:num) DIFF {0}))
+</pre>
+
+<DT><span class="strong">K_PARTIAL</span>
+<DD>
+<pre>
+⊢ ∀x. K x = (λz. x)
+</pre>
+
+<DT><span class="strong">IN_o</span>
+<DD>
+<pre>
+⊢ ∀x f s. x ∈ s ∘ f ⇔ f x ∈ s
+</pre>
+
+<DT><span class="strong">IN_PROD_SETS</span>
+<DD>
+<pre>
+⊢ ∀s a b. s ∈ prod_sets a b ⇔ ∃t u. s = t × u ∧ t ∈ a ∧ u ∈ b
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_SMALL_SQUARE</span>
+<DD>
+<pre>
+⊢ ∀f k.
+      BIJ f 𝕌(:num) (𝕌(:num) × 𝕌(:num)) ⇒
+      ∃N. count k × count k ⊆ IMAGE f (count N)
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_BIG_SQUARE</span>
+<DD>
+<pre>
+⊢ ∀f N.
+      BIJ f 𝕌(:num) (𝕌(:num) × 𝕌(:num)) ⇒
+      ∃k. IMAGE f (count N) ⊆ count k × count k
+</pre>
+
+<DT><span class="strong">finite_enumeration_of_sets_has_max_non_empty</span>
+<DD>
+<pre>
+⊢ ∀f s.
+      FINITE s ∧ (∀x. f x ∈ s) ∧ (∀m n. m ≠ n ⇒ DISJOINT (f m) (f n)) ⇒
+      ∃N. ∀n. n ≥ N ⇒ f n = ∅
+</pre>
+
+<DT><span class="strong">PREIMAGE_REAL_COMPL1</span>
+<DD>
+<pre>
+⊢ ∀c. COMPL {x | c < x} = {x | x ≤ c}
+</pre>
+
+<DT><span class="strong">PREIMAGE_REAL_COMPL2</span>
+<DD>
+<pre>
+⊢ ∀c. COMPL {x | c ≤ x} = {x | x < c}
+</pre>
+
+<DT><span class="strong">PREIMAGE_REAL_COMPL3</span>
+<DD>
+<pre>
+⊢ ∀c. COMPL {x | x ≤ c} = {x | c < x}
+</pre>
+
+<DT><span class="strong">PREIMAGE_REAL_COMPL4</span>
+<DD>
+<pre>
+⊢ ∀c. COMPL {x | x < c} = {x | c ≤ x}
+</pre>
+
+<DT><span class="strong">GBIGUNION_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀s p n. {s | ∃n. p s n} = BIGUNION (IMAGE (λn. {s | p s n}) 𝕌(:γ))
+</pre>
+
+<DT><span class="strong">LT_SUC</span>
+<DD>
+<pre>
+⊢ ∀a b. a < SUC b ⇔ a < b ∨ a = b
+</pre>
+
+<DT><span class="strong">LE_SUC</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ SUC b ⇔ a ≤ b ∨ a = SUC b
+</pre>
+
+<DT><span class="strong">HALF_POS</span>
+<DD>
+<pre>
+⊢ 0 < 1 / 2
+</pre>
+
+<DT><span class="strong">HALF_LT_1</span>
+<DD>
+<pre>
+⊢ 1 / 2 < 1
+</pre>
+
+<DT><span class="strong">HALF_CANCEL</span>
+<DD>
+<pre>
+⊢ 2 * (1 / 2) = 1
+</pre>
+
+<DT><span class="strong">X_HALF_HALF</span>
+<DD>
+<pre>
+⊢ ∀x. 1 / 2 * x + 1 / 2 * x = x
+</pre>
+
+<DT><span class="strong">ONE_MINUS_HALF</span>
+<DD>
+<pre>
+⊢ 1 − 1 / 2 = 1 / 2
+</pre>
+
+<DT><span class="strong">POW_HALF_POS</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < (1 / 2) pow n
+</pre>
+
+<DT><span class="strong">POW_HALF_SMALL</span>
+<DD>
+<pre>
+⊢ ∀e. 0 < e ⇒ ∃n. (1 / 2) pow n < e
+</pre>
+
+<DT><span class="strong">POW_HALF_MONO</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ (1 / 2) pow n ≤ (1 / 2) pow m
+</pre>
+
+<DT><span class="strong">REAL_LE_LT_MUL</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 < y ⇒ 0 ≤ x * y
+</pre>
+
+<DT><span class="strong">REAL_LT_LE_MUL</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 ≤ y ⇒ 0 ≤ x * y
+</pre>
+
+<DT><span class="strong">REAL_MUL_IDEMPOT</span>
+<DD>
+<pre>
+⊢ ∀r. r * r = r ⇔ r = 0 ∨ r = 1
+</pre>
+
+<DT><span class="strong">REAL_SUP_LE_X</span>
+<DD>
+<pre>
+⊢ ∀P x. (∃r. P r) ∧ (∀r. P r ⇒ r ≤ x) ⇒ sup P ≤ x
+</pre>
+
+<DT><span class="strong">REAL_X_LE_SUP</span>
+<DD>
+<pre>
+⊢ ∀P x. (∃r. P r) ∧ (∃z. ∀r. P r ⇒ r ≤ z) ∧ (∃r. P r ∧ x ≤ r) ⇒ x ≤ sup P
+</pre>
+
+<DT><span class="strong">INF_DEF_ALT</span>
+<DD>
+<pre>
+⊢ ∀p. inf p = -sup (λr. -r ∈ p)
+</pre>
+
+<DT><span class="strong">LE_INF</span>
+<DD>
+<pre>
+⊢ ∀p r. (∃x. x ∈ p) ∧ (∀x. x ∈ p ⇒ r ≤ x) ⇒ r ≤ inf p
+</pre>
+
+<DT><span class="strong">INF_LE</span>
+<DD>
+<pre>
+⊢ ∀p r. (∃z. ∀x. x ∈ p ⇒ z ≤ x) ∧ (∃x. x ∈ p ∧ x ≤ r) ⇒ inf p ≤ r
+</pre>
+
+<DT><span class="strong">INF_GREATER</span>
+<DD>
+<pre>
+⊢ ∀p z. (∃x. x ∈ p) ∧ inf p < z ⇒ ∃x. x ∈ p ∧ x < z
+</pre>
+
+<DT><span class="strong">INF_CLOSE</span>
+<DD>
+<pre>
+⊢ ∀p e. (∃x. x ∈ p) ∧ 0 < e ⇒ ∃x. x ∈ p ∧ x < inf p + e
+</pre>
+
+<DT><span class="strong">INCREASING_SEQ</span>
+<DD>
+<pre>
+⊢ ∀f l.
+      (∀n. f n ≤ f (SUC n)) ∧ (∀n. f n ≤ l) ∧ (∀e. 0 < e ⇒ ∃n. l < f n + e) ⇒
+      f --> l
+</pre>
+
+<DT><span class="strong">SEQ_SANDWICH</span>
+<DD>
+<pre>
+⊢ ∀f g h l. f --> l ∧ h --> l ∧ (∀n. f n ≤ g n ∧ g n ≤ h n) ⇒ g --> l
+</pre>
+
+<DT><span class="strong">SER_POS</span>
+<DD>
+<pre>
+⊢ ∀f. summable f ∧ (∀n. 0 ≤ f n) ⇒ 0 ≤ suminf f
+</pre>
+
+<DT><span class="strong">SER_POS_MONO</span>
+<DD>
+<pre>
+⊢ ∀f. (∀n. 0 ≤ f n) ⇒ mono (λn. sum (0,n) f)
+</pre>
+
+<DT><span class="strong">POS_SUMMABLE</span>
+<DD>
+<pre>
+⊢ ∀f. (∀n. 0 ≤ f n) ∧ (∃x. ∀n. sum (0,n) f ≤ x) ⇒ summable f
+</pre>
+
+<DT><span class="strong">SUMMABLE_LE</span>
+<DD>
+<pre>
+⊢ ∀f x. summable f ∧ (∀n. sum (0,n) f ≤ x) ⇒ suminf f ≤ x
+</pre>
+
+<DT><span class="strong">SUMS_EQ</span>
+<DD>
+<pre>
+⊢ ∀f x. f sums x ⇔ summable f ∧ suminf f = x
+</pre>
+
+<DT><span class="strong">SUMINF_POS</span>
+<DD>
+<pre>
+⊢ ∀f. (∀n. 0 ≤ f n) ∧ summable f ⇒ 0 ≤ suminf f
+</pre>
+
+<DT><span class="strong">SUM_PICK</span>
+<DD>
+<pre>
+⊢ ∀n k x. sum (0,n) (λm. if m = k then x else 0) = if k < n then x else 0
+</pre>
+
+<DT><span class="strong">SUM_LT</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+      (∀r. m ≤ r ∧ r < n + m ⇒ f r < g r) ∧ 0 < n ⇒ sum (m,n) f < sum (m,n) g
+</pre>
+
+<DT><span class="strong">SUM_CONST_R</span>
+<DD>
+<pre>
+⊢ ∀n r. sum (0,n) (K r) = &n * r
+</pre>
+
+<DT><span class="strong">SUMS_ZERO</span>
+<DD>
+<pre>
+⊢ K 0 sums 0
+</pre>
+
+<DT><span class="strong">SUMINF_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g.
+      summable f ∧ summable g ⇒
+      summable (λn. f n + g n) ∧ suminf f + suminf g = suminf (λn. f n + g n)
+</pre>
+
+<DT><span class="strong">SUMINF_2D</span>
+<DD>
+<pre>
+⊢ ∀f g h.
+      (∀m n. 0 ≤ f m n) ∧ (∀n. f n sums g n) ∧ summable g ∧
+      BIJ h 𝕌(:num) (𝕌(:num) × 𝕌(:num)) ⇒
+      UNCURRY f ∘ h sums suminf g
+</pre>
+
+<DT><span class="strong">POW_HALF_SER</span>
+<DD>
+<pre>
+⊢ (λn. (1 / 2) pow (n + 1)) sums 1
+</pre>
+
+<DT><span class="strong">SER_POS_COMPARE</span>
+<DD>
+<pre>
+⊢ ∀f g.
+      (∀n. 0 ≤ f n) ∧ summable g ∧ (∀n. f n ≤ g n) ⇒
+      summable f ∧ suminf f ≤ suminf g
+</pre>
+
+<DT><span class="strong">MINIMAL_EXISTS0</span>
+<DD>
+<pre>
+⊢ (∃n. P n) ⇔ ∃n. P n ∧ ∀m. m < n ⇒ ¬P m
+</pre>
+
+<DT><span class="strong">MINIMAL_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀P. (∃n. P n) ⇔ P (minimal P) ∧ ∀n. n < minimal P ⇒ ¬P n
+</pre>
+
+<DT><span class="strong">MINIMAL_EXISTS_IMP</span>
+<DD>
+<pre>
+⊢ ∀P. (∃n. P n) ⇒ ∃m. P m ∧ ∀n. n < m ⇒ ¬P n
+</pre>
+
+<DT><span class="strong">MINIMAL_EQ_IMP</span>
+<DD>
+<pre>
+⊢ ∀m p. p m ∧ (∀n. n < m ⇒ ¬p n) ⇒ m = minimal p
+</pre>
+
+<DT><span class="strong">MINIMAL_SUC</span>
+<DD>
+<pre>
+⊢ ∀n p.
+      SUC n = minimal p ∧ p (SUC n) ⇔ ¬p 0 ∧ n = minimal (p ∘ SUC) ∧ p (SUC n)
+</pre>
+
+<DT><span class="strong">MINIMAL_EQ</span>
+<DD>
+<pre>
+⊢ ∀p m. p m ∧ m = minimal p ⇔ p m ∧ ∀n. n < m ⇒ ¬p n
+</pre>
+
+<DT><span class="strong">MINIMAL_SUC_IMP</span>
+<DD>
+<pre>
+⊢ ∀n p. p (SUC n) ∧ ¬p 0 ∧ n = minimal (p ∘ SUC) ⇒ SUC n = minimal p
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

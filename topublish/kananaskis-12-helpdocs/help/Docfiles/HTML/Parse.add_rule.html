@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Parse.add_rule</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>add_rule :
+  {term_name : string, fixity : fixity,
+   pp_elements: term_grammar.pp_element list,
+   paren_style : term_grammar.ParenStyle,
+   block_style : term_grammar.PhraseBlockStyle *
+                 term_grammar.block_info}  -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Adds a parsing/printing rule to the global grammar.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Parse</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">add_rule</SPAN><SPAN class = "TEXT"> is a fundamental method for adding parsing
+(and thus printing) rules to the global term grammar that sits behind
+the term-parsing function </SPAN><SPAN class = "BRKT">Parse.Term</SPAN><SPAN class = "TEXT">, and the pretty-printer
+installed for terms. It is used for everything except the addition of
+list-forms, for which refer to the entry for </SPAN><SPAN class = "BRKT">add_listform</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">There are five components in the record argument to </SPAN><SPAN class = "BRKT">add_rule</SPAN><SPAN class = "TEXT">.  The
+</SPAN><SPAN class = "BRKT">term_name</SPAN><SPAN class = "TEXT"> component is the name of the term (whether a constant or a
+variable) that will be generated at the head of the function
+application.  Thus, the </SPAN><SPAN class = "BRKT">term_name</SPAN><SPAN class = "TEXT"> component when specifying parsing
+for conditional expressions is </SPAN><SPAN class = "BRKT">COND</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The following values (all in structure </SPAN><SPAN class = "BRKT">Parse</SPAN><SPAN class = "TEXT">) are useful for
+constructing fixity values:
+</SPAN><DIV class = "XMPL"><pre>
+   val LEFT       : HOLgrammars.associativity
+   val RIGHT      : HOLgrammars.associativity
+   val NONASSOC   : HOLgrammars.associativity
+
+   val Binder     : fixity
+   val Closefix   : fixity
+   val Infixl     : int -&gt; fixity
+   val Infixr     : int -&gt; fixity
+   val Infix      : HOLgrammars.associativity * int -&gt; fixity
+   val Prefix     : int -&gt; fixity
+   val Suffix     : int -&gt; fixity
+</pre></DIV>
+<SPAN class = "TEXT">
+The </SPAN><SPAN class = "BRKT">Binder</SPAN><SPAN class = "TEXT"> fixity is for binders such as universal and existential
+quantifiers (</SPAN><SPAN class = "BRKT">!</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">?</SPAN><SPAN class = "TEXT">).  Binders can actually be seen as (true)
+prefixes (should </SPAN><SPAN class = "BRKT">`!x.&nbsp;p&nbsp;/\&nbsp;q`</SPAN><SPAN class = "TEXT"> be parsed as </SPAN><SPAN class = "BRKT">`(!x.&nbsp;p)&nbsp;/\&nbsp;q`</SPAN><SPAN class = "TEXT"> or as
+</SPAN><SPAN class = "BRKT">`!x.&nbsp;(p&nbsp;/\&nbsp;q)`</SPAN><SPAN class = "TEXT">?), but the </SPAN><SPAN class = "BRKT">add_rule</SPAN><SPAN class = "TEXT"> interface only allows binders to
+be added at the one level (the weakest in the grammar).  Further, when
+binders are added using this interface, all elements of the record
+apart from the </SPAN><SPAN class = "BRKT">term_name</SPAN><SPAN class = "TEXT"> are ignored, so the name of the binder must
+be the same as the string that is parsed and printed  (but see also
+restricted quantifiers: </SPAN><SPAN class = "BRKT">associate_restriction</SPAN><SPAN class = "TEXT">).</SPAN>
+<P>
+<SPAN class = "TEXT">The remaining fixities all cause </SPAN><SPAN class = "BRKT">add_rule</SPAN><SPAN class = "TEXT"> to pay due heed to the
+</SPAN><SPAN class = "BRKT">pp_elements</SPAN><SPAN class = "TEXT"> (&ldquo;parsing/printing elements&rdquo;) component of the
+record.  As far as parsing is concerned, the only important elements
+are </SPAN><SPAN class = "BRKT">TOK</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">TM</SPAN><SPAN class = "TEXT"> values, of the following types:
+</SPAN><DIV class = "XMPL"><pre>
+   val TM  : term_grammar.pp_element
+   val TOK : string -&gt; term_grammar.pp_element
+</pre></DIV>
+<SPAN class = "TEXT">
+The </SPAN><SPAN class = "BRKT">TM</SPAN><SPAN class = "TEXT"> value corresponds to a &ldquo;hole&rdquo; where a sub-term is
+possible.  The </SPAN><SPAN class = "BRKT">TOK</SPAN><SPAN class = "TEXT"> value corresponds to a piece of concrete syntax,
+a string that is required when parsing, and which will appear when
+printing.   The sequence of </SPAN><SPAN class = "BRKT">pp_elements</SPAN><SPAN class = "TEXT"> specified in the record
+passed to </SPAN><SPAN class = "BRKT">add_rule</SPAN><SPAN class = "TEXT"> specifies the &ldquo;kernel&rdquo; syntax of an operator in the
+grammar.  The &ldquo;kernel&rdquo; of a rule is extended (or not) by additional
+sub-terms depending on the fixity type, thus:
+</SPAN><DIV class = "XMPL"><pre>
+   Closefix    :      [Kernel]     (* no external arguments *)
+   Prefix      :      [Kernel] _   (* an argument to the right *)
+   Suffix      :    _ [Kernel]     (* an argument to the left *)
+   Infix       :    _ [Kernel] _   (* arguments on both sides *)
+</pre></DIV>
+<SPAN class = "TEXT">
+Thus simple infixes, suffixes and prefixes would have singleton
+</SPAN><SPAN class = "BRKT">pp_element</SPAN><SPAN class = "TEXT"> lists, consisting of just the symbol desired.  More
+complicated mix-fix syntax can be constructed by identifying whether
+or not sub-term arguments exist beyond the kernel of concrete syntax.
+For example, syntax for the evaluation relation of an operational
+semantics (</SPAN><SPAN class = "BRKT">&nbsp;_&nbsp;|-&nbsp;_&nbsp;--&gt;&nbsp;_&nbsp;</SPAN><SPAN class = "TEXT">) is an infix with a kernel delimited by
+</SPAN><SPAN class = "BRKT">|-</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">--&gt;</SPAN><SPAN class = "TEXT"> tokens.  Syntax for denotation brackets </SPAN><SPAN class = "BRKT">[|&nbsp;_&nbsp;|]</SPAN><SPAN class = "TEXT"> is a
+closefix with one internal argument in the kernel.</SPAN>
+<P>
+<SPAN class = "TEXT">The remaining sorts of possible </SPAN><SPAN class = "BRKT">pp_element</SPAN><SPAN class = "TEXT"> values are concerned with
+pretty-printing.  (The basic scheme is implemented on top of a
+standard Oppen-style pretty-printing package.) They are
+</SPAN><DIV class = "XMPL"><pre>
+   (* where
+        type term_grammar.block_info = PP.break_style * int
+   *)
+   val BreakSpace : (int * int) -&gt; term_grammar.pp_element
+   val HardSpace : int -&gt; term_grammar.pp_element
+
+   val BeginFinalBlock : term_grammar.block_info -&gt; term_grammar.pp_element
+   val EndInitialBlock : term_grammar.block_info -&gt; term_grammar.pp_element
+   val PPBlock : term_grammar.pp_element list * term_grammar.block_info
+                 -&gt; term_grammar.pp_element
+
+   val OnlyIfNecessary : term_grammar.ParenStyle
+   val ParoundName : term_grammar.ParenStyle
+   val ParoundPrec : term_grammar.ParenStyle
+   val Always : term_grammar.ParenStyle
+
+   val AroundEachPhrase : term_grammar.PhraseBlockStyle
+   val AroundSamePrec   : term_grammar.PhraseBlockStyle
+   val AroundSameName   : term_grammar.PhraseBlockStyle
+   val NoPhrasing       : term_grammar.PhraseBlockStyle
+</pre></DIV>
+<SPAN class = "TEXT">
+The two spacing values provide ways of specifying
+white-space should be added when terms are printed.  Use of
+</SPAN><SPAN class = "BRKT">HardSpace&nbsp;n</SPAN><SPAN class = "TEXT"> results in </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> spaces being added to the term whatever
+the context.  On the other hand, </SPAN><SPAN class = "BRKT">BreakSpace(m,n)</SPAN><SPAN class = "TEXT"> results in a break
+of width </SPAN><SPAN class = "BRKT">m</SPAN><SPAN class = "TEXT"> spaces unless this makes the current line too wide, in
+which case a line-break will occur, and the next line will be indented
+an extra </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> spaces.</SPAN>
+<P>
+<SPAN class = "TEXT">For example, the </SPAN><SPAN class = "BRKT">add_infix</SPAN><SPAN class = "TEXT"> function (q.v.) is implemented in terms
+of </SPAN><SPAN class = "BRKT">add_rule</SPAN><SPAN class = "TEXT"> in such a way that a single token infix </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">, has a
+</SPAN><SPAN class = "BRKT">pp_element</SPAN><SPAN class = "TEXT"> list of
+</SPAN><DIV class = "XMPL"><pre>
+   [HardSpace 1, TOK s, BreakSpace(1,0)]
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">This results in chains of infixes (such as those that occur
+with conjunctions) that break so as to leave the infix on the right
+hand side of the line.  Under this constraint, printing can&rsquo;t break so
+as to put the infix symbol on the start of a line, because that would
+imply that the </SPAN><SPAN class = "BRKT">HardSpace</SPAN><SPAN class = "TEXT"> had in fact been broken.  (Consequently, if
+a change to this behaviour is desired, there is no global way of
+effecting it, but one can do it on an infix-by-infix basis by deleting
+the given rule (see, for example, </SPAN><SPAN class = "BRKT">remove_termtok</SPAN><SPAN class = "TEXT">) and then &ldquo;putting
+it back&rdquo; with different pretty-printing constraints.)</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">PPBlock</SPAN><SPAN class = "TEXT"> function allows the specification of nested blocks
+(blocks in the Oppen pretty-printing sense) within the list of
+</SPAN><SPAN class = "BRKT">pp_element</SPAN><SPAN class = "TEXT">s.  Because there are sub-terms in all but the </SPAN><SPAN class = "BRKT">Closefix</SPAN><SPAN class = "TEXT">
+fixities that occur beyond the scope of the </SPAN><SPAN class = "BRKT">pp_element</SPAN><SPAN class = "TEXT"> list, the
+</SPAN><SPAN class = "BRKT">BeginFinalBlock</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">EndInitialBlock</SPAN><SPAN class = "TEXT"> functions can also be used to
+indicate the boundary of blocks whose outer extent is the term beyond
+the kernel represented by the </SPAN><SPAN class = "BRKT">pp_element</SPAN><SPAN class = "TEXT"> list.  There is an example
+of this below.</SPAN>
+<P>
+<SPAN class = "TEXT">The possible </SPAN><SPAN class = "BRKT">ParenStyle</SPAN><SPAN class = "TEXT"> values describe when parentheses should be
+added to terms.  The </SPAN><SPAN class = "BRKT">OnlyIfNecessary</SPAN><SPAN class = "TEXT"> value will cause parentheses to
+be added only when required to disambiguate syntax.  The </SPAN><SPAN class = "BRKT">ParoundName</SPAN><SPAN class = "TEXT">
+will cause parentheses to be added if necessary, or where the head
+symbol has the given </SPAN><SPAN class = "BRKT">term_name</SPAN><SPAN class = "TEXT"> and where this term is not the
+argument of a function with the same head name.  This style of
+parenthesisation is used with tuples, for example.  The </SPAN><SPAN class = "BRKT">ParoundPrec</SPAN><SPAN class = "TEXT">
+value is similar, but causes parentheses to be added when the term is
+the argument to a function with a different precedence level.
+Finally, the </SPAN><SPAN class = "BRKT">Always</SPAN><SPAN class = "TEXT"> value causes parentheses always to be added.</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">PhraseBlockStyle</SPAN><SPAN class = "TEXT"> values describe when pretty-printing blocks
+involving this term should be entered.  The </SPAN><SPAN class = "BRKT">AroundEachPhrase</SPAN><SPAN class = "TEXT"> style
+causes a pretty-printing block to be created around each term.  This
+is not appropriate for operators such as conjunction however, where
+all of the arguments to the conjunctions in a list are more pleasingly
+thought of as being at the same level.  This effect is gained by
+specifying either </SPAN><SPAN class = "BRKT">AroundSamePrec</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">AroundSameName</SPAN><SPAN class = "TEXT">.  The former
+will cause the creation of a new block for the phrase if it is at a
+different precedence level from its parent, while the latter creates
+the block if the parent name is not the same.  The former is
+appropriate for </SPAN><SPAN class = "BRKT">+</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">-</SPAN><SPAN class = "TEXT"> which are at the same precedence level,
+while the latter is appropriate for </SPAN><SPAN class = "BRKT">/\</SPAN><SPAN class = "TEXT">.  Finally, the </SPAN><SPAN class = "BRKT">NoPhrasing</SPAN><SPAN class = "TEXT">
+style causes there to be no block at all around terms controlled by
+this rule.  The intention in using such a style is to have block
+structure controlled by the level above.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function will fail if the </SPAN><SPAN class = "BRKT">pp_element</SPAN><SPAN class = "TEXT"> list does not have </SPAN><SPAN class = "BRKT">TOK</SPAN><SPAN class = "TEXT">
+values at the beginning and the end of the list, or if there are two
+adjacent </SPAN><SPAN class = "BRKT">TM</SPAN><SPAN class = "TEXT"> values in the list.  It will fail if the rule specifies
+a fixity with a precedence, and if that precedence level in the
+grammar is already taken by rules with a different sort of fixity.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">There are two conditional expression syntaxes defined in the theory
+</SPAN><SPAN class = "BRKT">bool</SPAN><SPAN class = "TEXT">.  The first is the traditional HOL88/90 syntax.  Because the
+syntax involves &ldquo;dangling&rdquo; terms to the left and right, it is
+an infix (and one of very weak precedence at that).
+</SPAN><DIV class = "XMPL"><pre>
+   val _ = add_rule{term_name = "COND",
+                    fixity = Infix (HOLgrammars.RIGHT, 3),
+                    pp_elements = [HardSpace 1, TOK "=&gt;",
+                                   BreakSpace(1,0), TM,
+                                   BreakSpace(1,0), TOK "|",
+                                   HardSpace 1],
+                    paren_style = OnlyIfNecessary,
+                    block_style = (AroundEachPhrase,
+                                   (PP.INCONSISTENT, 0))};
+</pre></DIV>
+<SPAN class = "TEXT">
+The second rule added uses the more familiar </SPAN><SPAN class = "BRKT">if-then-else</SPAN><SPAN class = "TEXT">
+syntax.  Here there is only a &ldquo;dangling&rdquo; term to the right of the
+construction, so this rule&rsquo;s fixity is of type </SPAN><SPAN class = "BRKT">Prefix</SPAN><SPAN class = "TEXT">. (If the
+rule was made a </SPAN><SPAN class = "BRKT">Closefix</SPAN><SPAN class = "TEXT">, strings such as </SPAN><SPAN class = "BRKT">`if&nbsp;P&nbsp;then&nbsp;Q&nbsp;else&nbsp;R`</SPAN><SPAN class = "TEXT">
+would still parse, but so too would </SPAN><SPAN class = "BRKT">`if&nbsp;P&nbsp;then&nbsp;Q&nbsp;else`</SPAN><SPAN class = "TEXT">.)  This
+example also illustrates the use of blocks within rules to improve
+pretty-printing.
+</SPAN><DIV class = "XMPL"><pre>
+   val _ = add_rule{term_name = "COND", fixity = Prefix 70,
+                    pp_elements = [PPBlock([TOK "if", BreakSpace(1,2),
+                                            TM, BreakSpace(1,0),
+                                            TOK "then"], (PP.CONSISTENT, 0)),
+                                   BreakSpace(1,2), TM, BreakSpace(1,0),
+                                   BeginFinalBlock(PP.CONSISTENT, 2),
+                                   TOK "else", BreakSpace(1,0)],
+                    paren_style = OnlyIfNecessary,
+                    block_style = (AroundEachPhrase,
+                                   (PP.INCONSISTENT, 0))};
+</pre></DIV>
+<SPAN class = "TEXT">
+Note that the above form is not that actually used in the
+system.  As written, it allows for pretty-printing some expressions
+as:
+</SPAN><DIV class = "XMPL"><pre>
+   if P then
+      &lt;very long term&gt; else Q
+</pre></DIV>
+<SPAN class = "TEXT">
+because the </SPAN><SPAN class = "BRKT">block_style</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">INCONSISTENT</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The pretty-printer prefers later rules over earlier rules by
+default (though this choice can be changed with </SPAN><SPAN class = "BRKT">prefer_form_with_tok</SPAN><SPAN class = "TEXT">
+(q.v.)), so conditional expressions print using the </SPAN><SPAN class = "BRKT">if-then-else</SPAN><SPAN class = "TEXT">
+syntax rather than the </SPAN><SPAN class = "BRKT">_&nbsp;=&gt;&nbsp;_&nbsp;|&nbsp;_</SPAN><SPAN class = "TEXT"> syntax.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">For making pretty concrete syntax possible.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Because adding new rules to the grammar may result in precedence
+conflicts in the operator-precedence matrix, it is as well with
+interactive use to test the </SPAN><SPAN class = "BRKT">Term</SPAN><SPAN class = "TEXT"> parser immediately after adding a
+new rule, as it is only with this call that the precedence matrix is
+built.</SPAN>
+<P>
+<SPAN class = "TEXT">As with other functions in the </SPAN><SPAN class = "BRKT">Parse</SPAN><SPAN class = "TEXT"> structure, there is a companion
+</SPAN><SPAN class = "BRKT">temp_add_rule</SPAN><SPAN class = "TEXT"> function, which has the same effect on the global
+grammar, but which does not cause this effect to persist when the
+current theory is exported.</SPAN>
+<P>
+<SPAN class = "TEXT">An Isabelle-style concrete syntax for specifying rules would probably
+be desirable as it would conceal the complexity of the above from most
+users.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.add_listform.html">add_listform</A>,
+<A HREF = "Parse.add_infix.html">add_infix</A>,
+<A HREF = "Parse.prefer_form_with_tok.html">prefer_form_with_tok</A>,
+<A HREF = "Parse.remove_rules_for_term.html">remove_rules_for_term</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

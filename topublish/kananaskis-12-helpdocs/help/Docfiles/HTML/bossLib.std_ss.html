@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>bossLib.std_ss</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>std_ss : simpset</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Basic simplification set.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The simplification set </SPAN><SPAN class = "BRKT">std_ss</SPAN><SPAN class = "TEXT"> extends </SPAN><SPAN class = "BRKT">bool_ss</SPAN><SPAN class = "TEXT"> with a useful set
+of rewrite rules for terms involving options, pairs, and sums. It
+also performs beta and eta reduction. It applies some standard rewrites
+to evaluate expressions involving only numerals.</SPAN>
+<P>
+<SPAN class = "TEXT">The following rewrites from </SPAN><SPAN class = "BRKT">pairTheory</SPAN><SPAN class = "TEXT"> are included in </SPAN><SPAN class = "BRKT">std_ss</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   |- !x. (FST x,SND x) = x
+   |- !x y. FST (x,y) = x
+   |- !x y. SND (x,y) = y
+   |- !x y a b. ((x,y) = (a,b)) = (x = a) /\ (y = b)
+   |- !f. CURRY (UNCURRY f) = f
+   |- !f. UNCURRY (CURRY f) = f
+   |- (CURRY f = CURRY g) = (f = g)
+   |- (UNCURRY f = UNCURRY g) = (f = g)
+   |- !f x y. CURRY f x y = f (x,y)
+   |- !f x y. UNCURRY f (x,y) = f x y
+   |- !f g x y. (f ## g) (x,y) = (f x,g y)
+</pre></DIV>
+<SPAN class = "TEXT">
+The following rewrites from </SPAN><SPAN class = "BRKT">sumTheory</SPAN><SPAN class = "TEXT"> are included in </SPAN><SPAN class = "BRKT">std_ss</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   |- !x. ISL x ==&gt; (INL (OUTL x) = x)
+   |- !x. ISR x ==&gt; (INR (OUTR x) = x)
+   |- (!x. ISL (INL x)) /\ !y. ~ISL (INR y)
+   |- (!x. ISR (INR x)) /\ !y. ~ISR (INL y)
+   |- !x. OUTL (INL x) = x
+   |- !x. OUTR (INR x) = x
+   |- !x y. ~(INL x = INR y)
+   |- !x y. ~(INR y = INL x)
+   |- (!y x. (INL x = INL y) = (x = y)) /\
+      (!y x. (INR x = INR y) = (x = y))
+   |- (!f g x. case f g (INL x) = f x) /\
+      (!f g y. case f g (INR y) = g y)
+</pre></DIV>
+<SPAN class = "TEXT">
+The following rewrites from </SPAN><SPAN class = "BRKT">optionTheory</SPAN><SPAN class = "TEXT"> are included in </SPAN><SPAN class = "BRKT">std_ss</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   |- (!x y. (SOME x = SOME y) = (x = y))
+   |- (!x. ~(NONE = SOME x))
+   |- (!x. ~(SOME x = NONE))
+   |- (!x. THE (SOME x) = x)
+   |- (!x. IS_SOME (SOME x) = T)
+   |- (IS_SOME NONE = F)
+   |- (!x. IS_NONE x = (x = NONE))
+   |- (!x. ~IS_SOME x = (x = NONE))
+   |- (!x. IS_SOME x ==&gt; (SOME (THE x) = x))
+   |- (!x. case NONE SOME x = x)
+   |- (!x. case x SOME x = x)
+   |- (!x. IS_NONE x ==&gt; (case e f x = e))
+   |- (!x. IS_SOME x ==&gt; (case e f x = f (THE x)))
+   |- (!x. IS_SOME x ==&gt; (case e SOME x = x))
+   |- (!u f. case u f NONE = u)
+   |- (!u f x. case u f (SOME x) = f x)
+   |- (!f x. OPTION_MAP f (SOME x) = SOME (f x))
+   |- (!f. OPTION_MAP f NONE = NONE)
+   |- (OPTION_JOIN NONE = NONE)
+   |- (!x. OPTION_JOIN (SOME x) = x)
+   |- !f x y. (OPTION_MAP f x = SOME y) = ?z. (x = SOME z) /\ (y = f z)
+   |- !f x. (OPTION_MAP f x = NONE) = (x = NONE)
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">For performing obvious simplification steps on terms, formulas, and
+goals. Also, sometimes simplification with more powerful simpsets,
+like </SPAN><SPAN class = "BRKT">arith_ss</SPAN><SPAN class = "TEXT">, becomes too slow, in which case one can use </SPAN><SPAN class = "BRKT">std_ss</SPAN><SPAN class = "TEXT">
+supplemented with whatever theorems are needed.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The simplification sets provided in </SPAN><SPAN class = "BRKT">BasicProvers</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">bossLib</SPAN><SPAN class = "TEXT">
+(currently </SPAN><SPAN class = "BRKT">bool_ss</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">std_ss</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">arith_ss</SPAN><SPAN class = "TEXT">, and </SPAN><SPAN class = "BRKT">list_ss</SPAN><SPAN class = "TEXT">) do not
+include useful rewrites stemming from HOL datatype declarations, such
+as injectivity and distinctness of constructors. However, the
+simplification routines </SPAN><SPAN class = "BRKT">RW_TAC</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">SRW_TAC</SPAN><SPAN class = "TEXT"> automatically load these
+rewrites.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "BasicProvers.RW_TAC.html">RW_TAC</A>,
+<A HREF = "BasicProvers.SRW_TAC.html">SRW_TAC</A>,
+<A HREF = "simpLib.SIMP_TAC.html">SIMP_TAC</A>,
+<A HREF = "simpLib.SIMP_CONV.html">SIMP_CONV</A>,
+<A HREF = "simpLib.SIMP_RULE.html">SIMP_RULE</A>,
+<A HREF = "BasicProvers.bool_ss.html">bool_ss</A>,
+<A HREF = "bossLib.arith_ss.html">arith_ss</A>,
+<A HREF = "bossLib.list_ss.html">list_ss</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

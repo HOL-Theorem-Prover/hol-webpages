@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>computeLib.unmapped</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>unmapped : compset -&gt; (string * string) list</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/computeLib.html">computeLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">List unmapped elements in compset</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">compute</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">unmapped</SPAN><SPAN class = "TEXT"> takes a </SPAN><SPAN class = "BRKT">compset</SPAN><SPAN class = "TEXT"> value and returns a
+listing of the elements of the compset that have no transformation 
+attached to them.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The listing omits constructors, but can include constants
+that effectively act as constructors for rewrites in the compset. 
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; val compset = reduceLib.num_compset();
+   val compset = &lt;compset&gt;: computeLib.compset
+
+   &gt; computeLib.unmapped compset;
+   val it =
+     [("BIT1", "arithmetic"), 
+      ("BIT2", "arithmetic"),
+      ("ZERO", "arithmetic")]
+     : (string * string) list
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In the following example, a function is added to a compset without 
+also adding functions that get "called" by it:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; load "sortingTheory";
+   val it = (): unit
+
+  &gt; sortingTheory.QSORT_DEF;
+  val it =
+     |- (!ord. QSORT ord [] = []) /\
+        !t ord h.
+          QSORT ord (h::t) =
+           (let (l1,l2) = PARTITION (\y. ord y h) t
+           in
+           QSORT ord l1 ++ [h] ++ QSORT ord l2) : thm
+
+   &gt; val () = computeLib.add_thms [sortingTheory.QSORT_DEF] compset;
+
+   &gt; computeLib.unmapped compset;
+   val it =
+      [("APPEND", "list"), 
+       ("BIT1", "arithmetic"), 
+       ("BIT2", "arithmetic"),
+       ("PARTITION", "sorting"), 
+       ("UNCURRY", "pair"), 
+       ("ZERO", "arithmetic")]
+   :(string * string) list
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Intended to support the construction of large compsets, where it is often
+unclear what functions and conversions still need to be added in order to 
+make applications of </SPAN><SPAN class = "BRKT">EVAL_CONV</SPAN><SPAN class = "TEXT"> terminate.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.EVAL.html">EVAL</A>,
+<A HREF = "computeLib.listItems.html">listItems</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

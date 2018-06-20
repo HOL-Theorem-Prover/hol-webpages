@@ -1,0 +1,977 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: bitstring</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "bitstring"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "wordsTheory.html"><span class="strong">words</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">add</span>
+    <td>
+    :bitstring -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">band</span>
+    <td>
+    :bitstring -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">bitify</span>
+    <td>
+    :num list -> bitstring -> num list
+    <tr><td>
+    <span class="strong">bitwise</span>
+    <td>
+    :bool reln -> bitstring -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">bnand</span>
+    <td>
+    :bitstring -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">bnor</span>
+    <td>
+    :bitstring -> bitstring -> bitstring
+    <tr><td> <span class="strong">bnot</span> <td> :bitstring -> bitstring
+    <tr><td>
+    <span class="strong">boolify</span>
+    <td>
+    :bitstring -> num list -> bitstring
+    <tr><td>
+    <span class="strong">bor</span>
+    <td>
+    :bitstring -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">bxnor</span>
+    <td>
+    :bitstring -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">bxor</span>
+    <td>
+    :bitstring -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">extend</span>
+    <td>
+    :bool -> num -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">field</span>
+    <td>
+    :num -> num -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">field_insert</span>
+    <td>
+    :num -> num -> bitstring -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">fixwidth</span>
+    <td>
+    :num -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">modify</span>
+    <td>
+    :(num -> bool -> bool) -> bitstring -> bitstring
+    <tr><td> <span class="strong">n2v</span> <td> :num -> bitstring
+    <tr><td>
+    <span class="strong">replicate</span>
+    <td>
+    :bitstring -> num -> bitstring
+    <tr><td> <span class="strong">rev_count_list</span> <td> :num -> num list
+    <tr><td>
+    <span class="strong">rotate</span>
+    <td>
+    :bitstring -> num -> bitstring
+    <tr><td> <span class="strong">s2v</span> <td> :string -> bitstring
+    <tr><td>
+    <span class="strong">shiftl</span>
+    <td>
+    :bitstring -> num -> bitstring
+    <tr><td>
+    <span class="strong">shiftr</span>
+    <td>
+    :bitstring -> num -> bitstring
+    <tr><td>
+    <span class="strong">sign_extend</span>
+    <td>
+    :num -> α list -> α list
+    <tr><td>
+    <span class="strong">testbit</span>
+    <td>
+    :num -> bitstring -> bool
+    <tr><td> <span class="strong">v2n</span> <td> :bitstring -> num
+    <tr><td> <span class="strong">v2s</span> <td> :bitstring -> string
+    <tr><td> <span class="strong">v2w</span> <td> :bitstring -> α word
+    <tr><td> <span class="strong">w2v</span> <td> :α word -> bitstring
+    <tr><td>
+    <span class="strong">zero_extend</span>
+    <td>
+    :num -> bitstring -> bitstring
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">extend_def</span>
+<DD>
+<pre>
+⊢ (∀v0 l. extend v0 0 l = l) ∧ ∀c n l. extend c (SUC n) l = extend c n (c::l)
+</pre>
+
+<DT><span class="strong">boolify_def</span>
+<DD>
+<pre>
+⊢ (∀a. boolify a [] = a) ∧ ∀a n l. boolify a (n::l) = boolify ((n ≠ 0)::a) l
+</pre>
+
+<DT><span class="strong">n2v_def</span>
+<DD>
+<pre>
+⊢ ∀n. n2v n = boolify [] (num_to_bin_list n)
+</pre>
+
+<DT><span class="strong">v2n_def</span>
+<DD>
+<pre>
+⊢ ∀l. v2n l = num_from_bin_list (bitify [] l)
+</pre>
+
+<DT><span class="strong">s2v_def</span>
+<DD>
+<pre>
+⊢ s2v = MAP (λc. c = #"1" ∨ c = #"T")
+</pre>
+
+<DT><span class="strong">v2s_def</span>
+<DD>
+<pre>
+⊢ v2s = MAP (λb. if b then #"1" else #"0")
+</pre>
+
+<DT><span class="strong">zero_extend_def</span>
+<DD>
+<pre>
+⊢ ∀n v. zero_extend n v = PAD_LEFT F n v
+</pre>
+
+<DT><span class="strong">sign_extend_def</span>
+<DD>
+<pre>
+⊢ ∀n v. sign_extend n v = PAD_LEFT (HD v) n v
+</pre>
+
+<DT><span class="strong">fixwidth_def</span>
+<DD>
+<pre>
+⊢ ∀n v.
+      fixwidth n v =
+      (let l = LENGTH v in if l < n then zero_extend n v else DROP (l − n) v)
+</pre>
+
+<DT><span class="strong">shiftl_def</span>
+<DD>
+<pre>
+⊢ ∀v m. shiftl v m = PAD_RIGHT F (LENGTH v + m) v
+</pre>
+
+<DT><span class="strong">shiftr_def</span>
+<DD>
+<pre>
+⊢ ∀v m. shiftr v m = TAKE (LENGTH v − m) v
+</pre>
+
+<DT><span class="strong">field_def</span>
+<DD>
+<pre>
+⊢ ∀h l v. field h l v = fixwidth (SUC h − l) (shiftr v l)
+</pre>
+
+<DT><span class="strong">rotate_def</span>
+<DD>
+<pre>
+⊢ ∀v m.
+      rotate v m =
+      (let
+         l = LENGTH v ;
+         x = m MOD l
+       in
+         if l = 0 ∨ x = 0 then v else field (x − 1) 0 v ++ field (l − 1) x v)
+</pre>
+
+<DT><span class="strong">testbit_def</span>
+<DD>
+<pre>
+⊢ ∀b v. testbit b v ⇔ field b b v = [T]
+</pre>
+
+<DT><span class="strong">w2v_def</span>
+<DD>
+<pre>
+⊢ ∀w. w2v w = GENLIST (λi. w ' (dimindex (:α) − 1 − i)) (dimindex (:α))
+</pre>
+
+<DT><span class="strong">v2w_def</span>
+<DD>
+<pre>
+⊢ ∀v. v2w v = FCP i. testbit i v
+</pre>
+
+<DT><span class="strong">rev_count_list_def</span>
+<DD>
+<pre>
+⊢ ∀n. rev_count_list n = GENLIST (λi. n − 1 − i) n
+</pre>
+
+<DT><span class="strong">modify_def</span>
+<DD>
+<pre>
+⊢ ∀f v. modify f v = MAP (UNCURRY f) (ZIP (rev_count_list (LENGTH v),v))
+</pre>
+
+<DT><span class="strong">field_insert_def</span>
+<DD>
+<pre>
+⊢ ∀h l s.
+      field_insert h l s =
+      modify (λi. COND (l ≤ i ∧ i ≤ h) (testbit (i − l) s))
+</pre>
+
+<DT><span class="strong">add_def</span>
+<DD>
+<pre>
+⊢ ∀a b.
+      add a b =
+      (let
+         m = MAX (LENGTH a) (LENGTH b)
+       in
+         zero_extend m (n2v (v2n a + v2n b)))
+</pre>
+
+<DT><span class="strong">bitwise_def</span>
+<DD>
+<pre>
+⊢ ∀f v1 v2.
+      bitwise f v1 v2 =
+      (let
+         m = MAX (LENGTH v1) (LENGTH v2)
+       in
+         MAP (UNCURRY f) (ZIP (fixwidth m v1,fixwidth m v2)))
+</pre>
+
+<DT><span class="strong">bnot_def</span>
+<DD>
+<pre>
+⊢ bnot = MAP $~
+</pre>
+
+<DT><span class="strong">bor_def</span>
+<DD>
+<pre>
+⊢ bor = bitwise $\/
+</pre>
+
+<DT><span class="strong">band_def</span>
+<DD>
+<pre>
+⊢ band = bitwise $/\
+</pre>
+
+<DT><span class="strong">bxor_def</span>
+<DD>
+<pre>
+⊢ bxor = bitwise (λx y. x ⇎ y)
+</pre>
+
+<DT><span class="strong">bnor_def</span>
+<DD>
+<pre>
+⊢ bnor = bitwise (λx y. ¬(x ∨ y))
+</pre>
+
+<DT><span class="strong">bxnor_def</span>
+<DD>
+<pre>
+⊢ bxnor = bitwise $<=>
+</pre>
+
+<DT><span class="strong">bnand_def</span>
+<DD>
+<pre>
+⊢ bnand = bitwise (λx y. ¬(x ∧ y))
+</pre>
+
+<DT><span class="strong">replicate_def</span>
+<DD>
+<pre>
+⊢ ∀v n. replicate v n = FLAT (GENLIST (K v) n)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">extend_def_compute</span>
+<DD>
+<pre>
+⊢ (∀v0 l. extend v0 0 l = l) ∧
+  (∀c n l.
+       extend c (NUMERAL (BIT1 n)) l = extend c (NUMERAL (BIT1 n) − 1) (c::l)) ∧
+  ∀c n l. extend c (NUMERAL (BIT2 n)) l = extend c (NUMERAL (BIT1 n)) (c::l)
+</pre>
+
+<DT><span class="strong">bitify_ind</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∀a. P a []) ∧ (∀a l. P (0::a) l ⇒ P a (F::l)) ∧
+      (∀a l. P (1::a) l ⇒ P a (T::l)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">bitify_def</span>
+<DD>
+<pre>
+⊢ (∀a. bitify a [] = a) ∧ (∀l a. bitify a (F::l) = bitify (0::a) l) ∧
+  ∀l a. bitify a (T::l) = bitify (1::a) l
+</pre>
+
+<DT><span class="strong">extend_cons</span>
+<DD>
+<pre>
+⊢ ∀n c l. extend c (SUC n) l = c::extend c n l
+</pre>
+
+<DT><span class="strong">pad_left_extend</span>
+<DD>
+<pre>
+⊢ ∀n l c. PAD_LEFT c n l = extend c (n − LENGTH l) l
+</pre>
+
+<DT><span class="strong">extend</span>
+<DD>
+<pre>
+⊢ (∀n v. zero_extend n v = extend F (n − LENGTH v) v) ∧
+  ∀n v. sign_extend n v = extend (HD v) (n − LENGTH v) v
+</pre>
+
+<DT><span class="strong">fixwidth</span>
+<DD>
+<pre>
+⊢ ∀n v.
+      fixwidth n v =
+      (let
+         l = LENGTH v
+       in
+         if l < n then extend F (n − l) v else DROP (l − n) v)
+</pre>
+
+<DT><span class="strong">fixwidth_id</span>
+<DD>
+<pre>
+⊢ ∀w. fixwidth (LENGTH w) w = w
+</pre>
+
+<DT><span class="strong">fixwidth_id_imp</span>
+<DD>
+<pre>
+⊢ ∀n w. n = LENGTH w ⇒ fixwidth n w = w
+</pre>
+
+<DT><span class="strong">boolify_reverse_map</span>
+<DD>
+<pre>
+⊢ ∀v a. boolify a v = REVERSE (MAP (λn. n ≠ 0) v) ++ a
+</pre>
+
+<DT><span class="strong">bitify_reverse_map</span>
+<DD>
+<pre>
+⊢ ∀v a. bitify a v = REVERSE (MAP (λb. if b then 1 else 0) v) ++ a
+</pre>
+
+<DT><span class="strong">every_bit_bitify</span>
+<DD>
+<pre>
+⊢ ∀v. EVERY ($> 2) (bitify [] v)
+</pre>
+
+<DT><span class="strong">length_pad_left</span>
+<DD>
+<pre>
+⊢ ∀x n a. LENGTH (PAD_LEFT x n a) = if LENGTH a < n then n else LENGTH a
+</pre>
+
+<DT><span class="strong">length_pad_right</span>
+<DD>
+<pre>
+⊢ ∀x n a. LENGTH (PAD_RIGHT x n a) = if LENGTH a < n then n else LENGTH a
+</pre>
+
+<DT><span class="strong">length_zero_extend</span>
+<DD>
+<pre>
+⊢ ∀n v. LENGTH v < n ⇒ LENGTH (zero_extend n v) = n
+</pre>
+
+<DT><span class="strong">length_sign_extend</span>
+<DD>
+<pre>
+⊢ ∀n v. LENGTH v < n ⇒ LENGTH (sign_extend n v) = n
+</pre>
+
+<DT><span class="strong">length_fixwidth</span>
+<DD>
+<pre>
+⊢ ∀n v. LENGTH (fixwidth n v) = n
+</pre>
+
+<DT><span class="strong">length_field</span>
+<DD>
+<pre>
+⊢ ∀h l v. LENGTH (field h l v) = SUC h − l
+</pre>
+
+<DT><span class="strong">length_bitify</span>
+<DD>
+<pre>
+⊢ ∀v l. LENGTH (bitify l v) = LENGTH l + LENGTH v
+</pre>
+
+<DT><span class="strong">length_bitify_null</span>
+<DD>
+<pre>
+⊢ ∀v l. LENGTH (bitify [] v) = LENGTH v
+</pre>
+
+<DT><span class="strong">length_shiftr</span>
+<DD>
+<pre>
+⊢ ∀v n. LENGTH (shiftr v n) = LENGTH v − n
+</pre>
+
+<DT><span class="strong">length_rev_count_list</span>
+<DD>
+<pre>
+⊢ ∀n. LENGTH (rev_count_list n) = n
+</pre>
+
+<DT><span class="strong">length_w2v</span>
+<DD>
+<pre>
+⊢ ∀w. LENGTH (w2v w) = dimindex (:α)
+</pre>
+
+<DT><span class="strong">length_rotate</span>
+<DD>
+<pre>
+⊢ ∀v n. LENGTH (rotate v n) = LENGTH v
+</pre>
+
+<DT><span class="strong">el_rev_count_list</span>
+<DD>
+<pre>
+⊢ ∀n i. i < n ⇒ EL i (rev_count_list n) = n − 1 − i
+</pre>
+
+<DT><span class="strong">el_zero_extend</span>
+<DD>
+<pre>
+⊢ ∀n i v.
+      EL i (zero_extend n v) ⇔ n − LENGTH v ≤ i ∧ EL (i − (n − LENGTH v)) v
+</pre>
+
+<DT><span class="strong">el_sign_extend</span>
+<DD>
+<pre>
+⊢ ∀n i v.
+      EL i (sign_extend n v) = if i < n − LENGTH v then EL 0 v
+      else EL (i − (n − LENGTH v)) v
+</pre>
+
+<DT><span class="strong">el_fixwidth</span>
+<DD>
+<pre>
+⊢ ∀i n w.
+      i < n ⇒
+      (EL i (fixwidth n w) ⇔
+       if LENGTH w < n then n − LENGTH w ≤ i ∧ EL (i − (n − LENGTH w)) w
+       else EL (i + (LENGTH w − n)) w)
+</pre>
+
+<DT><span class="strong">el_field</span>
+<DD>
+<pre>
+⊢ ∀v h l i.
+      i < SUC h − l ⇒
+      (EL i (field h l v) ⇔ SUC h ≤ i + LENGTH v ∧ EL (i + LENGTH v − SUC h) v)
+</pre>
+
+<DT><span class="strong">el_w2v</span>
+<DD>
+<pre>
+⊢ ∀w n. n < dimindex (:α) ⇒ (EL n (w2v w) ⇔ w ' (dimindex (:α) − 1 − n))
+</pre>
+
+<DT><span class="strong">el_shiftr</span>
+<DD>
+<pre>
+⊢ ∀i v n d.
+      n < d ∧ i < d − n ∧ 0 < d ⇒
+      (EL i (shiftr (fixwidth d v) n) ⇔
+       d ≤ i + LENGTH v ∧ EL (i + LENGTH v − d) v)
+</pre>
+
+<DT><span class="strong">shiftr_0</span>
+<DD>
+<pre>
+⊢ ∀v. shiftr v 0 = v
+</pre>
+
+<DT><span class="strong">field_fixwidth</span>
+<DD>
+<pre>
+⊢ ∀h v. field h 0 v = fixwidth (SUC h) v
+</pre>
+
+<DT><span class="strong">testbit</span>
+<DD>
+<pre>
+⊢ ∀b v. testbit b v ⇔ (let n = LENGTH v in b < n ∧ EL (n − 1 − b) v)
+</pre>
+
+<DT><span class="strong">testbit_geq_len</span>
+<DD>
+<pre>
+⊢ ∀v i. LENGTH v ≤ i ⇒ ¬testbit i v
+</pre>
+
+<DT><span class="strong">testbit_el</span>
+<DD>
+<pre>
+⊢ ∀v i. i < LENGTH v ⇒ (testbit i v ⇔ EL (LENGTH v − 1 − i) v)
+</pre>
+
+<DT><span class="strong">bit_v2w</span>
+<DD>
+<pre>
+⊢ ∀n v. word_bit n (v2w v) ⇔ n < dimindex (:α) ∧ testbit n v
+</pre>
+
+<DT><span class="strong">word_index_v2w</span>
+<DD>
+<pre>
+⊢ ∀v i.
+      v2w v ' i ⇔ if i < dimindex (:α) then testbit i v
+      else FAIL $' index too large (v2w v) i
+</pre>
+
+<DT><span class="strong">testbit_w2v</span>
+<DD>
+<pre>
+⊢ ∀n w. testbit n (w2v w) ⇔ word_bit n w
+</pre>
+
+<DT><span class="strong">w2v_v2w</span>
+<DD>
+<pre>
+⊢ ∀v. w2v (v2w v) = fixwidth (dimindex (:α)) v
+</pre>
+
+<DT><span class="strong">v2w_w2v</span>
+<DD>
+<pre>
+⊢ ∀w. v2w (w2v w) = w
+</pre>
+
+<DT><span class="strong">v2w_fixwidth</span>
+<DD>
+<pre>
+⊢ ∀v. v2w (fixwidth (dimindex (:α)) v) = v2w v
+</pre>
+
+<DT><span class="strong">fixwidth_fixwidth</span>
+<DD>
+<pre>
+⊢ ∀n v. fixwidth n (fixwidth n v) = fixwidth n v
+</pre>
+
+<DT><span class="strong">bitstring_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀w. ∃v. w = v2w v
+</pre>
+
+<DT><span class="strong">ranged_bitstring_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀w. ∃v. w = v2w v ∧ Abbrev (LENGTH v = dimindex (:α))
+</pre>
+
+<DT><span class="strong">fixwidth_eq</span>
+<DD>
+<pre>
+⊢ ∀n v w.
+      fixwidth n v = fixwidth n w ⇔ ∀i. i < n ⇒ (testbit i v ⇔ testbit i w)
+</pre>
+
+<DT><span class="strong">v2w_11</span>
+<DD>
+<pre>
+⊢ ∀v w.
+      v2w v = v2w w ⇔ fixwidth (dimindex (:α)) v = fixwidth (dimindex (:α)) w
+</pre>
+
+<DT><span class="strong">field_concat_right</span>
+<DD>
+<pre>
+⊢ ∀h a b. LENGTH b = SUC h ⇒ field h 0 (a ++ b) = b
+</pre>
+
+<DT><span class="strong">field_concat_left</span>
+<DD>
+<pre>
+⊢ ∀h l a b.
+      l ≤ h ∧ LENGTH b ≤ l ⇒
+      field h l (a ++ b) = field (h − LENGTH b) (l − LENGTH b) a
+</pre>
+
+<DT><span class="strong">field_id_imp</span>
+<DD>
+<pre>
+⊢ ∀n v. SUC n = LENGTH v ⇒ field n 0 v = v
+</pre>
+
+<DT><span class="strong">shiftl_replicate_F</span>
+<DD>
+<pre>
+⊢ ∀v n. shiftl v n = v ++ replicate [F] n
+</pre>
+
+<DT><span class="strong">word_lsb_v2w</span>
+<DD>
+<pre>
+⊢ ∀v. word_lsb (v2w v) ⇔ v ≠ [] ∧ LAST v
+</pre>
+
+<DT><span class="strong">word_msb_v2w</span>
+<DD>
+<pre>
+⊢ ∀v. word_msb (v2w v) ⇔ testbit (dimindex (:α) − 1) v
+</pre>
+
+<DT><span class="strong">w2w_v2w</span>
+<DD>
+<pre>
+⊢ ∀v.
+      w2w (v2w v) =
+      v2w
+        (fixwidth
+           (if dimindex (:β) < dimindex (:α) then dimindex (:β)
+            else dimindex (:α)) v)
+</pre>
+
+<DT><span class="strong">sw2sw_v2w</span>
+<DD>
+<pre>
+⊢ ∀v.
+      sw2sw (v2w v) =
+      if dimindex (:α) < dimindex (:β) then
+        v2w (sign_extend (dimindex (:β)) (fixwidth (dimindex (:α)) v))
+      else v2w (fixwidth (dimindex (:β)) v)
+</pre>
+
+<DT><span class="strong">n2w_v2n</span>
+<DD>
+<pre>
+⊢ ∀v. n2w (v2n v) = v2w v
+</pre>
+
+<DT><span class="strong">v2n_n2v</span>
+<DD>
+<pre>
+⊢ ∀n. v2n (n2v n) = n
+</pre>
+
+<DT><span class="strong">v2w_n2v</span>
+<DD>
+<pre>
+⊢ ∀n. v2w (n2v n) = n2w n
+</pre>
+
+<DT><span class="strong">w2n_v2w</span>
+<DD>
+<pre>
+⊢ ∀v. w2n (v2w v) = MOD_2EXP (dimindex (:α)) (v2n v)
+</pre>
+
+<DT><span class="strong">v2n_lt</span>
+<DD>
+<pre>
+⊢ ∀v. v2n v < 2 ** LENGTH v
+</pre>
+
+<DT><span class="strong">word_and_v2w</span>
+<DD>
+<pre>
+⊢ ∀v w. (v2w v && v2w w) = v2w (band v w)
+</pre>
+
+<DT><span class="strong">word_or_v2w</span>
+<DD>
+<pre>
+⊢ ∀v w. (v2w v ‖ v2w w) = v2w (bor v w)
+</pre>
+
+<DT><span class="strong">word_xor_v2w</span>
+<DD>
+<pre>
+⊢ ∀v w. (v2w v ⊕ v2w w) = v2w (bxor v w)
+</pre>
+
+<DT><span class="strong">word_nand_v2w</span>
+<DD>
+<pre>
+⊢ ∀v w.
+      (v2w v ~&& v2w w) =
+      v2w (bnand (fixwidth (dimindex (:α)) v) (fixwidth (dimindex (:α)) w))
+</pre>
+
+<DT><span class="strong">word_nor_v2w</span>
+<DD>
+<pre>
+⊢ ∀v w.
+      (v2w v ~|| v2w w) =
+      v2w (bnor (fixwidth (dimindex (:α)) v) (fixwidth (dimindex (:α)) w))
+</pre>
+
+<DT><span class="strong">word_xnor_v2w</span>
+<DD>
+<pre>
+⊢ ∀v w.
+      (v2w v ~?? v2w w) =
+      v2w (bxnor (fixwidth (dimindex (:α)) v) (fixwidth (dimindex (:α)) w))
+</pre>
+
+<DT><span class="strong">word_1comp_v2w</span>
+<DD>
+<pre>
+⊢ ∀v. ¬v2w v = v2w (bnot (fixwidth (dimindex (:α)) v))
+</pre>
+
+<DT><span class="strong">word_lsl_v2w</span>
+<DD>
+<pre>
+⊢ ∀n v. v2w v ≪ n = v2w (shiftl v n)
+</pre>
+
+<DT><span class="strong">word_lsr_v2w</span>
+<DD>
+<pre>
+⊢ ∀n v. v2w v ⋙ n = v2w (shiftr (fixwidth (dimindex (:α)) v) n)
+</pre>
+
+<DT><span class="strong">word_modify_v2w</span>
+<DD>
+<pre>
+⊢ ∀f v. word_modify f (v2w v) = v2w (modify f (fixwidth (dimindex (:α)) v))
+</pre>
+
+<DT><span class="strong">word_bits_v2w</span>
+<DD>
+<pre>
+⊢ ∀h l v. (h -- l) (v2w v) = v2w (field h l (fixwidth (dimindex (:α)) v))
+</pre>
+
+<DT><span class="strong">word_extract_v2w</span>
+<DD>
+<pre>
+⊢ ∀h l v. (h >< l) (v2w v) = w2w ((h -- l) (v2w v))
+</pre>
+
+<DT><span class="strong">word_slice_v2w</span>
+<DD>
+<pre>
+⊢ ∀h l v.
+      (h '' l) (v2w v) =
+      v2w (shiftl (field h l (fixwidth (dimindex (:α)) v)) l)
+</pre>
+
+<DT><span class="strong">word_asr_v2w</span>
+<DD>
+<pre>
+⊢ ∀n v.
+      v2w v ≫ n =
+      (let
+         l = fixwidth (dimindex (:α)) v
+       in
+         v2w
+           (sign_extend (dimindex (:α))
+              (if dimindex (:α) ≤ n then [HD l] else shiftr l n)))
+</pre>
+
+<DT><span class="strong">word_ror_v2w</span>
+<DD>
+<pre>
+⊢ ∀n v. v2w v ⇄ n = v2w (rotate (fixwidth (dimindex (:α)) v) n)
+</pre>
+
+<DT><span class="strong">word_reverse_v2w</span>
+<DD>
+<pre>
+⊢ ∀v. word_reverse (v2w v) = v2w (REVERSE (fixwidth (dimindex (:α)) v))
+</pre>
+
+<DT><span class="strong">word_join_v2w</span>
+<DD>
+<pre>
+⊢ ∀v1 v2.
+      FINITE 𝕌(:α) ∧ FINITE 𝕌(:β) ⇒
+      word_join (v2w v1) (v2w v2) = v2w (v1 ++ fixwidth (dimindex (:β)) v2)
+</pre>
+
+<DT><span class="strong">word_concat_v2w</span>
+<DD>
+<pre>
+⊢ ∀v1 v2.
+      FINITE 𝕌(:α) ∧ FINITE 𝕌(:β) ⇒
+      v2w v1 @@ v2w v2 =
+      v2w
+        (fixwidth (MIN (dimindex (:γ)) (dimindex (:α) + dimindex (:β)))
+           (v1 ++ fixwidth (dimindex (:β)) v2))
+</pre>
+
+<DT><span class="strong">word_join_v2w_rwt</span>
+<DD>
+<pre>
+⊢ ∀v1 v2.
+      word_join (v2w v1) (v2w v2) =
+      if FINITE 𝕌(:α) ∧ FINITE 𝕌(:β) then
+        v2w (v1 ++ fixwidth (dimindex (:β)) v2)
+      else FAIL word_join bad domain (v2w v1) (v2w v2)
+</pre>
+
+<DT><span class="strong">word_concat_v2w_rwt</span>
+<DD>
+<pre>
+⊢ ∀v1 v2.
+      v2w v1 @@ v2w v2 =
+      if FINITE 𝕌(:α) ∧ FINITE 𝕌(:β) then
+        v2w
+          (fixwidth (MIN (dimindex (:γ)) (dimindex (:α) + dimindex (:β)))
+             (v1 ++ fixwidth (dimindex (:β)) v2))
+      else FAIL $@@ bad domain (v2w v1) (v2w v2)
+</pre>
+
+<DT><span class="strong">word_reduce_v2w</span>
+<DD>
+<pre>
+⊢ ∀f v.
+      word_reduce f (v2w v) =
+      (let l = fixwidth (dimindex (:α)) v in v2w [FOLDL f (HD l) (TL l)])
+</pre>
+
+<DT><span class="strong">reduce_and_v2w</span>
+<DD>
+<pre>
+⊢ ∀v. reduce_and (v2w v) = word_reduce $/\ (v2w v)
+</pre>
+
+<DT><span class="strong">reduce_or_v2w</span>
+<DD>
+<pre>
+⊢ ∀v. reduce_or (v2w v) = word_reduce $\/ (v2w v)
+</pre>
+
+<DT><span class="strong">extract_v2w</span>
+<DD>
+<pre>
+⊢ ∀h l v.
+      LENGTH v ≤ dimindex (:α) ∧ dimindex (:β) = SUC h − l ∧
+      dimindex (:β) ≤ dimindex (:α) ⇒
+      (h >< l) (v2w v) = v2w (field h l v)
+</pre>
+
+<DT><span class="strong">word_bit_last_shiftr</span>
+<DD>
+<pre>
+⊢ ∀i v.
+      i < dimindex (:α) ⇒
+      (word_bit i (v2w v) ⇔ (let l = shiftr v i in ¬NULL l ∧ LAST l))
+</pre>
+
+<DT><span class="strong">ops_to_v2w</span>
+<DD>
+<pre>
+⊢ (∀v n. (v2w v ‖ n2w n) = (v2w v ‖ v2w (n2v n))) ∧
+  (∀v n. (n2w n ‖ v2w v) = (v2w (n2v n) ‖ v2w v)) ∧
+  (∀v n. (v2w v && n2w n) = (v2w v && v2w (n2v n))) ∧
+  (∀v n. (n2w n && v2w v) = (v2w (n2v n) && v2w v)) ∧
+  (∀v n. (v2w v ⊕ n2w n) = (v2w v ⊕ v2w (n2v n))) ∧
+  (∀v n. (n2w n ⊕ v2w v) = (v2w (n2v n) ⊕ v2w v)) ∧
+  (∀v n. (v2w v ~|| n2w n) = (v2w v ~|| v2w (n2v n))) ∧
+  (∀v n. (n2w n ~|| v2w v) = (v2w (n2v n) ~|| v2w v)) ∧
+  (∀v n. (v2w v ~&& n2w n) = (v2w v ~&& v2w (n2v n))) ∧
+  (∀v n. (n2w n ~&& v2w v) = (v2w (n2v n) ~&& v2w v)) ∧
+  (∀v n. (v2w v ~?? n2w n) = (v2w v ~?? v2w (n2v n))) ∧
+  (∀v n. (n2w n ~?? v2w v) = (v2w (n2v n) ~?? v2w v)) ∧
+  (∀v n. v2w v @@ n2w n = v2w v @@ v2w (n2v n)) ∧
+  (∀v n. n2w n @@ v2w v = v2w (n2v n) @@ v2w v) ∧
+  (∀v n. word_join (v2w v) (n2w n) = word_join (v2w v) (v2w (n2v n))) ∧
+  ∀v n. word_join (n2w n) (v2w v) = word_join (v2w (n2v n)) (v2w v)
+</pre>
+
+<DT><span class="strong">ops_to_n2w</span>
+<DD>
+<pre>
+⊢ (∀v. -v2w v = -n2w (v2n v)) ∧
+  (∀v. word_log2 (v2w v) = word_log2 (n2w (v2n v))) ∧
+  (∀v n. v2w v = n2w n ⇔ n2w (v2n v) = n2w n) ∧
+  (∀v n. n2w n = v2w v ⇔ n2w n = n2w (v2n v)) ∧
+  (∀v w. v2w v + w = n2w (v2n v) + w) ∧ (∀v w. w + v2w v = w + n2w (v2n v)) ∧
+  (∀v w. v2w v − w = n2w (v2n v) − w) ∧ (∀v w. w − v2w v = w − n2w (v2n v)) ∧
+  (∀v w. v2w v * w = n2w (v2n v) * w) ∧ (∀v w. w * v2w v = w * n2w (v2n v)) ∧
+  (∀v w. v2w v / w = n2w (v2n v) / w) ∧ (∀v w. w / v2w v = w / n2w (v2n v)) ∧
+  (∀v w. v2w v // w = n2w (v2n v) // w) ∧
+  (∀v w. w // v2w v = w // n2w (v2n v)) ∧
+  (∀v w. word_mod (v2w v) w = word_mod (n2w (v2n v)) w) ∧
+  (∀v w. word_mod w (v2w v) = word_mod w (n2w (v2n v))) ∧
+  (∀v w. v2w v < w ⇔ n2w (v2n v) < w) ∧ (∀v w. w < v2w v ⇔ w < n2w (v2n v)) ∧
+  (∀v w. v2w v > w ⇔ n2w (v2n v) > w) ∧ (∀v w. w > v2w v ⇔ w > n2w (v2n v)) ∧
+  (∀v w. v2w v ≤ w ⇔ n2w (v2n v) ≤ w) ∧ (∀v w. w ≤ v2w v ⇔ w ≤ n2w (v2n v)) ∧
+  (∀v w. v2w v ≥ w ⇔ n2w (v2n v) ≥ w) ∧ (∀v w. w ≥ v2w v ⇔ w ≥ n2w (v2n v)) ∧
+  (∀v w. v2w v <₊ w ⇔ n2w (v2n v) <₊ w) ∧
+  (∀v w. w <₊ v2w v ⇔ w <₊ n2w (v2n v)) ∧
+  (∀v w. v2w v >₊ w ⇔ n2w (v2n v) >₊ w) ∧
+  (∀v w. w >₊ v2w v ⇔ w >₊ n2w (v2n v)) ∧
+  (∀v w. v2w v ≤₊ w ⇔ n2w (v2n v) ≤₊ w) ∧
+  (∀v w. w ≤₊ v2w v ⇔ w ≤₊ n2w (v2n v)) ∧
+  (∀v w. v2w v ≥₊ w ⇔ n2w (v2n v) ≥₊ w) ∧ ∀v w. w ≥₊ v2w v ⇔ w ≥₊ n2w (v2n v)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>pred_setLib.UNION_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>UNION_CONV : conv -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/pred_setLib.html">pred_setLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Reduce </SPAN><SPAN class = "BRKT">{t1;...;tn}&nbsp;UNION&nbsp;s</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">t1&nbsp;INSERT&nbsp;(...&nbsp;(tn&nbsp;INSERT&nbsp;s))</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">pred_set</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">UNION_CONV</SPAN><SPAN class = "TEXT"> is a parameterized conversion for reducing sets of
+the form </SPAN><SPAN class = "BRKT">{t1;...;tn}&nbsp;UNION&nbsp;s</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">{t1;...;tn}</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> are sets of
+type </SPAN><SPAN class = "BRKT">ty-&gt;bool</SPAN><SPAN class = "TEXT">. The first argument to </SPAN><SPAN class = "BRKT">UNION_CONV</SPAN><SPAN class = "TEXT"> is expected to be a
+conversion that decides equality between values of the base type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">.  Given
+an equation </SPAN><SPAN class = "BRKT">e1&nbsp;=&nbsp;e2</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">e1</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">e2</SPAN><SPAN class = "TEXT"> are terms of type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">, this
+conversion should return the theorem </SPAN><SPAN class = "BRKT">|-&nbsp;(e1&nbsp;=&nbsp;e2)&nbsp;=&nbsp;T</SPAN><SPAN class = "TEXT"> or the theorem
+</SPAN><SPAN class = "BRKT">|-&nbsp;(e1&nbsp;=&nbsp;e2)&nbsp;=&nbsp;F</SPAN><SPAN class = "TEXT">, as appropriate.</SPAN>
+<P>
+<SPAN class = "TEXT">Given such a conversion, the function </SPAN><SPAN class = "BRKT">UNION_CONV</SPAN><SPAN class = "TEXT"> returns a conversion that
+maps a term of the form </SPAN><SPAN class = "BRKT">{t1;...;tn}&nbsp;UNION&nbsp;s</SPAN><SPAN class = "TEXT"> to the theorem
+</SPAN><DIV class = "XMPL"><pre>
+   |- {t1;...;tn} UNION s = ti INSERT ... (tj INSERT s)
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">{ti;...;tj}</SPAN><SPAN class = "TEXT"> is the set of all terms </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> that occur as
+elements of </SPAN><SPAN class = "BRKT">{t1;...;tn}</SPAN><SPAN class = "TEXT"> for which the conversion </SPAN><SPAN class = "BRKT">IN_CONV&nbsp;conv</SPAN><SPAN class = "TEXT"> fails to
+prove that </SPAN><SPAN class = "BRKT">|-&nbsp;(t&nbsp;IN&nbsp;s)&nbsp;=&nbsp;T</SPAN><SPAN class = "TEXT"> (that is, either by proving </SPAN><SPAN class = "BRKT">|-&nbsp;(t&nbsp;IN&nbsp;s)&nbsp;=&nbsp;F</SPAN><SPAN class = "TEXT">
+instead, or by failing outright).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In the following example, </SPAN><SPAN class = "BRKT">REDUCE_CONV</SPAN><SPAN class = "TEXT"> is supplied as a parameter to
+</SPAN><SPAN class = "BRKT">UNION_CONV</SPAN><SPAN class = "TEXT"> and used to test for membership of each element of the first
+finite set </SPAN><SPAN class = "BRKT">{1;2;3}</SPAN><SPAN class = "TEXT"> of the union in the second finite set </SPAN><SPAN class = "BRKT">{SUC&nbsp;0;3;4}</SPAN><SPAN class = "TEXT">.
+</SPAN><DIV class = "XMPL"><pre>
+   - UNION_CONV REDUCE_CONV (Term`{1;2;3} UNION {SUC 0;3;4}`);
+   &gt; val it = |- {1; 2; 3} UNION {SUC 0; 3; 4} = {2; SUC 0; 3; 4} : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The result is </SPAN><SPAN class = "BRKT">{2;SUC&nbsp;0;3;4}</SPAN><SPAN class = "TEXT">, rather than </SPAN><SPAN class = "BRKT">{1;2;SUC&nbsp;0;3;4}</SPAN><SPAN class = "TEXT">,
+because </SPAN><SPAN class = "BRKT">UNION_CONV</SPAN><SPAN class = "TEXT"> is able by means of a call to
+</SPAN><DIV class = "XMPL"><pre>
+   - IN_CONV REDUCE_CONV (Term`1 IN {SUC 0;3;4}`);
+</pre></DIV>
+<SPAN class = "TEXT">
+to prove that </SPAN><SPAN class = "BRKT">1</SPAN><SPAN class = "TEXT"> is already an element of the set </SPAN><SPAN class = "BRKT">{SUC&nbsp;0;3;4}</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The conversion supplied to </SPAN><SPAN class = "BRKT">UNION_CONV</SPAN><SPAN class = "TEXT"> need not actually prove equality of
+elements, if simplification of the resulting set is not desired.  For example:
+</SPAN><DIV class = "XMPL"><pre>
+   - UNION_CONV NO_CONV ``{1;2;3} UNION {SUC 0;3;4}``;
+   &gt; val it = |- {1;2;3} UNION {SUC 0;3;4} = {1;2;SUC 0;3;4} : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+In this case, the resulting set is just left unsimplified. Moreover,
+the second set argument to </SPAN><SPAN class = "BRKT">UNION</SPAN><SPAN class = "TEXT"> need not be a finite set:
+</SPAN><DIV class = "XMPL"><pre>
+   - UNION_CONV NO_CONV ``{1;2;3} UNION s``;
+   &gt; val it = |- {1;2;3} UNION s = 1 INSERT (2 INSERT (3 INSERT s)) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+And, of course, in this case the conversion argument to </SPAN><SPAN class = "BRKT">UNION_CONV</SPAN><SPAN class = "TEXT">
+is irrelevant.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">UNION_CONV&nbsp;conv</SPAN><SPAN class = "TEXT"> fails if applied to a term not of the form
+</SPAN><SPAN class = "BRKT">{t1;...;tn}&nbsp;UNION&nbsp;s</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "pred_setLib.IN_CONV.html">IN_CONV</A>,
+<A HREF = "numLib.REDUCE_CONV.html">REDUCE_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

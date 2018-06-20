@@ -1,0 +1,936 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: patternMatches</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "patternMatches"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "rich_listTheory.html"><span class="strong">rich_list</span></a>&nbsp;&nbsp;
+    <a href = "quantHeuristicsTheory.html"><span class="strong">quantHeuristics</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">APPLY_REDUNDANT_ROWS_INFO</span>
+    <td>
+    :bitstring -> α list -> α list
+    <tr><td>
+    <span class="strong">IS_REDUNDANT_ROWS_INFO</span>
+    <td>
+    :α -> (α -> β option) list -> bool -> bitstring -> bool
+    <tr><td>
+    <span class="strong">PMATCH</span>
+    <td>
+    :β -> (β -> α option) list -> α
+    <tr><td>
+    <span class="strong">PMATCH_EQUIV_ROWS</span>
+    <td>
+    :α -> (α -> β option) list reln
+    <tr><td>
+    <span class="strong">PMATCH_EXPAND_PRED</span>
+    <td>
+    :(α -> bool) -> β -> (β -> α option) list reln
+    <tr><td>
+    <span class="strong">PMATCH_FLATTEN_FUN</span>
+    <td>
+    :(β -> γ) -> (β -> bool) -> (β -> β -> α option) -> γ -> α option
+    <tr><td> <span class="strong">PMATCH_INCOMPLETE</span> <td> :α
+    <tr><td>
+    <span class="strong">PMATCH_IS_EXHAUSTIVE</span>
+    <td>
+    :α -> (α -> β option) list -> bool
+    <tr><td>
+    <span class="strong">PMATCH_ROW</span>
+    <td>
+    :(β -> γ) -> (β -> bool) -> (β -> α) -> γ -> α option
+    <tr><td>
+    <span class="strong">PMATCH_ROW_COND</span>
+    <td>
+    :(α -> β) -> (α -> bool) -> β -> α -> bool
+    <tr><td>
+    <span class="strong">PMATCH_ROW_COND_EX</span>
+    <td>
+    :α -> (β -> α) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">PMATCH_ROW_COND_NOT_EX_OR_EQ</span>
+    <td>
+    :α -> (α -> β option) -> (α -> β option) list -> bool
+    <tr><td>
+    <span class="strong">PMATCH_ROW_LIFT</span>
+    <td>
+    :(γ -> β) -> (α -> γ option) -> α -> β option
+    <tr><td>
+    <span class="strong">PMATCH_ROW_REDUNDANT</span>
+    <td>
+    :α -> (α -> β option) list -> num -> bool
+    <tr><td>
+    <span class="strong">PMATCH_ROW_magic_0</span>
+    <td>
+    :α # bool # β -> α -> β option
+    <tr><td>
+    <span class="strong">PMATCH_ROW_magic_1</span>
+    <td>
+    :(α -> β # bool # γ) -> β -> γ option
+    <tr><td>
+    <span class="strong">PMATCH_ROW_magic_2</span>
+    <td>
+    :α -> bool -> β -> α # bool # β
+    <tr><td>
+    <span class="strong">PMATCH_ROW_magic_3</span>
+    <td>
+    :α -> β -> α # bool # β
+    <tr><td>
+    <span class="strong">PMATCH_ROW_magic_4</span>
+    <td>
+    :α # bool # β -> α -> β option
+    <tr><td>
+    <span class="strong">PMATCH_magic_1</span>
+    <td>
+    :α -> (α -> β option) list -> β
+    <tr><td>
+    <span class="strong">REDUNDANT_ROWS_INFOS_CONJ</span>
+    <td>
+    :bitstring -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">REDUNDANT_ROWS_INFOS_DISJ</span>
+    <td>
+    :bitstring -> bitstring -> bitstring
+    <tr><td>
+    <span class="strong">STRONGEST_REDUNDANT_ROWS_INFO</span>
+    <td>
+    :α -> (α -> β option) list -> bitstring
+    <tr><td>
+    <span class="strong">STRONGEST_REDUNDANT_ROWS_INFO_AUX</span>
+    <td>
+    :α -> (α -> β option) list -> bool -> bitstring -> bool # bitstring
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">PMATCH_ROW_COND_def</span>
+<DD>
+<pre>
+⊢ ∀pat guard inp v. PMATCH_ROW_COND pat guard inp v ⇔ pat v = inp ∧ guard v
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_def</span>
+<DD>
+<pre>
+⊢ ∀pat guard rhs i.
+      PMATCH_ROW pat guard rhs i =
+      OPTION_MAP rhs (some v. PMATCH_ROW_COND pat guard i v)
+</pre>
+
+<DT><span class="strong">PMATCH_INCOMPLETE_def</span>
+<DD>
+<pre>
+⊢ PMATCH_INCOMPLETE = ARB
+</pre>
+
+<DT><span class="strong">PMATCH_def</span>
+<DD>
+<pre>
+⊢ (∀v. PMATCH v [] = PMATCH_INCOMPLETE) ∧
+  ∀v r rs. PMATCH v (r::rs) = option_CASE (r v) (PMATCH v rs) I
+</pre>
+
+<DT><span class="strong">PMATCH_EQUIV_ROWS_def</span>
+<DD>
+<pre>
+⊢ ∀v rows1 rows2.
+      PMATCH_EQUIV_ROWS v rows1 rows2 ⇔
+      PMATCH v rows1 = PMATCH v rows2 ∧
+      ((∃r. MEM r rows1 ∧ IS_SOME (r v)) ⇔ ∃r. MEM r rows2 ∧ IS_SOME (r v))
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_REDUNDANT_def</span>
+<DD>
+<pre>
+⊢ ∀v rs i.
+      PMATCH_ROW_REDUNDANT v rs i ⇔
+      i < LENGTH rs ∧ (IS_SOME (EL i rs v) ⇒ ∃j. j < i ∧ IS_SOME (EL j rs v))
+</pre>
+
+<DT><span class="strong">IS_REDUNDANT_ROWS_INFO_def</span>
+<DD>
+<pre>
+⊢ ∀v rows c infos.
+      IS_REDUNDANT_ROWS_INFO v rows c infos ⇔
+      LENGTH rows = LENGTH infos ∧
+      (∀i. i < LENGTH rows ⇒ EL i infos ⇒ PMATCH_ROW_REDUNDANT v rows i) ∧
+      (EVERY (λr. r v = NONE) rows ⇒ c)
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_COND_EX_def</span>
+<DD>
+<pre>
+⊢ ∀i p g. PMATCH_ROW_COND_EX i p g ⇔ ∃x. PMATCH_ROW_COND p g i x
+</pre>
+
+<DT><span class="strong">APPLY_REDUNDANT_ROWS_INFO_def</span>
+<DD>
+<pre>
+⊢ ∀is xs.
+      APPLY_REDUNDANT_ROWS_INFO is xs =
+      MAP SND (FILTER (λx. ¬FST x) (ZIP (is,xs)))
+</pre>
+
+<DT><span class="strong">PMATCH_IS_EXHAUSTIVE_def</span>
+<DD>
+<pre>
+⊢ ∀v rs. PMATCH_IS_EXHAUSTIVE v rs ⇔ EXISTS (λr. IS_SOME (r v)) rs
+</pre>
+
+<DT><span class="strong">REDUNDANT_ROWS_INFOS_CONJ_def</span>
+<DD>
+<pre>
+⊢ ∀ip1 ip2. REDUNDANT_ROWS_INFOS_CONJ ip1 ip2 = MAP2 (λi1 i2. i1 ∧ i2) ip1 ip2
+</pre>
+
+<DT><span class="strong">REDUNDANT_ROWS_INFOS_DISJ_def</span>
+<DD>
+<pre>
+⊢ ∀ip1 ip2. REDUNDANT_ROWS_INFOS_DISJ ip1 ip2 = MAP2 (λi1 i2. i1 ∨ i2) ip1 ip2
+</pre>
+
+<DT><span class="strong">STRONGEST_REDUNDANT_ROWS_INFO_AUX_def</span>
+<DD>
+<pre>
+⊢ (∀v p infos. STRONGEST_REDUNDANT_ROWS_INFO_AUX v [] p infos = (p,infos)) ∧
+  ∀v r rows p infos.
+      STRONGEST_REDUNDANT_ROWS_INFO_AUX v (r::rows) p infos =
+      STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows (p ∧ r v = NONE)
+        (SNOC (p ⇒ r v = NONE) infos)
+</pre>
+
+<DT><span class="strong">STRONGEST_REDUNDANT_ROWS_INFO_def</span>
+<DD>
+<pre>
+⊢ ∀v rows.
+      STRONGEST_REDUNDANT_ROWS_INFO v rows =
+      SND (STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows T [])
+</pre>
+
+<DT><span class="strong">PMATCH_FLATTEN_FUN_def</span>
+<DD>
+<pre>
+⊢ ∀p g row v.
+      PMATCH_FLATTEN_FUN p g row v =
+      case some x. PMATCH_ROW_COND p g v x of NONE => NONE | SOME x => row x x
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_COND_NOT_EX_OR_EQ_def</span>
+<DD>
+<pre>
+⊢ ∀i r rows.
+      PMATCH_ROW_COND_NOT_EX_OR_EQ i r rows ⇔
+      ¬(r i ≠ NONE) ∨
+      EXISTS (λrow. row i ≠ NONE) rows ∧ THE (r i) = PMATCH i rows
+</pre>
+
+<DT><span class="strong">PMATCH_EXPAND_PRED_def</span>
+<DD>
+<pre>
+⊢ (∀P v rows_before.
+       PMATCH_EXPAND_PRED P v rows_before [] ⇔
+       ¬PMATCH_IS_EXHAUSTIVE v (REVERSE rows_before) ⇒ P ARB) ∧
+  ∀P v rows_before r rows_after.
+      PMATCH_EXPAND_PRED P v rows_before (r::rows_after) ⇔
+      (r v ≠ NONE ⇒
+       EVERY (λr'. r' v ≠ NONE ⇒ r' v = r v) rows_before ⇒
+       P (THE (r v))) ∧ PMATCH_EXPAND_PRED P v (r::rows_before) rows_after
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_LIFT_def</span>
+<DD>
+<pre>
+⊢ ∀f r. PMATCH_ROW_LIFT f r = (λx. OPTION_MAP f (r x))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">LENGTH_STRONGEST_REDUNDANT_ROWS_INFO</span>
+<DD>
+<pre>
+⊢ LENGTH (STRONGEST_REDUNDANT_ROWS_INFO v rows) = LENGTH rows
+</pre>
+
+<DT><span class="strong">EL2_STRONGEST_REDUNDANT_ROWS_INFO_AUX</span>
+<DD>
+<pre>
+⊢ ∀v rows p infos i.
+      i ≥ LENGTH infos ∧ i < LENGTH rows + LENGTH infos ⇒
+      (EL i (SND (STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows p infos)) ⇔
+       p ∧ EVERY (λr. r v = NONE) (TAKE (i − LENGTH infos) rows) ⇒
+       EL (i − LENGTH infos) rows v = NONE)
+</pre>
+
+<DT><span class="strong">EL1_STRONGEST_REDUNDANT_ROWS_INFO_AUX</span>
+<DD>
+<pre>
+⊢ ∀v rows p infos i.
+      i < LENGTH infos ⇒
+      (EL i (SND (STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows p infos)) ⇔
+       EL i infos)
+</pre>
+
+<DT><span class="strong">some_var_bool_T</span>
+<DD>
+<pre>
+⊢ (some x. x) = SOME T
+</pre>
+
+<DT><span class="strong">some_var_bool_F</span>
+<DD>
+<pre>
+⊢ (some x. ¬x) = SOME F
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_CONG</span>
+<DD>
+<pre>
+⊢ ∀p p' g g' r r' v v'.
+      p = p' ∧ v = v' ∧ (∀x. v = p x ⇒ (g x ⇔ g' x)) ∧
+      (∀x. v = p x ∧ g x ⇒ r x = r' x) ⇒
+      PMATCH_ROW p g r v = PMATCH_ROW p' g' r' v'
+</pre>
+
+<DT><span class="strong">PMATCH_CONG</span>
+<DD>
+<pre>
+⊢ ∀v v' rows rows' r r'.
+      v = v' ∧ r v' = r' v' ∧ PMATCH v' rows = PMATCH v' rows' ⇒
+      PMATCH v (r::rows) = PMATCH v' (r'::rows')
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_EQ_AUX</span>
+<DD>
+<pre>
+⊢ (∀i. (∃x. PMATCH_ROW_COND p g i x) ⇔ ∃x'. PMATCH_ROW_COND p' g' i x') ∧
+  (∀x x'. p x = p' x' ∧ g x ∧ g' x' ⇒ r x = r' x') ⇒
+  PMATCH_ROW p g r = PMATCH_ROW p' g' r'
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_EQ_NONE</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW p g r i = NONE ⇔ ∀x. ¬PMATCH_ROW_COND p g i x
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_EQ_SOME</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW p g r i = SOME y ⇒ ∃x. PMATCH_ROW_COND p g i x ∧ y = r x
+</pre>
+
+<DT><span class="strong">PMATCH_COND_SELECT_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀p g i.
+      (∀x1 x2. g x1 ∧ g x2 ∧ p x1 = p x2 ⇒ x1 = x2) ⇒
+      ∀x. PMATCH_ROW_COND p g i x ⇒ (@y. PMATCH_ROW_COND p g i y) = x
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_COND_DEF_GSYM</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW_COND pat guard inp v ⇔ inp = pat v ∧ guard v
+</pre>
+
+<DT><span class="strong">PMATCH_EVAL</span>
+<DD>
+<pre>
+⊢ PMATCH v [] = PMATCH_INCOMPLETE ∧
+  PMATCH v (PMATCH_ROW p g r::rs) =
+  if ∃x. PMATCH_ROW_COND p g v x then r (@x. PMATCH_ROW_COND p g v x)
+  else PMATCH v rs
+</pre>
+
+<DT><span class="strong">PMATCH_EVAL_MATCH</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW p g r v ≠ NONE ⇒
+  PMATCH v (PMATCH_ROW p g r::rs) = r (@x. PMATCH_ROW_COND p g v x)
+</pre>
+
+<DT><span class="strong">PMATCH_EXTEND_BASE</span>
+<DD>
+<pre>
+⊢ ∀v_old v_new. PMATCH v_old [] = PMATCH v_new []
+</pre>
+
+<DT><span class="strong">PMATCH_EXTEND_BOTH</span>
+<DD>
+<pre>
+⊢ ∀v_old v_new rows_old rows_new r_old r_new.
+      r_old v_old = r_new v_new ⇒
+      PMATCH v_old rows_old = PMATCH v_new rows_new ⇒
+      PMATCH v_old (r_old::rows_old) = PMATCH v_new (r_new::rows_new)
+</pre>
+
+<DT><span class="strong">PMATCH_EXTEND_BOTH_ID</span>
+<DD>
+<pre>
+⊢ ∀v rows_old rows_new r.
+      PMATCH v rows_old = PMATCH v rows_new ⇒
+      PMATCH v (r::rows_old) = PMATCH v (r::rows_new)
+</pre>
+
+<DT><span class="strong">PMATCH_EXTEND_OLD</span>
+<DD>
+<pre>
+⊢ ∀v_old v_new rows_old rows_new r_old.
+      r_old v_old = NONE ⇒
+      PMATCH v_old rows_old = PMATCH v_new rows_new ⇒
+      PMATCH v_old (r_old::rows_old) = PMATCH v_new rows_new
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_REMOVE_FUN</span>
+<DD>
+<pre>
+⊢ ∀ff v p g r.
+      (∀x y. ff x = ff y ⇒ x = y) ⇒
+      PMATCH_ROW (λx. ff (p x)) g r (ff v) = PMATCH_ROW (λx. p x) g r v
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_EXTEND_INPUT</span>
+<DD>
+<pre>
+⊢ ∀v v' f' f p g r p'.
+      (∀x'. v' = p' x' ⇒ p (f x') = v) ∧ (∀x. v = p x ⇒ ∃x'. p' x' = v') ∧
+      (∀x y. p x = p y ⇒ x = y) ⇒
+      PMATCH_ROW p (g (f' v')) (r (f' v')) v =
+      PMATCH_ROW p' (λx. g (f' (p' x)) (f x)) (λx. r (f' (p' x)) (f x)) v'
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_REMOVE_FUN_VAR</span>
+<DD>
+<pre>
+⊢ ∀v v' f p g r p'.
+      (∀x'. v' = p' x' ⇔ p (f x') = v) ∧ (∀x. v = p x ⇒ ∃x'. f x' = x) ∧
+      (∀x y. p x = p y ⇒ x = y) ⇒
+      PMATCH_ROW p g r v = PMATCH_ROW p' (λx. g (f x)) (λx. r (f x)) v'
+</pre>
+
+<DT><span class="strong">PMATCH_EQUIV_ROWS_EQUIV_EXPAND</span>
+<DD>
+<pre>
+⊢ PMATCH_EQUIV_ROWS v rows1 rows2 ⇔
+  PMATCH_EQUIV_ROWS v rows1 = PMATCH_EQUIV_ROWS v rows2
+</pre>
+
+<DT><span class="strong">PMATCH_EQUIV_ROWS_is_equiv_1</span>
+<DD>
+<pre>
+⊢ ∀v rows. PMATCH_EQUIV_ROWS v rows rows
+</pre>
+
+<DT><span class="strong">PMATCH_EQUIV_ROWS_is_equiv_2</span>
+<DD>
+<pre>
+⊢ ∀v rows1 rows2.
+      PMATCH_EQUIV_ROWS v rows1 rows2 ⇔ PMATCH_EQUIV_ROWS v rows2 rows1
+</pre>
+
+<DT><span class="strong">PMATCH_EQUIV_ROWS_is_equiv_3</span>
+<DD>
+<pre>
+⊢ ∀v rows1 rows2 rows3.
+      PMATCH_EQUIV_ROWS v rows1 rows2 ⇒
+      PMATCH_EQUIV_ROWS v rows2 rows3 ⇒
+      PMATCH_EQUIV_ROWS v rows1 rows3
+</pre>
+
+<DT><span class="strong">PMATCH_EQUIV_ROWS_MATCH</span>
+<DD>
+<pre>
+⊢ PMATCH_EQUIV_ROWS v rows1 rows2 ⇒ PMATCH v rows1 = PMATCH v rows2
+</pre>
+
+<DT><span class="strong">PMATCH_APPEND_SEM</span>
+<DD>
+<pre>
+⊢ ∀v rows1 rows2.
+      PMATCH v (rows1 ++ rows2) =
+      if ∃r. MEM r rows1 ∧ IS_SOME (r v) then PMATCH v rows1
+      else PMATCH v rows2
+</pre>
+
+<DT><span class="strong">PMATCH_EQUIV_APPEND</span>
+<DD>
+<pre>
+⊢ ∀v rows1a rows1b rows2a rows2b.
+      PMATCH_EQUIV_ROWS v rows1a rows1b ⇒
+      PMATCH_EQUIV_ROWS v rows2a rows2b ⇒
+      PMATCH_EQUIV_ROWS v (rows1a ++ rows2a) (rows1b ++ rows2b)
+</pre>
+
+<DT><span class="strong">PMATCH_EQUIV_ROWS_CONS_NONE</span>
+<DD>
+<pre>
+⊢ row v = NONE ⇒ PMATCH_EQUIV_ROWS v (row::rows) = PMATCH_EQUIV_ROWS v rows
+</pre>
+
+<DT><span class="strong">PMATCH_ROWS_DROP_REDUNDANT_TRIVIAL_SOUNDNESS_EQUIV</span>
+<DD>
+<pre>
+⊢ ∀v rows n.
+      n < LENGTH rows ∧ IS_SOME (EL n rows v) ⇒
+      PMATCH_EQUIV_ROWS v rows (TAKE (SUC n) rows)
+</pre>
+
+<DT><span class="strong">PMATCH_ROWS_DROP_REDUNDANT_TRIVIAL_SOUNDNESS</span>
+<DD>
+<pre>
+⊢ ∀v rows n.
+      n < LENGTH rows ∧ IS_SOME (EL n rows v) ⇒
+      PMATCH v rows = PMATCH v (TAKE (SUC n) rows)
+</pre>
+
+<DT><span class="strong">PMATCH_ROWS_DROP_REDUNDANT</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 rows1 rows2 rows3 v.
+      (IS_SOME (r2 v) ⇒ IS_SOME (r1 v)) ⇒
+      PMATCH v (rows1 ++ r1::rows2 ++ r2::rows3) =
+      PMATCH v (rows1 ++ r1::rows2 ++ rows3)
+</pre>
+
+<DT><span class="strong">PMATCH_ROWS_DROP_REDUNDANT_PMATCH_ROWS</span>
+<DD>
+<pre>
+⊢ ∀p g r p' g' r' rows1 rows2 rows3 v.
+      (∀x'. v = p' x' ∧ g' x' ⇒ ∃x. p' x' = p x ∧ g x) ⇒
+      PMATCH v
+        (rows1 ++ PMATCH_ROW p g r::rows2 ++ PMATCH_ROW p' g' r'::rows3) =
+      PMATCH v (rows1 ++ PMATCH_ROW p g r::rows2 ++ rows3)
+</pre>
+
+<DT><span class="strong">PMATCH_ROWS_DROP_SUBSUMED</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 rows1 rows2 rows3 v.
+      (∀x. r1 v = SOME x ⇒ r2 v = SOME x) ∧
+      (IS_SOME (r1 v) ⇒ EVERY (λrow. row v = NONE) rows2) ⇒
+      PMATCH v (rows1 ++ r1::(rows2 ++ r2::rows3)) =
+      PMATCH v (rows1 ++ rows2 ++ r2::rows3)
+</pre>
+
+<DT><span class="strong">PMATCH_ROWS_DROP_SUBSUMED_PMATCH_ROWS</span>
+<DD>
+<pre>
+⊢ ∀p g r p' g' r' rows1 rows2 rows3 v.
+      (∀x. v = p x ∧ g x ⇒ ∃x'. p x = p' x' ∧ g' x') ∧
+      (∀x x'. v = p x ∧ p x = p' x' ∧ g x ∧ g' x' ⇒ r x = r' x') ∧
+      (∀x. v = p x ∧ g x ⇒ EVERY (λrow. row (p x) = NONE) rows2) ⇒
+      PMATCH v
+        (rows1 ++ PMATCH_ROW p g r::(rows2 ++ PMATCH_ROW p' g' r'::rows3)) =
+      PMATCH v (rows1 ++ rows2 ++ PMATCH_ROW p' g' r'::rows3)
+</pre>
+
+<DT><span class="strong">PMATCH_REMOVE_ARB</span>
+<DD>
+<pre>
+⊢ ∀p g r v rows.
+      (∀x. r x = ARB) ⇒
+      PMATCH v (SNOC (PMATCH_ROW p g r) rows) = PMATCH v rows
+</pre>
+
+<DT><span class="strong">PMATCH_INTRO_CATCHALL</span>
+<DD>
+<pre>
+⊢ PMATCH v rows =
+  PMATCH v (SNOC (PMATCH_ROW (λ_0. _0) (λ_0. T) (λ_0. ARB)) rows)
+</pre>
+
+<DT><span class="strong">PMATCH_REMOVE_ARB_NO_OVERLAP</span>
+<DD>
+<pre>
+⊢ ∀v p g r rows1 rows2.
+      (∀x. r x = ARB) ∧
+      (∀x. v = p x ∧ g x ⇒ EVERY (λrow. row (p x) = NONE) rows2) ⇒
+      PMATCH v (rows1 ++ PMATCH_ROW p g r::rows2) = PMATCH v (rows1 ++ rows2)
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_REDUNDANT_NIL</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW_REDUNDANT v [] i ⇔ F
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_REDUNDANT_0</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW_REDUNDANT v (r::rs) 0 ⇔ r v = NONE
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_REDUNDANT_SUC</span>
+<DD>
+<pre>
+⊢ ∀v r rs i.
+      PMATCH_ROW_REDUNDANT v (r::rs) (SUC i) ⇔
+      r v ≠ NONE ∧ i < LENGTH rs ∨ PMATCH_ROW_REDUNDANT v rs i
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_REDUNDANT_APPEND_LT</span>
+<DD>
+<pre>
+⊢ ∀v rs1 rs2 i.
+      i < LENGTH rs1 ⇒
+      (PMATCH_ROW_REDUNDANT v (rs1 ++ rs2) i ⇔ PMATCH_ROW_REDUNDANT v rs1 i)
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_REDUNDANT_APPEND_GE</span>
+<DD>
+<pre>
+⊢ ∀v rs1 rs2 i.
+      ¬(i < LENGTH rs1) ⇒
+      (PMATCH_ROW_REDUNDANT v (rs1 ++ rs2) i ⇔
+       ¬EVERY (λr. r v = NONE) rs1 ∧ i < LENGTH rs1 + LENGTH rs2 ∨
+       PMATCH_ROW_REDUNDANT v rs2 (i − LENGTH rs1))
+</pre>
+
+<DT><span class="strong">IS_REDUNDANT_ROWS_INFO_NIL</span>
+<DD>
+<pre>
+⊢ ∀v. IS_REDUNDANT_ROWS_INFO v [] T []
+</pre>
+
+<DT><span class="strong">IS_REDUNDANT_ROWS_INFO_SNOC</span>
+<DD>
+<pre>
+⊢ ∀v rows c infos r i c'.
+      IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+      (r v = NONE ⇒ c ⇒ c') ⇒
+      (c ⇒ i ⇒ r v = NONE) ⇒
+      IS_REDUNDANT_ROWS_INFO v (SNOC r rows) c' (SNOC i infos)
+</pre>
+
+<DT><span class="strong">IS_REDUNDANT_ROWS_INFO_SNOC_PMATCH_ROW</span>
+<DD>
+<pre>
+⊢ ∀v rows c infos p g r c'.
+      IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+      (¬PMATCH_ROW_COND_EX v p g ⇒ (c ⇔ c')) ⇒
+      IS_REDUNDANT_ROWS_INFO v (SNOC (PMATCH_ROW p g r) rows) c'
+        (SNOC (c ⇒ ¬PMATCH_ROW_COND_EX v p g) infos)
+</pre>
+
+<DT><span class="strong">IS_REDUNDANT_ROWS_INFO_CONS</span>
+<DD>
+<pre>
+⊢ IS_REDUNDANT_ROWS_INFO v (row::rows) c (i::infos') ⇔
+  LENGTH rows = LENGTH infos' ∧ (i ⇒ row v = NONE) ∧
+  (row v = NONE ⇒ IS_REDUNDANT_ROWS_INFO v rows c infos')
+</pre>
+
+<DT><span class="strong">APPLY_REDUNDANT_ROWS_INFO_THMS</span>
+<DD>
+<pre>
+⊢ APPLY_REDUNDANT_ROWS_INFO [] [] = [] ∧
+  (∀is x xs.
+       APPLY_REDUNDANT_ROWS_INFO (T::is) (x::xs) =
+       APPLY_REDUNDANT_ROWS_INFO is xs) ∧
+  ∀is x xs.
+      APPLY_REDUNDANT_ROWS_INFO (F::is) (x::xs) =
+      x::APPLY_REDUNDANT_ROWS_INFO is xs
+</pre>
+
+<DT><span class="strong">PMATCH_ROWS_DROP_REDUNDANT_ROWS_INFO_EQUIV</span>
+<DD>
+<pre>
+⊢ ∀v c rows infos.
+      IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+      PMATCH_EQUIV_ROWS v rows (APPLY_REDUNDANT_ROWS_INFO infos rows)
+</pre>
+
+<DT><span class="strong">REDUNDANT_ROWS_INFO_TO_PMATCH_EQ</span>
+<DD>
+<pre>
+⊢ ∀v c rows infos.
+      IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+      PMATCH v rows = PMATCH v (APPLY_REDUNDANT_ROWS_INFO infos rows)
+</pre>
+
+<DT><span class="strong">PMATCH_IS_EXHAUSTIVE_REWRITES</span>
+<DD>
+<pre>
+⊢ (∀v. PMATCH_IS_EXHAUSTIVE v [] ⇔ F) ∧
+  ∀v r rs.
+      PMATCH_IS_EXHAUSTIVE v (r::rs) ⇔ r v ≠ NONE ∨ PMATCH_IS_EXHAUSTIVE v rs
+</pre>
+
+<DT><span class="strong">IS_REDUNDANT_ROWS_INFO_EXTRACT_IS_EXHAUSTIVE</span>
+<DD>
+<pre>
+⊢ ∀v rows c infos.
+      IS_REDUNDANT_ROWS_INFO v rows c infos ⇒ ¬c ⇒ PMATCH_IS_EXHAUSTIVE v rows
+</pre>
+
+<DT><span class="strong">REDUNDANT_ROWS_INFOS_CONJ_REWRITE</span>
+<DD>
+<pre>
+⊢ REDUNDANT_ROWS_INFOS_CONJ [] [] = [] ∧
+  REDUNDANT_ROWS_INFOS_CONJ (i1::is1) (i2::is2) =
+  (i1 ∧ i2)::REDUNDANT_ROWS_INFOS_CONJ is1 is2
+</pre>
+
+<DT><span class="strong">REDUNDANT_ROWS_INFOS_CONJ_THM</span>
+<DD>
+<pre>
+⊢ ∀v rows c infos c' infos'.
+      IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+      LENGTH infos' = LENGTH infos ⇒
+      IS_REDUNDANT_ROWS_INFO v rows (c ∨ c')
+        (REDUNDANT_ROWS_INFOS_CONJ infos infos')
+</pre>
+
+<DT><span class="strong">REDUNDANT_ROWS_INFOS_DISJ_THM</span>
+<DD>
+<pre>
+⊢ ∀v rows c infos c' infos'.
+      IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+      IS_REDUNDANT_ROWS_INFO v rows c' infos' ⇒
+      IS_REDUNDANT_ROWS_INFO v rows (c ∧ c')
+        (REDUNDANT_ROWS_INFOS_DISJ infos infos')
+</pre>
+
+<DT><span class="strong">LENGTH_STRONGEST_REDUNDANT_ROWS_INFO_AUX</span>
+<DD>
+<pre>
+⊢ ∀v rows p infos.
+      LENGTH (SND (STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows p infos)) =
+      LENGTH rows + LENGTH infos
+</pre>
+
+<DT><span class="strong">FST_STRONGEST_REDUNDANT_ROWS_INFO_AUX</span>
+<DD>
+<pre>
+⊢ ∀v rows p infos.
+      FST (STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows p infos) ⇔
+      p ∧ EVERY (λr. r v = NONE) rows
+</pre>
+
+<DT><span class="strong">EL_STRONGEST_REDUNDANT_ROWS_INFO</span>
+<DD>
+<pre>
+⊢ ∀v rows i.
+      i < LENGTH rows ⇒
+      (EL i (STRONGEST_REDUNDANT_ROWS_INFO v rows) ⇔
+       EVERY (λr. r v = NONE) (TAKE i rows) ⇒ EL i rows v = NONE)
+</pre>
+
+<DT><span class="strong">STRONGEST_REDUNDANT_ROWS_INFO_OK</span>
+<DD>
+<pre>
+⊢ IS_REDUNDANT_ROWS_INFO v rows (EVERY (λr. r v = NONE) rows)
+    (STRONGEST_REDUNDANT_ROWS_INFO v rows)
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_COND_EX_FULL_DEF</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW_COND_EX i p g ⇔ ∃x. i = p x ∧ g x
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_COND_EX_WEAKEN</span>
+<DD>
+<pre>
+⊢ ∀f v p g p' g'.
+      ¬PMATCH_ROW_COND_EX v p g ⇒
+      (∀x. p' x = p (f x)) ⇒
+      (PMATCH_ROW_COND_EX v p' g' ⇔
+       PMATCH_ROW_COND_EX v p' (λx. g' x ∧ ¬g (f x)))
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_COND_EX_FALSE</span>
+<DD>
+<pre>
+⊢ ∀v p g. (∀x. ¬g x) ⇒ (PMATCH_ROW_COND_EX v p g ⇔ F)
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_COND_EX_IMP_REWRITE</span>
+<DD>
+<pre>
+⊢ ∀v p g p' g' RES.
+      PMATCH_ROW_COND_EX v p g ⇒
+      (∀x. g x ⇒ ((∃x'. p' x' = p x ∧ g' x') ⇔ RES)) ⇒
+      (PMATCH_ROW_COND_EX v p' g' ⇔ RES)
+</pre>
+
+<DT><span class="strong">PMATCH_IS_EXHAUSTIVE_CONTRADICT</span>
+<DD>
+<pre>
+⊢ ∀v rs. (EVERY (λr. r v = NONE) rs ⇒ F) ⇒ PMATCH_IS_EXHAUSTIVE v rs
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_EVAL_COND_EX</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW_COND_EX i p g ⇒
+  PMATCH_ROW p g r i = SOME (r (@x. PMATCH_ROW_COND p g i x))
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_NEQ_NONE</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW p g r i ≠ NONE ⇔ PMATCH_ROW_COND_EX i p g
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_REMOVE_DOUBLE_BINDS_THM</span>
+<DD>
+<pre>
+⊢ ∀g p1 g1 r1 p2 g2 r2.
+      (∀x y. p1 x = p1 y ⇒ x = y) ∧ (∀x. p2 (g x) = p1 x) ∧
+      (∀x'. g2 x' ⇔ ∃x. x' = g x ∧ g1 x) ∧ (∀x. r2 (g x) = r1 x) ⇒
+      PMATCH_ROW p1 g1 r1 = PMATCH_ROW p2 g2 r2
+</pre>
+
+<DT><span class="strong">GUARDS_ELIM_THM</span>
+<DD>
+<pre>
+⊢ ∀v rs1 rs2 p g r.
+      (∀x1 x2. p x1 = p x2 ⇒ x1 = x2) ⇒
+      PMATCH v (rs1 ++ PMATCH_ROW p g r::rs2) =
+      PMATCH v
+        (rs1 ++
+         PMATCH_ROW p (λx. T) (λx. if g x then r x else PMATCH (p x) rs2)::rs2)
+</pre>
+
+<DT><span class="strong">PMATCH_FLATTEN_THM_SINGLE</span>
+<DD>
+<pre>
+⊢ ∀v p g rows.
+      (∀x. PMATCH_IS_EXHAUSTIVE x (MAP (λr. r x) rows)) ⇒
+      PMATCH_EQUIV_ROWS v [PMATCH_ROW p g (λx. PMATCH x (MAP (λr. r x) rows))]
+        (MAP (λr. PMATCH_FLATTEN_FUN p g r) rows)
+</pre>
+
+<DT><span class="strong">PMATCH_FLATTEN_THM</span>
+<DD>
+<pre>
+⊢ ∀v p g rows1 rows2 rows.
+      (∀x. PMATCH_IS_EXHAUSTIVE x (MAP (λr. r x) rows)) ⇒
+      PMATCH v
+        (rows1 ++ PMATCH_ROW p g (λx. PMATCH x (MAP (λr. r x) rows))::rows2) =
+      PMATCH v (rows1 ++ MAP (λr. PMATCH_FLATTEN_FUN p g r) rows ++ rows2)
+</pre>
+
+<DT><span class="strong">PMATCH_FLATTEN_FUN_PMATCH_ROW</span>
+<DD>
+<pre>
+⊢ ∀p.
+      (∀x1 x2. p x1 = p x2 ⇒ x1 = x2) ⇒
+      ∀g p' g' r'.
+          PMATCH_FLATTEN_FUN p g (λx. PMATCH_ROW p' (g' x) (r' x)) =
+          PMATCH_ROW (λx. p (p' x)) (λx. g (p' x) ∧ g' (p' x) x)
+            (λx. r' (p' x) x)
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_COND_NOT_EX_OR_EQ_FIRST_ROW</span>
+<DD>
+<pre>
+⊢ ∀i r r' rows.
+      r' i ≠ NONE ⇒
+      (PMATCH_ROW_COND_NOT_EX_OR_EQ i r (r'::rows) ⇔ r i ≠ NONE ⇒ r i = r' i)
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_COND_NOT_EX_OR_EQ_NIL</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW_COND_NOT_EX_OR_EQ i r [] ⇔ r i ≠ NONE ⇒ F
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_COND_NOT_EX_OR_EQ_NOT_FIRST_ROW</span>
+<DD>
+<pre>
+⊢ PMATCH_ROW_COND_NOT_EX_OR_EQ i r' rows ⇒
+  (PMATCH_ROW_COND_NOT_EX_OR_EQ i r (r'::rows) ⇔
+   PMATCH_ROW_COND_NOT_EX_OR_EQ i r rows)
+</pre>
+
+<DT><span class="strong">PMATCH_PRED_UNROLL_NIL</span>
+<DD>
+<pre>
+⊢ ∀P v. P (PMATCH v []) = P ARB
+</pre>
+
+<DT><span class="strong">PMATCH_PRED_UNROLL_CONS</span>
+<DD>
+<pre>
+⊢ ∀P v r rows.
+      P (PMATCH v (r::rows)) ⇔
+      (r v ≠ NONE ⇒ P (THE (r v))) ∧
+      (PMATCH_ROW_COND_NOT_EX_OR_EQ v r rows ⇒ P (PMATCH v rows))
+</pre>
+
+<DT><span class="strong">PMATCH_EXPAND_PRED_THM_GEN</span>
+<DD>
+<pre>
+⊢ ∀P v rows_before rows_after.
+      PMATCH_EXPAND_PRED P v rows_before rows_after ⇔
+      EVERY (λr. PMATCH_ROW_COND_NOT_EX_OR_EQ v r rows_after) rows_before ⇒
+      P (PMATCH v rows_after)
+</pre>
+
+<DT><span class="strong">PMATCH_EXPAND_PRED_THM</span>
+<DD>
+<pre>
+⊢ ∀P v rows. P (PMATCH v rows) ⇔ PMATCH_EXPAND_PRED P v [] rows
+</pre>
+
+<DT><span class="strong">PMATCH_LIFT_THM</span>
+<DD>
+<pre>
+⊢ ∀f v rows.
+      PMATCH_IS_EXHAUSTIVE v rows ⇒
+      f (PMATCH v rows) = PMATCH v (MAP (PMATCH_ROW_LIFT f) rows)
+</pre>
+
+<DT><span class="strong">PMATCH_ROW_LIFT_THM</span>
+<DD>
+<pre>
+⊢ ∀f p g r.
+      PMATCH_ROW_LIFT f (PMATCH_ROW p g r) = PMATCH_ROW p g (λx. f (r x))
+</pre>
+
+<DT><span class="strong">PMATCH_IS_EXHAUSTIVE_LIFT</span>
+<DD>
+<pre>
+⊢ ∀f v rows.
+      PMATCH_IS_EXHAUSTIVE v rows ⇒
+      PMATCH_IS_EXHAUSTIVE v (MAP (PMATCH_ROW_LIFT f) rows)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

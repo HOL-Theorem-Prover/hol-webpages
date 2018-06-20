@@ -1,0 +1,550 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: lbtree</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "lbtree"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "llistTheory.html"><span class="strong">llist</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">lbtree</span>
+    <td>
+    1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">Lf</span>
+    <td>
+    :α lbtree
+    <tr><td> <span class="strong">Lfrep</span> <td> :α -> β option
+    <tr><td>
+    <span class="strong">Nd</span>
+    <td>
+    :α -> α lbtree -> α lbtree -> α lbtree
+    <tr><td>
+    <span class="strong">Ndrep</span>
+    <td>
+    :α ->
+    (bitstring -> α option) ->
+    (bitstring -> α option) -> bitstring -> α option
+    <tr><td>
+    <span class="strong">bf_flatten</span>
+    <td>
+    :α lbtree list -> α llist
+    <tr><td>
+    <span class="strong">depth</span>
+    <td>
+    :α -> α lbtree -> num -> bool
+    <tr><td> <span class="strong">finite</span> <td> :α lbtree -> bool
+    <tr><td>
+    <span class="strong">is_lbtree</span>
+    <td>
+    :(bitstring -> α option) -> bool
+    <tr><td>
+    <span class="strong">is_mmindex</span>
+    <td>
+    :(α -> num option) -> α list -> num reln
+    <tr><td>
+    <span class="strong">lbtree_abs</span>
+    <td>
+    :(bitstring -> α option) -> α lbtree
+    <tr><td>
+    <span class="strong">lbtree_case</span>
+    <td>
+    :α -> (β -> β lbtree -> β lbtree -> α) -> β lbtree -> α
+    <tr><td>
+    <span class="strong">lbtree_rep</span>
+    <td>
+    :α lbtree -> bitstring -> α option
+    <tr><td>
+    <span class="strong">map</span>
+    <td>
+    :(α -> β) -> α lbtree -> β lbtree
+    <tr><td> <span class="strong">mem</span> <td> :α -> α lbtree -> bool
+    <tr><td>
+    <span class="strong">mindepth</span>
+    <td>
+    :α -> α lbtree -> num option
+    <tr><td>
+    <span class="strong">optmin</span>
+    <td>
+    :num option -> num option -> num option
+    <tr><td>
+    <span class="strong">path_follow</span>
+    <td>
+    :(β -> (α # β # β) option) -> β -> bitstring -> α option
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">Lfrep_def</span>
+<DD>
+<pre>
+⊢ Lfrep = (λl. NONE)
+</pre>
+
+<DT><span class="strong">Ndrep_def</span>
+<DD>
+<pre>
+⊢ ∀a t1 t2.
+      Ndrep a t1 t2 =
+      (λl. case l of [] => SOME a | T::xs => t1 xs | F::xs => t2 xs)
+</pre>
+
+<DT><span class="strong">is_lbtree_def</span>
+<DD>
+<pre>
+⊢ ∀t.
+      is_lbtree t ⇔
+      ∃P.
+          (∀t. P t ⇒ t = Lfrep ∨ ∃a t1 t2. P t1 ∧ P t2 ∧ t = Ndrep a t1 t2) ∧
+          P t
+</pre>
+
+<DT><span class="strong">lbtree_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION is_lbtree rep
+</pre>
+
+<DT><span class="strong">lbtree_absrep</span>
+<DD>
+<pre>
+⊢ (∀a. lbtree_abs (lbtree_rep a) = a) ∧
+  ∀r. is_lbtree r ⇔ lbtree_rep (lbtree_abs r) = r
+</pre>
+
+<DT><span class="strong">path_follow_def</span>
+<DD>
+<pre>
+⊢ (∀g x. path_follow g x [] = OPTION_MAP FST (g x)) ∧
+  ∀g x h t.
+      path_follow g x (h::t) =
+      case g x of
+        NONE => NONE
+      | SOME (a,y,z) => path_follow g (if h then y else z) t
+</pre>
+
+<DT><span class="strong">Lf_def</span>
+<DD>
+<pre>
+⊢ Lf = lbtree_abs Lfrep
+</pre>
+
+<DT><span class="strong">Nd_def</span>
+<DD>
+<pre>
+⊢ ∀a t1 t2. Nd a t1 t2 = lbtree_abs (Ndrep a (lbtree_rep t1) (lbtree_rep t2))
+</pre>
+
+<DT><span class="strong">lbtree_case_def</span>
+<DD>
+<pre>
+⊢ ∀e f t.
+      lbtree_case e f t = if t = Lf then e
+      else
+        f (@a. ∃t1 t2. t = Nd a t1 t2) (@t1. ∃a t2. t = Nd a t1 t2)
+          (@t2. ∃a t1. t = Nd a t1 t2)
+</pre>
+
+<DT><span class="strong">mem_def</span>
+<DD>
+<pre>
+⊢ mem =
+  (λa0 a1.
+       ∀mem'.
+           (∀a0 a1.
+                (∃t1 t2. a1 = Nd a0 t1 t2) ∨
+                (∃b t1 t2. a1 = Nd b t1 t2 ∧ mem' a0 t1) ∨
+                (∃b t1 t2. a1 = Nd b t1 t2 ∧ mem' a0 t2) ⇒
+                mem' a0 a1) ⇒
+           mem' a0 a1)
+</pre>
+
+<DT><span class="strong">map_def</span>
+<DD>
+<pre>
+⊢ ∀f.
+      map f Lf = Lf ∧
+      ∀a t1 t2. map f (Nd a t1 t2) = Nd (f a) (map f t1) (map f t2)
+</pre>
+
+<DT><span class="strong">finite_def</span>
+<DD>
+<pre>
+⊢ finite =
+  (λa0.
+       ∀finite'.
+           (∀a0.
+                a0 = Lf ∨
+                (∃a t1 t2. a0 = Nd a t1 t2 ∧ finite' t1 ∧ finite' t2) ⇒
+                finite' a0) ⇒
+           finite' a0)
+</pre>
+
+<DT><span class="strong">bf_flatten_def</span>
+<DD>
+<pre>
+⊢ bf_flatten [] = [||] ∧ (∀ts. bf_flatten (Lf::ts) = bf_flatten ts) ∧
+  ∀a t1 t2 ts. bf_flatten (Nd a t1 t2::ts) = a:::bf_flatten (ts ++ [t1; t2])
+</pre>
+
+<DT><span class="strong">depth_def</span>
+<DD>
+<pre>
+⊢ lbtree$depth =
+  (λa0 a1 a2.
+       ∀depth'.
+           (∀a0 a1 a2.
+                (∃t1 t2. a1 = Nd a0 t1 t2 ∧ a2 = 0) ∨
+                (∃m a t1 t2. a1 = Nd a t1 t2 ∧ a2 = SUC m ∧ depth' a0 t1 m) ∨
+                (∃m a t1 t2. a1 = Nd a t1 t2 ∧ a2 = SUC m ∧ depth' a0 t2 m) ⇒
+                depth' a0 a1 a2) ⇒
+           depth' a0 a1 a2)
+</pre>
+
+<DT><span class="strong">mindepth_def</span>
+<DD>
+<pre>
+⊢ ∀x t.
+      lbtree$mindepth x t = if mem x t then SOME (LEAST n. lbtree$depth x t n)
+      else NONE
+</pre>
+
+<DT><span class="strong">is_mmindex_def</span>
+<DD>
+<pre>
+⊢ ∀f l n d.
+      lbtree$is_mmindex f l n d ⇔
+      n < LENGTH l ∧ f (EL n l) = SOME d ∧
+      ∀i.
+          i < LENGTH l ⇒
+          f (EL i l) = NONE ∨
+          ∃d'. f (EL i l) = SOME d' ∧ d ≤ d' ∧ (i < n ⇒ d < d')
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">lbtree_cases</span>
+<DD>
+<pre>
+⊢ ∀t. t = Lf ∨ ∃a t1 t2. t = Nd a t1 t2
+</pre>
+
+<DT><span class="strong">Lf_NOT_Nd</span>
+<DD>
+<pre>
+⊢ Lf ≠ Nd a t1 t2
+</pre>
+
+<DT><span class="strong">Nd_11</span>
+<DD>
+<pre>
+⊢ Nd a1 t1 u1 = Nd a2 t2 u2 ⇔ a1 = a2 ∧ t1 = t2 ∧ u1 = u2
+</pre>
+
+<DT><span class="strong">lbtree_ue_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f. ∃!g. ∀x. g x = case f x of NONE => Lf | SOME (b,y,z) => Nd b (g y) (g z)
+</pre>
+
+<DT><span class="strong">lbtree_case_thm</span>
+<DD>
+<pre>
+⊢ lbtree_case e f Lf = e ∧ lbtree_case e f (Nd a t1 t2) = f a t1 t2
+</pre>
+
+<DT><span class="strong">lbtree_bisimulation</span>
+<DD>
+<pre>
+⊢ ∀t u.
+      t = u ⇔
+      ∃R.
+          R t u ∧
+          ∀t u.
+              R t u ⇒
+              t = Lf ∧ u = Lf ∨
+              ∃a t1 u1 t2 u2.
+                  R t1 u1 ∧ R t2 u2 ∧ t = Nd a t1 t2 ∧ u = Nd a u1 u2
+</pre>
+
+<DT><span class="strong">lbtree_strong_bisimulation</span>
+<DD>
+<pre>
+⊢ ∀t u.
+      t = u ⇔
+      ∃R.
+          R t u ∧
+          ∀t u.
+              R t u ⇒
+              t = u ∨
+              ∃a t1 u1 t2 u2.
+                  R t1 u1 ∧ R t2 u2 ∧ t = Nd a t1 t2 ∧ u = Nd a u1 u2
+</pre>
+
+<DT><span class="strong">mem_rules</span>
+<DD>
+<pre>
+⊢ (∀a t1 t2. mem a (Nd a t1 t2)) ∧
+  (∀a b t1 t2. mem a t1 ⇒ mem a (Nd b t1 t2)) ∧
+  ∀a b t1 t2. mem a t2 ⇒ mem a (Nd b t1 t2)
+</pre>
+
+<DT><span class="strong">mem_ind</span>
+<DD>
+<pre>
+⊢ ∀mem'.
+      (∀a t1 t2. mem' a (Nd a t1 t2)) ∧
+      (∀a b t1 t2. mem' a t1 ⇒ mem' a (Nd b t1 t2)) ∧
+      (∀a b t1 t2. mem' a t2 ⇒ mem' a (Nd b t1 t2)) ⇒
+      ∀a0 a1. mem a0 a1 ⇒ mem' a0 a1
+</pre>
+
+<DT><span class="strong">mem_strongind</span>
+<DD>
+<pre>
+⊢ ∀mem'.
+      (∀a t1 t2. mem' a (Nd a t1 t2)) ∧
+      (∀a b t1 t2. mem a t1 ∧ mem' a t1 ⇒ mem' a (Nd b t1 t2)) ∧
+      (∀a b t1 t2. mem a t2 ∧ mem' a t2 ⇒ mem' a (Nd b t1 t2)) ⇒
+      ∀a0 a1. mem a0 a1 ⇒ mem' a0 a1
+</pre>
+
+<DT><span class="strong">mem_cases</span>
+<DD>
+<pre>
+⊢ ∀a0 a1.
+      mem a0 a1 ⇔
+      (∃t1 t2. a1 = Nd a0 t1 t2) ∨ (∃b t1 t2. a1 = Nd b t1 t2 ∧ mem a0 t1) ∨
+      ∃b t1 t2. a1 = Nd b t1 t2 ∧ mem a0 t2
+</pre>
+
+<DT><span class="strong">mem_thm</span>
+<DD>
+<pre>
+⊢ (mem a Lf ⇔ F) ∧ (mem a (Nd b t1 t2) ⇔ a = b ∨ mem a t1 ∨ mem a t2)
+</pre>
+
+<DT><span class="strong">map_eq_Lf</span>
+<DD>
+<pre>
+⊢ (map f t = Lf ⇔ t = Lf) ∧ (Lf = map f t ⇔ t = Lf)
+</pre>
+
+<DT><span class="strong">map_eq_Nd</span>
+<DD>
+<pre>
+⊢ map f t = Nd a t1 t2 ⇔
+  ∃a' t1' t2'. t = Nd a' t1' t2' ∧ a = f a' ∧ t1 = map f t1' ∧ t2 = map f t2'
+</pre>
+
+<DT><span class="strong">finite_rules</span>
+<DD>
+<pre>
+⊢ finite Lf ∧ ∀a t1 t2. finite t1 ∧ finite t2 ⇒ finite (Nd a t1 t2)
+</pre>
+
+<DT><span class="strong">finite_ind</span>
+<DD>
+<pre>
+⊢ ∀finite'.
+      finite' Lf ∧ (∀a t1 t2. finite' t1 ∧ finite' t2 ⇒ finite' (Nd a t1 t2)) ⇒
+      ∀a0. finite a0 ⇒ finite' a0
+</pre>
+
+<DT><span class="strong">finite_strongind</span>
+<DD>
+<pre>
+⊢ ∀finite'.
+      finite' Lf ∧
+      (∀a t1 t2.
+           finite t1 ∧ finite' t1 ∧ finite t2 ∧ finite' t2 ⇒
+           finite' (Nd a t1 t2)) ⇒
+      ∀a0. finite a0 ⇒ finite' a0
+</pre>
+
+<DT><span class="strong">finite_cases</span>
+<DD>
+<pre>
+⊢ ∀a0. finite a0 ⇔ a0 = Lf ∨ ∃a t1 t2. a0 = Nd a t1 t2 ∧ finite t1 ∧ finite t2
+</pre>
+
+<DT><span class="strong">finite_thm</span>
+<DD>
+<pre>
+⊢ (finite Lf ⇔ T) ∧ (finite (Nd a t1 t2) ⇔ finite t1 ∧ finite t2)
+</pre>
+
+<DT><span class="strong">finite_map</span>
+<DD>
+<pre>
+⊢ finite (map f t) ⇔ finite t
+</pre>
+
+<DT><span class="strong">bf_flatten_eq_lnil</span>
+<DD>
+<pre>
+⊢ ∀l. bf_flatten l = [||] ⇔ EVERY ($= Lf) l
+</pre>
+
+<DT><span class="strong">bf_flatten_append</span>
+<DD>
+<pre>
+⊢ ∀l1. EVERY ($= Lf) l1 ⇒ bf_flatten (l1 ++ l2) = bf_flatten l2
+</pre>
+
+<DT><span class="strong">EXISTS_FIRST</span>
+<DD>
+<pre>
+⊢ ∀l. EXISTS P l ⇒ ∃l1 x l2. l = l1 ++ x::l2 ∧ EVERY ($~ ∘ P) l1 ∧ P x
+</pre>
+
+<DT><span class="strong">exists_bf_flatten</span>
+<DD>
+<pre>
+⊢ exists ($= x) (bf_flatten tlist) ⇒ EXISTS (mem x) tlist
+</pre>
+
+<DT><span class="strong">depth_rules</span>
+<DD>
+<pre>
+⊢ (∀x t1 t2. lbtree$depth x (Nd x t1 t2) 0) ∧
+  (∀m x a t1 t2. lbtree$depth x t1 m ⇒ lbtree$depth x (Nd a t1 t2) (SUC m)) ∧
+  ∀m x a t1 t2. lbtree$depth x t2 m ⇒ lbtree$depth x (Nd a t1 t2) (SUC m)
+</pre>
+
+<DT><span class="strong">depth_ind</span>
+<DD>
+<pre>
+⊢ ∀depth'.
+      (∀x t1 t2. depth' x (Nd x t1 t2) 0) ∧
+      (∀m x a t1 t2. depth' x t1 m ⇒ depth' x (Nd a t1 t2) (SUC m)) ∧
+      (∀m x a t1 t2. depth' x t2 m ⇒ depth' x (Nd a t1 t2) (SUC m)) ⇒
+      ∀a0 a1 a2. lbtree$depth a0 a1 a2 ⇒ depth' a0 a1 a2
+</pre>
+
+<DT><span class="strong">depth_strongind</span>
+<DD>
+<pre>
+⊢ ∀depth'.
+      (∀x t1 t2. depth' x (Nd x t1 t2) 0) ∧
+      (∀m x a t1 t2.
+           lbtree$depth x t1 m ∧ depth' x t1 m ⇒ depth' x (Nd a t1 t2) (SUC m)) ∧
+      (∀m x a t1 t2.
+           lbtree$depth x t2 m ∧ depth' x t2 m ⇒ depth' x (Nd a t1 t2) (SUC m)) ⇒
+      ∀a0 a1 a2. lbtree$depth a0 a1 a2 ⇒ depth' a0 a1 a2
+</pre>
+
+<DT><span class="strong">depth_cases</span>
+<DD>
+<pre>
+⊢ ∀a0 a1 a2.
+      lbtree$depth a0 a1 a2 ⇔
+      (∃t1 t2. a1 = Nd a0 t1 t2 ∧ a2 = 0) ∨
+      (∃m a t1 t2. a1 = Nd a t1 t2 ∧ a2 = SUC m ∧ lbtree$depth a0 t1 m) ∨
+      ∃m a t1 t2. a1 = Nd a t1 t2 ∧ a2 = SUC m ∧ lbtree$depth a0 t2 m
+</pre>
+
+<DT><span class="strong">mem_depth</span>
+<DD>
+<pre>
+⊢ ∀x t. mem x t ⇒ ∃n. lbtree$depth x t n
+</pre>
+
+<DT><span class="strong">depth_mem</span>
+<DD>
+<pre>
+⊢ ∀x t n. lbtree$depth x t n ⇒ mem x t
+</pre>
+
+<DT><span class="strong">optmin_ind</span>
+<DD>
+<pre>
+⊢ ∀P.
+      P NONE NONE ∧ (∀x. P (SOME x) NONE) ∧ (∀y. P NONE (SOME y)) ∧
+      (∀x y. P (SOME x) (SOME y)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">optmin_def</span>
+<DD>
+<pre>
+⊢ lbtree$optmin NONE NONE = NONE ∧ lbtree$optmin (SOME x) NONE = SOME x ∧
+  lbtree$optmin NONE (SOME y) = SOME y ∧
+  lbtree$optmin (SOME x) (SOME y) = SOME (MIN x y)
+</pre>
+
+<DT><span class="strong">mindepth_thm</span>
+<DD>
+<pre>
+⊢ lbtree$mindepth x Lf = NONE ∧
+  lbtree$mindepth x (Nd a t1 t2) = if x = a then SOME 0
+  else
+    OPTION_MAP SUC
+      (lbtree$optmin (lbtree$mindepth x t1) (lbtree$mindepth x t2))
+</pre>
+
+<DT><span class="strong">mem_mindepth</span>
+<DD>
+<pre>
+⊢ ∀x t. mem x t ⇒ ∃n. lbtree$mindepth x t = SOME n
+</pre>
+
+<DT><span class="strong">mindepth_depth</span>
+<DD>
+<pre>
+⊢ lbtree$mindepth x t = SOME n ⇒ lbtree$depth x t n
+</pre>
+
+<DT><span class="strong">mmindex_EXISTS</span>
+<DD>
+<pre>
+⊢ EXISTS (λe. ∃n. f e = SOME n) l ⇒ ∃i m. lbtree$is_mmindex f l i m
+</pre>
+
+<DT><span class="strong">mmindex_unique</span>
+<DD>
+<pre>
+⊢ lbtree$is_mmindex f l i m ⇒ ∀j n. lbtree$is_mmindex f l j n ⇔ j = i ∧ n = m
+</pre>
+
+<DT><span class="strong">mem_bf_flatten</span>
+<DD>
+<pre>
+⊢ exists ($= x) (bf_flatten tlist) ⇔ EXISTS (mem x) tlist
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

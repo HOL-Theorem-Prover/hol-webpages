@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Q.RENAME_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>RENAME_TAC : term quotation list -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Q.html">Q</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Renames free variables or subterms within a goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">RENAME_TAC&nbsp;qs</SPAN><SPAN class = "TEXT"> searches the current goal for matches to the
+patterns in the list </SPAN><SPAN class = "BRKT">qs</SPAN><SPAN class = "TEXT">, and then substitutes out the matches (in
+the &ldquo;reverse direction&rdquo;) so that the goal becomes one that uses the
+names from </SPAN><SPAN class = "BRKT">qs</SPAN><SPAN class = "TEXT">. This can cause subterms within the goal to turn into
+simple variables, but the usual intention is to rename free variables
+into the variables that appear in the patterns.</SPAN>
+<P>
+<SPAN class = "TEXT">The matching is done without reference to the goal&rsquo;s existing free
+variables. If a variable in </SPAN><SPAN class = "BRKT">qs</SPAN><SPAN class = "TEXT"> clashes with an existing variable in
+the goal, then the goal&rsquo;s variable will be renamed away. It is
+sufficient for variables to have the same name to &ldquo;clash&rdquo;; they need
+not also have the same type. The search for matches begins by
+attempting to find matches against the whole of the goal, against
+whole assumptions, for sub-terms within the goal, and then sub-terms
+of assumptions. If multiple matches are possible, a variant tactic,
+</SPAN><SPAN class = "BRKT">Q.kRENAME_TAC</SPAN><SPAN class = "TEXT">, can be used: this tactic takes an additional
+&ldquo;continuation&rdquo; tactic argument that can be used to discriminate
+between these matches.</SPAN>
+<P>
+<SPAN class = "TEXT">Patterns can use underscores to match anything without any change in
+the goal&rsquo;s naming being introduced. Underscores can match against
+sub-terms that include bound variables. Matching is first-order.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if it is impossible to consistently match the combination of
+patterns in the provided list of quotations (</SPAN><SPAN class = "BRKT">qs</SPAN><SPAN class = "TEXT">).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If the goal is of the form
+</SPAN><DIV class = "XMPL"><pre>
+   x &lt; y, y &lt; z ?- x &lt; f a
+</pre></DIV>
+<SPAN class = "TEXT">
+then invoking </SPAN><SPAN class = "BRKT">Q.RENAME_TAC&nbsp;[`b&nbsp;&lt;&nbsp;c`,&nbsp;`a&nbsp;&lt;&nbsp;b`]</SPAN><SPAN class = "TEXT"> will produce the sub-goal:
+</SPAN><DIV class = "XMPL"><pre>
+   a &lt; b, b &lt; c ?- a &lt; f a'
+</pre></DIV>
+<SPAN class = "TEXT">
+where the goal&rsquo;s original </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT"> variable (which is not even of type
+</SPAN><SPAN class = "BRKT">num</SPAN><SPAN class = "TEXT">), has been renamed away from </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT"> because that variable occurs in the
+patterns. (If the right hand side of the inequality was simply </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT"> and
+was thus of type num, it would also be renamed to </SPAN><SPAN class = "BRKT">a'</SPAN><SPAN class = "TEXT">.)</SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">Q.RENAME_TAC&nbsp;[`b&nbsp;&lt;&nbsp;c`]</SPAN><SPAN class = "TEXT"> is invoked on the same initial goal, the result is:
+</SPAN><DIV class = "XMPL"><pre>
+   b &lt; y, y &lt; z ?- b &lt; c
+</pre></DIV>
+<SPAN class = "TEXT">
+illustrating the way in which variables can eliminate more complicated sub-terms.</SPAN>
+<P>
+<SPAN class = "TEXT">The useful way in which underscores in patterns can be used to &ldquo;dodge&rdquo; terms including bound variables is illustrated in the next example, where the initial goal is:
+</SPAN><DIV class = "XMPL"><pre>
+   (!a. f a &lt; z), z &lt; c ?- z &lt; d
+</pre></DIV>
+<SPAN class = "TEXT">
+After applying </SPAN><SPAN class = "BRKT">Q.RENAME_TAC&nbsp;[`_&nbsp;&lt;&nbsp;x`,&nbsp;`x&nbsp;&lt;&nbsp;c`]</SPAN><SPAN class = "TEXT">, the goal becomes
+</SPAN><DIV class = "XMPL"><pre>
+   (!a. f a &lt; x), x &lt; c' ?- x &lt; c
+</pre></DIV>
+<SPAN class = "TEXT">
+The goal was chosen for the match to the second pattern because the goal is considered first. If the initial goal had been
+</SPAN><DIV class = "XMPL"><pre>
+   (!a. f a &lt; z), z &lt; c ?- z &lt; d /\ P z
+</pre></DIV>
+<SPAN class = "TEXT">
+then the result of the same application would be
+</SPAN><DIV class = "XMPL"><pre>
+   (!a. f a &lt; z), z &lt; c ?- x &lt; d /\ P x
+</pre></DIV>
+<SPAN class = "TEXT">
+because whole assumptions are considered before sub-terms of the goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function is also available under the name </SPAN><SPAN class = "BRKT">bossLib.rename</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Note that </SPAN><SPAN class = "BRKT">Q.RENAME_TAC&nbsp;[q]</SPAN><SPAN class = "TEXT"> is </SPAN><em>not</em><SPAN class = "TEXT"> the same as </SPAN><SPAN class = "BRKT">Q.RENAME1_TAC&nbsp;q</SPAN><SPAN class = "TEXT">.
+The latter pays attention to the goal&rsquo;s free variables, using these to
+constrain the match to the pattern. In contrast, </SPAN><SPAN class = "BRKT">Q.RENAME_TAC</SPAN><SPAN class = "TEXT">
+completely ignores all of the goal&rsquo;s free variables, such that using
+an existing name in a pattern doesn&rsquo;t make any difference to the
+matching behaviour.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Q.RENAME1_TAC.html">RENAME1_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

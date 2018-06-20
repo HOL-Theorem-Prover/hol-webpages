@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Parse.set_fixity</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>set_fixity : string -&gt; fixity -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Allows the fixity of tokens to be updated.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Parse</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">set_fixity</SPAN><SPAN class = "TEXT"> function is used to change the fixity of single
+tokens.  It implements this functionality rather crudely.  When called
+on to set the fixity of </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">, it removes all rules mentioning
+</SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> from the global (term) grammar, and then adds a new rule to the
+grammar.  The new rule maps occurrences of </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> with the given fixity
+to terms of the same name.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function fails if the new fixity causes a clash with existing
+rules, as happens if the precedence level of the specified fixity is
+already taken by rules using a fixity of a different type.  Even if
+the application of </SPAN><SPAN class = "BRKT">set_fixity</SPAN><SPAN class = "TEXT"> succeeds, it may cause the next
+subsequent application of the </SPAN><SPAN class = "BRKT">Term</SPAN><SPAN class = "TEXT"> parsing function to complain
+about precedence conflicts in the operator precedence matrix.  These
+problems may cause the parser to behave oddly on terms involving the
+token whose fixity was set.  Excessive parentheses will usually cure
+even these problems.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">After a new constant is defined, </SPAN><SPAN class = "BRKT">set_fixity</SPAN><SPAN class = "TEXT"> can be used to give it
+an appropriate parse status:
+</SPAN><DIV class = "XMPL"><pre>
+   - val thm = Psyntax.new_recursive_definition
+                  prim_recTheory.num_Axiom "f"
+                  (Term`(f 0 n = n) /\ (f (SUC n) m = SUC (SUC (f n m)))`);
+   &gt; val thm =
+       |- (!n. f 0 n = n) /\ !n m. f (SUC n) m = SUC (SUC (f n m))
+       : thm
+   - set_fixity "f" (Infixl 500);
+   &gt; val it = () : unit
+   - thm;
+   &gt; val it =
+       |- (!n. 0 f n = n) /\ !n m. SUC n f m = SUC (SUC (n f m)) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The same function can be used to alter the fixities of existing
+constants:
+</SPAN><DIV class = "XMPL"><pre>
+   - val t = Term`2 + 3 + 4 - 6`;
+   &gt; val t = `2 + 3 + 4 - 6` : term
+   - set_fixity "+" (Infixr 501);
+   &gt; val it = () : unit
+   - t;
+   &gt; val it = `(2 + 3) + 4 - 6` : term
+   - dest_comb (Term`3 - 1 + 2`);
+   &gt; val it = (`$- 3`, `1 + 2`) : term * term
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function is of no use if multiple-token rules (such as those for
+conditional expressions) are desired, or if the token does not
+correspond to the name of the constant or variable that is to be
+produced.  (For the latter case, use </SPAN><SPAN class = "BRKT">set_mapped_fixity</SPAN><SPAN class = "TEXT">.)</SPAN>
+<P>
+<SPAN class = "TEXT">As with other functions in the </SPAN><SPAN class = "BRKT">Parse</SPAN><SPAN class = "TEXT"> structure, there is a companion
+</SPAN><SPAN class = "BRKT">temp_set_fixity</SPAN><SPAN class = "TEXT"> function, which has the same effect on the global
+grammar, but which does not cause this effect to persist when the
+current theory is exported.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.add_rule.html">add_rule</A>,
+<A HREF = "Parse.add_infix.html">add_infix</A>,
+<A HREF = "Parse.remove_rules_for_term.html">remove_rules_for_term</A>,
+<A HREF = "Parse.remove_termtok.html">remove_termtok</A>,
+<A HREF = "Parse.set_mapped_fixity.html">set_mapped_fixity</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

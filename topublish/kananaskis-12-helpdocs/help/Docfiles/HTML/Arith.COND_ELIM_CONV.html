@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>Arith.COND_ELIM_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>COND_ELIM_CONV : conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Arith.html">Arith</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Eliminates conditional statements from a formula.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function moves conditional statements up through a term and if at any
+point the branches of the conditional become Boolean-valued the conditional is
+eliminated. If the term is a formula, only an abstraction can prevent a
+conditional being moved up far enough to be eliminated.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+#COND_ELIM_CONV "!f n. f ((SUC n = 0) =&gt; 0 | (SUC n - 1)) &lt; (f n) + 1";;
+|- (!f n. (f((SUC n = 0) =&gt; 0 | (SUC n) - 1)) &lt; ((f n) + 1)) =
+   (!f n.
+     (~(SUC n = 0) \/ (f 0) &lt; ((f n) + 1)) /\
+     ((SUC n = 0) \/ (f((SUC n) - 1)) &lt; ((f n) + 1)))
+
+#COND_ELIM_CONV "!f n. (\m. f ((m = 0) =&gt; 0 | (m - 1))) (SUC n) &lt; (f n) + 1";;
+|- (!f n. ((\m. f((m = 0) =&gt; 0 | m - 1))(SUC n)) &lt; ((f n) + 1)) =
+   (!f n. ((\m. ((m = 0) =&gt; f 0 | f(m - 1)))(SUC n)) &lt; ((f n) + 1))
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Useful as a preprocessor to decision procedures which do not allow conditional
+statements in their argument formula.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Arith.SUB_AND_COND_ELIM_CONV.html">SUB_AND_COND_ELIM_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

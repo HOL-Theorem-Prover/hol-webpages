@@ -1,0 +1,510 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: float</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "float"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "ieeeTheory.html"><span class="strong">ieee</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">error</span>
+    <td>
+    :real -> real
+    <tr><td> <span class="strong">normalizes</span> <td> :real -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">error_def</span>
+<DD>
+<pre>
+⊢ ∀x. error x = Val (float (round float_format To_nearest x)) − x
+</pre>
+
+<DT><span class="strong">normalizes_def</span>
+<DD>
+<pre>
+⊢ ∀x.
+      normalizes x ⇔
+      (2 pow (bias float_format − 1))⁻¹ ≤ abs x ∧
+      abs x < threshold float_format
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">SIGN</span>
+<DD>
+<pre>
+⊢ ∀a. sign a = FST a
+</pre>
+
+<DT><span class="strong">EXPONENT</span>
+<DD>
+<pre>
+⊢ ∀a. exponent a = FST (SND a)
+</pre>
+
+<DT><span class="strong">FRACTION</span>
+<DD>
+<pre>
+⊢ ∀a. fraction a = SND (SND a)
+</pre>
+
+<DT><span class="strong">IS_VALID</span>
+<DD>
+<pre>
+⊢ ∀X a.
+      is_valid X a ⇔
+      sign a < 2 ∧ exponent a < 2 ** expwidth X ∧
+      fraction a < 2 ** fracwidth X
+</pre>
+
+<DT><span class="strong">VALOF</span>
+<DD>
+<pre>
+⊢ ∀X a.
+      valof X a =
+      if exponent a = 0 then
+        -1 pow sign a * (2 / 2 pow bias X) * (&fraction a / 2 pow fracwidth X)
+      else
+        -1 pow sign a * (2 pow exponent a / 2 pow bias X) *
+        (1 + &fraction a / 2 pow fracwidth X)
+</pre>
+
+<DT><span class="strong">IS_VALID_DEFLOAT</span>
+<DD>
+<pre>
+⊢ ∀a. is_valid float_format (defloat a)
+</pre>
+
+<DT><span class="strong">IS_FINITE_EXPLICIT</span>
+<DD>
+<pre>
+⊢ ∀a.
+      is_finite float_format a ⇔
+      sign a < 2 ∧ exponent a < 255 ∧ fraction a < 8388608
+</pre>
+
+<DT><span class="strong">FLOAT_CASES</span>
+<DD>
+<pre>
+⊢ ∀a. Isnan a ∨ Infinity a ∨ Isnormal a ∨ Isdenormal a ∨ Iszero a
+</pre>
+
+<DT><span class="strong">FLOAT_CASES_FINITE</span>
+<DD>
+<pre>
+⊢ ∀a. Isnan a ∨ Infinity a ∨ Finite a
+</pre>
+
+<DT><span class="strong">FLOAT_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀a.
+      ¬(Isnan a ∧ Infinity a) ∧ ¬(Isnan a ∧ Isnormal a) ∧
+      ¬(Isnan a ∧ Isdenormal a) ∧ ¬(Isnan a ∧ Iszero a) ∧
+      ¬(Infinity a ∧ Isnormal a) ∧ ¬(Infinity a ∧ Isdenormal a) ∧
+      ¬(Infinity a ∧ Iszero a) ∧ ¬(Isnormal a ∧ Isdenormal a) ∧
+      ¬(Isnormal a ∧ Iszero a) ∧ ¬(Isdenormal a ∧ Iszero a)
+</pre>
+
+<DT><span class="strong">FLOAT_DISTINCT_FINITE</span>
+<DD>
+<pre>
+⊢ ∀a.
+      ¬(Isnan a ∧ Infinity a) ∧ ¬(Isnan a ∧ Finite a) ∧
+      ¬(Infinity a ∧ Finite a)
+</pre>
+
+<DT><span class="strong">FLOAT_INFINITIES_SIGNED</span>
+<DD>
+<pre>
+⊢ sign (defloat Plus_infinity) = 0 ∧ sign (defloat Minus_infinity) = 1
+</pre>
+
+<DT><span class="strong">INFINITY_IS_INFINITY</span>
+<DD>
+<pre>
+⊢ Infinity Plus_infinity ∧ Infinity Minus_infinity
+</pre>
+
+<DT><span class="strong">ZERO_IS_ZERO</span>
+<DD>
+<pre>
+⊢ Iszero Plus_zero ∧ Iszero Minus_zero
+</pre>
+
+<DT><span class="strong">INFINITY_NOT_NAN</span>
+<DD>
+<pre>
+⊢ ¬Isnan Plus_infinity ∧ ¬Isnan Minus_infinity
+</pre>
+
+<DT><span class="strong">ZERO_NOT_NAN</span>
+<DD>
+<pre>
+⊢ ¬Isnan Plus_zero ∧ ¬Isnan Minus_zero
+</pre>
+
+<DT><span class="strong">FLOAT_INFINITIES</span>
+<DD>
+<pre>
+⊢ ∀a. Infinity a ⇔ a == Plus_infinity ∨ a == Minus_infinity
+</pre>
+
+<DT><span class="strong">FLOAT_INFINITES_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀a. ¬(a == Plus_infinity ∧ a == Minus_infinity)
+</pre>
+
+<DT><span class="strong">FLOAT_LT</span>
+<DD>
+<pre>
+⊢ ∀a b. Finite a ∧ Finite b ⇒ (a < b ⇔ Val a < Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_GT</span>
+<DD>
+<pre>
+⊢ ∀a b. Finite a ∧ Finite b ⇒ (a > b ⇔ Val a > Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_LE</span>
+<DD>
+<pre>
+⊢ ∀a b. Finite a ∧ Finite b ⇒ (a ≤ b ⇔ Val a ≤ Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_GE</span>
+<DD>
+<pre>
+⊢ ∀a b. Finite a ∧ Finite b ⇒ (a ≥ b ⇔ Val a ≥ Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_EQ</span>
+<DD>
+<pre>
+⊢ ∀a b. Finite a ∧ Finite b ⇒ (a == b ⇔ Val a = Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_EQ_REFL</span>
+<DD>
+<pre>
+⊢ ∀a. a == a ⇔ ¬Isnan a
+</pre>
+
+<DT><span class="strong">IS_VALID_SPECIAL</span>
+<DD>
+<pre>
+⊢ ∀X.
+      is_valid X (minus_infinity X) ∧ is_valid X (plus_infinity X) ∧
+      is_valid X (topfloat X) ∧ is_valid X (bottomfloat X) ∧
+      is_valid X (plus_zero X) ∧ is_valid X (minus_zero X)
+</pre>
+
+<DT><span class="strong">IS_CLOSEST_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀v x s. FINITE s ⇒ s ≠ ∅ ⇒ ∃a. is_closest v s x a
+</pre>
+
+<DT><span class="strong">CLOSEST_IS_EVERYTHING</span>
+<DD>
+<pre>
+⊢ ∀v p s x.
+      FINITE s ⇒
+      s ≠ ∅ ⇒
+      is_closest v s x (closest v p s x) ∧
+      ((∃b. is_closest v s x b ∧ p b) ⇒ p (closest v p s x))
+</pre>
+
+<DT><span class="strong">CLOSEST_IN_SET</span>
+<DD>
+<pre>
+⊢ ∀v p x s. FINITE s ⇒ s ≠ ∅ ⇒ closest v p s x ∈ s
+</pre>
+
+<DT><span class="strong">CLOSEST_IS_CLOSEST</span>
+<DD>
+<pre>
+⊢ ∀v p x s. FINITE s ⇒ s ≠ ∅ ⇒ is_closest v s x (closest v p s x)
+</pre>
+
+<DT><span class="strong">IS_VALID_FINITE</span>
+<DD>
+<pre>
+⊢ FINITE {a | is_valid X a}
+</pre>
+
+<DT><span class="strong">IS_FINITE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀X. FINITE {a | is_finite X a}
+</pre>
+
+<DT><span class="strong">IS_VALID_NONEMPTY</span>
+<DD>
+<pre>
+⊢ {a | is_valid X a} ≠ ∅
+</pre>
+
+<DT><span class="strong">IS_FINITE_NONEMPTY</span>
+<DD>
+<pre>
+⊢ {a | is_finite X a} ≠ ∅
+</pre>
+
+<DT><span class="strong">IS_FINITE_CLOSEST</span>
+<DD>
+<pre>
+⊢ ∀X v p x. is_finite X (closest v p {a | is_finite X a} x)
+</pre>
+
+<DT><span class="strong">IS_VALID_CLOSEST</span>
+<DD>
+<pre>
+⊢ ∀X v p x. is_valid X (closest v p {a | is_finite X a} x)
+</pre>
+
+<DT><span class="strong">IS_VALID_ROUND</span>
+<DD>
+<pre>
+⊢ ∀X x. is_valid X (round X To_nearest x)
+</pre>
+
+<DT><span class="strong">DEFLOAT_FLOAT_ROUND</span>
+<DD>
+<pre>
+⊢ ∀x.
+      defloat (float (round float_format To_nearest x)) =
+      round float_format To_nearest x
+</pre>
+
+<DT><span class="strong">DEFLOAT_FLOAT_ZEROSIGN_ROUND</span>
+<DD>
+<pre>
+⊢ ∀x b.
+      defloat
+        (float (zerosign float_format b (round float_format To_nearest x))) =
+      zerosign float_format b (round float_format To_nearest x)
+</pre>
+
+<DT><span class="strong">VALOF_DEFLOAT_FLOAT_ZEROSIGN_ROUND</span>
+<DD>
+<pre>
+⊢ ∀x b.
+      valof float_format
+        (defloat
+           (float (zerosign float_format b (round float_format To_nearest x)))) =
+      valof float_format (round float_format To_nearest x)
+</pre>
+
+<DT><span class="strong">ISFINITE</span>
+<DD>
+<pre>
+⊢ ∀a. Finite a ⇔ is_finite float_format (defloat a)
+</pre>
+
+<DT><span class="strong">VAL_FINITE</span>
+<DD>
+<pre>
+⊢ ∀a. Finite a ⇒ abs (Val a) ≤ largest float_format
+</pre>
+
+<DT><span class="strong">FLOAT_THRESHOLD_EXPLICIT</span>
+<DD>
+<pre>
+⊢ threshold float_format = 340282356779733661637539395458142568448
+</pre>
+
+<DT><span class="strong">FLOAT_LARGEST_EXPLICIT</span>
+<DD>
+<pre>
+⊢ largest float_format = 340282346638528859811704183484516925440
+</pre>
+
+<DT><span class="strong">VAL_THRESHOLD</span>
+<DD>
+<pre>
+⊢ ∀a. Finite a ⇒ abs (Val a) < threshold float_format
+</pre>
+
+<DT><span class="strong">ERROR_IS_ZERO</span>
+<DD>
+<pre>
+⊢ ∀a x. Finite a ∧ Val a = x ⇒ error x = 0
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_NORM_STRONG</span>
+<DD>
+<pre>
+⊢ ∀x j.
+      abs x < threshold float_format ∧ abs x < 2 pow SUC j / 2 pow 126 ⇒
+      abs (error x) ≤ 2 pow j / 2 pow 150
+</pre>
+
+<DT><span class="strong">REAL_IN_BINADE</span>
+<DD>
+<pre>
+⊢ ∀x.
+      normalizes x ⇒
+      ∃j.
+          j ≤ emax float_format − 2 ∧ 2 pow j / 2 pow 126 ≤ abs x ∧
+          abs x < 2 pow SUC j / 2 pow 126
+</pre>
+
+<DT><span class="strong">ERROR_BOUND_NORM_STRONG_NORMALIZE</span>
+<DD>
+<pre>
+⊢ ∀x. normalizes x ⇒ ∃j. abs (error x) ≤ 2 pow j / 2 pow 150
+</pre>
+
+<DT><span class="strong">RELATIVE_ERROR</span>
+<DD>
+<pre>
+⊢ ∀x.
+      normalizes x ⇒
+      ∃e.
+          abs e ≤ 1 / 2 pow 24 ∧
+          Val (float (round float_format To_nearest x)) = x * (1 + e)
+</pre>
+
+<DT><span class="strong">DEFLOAT_FLOAT_ZEROSIGN_ROUND_FINITE</span>
+<DD>
+<pre>
+⊢ ∀b x.
+      abs x < threshold float_format ⇒
+      is_finite float_format
+        (defloat
+           (float (zerosign float_format b (round float_format To_nearest x))))
+</pre>
+
+<DT><span class="strong">FLOAT_ADD</span>
+<DD>
+<pre>
+⊢ ∀a b.
+      Finite a ∧ Finite b ∧ abs (Val a + Val b) < threshold float_format ⇒
+      Finite (a + b) ∧ Val (a + b) = Val a + Val b + error (Val a + Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_SUB</span>
+<DD>
+<pre>
+⊢ ∀a b.
+      Finite a ∧ Finite b ∧ abs (Val a − Val b) < threshold float_format ⇒
+      Finite (a − b) ∧ Val (a − b) = Val a − Val b + error (Val a − Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_MUL</span>
+<DD>
+<pre>
+⊢ ∀a b.
+      Finite a ∧ Finite b ∧ abs (Val a * Val b) < threshold float_format ⇒
+      Finite (a * b) ∧ Val (a * b) = Val a * Val b + error (Val a * Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_DIV</span>
+<DD>
+<pre>
+⊢ ∀a b.
+      Finite a ∧ Finite b ∧ ¬Iszero b ∧
+      abs (Val a / Val b) < threshold float_format ⇒
+      Finite (a / b) ∧ Val (a / b) = Val a / Val b + error (Val a / Val b)
+</pre>
+
+<DT><span class="strong">FLOAT_ADD_FINITE</span>
+<DD>
+<pre>
+⊢ ∀b a.
+      Finite a ∧ Finite b ∧ abs (Val a + Val b) < threshold float_format ⇒
+      Finite (a + b)
+</pre>
+
+<DT><span class="strong">FLOAT_SUB_FINITE</span>
+<DD>
+<pre>
+⊢ ∀b a.
+      Finite a ∧ Finite b ∧ abs (Val a − Val b) < threshold float_format ⇒
+      Finite (a − b)
+</pre>
+
+<DT><span class="strong">FLOAT_MUL_FINITE</span>
+<DD>
+<pre>
+⊢ ∀b a.
+      Finite a ∧ Finite b ∧ abs (Val a * Val b) < threshold float_format ⇒
+      Finite (a * b)
+</pre>
+
+<DT><span class="strong">FLOAT_ADD_RELATIVE</span>
+<DD>
+<pre>
+⊢ ∀a b.
+      Finite a ∧ Finite b ∧ normalizes (Val a + Val b) ⇒
+      Finite (a + b) ∧
+      ∃e. abs e ≤ 1 / 2 pow 24 ∧ Val (a + b) = (Val a + Val b) * (1 + e)
+</pre>
+
+<DT><span class="strong">FLOAT_SUB_RELATIVE</span>
+<DD>
+<pre>
+⊢ ∀a b.
+      Finite a ∧ Finite b ∧ normalizes (Val a − Val b) ⇒
+      Finite (a − b) ∧
+      ∃e. abs e ≤ 1 / 2 pow 24 ∧ Val (a − b) = (Val a − Val b) * (1 + e)
+</pre>
+
+<DT><span class="strong">FLOAT_MUL_RELATIVE</span>
+<DD>
+<pre>
+⊢ ∀a b.
+      Finite a ∧ Finite b ∧ normalizes (Val a * Val b) ⇒
+      Finite (a * b) ∧
+      ∃e. abs e ≤ 1 / 2 pow 24 ∧ Val (a * b) = Val a * Val b * (1 + e)
+</pre>
+
+<DT><span class="strong">FLOAT_DIV_RELATIVE</span>
+<DD>
+<pre>
+⊢ ∀a b.
+      Finite a ∧ Finite b ∧ ¬Iszero b ∧ normalizes (Val a / Val b) ⇒
+      Finite (a / b) ∧
+      ∃e. abs e ≤ 1 / 2 pow 24 ∧ Val (a / b) = Val a / Val b * (1 + e)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure whileTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure whileTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/theories/whileScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature whileTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#HOARE_SPEC_DEF-val">HOARE_SPEC_DEF</a> : thm
+<a name="line7"></a>    val <a href="#LEAST_DEF-val">LEAST_DEF</a> : thm
+<a name="line8"></a>    val <a href="#OLEAST_def-val">OLEAST_def</a> : thm
+<a name="line9"></a>    val <a href="#OWHILE_def-val">OWHILE_def</a> : thm
+<a name="line10"></a>    val <a href="#WHILE-val">WHILE</a> : thm
+<a name="line11"></a>  
+<a name="line12"></a>  (*  Theorems  *)
+<a name="line13"></a>    val <a href="#FULL_LEAST_INTRO-val">FULL_LEAST_INTRO</a> : thm
+<a name="line14"></a>    val <a href="#ITERATION-val">ITERATION</a> : thm
+<a name="line15"></a>    val <a href="#LEAST_ELIM-val">LEAST_ELIM</a> : thm
+<a name="line16"></a>    val <a href="#LEAST_EQ-val">LEAST_EQ</a> : thm
+<a name="line17"></a>    val <a href="#LEAST_EXISTS-val">LEAST_EXISTS</a> : thm
+<a name="line18"></a>    val <a href="#LEAST_EXISTS_IMP-val">LEAST_EXISTS_IMP</a> : thm
+<a name="line19"></a>    val <a href="#LEAST_INTRO-val">LEAST_INTRO</a> : thm
+<a name="line20"></a>    val <a href="#LEAST_T-val">LEAST_T</a> : thm
+<a name="line21"></a>    val <a href="#LESS_LEAST-val">LESS_LEAST</a> : thm
+<a name="line22"></a>    val <a href="#OLEAST_EQNS-val">OLEAST_EQNS</a> : thm
+<a name="line23"></a>    val <a href="#OLEAST_EQ_NONE-val">OLEAST_EQ_NONE</a> : thm
+<a name="line24"></a>    val <a href="#OLEAST_EQ_SOME-val">OLEAST_EQ_SOME</a> : thm
+<a name="line25"></a>    val <a href="#OLEAST_INTRO-val">OLEAST_INTRO</a> : thm
+<a name="line26"></a>    val <a href="#OWHILE_ENDCOND-val">OWHILE_ENDCOND</a> : thm
+<a name="line27"></a>    val <a href="#OWHILE_EQ_NONE-val">OWHILE_EQ_NONE</a> : thm
+<a name="line28"></a>    val <a href="#OWHILE_IND-val">OWHILE_IND</a> : thm
+<a name="line29"></a>    val <a href="#OWHILE_INV_IND-val">OWHILE_INV_IND</a> : thm
+<a name="line30"></a>    val <a href="#OWHILE_THM-val">OWHILE_THM</a> : thm
+<a name="line31"></a>    val <a href="#OWHILE_WHILE-val">OWHILE_WHILE</a> : thm
+<a name="line32"></a>    val <a href="#WHILE_INDUCTION-val">WHILE_INDUCTION</a> : thm
+<a name="line33"></a>    val <a href="#WHILE_RULE-val">WHILE_RULE</a> : thm
+<a name="line34"></a>  
+<a name="line35"></a>  val while_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line36"></a>(*
+   [arithmetic] Parent theory of "while"
+   
+   [option] Parent theory of "while"
+   
+   [<a name="HOARE_SPEC_DEF-val"><b>HOARE_SPEC_DEF</b></a>]  Definition
+      
+      ⊢ ∀P C Q. HOARE_SPEC P C Q ⇔ ∀s. P s ⇒ Q (C s)
+   
+   [<a name="LEAST_DEF-val"><b>LEAST_DEF</b></a>]  Definition
+      
+      ⊢ ∀P. $LEAST P = WHILE ($~ ∘ P) SUC 0
+   
+   [<a name="OLEAST_def-val"><b>OLEAST_def</b></a>]  Definition
+      
+      ⊢ ∀P. $OLEAST P = if ∃n. P n then SOME (LEAST n. P n) else NONE
+   
+   [<a name="OWHILE_def-val"><b>OWHILE_def</b></a>]  Definition
+      
+      ⊢ ∀G f s.
+            OWHILE G f s =
+            if ∃n. ¬G (FUNPOW f n s) then
+              SOME (FUNPOW f (LEAST n. ¬G (FUNPOW f n s)) s)
+            else NONE
+   
+   [<a name="WHILE-val"><b>WHILE</b></a>]  Definition
+      
+      ⊢ ∀P g x. WHILE P g x = if P x then WHILE P g (g x) else x
+   
+   [<a name="FULL_LEAST_INTRO-val"><b>FULL_LEAST_INTRO</b></a>]  Theorem
+      
+      ⊢ ∀x. P x ⇒ P ($LEAST P) ∧ $LEAST P ≤ x
+   
+   [<a name="ITERATION-val"><b>ITERATION</b></a>]  Theorem
+      
+      ⊢ ∀P g. ∃f. ∀x. f x = if P x then x else f (g x)
+   
+   [<a name="LEAST_ELIM-val"><b>LEAST_ELIM</b></a>]  Theorem
+      
+      ⊢ ∀Q P.
+            (∃n. P n) ∧ (∀n. (∀m. m &lt; n ⇒ ¬P m) ∧ P n ⇒ Q n) ⇒ Q ($LEAST P)
+   
+   [<a name="LEAST_EQ-val"><b>LEAST_EQ</b></a>]  Theorem
+      
+      ⊢ ((LEAST n. n = x) = x) ∧ ((LEAST n. x = n) = x)
+   
+   [<a name="LEAST_EXISTS-val"><b>LEAST_EXISTS</b></a>]  Theorem
+      
+      ⊢ ∀p. (∃n. p n) ⇔ p ($LEAST p) ∧ ∀n. n &lt; $LEAST p ⇒ ¬p n
+   
+   [<a name="LEAST_EXISTS_IMP-val"><b>LEAST_EXISTS_IMP</b></a>]  Theorem
+      
+      ⊢ ∀p. (∃n. p n) ⇒ p ($LEAST p) ∧ ∀n. n &lt; $LEAST p ⇒ ¬p n
+   
+   [<a name="LEAST_INTRO-val"><b>LEAST_INTRO</b></a>]  Theorem
+      
+      ⊢ ∀P x. P x ⇒ P ($LEAST P)
+   
+   [<a name="LEAST_T-val"><b>LEAST_T</b></a>]  Theorem
+      
+      ⊢ (LEAST x. T) = 0
+   
+   [<a name="LESS_LEAST-val"><b>LESS_LEAST</b></a>]  Theorem
+      
+      ⊢ ∀P m. m &lt; $LEAST P ⇒ ¬P m
+   
+   [<a name="OLEAST_EQNS-val"><b>OLEAST_EQNS</b></a>]  Theorem
+      
+      ⊢ ((OLEAST n. n = x) = SOME x) ∧ ((OLEAST n. x = n) = SOME x) ∧
+        ((OLEAST n. F) = NONE) ∧ ((OLEAST n. T) = SOME 0)
+   
+   [<a name="OLEAST_EQ_NONE-val"><b>OLEAST_EQ_NONE</b></a>]  Theorem
+      
+      ⊢ ($OLEAST P = NONE) ⇔ ∀n. ¬P n
+   
+   [<a name="OLEAST_EQ_SOME-val"><b>OLEAST_EQ_SOME</b></a>]  Theorem
+      
+      ⊢ ($OLEAST P = SOME n) ⇔ P n ∧ ∀m. m &lt; n ⇒ ¬P m
+   
+   [<a name="OLEAST_INTRO-val"><b>OLEAST_INTRO</b></a>]  Theorem
+      
+      ⊢ ((∀n. ¬P n) ⇒ Q NONE) ∧ (∀n. P n ∧ (∀m. m &lt; n ⇒ ¬P m) ⇒ Q (SOME n)) ⇒
+        Q ($OLEAST P)
+   
+   [<a name="OWHILE_ENDCOND-val"><b>OWHILE_ENDCOND</b></a>]  Theorem
+      
+      ⊢ (OWHILE G f s = SOME s') ⇒ ¬G s'
+   
+   [<a name="OWHILE_EQ_NONE-val"><b>OWHILE_EQ_NONE</b></a>]  Theorem
+      
+      ⊢ (OWHILE G f s = NONE) ⇔ ∀n. G (FUNPOW f n s)
+   
+   [<a name="OWHILE_IND-val"><b>OWHILE_IND</b></a>]  Theorem
+      
+      ⊢ ∀P G f.
+            (∀s. ¬G s ⇒ P s s) ∧ (∀s1 s2. G s1 ∧ P (f s1) s2 ⇒ P s1 s2) ⇒
+            ∀s1 s2. (OWHILE G f s1 = SOME s2) ⇒ P s1 s2
+   
+   [<a name="OWHILE_INV_IND-val"><b>OWHILE_INV_IND</b></a>]  Theorem
+      
+      ⊢ ∀G f s.
+            P s ∧ (∀x. P x ∧ G x ⇒ P (f x)) ⇒
+            ∀s'. (OWHILE G f s = SOME s') ⇒ P s'
+   
+   [<a name="OWHILE_THM-val"><b>OWHILE_THM</b></a>]  Theorem
+      
+      ⊢ OWHILE G f s = if G s then OWHILE G f (f s) else SOME s
+   
+   [<a name="OWHILE_WHILE-val"><b>OWHILE_WHILE</b></a>]  Theorem
+      
+      ⊢ (OWHILE G f s = SOME s') ⇒ (WHILE G f s = s')
+   
+   [<a name="WHILE_INDUCTION-val"><b>WHILE_INDUCTION</b></a>]  Theorem
+      
+      ⊢ ∀B C R.
+            WF R ∧ (∀s. B s ⇒ R (C s) s) ⇒
+            ∀P. (∀s. (B s ⇒ P (C s)) ⇒ P s) ⇒ ∀v. P v
+   
+   [<a name="WHILE_RULE-val"><b>WHILE_RULE</b></a>]  Theorem
+      
+      ⊢ ∀R B C.
+            WF R ∧ (∀s. B s ⇒ R (C s) s) ⇒
+            HOARE_SPEC (λs. P s ∧ B s) C P ⇒
+            HOARE_SPEC P (WHILE B C) (λs. P s ∧ ¬B s)
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/theories/whileScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

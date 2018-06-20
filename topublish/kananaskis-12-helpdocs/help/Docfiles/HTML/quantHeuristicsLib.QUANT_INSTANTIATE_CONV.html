@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>quantHeuristicsLib.QUANT_INSTANTIATE_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>QUANT_INSTANTIATE_CONV : quant_param list -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/quantHeuristicsLib.html">quantHeuristicsLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Intantiate quantifiers in a term using a given list of
+quantifier heuristic parameters.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This conversion tries to instantiate quantifiers. Therefore,
+it uses the given list of quantifier heuristic parameters. If the
+list is empty, it knows about the usual Boolean Connectives, quantifiers
+and equations. The parameter </SPAN><SPAN class = "BRKT">quantHeuristicsArgsLib.std_qp</SPAN><SPAN class = "TEXT"> adds knowledge
+about option-types, pairs, lists, records and natural numbers.
+The stateful parameter </SPAN><SPAN class = "BRKT">quantHeuristicsArgsLib.Type_Base_qp</SPAN><SPAN class = "TEXT"> can be
+used to extract information about user defined datatypes.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+#QUANT_INSTANTIATE_CONV [] "?x. ((x=7) \/ (7 = x)) /\ P x";;
+|- (?x. ((x=7) \/ (7 = x)) /\ P x) = P 7
+
+#QUANT_INSTANTIATE_CONV [] "?x. !y. (x=7) /\ P x y";;
+|- (?x. !y. (x=7) /\ P x y) = (!y. P 7 y)
+
+
+#QUANT_INSTANTIATE_CONV [] "?x. (f(8 + 2) = f(x + 2)) /\ P(f (x + 2))";;
+|- (?x. (f(8 + 2) = f(x + 2)) /\ P(f (x + 2))) = P(f (8 + 2))
+
+#QUANT_INSTANTIATE_CONV [std_qp] "!x. IS_SOME x ==&gt; P x";;
+|- (!x. IS_SOME x ==&gt; P x) =
+   (!x_x'. P (SOME x_x'))
+
+#QUANT_INSTANTIATE_CONV [std_qp] "!l. (~(l = []) ==&gt; (LENGTH l &gt; 0))";;
+|- (!l. (~(l = []) ==&gt; (LENGTH l &gt; 0))) =
+   (!l_t l_h. LENGTH (l_h::l_t) &gt; 0)
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "quantHeuristicsLib.QUANT_INST_ss.html">QUANT_INST_ss</A>,
+<A HREF = "quantHeuristicsLib.QUANT_INSTANTIATE_TAC.html">QUANT_INSTANTIATE_TAC</A>,
+<A HREF = "quantHeuristicsLib.ASM_QUANT_INSTANTIATE_TAC.html">ASM_QUANT_INSTANTIATE_TAC</A>,
+<A HREF = "quantHeuristicsLib.FAST_QUANT_INSTANTIATE_CONV.html">FAST_QUANT_INSTANTIATE_CONV</A>,
+<A HREF = "quantHeuristicsLib.FAST_QUANT_INST_ss.html">FAST_QUANT_INST_ss</A>,
+<A HREF = "quantHeuristicsLib.FAST_QUANT_INSTANTIATE_TAC.html">FAST_QUANT_INSTANTIATE_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

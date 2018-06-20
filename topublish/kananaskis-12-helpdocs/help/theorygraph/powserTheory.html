@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: powser</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "powser"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "limTheory.html"><span class="strong">lim</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">diffs</span>
+    <td>
+    :(num -> real) -> num -> real
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">diffs</span>
+<DD>
+<pre>
+⊢ ∀c. diffs c = (λn. &SUC n * c (SUC n))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">POWDIFF_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀n x y.
+      sum (0,SUC n) (λp. x pow p * y pow (SUC n − p)) =
+      y * sum (0,SUC n) (λp. x pow p * y pow (n − p))
+</pre>
+
+<DT><span class="strong">POWDIFF</span>
+<DD>
+<pre>
+⊢ ∀n x y.
+      x pow SUC n − y pow SUC n =
+      (x − y) * sum (0,SUC n) (λp. x pow p * y pow (n − p))
+</pre>
+
+<DT><span class="strong">POWREV</span>
+<DD>
+<pre>
+⊢ ∀n x y.
+      sum (0,SUC n) (λp. x pow p * y pow (n − p)) =
+      sum (0,SUC n) (λp. x pow (n − p) * y pow p)
+</pre>
+
+<DT><span class="strong">POWSER_INSIDEA</span>
+<DD>
+<pre>
+⊢ ∀f x z.
+      summable (λn. f n * x pow n) ∧ abs z < abs x ⇒
+      summable (λn. abs (f n) * z pow n)
+</pre>
+
+<DT><span class="strong">POWSER_INSIDE</span>
+<DD>
+<pre>
+⊢ ∀f x z.
+      summable (λn. f n * x pow n) ∧ abs z < abs x ⇒
+      summable (λn. f n * z pow n)
+</pre>
+
+<DT><span class="strong">DIFFS_NEG</span>
+<DD>
+<pre>
+⊢ ∀c. diffs (λn. -c n) = (λn. -diffs c n)
+</pre>
+
+<DT><span class="strong">DIFFS_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀n c x.
+      sum (0,n) (λn. diffs c n * x pow n) =
+      sum (0,n) (λn. &n * (c n * x pow (n − 1))) + &n * (c n * x pow (n − 1))
+</pre>
+
+<DT><span class="strong">DIFFS_LEMMA2</span>
+<DD>
+<pre>
+⊢ ∀n c x.
+      sum (0,n) (λn. &n * (c n * x pow (n − 1))) =
+      sum (0,n) (λn. diffs c n * x pow n) − &n * (c n * x pow (n − 1))
+</pre>
+
+<DT><span class="strong">DIFFS_EQUIV</span>
+<DD>
+<pre>
+⊢ ∀c x.
+      summable (λn. diffs c n * x pow n) ⇒
+      (λn. &n * (c n * x pow (n − 1))) sums suminf (λn. diffs c n * x pow n)
+</pre>
+
+<DT><span class="strong">TERMDIFF_LEMMA1</span>
+<DD>
+<pre>
+⊢ ∀m z h.
+      sum (0,m) (λp. (z + h) pow (m − p) * z pow p − z pow m) =
+      sum (0,m) (λp. z pow p * ((z + h) pow (m − p) − z pow (m − p)))
+</pre>
+
+<DT><span class="strong">TERMDIFF_LEMMA2</span>
+<DD>
+<pre>
+⊢ ∀z h n.
+      h ≠ 0 ⇒
+      ((z + h) pow n − z pow n) / h − &n * z pow (n − 1) =
+      h *
+      sum (0,n − 1)
+        (λp.
+             z pow p *
+             sum (0,n − 1 − p) (λq. (z + h) pow q * z pow (n − 2 − p − q)))
+</pre>
+
+<DT><span class="strong">TERMDIFF_LEMMA3</span>
+<DD>
+<pre>
+⊢ ∀z h n k'.
+      h ≠ 0 ∧ abs z ≤ k' ∧ abs (z + h) ≤ k' ⇒
+      abs (((z + h) pow n − z pow n) / h − &n * z pow (n − 1)) ≤
+      &n * (&(n − 1) * (k' pow (n − 2) * abs h))
+</pre>
+
+<DT><span class="strong">TERMDIFF_LEMMA4</span>
+<DD>
+<pre>
+⊢ ∀f k' k.
+      0 < k ∧ (∀h. 0 < abs h ∧ abs h < k ⇒ abs (f h) ≤ k' * abs h) ⇒
+      (f -> 0) 0
+</pre>
+
+<DT><span class="strong">TERMDIFF_LEMMA5</span>
+<DD>
+<pre>
+⊢ ∀f g k.
+      0 < k ∧ summable f ∧
+      (∀h. 0 < abs h ∧ abs h < k ⇒ ∀n. abs (g h n) ≤ f n * abs h) ⇒
+      ((λh. suminf (g h)) -> 0) 0
+</pre>
+
+<DT><span class="strong">TERMDIFF</span>
+<DD>
+<pre>
+⊢ ∀c k' x.
+      summable (λn. c n * k' pow n) ∧ summable (λn. diffs c n * k' pow n) ∧
+      summable (λn. diffs (diffs c) n * k' pow n) ∧ abs x < abs k' ⇒
+      ((λx. suminf (λn. c n * x pow n)) diffl suminf (λn. diffs c n * x pow n))
+        x
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta http-equiv="content-type" content="text/html ; charset=UTF-8">
+<title>Structure PmatchHeuristics</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure PmatchHeuristics</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/PmatchHeuristics.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature PmatchHeuristics =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>   type term = Term.term
+<a name="line5"></a>   type thm = Thm.thm
+<a name="line6"></a>   type thry = {Thy : string, Tyop : string} -&gt;
+<a name="line7"></a>               {case_const : term, constructors : term list} option
+<a name="line8"></a>   type pmatch_heuristic = {skip_rows : bool, (* skip splitting for redundant rows? *)
+<a name="line9"></a>                            collapse_cases : bool, (* collapse cases that lead to the same result ? *)
+<a name="line10"></a>                            (* given a list of rows of patterns, which column to split on? *)
+<a name="line11"></a>                            col_fun : thry -&gt; term list list -&gt; int }
+<a name="line12"></a>
+<a name="line13"></a>   (* some predefined heuristics *)
+<a name="line14"></a>   val pheu_classic : pmatch_heuristic (* HOL 4's old heuristic *)
+<a name="line15"></a>   val pheu_first_row : pmatch_heuristic
+<a name="line16"></a>   val pheu_constr_prefix : pmatch_heuristic
+<a name="line17"></a>   val pheu_qba : pmatch_heuristic  (* the recommended one *)
+<a name="line18"></a>   val pheu_cqba : pmatch_heuristic
+<a name="line19"></a>   val pheu_first_col : pmatch_heuristic
+<a name="line20"></a>   val pheu_last_col : pmatch_heuristic
+<a name="line21"></a>
+<a name="line22"></a>   (* A manual heuristic. For each decision, it prints the columns and
+<a name="line23"></a>      takes the column-number from the provided list of explicit
+<a name="line24"></a>      choices. If the list is too short, the first column is
+<a name="line25"></a>      chosen. One should run this heuristic first with an empty list
+<a name="line26"></a>      as argument. Then look at the choices and add 0s for all the
+<a name="line27"></a>      initial choices you liked to be 0 an then a different choice you
+<a name="line28"></a>      prefer. Rerun again (because the following choices will change)
+<a name="line29"></a>      and iterate. This provided very fine control, but is tedious. *)
+<a name="line30"></a>   val pheu_manual : int list -&gt; pmatch_heuristic
+<a name="line31"></a>
+<a name="line32"></a>   (* A heuristic based on column ranks. Given a pattern match matrix like
+<a name="line33"></a>
+<a name="line34"></a>      p_11 ... p_1n
+<a name="line35"></a>      ...
+<a name="line36"></a>      p_m1 --- p_mn
+<a name="line37"></a>
+<a name="line38"></a>      and a list of ranking functions prheuL = [r_1, ... r_j]. The
+<a name="line39"></a>      heuristic pheu_rank applies all ranking functions to all columns.
+<a name="line40"></a>      Let's denote the result of "r_i current_thyr [p_k1, ... pkm]" with
+<a name="line41"></a>      c_ik. It then picks column i such that [c_1i, ... c_ji] is maximal
+<a name="line42"></a>      accroding to the lexicographic ordering of integers.
+<a name="line43"></a>   *)
+<a name="line44"></a>   val pheu_rank : (thry -&gt; term list -&gt; int) list -&gt; pmatch_heuristic
+<a name="line45"></a>
+<a name="line46"></a>   (* some ranking functions *)
+<a name="line47"></a>   val prheu_first_row : thry -&gt; term list -&gt; int
+<a name="line48"></a>   val prheu_constr_prefix : thry -&gt; term list -&gt; int
+<a name="line49"></a>   val prheu_small_branching_factor : thry -&gt; term list -&gt; int
+<a name="line50"></a>   val prheu_arity : thry -&gt; term list -&gt; int
+<a name="line51"></a>
+<a name="line52"></a>   (* A comparison for the results of heuristic application
+<a name="line53"></a>      (list of pattern lists, resulting decision tree) *)
+<a name="line54"></a>   type pmatch_heuristic_res_compare = (term list list * term) Lib.cmp
+<a name="line55"></a>   val pmatch_heuristic_cases_cmp : pmatch_heuristic_res_compare (* few cases are good *)
+<a name="line56"></a>   val pmatch_heuristic_size_cmp : pmatch_heuristic_res_compare (* small terms are good *)
+<a name="line57"></a>
+<a name="line58"></a>   (* Using such comparisons, we can supply multiple heuristics and choose the best results.
+<a name="line59"></a>      For technical reasons, this function might be stateful and therefore get's unit arguments.
+<a name="line60"></a>
+<a name="line61"></a>      The usage of a heu_fun by the Pmatch library is as follows. Heu_fun initialises the functions and returns a
+<a name="line62"></a>      compare function and a function heu_fun' which provides heuristics. As long as
+<a name="line63"></a>      heu_fun' () provides fresh heuristics these are tried. Then the best result of all these
+<a name="line64"></a>      heuristics according to the compare function is choosen. *)
+<a name="line65"></a>   type pmatch_heuristic_fun = unit -&gt; pmatch_heuristic_res_compare * (unit -&gt; pmatch_heuristic option)
+<a name="line66"></a>
+<a name="line67"></a>   val default_heuristic_fun : pmatch_heuristic_fun
+<a name="line68"></a>   val classic_heuristic_fun : pmatch_heuristic_fun
+<a name="line69"></a>
+<a name="line70"></a>   (* An exhaustive heuristic_fun. It tries all possibilities and very quickly blows up!
+<a name="line71"></a>      Only usable for very small examples! *)
+<a name="line72"></a>   val exhaustive_heuristic_fun : pmatch_heuristic_res_compare -&gt; pmatch_heuristic_fun
+<a name="line73"></a>
+<a name="line74"></a>
+<a name="line75"></a>   (* custom pmatch_heuristic_fun can be easiest constructed by an explicit list of heuristics and
+<a name="line76"></a>      a compare function *)
+<a name="line77"></a>   val pmatch_heuristic_list : pmatch_heuristic_res_compare -&gt; pmatch_heuristic list -&gt; pmatch_heuristic_fun
+<a name="line78"></a>
+<a name="line79"></a>   (* A list of useful heuristics to be used with pmatch_heuristic_list *)
+<a name="line80"></a>   val default_heuristic_list : pmatch_heuristic list
+<a name="line81"></a>
+<a name="line82"></a>
+<a name="line83"></a>   (* The pmatch_heuristic_fun to be used by default and various functions to set it *)
+<a name="line84"></a>   val pmatch_heuristic : pmatch_heuristic_fun ref
+<a name="line85"></a>
+<a name="line86"></a>   val set_heuristic : pmatch_heuristic -&gt; unit
+<a name="line87"></a>   val set_heuristic_fun : pmatch_heuristic_fun -&gt; unit
+<a name="line88"></a>   val set_heuristic_list_size : pmatch_heuristic list -&gt; unit
+<a name="line89"></a>   val set_heuristic_list_cases : pmatch_heuristic list -&gt; unit
+<a name="line90"></a>   val set_default_heuristic : unit -&gt; unit
+<a name="line91"></a>   val set_classic_heuristic : unit -&gt; unit
+<a name="line92"></a>
+<a name="line93"></a>   val with_classic_heuristic : ('a -&gt; 'b) -&gt; ('a -&gt; 'b)
+<a name="line94"></a>   val with_heuristic : pmatch_heuristic -&gt; ('a -&gt; 'b) -&gt; ('a -&gt; 'b)
+<a name="line95"></a>   val with_manual_heuristic : int list -&gt; ('a -&gt; 'b) -&gt; ('a -&gt; 'b)
+<a name="line96"></a>   val is_classic : unit -&gt; bool
+<a name="line97"></a>end
+<a name="line98"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/PmatchHeuristics.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-11</a></em></p></body></html>

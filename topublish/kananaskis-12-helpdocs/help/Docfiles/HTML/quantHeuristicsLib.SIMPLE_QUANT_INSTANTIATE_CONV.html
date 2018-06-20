@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W32//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html ; charset=US-ASCII">
+<TITLE>quantHeuristicsLib.SIMPLE_QUANT_INSTANTIATE_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>SIMPLE_QUANT_INSTANTIATE_CONV : conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/quantHeuristicsLib.html">quantHeuristicsLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A conversion for instantiating quantifiers. In contrast to
+</SPAN><SPAN class = "BRKT">quantHeuristicsLib.QUANT_INSTANTIATE_CONV</SPAN><SPAN class = "TEXT"> it only searches for gap
+guesses without free variables. As a result, it is much less powerful,
+but also much faster than </SPAN><SPAN class = "BRKT">quantHeuristicsLib.QUANT_INSTANTIATE_CONV</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If no instantiation could be found.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+&gt; SIMPLE_QUANT_INSTANTIATE_CONV ``?x. P x /\ (x = 5)``
+|- (?x. P x /\ (x = 5)) &lt;=&gt; P 5 /\ (5 = 5):
+
+&gt; SIMPLE_QUANT_INSTANTIATE_CONV ``!x. (x = 5) ==&gt; P x``
+|- (!x. (x = 5) ==&gt; P x) &lt;=&gt; (5 = 5) ==&gt; P 5:
+
+&gt; SIMPLE_QUANT_INSTANTIATE_CONV ``!x. Q x ==&gt; !z. Z z /\ (x = 5) ==&gt; P x z``
+|- (!x. Q x ==&gt; !z. Z z /\ (x = 5) ==&gt; P x z) &lt;=&gt;
+   Q 5 ==&gt; !z. Z z /\ (5 = 5) ==&gt; P 5 z:
+
+&gt; SIMPLE_QUANT_INSTANTIATE_CONV ``!x. ((3, x, y) = zxy) ==&gt; P x``
+|- (!x. ((3,x,y) = zxy) ==&gt; P x) &lt;=&gt;
+   ((3,FST (SND zxy),y) = zxy) ==&gt; P (FST (SND zxy)):
+
+&gt; SIMPLE_QUANT_INSTANTIATE_CONV ``some x. (x = 2) /\ P x``
+|- (some x. (x = 2) /\ P x) = if (2 = 2) /\ P 2 then SOME 2 else NONE:
+
+&gt; SIMPLE_QUANT_INSTANTIATE_CONV ``?x1 x2 x3. P x1 x2 /\ (x2::x1::l = 3::(f x3)::l')``
+|- (?x1 x2 x3. P x1 x2 /\ (x2::x1::l = 3::f x3::l')) &lt;=&gt;
+   ?x2 x3. P (f x3) x2 /\ (x2::f x3::l = 3::f x3::l'):
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "quantHeuristicsLib.QUANT_INSTANTIATE_CONV.html">QUANT_INSTANTIATE_CONV</A>,
+<A HREF = "unwind.UNWIND_EXISTS_CONV.html">UNWIND_EXISTS_CONV</A>,
+<A HREF = "unwind.UNWIND_FORALL_CONV.html">UNWIND_FORALL_CONV</A>,
+<A HREF = "quantHeuristicsLib.SIMPLE_QUANT_INST_ss.html">SIMPLE_QUANT_INST_ss</A>,
+<A HREF = "bossLib.SQI_ss.html">SQI_ss</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-11</div></BODY></HTML>

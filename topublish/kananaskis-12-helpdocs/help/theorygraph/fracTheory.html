@@ -1,0 +1,518 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: frac</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "frac"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "intExtensionTheory.html"><span class="strong">intExtension</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">frac</span> <td> 0
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">abs_frac</span>
+    <td>
+    :int # int -> frac
+    <tr><td> <span class="strong">frac_0</span> <td> :frac
+    <tr><td> <span class="strong">frac_1</span> <td> :frac
+    <tr><td> <span class="strong">frac_add</span> <td> :frac -> frac -> frac
+    <tr><td> <span class="strong">frac_ainv</span> <td> :frac -> frac
+    <tr><td> <span class="strong">frac_div</span> <td> :frac -> frac -> frac
+    <tr><td> <span class="strong">frac_dnm</span> <td> :frac -> int
+    <tr><td> <span class="strong">frac_minv</span> <td> :frac -> frac
+    <tr><td> <span class="strong">frac_mul</span> <td> :frac -> frac -> frac
+    <tr><td> <span class="strong">frac_nmr</span> <td> :frac -> int
+    <tr><td> <span class="strong">frac_save</span> <td> :int -> num -> frac
+    <tr><td> <span class="strong">frac_sgn</span> <td> :frac -> int
+    <tr><td> <span class="strong">frac_sub</span> <td> :frac -> frac -> frac
+    <tr><td> <span class="strong">les_abs</span> <td> :frac reln
+    <tr><td> <span class="strong">rep_frac</span> <td> :frac -> int # int
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">frac_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION (λf. 0 < SND f) rep
+</pre>
+
+<DT><span class="strong">frac_tybij</span>
+<DD>
+<pre>
+⊢ (∀a. abs_frac (rep_frac a) = a) ∧
+  ∀r. (λf. 0 < SND f) r ⇔ rep_frac (abs_frac r) = r
+</pre>
+
+<DT><span class="strong">frac_nmr_def</span>
+<DD>
+<pre>
+⊢ ∀f. frac_nmr f = FST (rep_frac f)
+</pre>
+
+<DT><span class="strong">frac_dnm_def</span>
+<DD>
+<pre>
+⊢ ∀f. frac_dnm f = SND (rep_frac f)
+</pre>
+
+<DT><span class="strong">frac_sgn_def</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_sgn f1 = SGN (frac_nmr f1)
+</pre>
+
+<DT><span class="strong">frac_ainv_def</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_ainv f1 = abs_frac (-frac_nmr f1,frac_dnm f1)
+</pre>
+
+<DT><span class="strong">frac_minv_def</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_minv f1 = abs_frac (frac_sgn f1 * frac_dnm f1,ABS (frac_nmr f1))
+</pre>
+
+<DT><span class="strong">frac_0_def</span>
+<DD>
+<pre>
+⊢ frac_0 = abs_frac (0,1)
+</pre>
+
+<DT><span class="strong">frac_1_def</span>
+<DD>
+<pre>
+⊢ frac_1 = abs_frac (1,1)
+</pre>
+
+<DT><span class="strong">les_abs_def</span>
+<DD>
+<pre>
+⊢ ∀f1 f2.
+      les_abs f1 f2 ⇔ frac_nmr f1 * frac_dnm f2 < frac_nmr f2 * frac_dnm f1
+</pre>
+
+<DT><span class="strong">frac_add_def</span>
+<DD>
+<pre>
+⊢ ∀f1 f2.
+      frac_add f1 f2 =
+      abs_frac
+        (frac_nmr f1 * frac_dnm f2 + frac_nmr f2 * frac_dnm f1,
+         frac_dnm f1 * frac_dnm f2)
+</pre>
+
+<DT><span class="strong">frac_sub_def</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. frac_sub f1 f2 = frac_add f1 (frac_ainv f2)
+</pre>
+
+<DT><span class="strong">frac_mul_def</span>
+<DD>
+<pre>
+⊢ ∀f1 f2.
+      frac_mul f1 f2 =
+      abs_frac (frac_nmr f1 * frac_nmr f2,frac_dnm f1 * frac_dnm f2)
+</pre>
+
+<DT><span class="strong">frac_div_def</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. frac_div f1 f2 = frac_mul f1 (frac_minv f2)
+</pre>
+
+<DT><span class="strong">frac_save_def</span>
+<DD>
+<pre>
+⊢ ∀nmr dnm. frac_save nmr dnm = abs_frac (nmr,&dnm + 1)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">frac_bij</span>
+<DD>
+<pre>
+⊢ (∀a. abs_frac (rep_frac a) = a) ∧
+  ∀r. (λf. 0 < SND f) r ⇔ rep_frac (abs_frac r) = r
+</pre>
+
+<DT><span class="strong">FRAC</span>
+<DD>
+<pre>
+⊢ ∀f. abs_frac (frac_nmr f,frac_dnm f) = f
+</pre>
+
+<DT><span class="strong">FRAC_EQ</span>
+<DD>
+<pre>
+⊢ ∀a1 b1 a2 b2.
+      0 < b1 ⇒
+      0 < b2 ⇒
+      (abs_frac (a1,b1) = abs_frac (a2,b2) ⇔ a1 = a2 ∧ b1 = b2)
+</pre>
+
+<DT><span class="strong">FRAC_EQ_ALT</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. f1 = f2 ⇔ frac_nmr f1 = frac_nmr f2 ∧ frac_dnm f1 = frac_dnm f2
+</pre>
+
+<DT><span class="strong">FRAC_NOT_EQ</span>
+<DD>
+<pre>
+⊢ ∀a1 b1 a2 b2.
+      0 < b1 ⇒
+      0 < b2 ⇒
+      (abs_frac (a1,b1) ≠ abs_frac (a2,b2) ⇔ a1 ≠ a2 ∨ b1 ≠ b2)
+</pre>
+
+<DT><span class="strong">FRAC_NOT_EQ_IMP</span>
+<DD>
+<pre>
+⊢ ∀a1 b1 a2 b2.
+      0 < b1 ⇒
+      0 < b2 ⇒
+      (a1,b1) ≠ (a2,b2) ⇒
+      abs_frac (a1,b1) ≠ abs_frac (a2,b2)
+</pre>
+
+<DT><span class="strong">FRAC_DNMPOS</span>
+<DD>
+<pre>
+⊢ ∀f. 0 < frac_dnm f
+</pre>
+
+<DT><span class="strong">NMR</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 < b ⇒ frac_nmr (abs_frac (a,b)) = a
+</pre>
+
+<DT><span class="strong">DNM</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 < b ⇒ frac_dnm (abs_frac (a,b)) = b
+</pre>
+
+<DT><span class="strong">FRAC_AINV_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1. 0 < b1 ⇒ frac_ainv (abs_frac (a1,b1)) = abs_frac (-a1,b1)
+</pre>
+
+<DT><span class="strong">FRAC_MINV_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1.
+      0 < b1 ⇒
+      a1 ≠ 0 ⇒
+      frac_minv (abs_frac (a1,b1)) = abs_frac (SGN a1 * b1,ABS a1)
+</pre>
+
+<DT><span class="strong">FRAC_SGN_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1. 0 < b1 ⇒ frac_sgn (abs_frac (a1,b1)) = SGN a1
+</pre>
+
+<DT><span class="strong">FRAC_ADD_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1 a2 b2.
+      0 < b1 ⇒
+      0 < b2 ⇒
+      frac_add (abs_frac (a1,b1)) (abs_frac (a2,b2)) =
+      abs_frac (a1 * b2 + a2 * b1,b1 * b2)
+</pre>
+
+<DT><span class="strong">FRAC_SUB_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1 a2 b2.
+      0 < b1 ⇒
+      0 < b2 ⇒
+      frac_sub (abs_frac (a1,b1)) (abs_frac (a2,b2)) =
+      abs_frac (a1 * b2 − a2 * b1,b1 * b2)
+</pre>
+
+<DT><span class="strong">FRAC_MULT_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1 a2 b2.
+      0 < b1 ⇒
+      0 < b2 ⇒
+      frac_mul (abs_frac (a1,b1)) (abs_frac (a2,b2)) =
+      abs_frac (a1 * a2,b1 * b2)
+</pre>
+
+<DT><span class="strong">FRAC_DIV_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1 a2 b2.
+      0 < b1 ⇒
+      0 < b2 ⇒
+      a2 ≠ 0 ⇒
+      frac_div (abs_frac (a1,b1)) (abs_frac (a2,b2)) =
+      abs_frac (a1 * SGN a2 * b2,b1 * ABS a2)
+</pre>
+
+<DT><span class="strong">FRAC_ADD_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀a b c. frac_add a (frac_add b c) = frac_add (frac_add a b) c
+</pre>
+
+<DT><span class="strong">FRAC_MUL_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀a b c. frac_mul a (frac_mul b c) = frac_mul (frac_mul a b) c
+</pre>
+
+<DT><span class="strong">FRAC_ADD_COMM</span>
+<DD>
+<pre>
+⊢ ∀a b. frac_add a b = frac_add b a
+</pre>
+
+<DT><span class="strong">FRAC_MUL_COMM</span>
+<DD>
+<pre>
+⊢ ∀a b. frac_mul a b = frac_mul b a
+</pre>
+
+<DT><span class="strong">FRAC_ADD_RID</span>
+<DD>
+<pre>
+⊢ ∀a. frac_add a frac_0 = a
+</pre>
+
+<DT><span class="strong">FRAC_MUL_RID</span>
+<DD>
+<pre>
+⊢ ∀a. frac_mul a frac_1 = a
+</pre>
+
+<DT><span class="strong">FRAC_1_0</span>
+<DD>
+<pre>
+⊢ frac_1 ≠ frac_0
+</pre>
+
+<DT><span class="strong">FRAC_AINV_0</span>
+<DD>
+<pre>
+⊢ frac_ainv frac_0 = frac_0
+</pre>
+
+<DT><span class="strong">FRAC_AINV_AINV</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_ainv (frac_ainv f1) = f1
+</pre>
+
+<DT><span class="strong">FRAC_AINV_ADD</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. frac_ainv (frac_add f1 f2) = frac_add (frac_ainv f1) (frac_ainv f2)
+</pre>
+
+<DT><span class="strong">FRAC_AINV_SUB</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. frac_ainv (frac_sub f2 f1) = frac_sub f1 f2
+</pre>
+
+<DT><span class="strong">FRAC_AINV_RMUL</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. frac_ainv (frac_mul f1 f2) = frac_mul f1 (frac_ainv f2)
+</pre>
+
+<DT><span class="strong">FRAC_AINV_LMUL</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. frac_ainv (frac_mul f1 f2) = frac_mul (frac_ainv f1) f2
+</pre>
+
+<DT><span class="strong">FRAC_MINV_1</span>
+<DD>
+<pre>
+⊢ frac_minv frac_1 = frac_1
+</pre>
+
+<DT><span class="strong">FRAC_SUB_ADD</span>
+<DD>
+<pre>
+⊢ ∀a b c. frac_sub a (frac_add b c) = frac_sub (frac_sub a b) c
+</pre>
+
+<DT><span class="strong">FRAC_SUB_SUB</span>
+<DD>
+<pre>
+⊢ ∀a b c. frac_sub a (frac_sub b c) = frac_add (frac_sub a b) c
+</pre>
+
+<DT><span class="strong">FRAC_SGN_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_sgn f1 = -1 ∨ frac_sgn f1 = 0 ∨ frac_sgn f1 = 1
+</pre>
+
+<DT><span class="strong">FRAC_SGN_POS</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_sgn f1 = 1 ⇔ 0 < frac_nmr f1
+</pre>
+
+<DT><span class="strong">FRAC_SGN_NOT_NEG</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_sgn f1 ≠ -1 ⇔ 0 = frac_nmr f1 ∨ 0 < frac_nmr f1
+</pre>
+
+<DT><span class="strong">FRAC_SGN_NEG</span>
+<DD>
+<pre>
+⊢ ∀f. -frac_sgn (frac_ainv f) = frac_sgn f
+</pre>
+
+<DT><span class="strong">FRAC_SGN_IMP_EQGT</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_sgn f1 ≠ -1 ⇔ frac_sgn f1 = 0 ∨ frac_sgn f1 = 1
+</pre>
+
+<DT><span class="strong">FRAC_SGN_MUL</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. frac_sgn (frac_mul f1 f2) = frac_sgn f1 * frac_sgn f2
+</pre>
+
+<DT><span class="strong">FRAC_ABS_SGN</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_nmr f1 ≠ 0 ⇒ ABS (frac_sgn f1) = 1
+</pre>
+
+<DT><span class="strong">FRAC_SGN_MUL2</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. frac_sgn (frac_mul f1 f2) = frac_sgn f1 * frac_sgn f2
+</pre>
+
+<DT><span class="strong">FRAC_SGN_CASES</span>
+<DD>
+<pre>
+⊢ ∀f1 P.
+      (frac_sgn f1 = -1 ⇒ P) ∧ (frac_sgn f1 = 0 ⇒ P) ∧ (frac_sgn f1 = 1 ⇒ P) ⇒
+      P
+</pre>
+
+<DT><span class="strong">FRAC_SGN_AINV</span>
+<DD>
+<pre>
+⊢ ∀f1. -frac_sgn (frac_ainv f1) = frac_sgn f1
+</pre>
+
+<DT><span class="strong">FRAC_AINV_ONEONE</span>
+<DD>
+<pre>
+⊢ ONE_ONE frac_ainv
+</pre>
+
+<DT><span class="strong">FRAC_AINV_ONTO</span>
+<DD>
+<pre>
+⊢ ONTO frac_ainv
+</pre>
+
+<DT><span class="strong">FRAC_NMR_SAVE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1. frac_nmr (frac_save a1 b1) = a1
+</pre>
+
+<DT><span class="strong">FRAC_DNM_SAVE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1. frac_dnm (frac_save a1 b1) = &b1 + 1
+</pre>
+
+<DT><span class="strong">FRAC_0_SAVE</span>
+<DD>
+<pre>
+⊢ frac_0 = frac_save 0 0
+</pre>
+
+<DT><span class="strong">FRAC_1_SAVE</span>
+<DD>
+<pre>
+⊢ frac_1 = frac_save 1 0
+</pre>
+
+<DT><span class="strong">FRAC_AINV_SAVE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1. frac_ainv (frac_save a1 b1) = frac_save (-a1) b1
+</pre>
+
+<DT><span class="strong">FRAC_MINV_SAVE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1.
+      a1 ≠ 0 ⇒
+      frac_minv (frac_save a1 b1) =
+      frac_save (SGN a1 * (&b1 + 1)) (Num (ABS a1 − 1))
+</pre>
+
+<DT><span class="strong">FRAC_ADD_SAVE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1 a2 b2.
+      frac_add (frac_save a1 b1) (frac_save a2 b2) =
+      frac_save (a1 * &b2 + a2 * &b1 + a1 + a2) (b1 * b2 + b1 + b2)
+</pre>
+
+<DT><span class="strong">FRAC_MUL_SAVE</span>
+<DD>
+<pre>
+⊢ ∀a1 b1 a2 b2.
+      frac_mul (frac_save a1 b1) (frac_save a2 b2) =
+      frac_save (a1 * a2) (b1 * b2 + b1 + b2)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>
