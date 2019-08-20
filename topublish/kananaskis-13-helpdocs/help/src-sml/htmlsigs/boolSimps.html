@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure boolSimps</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure boolSimps</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/boolSimps.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature boolSimps =
+<a name="line2"></a>sig
+<a name="line3"></a>     include Abbrev
+<a name="line4"></a>
+<a name="line5"></a>     val <a href="../../Docfiles/HTML/boolSimps.bool_ss.html">bool_ss</a> : simpLib.simpset
+<a name="line6"></a>     val BOOL_ss : simpLib.ssfrag       (* boolean rewrites and
+<a name="line7"></a>                                           beta conversion *)
+<a name="line8"></a>     val CONG_ss : simpLib.ssfrag       (* congruence rules for ==&gt; and
+<a name="line9"></a>                                           if-then-else *)
+<a name="line10"></a>     val CONJ_ss : simpLib.ssfrag       (* congruence rules for /\; not
+<a name="line11"></a>                                           included in bool_ss, but
+<a name="line12"></a>                                           occasionally useful *)
+<a name="line13"></a>     val NOT_ss : simpLib.ssfrag        (* rewrites that move negations
+<a name="line14"></a>                                           inwards, included in bool_ss *)
+<a name="line15"></a>     val COND_elim_ss : simpLib.ssfrag  (* eliminates if-then-else's;
+<a name="line16"></a>                                           not in bool_ss *)
+<a name="line17"></a>     val LIFT_COND_ss : simpLib.ssfrag  (* lifts conds high in a term, but
+<a name="line18"></a>                                           doesn't eliminate them; can merge
+<a name="line19"></a>                                           those of the same guard or
+<a name="line20"></a>                                           opposing guards *)
+<a name="line21"></a>     val UNWIND_ss : simpLib.ssfrag     (* "pointwise" elimination for
+<a name="line22"></a>                                            ? and !, included in bool_ss *)
+<a name="line23"></a>     val ETA_ss : simpLib.ssfrag        (* eta conversion;
+<a name="line24"></a>                                           not included in bool_ss *)
+<a name="line25"></a>
+<a name="line26"></a>     val LET_ss : simpLib.ssfrag        (* writes out let terms, using a
+<a name="line27"></a>                                           congruence to evaluate the
+<a name="line28"></a>                                           second argument first *)
+<a name="line29"></a>
+<a name="line30"></a>     val literal_case_ss : simpLib.ssfrag (* writes out literal case terms,
+<a name="line31"></a>                                           using a congruence to evaluate
+<a name="line32"></a>                                           the second argument first *)
+<a name="line33"></a>
+<a name="line34"></a>     val <a href="../../Docfiles/HTML/boolSimps.DNF_ss.html">DNF_ss</a> : simpLib.ssfrag
+<a name="line35"></a>        (* converts a term to DNF at the level of propositional logic, and
+<a name="line36"></a>           also moves quantifiers around to give them maximum useful scope
+<a name="line37"></a>           over their bodies:
+<a name="line38"></a>               (?x. P x) /\ Q   --&gt;  ?x. P x /\ Q
+<a name="line39"></a>               P /\ (?x. Q x)   --&gt;  ?x. P /\ Q x
+<a name="line40"></a>               (?x. P x) ==&gt; Q  --&gt;  !x. P x ==&gt; Q
+<a name="line41"></a>               P ==&gt; !x. Q x    --&gt;  !x. P ==&gt; Q x
+<a name="line42"></a>               !x. P x /\ Q x   --&gt;  (!x. P x) /\ (!x. Q x)
+<a name="line43"></a>               ?x. P x \/ Q x   --&gt;  (?x. P x) \/ (?x. Q x)
+<a name="line44"></a>           Think of this simpset fragment as attempting to achieve as
+<a name="line45"></a>           much as possible of STRIP_TAC within a single goal.
+<a name="line46"></a>
+<a name="line47"></a>           Note that it leaves ==&gt; alone, but includes the following
+<a name="line48"></a>           extra rewrites:
+<a name="line49"></a>               P \/ Q ==&gt; R     --&gt;  (P ==&gt; R) /\ (Q ==&gt; R)
+<a name="line50"></a>               P ==&gt; Q /\ R     --&gt;  (P ==&gt; Q) /\ (P ==&gt; R)
+<a name="line51"></a>
+<a name="line52"></a>           This simpset fragment will give UNWIND_ss maximum opportunity to
+<a name="line53"></a>           eliminate equalities. *)
+<a name="line54"></a>
+<a name="line55"></a>     val EQUIV_EXTRACT_ss : simpLib.ssfrag
+<a name="line56"></a>        (* Extracts common terms from both sides of an equivalence. Example:
+<a name="line57"></a>
+<a name="line58"></a>           ``A /\ B /\ C &lt;=&gt; C /\ B /\ D`` is transformed to
+<a name="line59"></a>
+<a name="line60"></a>           |- (A /\ B /\ C &lt;=&gt; C /\ B /\ D) &lt;=&gt; C /\ B ==&gt; (A &lt;=&gt; D)
+<a name="line61"></a>         *)
+<a name="line62"></a>
+<a name="line63"></a>     val <a href="../../Docfiles/HTML/boolSimps.NORMEQ_ss.html">NORMEQ_ss</a> : simpLib.ssfrag
+<a name="line64"></a>       (* flips equalities that have a ground term on the left and a
+<a name="line65"></a>          non-ground term on the right *)
+<a name="line66"></a>
+<a name="line67"></a>     val SimpLHS : thm
+<a name="line68"></a>     val SimpRHS : thm
+<a name="line69"></a>     val SimpL   : term -&gt; thm
+<a name="line70"></a>     val SimpR   : term -&gt; thm
+<a name="line71"></a>
+<a name="line72"></a>
+<a name="line73"></a>end
+<a name="line74"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/boolSimps.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

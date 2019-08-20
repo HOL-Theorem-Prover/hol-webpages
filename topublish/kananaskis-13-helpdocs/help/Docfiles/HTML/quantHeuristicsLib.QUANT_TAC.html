@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>quantHeuristicsLib.QUANT_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>QUANT_TAC : (string * Parse.term Lib.frag list * Parse.term Parse.frag list list) list -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/quantHeuristicsLib.html">quantHeuristicsLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A tactic to instantiate quantifiers in a term using an explitly given list of (partial) instantiations.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This tactic can be seen as a generalisation of </SPAN><SPAN class = "BRKT">Q.EXISTS_TAC</SPAN><SPAN class = "TEXT">.
+When applied to a term fragment </SPAN><SPAN class = "BRKT">u</SPAN><SPAN class = "TEXT"> and a goal </SPAN><SPAN class = "BRKT">?x.&nbsp;t</SPAN><SPAN class = "TEXT">, the tactic
+</SPAN><SPAN class = "BRKT">EXISTS_TAC</SPAN><SPAN class = "TEXT"> reduces the goal to </SPAN><SPAN class = "BRKT">t[u/x]</SPAN><SPAN class = "TEXT">. </SPAN><SPAN class = "BRKT">QUANT_TAC</SPAN><SPAN class = "TEXT"> allows to
+perform similar instantiations of quantifiers at subpositions, provided
+the subposition occurs in a formula composed of standard operators that
+the tactic can handle. It can - depending on negation level - instantiate
+both existential and universal quantifiers. Moreover, it allows partial
+instantiations and instantiating multiple variables at the same time.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">QUANT_TAC</SPAN><SPAN class = "TEXT"> gets a list of triples </SPAN><SPAN class = "BRKT">(var_name,&nbsp;instantiation,&nbsp;free_vars)</SPAN><SPAN class = "TEXT">
+as an argument. </SPAN><SPAN class = "BRKT">var_name</SPAN><SPAN class = "TEXT"> is the name of the variable to be instantiated;
+</SPAN><SPAN class = "BRKT">instantiation</SPAN><SPAN class = "TEXT"> is the term this variable should be instantiated with. Finally,
+</SPAN><SPAN class = "BRKT">free_vars</SPAN><SPAN class = "TEXT"> is a list of free variables in </SPAN><SPAN class = "BRKT">instantiation</SPAN><SPAN class = "TEXT"> that should remain
+quantified.</SPAN>
+<P>
+<SPAN class = "TEXT">As this tactic adresses variables by their name, resulting proofs might
+not be robust. Therefore, this tactic should be used carefully.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Given the goal
+</SPAN><DIV class = "XMPL"><pre>
+   !x. (!z. P x z) ==&gt; ?a b.    Q a        b z
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">z</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT"> are natural numbers, the call </SPAN><SPAN class = "BRKT">QUANT_TAC&nbsp;[("z",&nbsp;`0`,&nbsp;[]),&nbsp;("a",&nbsp;`SUC&nbsp;a'`,&nbsp;[`a'`])]</SPAN><SPAN class = "TEXT">
+instantiates </SPAN><SPAN class = "BRKT">z</SPAN><SPAN class = "TEXT"> with </SPAN><SPAN class = "BRKT">0</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT"> with </SPAN><SPAN class = "BRKT">SUC&nbsp;a'</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">a'</SPAN><SPAN class = "TEXT"> is free.
+The variable </SPAN><SPAN class = "BRKT">z</SPAN><SPAN class = "TEXT"> is universally quantified, but in the antecedent of the implication.
+Therefore, it can be safely instantiated. </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT"> is existentially quantified.
+In this example we just want to say that </SPAN><SPAN class = "BRKT">a</SPAN><SPAN class = "TEXT"> is not </SPAN><SPAN class = "BRKT">0</SPAN><SPAN class = "TEXT">, therefore </SPAN><SPAN class = "BRKT">a'</SPAN><SPAN class = "TEXT"> is
+considered as a free variable and thus remains existentially quantified.
+The call results in the goal
+</SPAN><DIV class = "XMPL"><pre>
+   !x. (    P x 0) ==&gt; ?  b a'. Q (SUC a') b z
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactic.EXISTS_TAC.html">EXISTS_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

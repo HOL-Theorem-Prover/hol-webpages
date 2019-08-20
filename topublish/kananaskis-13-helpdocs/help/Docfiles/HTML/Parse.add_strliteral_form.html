@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Parse.add_strliteral_form</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>add_strliteral_form : {inj:term, ldelim:string} -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Adds interpretation for string literal syntaxes</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">ld</SPAN><SPAN class = "TEXT"> is a valid left delimiter, with corresponding right delimiter
+</SPAN><SPAN class = "BRKT">rd</SPAN><SPAN class = "TEXT">, then a call to </SPAN><SPAN class = "BRKT">add_strliteral_form{inj=t,ldelim=ld}</SPAN><SPAN class = "TEXT"> causes the
+parser and pretty-printer to treat string literals delimited by </SPAN><SPAN class = "BRKT">ld</SPAN><SPAN class = "TEXT">
+and </SPAN><SPAN class = "BRKT">rd</SPAN><SPAN class = "TEXT"> as occurrences of the term </SPAN><SPAN class = "BRKT">inj</SPAN><SPAN class = "TEXT"> applied to the given HOL
+value (which will be of </SPAN><SPAN class = "BRKT">string</SPAN><SPAN class = "TEXT"> type).</SPAN>
+<P>
+<SPAN class = "TEXT">If the given </SPAN><SPAN class = "BRKT">ld</SPAN><SPAN class = "TEXT">-</SPAN><SPAN class = "BRKT">rd</SPAN><SPAN class = "TEXT"> pair is already associated with an injector,
+then the parsing process will resolve the ambiguity with the standard
+overloading resolution method. In particular, note that the standard
+double quotation mark (ASCII character 34, </SPAN><SPAN class = "BRKT">"</SPAN><SPAN class = "TEXT">) is associated with the
+&ldquo;null&rdquo; injector, which takes string literals into the </SPAN><SPAN class = "BRKT">string</SPAN><SPAN class = "TEXT"> type.
+Other injectors can be associated with this delimiter pair.</SPAN>
+<P>
+<SPAN class = "TEXT">The other valid delimiter pairs are double guillemets (</SPAN><SPAN class = "BRKT">«...»</SPAN><SPAN class = "TEXT">, U+00AB
+and U+00BB) and single guillemets (</SPAN><SPAN class = "BRKT">‹...›</SPAN><SPAN class = "TEXT">, U+2039 and U+203A).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the </SPAN><SPAN class = "BRKT">ldelim</SPAN><SPAN class = "TEXT"> field does not correspond to a valid left
+delimiter, or if the HOL type of the </SPAN><SPAN class = "BRKT">inj</SPAN><SPAN class = "TEXT"> field is not </SPAN><SPAN class = "BRKT">:string-&gt;X</SPAN><SPAN class = "TEXT">
+for some type </SPAN><SPAN class = "BRKT">X</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If we have established a new type of deeply embedded terms with
+variables, constants and binary applications:</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+   Datatype`tm = V string | Cst string | App tm tm`;
+</pre></DIV>
+<SPAN class = "TEXT">
+then we can overload the usual double-quoted string literals to also
+be applications of the </SPAN><SPAN class = "BRKT">V</SPAN><SPAN class = "TEXT"> constructor:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; add_strliteral_form {inj=``V``, ldelim="\""};
+   &gt; ``App (V "foo") (App "bar" "baz")``;
+   val it = “App "foo" (App "bar" "baz")”: term
+</pre></DIV>
+<SPAN class = "TEXT">
+where all the string literals in the output are actually applications
+of </SPAN><SPAN class = "BRKT">V</SPAN><SPAN class = "TEXT"> to a real literal.</SPAN>
+<P>
+<SPAN class = "TEXT">We can further choose to have constants printed with enclosing </SPAN><SPAN class = "BRKT">«...»</SPAN><SPAN class = "TEXT"> by:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; add_strliteral_form {inj=``Cst``, ldelim="«"};
+   &gt; ``App "foo" (Cst "bar")``;
+   val it = “App "foo" «bar»”: term
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">Note that in this situation, use of the double guillemets is
+unambiguous, but a bare string literal is strictly ambiguous (the
+default is to prefer the core string type):
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; type_of “«foo»”;
+   val it = “:tm”: hol_type
+
+   &gt; type_of “"foo"”;
+   &lt;&lt;HOL message: more than one resolution of overloading was possible&gt;&gt;
+   val it = “:string”: hol_type
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This facility is analogous to the way in which numerals can be seen to
+inhabit types other than just </SPAN><SPAN class = "BRKT">:num</SPAN><SPAN class = "TEXT">. As with other parsing facilities
+there is a temporary form </SPAN><SPAN class = "BRKT">temp_add_strliteral_form</SPAN><SPAN class = "TEXT">, which does not
+cause the change to the grammar to persist to descendant theories.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.add_numeral_form.html">add_numeral_form</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

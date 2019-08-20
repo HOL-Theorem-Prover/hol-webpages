@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactic.SUBST_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>SUBST_TAC : (thm list -&gt; tactic)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactic.html">Tactic</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Makes term substitutions in a goal using a list of theorems.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Given a list of theorems </SPAN><SPAN class = "BRKT">A1|-u1=v1,...,An|-un=vn</SPAN><SPAN class = "TEXT"> and a goal </SPAN><SPAN class = "BRKT">(A,t)</SPAN><SPAN class = "TEXT">,
+</SPAN><SPAN class = "BRKT">SUBST_TAC</SPAN><SPAN class = "TEXT"> rewrites the term </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> into the term </SPAN><SPAN class = "BRKT">t[v1,...,vn/u1,...,un]</SPAN><SPAN class = "TEXT"> by
+simultaneously substituting </SPAN><SPAN class = "BRKT">vi</SPAN><SPAN class = "TEXT"> for each occurrence of </SPAN><SPAN class = "BRKT">ui</SPAN><SPAN class = "TEXT"> in </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> with </SPAN><SPAN class = "BRKT">vi</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+              A ?- t
+   =============================  SUBST_TAC [A1|-u1=v1,...,An|-un=vn]
+    A ?- t[v1,...,vn/u1,...,un]
+</pre></DIV>
+<SPAN class = "TEXT">
+The assumptions of the theorems used to substitute with are not added
+to the assumptions </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> of the goal, while they are recorded in the proof.  If
+any </SPAN><SPAN class = "BRKT">Ai</SPAN><SPAN class = "TEXT"> is not a subset of </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> (up to alpha-conversion), then
+</SPAN><SPAN class = "BRKT">SUBST_TAC&nbsp;[A1|-u1=v1,...,An|-un=vn]</SPAN><SPAN class = "TEXT"> results in an invalid tactic.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_TAC</SPAN><SPAN class = "TEXT"> automatically renames bound variables to prevent free variables in
+</SPAN><SPAN class = "BRKT">vi</SPAN><SPAN class = "TEXT"> becoming bound after substitution.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_TAC&nbsp;[th1,...,thn]&nbsp;(A,t)</SPAN><SPAN class = "TEXT"> fails if the conclusion of any theorem in the
+list is not an equation.  No change is made to the goal if no occurrence of the
+left-hand side of the conclusion of </SPAN><SPAN class = "BRKT">thi</SPAN><SPAN class = "TEXT"> appears in </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When trying to solve the goal
+</SPAN><DIV class = "XMPL"><pre>
+   ?- (n + 0) + (0 + m) = m + n
+</pre></DIV>
+<SPAN class = "TEXT">
+by substituting with the theorems
+</SPAN><DIV class = "XMPL"><pre>
+   - val thm1 = SPEC_ALL arithmeticTheory.ADD_SYM
+     val thm2 = CONJUNCT1 arithmeticTheory.ADD_CLAUSES;
+   thm1 = |- m + n = n + m
+   thm2 = |- 0 + m = m
+</pre></DIV>
+<SPAN class = "TEXT">
+applying </SPAN><SPAN class = "BRKT">SUBST_TAC&nbsp;[thm1,&nbsp;thm2]</SPAN><SPAN class = "TEXT"> results in the goal
+</SPAN><DIV class = "XMPL"><pre>
+   ?- (n + 0) + m = n + m
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_TAC</SPAN><SPAN class = "TEXT"> is used when rewriting (for example, with </SPAN><SPAN class = "BRKT">REWRITE_TAC</SPAN><SPAN class = "TEXT">) is
+extensive or would diverge.  Substituting is also much faster than rewriting.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Rewrite.ONCE_REWRITE_TAC.html">ONCE_REWRITE_TAC</A>,
+<A HREF = "Rewrite.PURE_REWRITE_TAC.html">PURE_REWRITE_TAC</A>,
+<A HREF = "Rewrite.REWRITE_TAC.html">REWRITE_TAC</A>,
+<A HREF = "Tactic.SUBST1_TAC.html">SUBST1_TAC</A>,
+<A HREF = "Tactic.SUBST_ALL_TAC.html">SUBST_ALL_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

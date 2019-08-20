@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Thm_cont.PROVEHYP_THEN</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>PROVEHYP_THEN : (thm -&gt; thm -&gt; tactic) -&gt; thm -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Thm_cont.html">Thm_cont</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Makes antecedent of theorem as subgoal, continues with both parts as theorems.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An application of the tactic </SPAN><SPAN class = "BRKT">PROVEHYP_THEN&nbsp;th2tac&nbsp;th</SPAN><SPAN class = "TEXT"> to a goal </SPAN><SPAN class = "BRKT">g</SPAN><SPAN class = "TEXT">
+requires that </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> be an implication (or a negation, in which case
+</SPAN><SPAN class = "BRKT">~p</SPAN><SPAN class = "TEXT"> is treated as </SPAN><SPAN class = "BRKT">p&nbsp;==&gt;&nbsp;F</SPAN><SPAN class = "TEXT">). Given an implication </SPAN><SPAN class = "BRKT">|-&nbsp;l&nbsp;==&gt;&nbsp;r</SPAN><SPAN class = "TEXT">,
+the result is a new sub-goal requiring the user to prove </SPAN><SPAN class = "BRKT">l</SPAN><SPAN class = "TEXT">, and the
+application of </SPAN><SPAN class = "BRKT">th2tac</SPAN><SPAN class = "TEXT"> to the theorems with conclusion </SPAN><SPAN class = "BRKT">l</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">r</SPAN><SPAN class = "TEXT">.
+(The former has just been proved by the user; the latter is the result
+of applying </SPAN><SPAN class = "BRKT">MP</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">l</SPAN><SPAN class = "TEXT">.)</SPAN>
+<P>
+<SPAN class = "TEXT">Diagrammatically, one might see this as
+</SPAN><DIV class = "XMPL"><pre>
+          A ?- g
+   ==============================================  PROVEHYP_THEN th2tac th
+   A ?- l  ...  th2tac (A |- l) (A |- r) (A ?- g)
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the theorem argument is not an implication or negation.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+   &gt; FIRST_X_ASSUM (PROVEHYP_THEN (K MP_TAC)) ([“p”, “p ==&gt; q”], “r”)
+   val it = ([([“p”], “p”), ([“p”], “q ==&gt; r”)], fn):
+            goal list * validation
+</pre></DIV>
+<SPAN class = "TEXT">
+The use of </SPAN><SPAN class = "BRKT">FIRST_X_ASSUM</SPAN><SPAN class = "TEXT"> pulls out the first implicational theorem, and gives the user the requirement to prove </SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT"> as a subgoal. In the other subgoal, </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> has become a new antecedent in the goal (thanks to the action of </SPAN><SPAN class = "BRKT">MP_TAC</SPAN><SPAN class = "TEXT">).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function is also available under the name </SPAN><SPAN class = "BRKT">provehyp_then</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactic.impl_keep_tac.html">impl_keep_tac</A>,
+<A HREF = "Tactic.impl_tac.html">impl_tac</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

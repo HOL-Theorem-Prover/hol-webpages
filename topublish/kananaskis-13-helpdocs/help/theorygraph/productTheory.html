@@ -1,0 +1,636 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: product</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "product"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "iterateTheory.html"><span class="strong">iterate</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">nproduct</span>
+    <td>
+    :(α -> bool) -> (α -> num) -> num
+    <tr><td>
+    <span class="strong">product</span>
+    <td>
+    :(α -> bool) -> (α -> real) -> real
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">product</span>
+<DD>
+<pre>
+⊢ product = iterate $*
+</pre>
+
+<DT><span class="strong">nproduct</span>
+<DD>
+<pre>
+⊢ nproduct = iterate $*
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">th</span>
+<DD>
+<pre>
+⊢ (∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (nproduct s (λi. f i) = nproduct s g)) ∧
+  (∀f g a b.
+       (∀i. a ≤ i ∧ i ≤ b ⇒ (f i = g i)) ⇒
+       (nproduct (a .. b) (λi. f i) = nproduct (a .. b) g)) ∧
+  ∀f g p.
+      (∀x. p x ⇒ (f x = g x)) ⇒
+      (nproduct {y | p y} (λi. f i) = nproduct {y | p y} g)
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_NPRODUCT</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ (&nproduct s f = product s (λx. &f x))
+</pre>
+
+<DT><span class="strong">REAL_ADD_AC</span>
+<DD>
+<pre>
+⊢ (m + n = n + m) ∧ (m + n + p = m + (n + p)) ∧ (m + (n + p) = n + (m + p))
+</pre>
+
+<DT><span class="strong">PRODUCT_UNION</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+      FINITE s ∧ FINITE t ∧ DISJOINT s t ⇒
+      (product (s ∪ t) f = product s f * product t f)
+</pre>
+
+<DT><span class="strong">PRODUCT_SUPPORT</span>
+<DD>
+<pre>
+⊢ ∀f s. product (support $* f s) f = product s f
+</pre>
+
+<DT><span class="strong">PRODUCT_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀f u v.
+      u ⊆ v ∧ (∀x. x ∈ v ∧ x ∉ u ⇒ (f x = 1)) ⇒ (product v f = product u f)
+</pre>
+
+<DT><span class="strong">PRODUCT_SING_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f n. product (n .. n) f = f n
+</pre>
+
+<DT><span class="strong">PRODUCT_SING</span>
+<DD>
+<pre>
+⊢ ∀f x. product {x} f = f x
+</pre>
+
+<DT><span class="strong">PRODUCT_POS_LT_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. (∀x. m ≤ x ∧ x ≤ n ⇒ 0 < f x) ⇒ 0 < product (m .. n) f
+</pre>
+
+<DT><span class="strong">PRODUCT_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ∧ (∀x. x ∈ s ⇒ 0 < f x) ⇒ 0 < product s f
+</pre>
+
+<DT><span class="strong">PRODUCT_POS_LE_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. (∀x. m ≤ x ∧ x ≤ n ⇒ 0 ≤ f x) ⇒ 0 ≤ product (m .. n) f
+</pre>
+
+<DT><span class="strong">PRODUCT_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x) ⇒ 0 ≤ product s f
+</pre>
+
+<DT><span class="strong">PRODUCT_PAIR</span>
+<DD>
+<pre>
+⊢ ∀f m n.
+      product (2 * m .. 2 * n + 1) f =
+      product (m .. n) (λi. f (2 * i) * f (2 * i + 1))
+</pre>
+
+<DT><span class="strong">PRODUCT_ONE</span>
+<DD>
+<pre>
+⊢ ∀s. product s (λn. 1) = 1
+</pre>
+
+<DT><span class="strong">PRODUCT_OFFSET</span>
+<DD>
+<pre>
+⊢ ∀f m p. product (m + p .. n + p) f = product (m .. n) (λi. f (i + p))
+</pre>
+
+<DT><span class="strong">PRODUCT_NEG_NUMSEG_1</span>
+<DD>
+<pre>
+⊢ ∀f n. product (1 .. n) (λi. -f i) = -1 pow n * product (1 .. n) f
+</pre>
+
+<DT><span class="strong">PRODUCT_NEG_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n.
+      product (m .. n) (λi. -f i) = -1 pow (n + 1 − m) * product (m .. n) f
+</pre>
+
+<DT><span class="strong">PRODUCT_NEG</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ (product s (λi. -f i) = -1 pow CARD s * product s f)
+</pre>
+
+<DT><span class="strong">PRODUCT_MUL_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+      product (m .. n) (λx. f x * g x) =
+      product (m .. n) f * product (m .. n) g
+</pre>
+
+<DT><span class="strong">PRODUCT_MUL_GEN</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+      FINITE {x | x ∈ s ∧ f x ≠ 1} ∧ FINITE {x | x ∈ s ∧ g x ≠ 1} ⇒
+      (product s (λx. f x * g x) = product s f * product s g)
+</pre>
+
+<DT><span class="strong">PRODUCT_MUL</span>
+<DD>
+<pre>
+⊢ ∀f g s. FINITE s ⇒ (product s (λx. f x * g x) = product s f * product s g)
+</pre>
+
+<DT><span class="strong">PRODUCT_LE_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n.
+      (∀i. m ≤ i ∧ i ≤ n ⇒ 0 ≤ f i ∧ f i ≤ g i) ⇒
+      product (m .. n) f ≤ product (m .. n) g
+</pre>
+
+<DT><span class="strong">PRODUCT_LE_1</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x ∧ f x ≤ 1) ⇒ product s f ≤ 1
+</pre>
+
+<DT><span class="strong">PRODUCT_LE</span>
+<DD>
+<pre>
+⊢ ∀f s.
+      FINITE s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x ∧ f x ≤ g x) ⇒ product s f ≤ product s g
+</pre>
+
+<DT><span class="strong">PRODUCT_INV</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ (product s (λx. (f x)⁻¹) = (product s f)⁻¹)
+</pre>
+
+<DT><span class="strong">PRODUCT_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+      (∀x y. x ∈ s ∧ y ∈ s ∧ (f x = f y) ⇒ (x = y)) ⇒
+      (product (IMAGE f s) g = product s (g ∘ f))
+</pre>
+
+<DT><span class="strong">PRODUCT_EQ_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+      (∀i. m ≤ i ∧ i ≤ n ⇒ (f i = g i)) ⇒
+      (product (m .. n) f = product (m .. n) g)
+</pre>
+
+<DT><span class="strong">PRODUCT_EQ_1_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. (∀i. m ≤ i ∧ i ≤ n ⇒ (f i = 1)) ⇒ (product (m .. n) f = 1)
+</pre>
+
+<DT><span class="strong">PRODUCT_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀f s. (∀x. x ∈ s ⇒ (f x = 1)) ⇒ (product s f = 1)
+</pre>
+
+<DT><span class="strong">PRODUCT_EQ_0_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. (product (m .. n) f = 0) ⇔ ∃x. m ≤ x ∧ x ≤ n ∧ (f x = 0)
+</pre>
+
+<DT><span class="strong">PRODUCT_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ ((product s f = 0) ⇔ ∃x. x ∈ s ∧ (f x = 0))
+</pre>
+
+<DT><span class="strong">PRODUCT_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (product s f = product s g)
+</pre>
+
+<DT><span class="strong">PRODUCT_DIV_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+      product (m .. n) (λx. f x / g x) =
+      product (m .. n) f / product (m .. n) g
+</pre>
+
+<DT><span class="strong">PRODUCT_DIV</span>
+<DD>
+<pre>
+⊢ ∀f g s. FINITE s ⇒ (product s (λx. f x / g x) = product s f / product s g)
+</pre>
+
+<DT><span class="strong">PRODUCT_DELTA</span>
+<DD>
+<pre>
+⊢ ∀s a. product s (λx. if x = a then b else 1) = if a ∈ s then b else 1
+</pre>
+
+<DT><span class="strong">PRODUCT_DELETE</span>
+<DD>
+<pre>
+⊢ ∀f s a. FINITE s ∧ a ∈ s ⇒ (f a * product (s DELETE a) f = product s f)
+</pre>
+
+<DT><span class="strong">PRODUCT_CONST_NUMSEG_1</span>
+<DD>
+<pre>
+⊢ ∀c n. product (1 .. n) (λx. c) = c pow n
+</pre>
+
+<DT><span class="strong">PRODUCT_CONST_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀c m n. product (m .. n) (λx. c) = c pow (n + 1 − m)
+</pre>
+
+<DT><span class="strong">PRODUCT_CONST</span>
+<DD>
+<pre>
+⊢ ∀c s. FINITE s ⇒ (product s (λx. c) = c pow CARD s)
+</pre>
+
+<DT><span class="strong">PRODUCT_CONG</span>
+<DD>
+<pre>
+⊢ (∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (product s (λi. f i) = product s g)) ∧
+  (∀f g a b.
+       (∀i. a ≤ i ∧ i ≤ b ⇒ (f i = g i)) ⇒
+       (product (a .. b) (λi. f i) = product (a .. b) g)) ∧
+  ∀f g p.
+      (∀x. p x ⇒ (f x = g x)) ⇒
+      (product {y | p y} (λi. f i) = product {y | p y} g)
+</pre>
+
+<DT><span class="strong">PRODUCT_CLOSED</span>
+<DD>
+<pre>
+⊢ ∀P f s.
+      P 1 ∧ (∀x y. P x ∧ P y ⇒ P (x * y)) ∧ (∀a. a ∈ s ⇒ P (f a)) ⇒
+      P (product s f)
+</pre>
+
+<DT><span class="strong">PRODUCT_CLAUSES_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀f m n. 0 < n ∧ m ≤ n ⇒ (product (m .. n) f = product (m .. n − 1) f * f n)
+</pre>
+
+<DT><span class="strong">PRODUCT_CLAUSES_NUMSEG</span>
+<DD>
+<pre>
+⊢ (∀m. product (m .. 0) f = if m = 0 then f 0 else 1) ∧
+  ∀m n.
+      product (m .. SUC n) f =
+      if m ≤ SUC n then product (m .. n) f * f (SUC n) else product (m .. n) f
+</pre>
+
+<DT><span class="strong">PRODUCT_CLAUSES_LEFT</span>
+<DD>
+<pre>
+⊢ ∀f m n. m ≤ n ⇒ (product (m .. n) f = f m * product (m + 1 .. n) f)
+</pre>
+
+<DT><span class="strong">PRODUCT_CLAUSES</span>
+<DD>
+<pre>
+⊢ (∀f. product ∅ f = 1) ∧
+  ∀x f s.
+      FINITE s ⇒
+      (product (x INSERT s) f =
+       if x ∈ s then product s f else f x * product s f)
+</pre>
+
+<DT><span class="strong">PRODUCT_ADD_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀f m n p.
+      m ≤ n + 1 ⇒
+      (product (m .. n + p) f =
+       product (m .. n) f * product (n + 1 .. n + p) f)
+</pre>
+
+<DT><span class="strong">PRODUCT_ABS</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ (product s (λx. abs (f x)) = abs (product s f))
+</pre>
+
+<DT><span class="strong">NPRODUCT_UNION</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+      FINITE s ∧ FINITE t ∧ DISJOINT s t ⇒
+      (nproduct (s ∪ t) f = nproduct s f * nproduct t f)
+</pre>
+
+<DT><span class="strong">NPRODUCT_SUPPORT</span>
+<DD>
+<pre>
+⊢ ∀f s. nproduct (support $* f s) f = nproduct s f
+</pre>
+
+<DT><span class="strong">NPRODUCT_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀f u v.
+      u ⊆ v ∧ (∀x. x ∈ v ∧ x ∉ u ⇒ (f x = 1)) ⇒ (nproduct v f = nproduct u f)
+</pre>
+
+<DT><span class="strong">NPRODUCT_SING_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f n. nproduct (n .. n) f = f n
+</pre>
+
+<DT><span class="strong">NPRODUCT_SING</span>
+<DD>
+<pre>
+⊢ ∀f x. nproduct {x} f = f x
+</pre>
+
+<DT><span class="strong">NPRODUCT_POS_LT_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. (∀x. m ≤ x ∧ x ≤ n ⇒ 0 < f x) ⇒ 0 < nproduct (m .. n) f
+</pre>
+
+<DT><span class="strong">NPRODUCT_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ∧ (∀x. x ∈ s ⇒ 0 < f x) ⇒ 0 < nproduct s f
+</pre>
+
+<DT><span class="strong">NPRODUCT_PAIR</span>
+<DD>
+<pre>
+⊢ ∀f m n.
+      nproduct (2 * m .. 2 * n + 1) f =
+      nproduct (m .. n) (λi. f (2 * i) * f (2 * i + 1))
+</pre>
+
+<DT><span class="strong">NPRODUCT_ONE</span>
+<DD>
+<pre>
+⊢ ∀s. nproduct s (λn. 1) = 1
+</pre>
+
+<DT><span class="strong">NPRODUCT_OFFSET</span>
+<DD>
+<pre>
+⊢ ∀f m p. nproduct (m + p .. n + p) f = nproduct (m .. n) (λi. f (i + p))
+</pre>
+
+<DT><span class="strong">NPRODUCT_MUL_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+      nproduct (m .. n) (λx. f x * g x) =
+      nproduct (m .. n) f * nproduct (m .. n) g
+</pre>
+
+<DT><span class="strong">NPRODUCT_MUL_GEN</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+      FINITE {x | x ∈ s ∧ f x ≠ 1} ∧ FINITE {x | x ∈ s ∧ g x ≠ 1} ⇒
+      (nproduct s (λx. f x * g x) = nproduct s f * nproduct s g)
+</pre>
+
+<DT><span class="strong">NPRODUCT_MUL</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+      FINITE s ⇒ (nproduct s (λx. f x * g x) = nproduct s f * nproduct s g)
+</pre>
+
+<DT><span class="strong">NPRODUCT_LE_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n.
+      (∀i. m ≤ i ∧ i ≤ n ⇒ 0 ≤ f i ∧ f i ≤ g i) ⇒
+      nproduct (m .. n) f ≤ nproduct (m .. n) g
+</pre>
+
+<DT><span class="strong">NPRODUCT_LE</span>
+<DD>
+<pre>
+⊢ ∀f s.
+      FINITE s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x ∧ f x ≤ g x) ⇒
+      nproduct s f ≤ nproduct s g
+</pre>
+
+<DT><span class="strong">NPRODUCT_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+      (∀x y. x ∈ s ∧ y ∈ s ∧ (f x = f y) ⇒ (x = y)) ⇒
+      (nproduct (IMAGE f s) g = nproduct s (g ∘ f))
+</pre>
+
+<DT><span class="strong">NPRODUCT_FACT</span>
+<DD>
+<pre>
+⊢ ∀n. nproduct (1 .. n) (λm. m) = FACT n
+</pre>
+
+<DT><span class="strong">NPRODUCT_EQ_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+      (∀i. m ≤ i ∧ i ≤ n ⇒ (f i = g i)) ⇒
+      (nproduct (m .. n) f = nproduct (m .. n) g)
+</pre>
+
+<DT><span class="strong">NPRODUCT_EQ_1_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. (∀i. m ≤ i ∧ i ≤ n ⇒ (f i = 1)) ⇒ (nproduct (m .. n) f = 1)
+</pre>
+
+<DT><span class="strong">NPRODUCT_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀f s. (∀x. x ∈ s ⇒ (f x = 1)) ⇒ (nproduct s f = 1)
+</pre>
+
+<DT><span class="strong">NPRODUCT_EQ_0_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. (nproduct (m .. n) f = 0) ⇔ ∃x. m ≤ x ∧ x ≤ n ∧ (f x = 0)
+</pre>
+
+<DT><span class="strong">NPRODUCT_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ ((nproduct s f = 0) ⇔ ∃x. x ∈ s ∧ (f x = 0))
+</pre>
+
+<DT><span class="strong">NPRODUCT_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (nproduct s f = nproduct s g)
+</pre>
+
+<DT><span class="strong">NPRODUCT_DELTA</span>
+<DD>
+<pre>
+⊢ ∀s a. nproduct s (λx. if x = a then b else 1) = if a ∈ s then b else 1
+</pre>
+
+<DT><span class="strong">NPRODUCT_DELETE</span>
+<DD>
+<pre>
+⊢ ∀f s a. FINITE s ∧ a ∈ s ⇒ (f a * nproduct (s DELETE a) f = nproduct s f)
+</pre>
+
+<DT><span class="strong">NPRODUCT_CONST_NUMSEG_1</span>
+<DD>
+<pre>
+⊢ ∀c n. nproduct (1 .. n) (λx. c) = c ** n
+</pre>
+
+<DT><span class="strong">NPRODUCT_CONST_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀c m n. nproduct (m .. n) (λx. c) = c ** (n + 1 − m)
+</pre>
+
+<DT><span class="strong">NPRODUCT_CONST</span>
+<DD>
+<pre>
+⊢ ∀c s. FINITE s ⇒ (nproduct s (λx. c) = c ** CARD s)
+</pre>
+
+<DT><span class="strong">NPRODUCT_CLOSED</span>
+<DD>
+<pre>
+⊢ ∀P f s.
+      P 1 ∧ (∀x y. P x ∧ P y ⇒ P (x * y)) ∧ (∀a. a ∈ s ⇒ P (f a)) ⇒
+      P (nproduct s f)
+</pre>
+
+<DT><span class="strong">NPRODUCT_CLAUSES_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀f m n.
+      0 < n ∧ m ≤ n ⇒ (nproduct (m .. n) f = nproduct (m .. n − 1) f * f n)
+</pre>
+
+<DT><span class="strong">NPRODUCT_CLAUSES_NUMSEG</span>
+<DD>
+<pre>
+⊢ (∀m. nproduct (m .. 0) f = if m = 0 then f 0 else 1) ∧
+  ∀m n.
+      nproduct (m .. SUC n) f =
+      if m ≤ SUC n then nproduct (m .. n) f * f (SUC n)
+      else nproduct (m .. n) f
+</pre>
+
+<DT><span class="strong">NPRODUCT_CLAUSES_LEFT</span>
+<DD>
+<pre>
+⊢ ∀f m n. m ≤ n ⇒ (nproduct (m .. n) f = f m * nproduct (m + 1 .. n) f)
+</pre>
+
+<DT><span class="strong">NPRODUCT_CLAUSES</span>
+<DD>
+<pre>
+⊢ (∀f. nproduct ∅ f = 1) ∧
+  ∀x f s.
+      FINITE s ⇒
+      (nproduct (x INSERT s) f =
+       if x ∈ s then nproduct s f else f x * nproduct s f)
+</pre>
+
+<DT><span class="strong">NPRODUCT_ADD_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀f m n p.
+      m ≤ n + 1 ⇒
+      (nproduct (m .. n + p) f =
+       nproduct (m .. n) f * nproduct (n + 1 .. n + p) f)
+</pre>
+
+<DT><span class="strong">MULT_AC</span>
+<DD>
+<pre>
+⊢ (m * n = n * m) ∧ (m * n * p = m * (n * p)) ∧ (m * (n * p) = n * (m * p))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

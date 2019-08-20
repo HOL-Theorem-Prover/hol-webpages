@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>unwindLib.EXPAND_ALL_BUT_RIGHT_RULE</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>EXPAND_ALL_BUT_RIGHT_RULE : (string list -&gt; thm list -&gt; thm -&gt; thm)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/unwindLib.html">unwindLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Unfolds, then unwinds all lines (except those specified) as much as possible,
+then prunes the unwound lines.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">unwind</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">EXPAND_ALL_BUT_RIGHT_RULE&nbsp;[`li(k+1)`;...;`lim`]&nbsp;thl</SPAN><SPAN class = "TEXT"> behaves as follows:
+</SPAN><DIV class = "XMPL"><pre>
+    A |- !z1 ... zr.
+          t = ?l1 ... lm. t1 /\ ... /\ ui1 /\ ... /\ uik /\ ... /\ tn
+   -------------------------------------------------------------------
+       B u A |- !z1 ... zr. t = ?li(k+1) ... lim. t1' /\ ... /\ tn'
+</pre></DIV>
+<SPAN class = "TEXT">
+where each </SPAN><SPAN class = "BRKT">ti'</SPAN><SPAN class = "TEXT"> is the result of rewriting </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> with the theorems in
+</SPAN><SPAN class = "BRKT">thl</SPAN><SPAN class = "TEXT">. The set of assumptions </SPAN><SPAN class = "BRKT">B</SPAN><SPAN class = "TEXT"> is the union of the instantiated assumptions
+of the theorems used for rewriting. If none of the rewrites are applicable to a
+conjunct, it is unchanged. Those conjuncts that after rewriting are equations
+for the lines </SPAN><SPAN class = "BRKT">li1,...,lik</SPAN><SPAN class = "TEXT"> (they are denoted by </SPAN><SPAN class = "BRKT">ui1,...,uik</SPAN><SPAN class = "TEXT">) are used to
+unwind and the lines </SPAN><SPAN class = "BRKT">li1,...,lik</SPAN><SPAN class = "TEXT"> are then pruned.</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">li</SPAN><SPAN class = "TEXT">&rsquo;s are related by the equation:
+</SPAN><DIV class = "XMPL"><pre>
+   {{li1,...,lik}} u {{li(k+1),...,lim}} = {{l1,...,lm}}
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function may fail if the argument theorem is not of the specified form. It
+will also fail if the unwound lines cannot be pruned. It is possible for the
+function to attempt unwinding indefinitely (to loop).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+#EXPAND_ALL_BUT_RIGHT_RULE [`l1`]
+# [ASSUME "!in out. INV (in,out) = !(t:num). out t = ~(in t)"]
+# (ASSUME
+#   "!(in:num-&gt;bool) out.
+#     DEV(in,out) =
+#      ?l1 l2.
+#       INV (l1,l2) /\ INV (l2,out) /\ (!(t:num). l1 t = in t \/ out (t-1))");;
+.. |- !in out.
+       DEV(in,out) =
+       (?l1. (!t. out t = ~~l1 t) /\ (!t. l1 t = in t \/ ~~l1(t - 1)))
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "unwindLib.EXPAND_AUTO_RIGHT_RULE.html">EXPAND_AUTO_RIGHT_RULE</A>,
+<A HREF = "unwindLib.EXPAND_ALL_BUT_CONV.html">EXPAND_ALL_BUT_CONV</A>,
+<A HREF = "unwindLib.EXPAND_AUTO_CONV.html">EXPAND_AUTO_CONV</A>,
+<A HREF = "unwindLib.UNFOLD_RIGHT_RULE.html">UNFOLD_RIGHT_RULE</A>,
+<A HREF = "unwindLib.UNWIND_ALL_BUT_RIGHT_RULE.html">UNWIND_ALL_BUT_RIGHT_RULE</A>,
+<A HREF = "unwindLib.PRUNE_SOME_RIGHT_RULE.html">PRUNE_SOME_RIGHT_RULE</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

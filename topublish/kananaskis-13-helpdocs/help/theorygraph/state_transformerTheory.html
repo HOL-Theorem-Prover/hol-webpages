@@ -1,0 +1,436 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: state_transformer</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "state_transformer"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "listTheory.html"><span class="strong">list</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">BIND</span>
+    <td>
+    :(α -> β # α) -> (β -> α -> γ # α) -> α -> γ # α
+    <tr><td>
+    <span class="strong">EXT</span>
+    <td>
+    :(β -> σ -> γ # σ) -> (σ -> β # σ) -> σ -> γ # σ
+    <tr><td>
+    <span class="strong">FOR</span>
+    <td>
+    :num # num # (num -> 'state -> unit # 'state) -> 'state -> unit # 'state
+    <tr><td>
+    <span class="strong">FOREACH</span>
+    <td>
+    :α list # (α -> 'state -> unit # 'state) -> 'state -> unit # 'state
+    <tr><td>
+    <span class="strong">IGNORE_BIND</span>
+    <td>
+    :(α -> γ # α) -> (α -> β # α) -> α -> β # α
+    <tr><td>
+    <span class="strong">JOIN</span>
+    <td>
+    :(α -> (α -> β # α) # α) -> α -> β # α
+    <tr><td>
+    <span class="strong">MCOMP</span>
+    <td>
+    :(β -> σ -> γ # σ) -> (α -> σ -> β # σ) -> α -> σ -> γ # σ
+    <tr><td>
+    <span class="strong">MMAP</span>
+    <td>
+    :(γ -> β) -> (α -> γ # α) -> α -> β # α
+    <tr><td>
+    <span class="strong">MWHILE</span>
+    <td>
+    :(α -> bool # α) -> (α -> β # α) -> α -> unit # α
+    <tr><td>
+    <span class="strong">NARROW</span>
+    <td>
+    :β -> (β # 'state -> α # β # 'state) -> 'state -> α # 'state
+    <tr><td>
+    <span class="strong">READ</span>
+    <td>
+    :('state -> α) -> 'state -> α # 'state
+    <tr><td> <span class="strong">UNIT</span> <td> :β -> α -> β # α
+    <tr><td>
+    <span class="strong">WIDEN</span>
+    <td>
+    :('state -> α # 'state) -> β # 'state -> α # β # 'state
+    <tr><td>
+    <span class="strong">WRITE</span>
+    <td>
+    :('state -> 'state) -> 'state -> unit # 'state
+    <tr><td>
+    <span class="strong">mapM</span>
+    <td>
+    :(α -> β -> γ # β) -> α list -> β -> γ list # β
+    <tr><td>
+    <span class="strong">sequence</span>
+    <td>
+    :(α -> β # α) list -> α -> β list # α
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">WRITE_def</span>
+<DD>
+<pre>
+⊢ ∀f. WRITE f = (λs. ((),f s))
+</pre>
+
+<DT><span class="strong">WIDEN_def</span>
+<DD>
+<pre>
+⊢ ∀f. WIDEN f = (λ(s1,s2). (let (r,s3) = f s2 in (r,s1,s3)))
+</pre>
+
+<DT><span class="strong">UNIT_DEF</span>
+<DD>
+<pre>
+⊢ ∀x. UNIT x = (λs. (x,s))
+</pre>
+
+<DT><span class="strong">sequence_def</span>
+<DD>
+<pre>
+⊢ sequence = FOLDR (λm ms. do x <- m; xs <- ms; UNIT (x::xs) od) (UNIT [])
+</pre>
+
+<DT><span class="strong">READ_def</span>
+<DD>
+<pre>
+⊢ ∀f. READ f = (λs. (f s,s))
+</pre>
+
+<DT><span class="strong">NARROW_def</span>
+<DD>
+<pre>
+⊢ ∀v f. NARROW v f = (λs. (let (r,s1) = f (v,s) in (r,SND s1)))
+</pre>
+
+<DT><span class="strong">MWHILE_DEF</span>
+<DD>
+<pre>
+⊢ ∀g b.
+      MWHILE g b = do gv <- g; if gv then do b; MWHILE g b od else UNIT () od
+</pre>
+
+<DT><span class="strong">MMAP_DEF</span>
+<DD>
+<pre>
+⊢ ∀f m. MMAP f m = monad_bind m (UNIT ∘ f)
+</pre>
+
+<DT><span class="strong">MCOMP_DEF</span>
+<DD>
+<pre>
+⊢ ∀g f. MCOMP g f = EXT g ∘ f
+</pre>
+
+<DT><span class="strong">mapM_def</span>
+<DD>
+<pre>
+⊢ ∀f. mapM f = sequence ∘ MAP f
+</pre>
+
+<DT><span class="strong">JOIN_DEF</span>
+<DD>
+<pre>
+⊢ ∀z. JOIN z = monad_bind z I
+</pre>
+
+<DT><span class="strong">IGNORE_BIND_DEF</span>
+<DD>
+<pre>
+⊢ ∀f g. do f; g od = do x <- f; g od
+</pre>
+
+<DT><span class="strong">FOREACH_primitive_def</span>
+<DD>
+<pre>
+⊢ FOREACH =
+  WFREC (@R. WF R ∧ ∀h a t. R (t,a) (h::t,a))
+    (λFOREACH a'.
+         case a' of
+           ([],a) => I (UNIT ())
+         | (h::t,a) => I do u <- a h; FOREACH (t,a) od)
+</pre>
+
+<DT><span class="strong">FOR_primitive_def</span>
+<DD>
+<pre>
+⊢ FOR =
+  WFREC
+    (@R. WF R ∧ ∀a j i. i ≠ j ⇒ R (if i < j then i + 1 else i − 1,j,a) (i,j,a))
+    (λFOR a'.
+         case a' of
+           (i,j,a) =>
+             I
+               (if i = j then a i
+                else do u <- a i; FOR (if i < j then i + 1 else i − 1,j,a) od))
+</pre>
+
+<DT><span class="strong">EXT_DEF</span>
+<DD>
+<pre>
+⊢ ∀f m. EXT f m = UNCURRY f ∘ m
+</pre>
+
+<DT><span class="strong">BIND_DEF</span>
+<DD>
+<pre>
+⊢ ∀g f. monad_bind g f = UNCURRY f ∘ g
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">UNIT_UNCURRY</span>
+<DD>
+<pre>
+⊢ ∀s. UNCURRY UNIT s = s
+</pre>
+
+<DT><span class="strong">UNIT_o_MCOMP</span>
+<DD>
+<pre>
+⊢ MCOMP (UNIT ∘ g) (UNIT ∘ f) = UNIT ∘ g ∘ f
+</pre>
+
+<DT><span class="strong">UNIT_CURRY</span>
+<DD>
+<pre>
+⊢ UNIT = CURRY I
+</pre>
+
+<DT><span class="strong">SND_o_UNIT</span>
+<DD>
+<pre>
+⊢ ∀x. SND ∘ UNIT x = I
+</pre>
+
+<DT><span class="strong">sequence_nil</span>
+<DD>
+<pre>
+⊢ sequence [] = UNIT []
+</pre>
+
+<DT><span class="strong">MMAP_UNIT</span>
+<DD>
+<pre>
+⊢ ∀f. MMAP f ∘ UNIT = UNIT ∘ f
+</pre>
+
+<DT><span class="strong">MMAP_JOIN</span>
+<DD>
+<pre>
+⊢ ∀f. MMAP f ∘ JOIN = JOIN ∘ MMAP (MMAP f)
+</pre>
+
+<DT><span class="strong">MMAP_ID</span>
+<DD>
+<pre>
+⊢ MMAP I = I
+</pre>
+
+<DT><span class="strong">MMAP_EXT</span>
+<DD>
+<pre>
+⊢ MMAP f = EXT (UNIT ∘ f)
+</pre>
+
+<DT><span class="strong">MMAP_COMP</span>
+<DD>
+<pre>
+⊢ ∀f g. MMAP (f ∘ g) = MMAP f ∘ MMAP g
+</pre>
+
+<DT><span class="strong">MCOMP_ID</span>
+<DD>
+<pre>
+⊢ (MCOMP g UNIT = g) ∧ (MCOMP UNIT f = f)
+</pre>
+
+<DT><span class="strong">MCOMP_ASSOC</span>
+<DD>
+<pre>
+⊢ MCOMP f (MCOMP g h) = MCOMP (MCOMP f g) h
+</pre>
+
+<DT><span class="strong">MCOMP_ALT</span>
+<DD>
+<pre>
+⊢ MCOMP g f = CURRY (UNCURRY g ∘ UNCURRY f)
+</pre>
+
+<DT><span class="strong">mapM_nil</span>
+<DD>
+<pre>
+⊢ mapM f [] = UNIT []
+</pre>
+
+<DT><span class="strong">mapM_cons</span>
+<DD>
+<pre>
+⊢ mapM f (x::xs) = do y <- f x; ys <- mapM f xs; UNIT (y::ys) od
+</pre>
+
+<DT><span class="strong">JOIN_UNIT</span>
+<DD>
+<pre>
+⊢ JOIN ∘ UNIT = I
+</pre>
+
+<DT><span class="strong">JOIN_MMAP_UNIT</span>
+<DD>
+<pre>
+⊢ JOIN ∘ MMAP UNIT = I
+</pre>
+
+<DT><span class="strong">JOIN_MAP_JOIN</span>
+<DD>
+<pre>
+⊢ JOIN ∘ MMAP JOIN = JOIN ∘ JOIN
+</pre>
+
+<DT><span class="strong">JOIN_MAP</span>
+<DD>
+<pre>
+⊢ ∀k m. monad_bind k m = JOIN (MMAP m k)
+</pre>
+
+<DT><span class="strong">JOIN_EXT</span>
+<DD>
+<pre>
+⊢ JOIN = EXT I
+</pre>
+
+<DT><span class="strong">FST_o_UNIT</span>
+<DD>
+<pre>
+⊢ ∀x. FST ∘ UNIT x = K x
+</pre>
+
+<DT><span class="strong">FST_o_MMAP</span>
+<DD>
+<pre>
+⊢ ∀f g. FST ∘ MMAP f g = f ∘ FST ∘ g
+</pre>
+
+<DT><span class="strong">FOREACH_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a. P ([],a)) ∧ (∀h t a. P (t,a) ⇒ P (h::t,a)) ⇒ ∀v v1. P (v,v1)
+</pre>
+
+<DT><span class="strong">FOREACH_def</span>
+<DD>
+<pre>
+⊢ (∀a. FOREACH ([],a) = UNIT ()) ∧
+  ∀t h a. FOREACH (h::t,a) = do u <- a h; FOREACH (t,a) od
+</pre>
+
+<DT><span class="strong">FOR_ind</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∀i j a. (i ≠ j ⇒ P (if i < j then i + 1 else i − 1,j,a)) ⇒ P (i,j,a)) ⇒
+      ∀v v1 v2. P (v,v1,v2)
+</pre>
+
+<DT><span class="strong">FOR_def</span>
+<DD>
+<pre>
+⊢ ∀j i a.
+      FOR (i,j,a) =
+      if i = j then a i
+      else do u <- a i; FOR (if i < j then i + 1 else i − 1,j,a) od
+</pre>
+
+<DT><span class="strong">EXT_UNIT</span>
+<DD>
+<pre>
+⊢ EXT UNIT = I
+</pre>
+
+<DT><span class="strong">EXT_o_UNIT</span>
+<DD>
+<pre>
+⊢ EXT f ∘ UNIT = f
+</pre>
+
+<DT><span class="strong">EXT_o_JOIN</span>
+<DD>
+<pre>
+⊢ ∀f. EXT f ∘ JOIN = EXT (EXT f)
+</pre>
+
+<DT><span class="strong">EXT_MCOMP</span>
+<DD>
+<pre>
+⊢ EXT (MCOMP g f) = EXT g ∘ EXT f
+</pre>
+
+<DT><span class="strong">EXT_JM</span>
+<DD>
+<pre>
+⊢ EXT f = JOIN ∘ MMAP f
+</pre>
+
+<DT><span class="strong">BIND_RIGHT_UNIT</span>
+<DD>
+<pre>
+⊢ ∀k. monad_bind k UNIT = k
+</pre>
+
+<DT><span class="strong">BIND_LEFT_UNIT</span>
+<DD>
+<pre>
+⊢ ∀k x. monad_bind (UNIT x) k = k x
+</pre>
+
+<DT><span class="strong">BIND_EXT</span>
+<DD>
+<pre>
+⊢ monad_bind m f = EXT f m
+</pre>
+
+<DT><span class="strong">BIND_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀k m n. do a <- k; monad_bind (m a) n od = monad_bind (monad_bind k m) n
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

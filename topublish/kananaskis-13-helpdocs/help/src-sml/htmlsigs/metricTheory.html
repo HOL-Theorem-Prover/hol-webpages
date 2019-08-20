@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure metricTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure metricTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/real/metricScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature metricTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#ball-val">ball</a> : thm
+<a name="line7"></a>    val <a href="#ismet-val">ismet</a> : thm
+<a name="line8"></a>    val <a href="#metric_TY_DEF-val">metric_TY_DEF</a> : thm
+<a name="line9"></a>    val <a href="#metric_tybij-val">metric_tybij</a> : thm
+<a name="line10"></a>    val <a href="#mr1-val">mr1</a> : thm
+<a name="line11"></a>    val <a href="#mtop-val">mtop</a> : thm
+<a name="line12"></a>  
+<a name="line13"></a>  (*  Theorems  *)
+<a name="line14"></a>    val <a href="#BALL_NEIGH-val">BALL_NEIGH</a> : thm
+<a name="line15"></a>    val <a href="#BALL_OPEN-val">BALL_OPEN</a> : thm
+<a name="line16"></a>    val <a href="#ISMET_R1-val">ISMET_R1</a> : thm
+<a name="line17"></a>    val <a href="#METRIC_ISMET-val">METRIC_ISMET</a> : thm
+<a name="line18"></a>    val <a href="#METRIC_NZ-val">METRIC_NZ</a> : thm
+<a name="line19"></a>    val <a href="#METRIC_POS-val">METRIC_POS</a> : thm
+<a name="line20"></a>    val <a href="#METRIC_SAME-val">METRIC_SAME</a> : thm
+<a name="line21"></a>    val <a href="#METRIC_SYM-val">METRIC_SYM</a> : thm
+<a name="line22"></a>    val <a href="#METRIC_TRIANGLE-val">METRIC_TRIANGLE</a> : thm
+<a name="line23"></a>    val <a href="#METRIC_ZERO-val">METRIC_ZERO</a> : thm
+<a name="line24"></a>    val <a href="#MR1_ADD-val">MR1_ADD</a> : thm
+<a name="line25"></a>    val <a href="#MR1_ADD_LT-val">MR1_ADD_LT</a> : thm
+<a name="line26"></a>    val <a href="#MR1_ADD_POS-val">MR1_ADD_POS</a> : thm
+<a name="line27"></a>    val <a href="#MR1_BETWEEN1-val">MR1_BETWEEN1</a> : thm
+<a name="line28"></a>    val <a href="#MR1_DEF-val">MR1_DEF</a> : thm
+<a name="line29"></a>    val <a href="#MR1_LIMPT-val">MR1_LIMPT</a> : thm
+<a name="line30"></a>    val <a href="#MR1_SUB-val">MR1_SUB</a> : thm
+<a name="line31"></a>    val <a href="#MR1_SUB_LE-val">MR1_SUB_LE</a> : thm
+<a name="line32"></a>    val <a href="#MR1_SUB_LT-val">MR1_SUB_LT</a> : thm
+<a name="line33"></a>    val <a href="#MTOP_LIMPT-val">MTOP_LIMPT</a> : thm
+<a name="line34"></a>    val <a href="#MTOP_OPEN-val">MTOP_OPEN</a> : thm
+<a name="line35"></a>    val <a href="#mtop_istopology-val">mtop_istopology</a> : thm
+<a name="line36"></a>  
+<a name="line37"></a>  val metric_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line38"></a>(*
+   [real] Parent theory of "metric"
+   
+   [topology] Parent theory of "metric"
+   
+   [<a name="ball-val"><b>ball</b></a>]  Definition
+      
+      ⊢ ∀m x e. metric$B m (x,e) = (λy. dist m (x,y) &lt; e)
+   
+   [<a name="ismet-val"><b>ismet</b></a>]  Definition
+      
+      ⊢ ∀m.
+            ismet m ⇔
+            (∀x y. (m (x,y) = 0) ⇔ (x = y)) ∧
+            ∀x y z. m (y,z) ≤ m (x,y) + m (x,z)
+   
+   [<a name="metric_TY_DEF-val"><b>metric_TY_DEF</b></a>]  Definition
+      
+      ⊢ ∃rep. TYPE_DEFINITION ismet rep
+   
+   [<a name="metric_tybij-val"><b>metric_tybij</b></a>]  Definition
+      
+      ⊢ (∀a. metric (dist a) = a) ∧ ∀r. ismet r ⇔ (dist (metric r) = r)
+   
+   [<a name="mr1-val"><b>mr1</b></a>]  Definition
+      
+      ⊢ mr1 = metric (λ(x,y). abs (y − x))
+   
+   [<a name="mtop-val"><b>mtop</b></a>]  Definition
+      
+      ⊢ ∀m.
+            mtop m =
+            topology
+              (λS'. ∀x. S' x ⇒ ∃e. 0 &lt; e ∧ ∀y. dist m (x,y) &lt; e ⇒ S' y)
+   
+   [<a name="BALL_NEIGH-val"><b>BALL_NEIGH</b></a>]  Theorem
+      
+      ⊢ ∀m x e. 0 &lt; e ⇒ neigh (mtop m) (metric$B m (x,e),x)
+   
+   [<a name="BALL_OPEN-val"><b>BALL_OPEN</b></a>]  Theorem
+      
+      ⊢ ∀m x e. 0 &lt; e ⇒ open_in (mtop m) (metric$B m (x,e))
+   
+   [<a name="ISMET_R1-val"><b>ISMET_R1</b></a>]  Theorem
+      
+      ⊢ ismet (λ(x,y). abs (y − x))
+   
+   [<a name="METRIC_ISMET-val"><b>METRIC_ISMET</b></a>]  Theorem
+      
+      ⊢ ∀m. ismet (dist m)
+   
+   [<a name="METRIC_NZ-val"><b>METRIC_NZ</b></a>]  Theorem
+      
+      ⊢ ∀m x y. x ≠ y ⇒ 0 &lt; dist m (x,y)
+   
+   [<a name="METRIC_POS-val"><b>METRIC_POS</b></a>]  Theorem
+      
+      ⊢ ∀m x y. 0 ≤ dist m (x,y)
+   
+   [<a name="METRIC_SAME-val"><b>METRIC_SAME</b></a>]  Theorem
+      
+      ⊢ ∀m x. dist m (x,x) = 0
+   
+   [<a name="METRIC_SYM-val"><b>METRIC_SYM</b></a>]  Theorem
+      
+      ⊢ ∀m x y. dist m (x,y) = dist m (y,x)
+   
+   [<a name="METRIC_TRIANGLE-val"><b>METRIC_TRIANGLE</b></a>]  Theorem
+      
+      ⊢ ∀m x y z. dist m (x,z) ≤ dist m (x,y) + dist m (y,z)
+   
+   [<a name="METRIC_ZERO-val"><b>METRIC_ZERO</b></a>]  Theorem
+      
+      ⊢ ∀m x y. (dist m (x,y) = 0) ⇔ (x = y)
+   
+   [<a name="MR1_ADD-val"><b>MR1_ADD</b></a>]  Theorem
+      
+      ⊢ ∀x d. dist mr1 (x,x + d) = abs d
+   
+   [<a name="MR1_ADD_LT-val"><b>MR1_ADD_LT</b></a>]  Theorem
+      
+      ⊢ ∀x d. 0 &lt; d ⇒ (dist mr1 (x,x + d) = d)
+   
+   [<a name="MR1_ADD_POS-val"><b>MR1_ADD_POS</b></a>]  Theorem
+      
+      ⊢ ∀x d. 0 ≤ d ⇒ (dist mr1 (x,x + d) = d)
+   
+   [<a name="MR1_BETWEEN1-val"><b>MR1_BETWEEN1</b></a>]  Theorem
+      
+      ⊢ ∀x y z. x &lt; z ∧ dist mr1 (x,y) &lt; z − x ⇒ y &lt; z
+   
+   [<a name="MR1_DEF-val"><b>MR1_DEF</b></a>]  Theorem
+      
+      ⊢ ∀x y. dist mr1 (x,y) = abs (y − x)
+   
+   [<a name="MR1_LIMPT-val"><b>MR1_LIMPT</b></a>]  Theorem
+      
+      ⊢ ∀x. limpt (mtop mr1) x 𝕌(:real)
+   
+   [<a name="MR1_SUB-val"><b>MR1_SUB</b></a>]  Theorem
+      
+      ⊢ ∀x d. dist mr1 (x,x − d) = abs d
+   
+   [<a name="MR1_SUB_LE-val"><b>MR1_SUB_LE</b></a>]  Theorem
+      
+      ⊢ ∀x d. 0 ≤ d ⇒ (dist mr1 (x,x − d) = d)
+   
+   [<a name="MR1_SUB_LT-val"><b>MR1_SUB_LT</b></a>]  Theorem
+      
+      ⊢ ∀x d. 0 &lt; d ⇒ (dist mr1 (x,x − d) = d)
+   
+   [<a name="MTOP_LIMPT-val"><b>MTOP_LIMPT</b></a>]  Theorem
+      
+      ⊢ ∀m x S'.
+            limpt (mtop m) x S' ⇔
+            ∀e. 0 &lt; e ⇒ ∃y. x ≠ y ∧ S' y ∧ dist m (x,y) &lt; e
+   
+   [<a name="MTOP_OPEN-val"><b>MTOP_OPEN</b></a>]  Theorem
+      
+      ⊢ ∀S' m.
+            open_in (mtop m) S' ⇔
+            ∀x. S' x ⇒ ∃e. 0 &lt; e ∧ ∀y. dist m (x,y) &lt; e ⇒ S' y
+   
+   [<a name="mtop_istopology-val"><b>mtop_istopology</b></a>]  Theorem
+      
+      ⊢ ∀m.
+            istopology
+              (λS'. ∀x. S' x ⇒ ∃e. 0 &lt; e ∧ ∀y. dist m (x,y) &lt; e ⇒ S' y)
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/real/metricScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: alignment</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "alignment"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "wordsTheory.html"><span class="strong">words</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">align</span>
+    <td>
+    :num -> α word -> α word
+    <tr><td> <span class="strong">aligned</span> <td> :num -> α word -> bool
+    <tr><td> <span class="strong">byte_align</span> <td> :α word -> α word
+    <tr><td> <span class="strong">byte_aligned</span> <td> :α word -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">byte_aligned_def</span>
+<DD>
+<pre>
+⊢ ∀w. byte_aligned w ⇔ aligned (LOG2 (dimindex (:α) DIV 8)) w
+</pre>
+
+<DT><span class="strong">byte_align_def</span>
+<DD>
+<pre>
+⊢ ∀w. byte_align w = align (LOG2 (dimindex (:α) DIV 8)) w
+</pre>
+
+<DT><span class="strong">aligned_def</span>
+<DD>
+<pre>
+⊢ ∀p w. aligned p w ⇔ (align p w = w)
+</pre>
+
+<DT><span class="strong">align_def</span>
+<DD>
+<pre>
+⊢ ∀p w. align p w = (dimindex (:α) − 1 '' p) w
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">word_msb_align</span>
+<DD>
+<pre>
+⊢ p < dimindex (:α) ⇒ (word_msb (align p w) ⇔ word_msb w)
+</pre>
+
+<DT><span class="strong">pow2_eq_0</span>
+<DD>
+<pre>
+⊢ dimindex (:α) ≤ k ⇒ (n2w (2 ** k) = 0w)
+</pre>
+
+<DT><span class="strong">MOD_0_aligned</span>
+<DD>
+<pre>
+⊢ ∀n p. (n MOD 2 ** p = 0) ⇒ aligned p (n2w n)
+</pre>
+
+<DT><span class="strong">lt_align_eq_0</span>
+<DD>
+<pre>
+⊢ w2n a < 2 ** p ⇒ (align p a = 0w)
+</pre>
+
+<DT><span class="strong">byte_aligned_add</span>
+<DD>
+<pre>
+⊢ byte_aligned x ∧ byte_aligned y ⇒ byte_aligned (x + y)
+</pre>
+
+<DT><span class="strong">byte_align_aligned</span>
+<DD>
+<pre>
+⊢ byte_aligned x ⇔ (byte_align x = x)
+</pre>
+
+<DT><span class="strong">aligned_w2n</span>
+<DD>
+<pre>
+⊢ aligned k w ⇔ (w2n w MOD 2 ** k = 0)
+</pre>
+
+<DT><span class="strong">aligned_pow2</span>
+<DD>
+<pre>
+⊢ aligned k (n2w (2 ** k))
+</pre>
+
+<DT><span class="strong">aligned_or</span>
+<DD>
+<pre>
+⊢ aligned n (w ‖ v) ⇔ aligned n w ∧ aligned n v
+</pre>
+
+<DT><span class="strong">aligned_numeric</span>
+<DD>
+<pre>
+⊢ (∀x. aligned 3 (n2w (NUMERAL (BIT2 (BIT1 (BIT1 x)))))) ∧
+  (∀x. aligned 2 (n2w (NUMERAL (BIT2 (BIT1 x))))) ∧
+  (∀x. aligned 1 (n2w (NUMERAL (BIT2 x)))) ∧
+  (∀x. aligned 3 (-n2w (NUMERAL (BIT2 (BIT1 (BIT1 x)))))) ∧
+  (∀x. aligned 2 (-n2w (NUMERAL (BIT2 (BIT1 x))))) ∧
+  (∀x. aligned 1 (-n2w (NUMERAL (BIT2 x)))) ∧
+  (∀x y f.
+       aligned 3 (y + n2w (NUMERAL (BIT1 (BIT1 (BIT1 (f x)))))) ⇔
+       aligned 3 (y + 7w)) ∧
+  (∀x y f.
+       aligned 3 (y + n2w (NUMERAL (BIT1 (BIT1 (BIT2 x))))) ⇔
+       aligned 3 (y + 3w)) ∧
+  (∀x y f.
+       aligned 3 (y + n2w (NUMERAL (BIT1 (BIT2 (BIT1 x))))) ⇔
+       aligned 3 (y + 1w)) ∧
+  (∀x y f.
+       aligned 3 (y + n2w (NUMERAL (BIT1 (BIT2 (BIT2 x))))) ⇔
+       aligned 3 (y + 5w)) ∧
+  (∀x y f. aligned 3 (y + n2w (NUMERAL (BIT2 (BIT1 (BIT1 x))))) ⇔ aligned 3 y) ∧
+  (∀x y f.
+       aligned 3 (y + n2w (NUMERAL (BIT2 (BIT1 (BIT2 x))))) ⇔
+       aligned 3 (y + 4w)) ∧
+  (∀x y f.
+       aligned 3 (y + n2w (NUMERAL (BIT2 (BIT2 (BIT1 x))))) ⇔
+       aligned 3 (y + 2w)) ∧
+  (∀x y f.
+       aligned 3 (y + n2w (NUMERAL (BIT2 (BIT2 (BIT2 x))))) ⇔
+       aligned 3 (y + 6w)) ∧
+  (∀x y f.
+       aligned 3 (y − n2w (NUMERAL (BIT1 (BIT1 (BIT1 (f x)))))) ⇔
+       aligned 3 (y − 7w)) ∧
+  (∀x y f.
+       aligned 3 (y − n2w (NUMERAL (BIT1 (BIT1 (BIT2 x))))) ⇔
+       aligned 3 (y − 3w)) ∧
+  (∀x y f.
+       aligned 3 (y − n2w (NUMERAL (BIT1 (BIT2 (BIT1 x))))) ⇔
+       aligned 3 (y − 1w)) ∧
+  (∀x y f.
+       aligned 3 (y − n2w (NUMERAL (BIT1 (BIT2 (BIT2 x))))) ⇔
+       aligned 3 (y − 5w)) ∧
+  (∀x y f. aligned 3 (y − n2w (NUMERAL (BIT2 (BIT1 (BIT1 x))))) ⇔ aligned 3 y) ∧
+  (∀x y f.
+       aligned 3 (y − n2w (NUMERAL (BIT2 (BIT1 (BIT2 x))))) ⇔
+       aligned 3 (y − 4w)) ∧
+  (∀x y f.
+       aligned 3 (y − n2w (NUMERAL (BIT2 (BIT2 (BIT1 x))))) ⇔
+       aligned 3 (y − 2w)) ∧
+  (∀x y f.
+       aligned 3 (y − n2w (NUMERAL (BIT2 (BIT2 (BIT2 x))))) ⇔
+       aligned 3 (y − 6w)) ∧
+  (∀x y f.
+       aligned 2 (y + n2w (NUMERAL (BIT1 (BIT1 (f x))))) ⇔ aligned 2 (y + 3w)) ∧
+  (∀x y. aligned 2 (y + n2w (NUMERAL (BIT1 (BIT2 x)))) ⇔ aligned 2 (y + 1w)) ∧
+  (∀x y. aligned 2 (y + n2w (NUMERAL (BIT2 (BIT1 x)))) ⇔ aligned 2 y) ∧
+  (∀x y. aligned 2 (y + n2w (NUMERAL (BIT2 (BIT2 x)))) ⇔ aligned 2 (y + 2w)) ∧
+  (∀x y f.
+       aligned 2 (y − n2w (NUMERAL (BIT1 (BIT1 (f x))))) ⇔ aligned 2 (y − 3w)) ∧
+  (∀x y. aligned 2 (y − n2w (NUMERAL (BIT1 (BIT2 x)))) ⇔ aligned 2 (y − 1w)) ∧
+  (∀x y. aligned 2 (y − n2w (NUMERAL (BIT2 (BIT1 x)))) ⇔ aligned 2 y) ∧
+  (∀x y. aligned 2 (y − n2w (NUMERAL (BIT2 (BIT2 x)))) ⇔ aligned 2 (y − 2w)) ∧
+  (∀x y f. aligned 1 (y + n2w (NUMERAL (BIT1 (f x)))) ⇔ aligned 1 (y + 1w)) ∧
+  (∀x y f. aligned 1 (y − n2w (NUMERAL (BIT1 (f x)))) ⇔ aligned 1 (y − 1w)) ∧
+  (∀x y. aligned 1 (y + n2w (NUMERAL (BIT2 x))) ⇔ aligned 1 y) ∧
+  ∀x y. aligned 1 (y − n2w (NUMERAL (BIT2 x))) ⇔ aligned 1 y
+</pre>
+
+<DT><span class="strong">aligned_mul_shift_1</span>
+<DD>
+<pre>
+⊢ ∀p w. aligned p (1w ≪ p * w)
+</pre>
+
+<DT><span class="strong">aligned_lsl_leq</span>
+<DD>
+<pre>
+⊢ k ≤ l ⇒ aligned k (w ≪ l)
+</pre>
+
+<DT><span class="strong">aligned_lsl</span>
+<DD>
+<pre>
+⊢ aligned k (w ≪ k)
+</pre>
+
+<DT><span class="strong">aligned_imp</span>
+<DD>
+<pre>
+⊢ ∀p q w. p < q ∧ aligned q w ⇒ aligned p w
+</pre>
+
+<DT><span class="strong">aligned_ge_dim</span>
+<DD>
+<pre>
+⊢ ∀p w. dimindex (:α) ≤ p ⇒ (aligned p w ⇔ (w = 0w))
+</pre>
+
+<DT><span class="strong">aligned_extract</span>
+<DD>
+<pre>
+⊢ ∀p w. aligned p w ⇔ (p = 0) ∨ ((p − 1 >< 0) w = 0w)
+</pre>
+
+<DT><span class="strong">aligned_bitwise_and</span>
+<DD>
+<pre>
+⊢ ∀p w. aligned p w ⇔ (w && n2w (2 ** p − 1) = 0w)
+</pre>
+
+<DT><span class="strong">aligned_bit_count_upto</span>
+<DD>
+<pre>
+⊢ ∀p w. aligned p w ⇔ (bit_count_upto (MIN (dimindex (:α)) p) w = 0)
+</pre>
+
+<DT><span class="strong">aligned_between</span>
+<DD>
+<pre>
+⊢ ¬aligned p n ∧ aligned p m ∧ align p n <₊ m ⇒ n <₊ m
+</pre>
+
+<DT><span class="strong">aligned_align</span>
+<DD>
+<pre>
+⊢ ∀p w. aligned p (align p w)
+</pre>
+
+<DT><span class="strong">aligned_add_sub_prod</span>
+<DD>
+<pre>
+⊢ ∀p w x.
+      (aligned p (w + 1w ≪ p * x) ⇔ aligned p w) ∧
+      (aligned p (w − 1w ≪ p * x) ⇔ aligned p w)
+</pre>
+
+<DT><span class="strong">aligned_add_sub_cor</span>
+<DD>
+<pre>
+⊢ ∀p a b. aligned p a ∧ aligned p b ⇒ aligned p (a + b) ∧ aligned p (a − b)
+</pre>
+
+<DT><span class="strong">aligned_add_sub_123</span>
+<DD>
+<pre>
+⊢ (∀w x.
+       (aligned 1 (w + 2w * x) ⇔ aligned 1 w) ∧
+       (aligned 1 (w − 2w * x) ⇔ aligned 1 w)) ∧
+  (∀x. aligned 1 (2w * x) ∧ aligned 1 (-2w * x)) ∧
+  (∀w x.
+       (aligned 2 (w + 4w * x) ⇔ aligned 2 w) ∧
+       (aligned 2 (w − 4w * x) ⇔ aligned 2 w)) ∧
+  (∀x. aligned 2 (4w * x) ∧ aligned 2 (-4w * x)) ∧
+  (∀w x.
+       (aligned 3 (w + 8w * x) ⇔ aligned 3 w) ∧
+       (aligned 3 (w − 8w * x) ⇔ aligned 3 w)) ∧
+  ∀x. aligned 3 (8w * x) ∧ aligned 3 (-8w * x)
+</pre>
+
+<DT><span class="strong">aligned_add_sub</span>
+<DD>
+<pre>
+⊢ ∀p a b.
+      aligned p b ⇒
+      (aligned p (a + b) ⇔ aligned p a) ∧ (aligned p (a − b) ⇔ aligned p a)
+</pre>
+
+<DT><span class="strong">aligned_add_pow</span>
+<DD>
+<pre>
+⊢ (∀w k. aligned k (w + n2w (2 ** k)) ⇔ aligned k w) ∧
+  ∀k n w. aligned k (w + n2w (n * 2 ** k)) ⇔ aligned k w
+</pre>
+
+<DT><span class="strong">aligned_1_lsb</span>
+<DD>
+<pre>
+⊢ ∀w. aligned 1 w ⇔ ¬word_lsb w
+</pre>
+
+<DT><span class="strong">aligned_0</span>
+<DD>
+<pre>
+⊢ (∀p. aligned p 0w) ∧ ∀w. aligned 0 w
+</pre>
+
+<DT><span class="strong">align_w2n</span>
+<DD>
+<pre>
+⊢ ∀p w. align p w = n2w (w2n w DIV 2 ** p * 2 ** p)
+</pre>
+
+<DT><span class="strong">align_sub</span>
+<DD>
+<pre>
+⊢ ∀p w. align p w = if p = 0 then w else w − (p − 1 >< 0) w
+</pre>
+
+<DT><span class="strong">align_shift</span>
+<DD>
+<pre>
+⊢ ∀p w. align p w = w ⋙ p ≪ p
+</pre>
+
+<DT><span class="strong">align_ls</span>
+<DD>
+<pre>
+⊢ align p n ≤₊ n
+</pre>
+
+<DT><span class="strong">align_lo</span>
+<DD>
+<pre>
+⊢ ¬aligned p n ⇒ align p n <₊ n
+</pre>
+
+<DT><span class="strong">align_bitwise_and</span>
+<DD>
+<pre>
+⊢ ∀p w. align p w = w && UINT_MAXw ≪ p
+</pre>
+
+<DT><span class="strong">align_aligned</span>
+<DD>
+<pre>
+⊢ ∀p w. aligned p w ⇒ (align p w = w)
+</pre>
+
+<DT><span class="strong">align_align_MAX</span>
+<DD>
+<pre>
+⊢ ∀k l w. align k (align l w) = align (MAX k l) w
+</pre>
+
+<DT><span class="strong">align_align</span>
+<DD>
+<pre>
+⊢ ∀p w. align p (align p w) = align p w
+</pre>
+
+<DT><span class="strong">align_add_aligned_gen</span>
+<DD>
+<pre>
+⊢ ∀a. aligned p a ⇒ (align p (a + b) = a + align p b)
+</pre>
+
+<DT><span class="strong">align_add_aligned</span>
+<DD>
+<pre>
+⊢ ∀p a b. aligned p a ∧ w2n b < 2 ** p ⇒ (align p (a + b) = a)
+</pre>
+
+<DT><span class="strong">align_0</span>
+<DD>
+<pre>
+⊢ ∀w. align 0 w = w
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

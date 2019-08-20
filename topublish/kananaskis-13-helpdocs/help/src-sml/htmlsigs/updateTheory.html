@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure updateTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure updateTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/update/updateScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature updateTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#FIND_def-val">FIND_def</a> : thm
+<a name="line7"></a>    val <a href="#LIST_UPDATE_def-val">LIST_UPDATE_def</a> : thm
+<a name="line8"></a>    val <a href="#OVERRIDE_primitive_def-val">OVERRIDE_primitive_def</a> : thm
+<a name="line9"></a>  
+<a name="line10"></a>  (*  Theorems  *)
+<a name="line11"></a>    val <a href="#APPLY_UPDATE_ID-val">APPLY_UPDATE_ID</a> : thm
+<a name="line12"></a>    val <a href="#APPLY_UPDATE_THM-val">APPLY_UPDATE_THM</a> : thm
+<a name="line13"></a>    val <a href="#LIST_UPDATE_ALL_DISTINCT-val">LIST_UPDATE_ALL_DISTINCT</a> : thm
+<a name="line14"></a>    val <a href="#LIST_UPDATE_LOOKUP-val">LIST_UPDATE_LOOKUP</a> : thm
+<a name="line15"></a>    val <a href="#LIST_UPDATE_OVERRIDE-val">LIST_UPDATE_OVERRIDE</a> : thm
+<a name="line16"></a>    val <a href="#LIST_UPDATE_SORT_OVERRIDE-val">LIST_UPDATE_SORT_OVERRIDE</a> : thm
+<a name="line17"></a>    val <a href="#LIST_UPDATE_THMS-val">LIST_UPDATE_THMS</a> : thm
+<a name="line18"></a>    val <a href="#OVERRIDE_def-val">OVERRIDE_def</a> : thm
+<a name="line19"></a>    val <a href="#OVERRIDE_ind-val">OVERRIDE_ind</a> : thm
+<a name="line20"></a>    val <a href="#SAME_KEY_UPDATE_DIFFER-val">SAME_KEY_UPDATE_DIFFER</a> : thm
+<a name="line21"></a>    val <a href="#UPDATE_APPLY_ID-val">UPDATE_APPLY_ID</a> : thm
+<a name="line22"></a>    val <a href="#UPDATE_APPLY_IMP_ID-val">UPDATE_APPLY_IMP_ID</a> : thm
+<a name="line23"></a>    val <a href="#UPDATE_COMMUTES-val">UPDATE_COMMUTES</a> : thm
+<a name="line24"></a>    val <a href="#UPDATE_EQ-val">UPDATE_EQ</a> : thm
+<a name="line25"></a>    val <a href="#UPDATE_def-val">UPDATE_def</a> : thm
+<a name="line26"></a>  
+<a name="line27"></a>  val update_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line28"></a>(*
+   [sorting] Parent theory of "update"
+   
+   [<a name="FIND_def-val"><b>FIND_def</b></a>]  Definition
+      
+      ⊢ (∀P. FIND P [] = NONE) ∧
+        ∀P h t. FIND P (h::t) = if P h then SOME h else FIND P t
+   
+   [<a name="LIST_UPDATE_def-val"><b>LIST_UPDATE_def</b></a>]  Definition
+      
+      ⊢ LIST_UPDATE [] = I ∧
+        ∀h t. LIST_UPDATE (h::t) = (FST h =+ SND h) ∘ LIST_UPDATE t
+   
+   [<a name="OVERRIDE_primitive_def-val"><b>OVERRIDE_primitive_def</b></a>]  Definition
+      
+      ⊢ OVERRIDE =
+        WFREC (@R. WF R ∧ ∀t x. R (FILTER (λy. FST x ≠ FST y) t) (x::t))
+          (λOVERRIDE a.
+               case a of
+                 [] =&gt; I []
+               | x::t =&gt; I (x::OVERRIDE (FILTER (λy. FST x ≠ FST y) t)))
+   
+   [<a name="APPLY_UPDATE_ID-val"><b>APPLY_UPDATE_ID</b></a>]  Theorem
+      
+      ⊢ ∀f a. f⦇a ↦ f a⦈ = f
+   
+   [<a name="APPLY_UPDATE_THM-val"><b>APPLY_UPDATE_THM</b></a>]  Theorem
+      
+      ⊢ ∀f a b c. f⦇a ↦ b⦈ c = if a = c then b else f c
+   
+   [<a name="LIST_UPDATE_ALL_DISTINCT-val"><b>LIST_UPDATE_ALL_DISTINCT</b></a>]  Theorem
+      
+      ⊢ ∀l1 l2.
+            ALL_DISTINCT (MAP FST l2) ∧ PERM l1 l2 ⇒
+            LIST_UPDATE l1 = LIST_UPDATE l2
+   
+   [<a name="LIST_UPDATE_LOOKUP-val"><b>LIST_UPDATE_LOOKUP</b></a>]  Theorem
+      
+      ⊢ ∀l f i.
+            LIST_UPDATE l f i =
+            case FIND (λx. FST x = i) l of NONE =&gt; f i | SOME (v1,e) =&gt; e
+   
+   [<a name="LIST_UPDATE_OVERRIDE-val"><b>LIST_UPDATE_OVERRIDE</b></a>]  Theorem
+      
+      ⊢ ∀l. LIST_UPDATE l = LIST_UPDATE (OVERRIDE l)
+   
+   [<a name="LIST_UPDATE_SORT_OVERRIDE-val"><b>LIST_UPDATE_SORT_OVERRIDE</b></a>]  Theorem
+      
+      ⊢ ∀R l. LIST_UPDATE l = LIST_UPDATE (QSORT R (OVERRIDE l))
+   
+   [<a name="LIST_UPDATE_THMS-val"><b>LIST_UPDATE_THMS</b></a>]  Theorem
+      
+      ⊢ ((∀l1 l2 r1 r2.
+              (l1 =+ r1) ∘ (l2 =+ r2) = LIST_UPDATE [(l1,r1); (l2,r2)]) ∧
+         (∀l r t. (l =+ r) ∘ LIST_UPDATE t = LIST_UPDATE ((l,r)::t)) ∧
+         (∀l1 l2 r1 r2 f.
+              f⦇l1 ↦ r1; l2 ↦ r2⦈ = LIST_UPDATE [(l1,r1); (l2,r2)] f) ∧
+         ∀l r t f. (LIST_UPDATE t f)⦇l ↦ r⦈ = LIST_UPDATE ((l,r)::t) f) ∧
+        (∀l1 l2. LIST_UPDATE l1 ∘ LIST_UPDATE l2 = LIST_UPDATE (l1 ⧺ l2)) ∧
+        (∀l1 l2 r.
+             LIST_UPDATE l1 ∘ (l2 =+ r) = LIST_UPDATE (SNOC (l2,r) l1)) ∧
+        (∀l1 l2 f.
+             LIST_UPDATE l1 (LIST_UPDATE l2 f) = LIST_UPDATE (l1 ⧺ l2) f) ∧
+        ∀l1 l2 r f.
+            LIST_UPDATE l1 f⦇l2 ↦ r⦈ = LIST_UPDATE (SNOC (l2,r) l1) f
+   
+   [<a name="OVERRIDE_def-val"><b>OVERRIDE_def</b></a>]  Theorem
+      
+      ⊢ OVERRIDE [] = [] ∧
+        ∀x t. OVERRIDE (x::t) = x::OVERRIDE (FILTER (λy. FST x ≠ FST y) t)
+   
+   [<a name="OVERRIDE_ind-val"><b>OVERRIDE_ind</b></a>]  Theorem
+      
+      ⊢ ∀P.
+            P [] ∧ (∀x t. P (FILTER (λy. FST x ≠ FST y) t) ⇒ P (x::t)) ⇒
+            ∀v. P v
+   
+   [<a name="SAME_KEY_UPDATE_DIFFER-val"><b>SAME_KEY_UPDATE_DIFFER</b></a>]  Theorem
+      
+      ⊢ ∀f1 f2 a b c. b ≠ c ⇒ f⦇a ↦ b⦈ ≠ f⦇a ↦ c⦈
+   
+   [<a name="UPDATE_APPLY_ID-val"><b>UPDATE_APPLY_ID</b></a>]  Theorem
+      
+      ⊢ ∀f a b. f a = b ⇔ f⦇a ↦ b⦈ = f
+   
+   [<a name="UPDATE_APPLY_IMP_ID-val"><b>UPDATE_APPLY_IMP_ID</b></a>]  Theorem
+      
+      ⊢ ∀f b a. f a = b ⇒ f⦇a ↦ b⦈ = f
+   
+   [<a name="UPDATE_COMMUTES-val"><b>UPDATE_COMMUTES</b></a>]  Theorem
+      
+      ⊢ ∀f a b c d. a ≠ b ⇒ f⦇a ↦ c; b ↦ d⦈ = f⦇b ↦ d; a ↦ c⦈
+   
+   [<a name="UPDATE_EQ-val"><b>UPDATE_EQ</b></a>]  Theorem
+      
+      ⊢ ∀f a b c. f⦇a ↦ c; a ↦ b⦈ = f⦇a ↦ c⦈
+   
+   [<a name="UPDATE_def-val"><b>UPDATE_def</b></a>]  Theorem
+      
+      ⊢ ∀a b. (a =+ b) = (λf c. if a = c then b else f c)
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/update/updateScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

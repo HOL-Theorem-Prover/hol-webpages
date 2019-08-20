@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure quantHeuristicsLib</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure quantHeuristicsLib</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quantHeuristics/quantHeuristicsLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature quantHeuristicsLib =
+<a name="line2"></a>sig
+<a name="line3"></a> include Abbrev
+<a name="line4"></a>
+<a name="line5"></a>  type quant_param = quantHeuristicsLibBase.quant_param
+<a name="line6"></a>  type quant_heuristic = quantHeuristicsLibBase.quant_heuristic
+<a name="line7"></a>
+<a name="line8"></a>  (************************************)
+<a name="line9"></a>  (* Interface                        *)
+<a name="line10"></a>  (************************************)
+<a name="line11"></a>
+<a name="line12"></a>  (* Simplifier Interface *)
+<a name="line13"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.QUANT_INST_ss.html">QUANT_INST_ss</a>        : quant_param list -&gt; simpLib.ssfrag;
+<a name="line14"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.FAST_QUANT_INST_ss.html">FAST_QUANT_INST_ss</a>   : quant_param list -&gt; simpLib.ssfrag;
+<a name="line15"></a>  val EXPAND_QUANT_INST_ss : quant_param list -&gt; simpLib.ssfrag;
+<a name="line16"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.SIMPLE_QUANT_INST_ss.html">SIMPLE_QUANT_INST_ss</a> : simpLib.ssfrag;
+<a name="line17"></a>
+<a name="line18"></a>  (* Tactics *)
+<a name="line19"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.QUANT_INSTANTIATE_TAC.html">QUANT_INSTANTIATE_TAC</a>          : quant_param list -&gt; tactic;
+<a name="line20"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.ASM_QUANT_INSTANTIATE_TAC.html">ASM_QUANT_INSTANTIATE_TAC</a>      : quant_param list -&gt; tactic;
+<a name="line21"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.FAST_QUANT_INSTANTIATE_TAC.html">FAST_QUANT_INSTANTIATE_TAC</a>     : quant_param list -&gt; tactic;
+<a name="line22"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.FAST_ASM_QUANT_INSTANTIATE_TAC.html">FAST_ASM_QUANT_INSTANTIATE_TAC</a> : quant_param list -&gt; tactic;
+<a name="line23"></a>  val QUANT_INSTANTIATE_CONSEQ_TAC   : quant_param list -&gt; tactic;
+<a name="line24"></a>  val SIMPLE_QUANT_INSTANTIATE_TAC   : tactic;
+<a name="line25"></a>
+<a name="line26"></a>  (* Conversions *)
+<a name="line27"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.QUANT_INSTANTIATE_CONV.html">QUANT_INSTANTIATE_CONV</a>        : quant_param list -&gt; conv;
+<a name="line28"></a>  val NORE_QUANT_INSTANTIATE_CONV   : quant_param list -&gt; conv;
+<a name="line29"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.FAST_QUANT_INSTANTIATE_CONV.html">FAST_QUANT_INSTANTIATE_CONV</a>   : quant_param list -&gt; conv;
+<a name="line30"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.SIMPLE_QUANT_INSTANTIATE_CONV.html">SIMPLE_QUANT_INSTANTIATE_CONV</a> : conv;
+<a name="line31"></a>
+<a name="line32"></a>  (* Conversions that do a case split in order to instantiate quantifiers,
+<a name="line33"></a>     if no equivalence can be proved. Be careful, this will blow up the term size! *)
+<a name="line34"></a>  val EXPAND_QUANT_INSTANTIATE_CONV     : quant_param list -&gt; conv;
+<a name="line35"></a>  val NORE_EXPAND_QUANT_INSTANTIATE_CONV: quant_param list -&gt; conv;
+<a name="line36"></a>  val FAST_EXPAND_QUANT_INSTANTIATE_CONV: quant_param list -&gt; conv;
+<a name="line37"></a>
+<a name="line38"></a>  (* Consequence Conversions *)
+<a name="line39"></a>  val QUANT_INSTANTIATE_CONSEQ_CONV      : quant_param list -&gt; ConseqConv.directed_conseq_conv;
+<a name="line40"></a>  val NORE_QUANT_INSTANTIATE_CONSEQ_CONV : quant_param list -&gt; ConseqConv.directed_conseq_conv;
+<a name="line41"></a>  val FAST_QUANT_INSTANTIATE_CONSEQ_CONV : quant_param list -&gt; ConseqConv.directed_conseq_conv;
+<a name="line42"></a>
+<a name="line43"></a>  (* Tactic for instantiating quantifiers manually *)
+<a name="line44"></a>  val <a href="../../Docfiles/HTML/quantHeuristicsLib.QUANT_TAC.html">QUANT_TAC</a>  : (string * Parse.term Lib.frag list * Parse.term Parse.frag list list) list -&gt; tactic;
+<a name="line45"></a>
+<a name="line46"></a>  (* Conversion for instantiation quantifiers manually. In order to prove equality, simple proofs are
+<a name="line47"></a>     tried using REWRITE_CONV followed by METIS. This may easily fail. *)
+<a name="line48"></a>  val INST_QUANT_CONV  : (string * Parse.term Lib.frag list * Parse.term Parse.frag list list) list -&gt; conv;
+<a name="line49"></a>
+<a name="line50"></a>  (* Debug Traces:
+<a name="line51"></a>
+<a name="line52"></a>     QUANT_INSTANTIATE_HEURISTIC
+<a name="line53"></a>       0 - no debug
+<a name="line54"></a>       1 - simple traces
+<a name="line55"></a>       2 - full traces with theorems
+<a name="line56"></a>
+<a name="line57"></a>     QUANT_INSTANTIATE_HEURISTIC___print_term_length
+<a name="line58"></a>       maximal length of term strings in debug (default 20)
+<a name="line59"></a>   *)
+<a name="line60"></a>
+<a name="line61"></a>
+<a name="line62"></a>  (************************************)
+<a name="line63"></a>  (* quantifier heurostic parameters  *)
+<a name="line64"></a>  (************************************)
+<a name="line65"></a>
+<a name="line66"></a>  (* stateful ones *)
+<a name="line67"></a>  val stateful_qp        : unit -&gt; quantHeuristicsLibBase.quant_param;
+<a name="line68"></a>  val pure_stateful_qp   : unit -&gt; quantHeuristicsLibBase.quant_param;
+<a name="line69"></a>  val TypeBase_qp        : quantHeuristicsLibBase.quant_param;
+<a name="line70"></a>
+<a name="line71"></a>  val clear_stateful_qp : unit -&gt; unit;
+<a name="line72"></a>  val stateful_qp___add_combine_arguments :
+<a name="line73"></a>     quantHeuristicsLibBase.quant_param list -&gt; unit;
+<a name="line74"></a>
+<a name="line75"></a>  (* Context *)
+<a name="line76"></a>  val direct_context_qp  : quant_param; (* use the context, but don't recurse *)
+<a name="line77"></a>  val context_qp         : quant_param; (* use the context *)
+<a name="line78"></a>
+<a name="line79"></a>  (*pair type*)
+<a name="line80"></a>  val split_pair___PABS___pred    : Abbrev.term -&gt; Abbrev.term -&gt; Abbrev.term option
+<a name="line81"></a>  val split_pair___FST_SND___pred : bool -&gt; Abbrev.term -&gt; Abbrev.term -&gt; Abbrev.term option
+<a name="line82"></a>  val split_pair___ALL___pred     : Abbrev.term -&gt; Abbrev.term -&gt; Abbrev.term option
+<a name="line83"></a>
+<a name="line84"></a>  val pair_qp           : (Abbrev.term -&gt; Abbrev.term -&gt; Abbrev.term option) list -&gt;
+<a name="line85"></a>                           quantHeuristicsLibBase.quant_param;
+<a name="line86"></a>  val pair_default_qp   : quantHeuristicsLibBase.quant_param;
+<a name="line87"></a>
+<a name="line88"></a>  (*record type*)
+<a name="line89"></a>  val record_qp         : bool -&gt; (Abbrev.term -&gt; Abbrev.term -&gt; bool) -&gt;
+<a name="line90"></a>                          quantHeuristicsLibBase.quant_param;
+<a name="line91"></a>  val record_default_qp : quantHeuristicsLibBase.quant_param;
+<a name="line92"></a>
+<a name="line93"></a>  (*other types*)
+<a name="line94"></a>  val num_qp            : quantHeuristicsLibBase.quant_param;
+<a name="line95"></a>  val option_qp         : quantHeuristicsLibBase.quant_param;
+<a name="line96"></a>  val list_qp           : quantHeuristicsLibBase.quant_param;
+<a name="line97"></a>  val list_no_len_qp    : quantHeuristicsLibBase.quant_param; (* do not use LENGTH to unroll lists *)
+<a name="line98"></a>  val list_len_qp       : quantHeuristicsLibBase.quant_param; (* use LENGTH for number &gt; 1 to unroll lists *)
+<a name="line99"></a>  val sum_qp            : quantHeuristicsLibBase.quant_param;
+<a name="line100"></a>
+<a name="line101"></a>  (* predefined filters *)
+<a name="line102"></a>  val subterm_filter       : term list -&gt; term -&gt; term -&gt; bool
+<a name="line103"></a>  val subterm_match_filter : term list -&gt; term -&gt; term -&gt; bool
+<a name="line104"></a>  val type_filter          : hol_type list -&gt; term -&gt; term -&gt; bool
+<a name="line105"></a>  val type_match_filter    : hol_type list -&gt; term -&gt; term -&gt; bool
+<a name="line106"></a>  val neg_filter           : (term -&gt; term -&gt; bool) -&gt; term -&gt; term -&gt; bool
+<a name="line107"></a>  val sum_ty_filter        : term -&gt; term -&gt; bool
+<a name="line108"></a>  val option_ty_filter     : term -&gt; term -&gt; bool
+<a name="line109"></a>  val pair_ty_filter       : term -&gt; term -&gt; bool
+<a name="line110"></a>  val num_ty_filter        : term -&gt; term -&gt; bool
+<a name="line111"></a>  val list_ty_filter       : term -&gt; term -&gt; bool
+<a name="line112"></a>
+<a name="line113"></a>  (* combination of all except the stateful ones *)
+<a name="line114"></a>  val std_qp             : quantHeuristicsLibBase.quant_param;
+<a name="line115"></a>  val no_ctxt_std_qp     : quantHeuristicsLibBase.quant_param (* ignore context *);
+<a name="line116"></a>  val direct_ctxt_std_qp : quantHeuristicsLibBase.quant_param (* don't use context for weaken / strengthen *);
+<a name="line117"></a>
+<a name="line118"></a>  (* A heuristic that considers just the conclusion of implications. This may lead to wrong guesses, but
+<a name="line119"></a>     if used carefully, is a handy heuristic. *)
+<a name="line120"></a>  val implication_concl_qp : quantHeuristicsLibBase.quant_param;
+<a name="line121"></a>
+<a name="line122"></a>  (* A heuristic that looks at both sides of a conjunction independently
+<a name="line123"></a>     and just lifts the results. This may lead to wrong guesses, but
+<a name="line124"></a>     if used carefully, may be a handy heuristic. *)
+<a name="line125"></a>  val conj_lift_qp : quantHeuristicsLibBase.quant_param;
+<a name="line126"></a>
+<a name="line127"></a>  (* writing own parameters *)
+<a name="line128"></a>
+<a name="line129"></a>  val empty_qp    : quant_param;
+<a name="line130"></a>  val combine_qp  : quant_param -&gt; quant_param -&gt; quant_param;
+<a name="line131"></a>  val combine_qps : quant_param list -&gt; quant_param;
+<a name="line132"></a>  val get_qp___for_types : hol_type list -&gt; quant_param
+<a name="line133"></a>
+<a name="line134"></a>  val distinct_qp      : thm list -&gt; quant_param
+<a name="line135"></a>  val cases_qp         : thm list -&gt; quant_param
+<a name="line136"></a>  val rewrite_qp       : thm list -&gt; quant_param
+<a name="line137"></a>  val instantiation_qp : thm list -&gt; quant_param
+<a name="line138"></a>  val imp_qp           : thm list -&gt; quant_param
+<a name="line139"></a>  val fixed_context_qp : thm list -&gt; quant_param
+<a name="line140"></a>  val inference_qp     : thm list -&gt; quant_param
+<a name="line141"></a>  val convs_qp         : conv list -&gt; quant_param
+<a name="line142"></a>  val filter_qp        : (term -&gt; term -&gt; bool) list -&gt; quant_param
+<a name="line143"></a>  val context_heuristics_qp : (thm list -&gt; quant_heuristic) list -&gt; quant_param
+<a name="line144"></a>  val context_top_heuristics_qp : (thm list -&gt; quant_heuristic) list -&gt; quant_param
+<a name="line145"></a>  val heuristics_qp    : quant_heuristic list -&gt; quant_param
+<a name="line146"></a>  val top_heuristics_qp: quant_heuristic list -&gt; quant_param
+<a name="line147"></a>  val oracle_qp        : (term -&gt; term -&gt; (term * term list) option) -&gt; quant_param
+<a name="line148"></a>  val context_oracle_qp: (thm list -&gt; term -&gt; term -&gt; (term * term list) option) -&gt; quant_param
+<a name="line149"></a>  val final_rewrite_qp : thm list -&gt; quant_param
+<a name="line150"></a>
+<a name="line151"></a>
+<a name="line152"></a>  (* Removing functions under quantification *)
+<a name="line153"></a>  val QUANT_FUN_REMOVE_CONV : quantHeuristicsLibFunRemove.quant_fun_remove_arg list -&gt; conv
+<a name="line154"></a>  val QUANT_FUN_REMOVE_ss   : quantHeuristicsLibFunRemove.quant_fun_remove_arg list -&gt; simpLib.ssfrag
+<a name="line155"></a>  val remove_thm_arg        : thm -&gt; string -&gt; thm list -&gt; quantHeuristicsLibFunRemove.quant_fun_remove_arg
+<a name="line156"></a>
+<a name="line157"></a>end
+<a name="line158"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quantHeuristics/quantHeuristicsLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

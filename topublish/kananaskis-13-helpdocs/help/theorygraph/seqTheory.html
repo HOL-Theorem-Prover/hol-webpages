@@ -1,0 +1,762 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: seq</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "seq"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "netsTheory.html"><span class="strong">nets</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">--></span>
+    <td>
+    :(num -> real) -> real -> bool
+    <tr><td> <span class="strong">cauchy</span> <td> :(num -> real) -> bool
+    <tr><td>
+    <span class="strong">convergent</span>
+    <td>
+    :(num -> real) -> bool
+    <tr><td> <span class="strong">lim</span> <td> :(num -> real) -> real
+    <tr><td> <span class="strong">mono</span> <td> :(num -> real) -> bool
+    <tr><td>
+    <span class="strong">mono_decreasing</span>
+    <td>
+    :(num -> real) -> bool
+    <tr><td>
+    <span class="strong">mono_increasing</span>
+    <td>
+    :(num -> real) -> bool
+    <tr><td> <span class="strong">subseq</span> <td> :(num -> num) -> bool
+    <tr><td> <span class="strong">suminf</span> <td> :(num -> real) -> real
+    <tr><td> <span class="strong">summable</span> <td> :(num -> real) -> bool
+    <tr><td>
+    <span class="strong">sums</span>
+    <td>
+    :(num -> real) -> real -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">tends_num_real</span>
+<DD>
+<pre>
+⊢ ∀x x0. x --> x0 ⇔ (x tends x0) (mtop mr1,$>=)
+</pre>
+
+<DT><span class="strong">sums</span>
+<DD>
+<pre>
+⊢ ∀f s. f sums s ⇔ (λn. sum (0,n) f) --> s
+</pre>
+
+<DT><span class="strong">summable</span>
+<DD>
+<pre>
+⊢ ∀f. summable f ⇔ ∃s. f sums s
+</pre>
+
+<DT><span class="strong">suminf</span>
+<DD>
+<pre>
+⊢ ∀f. suminf f = @s. f sums s
+</pre>
+
+<DT><span class="strong">subseq</span>
+<DD>
+<pre>
+⊢ ∀f. subseq f ⇔ ∀m n. m < n ⇒ f m < f n
+</pre>
+
+<DT><span class="strong">mono_increasing_def</span>
+<DD>
+<pre>
+⊢ ∀f. mono_increasing f ⇔ ∀m n. m ≤ n ⇒ f m ≤ f n
+</pre>
+
+<DT><span class="strong">mono_decreasing_def</span>
+<DD>
+<pre>
+⊢ ∀f. mono_decreasing f ⇔ ∀m n. m ≤ n ⇒ f n ≤ f m
+</pre>
+
+<DT><span class="strong">mono</span>
+<DD>
+<pre>
+⊢ ∀f. mono f ⇔ (∀m n. m ≤ n ⇒ f m ≤ f n) ∨ ∀m n. m ≤ n ⇒ f m ≥ f n
+</pre>
+
+<DT><span class="strong">lim</span>
+<DD>
+<pre>
+⊢ ∀f. lim f = @l. f --> l
+</pre>
+
+<DT><span class="strong">convergent</span>
+<DD>
+<pre>
+⊢ ∀f. convergent f ⇔ ∃l. f --> l
+</pre>
+
+<DT><span class="strong">cauchy</span>
+<DD>
+<pre>
+⊢ ∀f. cauchy f ⇔ ∀e. 0 < e ⇒ ∃N. ∀m n. m ≥ N ∧ n ≥ N ⇒ abs (f m − f n) < e
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">X_LE_MAX</span>
+<DD>
+<pre>
+⊢ ∀m n k. k ≤ MAX m n ⇔ k ≤ m ∨ k ≤ n
+</pre>
+
+<DT><span class="strong">X_HALF_HALF</span>
+<DD>
+<pre>
+⊢ ∀x. 1 / 2 * x + 1 / 2 * x = x
+</pre>
+
+<DT><span class="strong">TRIANGLE_2D_NUM</span>
+<DD>
+<pre>
+⊢ ∀P. (∀d n. P n (d + n)) ⇒ ∀m n. m ≤ n ⇒ P m n
+</pre>
+
+<DT><span class="strong">TRANSFORM_2D_NUM</span>
+<DD>
+<pre>
+⊢ ∀P. (∀m n. P m n ⇒ P n m) ∧ (∀m n. P m (m + n)) ⇒ ∀m n. P m n
+</pre>
+
+<DT><span class="strong">SUMS_ZERO</span>
+<DD>
+<pre>
+⊢ K 0 sums 0
+</pre>
+
+<DT><span class="strong">SUMS_EQ</span>
+<DD>
+<pre>
+⊢ ∀f x. f sums x ⇔ summable f ∧ (suminf f = x)
+</pre>
+
+<DT><span class="strong">SUMMABLE_SUM</span>
+<DD>
+<pre>
+⊢ ∀f. summable f ⇒ f sums suminf f
+</pre>
+
+<DT><span class="strong">SUMMABLE_LE</span>
+<DD>
+<pre>
+⊢ ∀f x. summable f ∧ (∀n. sum (0,n) f ≤ x) ⇒ suminf f ≤ x
+</pre>
+
+<DT><span class="strong">SUMINF_POS</span>
+<DD>
+<pre>
+⊢ ∀f. (∀n. 0 ≤ f n) ∧ summable f ⇒ 0 ≤ suminf f
+</pre>
+
+<DT><span class="strong">SUMINF_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g.
+      summable f ∧ summable g ⇒
+      summable (λn. f n + g n) ∧
+      (suminf f + suminf g = suminf (λn. f n + g n))
+</pre>
+
+<DT><span class="strong">SUMINF_2D</span>
+<DD>
+<pre>
+⊢ ∀f g h.
+      (∀m n. 0 ≤ f m n) ∧ (∀n. f n sums g n) ∧ summable g ∧
+      BIJ h 𝕌(:num) (𝕌(:num) × 𝕌(:num)) ⇒
+      UNCURRY f ∘ h sums suminf g
+</pre>
+
+<DT><span class="strong">SUM_UNIQ</span>
+<DD>
+<pre>
+⊢ ∀f x. f sums x ⇒ (x = suminf f)
+</pre>
+
+<DT><span class="strong">SUM_SUMMABLE</span>
+<DD>
+<pre>
+⊢ ∀f l. f sums l ⇒ summable f
+</pre>
+
+<DT><span class="strong">SUM_PICK</span>
+<DD>
+<pre>
+⊢ ∀n k x. sum (0,n) (λm. if m = k then x else 0) = if k < n then x else 0
+</pre>
+
+<DT><span class="strong">SUM_LT</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+      (∀r. m ≤ r ∧ r < n + m ⇒ f r < g r) ∧ 0 < n ⇒ sum (m,n) f < sum (m,n) g
+</pre>
+
+<DT><span class="strong">SUM_CONST_R</span>
+<DD>
+<pre>
+⊢ ∀n r. sum (0,n) (K r) = &n * r
+</pre>
+
+<DT><span class="strong">SUBSEQ_SUC</span>
+<DD>
+<pre>
+⊢ ∀f. subseq f ⇔ ∀n. f n < f (SUC n)
+</pre>
+
+<DT><span class="strong">SER_ZERO</span>
+<DD>
+<pre>
+⊢ ∀f. summable f ⇒ f --> 0
+</pre>
+
+<DT><span class="strong">SER_SUB</span>
+<DD>
+<pre>
+⊢ ∀x x0 y y0. x sums x0 ∧ y sums y0 ⇒ (λn. x n − y n) sums x0 − y0
+</pre>
+
+<DT><span class="strong">SER_RATIO</span>
+<DD>
+<pre>
+⊢ ∀f c N. c < 1 ∧ (∀n. n ≥ N ⇒ abs (f (SUC n)) ≤ c * abs (f n)) ⇒ summable f
+</pre>
+
+<DT><span class="strong">SER_POS_MONO</span>
+<DD>
+<pre>
+⊢ ∀f. (∀n. 0 ≤ f n) ⇒ mono (λn. sum (0,n) f)
+</pre>
+
+<DT><span class="strong">SER_POS_LT_PAIR</span>
+<DD>
+<pre>
+⊢ ∀f n.
+      summable f ∧ (∀d. 0 < f (n + 2 * d) + f (n + (2 * d + 1))) ⇒
+      sum (0,n) f < suminf f
+</pre>
+
+<DT><span class="strong">SER_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀f n. summable f ∧ (∀m. n ≤ m ⇒ 0 < f m) ⇒ sum (0,n) f < suminf f
+</pre>
+
+<DT><span class="strong">SER_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀f n. summable f ∧ (∀m. n ≤ m ⇒ 0 ≤ f m) ⇒ sum (0,n) f ≤ suminf f
+</pre>
+
+<DT><span class="strong">SER_POS_COMPARE</span>
+<DD>
+<pre>
+⊢ ∀f g.
+      (∀n. 0 ≤ f n) ∧ summable g ∧ (∀n. f n ≤ g n) ⇒
+      summable f ∧ suminf f ≤ suminf g
+</pre>
+
+<DT><span class="strong">SER_POS</span>
+<DD>
+<pre>
+⊢ ∀f. summable f ∧ (∀n. 0 ≤ f n) ⇒ 0 ≤ suminf f
+</pre>
+
+<DT><span class="strong">SER_PAIR</span>
+<DD>
+<pre>
+⊢ ∀f. summable f ⇒ (λn. sum (2 * n,2) f) sums suminf f
+</pre>
+
+<DT><span class="strong">SER_OFFSET</span>
+<DD>
+<pre>
+⊢ ∀f. summable f ⇒ ∀k. (λn. f (n + k)) sums suminf f − sum (0,k) f
+</pre>
+
+<DT><span class="strong">SER_NEG</span>
+<DD>
+<pre>
+⊢ ∀x x0. x sums x0 ⇒ (λn. -x n) sums -x0
+</pre>
+
+<DT><span class="strong">SER_LE2</span>
+<DD>
+<pre>
+⊢ ∀f g. (∀n. abs (f n) ≤ g n) ∧ summable g ⇒ summable f ∧ suminf f ≤ suminf g
+</pre>
+
+<DT><span class="strong">SER_LE</span>
+<DD>
+<pre>
+⊢ ∀f g. (∀n. f n ≤ g n) ∧ summable f ∧ summable g ⇒ suminf f ≤ suminf g
+</pre>
+
+<DT><span class="strong">SER_GROUP</span>
+<DD>
+<pre>
+⊢ ∀f k. summable f ∧ 0 < k ⇒ (λn. sum (n * k,k) f) sums suminf f
+</pre>
+
+<DT><span class="strong">SER_COMPARA</span>
+<DD>
+<pre>
+⊢ ∀f g.
+      (∃N. ∀n. n ≥ N ⇒ abs (f n) ≤ g n) ∧ summable g ⇒
+      summable (λk. abs (f k))
+</pre>
+
+<DT><span class="strong">SER_COMPAR</span>
+<DD>
+<pre>
+⊢ ∀f g. (∃N. ∀n. n ≥ N ⇒ abs (f n) ≤ g n) ∧ summable g ⇒ summable f
+</pre>
+
+<DT><span class="strong">SER_CMUL</span>
+<DD>
+<pre>
+⊢ ∀x x0 c. x sums x0 ⇒ (λn. c * x n) sums c * x0
+</pre>
+
+<DT><span class="strong">SER_CDIV</span>
+<DD>
+<pre>
+⊢ ∀x x0 c. x sums x0 ⇒ (λn. x n / c) sums x0 / c
+</pre>
+
+<DT><span class="strong">SER_CAUCHY</span>
+<DD>
+<pre>
+⊢ ∀f. summable f ⇔ ∀e. 0 < e ⇒ ∃N. ∀m n. m ≥ N ⇒ abs (sum (m,n) f) < e
+</pre>
+
+<DT><span class="strong">SER_ADD</span>
+<DD>
+<pre>
+⊢ ∀x x0 y y0. x sums x0 ∧ y sums y0 ⇒ (λn. x n + y n) sums x0 + y0
+</pre>
+
+<DT><span class="strong">SER_ACONV</span>
+<DD>
+<pre>
+⊢ ∀f. summable (λn. abs (f n)) ⇒ summable f
+</pre>
+
+<DT><span class="strong">SER_ABS</span>
+<DD>
+<pre>
+⊢ ∀f. summable (λn. abs (f n)) ⇒ abs (suminf f) ≤ suminf (λn. abs (f n))
+</pre>
+
+<DT><span class="strong">SER_0</span>
+<DD>
+<pre>
+⊢ ∀f n. (∀m. n ≤ m ⇒ (f m = 0)) ⇒ f sums sum (0,n) f
+</pre>
+
+<DT><span class="strong">SEQ_UNIQ</span>
+<DD>
+<pre>
+⊢ ∀x x1 x2. x --> x1 ∧ x --> x2 ⇒ (x1 = x2)
+</pre>
+
+<DT><span class="strong">SEQ_SUC</span>
+<DD>
+<pre>
+⊢ ∀f l. f --> l ⇔ (λn. f (SUC n)) --> l
+</pre>
+
+<DT><span class="strong">SEQ_SUBLE</span>
+<DD>
+<pre>
+⊢ ∀f. subseq f ⇒ ∀n. n ≤ f n
+</pre>
+
+<DT><span class="strong">SEQ_SUB</span>
+<DD>
+<pre>
+⊢ ∀x x0 y y0. x --> x0 ∧ y --> y0 ⇒ (λn. x n − y n) --> (x0 − y0)
+</pre>
+
+<DT><span class="strong">SEQ_SBOUNDED</span>
+<DD>
+<pre>
+⊢ ∀s f. bounded (mr1,$>=) s ⇒ bounded (mr1,$>=) (λn. s (f n))
+</pre>
+
+<DT><span class="strong">SEQ_SANDWICH</span>
+<DD>
+<pre>
+⊢ ∀f g h l. f --> l ∧ h --> l ∧ (∀n. f n ≤ g n ∧ g n ≤ h n) ⇒ g --> l
+</pre>
+
+<DT><span class="strong">SEQ_POWER_ABS</span>
+<DD>
+<pre>
+⊢ ∀c. abs c < 1 ⇒ (λn. abs c pow n) --> 0
+</pre>
+
+<DT><span class="strong">SEQ_POWER</span>
+<DD>
+<pre>
+⊢ ∀c. abs c < 1 ⇒ (λn. c pow n) --> 0
+</pre>
+
+<DT><span class="strong">SEQ_NEG_CONV</span>
+<DD>
+<pre>
+⊢ ∀f. convergent f ⇔ convergent (λn. -f n)
+</pre>
+
+<DT><span class="strong">SEQ_NEG_BOUNDED</span>
+<DD>
+<pre>
+⊢ ∀f. bounded (mr1,$>=) (λn. -f n) ⇔ bounded (mr1,$>=) f
+</pre>
+
+<DT><span class="strong">SEQ_NEG</span>
+<DD>
+<pre>
+⊢ ∀x x0. x --> x0 ⇔ (λn. -x n) --> -x0
+</pre>
+
+<DT><span class="strong">SEQ_MUL</span>
+<DD>
+<pre>
+⊢ ∀x x0 y y0. x --> x0 ∧ y --> y0 ⇒ (λn. x n * y n) --> (x0 * y0)
+</pre>
+
+<DT><span class="strong">SEQ_MONOSUB</span>
+<DD>
+<pre>
+⊢ ∀s. ∃f. subseq f ∧ mono (λn. s (f n))
+</pre>
+
+<DT><span class="strong">SEQ_MONO_LE</span>
+<DD>
+<pre>
+⊢ ∀f x n. (∀n. f n ≤ f (n + 1)) ∧ f --> x ⇒ f n ≤ x
+</pre>
+
+<DT><span class="strong">SEQ_LIM</span>
+<DD>
+<pre>
+⊢ ∀f. convergent f ⇔ f --> lim f
+</pre>
+
+<DT><span class="strong">SEQ_LE_MONO</span>
+<DD>
+<pre>
+⊢ ∀f x n. (∀n. f (n + 1) ≤ f n) ∧ f --> x ⇒ x ≤ f n
+</pre>
+
+<DT><span class="strong">SEQ_LE_IMP_LIM_LE</span>
+<DD>
+<pre>
+⊢ ∀x y f. (∀n. f n ≤ x) ∧ f --> y ⇒ y ≤ x
+</pre>
+
+<DT><span class="strong">SEQ_LE</span>
+<DD>
+<pre>
+⊢ ∀f g l m. f --> l ∧ g --> m ∧ (∃N. ∀n. n ≥ N ⇒ f n ≤ g n) ⇒ l ≤ m
+</pre>
+
+<DT><span class="strong">SEQ_INV0</span>
+<DD>
+<pre>
+⊢ ∀f. (∀y. ∃N. ∀n. n ≥ N ⇒ f n > y) ⇒ (λn. (f n)⁻¹) --> 0
+</pre>
+
+<DT><span class="strong">SEQ_INV</span>
+<DD>
+<pre>
+⊢ ∀x x0. x --> x0 ∧ x0 ≠ 0 ⇒ (λn. (x n)⁻¹) --> x0⁻¹
+</pre>
+
+<DT><span class="strong">SEQ_ICONV</span>
+<DD>
+<pre>
+⊢ ∀f. bounded (mr1,$>=) f ∧ (∀m n. m ≥ n ⇒ f m ≥ f n) ⇒ convergent f
+</pre>
+
+<DT><span class="strong">SEQ_DIV</span>
+<DD>
+<pre>
+⊢ ∀x x0 y y0. x --> x0 ∧ y --> y0 ∧ y0 ≠ 0 ⇒ (λn. x n / y n) --> (x0 / y0)
+</pre>
+
+<DT><span class="strong">SEQ_DIRECT</span>
+<DD>
+<pre>
+⊢ ∀f. subseq f ⇒ ∀N1 N2. ∃n. n ≥ N1 ∧ f n ≥ N2
+</pre>
+
+<DT><span class="strong">SEQ_CONST</span>
+<DD>
+<pre>
+⊢ ∀k. (λx. k) --> k
+</pre>
+
+<DT><span class="strong">SEQ_CBOUNDED</span>
+<DD>
+<pre>
+⊢ ∀f. cauchy f ⇒ bounded (mr1,$>=) f
+</pre>
+
+<DT><span class="strong">SEQ_CAUCHY</span>
+<DD>
+<pre>
+⊢ ∀f. cauchy f ⇔ convergent f
+</pre>
+
+<DT><span class="strong">SEQ_BOUNDED_2</span>
+<DD>
+<pre>
+⊢ ∀f k k'. (∀n. k ≤ f n ∧ f n ≤ k') ⇒ bounded (mr1,$>=) f
+</pre>
+
+<DT><span class="strong">SEQ_BOUNDED</span>
+<DD>
+<pre>
+⊢ ∀s. bounded (mr1,$>=) s ⇔ ∃k. ∀n. abs (s n) < k
+</pre>
+
+<DT><span class="strong">SEQ_BCONV</span>
+<DD>
+<pre>
+⊢ ∀f. bounded (mr1,$>=) f ∧ mono f ⇒ convergent f
+</pre>
+
+<DT><span class="strong">SEQ_ADD</span>
+<DD>
+<pre>
+⊢ ∀x x0 y y0. x --> x0 ∧ y --> y0 ⇒ (λn. x n + y n) --> (x0 + y0)
+</pre>
+
+<DT><span class="strong">SEQ_ABS_IMP</span>
+<DD>
+<pre>
+⊢ ∀f l. f --> l ⇒ (λn. abs (f n)) --> abs l
+</pre>
+
+<DT><span class="strong">SEQ_ABS</span>
+<DD>
+<pre>
+⊢ ∀f. (λn. abs (f n)) --> 0 ⇔ f --> 0
+</pre>
+
+<DT><span class="strong">SEQ</span>
+<DD>
+<pre>
+⊢ ∀x x0. x --> x0 ⇔ ∀e. 0 < e ⇒ ∃N. ∀n. n ≥ N ⇒ abs (x n − x0) < e
+</pre>
+
+<DT><span class="strong">POW_HALF_SER</span>
+<DD>
+<pre>
+⊢ (λn. (1 / 2) pow (n + 1)) sums 1
+</pre>
+
+<DT><span class="strong">POS_SUMMABLE</span>
+<DD>
+<pre>
+⊢ ∀f. (∀n. 0 ≤ f n) ∧ (∃x. ∀n. sum (0,n) f ≤ x) ⇒ summable f
+</pre>
+
+<DT><span class="strong">ONE_MINUS_HALF</span>
+<DD>
+<pre>
+⊢ 1 − 1 / 2 = 1 / 2
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_SMALL_SQUARE</span>
+<DD>
+<pre>
+⊢ ∀f k.
+      BIJ f 𝕌(:num) (𝕌(:num) × 𝕌(:num)) ⇒
+      ∃N. count k × count k ⊆ IMAGE f (count N)
+</pre>
+
+<DT><span class="strong">NUM_2D_BIJ_BIG_SQUARE</span>
+<DD>
+<pre>
+⊢ ∀f N.
+      BIJ f 𝕌(:num) (𝕌(:num) × 𝕌(:num)) ⇒
+      ∃k. IMAGE f (count N) ⊆ count k × count k
+</pre>
+
+<DT><span class="strong">NEST_LEMMA_UNIQ</span>
+<DD>
+<pre>
+⊢ ∀f g.
+      (∀n. f (SUC n) ≥ f n) ∧ (∀n. g (SUC n) ≤ g n) ∧ (∀n. f n ≤ g n) ∧
+      (λn. f n − g n) --> 0 ⇒
+      ∃l. ((∀n. f n ≤ l) ∧ f --> l) ∧ (∀n. l ≤ g n) ∧ g --> l
+</pre>
+
+<DT><span class="strong">NEST_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀f g.
+      (∀n. f (SUC n) ≥ f n) ∧ (∀n. g (SUC n) ≤ g n) ∧ (∀n. f n ≤ g n) ⇒
+      ∃l m. l ≤ m ∧ ((∀n. f n ≤ l) ∧ f --> l) ∧ (∀n. m ≤ g n) ∧ g --> m
+</pre>
+
+<DT><span class="strong">MONO_SUC</span>
+<DD>
+<pre>
+⊢ ∀f. mono f ⇔ (∀n. f (SUC n) ≥ f n) ∨ ∀n. f (SUC n) ≤ f n
+</pre>
+
+<DT><span class="strong">mono_increasing_suc</span>
+<DD>
+<pre>
+⊢ ∀f. mono_increasing f ⇔ ∀n. f n ≤ f (SUC n)
+</pre>
+
+<DT><span class="strong">mono_increasing_converges_to_sup</span>
+<DD>
+<pre>
+⊢ ∀f r. mono_increasing f ∧ f --> r ⇒ (r = sup (IMAGE f 𝕌(:num)))
+</pre>
+
+<DT><span class="strong">mono_decreasing_suc</span>
+<DD>
+<pre>
+⊢ ∀f. mono_decreasing f ⇔ ∀n. f (SUC n) ≤ f n
+</pre>
+
+<DT><span class="strong">MAX_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀s N. ∃k. ∀n. n < N ⇒ abs (s n) < k
+</pre>
+
+<DT><span class="strong">MAX_LE_X</span>
+<DD>
+<pre>
+⊢ ∀m n k. MAX m n ≤ k ⇔ m ≤ k ∧ n ≤ k
+</pre>
+
+<DT><span class="strong">LT_SUC</span>
+<DD>
+<pre>
+⊢ ∀a b. a < SUC b ⇔ a < b ∨ (a = b)
+</pre>
+
+<DT><span class="strong">LE_SUC</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ SUC b ⇔ a ≤ b ∨ (a = SUC b)
+</pre>
+
+<DT><span class="strong">LE_SEQ_IMP_LE_LIM</span>
+<DD>
+<pre>
+⊢ ∀x y f. (∀n. x ≤ f n) ∧ f --> y ⇒ x ≤ y
+</pre>
+
+<DT><span class="strong">K_PARTIAL</span>
+<DD>
+<pre>
+⊢ ∀x. K x = (λz. x)
+</pre>
+
+<DT><span class="strong">INCREASING_SEQ</span>
+<DD>
+<pre>
+⊢ ∀f l.
+      (∀n. f n ≤ f (SUC n)) ∧ (∀n. f n ≤ l) ∧ (∀e. 0 < e ⇒ ∃n. l < f n + e) ⇒
+      f --> l
+</pre>
+
+<DT><span class="strong">HALF_POS</span>
+<DD>
+<pre>
+⊢ 0 < 1 / 2
+</pre>
+
+<DT><span class="strong">HALF_LT_1</span>
+<DD>
+<pre>
+⊢ 1 / 2 < 1
+</pre>
+
+<DT><span class="strong">HALF_CANCEL</span>
+<DD>
+<pre>
+⊢ 2 * (1 / 2) = 1
+</pre>
+
+<DT><span class="strong">GP_FINITE</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 1 ⇒ ∀n. sum (0,n) (λn. x pow n) = (x pow n − 1) / (x − 1)
+</pre>
+
+<DT><span class="strong">GP</span>
+<DD>
+<pre>
+⊢ ∀x. abs x < 1 ⇒ (λn. x pow n) sums (1 − x)⁻¹
+</pre>
+
+<DT><span class="strong">BOLZANO_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∀a b c. a ≤ b ∧ b ≤ c ∧ P (a,b) ∧ P (b,c) ⇒ P (a,c)) ∧
+      (∀x. ∃d. 0 < d ∧ ∀a b. a ≤ x ∧ x ≤ b ∧ b − a < d ⇒ P (a,b)) ⇒
+      ∀a b. a ≤ b ⇒ P (a,b)
+</pre>
+
+<DT><span class="strong">ABS_NEG_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀c. c ≤ 0 ⇒ ∀x y. abs x ≤ c * abs y ⇒ (x = 0)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

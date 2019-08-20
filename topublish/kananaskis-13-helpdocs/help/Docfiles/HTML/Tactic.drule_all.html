@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactic.drule_all</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>drule_all : thm -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactic.html">Tactic</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Attempts to discharge all of a theorem&rsquo;s antecedents from assumptions</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is a theorem with a conclusion that is a (possibly universally
+quantified) implication (or negation), the theorem-tactic </SPAN><SPAN class = "BRKT">drule_all</SPAN><SPAN class = "TEXT">
+(implicitly) normalises it have form
+</SPAN><DIV class = "XMPL"><pre>
+    !v1 .. vn. P1 ==&gt; (P2 ==&gt; (P3 ==&gt; ... Q)...)
+</pre></DIV>
+<SPAN class = "TEXT">
+where each </SPAN><SPAN class = "BRKT">Pi</SPAN><SPAN class = "TEXT"> is not a conjunction. (In other words, </SPAN><SPAN class = "BRKT">P&nbsp;/\&nbsp;Q&nbsp;==&gt;&nbsp;R</SPAN><SPAN class = "TEXT">
+is normalised to </SPAN><SPAN class = "BRKT">P&nbsp;==&gt;&nbsp;(Q&nbsp;==&gt;&nbsp;R)</SPAN><SPAN class = "TEXT">.) An application of </SPAN><SPAN class = "BRKT">drule_all&nbsp;th</SPAN><SPAN class = "TEXT">
+to a goal then attempts to find a consistent instantiation so that all
+of the </SPAN><SPAN class = "BRKT">Pi</SPAN><SPAN class = "TEXT"> antecedents can be discharged by appeal to the goal&rsquo;s
+assumptions. If this repeated instantiation and use of </SPAN><SPAN class = "BRKT">MP</SPAN><SPAN class = "TEXT"> is
+possible, then the (instantiated) conclusion </SPAN><SPAN class = "BRKT">Q</SPAN><SPAN class = "TEXT"> is added to the goal
+with the </SPAN><SPAN class = "BRKT">MP_TAC</SPAN><SPAN class = "TEXT"> </SPAN><SPAN class = "BRKT">thm_tactic</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">When finding assumptions, those that have been most recently added to
+the assumption list will be preferred.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An invocation of </SPAN><SPAN class = "BRKT">drule_all&nbsp;th</SPAN><SPAN class = "TEXT"> can only fail when applied to a goal.
+It can then fail if </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is not an implication, or if all of </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">&rsquo;s
+implications cannot be eliminated by matching against the goal&rsquo;s
+assumptions.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">LESS_LESS_EQ_TRANS</SPAN><SPAN class = "TEXT"> theorem states:
+</SPAN><DIV class = "XMPL"><pre>
+   !m n p. m &lt; n /\ n &lt;= p ==&gt; m &lt; p
+</pre></DIV>
+<SPAN class = "TEXT">
+Then:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; drule_all arithmeticTheory.LESS_LESS_EQ_TRANS
+      ([“x &lt; w”, “1 &lt; x”, “z &lt;= y”, “x &lt;= z”, “y &lt; z”], “P:bool”);
+   val it =
+      ([([“x &lt; w”, “1 &lt; x”, “z &lt;= y”, “x &lt;= z”, “y &lt; z”],
+         “1 &lt; z ==&gt; P”)], fn): goal list * validation
+</pre></DIV>
+<SPAN class = "TEXT">
+Note how the other possible instance of the theorem (chaining </SPAN><SPAN class = "BRKT">y&nbsp;&lt;&nbsp;z</SPAN><SPAN class = "TEXT">
+and </SPAN><SPAN class = "BRKT">z&nbsp;&lt;=&nbsp;y</SPAN><SPAN class = "TEXT">) is not found.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The variant </SPAN><SPAN class = "BRKT">dxrule_all</SPAN><SPAN class = "TEXT"> removes used assumptions from the assumption
+list as they resolve against the theorem. The variant </SPAN><SPAN class = "BRKT">drule_all_then</SPAN><SPAN class = "TEXT">
+allows a continuation other than </SPAN><SPAN class = "BRKT">MP_TAC</SPAN><SPAN class = "TEXT"> to be used. The variant
+</SPAN><SPAN class = "BRKT">dxrule_all_then</SPAN><SPAN class = "TEXT"> combines both.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactic.drule.html">drule</A>,
+<A HREF = "Tactic.IMP_RES_TAC.html">IMP_RES_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

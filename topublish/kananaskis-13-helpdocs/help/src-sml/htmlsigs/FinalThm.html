@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure FinalThm</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure FinalThm</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/prekernel/FinalThm.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature FinalThm =
+<a name="line2"></a>sig
+<a name="line3"></a>  type <a href="../../Docfiles/HTML/Thm.thm.html">thm</a>
+<a name="line4"></a>  type <a href="../../Docfiles/HTML/Thm.tag.html">tag</a>
+<a name="line5"></a>  type term
+<a name="line6"></a>  type hol_type
+<a name="line7"></a>  type 'a set   = 'a HOLset.set
+<a name="line8"></a>  type depdisk  = (string * int) * ((string * int list) list)
+<a name="line9"></a>
+<a name="line10"></a>  val kernelid : string
+<a name="line11"></a>
+<a name="line12"></a>  (* Simple operations on the type of theorems *)
+<a name="line13"></a>
+<a name="line14"></a>  val <a href="../../Docfiles/HTML/Thm.tag.html">tag</a>           : thm -&gt; tag
+<a name="line15"></a>  val <a href="../../Docfiles/HTML/Thm.hyp.html">hyp</a>           : thm -&gt; term list
+<a name="line16"></a>  val hypset        : thm -&gt; term set
+<a name="line17"></a>  val <a href="../../Docfiles/HTML/Thm.concl.html">concl</a>         : thm -&gt; term
+<a name="line18"></a>  val <a href="../../Docfiles/HTML/Thm.dest_thm.html">dest_thm</a>      : thm -&gt; term list * term
+<a name="line19"></a>  val thm_frees     : thm -&gt; term list
+<a name="line20"></a>  val hyp_frees     : thm -&gt; term set
+<a name="line21"></a>  val hyp_tyvars    : thm -&gt; hol_type set
+<a name="line22"></a>
+<a name="line23"></a>
+<a name="line24"></a>  (* The primitive rules of inference *)
+<a name="line25"></a>
+<a name="line26"></a>  val <a href="../../Docfiles/HTML/Thm.ASSUME.html">ASSUME</a>        : term -&gt; thm
+<a name="line27"></a>  val <a href="../../Docfiles/HTML/Thm.REFL.html">REFL</a>          : term -&gt; thm
+<a name="line28"></a>  val <a href="../../Docfiles/HTML/Thm.BETA_CONV.html">BETA_CONV</a>     : term -&gt; thm
+<a name="line29"></a>  val <a href="../../Docfiles/HTML/Thm.ABS.html">ABS</a>           : term -&gt; thm -&gt; thm
+<a name="line30"></a>  val <a href="../../Docfiles/HTML/Thm.DISCH.html">DISCH</a>         : term -&gt; thm -&gt; thm
+<a name="line31"></a>  val <a href="../../Docfiles/HTML/Thm.MP.html">MP</a>            : thm -&gt; thm -&gt; thm
+<a name="line32"></a>  val <a href="../../Docfiles/HTML/Thm.SUBST.html">SUBST</a>         : (term,thm)Lib.subst -&gt; term -&gt; thm -&gt; thm
+<a name="line33"></a>  val <a href="../../Docfiles/HTML/Thm.INST_TYPE.html">INST_TYPE</a>     : (hol_type,hol_type)Lib.subst -&gt; thm -&gt; thm
+<a name="line34"></a>
+<a name="line35"></a>
+<a name="line36"></a>  (* Now some derivable-but-primitive rules of inference *)
+<a name="line37"></a>
+<a name="line38"></a>
+<a name="line39"></a>  (* Lambda calculus rules *)
+<a name="line40"></a>
+<a name="line41"></a>  val <a href="../../Docfiles/HTML/Thm.ALPHA.html">ALPHA</a>         : term -&gt; term -&gt; thm
+<a name="line42"></a>  val <a href="../../Docfiles/HTML/Thm.MK_COMB.html">MK_COMB</a>       : thm * thm -&gt; thm
+<a name="line43"></a>  val <a href="../../Docfiles/HTML/Thm.AP_TERM.html">AP_TERM</a>       : term -&gt; thm -&gt; thm
+<a name="line44"></a>  val <a href="../../Docfiles/HTML/Thm.AP_THM.html">AP_THM</a>        : thm -&gt; term -&gt; thm
+<a name="line45"></a>
+<a name="line46"></a>
+<a name="line47"></a>  (* Equality *)
+<a name="line48"></a>
+<a name="line49"></a>  val <a href="../../Docfiles/HTML/Thm.SYM.html">SYM</a>           : thm -&gt; thm
+<a name="line50"></a>  val <a href="../../Docfiles/HTML/Thm.TRANS.html">TRANS</a>         : thm -&gt; thm -&gt; thm
+<a name="line51"></a>  val <a href="../../Docfiles/HTML/Thm.EQ_MP.html">EQ_MP</a>         : thm -&gt; thm -&gt; thm
+<a name="line52"></a>  val <a href="../../Docfiles/HTML/Thm.EQ_IMP_RULE.html">EQ_IMP_RULE</a>   : thm -&gt; thm * thm
+<a name="line53"></a>
+<a name="line54"></a>
+<a name="line55"></a>  (* Free variable instantiation *)
+<a name="line56"></a>
+<a name="line57"></a>  val <a href="../../Docfiles/HTML/Thm.INST.html">INST</a>          : (term,term)Lib.subst -&gt; thm -&gt; thm
+<a name="line58"></a>
+<a name="line59"></a>
+<a name="line60"></a>  (* Universal quantification *)
+<a name="line61"></a>
+<a name="line62"></a>  val <a href="../../Docfiles/HTML/Thm.SPEC.html">SPEC</a>          : term -&gt; thm -&gt; thm
+<a name="line63"></a>  val <a href="../../Docfiles/HTML/Thm.GEN.html">GEN</a>           : term -&gt; thm -&gt; thm
+<a name="line64"></a>  val <a href="../../Docfiles/HTML/Thm.GENL.html">GENL</a>          : term list -&gt; thm -&gt; thm
+<a name="line65"></a>
+<a name="line66"></a>
+<a name="line67"></a>  (* Existential quantification *)
+<a name="line68"></a>
+<a name="line69"></a>  val <a href="../../Docfiles/HTML/Thm.EXISTS.html">EXISTS</a>        : term * term -&gt; thm -&gt; thm
+<a name="line70"></a>  val <a href="../../Docfiles/HTML/Thm.CHOOSE.html">CHOOSE</a>        : term * thm -&gt; thm -&gt; thm
+<a name="line71"></a>
+<a name="line72"></a>
+<a name="line73"></a>  (* Conjunction *)
+<a name="line74"></a>
+<a name="line75"></a>  val <a href="../../Docfiles/HTML/Thm.CONJ.html">CONJ</a>          : thm -&gt; thm -&gt; thm
+<a name="line76"></a>  val <a href="../../Docfiles/HTML/Thm.CONJUNCT1.html">CONJUNCT1</a>     : thm -&gt; thm
+<a name="line77"></a>  val <a href="../../Docfiles/HTML/Thm.CONJUNCT2.html">CONJUNCT2</a>     : thm -&gt; thm
+<a name="line78"></a>
+<a name="line79"></a>
+<a name="line80"></a>  (* Disjunction *)
+<a name="line81"></a>
+<a name="line82"></a>  val <a href="../../Docfiles/HTML/Thm.DISJ1.html">DISJ1</a>         : thm -&gt; term -&gt; thm
+<a name="line83"></a>  val <a href="../../Docfiles/HTML/Thm.DISJ2.html">DISJ2</a>         : term -&gt; thm -&gt; thm
+<a name="line84"></a>  val <a href="../../Docfiles/HTML/Thm.DISJ_CASES.html">DISJ_CASES</a>    : thm -&gt; thm -&gt; thm -&gt; thm
+<a name="line85"></a>
+<a name="line86"></a>
+<a name="line87"></a>  (* Negation *)
+<a name="line88"></a>
+<a name="line89"></a>  val <a href="../../Docfiles/HTML/Thm.NOT_INTRO.html">NOT_INTRO</a>     : thm -&gt; thm
+<a name="line90"></a>  val <a href="../../Docfiles/HTML/Thm.NOT_ELIM.html">NOT_ELIM</a>      : thm -&gt; thm
+<a name="line91"></a>  val <a href="../../Docfiles/HTML/Thm.CCONTR.html">CCONTR</a>        : term -&gt; thm -&gt; thm
+<a name="line92"></a>
+<a name="line93"></a>
+<a name="line94"></a>  (* Computing with explicit substitutions *)
+<a name="line95"></a>
+<a name="line96"></a>  val <a href="../../Docfiles/HTML/Thm.Beta.html">Beta</a>          : thm -&gt; thm
+<a name="line97"></a>  val Mk_comb       : thm -&gt; thm * thm * (thm -&gt; thm -&gt; thm)
+<a name="line98"></a>  val Mk_abs        : thm -&gt; term * thm * (thm -&gt; thm)
+<a name="line99"></a>  val <a href="../../Docfiles/HTML/Thm.Specialize.html">Specialize</a>    : term -&gt; thm -&gt; thm
+<a name="line100"></a>
+<a name="line101"></a>  (* Multiple binders *)
+<a name="line102"></a>
+<a name="line103"></a>  val <a href="../../Docfiles/HTML/Thm.GEN_ABS.html">GEN_ABS</a>       : term option -&gt; term list -&gt; thm -&gt; thm
+<a name="line104"></a>
+<a name="line105"></a>  (* Oracle invocation *)
+<a name="line106"></a>
+<a name="line107"></a>  val <a href="../../Docfiles/HTML/Thm.mk_thm.html">mk_thm</a>        : term list * term -&gt; thm
+<a name="line108"></a>  val <a href="../../Docfiles/HTML/Thm.mk_oracle_thm.html">mk_oracle_thm</a> : string -&gt; term list * term -&gt; thm
+<a name="line109"></a>  val mk_axiom_thm  : (string Nonce.t * term) -&gt; thm
+<a name="line110"></a>  val <a href="../../Docfiles/HTML/Thm.add_tag.html">add_tag</a>       : tag * thm -&gt; thm
+<a name="line111"></a>
+<a name="line112"></a>  (* definitional rules of inference *)
+<a name="line113"></a>  val prim_type_definition : {Thy : string, Tyop : string} * thm -&gt; thm
+<a name="line114"></a>  val prim_specification : string -&gt; string list -&gt; thm -&gt; thm
+<a name="line115"></a>  val gen_prim_specification : string -&gt; thm -&gt; string list * thm
+<a name="line116"></a>
+<a name="line117"></a>  (* Fetching theorems from disk *)
+<a name="line118"></a>
+<a name="line119"></a>  val disk_thm : (depdisk * string list) * term list -&gt; thm
+<a name="line120"></a>
+<a name="line121"></a>  (* Saving proof dependencies *)
+<a name="line122"></a>
+<a name="line123"></a>  val save_dep : string -&gt; thm -&gt; thm
+<a name="line124"></a>
+<a name="line125"></a>end;
+<a name="line126"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/prekernel/FinalThm.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

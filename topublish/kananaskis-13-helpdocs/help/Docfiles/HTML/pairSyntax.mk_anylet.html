@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>pairSyntax.mk_anylet</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>mk_anylet : (term * term) list * term -&gt; term</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/pairSyntax.html">pairSyntax</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Constructs arbitrary </SPAN><SPAN class = "BRKT">let</SPAN><SPAN class = "TEXT"> terms.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The invocation </SPAN><SPAN class = "BRKT">mk_anylet&nbsp;([(a1,b1),...,(an,bn)],N)</SPAN><SPAN class = "TEXT"> returns a term of the
+form </SPAN><SPAN class = "BRKT">`LET&nbsp;P&nbsp;Q`</SPAN><SPAN class = "TEXT">, which will prettyprint as </SPAN><SPAN class = "BRKT">let&nbsp;a1&nbsp;=&nbsp;b1&nbsp;and&nbsp;...&nbsp;and&nbsp;an&nbsp;=&nbsp;bn&nbsp;in&nbsp;N</SPAN><SPAN class = "TEXT">.
+The internal representation is equal to
+</SPAN><DIV class = "XMPL"><pre>
+    LET (...(LET (\an ...\a1. N) bn) ...) b1
+</pre></DIV>
+<SPAN class = "TEXT">
+Each </SPAN><SPAN class = "BRKT">ai</SPAN><SPAN class = "TEXT"> can be a varstruct (a single variable or a tuple of variables),
+or a function variable applied to a sequence of varstructs. In the usual case,
+only a single binding is made, i.e., </SPAN><SPAN class = "BRKT">mk_anylet&nbsp;([(a,b)],N)</SPAN><SPAN class = "TEXT">, and the result
+is equal to </SPAN><SPAN class = "BRKT">LET&nbsp;(\a.&nbsp;N)&nbsp;b</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the type of any </SPAN><SPAN class = "BRKT">ai</SPAN><SPAN class = "TEXT"> is not equal to the type of the corresponding </SPAN><SPAN class = "BRKT">bi</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- strip_comb (mk_anylet ([(Term`x`, Term`M`)], Term`N x`));
+&gt; val it = (`LET`, [`\x. N x`, `M`]) : term * term list
+
+- mk_anylet ([(``f (x:'a,y:'b):'c``, ``M:'c``), (``g (z:'c) :'d``, ``N:'d``)],
+             ``g (f (a:'a,b:'b):'c):'d`);
+&gt; val it = ``let f (x,y) = M and g z = N in g (f (a,b))`` : term
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Programming that involves manipulation of term syntax.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "boolSyntax.mk_let.html">mk_let</A>,
+<A HREF = "boolSyntax.dest_let.html">dest_let</A>,
+<A HREF = "boolSyntax.is_let.html">is_let</A>,
+<A HREF = "pairSyntax.list_mk_anylet.html">list_mk_anylet</A>,
+<A HREF = "pairSyntax.dest_anylet.html">dest_anylet</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

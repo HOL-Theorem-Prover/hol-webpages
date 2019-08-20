@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>boolSyntax.type_unify</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>type_unify : hol_type -&gt; hol_type -&gt; (hol_type,hol_type) subst</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/boolSyntax.html">boolSyntax</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Performs classical type unification.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Calculates a substitution </SPAN><SPAN class = "BRKT">theta</SPAN><SPAN class = "TEXT"> such that instantiating each of the arguments
+with </SPAN><SPAN class = "BRKT">theta</SPAN><SPAN class = "TEXT"> gives the same result type.</SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">type_unify&nbsp;ty1&nbsp;ty2</SPAN><SPAN class = "TEXT"> succeeds, then
+</SPAN><DIV class = "XMPL"><pre>
+    type_subst (type_unify ty1 ty2) ty1 = type_subst (type_unify ty1 ty2) ty2
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If no such substitution can be found. This could be due to incompatible type
+constructors, or the failing of an occurs check.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- let val ty1 = Type `:'a -&gt; 'b -&gt; 'a`
+      val ty2 = Type `:'a -&gt; 'b -&gt; 'b`
+  in
+     type_subst (type_unify ty1 ty2) ty1 = type_subst (type_unify ty1 ty2) ty2
+  end;
+&gt; val it = true : bool
+
+- let val alpha_list = Type `:'a list`
+  in
+     type_unify alpha alpha_list handle e =&gt; Raise e
+  end;
+
+  Exception raised at boolSyntax.type_unify:
+  occurs check
+  Exception-
+     HOL_ERR
+       {message = "occurs check", origin_function = "type_unify",
+        origin_structure = "boolSyntax"} raised
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">Note that attempting to use </SPAN><SPAN class = "BRKT">Type.match_type</SPAN><SPAN class = "TEXT"> in the first example
+results in immediate error, as it can only attempt to substitute the first
+argument to match the second:
+</SPAN><DIV class = "XMPL"><pre>
+- let val ty1 = Type `:'a -&gt; 'b -&gt; 'a`
+      val ty2 = Type `:'a -&gt; 'b -&gt; 'b`
+  in
+     match_type ty1 ty2 handle e =&gt; Raise e
+  end;
+
+  Exception raised at Type.raw_match_type:
+  double bind on type variable 'a
+  Exception-
+   HOL_ERR
+     {message = "double bind on type variable 'a", origin_function =
+      "raw_match_type", origin_structure = "Type"} raised
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "boolSyntax.sep_type_unify.html">sep_type_unify</A>,
+<A HREF = "Type.match_type.html">match_type</A>,
+<A HREF = "Type.type_subst.html">type_subst</A>,
+<A HREF = "Term.inst.html">inst</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

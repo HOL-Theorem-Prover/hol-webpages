@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure logrootTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure logrootTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/extra_theories/logrootScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature logrootTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#LOG-val">LOG</a> : thm
+<a name="line7"></a>    val <a href="#ROOT-val">ROOT</a> : thm
+<a name="line8"></a>    val <a href="#SQRTd_def-val">SQRTd_def</a> : thm
+<a name="line9"></a>    val <a href="#iSQRT0_def-val">iSQRT0_def</a> : thm
+<a name="line10"></a>    val <a href="#iSQRT1_def-val">iSQRT1_def</a> : thm
+<a name="line11"></a>    val <a href="#iSQRT2_def-val">iSQRT2_def</a> : thm
+<a name="line12"></a>    val <a href="#iSQRT3_def-val">iSQRT3_def</a> : thm
+<a name="line13"></a>  
+<a name="line14"></a>  (*  Theorems  *)
+<a name="line15"></a>    val <a href="#EXP_LE_ISO-val">EXP_LE_ISO</a> : thm
+<a name="line16"></a>    val <a href="#EXP_LT_ISO-val">EXP_LT_ISO</a> : thm
+<a name="line17"></a>    val <a href="#EXP_MUL-val">EXP_MUL</a> : thm
+<a name="line18"></a>    val <a href="#LE_EXP_ISO-val">LE_EXP_ISO</a> : thm
+<a name="line19"></a>    val <a href="#LOG_1-val">LOG_1</a> : thm
+<a name="line20"></a>    val <a href="#LOG_ADD-val">LOG_ADD</a> : thm
+<a name="line21"></a>    val <a href="#LOG_ADD1-val">LOG_ADD1</a> : thm
+<a name="line22"></a>    val <a href="#LOG_BASE-val">LOG_BASE</a> : thm
+<a name="line23"></a>    val <a href="#LOG_DIV-val">LOG_DIV</a> : thm
+<a name="line24"></a>    val <a href="#LOG_EQ_0-val">LOG_EQ_0</a> : thm
+<a name="line25"></a>    val <a href="#LOG_EXP-val">LOG_EXP</a> : thm
+<a name="line26"></a>    val <a href="#LOG_LE_MONO-val">LOG_LE_MONO</a> : thm
+<a name="line27"></a>    val <a href="#LOG_MOD-val">LOG_MOD</a> : thm
+<a name="line28"></a>    val <a href="#LOG_MULT-val">LOG_MULT</a> : thm
+<a name="line29"></a>    val <a href="#LOG_ROOT-val">LOG_ROOT</a> : thm
+<a name="line30"></a>    val <a href="#LOG_RWT-val">LOG_RWT</a> : thm
+<a name="line31"></a>    val <a href="#LOG_UNIQUE-val">LOG_UNIQUE</a> : thm
+<a name="line32"></a>    val <a href="#LOG_add_digit-val">LOG_add_digit</a> : thm
+<a name="line33"></a>    val <a href="#LOG_exists-val">LOG_exists</a> : thm
+<a name="line34"></a>    val <a href="#LT_EXP_ISO-val">LT_EXP_ISO</a> : thm
+<a name="line35"></a>    val <a href="#ROOT_COMPUTE-val">ROOT_COMPUTE</a> : thm
+<a name="line36"></a>    val <a href="#ROOT_DIV-val">ROOT_DIV</a> : thm
+<a name="line37"></a>    val <a href="#ROOT_LE_MONO-val">ROOT_LE_MONO</a> : thm
+<a name="line38"></a>    val <a href="#ROOT_UNIQUE-val">ROOT_UNIQUE</a> : thm
+<a name="line39"></a>    val <a href="#ROOT_exists-val">ROOT_exists</a> : thm
+<a name="line40"></a>    val <a href="#numeral_root2-val">numeral_root2</a> : thm
+<a name="line41"></a>    val <a href="#numeral_sqrt-val">numeral_sqrt</a> : thm
+<a name="line42"></a>  
+<a name="line43"></a>  val logroot_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line44"></a>(*
+   [basicSize] Parent theory of "logroot"
+   
+   [while] Parent theory of "logroot"
+   
+   [<a name="LOG-val"><b>LOG</b></a>]  Definition
+      
+      ⊢ ∀a n. 1 &lt; a ∧ 0 &lt; n ⇒ a ** LOG a n ≤ n ∧ n &lt; a ** SUC (LOG a n)
+   
+   [<a name="ROOT-val"><b>ROOT</b></a>]  Definition
+      
+      ⊢ ∀r n. 0 &lt; r ⇒ ROOT r n ** r ≤ n ∧ n &lt; SUC (ROOT r n) ** r
+   
+   [<a name="SQRTd_def-val"><b>SQRTd_def</b></a>]  Definition
+      
+      ⊢ ∀n. SQRTd n = (ROOT 2 n,n − ROOT 2 n * ROOT 2 n)
+   
+   [<a name="iSQRT0_def-val"><b>iSQRT0_def</b></a>]  Definition
+      
+      ⊢ ∀n.
+            iSQRT0 n =
+            (let
+               p = SQRTd n ;
+               d = SND p − FST p
+             in
+               if d = 0 then (2 * FST p,4 * SND p)
+               else (SUC (2 * FST p),4 * d − 1))
+   
+   [<a name="iSQRT1_def-val"><b>iSQRT1_def</b></a>]  Definition
+      
+      ⊢ ∀n.
+            iSQRT1 n =
+            (let
+               p = SQRTd n ;
+               d = SUC (SND p) − FST p
+             in
+               if d = 0 then (2 * FST p,SUC (4 * SND p))
+               else (SUC (2 * FST p),4 * (d − 1)))
+   
+   [<a name="iSQRT2_def-val"><b>iSQRT2_def</b></a>]  Definition
+      
+      ⊢ ∀n.
+            iSQRT2 n =
+            (let
+               p = SQRTd n ;
+               d = 2 * FST p ;
+               c = SUC (2 * SND p) ;
+               e = c − d
+             in
+               if e = 0 then (d,2 * c) else (SUC d,2 * e − 1))
+   
+   [<a name="iSQRT3_def-val"><b>iSQRT3_def</b></a>]  Definition
+      
+      ⊢ ∀n.
+            iSQRT3 n =
+            (let
+               p = SQRTd n ;
+               d = 2 * FST p ;
+               c = SUC (2 * SND p) ;
+               e = SUC c − d
+             in
+               if e = 0 then (d,SUC (2 * c)) else (SUC d,2 * (e − 1)))
+   
+   [<a name="EXP_LE_ISO-val"><b>EXP_LE_ISO</b></a>]  Theorem
+      
+      ⊢ ∀a b r. 0 &lt; r ⇒ (a ≤ b ⇔ a ** r ≤ b ** r)
+   
+   [<a name="EXP_LT_ISO-val"><b>EXP_LT_ISO</b></a>]  Theorem
+      
+      ⊢ ∀a b r. 0 &lt; r ⇒ (a &lt; b ⇔ a ** r &lt; b ** r)
+   
+   [<a name="EXP_MUL-val"><b>EXP_MUL</b></a>]  Theorem
+      
+      ⊢ ∀a b c. (a ** b) ** c = a ** (b * c)
+   
+   [<a name="LE_EXP_ISO-val"><b>LE_EXP_ISO</b></a>]  Theorem
+      
+      ⊢ ∀e a b. 1 &lt; e ⇒ (a ≤ b ⇔ e ** a ≤ e ** b)
+   
+   [<a name="LOG_1-val"><b>LOG_1</b></a>]  Theorem
+      
+      ⊢ ∀a. 1 &lt; a ⇒ LOG a 1 = 0
+   
+   [<a name="LOG_ADD-val"><b>LOG_ADD</b></a>]  Theorem
+      
+      ⊢ ∀a b c. 1 &lt; a ∧ b &lt; a ** c ⇒ LOG a (b + a ** c) = c
+   
+   [<a name="LOG_ADD1-val"><b>LOG_ADD1</b></a>]  Theorem
+      
+      ⊢ ∀n a b.
+            0 &lt; n ∧ 1 &lt; a ∧ 0 &lt; b ⇒
+            LOG a (a ** SUC n * b) = SUC (LOG a (a ** n * b))
+   
+   [<a name="LOG_BASE-val"><b>LOG_BASE</b></a>]  Theorem
+      
+      ⊢ ∀a. 1 &lt; a ⇒ LOG a a = 1
+   
+   [<a name="LOG_DIV-val"><b>LOG_DIV</b></a>]  Theorem
+      
+      ⊢ ∀a x. 1 &lt; a ∧ a ≤ x ⇒ LOG a x = 1 + LOG a (x DIV a)
+   
+   [<a name="LOG_EQ_0-val"><b>LOG_EQ_0</b></a>]  Theorem
+      
+      ⊢ ∀a b. 1 &lt; a ∧ 0 &lt; b ⇒ (LOG a b = 0 ⇔ b &lt; a)
+   
+   [<a name="LOG_EXP-val"><b>LOG_EXP</b></a>]  Theorem
+      
+      ⊢ ∀n a b. 1 &lt; a ∧ 0 &lt; b ⇒ LOG a (a ** n * b) = n + LOG a b
+   
+   [<a name="LOG_LE_MONO-val"><b>LOG_LE_MONO</b></a>]  Theorem
+      
+      ⊢ ∀a x y. 1 &lt; a ∧ 0 &lt; x ⇒ x ≤ y ⇒ LOG a x ≤ LOG a y
+   
+   [<a name="LOG_MOD-val"><b>LOG_MOD</b></a>]  Theorem
+      
+      ⊢ ∀n. 0 &lt; n ⇒ n = 2 ** LOG 2 n + n MOD 2 ** LOG 2 n
+   
+   [<a name="LOG_MULT-val"><b>LOG_MULT</b></a>]  Theorem
+      
+      ⊢ ∀b x. 1 &lt; b ∧ 0 &lt; x ⇒ LOG b (b * x) = SUC (LOG b x)
+   
+   [<a name="LOG_ROOT-val"><b>LOG_ROOT</b></a>]  Theorem
+      
+      ⊢ ∀a x r. 1 &lt; a ∧ 0 &lt; x ∧ 0 &lt; r ⇒ LOG a (ROOT r x) = LOG a x DIV r
+   
+   [<a name="LOG_RWT-val"><b>LOG_RWT</b></a>]  Theorem
+      
+      ⊢ ∀m n.
+            1 &lt; m ∧ 0 &lt; n ⇒
+            LOG m n = if n &lt; m then 0 else SUC (LOG m (n DIV m))
+   
+   [<a name="LOG_UNIQUE-val"><b>LOG_UNIQUE</b></a>]  Theorem
+      
+      ⊢ ∀a n p. a ** p ≤ n ∧ n &lt; a ** SUC p ⇒ LOG a n = p
+   
+   [<a name="LOG_add_digit-val"><b>LOG_add_digit</b></a>]  Theorem
+      
+      ⊢ ∀b x y. 1 &lt; b ∧ 0 &lt; y ∧ x &lt; b ⇒ LOG b (b * y + x) = SUC (LOG b y)
+   
+   [<a name="LOG_exists-val"><b>LOG_exists</b></a>]  Theorem
+      
+      ⊢ ∃f. ∀a n. 1 &lt; a ∧ 0 &lt; n ⇒ a ** f a n ≤ n ∧ n &lt; a ** SUC (f a n)
+   
+   [<a name="LT_EXP_ISO-val"><b>LT_EXP_ISO</b></a>]  Theorem
+      
+      ⊢ ∀e a b. 1 &lt; e ⇒ (a &lt; b ⇔ e ** a &lt; e ** b)
+   
+   [<a name="ROOT_COMPUTE-val"><b>ROOT_COMPUTE</b></a>]  Theorem
+      
+      ⊢ ∀r n.
+            0 &lt; r ⇒
+            ROOT r 0 = 0 ∧
+            ROOT r n =
+            (let
+               x = 2 * ROOT r (n DIV 2 ** r)
+             in
+               if n &lt; SUC x ** r then x else SUC x)
+   
+   [<a name="ROOT_DIV-val"><b>ROOT_DIV</b></a>]  Theorem
+      
+      ⊢ ∀r x y. 0 &lt; r ∧ 0 &lt; y ⇒ ROOT r x DIV y = ROOT r (x DIV y ** r)
+   
+   [<a name="ROOT_LE_MONO-val"><b>ROOT_LE_MONO</b></a>]  Theorem
+      
+      ⊢ ∀r x y. 0 &lt; r ⇒ x ≤ y ⇒ ROOT r x ≤ ROOT r y
+   
+   [<a name="ROOT_UNIQUE-val"><b>ROOT_UNIQUE</b></a>]  Theorem
+      
+      ⊢ ∀r n p. p ** r ≤ n ∧ n &lt; SUC p ** r ⇒ ROOT r n = p
+   
+   [<a name="ROOT_exists-val"><b>ROOT_exists</b></a>]  Theorem
+      
+      ⊢ ∀r n. 0 &lt; r ⇒ ∃rt. rt ** r ≤ n ∧ n &lt; SUC rt ** r
+   
+   [<a name="numeral_root2-val"><b>numeral_root2</b></a>]  Theorem
+      
+      ⊢ ROOT 2 (NUMERAL n) = FST (SQRTd n)
+   
+   [<a name="numeral_sqrt-val"><b>numeral_sqrt</b></a>]  Theorem
+      
+      ⊢ SQRTd ZERO = (0,0) ∧ SQRTd (BIT1 ZERO) = (1,0) ∧
+        SQRTd (BIT2 ZERO) = (1,1) ∧ SQRTd (BIT1 (BIT1 n)) = iSQRT3 n ∧
+        SQRTd (BIT2 (BIT1 n)) = iSQRT0 (SUC n) ∧
+        SQRTd (BIT1 (BIT2 n)) = iSQRT1 (SUC n) ∧
+        SQRTd (BIT2 (BIT2 n)) = iSQRT2 (SUC n) ∧
+        SQRTd (SUC (BIT1 (BIT1 n))) = iSQRT0 (SUC n) ∧
+        SQRTd (SUC (BIT2 (BIT1 n))) = iSQRT1 (SUC n) ∧
+        SQRTd (SUC (BIT1 (BIT2 n))) = iSQRT2 (SUC n) ∧
+        SQRTd (SUC (BIT2 (BIT2 n))) = iSQRT3 (SUC n)
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/extra_theories/logrootScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

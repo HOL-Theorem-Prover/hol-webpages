@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactical.SUBGOAL_THEN</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>SUBGOAL_THEN : term -&gt; thm_tactic -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactical.html">Tactical</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Allows the user to introduce a lemma.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The user proposes a lemma and is then invited to prove it under the
+current assumptions.  The lemma is then used with the </SPAN><SPAN class = "BRKT">thm_tactic</SPAN><SPAN class = "TEXT"> to
+simplify the goal.  That is, if
+</SPAN><DIV class = "XMPL"><pre>
+    A1 ?- t1
+   ==========  f (u |- u)
+    A2 ?- t2
+</pre></DIV>
+<SPAN class = "TEXT">
+then
+</SPAN><DIV class = "XMPL"><pre>
+         A1 ?- t1
+   ====================  SUBGOAL_THEN u f
+    A1 ?- u   A2 ?- t2
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">Typically </SPAN><SPAN class = "BRKT">f&nbsp;(u&nbsp;|-&nbsp;u)</SPAN><SPAN class = "TEXT"> will be an invalid tactic because it would
+return a validation function which generated the theorem </SPAN><SPAN class = "BRKT">A1,u&nbsp;|-&nbsp;t1</SPAN><SPAN class = "TEXT">
+from the theorem </SPAN><SPAN class = "BRKT">A2&nbsp;|-&nbsp;t2</SPAN><SPAN class = "TEXT">.  Nonetheless, the tactic
+</SPAN><SPAN class = "BRKT">SUBGOAL_THEN&nbsp;u&nbsp;f</SPAN><SPAN class = "TEXT"> is valid because of the extra sub-goal where </SPAN><SPAN class = "BRKT">u</SPAN><SPAN class = "TEXT">
+must be proved.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBGOAL_THEN</SPAN><SPAN class = "TEXT"> will fail if an attempt is made to use a
+nonboolean term as a lemma.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When combined with </SPAN><SPAN class = "BRKT">rotate</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">SUBGOAL_THEN</SPAN><SPAN class = "TEXT"> allows the user to defer
+some part of a proof and to continue with another part.
+</SPAN><SPAN class = "BRKT">SUBGOAL_THEN</SPAN><SPAN class = "TEXT"> is most convenient when the tactic solves the original
+goal, leaving only the subgoal.  For example, suppose the user wishes
+to prove the goal
+</SPAN><DIV class = "XMPL"><pre>
+   {n = SUC m} ?- (0 = n) ==&gt; t
+</pre></DIV>
+<SPAN class = "TEXT">
+Using </SPAN><SPAN class = "BRKT">SUBGOAL_THEN</SPAN><SPAN class = "TEXT"> to focus on the case in which </SPAN><SPAN class = "BRKT">~(n&nbsp;=&nbsp;0)</SPAN><SPAN class = "TEXT">,
+rewriting establishes it truth, leaving only the proof that </SPAN><SPAN class = "BRKT">~(n&nbsp;=&nbsp;0)</SPAN><SPAN class = "TEXT">.
+That is,
+</SPAN><DIV class = "XMPL"><pre>
+   SUBGOAL_THEN (Term `~(0 = n)`) (fn th =&gt; REWRITE_TAC [th])
+</pre></DIV>
+<SPAN class = "TEXT">
+generates the following subgoals:
+</SPAN><DIV class = "XMPL"><pre>
+   {n = SUC m} ?-  ~(0 = n)
+   ?- T
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Some users may expect the generated tactic to be </SPAN><SPAN class = "BRKT">f&nbsp;(A1&nbsp;|-&nbsp;u)</SPAN><SPAN class = "TEXT">, rather
+than </SPAN><SPAN class = "BRKT">f&nbsp;(u&nbsp;|-&nbsp;u)</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

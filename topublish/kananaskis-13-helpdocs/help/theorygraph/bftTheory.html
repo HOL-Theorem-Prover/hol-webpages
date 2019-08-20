@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: bft</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "bft"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "dirGraphTheory.html"><span class="strong">dirGraph</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">BFT</span>
+    <td>
+    :(β -> β list) -> (β -> α -> α) -> β list -> β list -> α -> α
+    <tr><td>
+    <span class="strong">Rel</span>
+    <td>
+    :(α -> β list) # γ # α list # δ list # ε -> num # num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">Rel_def</span>
+<DD>
+<pre>
+⊢ ∀G f seen fringe acc.
+      Rel (G,f,seen,fringe,acc) =
+      (CARD (Parents G DIFF LIST_TO_SET seen),LENGTH fringe)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">BFT_REACH_THM</span>
+<DD>
+<pre>
+⊢ ∀G fringe.
+      FINITE (Parents G) ⇒
+      ∀x. x ∈ REACH_LIST G fringe ⇔ MEM x (BFT G CONS [] fringe [])
+</pre>
+
+<DT><span class="strong">BFT_REACH_2</span>
+<DD>
+<pre>
+⊢ ∀G f seen fringe acc x.
+      FINITE (Parents G) ∧ (f = CONS) ∧
+      x ∈ REACH_LIST (EXCLUDE G (LIST_TO_SET seen)) fringe ∧ ¬MEM x seen ⇒
+      MEM x (BFT G f seen fringe acc)
+</pre>
+
+<DT><span class="strong">BFT_REACH_1</span>
+<DD>
+<pre>
+⊢ ∀G f seen fringe acc.
+      FINITE (Parents G) ∧ (f = CONS) ⇒
+      ∀x.
+          MEM x (BFT G f seen fringe acc) ⇒
+          x ∈ REACH_LIST G fringe ∨ MEM x acc
+</pre>
+
+<DT><span class="strong">BFT_ind</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∀G f seen h t acc.
+           P G f seen [] acc ∧
+           ((FINITE (Parents G) ∧ ¬MEM h seen ⇒
+             P G f (h::seen) (t ++ G h) (f h acc)) ∧
+            (FINITE (Parents G) ∧ MEM h seen ⇒ P G f seen t acc) ⇒
+            P G f seen (h::t) acc)) ⇒
+      ∀v v1 v2 v3 v4. P v v1 v2 v3 v4
+</pre>
+
+<DT><span class="strong">BFT_FOLD</span>
+<DD>
+<pre>
+⊢ ∀G f seen fringe acc.
+      FINITE (Parents G) ⇒
+      (BFT G f seen fringe acc = FOLDR f acc (BFT G CONS seen fringe []))
+</pre>
+
+<DT><span class="strong">BFT_def</span>
+<DD>
+<pre>
+⊢ FINITE (Parents G) ⇒
+  (BFT G f seen [] acc = acc) ∧
+  (BFT G f seen (h::t) acc =
+   if MEM h seen then BFT G f seen t acc
+   else BFT G f (h::seen) (t ++ G h) (f h acc))
+</pre>
+
+<DT><span class="strong">BFT_CONS</span>
+<DD>
+<pre>
+⊢ ∀G f seen fringe acc a b.
+      FINITE (Parents G) ∧ (f = CONS) ∧ (acc = a ++ b) ⇒
+      (BFT G f seen fringe acc = BFT G f seen fringe a ++ b)
+</pre>
+
+<DT><span class="strong">BFT_ALL_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀G seen fringe.
+      FINITE (Parents G) ⇒ ALL_DISTINCT (BFT G CONS seen fringe [])
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

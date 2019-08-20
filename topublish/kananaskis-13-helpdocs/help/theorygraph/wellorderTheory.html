@@ -1,0 +1,958 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: wellorder</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "wellorder"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "set_relationTheory.html"><span class="strong">set_relation</span></a>&nbsp;&nbsp;
+    <a href = "indexedListsTheory.html"><span class="strong">indexedLists</span></a>&nbsp;&nbsp;
+    <a href = "patternMatchesTheory.html"><span class="strong">patternMatches</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">wellorder</span>
+    <td>
+    1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">ADD1</span>
+    <td>
+    :α -> α wellorder -> α wellorder
+    <tr><td>
+    <span class="strong">Chain</span>
+    <td>
+    :(α # α -> bool) -> (α -> bool) -> bool
+    <tr><td> <span class="strong">elsOf</span> <td> :α wellorder -> α -> bool
+    <tr><td> <span class="strong">finite</span> <td> :α wellorder -> bool
+    <tr><td> <span class="strong">fl</span> <td> :(α # α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">fromNatWO</span>
+    <td>
+    :num -> (num + α) wellorder
+    <tr><td>
+    <span class="strong">iseg</span>
+    <td>
+    :α wellorder -> α -> α -> bool
+    <tr><td>
+    <span class="strong">orderiso</span>
+    <td>
+    :α wellorder -> β wellorder -> bool
+    <tr><td>
+    <span class="strong">orderlt</span>
+    <td>
+    :α wellorder -> β wellorder -> bool
+    <tr><td> <span class="strong">poset</span> <td> :(α # α -> bool) -> bool
+    <tr><td>
+    <span class="strong">remove</span>
+    <td>
+    :α -> α wellorder -> α wellorder
+    <tr><td> <span class="strong">wZERO</span> <td> :α wellorder
+    <tr><td>
+    <span class="strong">wellfounded</span>
+    <td>
+    :(α # α -> bool) -> bool
+    <tr><td>
+    <span class="strong">wellorder</span>
+    <td>
+    :(α # α -> bool) -> bool
+    <tr><td>
+    <span class="strong">wellorder_ABS</span>
+    <td>
+    :(α # α -> bool) -> α wellorder
+    <tr><td>
+    <span class="strong">wellorder_REP</span>
+    <td>
+    :α wellorder -> α # α -> bool
+    <tr><td>
+    <span class="strong">wleast</span>
+    <td>
+    :α wellorder -> (α -> bool) -> α option
+    <tr><td>
+    <span class="strong">wo2wo</span>
+    <td>
+    :α wellorder -> β wellorder -> α -> β option
+    <tr><td>
+    <span class="strong">wobound</span>
+    <td>
+    :α -> α wellorder -> α wellorder
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">wZERO_def</span>
+<DD>
+<pre>
+⊢ wZERO = mkWO ∅
+</pre>
+
+<DT><span class="strong">wobound_def</span>
+<DD>
+<pre>
+⊢ ∀x w. wobound x w = mkWO (rrestrict (destWO w) (iseg w x))
+</pre>
+
+<DT><span class="strong">wo2wo_def</span>
+<DD>
+<pre>
+⊢ ∀w1 w2.
+      wo2wo w1 w2 =
+      WFREC (λx y. (x,y) WIN w1)
+        (λf x.
+             (let
+                s0 = IMAGE f (iseg w1 x) ;
+                s1 = IMAGE THE (s0 DELETE NONE)
+              in
+                if s1 = elsOf w2 then NONE else wleast w2 s1))
+</pre>
+
+<DT><span class="strong">wleast_def</span>
+<DD>
+<pre>
+⊢ ∀w s.
+      wleast w s =
+      some x.
+          x ∈ elsOf w ∧ x ∉ s ∧ ∀y. y ∈ elsOf w ∧ y ∉ s ∧ x ≠ y ⇒ (x,y) WIN w
+</pre>
+
+<DT><span class="strong">wellorder_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION wellorder rep
+</pre>
+
+<DT><span class="strong">wellorder_def</span>
+<DD>
+<pre>
+⊢ ∀R.
+      wellorder R ⇔
+      Wellfounded (strict R) ∧ linear_order R (domain R ∪ range R) ∧
+      reflexive R (domain R ∪ range R)
+</pre>
+
+<DT><span class="strong">wellorder_ABSREP</span>
+<DD>
+<pre>
+⊢ (∀a. mkWO (destWO a) = a) ∧ ∀r. wellorder r ⇔ (destWO (mkWO r) = r)
+</pre>
+
+<DT><span class="strong">wellfounded_def</span>
+<DD>
+<pre>
+⊢ ∀R.
+      Wellfounded R ⇔
+      ∀s. (∃w. w ∈ s) ⇒ ∃min. min ∈ s ∧ ∀w. (w,min) ∈ R ⇒ w ∉ s
+</pre>
+
+<DT><span class="strong">remove_def</span>
+<DD>
+<pre>
+⊢ ∀e w. remove e w = mkWO {(x,y) | x ≠ e ∧ y ≠ e ∧ (x,y) WLE w}
+</pre>
+
+<DT><span class="strong">poset</span>
+<DD>
+<pre>
+⊢ ∀l.
+      poset l ⇔
+      (∀x. fl l x ⇒ l (x,x)) ∧ (∀x y z. l (x,y) ∧ l (y,z) ⇒ l (x,z)) ∧
+      ∀x y. l (x,y) ∧ l (y,x) ⇒ (x = y)
+</pre>
+
+<DT><span class="strong">orderlt_def</span>
+<DD>
+<pre>
+⊢ ∀w1 w2. orderlt w1 w2 ⇔ ∃x. x ∈ elsOf w2 ∧ orderiso w1 (wobound x w2)
+</pre>
+
+<DT><span class="strong">orderiso_def</span>
+<DD>
+<pre>
+⊢ ∀w1 w2.
+      orderiso w1 w2 ⇔
+      ∃f.
+          (∀x. x ∈ elsOf w1 ⇒ f x ∈ elsOf w2) ∧
+          (∀x1 x2. x1 ∈ elsOf w1 ∧ x2 ∈ elsOf w1 ⇒ ((f x1 = f x2) ⇔ (x1 = x2))) ∧
+          (∀y. y ∈ elsOf w2 ⇒ ∃x. x ∈ elsOf w1 ∧ (f x = y)) ∧
+          ∀x y. (x,y) WIN w1 ⇒ (f x,f y) WIN w2
+</pre>
+
+<DT><span class="strong">iseg_def</span>
+<DD>
+<pre>
+⊢ ∀w x. iseg w x = {y | (y,x) WIN w}
+</pre>
+
+<DT><span class="strong">fromNatWO_def</span>
+<DD>
+<pre>
+⊢ ∀n. fromNatWO n = mkWO {(INL i,INL j) | i ≤ j ∧ j < n}
+</pre>
+
+<DT><span class="strong">fl</span>
+<DD>
+<pre>
+⊢ ∀l x. fl l x ⇔ ∃y. l (x,y) ∨ l (y,x)
+</pre>
+
+<DT><span class="strong">finite_def</span>
+<DD>
+<pre>
+⊢ ∀w. finite w ⇔ FINITE (elsOf w)
+</pre>
+
+<DT><span class="strong">elsOf_def</span>
+<DD>
+<pre>
+⊢ ∀w. elsOf w = domain (destWO w) ∪ wrange w
+</pre>
+
+<DT><span class="strong">chain</span>
+<DD>
+<pre>
+⊢ ∀l P. chain l P ⇔ ∀x y. P x ∧ P y ⇒ l (x,y) ∨ l (y,x)
+</pre>
+
+<DT><span class="strong">ADD1_def</span>
+<DD>
+<pre>
+⊢ ∀e w.
+      ADD1 e w =
+      if e ∈ elsOf w then w
+      else mkWO (destWO w ∪ {(x,e) | x ∈ elsOf w} ∪ {(e,e)})
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ZL_SUBSETS_BIGUNION_NONEMPTY</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∃x. P x) ∧
+      (∀c.
+           (∃x. x ∈ c) ∧ (∀x. x ∈ c ⇒ P x) ∧
+           (∀x y. x ∈ c ∧ y ∈ c ⇒ x ⊆ y ∨ y ⊆ x) ⇒
+           P (BIGUNION c)) ⇒
+      ∃a. P a ∧ ∀x. P x ∧ a ⊆ x ⇒ (a = x)
+</pre>
+
+<DT><span class="strong">ZL_SUBSETS_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∀c.
+           (∀x. x ∈ c ⇒ P x) ∧ (∀x y. x ∈ c ∧ y ∈ c ⇒ x ⊆ y ∨ y ⊆ x) ⇒
+           P (BIGUNION c)) ⇒
+      ∃a. P a ∧ ∀x. P x ∧ a ⊆ x ⇒ (a = x)
+</pre>
+
+<DT><span class="strong">ZL_SUBSETS</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∀c.
+           (∀x. x ∈ c ⇒ P x) ∧ (∀x y. x ∈ c ∧ y ∈ c ⇒ x ⊆ y ∨ y ⊆ x) ⇒
+           ∃z. P z ∧ ∀x. x ∈ c ⇒ x ⊆ z) ⇒
+      ∃a. P a ∧ ∀x. P x ∧ a ⊆ x ⇒ (a = x)
+</pre>
+
+<DT><span class="strong">ZL</span>
+<DD>
+<pre>
+⊢ ∀l.
+      poset l ∧ (∃x. (λx. fl l x) x) ∧
+      (∀P. chain l P ⇒ ∃y. fl l y ∧ ∀x. P x ⇒ l (x,y)) ⇒
+      ∃y. fl l y ∧ ∀x. l (y,x) ⇒ (y = x)
+</pre>
+
+<DT><span class="strong">wobounds_preserve_bijections</span>
+<DD>
+<pre>
+⊢ BIJ f (elsOf w1) (elsOf w2) ∧ x ∈ elsOf w1 ∧
+  (∀x y. (x,y) WIN w1 ⇒ (f x,f y) WIN w2) ⇒
+  BIJ f (elsOf (wobound x w1)) (elsOf (wobound (f x) w2))
+</pre>
+
+<DT><span class="strong">wobound2</span>
+<DD>
+<pre>
+⊢ (a,b) WIN w ⇒ (wobound a (wobound b w) = wobound a w)
+</pre>
+
+<DT><span class="strong">wo_INDUCTION</span>
+<DD>
+<pre>
+⊢ ∀P w.
+      (∀x. (∀y. (y,x) WIN w ⇒ y ∈ elsOf w ⇒ P y) ⇒ x ∈ elsOf w ⇒ P x) ⇒
+      ∀x. x ∈ elsOf w ⇒ P x
+</pre>
+
+<DT><span class="strong">wo2wo_thm</span>
+<DD>
+<pre>
+⊢ ∀x.
+      wo2wo w w2 x =
+      (let
+         s0 = IMAGE (wo2wo w w2) (iseg w x) ;
+         s1 = IMAGE THE (s0 DELETE NONE)
+       in
+         if s1 = elsOf w2 then NONE else wleast w2 s1)
+</pre>
+
+<DT><span class="strong">wo2wo_ONTO</span>
+<DD>
+<pre>
+⊢ x ∈ elsOf w1 ∧ (wo2wo w1 w2 x = SOME y) ∧ (y0,y) WIN w2 ⇒
+  ∃x0. x0 ∈ elsOf w1 ∧ (wo2wo w1 w2 x0 = SOME y0)
+</pre>
+
+<DT><span class="strong">wo2wo_mono</span>
+<DD>
+<pre>
+⊢ (wo2wo w1 w2 x0 = SOME y0) ∧ (wo2wo w1 w2 x = SOME y) ∧ (x0,x) WIN w1 ⇒
+  (y0,y) WIN w2
+</pre>
+
+<DT><span class="strong">wo2wo_IN_w2</span>
+<DD>
+<pre>
+⊢ ∀x y. (wo2wo w1 w2 x = SOME y) ⇒ y ∈ elsOf w2
+</pre>
+
+<DT><span class="strong">wo2wo_EQ_SOME_downwards</span>
+<DD>
+<pre>
+⊢ ∀x y.
+      (wo2wo w1 w2 x = SOME y) ⇒
+      ∀x0. (x0,x) WIN w1 ⇒ ∃y0. wo2wo w1 w2 x0 = SOME y0
+</pre>
+
+<DT><span class="strong">wo2wo_EQ_NONE_woseg</span>
+<DD>
+<pre>
+⊢ (wo2wo w1 w2 x = NONE) ⇒ (elsOf w2 = woseg w1 w2 x)
+</pre>
+
+<DT><span class="strong">wo2wo_EQ_NONE</span>
+<DD>
+<pre>
+⊢ ∀x. (wo2wo w1 w2 x = NONE) ⇒ ∀y. (x,y) WIN w1 ⇒ (wo2wo w1 w2 y = NONE)
+</pre>
+
+<DT><span class="strong">wo2wo_11</span>
+<DD>
+<pre>
+⊢ x1 ∈ elsOf w1 ∧ x2 ∈ elsOf w1 ∧ (wo2wo w1 w2 x1 = SOME y) ∧
+  (wo2wo w1 w2 x2 = SOME y) ⇒
+  (x1 = x2)
+</pre>
+
+<DT><span class="strong">wleast_SUBSET</span>
+<DD>
+<pre>
+⊢ (wleast w s1 = SOME x) ∧ (wleast w s2 = SOME y) ∧ s1 ⊆ s2 ⇒
+  (x = y) ∨ (x,y) WIN w
+</pre>
+
+<DT><span class="strong">wleast_IN_wo</span>
+<DD>
+<pre>
+⊢ (wleast w s = SOME x) ⇒
+  x ∈ elsOf w ∧ x ∉ s ∧ ∀y. y ∈ elsOf w ∧ y ∉ s ∧ x ≠ y ⇒ (x,y) WIN w
+</pre>
+
+<DT><span class="strong">wleast_EQ_NONE</span>
+<DD>
+<pre>
+⊢ (wleast w s = NONE) ⇒ elsOf w ⊆ s
+</pre>
+
+<DT><span class="strong">WLE_wZERO</span>
+<DD>
+<pre>
+⊢ (x,y) WLE wZERO ⇔ F
+</pre>
+
+<DT><span class="strong">WLE_wobound</span>
+<DD>
+<pre>
+⊢ (x,y) WLE wobound z w ⇔ (x,z) WIN w ∧ (y,z) WIN w ∧ (x,y) WLE w
+</pre>
+
+<DT><span class="strong">WLE_WIN_EQ</span>
+<DD>
+<pre>
+⊢ (x,y) WLE w ⇔ (x = y) ∧ x ∈ elsOf w ∨ (x,y) WIN w
+</pre>
+
+<DT><span class="strong">WLE_WIN</span>
+<DD>
+<pre>
+⊢ (x,y) WLE w ⇒ (x = y) ∨ (x,y) WIN w
+</pre>
+
+<DT><span class="strong">WLE_TRANS</span>
+<DD>
+<pre>
+⊢ (x,y) WLE w ∧ (y,z) WLE w ⇒ (x,z) WLE w
+</pre>
+
+<DT><span class="strong">WLE_elsOf</span>
+<DD>
+<pre>
+⊢ (x,y) WLE w ⇒ x ∈ elsOf w ∧ y ∈ elsOf w
+</pre>
+
+<DT><span class="strong">WLE_ANTISYM</span>
+<DD>
+<pre>
+⊢ (x,y) WLE w ∧ (y,x) WLE w ⇒ (x = y)
+</pre>
+
+<DT><span class="strong">WIN_wZERO</span>
+<DD>
+<pre>
+⊢ (x,y) WIN wZERO ⇔ F
+</pre>
+
+<DT><span class="strong">WIN_wobound</span>
+<DD>
+<pre>
+⊢ (x,y) WIN wobound z w ⇔ (x,z) WIN w ∧ (y,z) WIN w ∧ (x,y) WIN w
+</pre>
+
+<DT><span class="strong">WIN_WLE</span>
+<DD>
+<pre>
+⊢ (x,y) WIN w ⇒ (x,y) WLE w
+</pre>
+
+<DT><span class="strong">WIN_WF2</span>
+<DD>
+<pre>
+⊢ WF (λx y. (x,y) WIN w)
+</pre>
+
+<DT><span class="strong">WIN_WF</span>
+<DD>
+<pre>
+⊢ Wellfounded (λp. p WIN w)
+</pre>
+
+<DT><span class="strong">WIN_trichotomy</span>
+<DD>
+<pre>
+⊢ ∀x y. x ∈ elsOf w ∧ y ∈ elsOf w ⇒ (x,y) WIN w ∨ (x = y) ∨ (y,x) WIN w
+</pre>
+
+<DT><span class="strong">WIN_TRANS</span>
+<DD>
+<pre>
+⊢ (x,y) WIN w ∧ (y,z) WIN w ⇒ (x,z) WIN w
+</pre>
+
+<DT><span class="strong">WIN_remove</span>
+<DD>
+<pre>
+⊢ (x,y) WIN remove e w ⇔ x ≠ e ∧ y ≠ e ∧ (x,y) WIN w
+</pre>
+
+<DT><span class="strong">WIN_REFL</span>
+<DD>
+<pre>
+⊢ (x,x) WIN w ⇔ F
+</pre>
+
+<DT><span class="strong">WIN_elsOf</span>
+<DD>
+<pre>
+⊢ (x,y) WIN w ⇒ x ∈ elsOf w ∧ y ∈ elsOf w
+</pre>
+
+<DT><span class="strong">WIN_ADD1</span>
+<DD>
+<pre>
+⊢ (x,y) WIN ADD1 e w ⇔ e ∉ elsOf w ∧ x ∈ elsOf w ∧ (y = e) ∨ (x,y) WIN w
+</pre>
+
+<DT><span class="strong">WF_UREC_WF</span>
+<DD>
+<pre>
+⊢ (∀H.
+       (∀f g x. (∀z. z ≪ x ⇒ (f z ⇔ g z)) ⇒ (H f x ⇔ H g x)) ⇒
+       ∀f g. (∀x. f x ⇔ H f x) ∧ (∀x. g x ⇔ H g x) ⇒ (f = g)) ⇒
+  WF $<<
+</pre>
+
+<DT><span class="strong">WF_UREC</span>
+<DD>
+<pre>
+⊢ WF $<< ⇒
+  ∀H.
+      (∀f g x. (∀z. z ≪ x ⇒ (f z = g z)) ⇒ (H f x = H g x)) ⇒
+      ∀f g. (∀x. f x = H f x) ∧ (∀x. g x = H g x) ⇒ (f = g)
+</pre>
+
+<DT><span class="strong">WF_REC_num</span>
+<DD>
+<pre>
+⊢ ∀H.
+      (∀f g n. (∀m. m < n ⇒ (f m = g m)) ⇒ (H f n = H g n)) ⇒
+      ∃f. ∀n. f n = H f n
+</pre>
+
+<DT><span class="strong">WF_REC_INVARIANT</span>
+<DD>
+<pre>
+⊢ WF $<< ⇒
+  ∀H S.
+      (∀f g x.
+           (∀z. z ≪ x ⇒ (f z = g z) ∧ S z (f z)) ⇒
+           (H f x = H g x) ∧ S x (H f x)) ⇒
+      ∃f. ∀x. f x = H f x
+</pre>
+
+<DT><span class="strong">WF_REC</span>
+<DD>
+<pre>
+⊢ WF $<< ⇒
+  ∀H.
+      (∀f g x. (∀z. z ≪ x ⇒ (f z = g z)) ⇒ (H f x = H g x)) ⇒
+      ∃f. ∀x. f x = H f x
+</pre>
+
+<DT><span class="strong">WF_num</span>
+<DD>
+<pre>
+⊢ WF $<
+</pre>
+
+<DT><span class="strong">WF_IND</span>
+<DD>
+<pre>
+⊢ WF $<< ⇔ ∀P. (∀x. (∀y. y ≪ x ⇒ P y) ⇒ P x) ⇒ ∀x. P x
+</pre>
+
+<DT><span class="strong">WF_EQ</span>
+<DD>
+<pre>
+⊢ WF $<< ⇔ ∀P. (∃x. P x) ⇔ ∃x. P x ∧ ∀y. y ≪ x ⇒ ¬P y
+</pre>
+
+<DT><span class="strong">WF_DCHAIN</span>
+<DD>
+<pre>
+⊢ WF $<< ⇔ ¬∃s. ∀n. s (SUC n) ≪ s n
+</pre>
+
+<DT><span class="strong">WF</span>
+<DD>
+<pre>
+⊢ WF $<< ⇔ ∀P. (∃x. P x) ⇒ ∃x. P x ∧ ∀y. y ≪ x ⇒ ¬P y
+</pre>
+
+<DT><span class="strong">WEXTENSION</span>
+<DD>
+<pre>
+⊢ (w1 = w2) ⇔ ∀a b. (a,b) WLE w1 ⇔ (a,b) WLE w2
+</pre>
+
+<DT><span class="strong">wellorder_SING</span>
+<DD>
+<pre>
+⊢ ∀x y. wellorder {(x,y)} ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">wellorder_rrestrict</span>
+<DD>
+<pre>
+⊢ wellorder (rrestrict (destWO w) s)
+</pre>
+
+<DT><span class="strong">wellorder_remove</span>
+<DD>
+<pre>
+⊢ wellorder {(x,y) | x ≠ e ∧ y ≠ e ∧ (x,y) WLE w}
+</pre>
+
+<DT><span class="strong">wellorder_fromNat_SUM</span>
+<DD>
+<pre>
+⊢ wellorder {(INL i,INL j) | i ≤ j ∧ j < n}
+</pre>
+
+<DT><span class="strong">wellorder_fromNat</span>
+<DD>
+<pre>
+⊢ wellorder {(i,j) | i ≤ j ∧ j < n}
+</pre>
+
+<DT><span class="strong">wellorder_EMPTY</span>
+<DD>
+<pre>
+⊢ wellorder ∅
+</pre>
+
+<DT><span class="strong">wellorder_cases</span>
+<DD>
+<pre>
+⊢ ∀w. ∃s. wellorder s ∧ (w = mkWO s)
+</pre>
+
+<DT><span class="strong">wellorder_ADD1</span>
+<DD>
+<pre>
+⊢ e ∉ elsOf w ⇒ wellorder (destWO w ∪ {(x,e) | x ∈ elsOf w} ∪ {(e,e)})
+</pre>
+
+<DT><span class="strong">wellfounded_WF</span>
+<DD>
+<pre>
+⊢ ∀R. Wellfounded R ⇔ WF (CURRY R)
+</pre>
+
+<DT><span class="strong">wellfounded_subset</span>
+<DD>
+<pre>
+⊢ ∀r0 r. Wellfounded r ∧ r0 ⊆ r ⇒ Wellfounded r0
+</pre>
+
+<DT><span class="strong">transitive_strict</span>
+<DD>
+<pre>
+⊢ transitive r ∧ antisym r ⇒ transitive (strict r)
+</pre>
+
+<DT><span class="strong">transitive_rrestrict</span>
+<DD>
+<pre>
+⊢ transitive r ⇒ transitive (rrestrict r s)
+</pre>
+
+<DT><span class="strong">TARSKI_SET</span>
+<DD>
+<pre>
+⊢ ∀f. (∀s t. s ⊆ t ⇒ f s ⊆ f t) ⇒ ∃s. f s = s
+</pre>
+
+<DT><span class="strong">strict_UNION</span>
+<DD>
+<pre>
+⊢ strict (r1 ∪ r2) = strict r1 ∪ strict r2
+</pre>
+
+<DT><span class="strong">strict_subset</span>
+<DD>
+<pre>
+⊢ r1 ⊆ r2 ⇒ strict r1 ⊆ strict r2
+</pre>
+
+<DT><span class="strong">seteq_wlog</span>
+<DD>
+<pre>
+⊢ ∀f.
+      (∀a b. P a b ⇒ P b a) ∧ (∀x a b. P a b ∧ x ∈ f a ⇒ x ∈ f b) ⇒
+      ∀a b. P a b ⇒ (f a = f b)
+</pre>
+
+<DT><span class="strong">rrestrict_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀r s. rrestrict r s ⊆ r
+</pre>
+
+<DT><span class="strong">reflexive_rrestrict</span>
+<DD>
+<pre>
+⊢ reflexive r (domain r ∪ range r) ⇒
+  reflexive (rrestrict r s) (domain (rrestrict r s) ∪ range (rrestrict r s))
+</pre>
+
+<DT><span class="strong">range_IMAGE_ff</span>
+<DD>
+<pre>
+⊢ range (IMAGE (f ## g) r) = IMAGE g (range r)
+</pre>
+
+<DT><span class="strong">POSET_RESTRICTED_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀P. poset (λ(x,y). P x ∧ P y ∧ x ⊆ y)
+</pre>
+
+<DT><span class="strong">orderlt_WF</span>
+<DD>
+<pre>
+⊢ WF orderlt
+</pre>
+
+<DT><span class="strong">orderlt_trichotomy</span>
+<DD>
+<pre>
+⊢ orderlt w1 w2 ∨ orderiso w1 w2 ∨ orderlt w2 w1
+</pre>
+
+<DT><span class="strong">orderlt_TRANS</span>
+<DD>
+<pre>
+⊢ ∀w1 w2 w3. orderlt w1 w2 ∧ orderlt w2 w3 ⇒ orderlt w1 w3
+</pre>
+
+<DT><span class="strong">orderlt_REFL</span>
+<DD>
+<pre>
+⊢ orderlt w w ⇔ F
+</pre>
+
+<DT><span class="strong">orderlt_orderiso</span>
+<DD>
+<pre>
+⊢ orderiso x0 y0 ∧ orderiso a0 b0 ⇒ (orderlt x0 a0 ⇔ orderlt y0 b0)
+</pre>
+
+<DT><span class="strong">orderiso_wZERO</span>
+<DD>
+<pre>
+⊢ orderiso wZERO w ⇔ (w = wZERO)
+</pre>
+
+<DT><span class="strong">orderiso_unique</span>
+<DD>
+<pre>
+⊢ BIJ f1 (elsOf w1) (elsOf w2) ∧ BIJ f2 (elsOf w1) (elsOf w2) ∧
+  (∀x y. (x,y) WIN w1 ⇒ (f1 x,f1 y) WIN w2) ∧
+  (∀x y. (x,y) WIN w1 ⇒ (f2 x,f2 y) WIN w2) ⇒
+  ∀x. x ∈ elsOf w1 ⇒ (f1 x = f2 x)
+</pre>
+
+<DT><span class="strong">orderiso_TRANS</span>
+<DD>
+<pre>
+⊢ ∀w1 w2 w3. orderiso w1 w2 ∧ orderiso w2 w3 ⇒ orderiso w1 w3
+</pre>
+
+<DT><span class="strong">orderiso_thm</span>
+<DD>
+<pre>
+⊢ orderiso w1 w2 ⇔
+  ∃f. BIJ f (elsOf w1) (elsOf w2) ∧ ∀x y. (x,y) WIN w1 ⇒ (f x,f y) WIN w2
+</pre>
+
+<DT><span class="strong">orderiso_SYM</span>
+<DD>
+<pre>
+⊢ ∀w1 w2. orderiso w1 w2 ⇒ orderiso w2 w1
+</pre>
+
+<DT><span class="strong">orderiso_REFL</span>
+<DD>
+<pre>
+⊢ ∀w. orderiso w w
+</pre>
+
+<DT><span class="strong">mono_woseg</span>
+<DD>
+<pre>
+⊢ (x1,x2) WIN w1 ⇒ woseg w1 w2 x1 ⊆ woseg w1 w2 x2
+</pre>
+
+<DT><span class="strong">mkWO_destWO</span>
+<DD>
+<pre>
+⊢ ∀a. mkWO (destWO a) = a
+</pre>
+
+<DT><span class="strong">LT_wZERO</span>
+<DD>
+<pre>
+⊢ orderlt w wZERO ⇔ F
+</pre>
+
+<DT><span class="strong">linear_order_rrestrict</span>
+<DD>
+<pre>
+⊢ linear_order r (domain r ∪ range r) ⇒
+  linear_order (rrestrict r s)
+    (domain (rrestrict r s) ∪ range (rrestrict r s))
+</pre>
+
+<DT><span class="strong">INJECTIVE_LEFT_INVERSE_NONEMPTY</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+      (∃x. x ∈ s) ⇒
+      ((∀x y. x ∈ s ∧ y ∈ s ∧ (f x = f y) ⇒ (x = y)) ⇔
+       ∃g. (∀y. y ∈ t ⇒ g y ∈ s) ∧ ∀x. x ∈ s ⇒ (g (f x) = x))
+</pre>
+
+<DT><span class="strong">INJ_preserves_wellorder</span>
+<DD>
+<pre>
+⊢ wellorder r ∧ INJ f (domain r ∪ range r) t ⇒ wellorder (IMAGE (f ## f) r)
+</pre>
+
+<DT><span class="strong">INJ_preserves_transitive</span>
+<DD>
+<pre>
+⊢ transitive r ∧ INJ f (domain r ∪ range r) t ⇒ transitive (IMAGE (f ## f) r)
+</pre>
+
+<DT><span class="strong">INJ_preserves_linear_order</span>
+<DD>
+<pre>
+⊢ linear_order r (domain r ∪ range r) ∧ INJ f (domain r ∪ range r) t ⇒
+  linear_order (IMAGE (f ## f) r) (IMAGE f (domain r ∪ range r))
+</pre>
+
+<DT><span class="strong">INJ_preserves_antisym</span>
+<DD>
+<pre>
+⊢ antisym r ∧ INJ f (domain r ∪ range r) t ⇒ antisym (IMAGE (f ## f) r)
+</pre>
+
+<DT><span class="strong">IMAGE_wo2wo_SUBSET</span>
+<DD>
+<pre>
+⊢ woseg w1 w2 x ⊆ elsOf w2
+</pre>
+
+<DT><span class="strong">fromNatWO_11</span>
+<DD>
+<pre>
+⊢ (fromNatWO i = fromNatWO j) ⇔ (i = j)
+</pre>
+
+<DT><span class="strong">FORALL_NUM</span>
+<DD>
+<pre>
+⊢ (∀n. P n) ⇔ P 0 ∧ ∀n. P (SUC n)
+</pre>
+
+<DT><span class="strong">FLATTEN_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀s. (∀x. x ∈ s ⇒ (g (f x) = x)) ⇔ ∀y x. x ∈ s ∧ (y = f x) ⇒ (g y = x)
+</pre>
+
+<DT><span class="strong">FL_RESTRICTED_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀P. fl (λ(x,y). P x ∧ P y ∧ x ⊆ y) = P
+</pre>
+
+<DT><span class="strong">finite_wZERO</span>
+<DD>
+<pre>
+⊢ finite wZERO
+</pre>
+
+<DT><span class="strong">finite_iso</span>
+<DD>
+<pre>
+⊢ orderiso w1 w2 ⇒ (finite w1 ⇔ finite w2)
+</pre>
+
+<DT><span class="strong">elsOf_wZERO</span>
+<DD>
+<pre>
+⊢ elsOf wZERO = ∅
+</pre>
+
+<DT><span class="strong">elsOf_wobound</span>
+<DD>
+<pre>
+⊢ elsOf (wobound x w) = {y | (y,x) WIN w}
+</pre>
+
+<DT><span class="strong">elsOf_WLE</span>
+<DD>
+<pre>
+⊢ x ∈ elsOf w ⇔ (x,x) WLE w
+</pre>
+
+<DT><span class="strong">elsOf_remove</span>
+<DD>
+<pre>
+⊢ elsOf (remove e w) = elsOf w DELETE e
+</pre>
+
+<DT><span class="strong">elsOf_fromNatWO</span>
+<DD>
+<pre>
+⊢ elsOf (fromNatWO n) = IMAGE INL (count n)
+</pre>
+
+<DT><span class="strong">elsOf_EQ_EMPTY</span>
+<DD>
+<pre>
+⊢ (elsOf w = ∅) ⇔ (w = wZERO)
+</pre>
+
+<DT><span class="strong">elsOf_cardeq_iso</span>
+<DD>
+<pre>
+⊢ INJ f (elsOf wo) 𝕌(:α) ⇒ ∃wo'. orderiso wo wo'
+</pre>
+
+<DT><span class="strong">elsOf_ADD1</span>
+<DD>
+<pre>
+⊢ elsOf (ADD1 e w) = e INSERT elsOf w
+</pre>
+
+<DT><span class="strong">domain_IMAGE_ff</span>
+<DD>
+<pre>
+⊢ domain (IMAGE (f ## g) r) = IMAGE f (domain r)
+</pre>
+
+<DT><span class="strong">destWO_mkWO</span>
+<DD>
+<pre>
+⊢ ∀r. wellorder r ⇒ (destWO (mkWO r) = r)
+</pre>
+
+<DT><span class="strong">antisym_rrestrict</span>
+<DD>
+<pre>
+⊢ antisym r ⇒ antisym (rrestrict r s)
+</pre>
+
+<DT><span class="strong">allsets_wellorderable</span>
+<DD>
+<pre>
+⊢ ∀s. ∃wo. elsOf wo = s
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

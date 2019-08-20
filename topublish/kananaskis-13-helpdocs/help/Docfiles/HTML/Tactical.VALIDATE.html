@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactical.VALIDATE</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>VALIDATE : tactic -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactical.html">Tactical</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Makes a tactic valid if its invalidity is due to relying on assumptions not
+present in the goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Suppose </SPAN><SPAN class = "BRKT">tac</SPAN><SPAN class = "TEXT"> applied to the goal </SPAN><SPAN class = "BRKT">(asl,g)</SPAN><SPAN class = "TEXT"> produces a justification that
+creates a theorem </SPAN><SPAN class = "BRKT">A&nbsp;|-&nbsp;g'</SPAN><SPAN class = "TEXT">.
+If </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> a not a subset of </SPAN><SPAN class = "BRKT">asl</SPAN><SPAN class = "TEXT">, then the tactic is invalid
+(and </SPAN><SPAN class = "BRKT">VALID&nbsp;tac&nbsp;(asl,g)</SPAN><SPAN class = "TEXT"> fails, ie, raises an exception).
+But </SPAN><SPAN class = "BRKT">VALIDATE&nbsp;tac&nbsp;(asl,g)</SPAN><SPAN class = "TEXT"> produces a subgoal list augmented by the
+members of </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> missing from </SPAN><SPAN class = "BRKT">asl</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">g'</SPAN><SPAN class = "TEXT"> differs from </SPAN><SPAN class = "BRKT">g</SPAN><SPAN class = "TEXT">, both </SPAN><SPAN class = "BRKT">VALID&nbsp;tac&nbsp;(asl,g)</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">VALIDATE&nbsp;tac&nbsp;(asl,g)</SPAN><SPAN class = "TEXT">
+fail.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails by design if </SPAN><SPAN class = "BRKT">tac</SPAN><SPAN class = "TEXT">, when applied to a goal,
+produces a proof which is invalid on account of proving
+a theorem whose conclusion differs from that of the goal.</SPAN>
+<P>
+<SPAN class = "TEXT">Also fails if </SPAN><SPAN class = "BRKT">tac</SPAN><SPAN class = "TEXT"> fails when applied to the given goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">For example, where theorem </SPAN><SPAN class = "BRKT">uth'</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">[p']&nbsp;|-&nbsp;q</SPAN><SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+1 subgoal:
+val it =
+
+q
+------------------------------------
+  p
+:
+   proof
+
+&gt; e (ACCEPT_TAC uth') ;
+OK..
+
+Exception raised at Tactical.VALID:
+Invalid tactic [...]
+
+&gt; e (VALIDATE (ACCEPT_TAC uth')) ;
+OK..
+1 subgoal:
+val it =
+
+p'
+------------------------------------
+  p
+:
+   proof
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">Given a goal with an implication in the assumptions,
+one can split it into two subgoals.
+</SPAN><DIV class = "XMPL"><pre>
+1 subgoal:
+val it =
+
+r
+------------------------------------
+  p ==&gt; q
+:
+   proof
+
+&gt; e (VALIDATE (POP_ASSUM (ASSUME_TAC o UNDISCH))) ;
+
+OK..
+2 subgoals:
+val it =
+
+r
+------------------------------------
+  q
+
+p
+------------------------------------
+  p ==&gt; q
+
+2 subgoals
+:
+   proof
+</pre></DIV>
+<SPAN class = "TEXT">
+Meanwhile, to propose a term, prove it as a subgoal and then use it to prove
+the goal, as is done using </SPAN><SPAN class = "BRKT">SUBGOAL_THEN&nbsp;tm&nbsp;ASSUME_TAC</SPAN><SPAN class = "TEXT">,
+can also be done by </SPAN><SPAN class = "BRKT">VALIDATE&nbsp;(ASSUME_TAC&nbsp;(ASSUME&nbsp;tm)))</SPAN><SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Where a tactic </SPAN><SPAN class = "BRKT">tac</SPAN><SPAN class = "TEXT"> requires certain assumptions to be present in the goal,
+which are not present but are capable of being proved,
+</SPAN><SPAN class = "BRKT">VALIDATE&nbsp;tac</SPAN><SPAN class = "TEXT"> will conveniently set up new subgoals to prove the missing
+assumptions.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "proofManagerLib.expand.html">expand</A>,
+<A HREF = "Tactical.VALID.html">VALID</A>,
+<A HREF = "Tactical.GEN_VALIDATE.html">GEN_VALIDATE</A>,
+<A HREF = "Tactical.ADD_SGS_TAC.html">ADD_SGS_TAC</A>,
+<A HREF = "Tactical.SUBGOAL_THEN.html">SUBGOAL_THEN</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

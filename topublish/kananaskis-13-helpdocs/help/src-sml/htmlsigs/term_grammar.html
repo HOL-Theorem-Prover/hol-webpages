@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure term_grammar</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure term_grammar</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/term_grammar.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature term_grammar =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  type block_info = term_grammar_dtype.block_info
+<a name="line5"></a>  type overload_info = Overload.overload_info
+<a name="line6"></a>  type associativity = term_grammar_dtype.associativity
+<a name="line7"></a>  type grule = term_grammar_dtype.grule
+<a name="line8"></a>
+<a name="line9"></a>  datatype rule_element = datatype term_grammar_dtype.rule_element
+<a name="line10"></a>  val RE_compare : rule_element * rule_element -&gt; order
+<a name="line11"></a>
+<a name="line12"></a>  datatype pp_element = datatype term_grammar_dtype.pp_element
+<a name="line13"></a>  datatype PhraseBlockStyle = datatype term_grammar_dtype.PhraseBlockStyle
+<a name="line14"></a>  datatype ParenStyle = datatype term_grammar_dtype.ParenStyle
+<a name="line15"></a>
+<a name="line16"></a>  val rule_elements  : pp_element list -&gt; rule_element list
+<a name="line17"></a>  val pp_elements_ok : pp_element list -&gt; bool
+<a name="line18"></a>  val first_rtok : rule_element list -&gt; string
+<a name="line19"></a>  val first_tok : pp_element list -&gt; string
+<a name="line20"></a>
+<a name="line21"></a>  val reltoString    : rule_element -&gt; string
+<a name="line22"></a>
+<a name="line23"></a>  datatype binder = datatype term_grammar_dtype.binder
+<a name="line24"></a>  datatype prefix_rule = datatype term_grammar_dtype.prefix_rule
+<a name="line25"></a>  datatype suffix_rule = datatype term_grammar_dtype.suffix_rule
+<a name="line26"></a>  datatype infix_rule = datatype term_grammar_dtype.infix_rule
+<a name="line27"></a>  datatype grammar_rule = datatype term_grammar_dtype.grammar_rule
+<a name="line28"></a>  datatype fixity = datatype term_grammar_dtype.fixity
+<a name="line29"></a>  datatype user_delta = datatype term_grammar_dtype.user_delta
+<a name="line30"></a>  type listspec = term_grammar_dtype.listspec
+<a name="line31"></a>  type rule_record = term_grammar_dtype.rule_record
+<a name="line32"></a>
+<a name="line33"></a>  type grammar
+<a name="line34"></a>
+<a name="line35"></a>  val grule_toks : grule -&gt; string list
+<a name="line36"></a>  val grule_name : grule -&gt; string
+<a name="line37"></a>
+<a name="line38"></a>  val stdhol         : grammar
+<a name="line39"></a>  val min_grammar    : grammar
+<a name="line40"></a>
+<a name="line41"></a>  val binder_grule   : {term_name : string, tok : string} -&gt; grule
+<a name="line42"></a>  val standard_mapped_spacing :
+<a name="line43"></a>      {term_name:string,tok:string,fixity:fixity} -&gt; grule
+<a name="line44"></a>  val standard_spacing : string -&gt; fixity -&gt; grule
+<a name="line45"></a>
+<a name="line46"></a>  val merge_grammars : grammar * grammar -&gt; grammar
+<a name="line47"></a>  val fupdate_overload_info :
+<a name="line48"></a>    (overload_info -&gt; overload_info) -&gt; grammar -&gt; grammar
+<a name="line49"></a>  val mfupdate_overload_info :
+<a name="line50"></a>    (overload_info -&gt; overload_info * 'a) -&gt; grammar -&gt; grammar * 'a
+<a name="line51"></a>
+<a name="line52"></a>
+<a name="line53"></a>  (* User code additions *)
+<a name="line54"></a>  (* Users can add special-purpose printers and parsers to grammars *)
+<a name="line55"></a>  type term = Term.term
+<a name="line56"></a>  type userprinter =
+<a name="line57"></a>       (type_grammar.grammar * grammar,grammar) term_pp_types.userprinter
+<a name="line58"></a>  val add_user_printer :
+<a name="line59"></a>    (string * term * userprinter) -&gt; grammar -&gt;
+<a name="line60"></a>    grammar
+<a name="line61"></a>  val remove_user_printer :
+<a name="line62"></a>    string -&gt; grammar -&gt; (grammar * (term * userprinter) option)
+<a name="line63"></a>  val user_printers :
+<a name="line64"></a>    grammar -&gt; (term * string * userprinter)FCNet.t
+<a name="line65"></a>
+<a name="line66"></a>  type absyn_postprocessor = grammar -&gt; Absyn.absyn -&gt; Absyn.absyn
+<a name="line67"></a>  type AbPTME = Absyn.absyn -&gt; Parse_supportENV.preterm_in_env
+<a name="line68"></a>  type preterm_processor = grammar -&gt; AbPTME -&gt; AbPTME
+<a name="line69"></a>
+<a name="line70"></a>  structure userSyntaxFns :
+<a name="line71"></a>    sig
+<a name="line72"></a>      type 'a getter = string -&gt; 'a
+<a name="line73"></a>      type 'a setter = {name : string, code : 'a} -&gt; unit
+<a name="line74"></a>      val register_userPP : userprinter setter
+<a name="line75"></a>      val get_userPP : userprinter getter
+<a name="line76"></a>      val get_absynPostProcessor : absyn_postprocessor getter
+<a name="line77"></a>      val register_absynPostProcessor : absyn_postprocessor setter
+<a name="line78"></a>    end
+<a name="line79"></a>
+<a name="line80"></a>  val absyn_postprocessors :
+<a name="line81"></a>      grammar -&gt; (string * absyn_postprocessor) list
+<a name="line82"></a>  val new_absyn_postprocessor :
+<a name="line83"></a>      string * absyn_postprocessor -&gt; grammar -&gt; grammar
+<a name="line84"></a>  val remove_absyn_postprocessor :
+<a name="line85"></a>      string -&gt; grammar -&gt; (grammar * absyn_postprocessor option)
+<a name="line86"></a>
+<a name="line87"></a>  val preterm_processor :
+<a name="line88"></a>      grammar -&gt; string * int -&gt; preterm_processor option
+<a name="line89"></a>  val new_preterm_processor :
+<a name="line90"></a>      string * int -&gt; preterm_processor -&gt; grammar -&gt; grammar
+<a name="line91"></a>  val remove_preterm_processor :
+<a name="line92"></a>      string * int -&gt; grammar -&gt; grammar * preterm_processor option
+<a name="line93"></a>
+<a name="line94"></a>
+<a name="line95"></a>  type special_info = {type_intro    : string,
+<a name="line96"></a>                       lambda        : string list,
+<a name="line97"></a>                       endbinding    : string,
+<a name="line98"></a>                       restr_binders : (string option * string) list,
+<a name="line99"></a>                       res_quanop    : string}
+<a name="line100"></a>  val fupd_lambda    : (string list -&gt; string list) -&gt; special_info -&gt;
+<a name="line101"></a>                       special_info
+<a name="line102"></a>
+<a name="line103"></a>  type ruleset
+<a name="line104"></a>  val rules          : grammar -&gt; (int option * grammar_rule) list
+<a name="line105"></a>  val ruleset        : grammar -&gt; ruleset
+<a name="line106"></a>  val grammar_rules  : grammar -&gt; grammar_rule list
+<a name="line107"></a>  val specials       : grammar -&gt; special_info
+<a name="line108"></a>  val fupdate_specials : (special_info -&gt; special_info) -&gt; grammar -&gt; grammar
+<a name="line109"></a>  val numeral_info   : grammar -&gt; (char * string option) list
+<a name="line110"></a>  val overload_info  : grammar -&gt; overload_info
+<a name="line111"></a>  val grammar_name   : grammar -&gt; term -&gt; string option
+<a name="line112"></a>
+<a name="line113"></a>  (*------------------------------------------------------------------------
+<a name="line114"></a>   * known constants are those strings that the parsing process will
+<a name="line115"></a>   * attempt to turn into constants.  Known constants are those strings
+<a name="line116"></a>   * that are in the domain of the overloading map (this map being from
+<a name="line117"></a>   * strings to non-empty sets of constants.
+<a name="line118"></a>   *-------------------------------------------------------------------------*)
+<a name="line119"></a>
+<a name="line120"></a>  val known_constants : grammar -&gt; string list
+<a name="line121"></a>
+<a name="line122"></a>  val binders          : grammar -&gt; string list
+<a name="line123"></a>  val is_binder        : grammar -&gt; string -&gt; bool
+<a name="line124"></a>  val binder_to_string : grammar -&gt; binder -&gt; string
+<a name="line125"></a>
+<a name="line126"></a>  val resquan_op            : grammar -&gt; string
+<a name="line127"></a>  val associate_restriction : grammar -&gt;
+<a name="line128"></a>                              {binder : string option,
+<a name="line129"></a>                               resbinder : string} -&gt; grammar
+<a name="line130"></a>
+<a name="line131"></a>  val grammar_tokens : grammar -&gt; string list
+<a name="line132"></a>  val rule_tokens : grammar -&gt; grammar_rule -&gt; string list
+<a name="line133"></a>
+<a name="line134"></a>  val add_binder : {term_name:string,tok:string} -&gt; grammar -&gt; grammar
+<a name="line135"></a>  val add_listform : grammar -&gt; listspec -&gt; grammar
+<a name="line136"></a>  val listform_to_rule : listspec -&gt; grule
+<a name="line137"></a>
+<a name="line138"></a>  val fixityToString : fixity -&gt; string
+<a name="line139"></a>  val add_rule : grule -&gt; grammar -&gt; grammar
+<a name="line140"></a>  val add_delta : user_delta -&gt; grammar -&gt; grammar
+<a name="line141"></a>  val add_deltas : user_delta list -&gt; grammar -&gt; grammar
+<a name="line142"></a>
+<a name="line143"></a>  val add_numeral_form : grammar -&gt; (char * string option) -&gt; grammar
+<a name="line144"></a>  val give_num_priority : grammar -&gt; char -&gt; grammar
+<a name="line145"></a>  val remove_numeral_form : grammar -&gt; char -&gt; grammar
+<a name="line146"></a>
+<a name="line147"></a>  val add_strlit_injector: {ldelim: string, tmnm: string} -&gt; grammar -&gt; grammar
+<a name="line148"></a>  val strlit_map : grammar -&gt; {tmnm:string} -&gt; string option
+<a name="line149"></a>
+<a name="line150"></a>  (*------------------------------------------------------------------------*
+<a name="line151"></a>   * this removes all those rules which give special status to the          *
+<a name="line152"></a>   * given string.  If there is a rule saying that COND is written          *
+<a name="line153"></a>   *     if _ then _ else _                                                 *
+<a name="line154"></a>   * you could get rid of it with                                           *
+<a name="line155"></a>   *  remove_standard_form G "COND"                                         *
+<a name="line156"></a>   *------------------------------------------------------------------------*)
+<a name="line157"></a>
+<a name="line158"></a>  val remove_standard_form : grammar -&gt; string -&gt; grammar
+<a name="line159"></a>
+<a name="line160"></a>  (* ----------------------------------------------------------------------
+<a name="line161"></a>      these two remove rules relating to the term which also include
+<a name="line162"></a>      a token, or the exact token list of the form given.
+<a name="line163"></a>      Thus, if you had two rules for COND, and you wanted to get rid of
+<a name="line164"></a>      the one with the "if" token in it, you would use
+<a name="line165"></a>
+<a name="line166"></a>         remove_form_with_tok G {term_name = "COND", tok = "if"}
+<a name="line167"></a>     ---------------------------------------------------------------------- *)
+<a name="line168"></a>
+<a name="line169"></a>  val remove_form_with_tok : grammar -&gt; {term_name : string, tok: string} -&gt;
+<a name="line170"></a>                             grammar
+<a name="line171"></a>  val remove_form_with_toklist : {term_name : string, toklist : string list} -&gt;
+<a name="line172"></a>                                 grammar -&gt; grammar
+<a name="line173"></a>
+<a name="line174"></a>  (* this one is the nuclear option, and just removes every rule that uses
+<a name="line175"></a>     the given token *)
+<a name="line176"></a>  val remove_rules_with_tok : string -&gt; grammar -&gt; grammar
+<a name="line177"></a>
+<a name="line178"></a>  val <a href="../../Docfiles/HTML/term_grammar.clear_overloads.html">clear_overloads</a> : grammar -&gt; grammar
+<a name="line179"></a>
+<a name="line180"></a>  (*-----------------------------------------------------------------------*
+<a name="line181"></a>   * Pretty-printing                                                       *
+<a name="line182"></a>   *-----------------------------------------------------------------------*)
+<a name="line183"></a>
+<a name="line184"></a>  val prefer_form_with_tok : {term_name : string, tok : string} -&gt; grammar -&gt;
+<a name="line185"></a>                             grammar
+<a name="line186"></a>  val prefer_form_with_toklist : {term_name : string, toklist : string list} -&gt;
+<a name="line187"></a>                                 grammar -&gt; grammar
+<a name="line188"></a>
+<a name="line189"></a>
+<a name="line190"></a>  val set_associativity_at_level : grammar -&gt; int * associativity -&gt; grammar
+<a name="line191"></a>  val get_precedence : grammar -&gt; string -&gt; fixity option
+<a name="line192"></a>  val rules_for : grammar -&gt; string -&gt; (int * user_delta) list
+<a name="line193"></a>
+<a name="line194"></a>
+<a name="line195"></a>  val prettyprint_grammar_rules
+<a name="line196"></a>                          : (grammar -&gt; term -&gt; term_pp_types.uprinter) -&gt;
+<a name="line197"></a>                            ruleset -&gt; term_pp_types.uprinter
+<a name="line198"></a>  val prettyprint_grammar : (grammar -&gt; term -&gt; term_pp_types.uprinter) -&gt;
+<a name="line199"></a>                            grammar -&gt; term_pp_types.uprinter
+<a name="line200"></a>
+<a name="line201"></a>  val grammar_rule_reader : grammar_rule Coding.reader
+<a name="line202"></a>  val grammar_rule_encode : grammar_rule -&gt; string
+<a name="line203"></a>  val user_delta_reader : (string -&gt; term) -&gt; user_delta Coding.reader
+<a name="line204"></a>  val user_delta_encode : (term -&gt; string) -&gt; user_delta -&gt; string
+<a name="line205"></a>  val fixity_encode : fixity -&gt; string
+<a name="line206"></a>  val fixity_reader : fixity Coding.reader
+<a name="line207"></a>  val grule_encode : grule -&gt; string
+<a name="line208"></a>  val grule_reader : grule Coding.reader
+<a name="line209"></a>
+<a name="line210"></a>  val debugprint : grammar -&gt; term -&gt; string
+<a name="line211"></a>
+<a name="line212"></a>end
+<a name="line213"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/term_grammar.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

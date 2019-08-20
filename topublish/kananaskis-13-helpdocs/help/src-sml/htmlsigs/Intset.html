@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure Intset</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Intset</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/poly/Intset.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* Intset -- applicative sets of integers                        *)
+<a name="line2"></a>(* From SML/NJ lib 0.2, copyright 1993 by AT&T Bell Laboratories *)
+<a name="line3"></a>(* Original implementation due to Stephen Adams, Southampton, UK *)
+<a name="line4"></a>
+<a name="line5"></a>signature Intset =
+<a name="line6"></a>sig
+<a name="line7"></a>
+<a name="line8"></a>type <a href="#intset-typ">intset</a>
+<a name="line9"></a>
+<a name="line10"></a>exception NotFound
+<a name="line11"></a>
+<a name="line12"></a>val <a href="#empty-val">empty</a>        : intset
+<a name="line13"></a>val <a href="#singleton-val">singleton</a>    : int -&gt; intset
+<a name="line14"></a>val <a href="#add-val">add</a>          : intset * int -&gt; intset
+<a name="line15"></a>val <a href="#addList-val">addList</a>      : intset * int list -&gt; intset
+<a name="line16"></a>val <a href="#isEmpty-val">isEmpty</a>      : intset -&gt; bool
+<a name="line17"></a>val <a href="#equal-val">equal</a>        : intset * intset -&gt; bool
+<a name="line18"></a>val <a href="#isSubset-val">isSubset</a>     : intset * intset -&gt; bool
+<a name="line19"></a>val <a href="#member-val">member</a>       : intset * int -&gt; bool
+<a name="line20"></a>val <a href="#delete-val">delete</a>       : intset * int -&gt; intset
+<a name="line21"></a>val <a href="#numItems-val">numItems</a>     : intset -&gt;  int
+<a name="line22"></a>val <a href="#union-val">union</a>        : intset * intset -&gt; intset
+<a name="line23"></a>val <a href="#intersection-val">intersection</a> : intset * intset -&gt; intset
+<a name="line24"></a>val <a href="#difference-val">difference</a>   : intset * intset -&gt; intset
+<a name="line25"></a>val <a href="#listItems-val">listItems</a>    : intset -&gt; int list
+<a name="line26"></a>val <a href="#app-val">app</a>          : (int -&gt; unit) -&gt; intset -&gt; unit
+<a name="line27"></a>val <a href="#revapp-val">revapp</a>       : (int -&gt; unit) -&gt; intset -&gt; unit
+<a name="line28"></a>val <a href="#foldr-val">foldr</a>        : (int * 'b -&gt; 'b) -&gt; 'b -&gt; intset -&gt; 'b
+<a name="line29"></a>val <a href="#foldl-val">foldl</a>        : (int * 'b -&gt; 'b) -&gt; 'b -&gt; intset -&gt; 'b
+<a name="line30"></a>val <a href="#find-val">find</a>         : (int -&gt; bool) -&gt; intset -&gt; int option
+<a name="line31"></a>
+<a name="line32"></a>end
+<a name="line33"></a>
+<a name="line34"></a>(*
+   [<a name="intset-typ"><b>intset</b></a>] is the type of sets of integers.
+
+   [<a name="empty-val"><b>empty</b></a>] is the empty set of integers.
+
+   [<a name="singleton-val"><b>singleton</b></a> i] is the singleton set containing i.
+
+   [<a name="add-val"><b>add</b></a>(s, i)] adds item i to set s.
+
+   [<a name="addList-val"><b>addList</b></a>(s, xs)] adds all items from the list xs to the set s.
+
+   [<a name="isEmpty-val"><b>isEmpty</b></a> s] returns true if and only if the set is empty.
+
+   [<a name="equal-val"><b>equal</b></a>(s1, s2)] returns true if and only if the two sets have the
+   same elements.
+
+   [<a name="isSubset-val"><b>isSubset</b></a>(s1, s2)] returns true if and only if s1 is a subset of s2.
+
+   [<a name="member-val"><b>member</b></a>(s, i)] returns true if and only if i is in s.
+
+   [<a name="delete-val"><b>delete</b></a>(s, i)] removes item i from s.  Raises NotFound if i is not in s.
+
+   [<a name="numItems-val"><b>numItems</b></a> s] returns the number of items in set s.
+
+   [<a name="union-val"><b>union</b></a>(s1, s2)] returns the union of s1 and s2.
+
+   [<a name="intersection-val"><b>intersection</b></a>(s1, s2)] returns the intersectionof s1 and s2.
+
+   [<a name="difference-val"><b>difference</b></a>(s1, s2)] returns the difference between s1 and s2 (that
+   is, the set of elements in s1 but not in s2).
+
+   [<a name="listItems-val"><b>listItems</b></a> s] returns a list of the items in set s, in increasing
+   order.
+
+   [<a name="app-val"><b>app</b></a> f s] applies function f to the elements of s, in increasing
+   order.
+
+   [<a name="revapp-val"><b>revapp</b></a> f s] applies function f to the elements of s, in decreasing
+   order.
+
+   [<a name="foldl-val"><b>foldl</b></a> f e s] applies the folding function f to the entries of the
+   set in increasing order.
+
+   [<a name="foldr-val"><b>foldr</b></a> f e s] applies the folding function f to the entries of the
+   set in decreasing order.
+
+   [<a name="find-val"><b>find</b></a> p s] returns SOME i, where i is an item in s which satisfies
+   p, if one exists; otherwise returns NONE.
+*)
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/poly/Intset.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

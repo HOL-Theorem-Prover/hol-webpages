@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release notes for HOL4, Kananaskis-13</title>
+  <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="style.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="textbox">
+<header id="title-block-header">
+<h1 class="title">Release notes for HOL4, Kananaskis-13</h1>
+</header>
+<!-- search and replace Kananaskis-13 strings corresponding to release name -->
+<!-- indent code within bulleted lists to column 11 -->
+<p>(Released: 20 August 2019)</p>
+<p>We are pleased to announce the Kananaskis-13 release of HOL 4.</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><a href="#new-features">New features</a></li>
+<li><a href="#bugs-fixed">Bugs fixed</a></li>
+<li><a href="#new-theories">New theories</a></li>
+<li><a href="#new-tools">New tools</a></li>
+<li><a href="#new-examples">New Examples</a></li>
+<li><a href="#incompatibilities">Incompatibilities</a></li>
+</ul>
+<h2 id="new-features">New features:</h2>
+<ul>
+<li><p>We have implemented new syntaxes for <code>store_thm</code> and <code>save_thm</code>, which better satisfy the recommendation that <code>name1</code> and <code>name2</code> below should be the same:</p>
+<pre>   val name1 = store_thm(&quot;name2&quot;, tm, tac);</pre>
+<p>Now we can remove the “code smell” by writing</p>
+<pre>   Theorem name: term-syntax
+   Proof tac
+   QED</pre>
+<p>which might look like</p>
+<pre>   Theorem name:
+     ∀x. P x ⇒ Q x
+   Proof
+     rpt strip_tac &gt;&gt; ...
+   QED
+</pre>
+<p>This latter form must have the <code>Proof</code> and <code>QED</code> keywords in column 0 in order for the lexing machinery to detect the end of the term and tactic respectively. Both forms map to applications of <code>Q.store_thm</code> underneath, with an ML binding also made to the appropriate name. Both forms allow for theorem attributes to be associated with the name, so that one can write</p>
+<pre>   Theorem ADD0[simp]: ∀x. x + 0 = x
+   Proof tactic
+   QED</pre>
+<p>Finally, to replace</p>
+<pre>   val nm = save_thm(“nm”, thm_expr);</pre>
+<p>one can now write</p>
+<pre>   Theorem nm = thm_expr</pre>
+<p>These names can also be given attributes in the same way.</p>
+<p>There is also a new <code>local</code> attribute available for use with <code>store_thm</code>, <code>save_thm</code> and the <code>Theorem</code> syntax above. This attribute causes a theorem to not be exported when <code>export_theory</code> is called, making it local-only. Use of <code>Theorem</code>-<code>local</code> is thus an alternative to using <code>prove</code> or <code>Q.prove</code>. In addition, the <code>Theorem</code>-<code>local</code> combination can be abbreviated with <code>Triviality</code>; one can write <code>Triviality foo[...]</code> instead of <code>Theorem foo[local,...]</code>.</p></li>
+<li><p>Relatedly, there is a similar syntax for making definitions. The idiom is to write</p>
+<pre>   Definition name[attrs]:
+     def
+   End</pre>
+<p>Or</p>
+<pre>   Definition name[attrs]:
+     def
+   Termination
+     tactic
+   End</pre>
+<p>The latter form maps to a call to <code>tDefine</code>; the former to <code>xDefine</code>. In both cases, the <code>name</code> is taken to be the name of the theorem stored to disk (it does <em>not</em> have a suffix such as <code>_def</code> appended to it), and is also the name of the local SML binding. The attributes given by <code>attrs</code> can be any standard attribute (such as <code>simp</code>), and/or drawn from <code>Definition</code>-specific options:</p>
+<ul>
+<li>the attribute <code>schematic</code> alllows the definition to be schematic;</li>
+<li>the attribute <code>nocompute</code> stops the definition from being added to the global compset used by <code>EVAL</code></li>
+<li>the attribute <code>induction=iname</code> makes the induction theorem that is automatically derived for definitions with interesting termination be called <code>iname</code>. If this is omitted, the name chosen will be derived from the <code>name</code> of the definition: if <code>name</code> ends with <code>_def</code> or <code>_DEF</code>, the induction name will replace this suffix with <code>_ind</code> or <code>_IND</code> respectively; otherwise the induction name will simply be <code>name</code> with <code>_ind</code> appended.</li>
+</ul>
+<p>Whether or not the <code>induction=</code> attribute is used, the induction theorem is also made available as an SML binding under the appropriate name. This means that one does not need to follow one’s definition with a call to something like <code>DB.fetch</code> or <code>theorem</code> just to make the induction theorem available at the SML level.</p></li>
+<li><p>Similarly, there are analogous <code>Inductive</code> and <code>CoInductive</code> syntaxes for defining inductive and coinductive relations (using <code>Hol_reln</code> and <code>Hol_coreln</code> underneath). The syntax is</p>
+<pre>   Inductive stem:
+      quoted term material
+   End</pre>
+<p>or</p>
+<pre>   CoInductive stem:
+      quoted term material
+   End</pre>
+<p>where, as above, the <code>Inductive</code>, <code>CoInductive</code> and <code>End</code> keywords must be in the leftmost column of the script file. The <code>stem</code> part of the syntax drives the selection of the various theorem names (<em>e.g.</em>, <code>stem_rules</code>, <code>stem_ind</code>, <code>stem_cases</code> and <code>stem_strongind</code> for inductive definitions) for both the SML environment and the exported theory. The actual names of new constants in the quoted term material do not affect these bindings.</p></li>
+<li><p>Finally, there are new syntaxes for <code>Datatype</code> and type-abbreviation. Users can replace <code>val _ = Datatype`...`</code> with</p>
+<pre>   Datatype: ...
+   End</pre>
+<p>and <code>val _ = type_abbrev("name", ty)</code> with</p>
+<pre>   Type name = ty</pre>
+<p>if the abbreviation should introduce pretty-printing (which would be done with <code>type_abbrev_pp</code>), the syntax is</p>
+<pre>   Type name[pp] = ty</pre>
+<p>Note that in both <code>Type</code> forms the <code>ty</code> is a correct ML value, and may thus require quoting. For example, the <code>set</code> abbreviation is established with</p>
+<pre>   Type set = “:α -&gt; bool”</pre></li>
+<li><p>Holmake now understands targets whose suffixes are the string <code>Theory</code> to be instructions to build all of the files associated with a theory. Previously, to specifically get <code>fooTheory</code> built, it was necessary to write</p>
+<pre>   Holmake fooTheory.uo</pre>
+<p>which is not particularly intuitive.</p>
+<p>Thanks to Magnus Myreen for the feature suggestion.</p></li>
+<li><p>Users can now remove rewrites from simpsets, adjusting the behaviour of the simplifier. This can be done with the <code>-*</code> operator</p>
+<pre>   SIMP_TAC (bool_ss -* [“APPEND_ASSOC”]) [] &gt;&gt; ...</pre>
+<p>or with the <code>Excl</code> form in a theorem list:</p>
+<pre>   simp[Excl “APPEND_ASSOC”] &gt;&gt; ...</pre>
+<p>The stateful simpset (which is behind <code>srw_ss()</code> and tactics such as <code>simp</code>, <code>rw</code> and <code>fs</code>) can also be affected more permanently by making calls to <code>delsimps</code>:</p>
+<pre>   val _ = delsimps [“APPEND_ASSOC”]</pre>
+<p>Such a call will affect the stateful simpset for the rest of the containing script-file and in all scripts that inherit this theory. As is typical, there is a <code>temp_delsimps</code> that removes the rewrite for the containing script-file only.</p></li>
+<li><p>Users can now require that a simplification tactic use particular rewrites. This is done with the <code>Req0</code> and <code>ReqD</code> special forms. The <code>Req0</code> form requires that the goalstate(s) pertaining after the application of the tactic have no sub-terms that match the pattern of the theorems’ left-hand sides. The <code>ReqD</code> form requires that the number of matching sub-terms should have decreased. (This latter is implicitly a requirement that the original goal <em>did</em> have some matching sub-terms.) We hope that both forms will be useful in creating maintainable tactics. See the <em>DESCRIPTION</em> manual for more details.</p>
+<p>Thanks to Magnus Myreen for this feature suggestion (<a href="https://github.com/HOL-Theorem-Prover/HOL/issues/680">Github issue</a>).</p></li>
+<li><p>The <code>emacs</code> editor mode now automatically switches new HOL sessions to the directory of the (presumably script) file where the command is invoked. Relatedly there is a backwards incompatibility: the commands for creating new sessions now also <em>always</em> create fresh sessions (previously, they would try to make an existing session visible if there was one running).</p></li>
+<li><p>The <code>emacs</code> mode’s <code>M-h H</code> command used to try to send the whole buffer to the new HOL session when there was no region high-lighted. Now the behaviour is to send everything up to the cursor. This seems preferable: it helps when debugging to be able to have everything up to a problem-point immediately fed into a fresh session. (The loading of the material (whole prefix or selected region) is done “quietly”, with the interactive flag false.)</p></li>
+<li><p>Holmakefiles can now refer to the new variable <code>DEFAULT_TARGETS</code> in order to generate a list of the targets in the current directory that Holmake would attempt to build by default. This provides an easier way to adjust makefiles than that suggested in the <a href="http://hol-theorem-prover.org/kananaskis-10.release.html">release notes for Kananaskis-10</a>.</p></li>
+<li><p>String literals can now be injected into other types (in much the same way as numeric literals are injected into types such as <code>real</code> and <code>rat</code>). Either the standard double-quotes can be used, or two flavours of guillemet, allowing <em>e.g.</em>, <code>“‹foo bar›”</code>, and <code>“«injected-HOL-string\n»”</code>. Ambiguous situations are resolved with the standard overloading resolution machinery. See the <em>REFERENCE</em> manual’s description of the <code>add_strliteral_form</code> function for details.</p></li>
+<li><p>The <code>Q.SPEC_THEN</code> function (also available as <code>qspec_then</code> in <code>bossLib</code>) now type-instantiates provided theorems à la <code>ISPEC</code>, and tries all possible parses of the provided quotation in order to make this work. The <code>Q.ISPEC_THEN</code> function is deprecated.</p></li>
+</ul>
+<h2 id="bugs-fixed">Bugs fixed:</h2>
+<ul>
+<li><code>smlTimeout.timeout</code>: The thread attributes are now given which eliminates concurrency issues during TacticToe recording. This function now raises the exception <code>FunctionTimeout</code> instead of <code>Interrupt</code> if the argument function exceeds the time limit.</li>
+</ul>
+<h2 id="new-theories">New theories:</h2>
+<ul>
+<li><p><code>real_topologyTheory</code>: a rather complete theory of Elementary Topology in Euclidean Space, ported by Muhammad Qasim and Osman Hasan from HOL-light (up to 2015). The part of General Topology (independent of <code>realTheory</code>) is now available at <code>topologyTheory</code>; the old <code>topologyTheory</code> is renamed to <code>metricTheory</code>.</p>
+<p>There is a minor backwards-incompatibility: old proof scripts using the metric-related results in previous <code>topologyTheory</code> should now open <code>metricTheory</code> instead. (Thanks to Chun Tian for this work.)</p></li>
+<li><p><code>nlistTheory</code>: a development of the bijection between lists of natural numbers and natural numbers. Many operations on lists transfer across to the numbers in obvious ways. The functions demonstrating the bijection are</p>
+<pre>   listOfN : num -&gt; num list</pre>
+<p>and</p>
+<pre>   nlist_of : num list -&gt; num</pre>
+<p>This material is an extension of a basic treatment that was already part of the computability example. Thanks to Elliot Catt and Yiming Xu for help with this theory’s development.</p></li>
+<li><p><code>bisimulationTheory</code>: a basic theory of bisimulation (strong and weak) defined on general labeled transitions (of type <code>:'a-&gt;'b-&gt;'a-&gt;bool</code>), mostly abstracted from <code>examples/CCS</code>. (Thanks to James Shaker and Chun Tian for this work.)</p></li>
+</ul>
+<h2 id="new-tools">New tools:</h2>
+<ul>
+<li><p>HolyHammer is now able to exports HOL4 formulas to the TPTP formats: TFF0, TFF1, THF0 and THF1. Type encodings have been adapted from the existing FOF translation to make use of the increase in type expressivity provided by these different formats.</p></li>
+<li><p>It is now possible to train feedforward neural networks with <code>mlNeuralNetwork</code> and tree neural networks with <code>mlTreeNeuralNetwork</code>. The shape of a tree neural network is described by a term, making it handy to train functions from terms to real numbers.</p></li>
+<li><p>An implementation of Monte Carlo tree search relying on an existing policy and value is now provided in <code>psMCTS</code>. The policy is a function that given a particular situation returns a prior probability for each possible choice. The value is a function that evaluates how promising a situation is by a real number between 0 and 1.</p></li>
+<li><p>Tactic to automate some routine <code>pred_set</code> theorems by reduction to FOL (<code>bossLib</code>): <code>SET_TAC</code>, <code>ASM_SET_TAC</code> and <code>SET_RULE</code>, ported from HOL Light. Many simple set-theoretic results can be directly proved without finding needed lemmas in <code>pred_setTheory</code>. (Thanks to HVG concordia and Chun Tian for this work.)</p></li>
+</ul>
+<h2 id="new-examples">New examples:</h2>
+<ul>
+<li><p>[<code>examples/logic/folcompactness</code>] A port of some material from HOL Light (<a href="https://github.com/jrh13/hol-light/commit/013324af7ff715346383fb963d323138">this commit</a>), about compactness and canonical models for First Order Logic. This is work described in John Harrison’s <a href="https://doi.org/10.1007/BFb0055135"><em>Formalizing Basic First Order Model Theory</em></a>.</p>
+<p>Results include</p>
+<pre>   ⊢ INFINITE 𝕌(:α) ∧ ffinsat (:α) s ⇒ satisfiable (:α) s</pre>
+<p>and</p>
+<pre>   ⊢ INFINITE 𝕌(:α) ⇒
+       (entails (:α) Γ ϕ ⇔ ∃Γ₀. FINITE Γ₀ ∧ Γ₀ ⊆ Γ ∧ entails (:α) Γ₀ ϕ)</pre></li>
+</ul>
+<h2 id="incompatibilities">Incompatibilities:</h2>
+<ul>
+<li><p>The <code>term</code> type is now declared so that it is no longer what SML refers to as an “equality type”. This means that SML code that attempts to use <code>=</code> or <code>&lt;&gt;</code> on types that include terms will now fail to compile. Unlike in Haskell, we cannot redefine the behaviour of equality and must accept the SML implementation’s best guess as to what equality is. Unfortunately, the SML equality on terms is <em>not</em> correct. As has long been appreciated, it distinguishes <code>“λx.x”</code> and <code>“λy.y”</code>, which is bad enough. However, in the standard kernel, where explicit substitutions may be present in a term representation, it can also distinguish terms that are not only semantically identical, but also even print the same.</p>
+<p>This incompatibility will mostly affect people writing SML code. If broken code is directly calling <code>=</code> on terms, the <code>~~</code> infix operator can be used instead (this is the tupled version of <code>aconv</code>). Similarly, <code>&lt;&gt;</code> can be replaced by <code>!~</code>. If broken code includes something like <code>expr &lt;&gt; NONE</code> and <code>expr</code> has type <code>term option</code>, then combinators from <code>Portable</code> for building equality tests should be used. In particular, the above could be rewritten to</p>
+<pre>   not (option_eq aconv expr NONE)</pre>
+<p>It is possible that a tool will want to compare terms for exact syntactic equality up to choice of bound names. The <code>identical</code> function can be used for this. Note that we strongly believe that uses of this function will only occur in very niche cases. For example, it is used just twice in the distribution as of February 2019.</p>
+<p>There are a number of term-specific helper functions defined in <code>boolLib</code> to help in writing specific cases. For example</p>
+<pre>   val memt : term list -&gt; term -&gt; bool
+   val goal_eq : (term list * term) -&gt; (term list * term) -&gt; bool
+   val tassoc : term -&gt; (term * ‘a) list -&gt; ‘a
+   val xtm_eq : (‘’a * term) -&gt; (‘’a * term) -&gt; bool</pre></li>
+<li><p>The <code>Holmake</code> tool now behaves with the <code>--qof</code> behaviour enabled by default. This means that script files which have a tactic failure occur will cause the building of the corresponding theory to fail, rather than having the build continue with the theorem “cheated”. We think this will be less confusing for new users. Experts who <em>do</em> want to have script files continue past such errors can use the <code>--noqof</code> option to enable the old behaviour.</p></li>
+<li><p>When running with Poly/ML, we now require at least version 5.7.0.</p></li>
+<li><p>The <code>type_abbrev</code> function now affects only the type parser. The pretty-printer will not use the new abbreviation when printing types. If the old behaviour of printing the abbreviations as well as parsing them is desired, the new entrypoint <code>type_abbrev_pp</code> should be used.</p></li>
+<li><p>The <code>Globals.priming</code> reference variable has been removed. All priming done by the kernel is now by appending extra prime (apostrophe) characters to the names of variables. This also means that this is the only form of variation introduced by the <code>variant</code> function. However, there is also a new <code>numvariant</code> function, which makes the varying function behave as if the old <code>Globals.priming</code> was set to <code>SOME ""</code> (introduces and increments a numeric suffix).</p></li>
+<li><p>We have made equality a tightly binding infix rather than a loose one. This means that a term like <code>“p = q ∧ r”</code> now parses differently, and means <code>“(p = q) ∧ r”</code>, rather than <code>“p = (q ∧ r)”</code>. For the weak binding, the “iff” alternative is probably better; thus: <code>“p &lt;=&gt; q ∧ r”</code> (or use the Unicode <code>⇔</code>). To fix a whole script file at one stroke, one can revert to the old, loosely binding equality with</p>
+<pre>   val _ = ParseExtras.temp_loose_equality()</pre>
+<p>To fix a whole family of theories that inherit from a few ancestors, add</p>
+<pre>   val _ = ParseExtras.loose_equality()</pre>
+<p>to the ancestral script files, and then the reversion to the old style of grammar will be inherited by all subsequent theories as well.</p></li>
+<li><p>By default, goals are now printed with the trace variable <code>"Goalstack.print_goal_at_top"</code> set to false. This means goals now print like</p>
+<pre>    0.  p
+    1.  q
+   ------------------------------------
+        r</pre>
+<p>The motivation is that when goal-states are very large, the conclusion (which we assume is the most important part of the state) runs no risk of disappearing off the top of the screen. We also believe that having the conclusion and most recent assumption at the bottom of the screen is easier for human eyes to track. The trace variable can be changed back to the old behaviour with:</p>
+<pre>   val _ = set_trace &quot;Goalstack.print_goal_at_top&quot; 1;</pre>
+<p>This instruction can be put into script files, or (better) put into your <code>~/.hol-config.sml</code> file so that all interactive sessions are automatically adjusted.</p></li>
+<li><p>This is arguably also a bug-fix: it is now impossible to rebind a theorem to a name that was associated with a definition, and have the new theorem silently be added to the <code>EVAL</code> compset for future theories’ benefit. In other words, it was previously possible to do</p>
+<pre>   val _ = Define`foo x = x + 1`;
+   EVAL “foo 6”;     (* returns ⊢ foo 6 = 7 *)
+
+   val _ = Q.save_thm (“foo_def”, thm);</pre>
+<p>and have the effect be that <code>thm</code> goes into <code>EVAL</code>’s compset in descendent theories.</p>
+<p>Now, when this happens, the change to the persistent compset is dropped. If the user wants the new <code>foo_def</code> to appear in the <code>EVAL</code>-compset in future theories, they must change the call to <code>save_thm</code> to use the name <code>"foo_def[compute]"</code>. Now, as before, the old <code>foo_def</code> cannot be seen by future theories at all, and so certainly will not be in the <code>EVAL</code>-compset.</p></li>
+<li><p>In some circumstances, the function definition machinery would create a theorem called <code>foo_def_compute</code>. (Such theorems would be rewrites for functions that were defined using the <code>SUC</code> constructor, and would be useful for rewriting with numeral arguments.) Now, such theorems are called <code>foo_compute</code>. As before, such theorems are automatically added to <code>EVAL</code>’s built-in compset.</p></li>
+<li><p>The global toggle <code>allow_schema_definition</code> has turned into a feedback trace variable. Users typically use the <code>DefineSchema</code> entrypoint and can continue to do so. Users can also pass the <code>schematic</code> attribute with the new <code>Definition</code> syntax (see above). Programmers should change uses of <code>with_flag</code> to <code>Feedback.trace</code>.</p></li>
+<li><p>The theorem <code>MEM_DROP</code> in <code>listTheory</code> has been restated as</p>
+<pre>   MEM x (DROP n ls) ⇔ ∃m. m + n &lt; LENGTH ls ∧ x = EL (m + n) ls</pre>
+<p>The identically named <code>MEM_DROP</code> in <code>rich_listTheory</code> has been deleted because it is subsumed by <code>MEM_DROP_IMP</code> in <code>rich_listTheory</code>, which states</p>
+<pre>   MEM x (DROP n ls) ⇒ MEM x ls</pre></li>
+<li><p>The <code>drule</code> family of tactics (and the underlying <code>mp_then</code>) now generalise the implicational theorem argument (with <code>GEN_ALL</code>) before looking for instantiations. If the old behaviour is desired, where free variables are fixed, replacing <code>drule</code> with <code>FREEZE_THEN drule</code> will stop generalisation of all the implicational theorem’s variables. Unfortunately, this may then prevent the matching from occurring at all. In this situation (where some free variables need to be instantiated to make the match go through and the remainder have to be appear as new “local constants” serendipitously linking up with existing free variables in the goal, or if there are type variables that need to be instantiated), <code>drule</code> may need to be replaced with</p>
+<pre>   drule_then (qspecl_then [‘a’, ‘b’,...] mp_tac)</pre>
+<p>where <code>‘a’</code>, <code>‘b’</code> <em>etc.</em> respecialise the original theorem.</p>
+<p>Alternatively, there is a more involved code that more robustly reimplements the old behaviour <a href="https://github.com/CakeML/cakeml/blob/349c6adc73366d9c689a0c8bd11d85c75fd0f71b/misc/preamble.sml#L534-L572">available as part of the CakeML project</a>.</p></li>
+</ul>
+<hr />
+</div>
+<div class="footer">
+<p><em><a href="http://hol-theorem-prover.org">HOL4, Kananaskis-13</a></em></p>
+<p><a href="kananaskis-12.release.html">Release notes for the previous version</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure EncodeVarTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure EncodeVarTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/Boolify/src/EncodeVarScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature EncodeVarTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#fixed_width_def-val">fixed_width_def</a> : thm
+<a name="line7"></a>    val <a href="#of_length_def-val">of_length_def</a> : thm
+<a name="line8"></a>  
+<a name="line9"></a>  (*  Theorems  *)
+<a name="line10"></a>    val <a href="#fixed_width_bnum-val">fixed_width_bnum</a> : thm
+<a name="line11"></a>    val <a href="#fixed_width_bool-val">fixed_width_bool</a> : thm
+<a name="line12"></a>    val <a href="#fixed_width_exists-val">fixed_width_exists</a> : thm
+<a name="line13"></a>    val <a href="#fixed_width_prod-val">fixed_width_prod</a> : thm
+<a name="line14"></a>    val <a href="#fixed_width_sum-val">fixed_width_sum</a> : thm
+<a name="line15"></a>    val <a href="#fixed_width_unit-val">fixed_width_unit</a> : thm
+<a name="line16"></a>    val <a href="#fixed_width_univ-val">fixed_width_univ</a> : thm
+<a name="line17"></a>    val <a href="#of_length_exists_suc-val">of_length_exists_suc</a> : thm
+<a name="line18"></a>    val <a href="#of_length_exists_zero-val">of_length_exists_zero</a> : thm
+<a name="line19"></a>    val <a href="#of_length_univ_suc-val">of_length_univ_suc</a> : thm
+<a name="line20"></a>    val <a href="#of_length_univ_zero-val">of_length_univ_zero</a> : thm
+<a name="line21"></a>  
+<a name="line22"></a>  val EncodeVar_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line23"></a>(*
+   [Coder] Parent theory of "EncodeVar"
+   
+   [<a name="fixed_width_def-val"><b>fixed_width_def</b></a>]  Definition
+      
+      ⊢ ∀n c. fixed_width n c ⇔ ∀x. domain c x ⇒ (LENGTH (encoder c x) = n)
+   
+   [<a name="of_length_def-val"><b>of_length_def</b></a>]  Definition
+      
+      ⊢ ∀l n. l ∈ of_length n ⇔ (LENGTH l = n)
+   
+   [<a name="fixed_width_bnum-val"><b>fixed_width_bnum</b></a>]  Theorem
+      
+      ⊢ ∀m p. fixed_width m (bnum_coder m p)
+   
+   [<a name="fixed_width_bool-val"><b>fixed_width_bool</b></a>]  Theorem
+      
+      ⊢ ∀p. fixed_width 1 (bool_coder p)
+   
+   [<a name="fixed_width_exists-val"><b>fixed_width_exists</b></a>]  Theorem
+      
+      ⊢ ∀phi c n.
+            wf_coder c ∧ fixed_width n c ⇒
+            ((∃x. domain c x ∧ phi x) ⇔ ∃w::of_length n. phi (decoder c w))
+   
+   [<a name="fixed_width_prod-val"><b>fixed_width_prod</b></a>]  Theorem
+      
+      ⊢ ∀c1 c2 n1 n2.
+            fixed_width n1 c1 ∧ fixed_width n2 c2 ⇒
+            fixed_width (n1 + n2) (prod_coder c1 c2)
+   
+   [<a name="fixed_width_sum-val"><b>fixed_width_sum</b></a>]  Theorem
+      
+      ⊢ ∀c1 c2 n.
+            fixed_width n c1 ∧ fixed_width n c2 ⇒
+            fixed_width (SUC n) (sum_coder c1 c2)
+   
+   [<a name="fixed_width_unit-val"><b>fixed_width_unit</b></a>]  Theorem
+      
+      ⊢ ∀p. fixed_width 0 (unit_coder p)
+   
+   [<a name="fixed_width_univ-val"><b>fixed_width_univ</b></a>]  Theorem
+      
+      ⊢ ∀phi c n.
+            wf_coder c ∧ fixed_width n c ⇒
+            ((∀x. domain c x ⇒ phi x) ⇔ ∀w::of_length n. phi (decoder c w))
+   
+   [<a name="of_length_exists_suc-val"><b>of_length_exists_suc</b></a>]  Theorem
+      
+      ⊢ ∀phi n.
+            (∃w::of_length (SUC n). phi w) ⇔
+            ∃x (w::of_length n). phi (x::w)
+   
+   [<a name="of_length_exists_zero-val"><b>of_length_exists_zero</b></a>]  Theorem
+      
+      ⊢ ∀phi. (∃w::of_length 0. phi w) ⇔ phi []
+   
+   [<a name="of_length_univ_suc-val"><b>of_length_univ_suc</b></a>]  Theorem
+      
+      ⊢ ∀phi n.
+            (∀w::of_length (SUC n). phi w) ⇔
+            ∀x (w::of_length n). phi (x::w)
+   
+   [<a name="of_length_univ_zero-val"><b>of_length_univ_zero</b></a>]  Theorem
+      
+      ⊢ ∀phi. (∀w::of_length 0. phi w) ⇔ phi []
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/Boolify/src/EncodeVarScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

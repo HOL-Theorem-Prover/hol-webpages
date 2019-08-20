@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure numeral_bitTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure numeral_bitTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/extra_theories/numeral_bitScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature numeral_bitTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#BIT_MODF_def-val">BIT_MODF_def</a> : thm
+<a name="line7"></a>    val <a href="#BIT_REV_def-val">BIT_REV_def</a> : thm
+<a name="line8"></a>    val <a href="#FDUB_def-val">FDUB_def</a> : thm
+<a name="line9"></a>    val <a href="#SFUNPOW_def-val">SFUNPOW_def</a> : thm
+<a name="line10"></a>    val <a href="#iBITWISE_def-val">iBITWISE_def</a> : thm
+<a name="line11"></a>    val <a href="#iDIV2-val">iDIV2</a> : thm
+<a name="line12"></a>    val <a href="#iLOG2_def-val">iLOG2_def</a> : thm
+<a name="line13"></a>    val <a href="#iMOD_2EXP-val">iMOD_2EXP</a> : thm
+<a name="line14"></a>    val <a href="#iSUC-val">iSUC</a> : thm
+<a name="line15"></a>  
+<a name="line16"></a>  (*  Theorems  *)
+<a name="line17"></a>    val <a href="#BIT_MODIFY_EVAL-val">BIT_MODIFY_EVAL</a> : thm
+<a name="line18"></a>    val <a href="#BIT_REVERSE_EVAL-val">BIT_REVERSE_EVAL</a> : thm
+<a name="line19"></a>    val <a href="#DIV_2EXP-val">DIV_2EXP</a> : thm
+<a name="line20"></a>    val <a href="#FDUB_FDUB-val">FDUB_FDUB</a> : thm
+<a name="line21"></a>    val <a href="#FDUB_iDIV2-val">FDUB_iDIV2</a> : thm
+<a name="line22"></a>    val <a href="#FDUB_iDUB-val">FDUB_iDUB</a> : thm
+<a name="line23"></a>    val <a href="#LOG_compute-val">LOG_compute</a> : thm
+<a name="line24"></a>    val <a href="#LOWEST_SET_BIT-val">LOWEST_SET_BIT</a> : thm
+<a name="line25"></a>    val <a href="#LOWEST_SET_BIT_compute-val">LOWEST_SET_BIT_compute</a> : thm
+<a name="line26"></a>    val <a href="#MOD_2EXP-val">MOD_2EXP</a> : thm
+<a name="line27"></a>    val <a href="#MOD_2EXP_EQ-val">MOD_2EXP_EQ</a> : thm
+<a name="line28"></a>    val <a href="#MOD_2EXP_MAX-val">MOD_2EXP_MAX</a> : thm
+<a name="line29"></a>    val <a href="#NUMERAL_BITWISE-val">NUMERAL_BITWISE</a> : thm
+<a name="line30"></a>    val <a href="#NUMERAL_BIT_MODF-val">NUMERAL_BIT_MODF</a> : thm
+<a name="line31"></a>    val <a href="#NUMERAL_BIT_MODIFY-val">NUMERAL_BIT_MODIFY</a> : thm
+<a name="line32"></a>    val <a href="#NUMERAL_BIT_REV-val">NUMERAL_BIT_REV</a> : thm
+<a name="line33"></a>    val <a href="#NUMERAL_BIT_REVERSE-val">NUMERAL_BIT_REVERSE</a> : thm
+<a name="line34"></a>    val <a href="#NUMERAL_DIV_2EXP-val">NUMERAL_DIV_2EXP</a> : thm
+<a name="line35"></a>    val <a href="#NUMERAL_SFUNPOW_FDUB-val">NUMERAL_SFUNPOW_FDUB</a> : thm
+<a name="line36"></a>    val <a href="#NUMERAL_SFUNPOW_iDIV2-val">NUMERAL_SFUNPOW_iDIV2</a> : thm
+<a name="line37"></a>    val <a href="#NUMERAL_SFUNPOW_iDUB-val">NUMERAL_SFUNPOW_iDUB</a> : thm
+<a name="line38"></a>    val <a href="#NUMERAL_TIMES_2EXP-val">NUMERAL_TIMES_2EXP</a> : thm
+<a name="line39"></a>    val <a href="#NUMERAL_iDIV2-val">NUMERAL_iDIV2</a> : thm
+<a name="line40"></a>    val <a href="#iBITWISE-val">iBITWISE</a> : thm
+<a name="line41"></a>    val <a href="#iDUB_NUMERAL-val">iDUB_NUMERAL</a> : thm
+<a name="line42"></a>    val <a href="#numeral_ilog2-val">numeral_ilog2</a> : thm
+<a name="line43"></a>    val <a href="#numeral_imod_2exp-val">numeral_imod_2exp</a> : thm
+<a name="line44"></a>    val <a href="#numeral_log2-val">numeral_log2</a> : thm
+<a name="line45"></a>    val <a href="#numeral_mod2-val">numeral_mod2</a> : thm
+<a name="line46"></a>  
+<a name="line47"></a>  val numeral_bit_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line48"></a>(*
+   [bit] Parent theory of "numeral_bit"
+   
+   [<a name="BIT_MODF_def-val"><b>BIT_MODF_def</b></a>]  Definition
+      
+      ⊢ (∀f x b e y. BIT_MODF 0 f x b e y = y) ∧
+        ∀n f x b e y.
+            BIT_MODF (SUC n) f x b e y =
+            BIT_MODF n f (x DIV 2) (b + 1) (2 * e)
+              (if f b (ODD x) then e + y else y)
+   
+   [<a name="BIT_REV_def-val"><b>BIT_REV_def</b></a>]  Definition
+      
+      ⊢ (∀x y. BIT_REV 0 x y = y) ∧
+        ∀n x y.
+            BIT_REV (SUC n) x y =
+            BIT_REV n (x DIV 2) (2 * y + SBIT (ODD x) 0)
+   
+   [<a name="FDUB_def-val"><b>FDUB_def</b></a>]  Definition
+      
+      ⊢ (∀f. FDUB f 0 = 0) ∧ ∀f n. FDUB f (SUC n) = f (f (SUC n))
+   
+   [<a name="SFUNPOW_def-val"><b>SFUNPOW_def</b></a>]  Definition
+      
+      ⊢ (∀f x. SFUNPOW f 0 x = x) ∧
+        ∀f n x.
+            SFUNPOW f (SUC n) x = if x = 0 then 0 else SFUNPOW f n (f x)
+   
+   [<a name="iBITWISE_def-val"><b>iBITWISE_def</b></a>]  Definition
+      
+      ⊢ numeral_bit$iBITWISE = BITWISE
+   
+   [<a name="iDIV2-val"><b>iDIV2</b></a>]  Definition
+      
+      ⊢ numeral_bit$iDIV2 = DIV2
+   
+   [<a name="iLOG2_def-val"><b>iLOG2_def</b></a>]  Definition
+      
+      ⊢ ∀n. numeral_bit$iLOG2 n = LOG2 (n + 1)
+   
+   [<a name="iMOD_2EXP-val"><b>iMOD_2EXP</b></a>]  Definition
+      
+      ⊢ numeral_bit$iMOD_2EXP = MOD_2EXP
+   
+   [<a name="iSUC-val"><b>iSUC</b></a>]  Definition
+      
+      ⊢ numeral_bit$iSUC = SUC
+   
+   [<a name="BIT_MODIFY_EVAL-val"><b>BIT_MODIFY_EVAL</b></a>]  Theorem
+      
+      ⊢ ∀m f n. BIT_MODIFY m f n = BIT_MODF m f n 0 1 0
+   
+   [<a name="BIT_REVERSE_EVAL-val"><b>BIT_REVERSE_EVAL</b></a>]  Theorem
+      
+      ⊢ ∀m n. BIT_REVERSE m n = BIT_REV m n 0
+   
+   [<a name="DIV_2EXP-val"><b>DIV_2EXP</b></a>]  Theorem
+      
+      ⊢ ∀n x. DIV_2EXP n x = FUNPOW DIV2 n x
+   
+   [<a name="FDUB_FDUB-val"><b>FDUB_FDUB</b></a>]  Theorem
+      
+      ⊢ FDUB (FDUB f) ZERO = ZERO ∧
+        (∀x.
+             FDUB (FDUB f) (numeral_bit$iSUC x) =
+             FDUB f (FDUB f (numeral_bit$iSUC x))) ∧
+        (∀x. FDUB (FDUB f) (BIT1 x) = FDUB f (FDUB f (BIT1 x))) ∧
+        ∀x. FDUB (FDUB f) (BIT2 x) = FDUB f (FDUB f (BIT2 x))
+   
+   [<a name="FDUB_iDIV2-val"><b>FDUB_iDIV2</b></a>]  Theorem
+      
+      ⊢ ∀x.
+            FDUB numeral_bit$iDIV2 x =
+            numeral_bit$iDIV2 (numeral_bit$iDIV2 x)
+   
+   [<a name="FDUB_iDUB-val"><b>FDUB_iDUB</b></a>]  Theorem
+      
+      ⊢ ∀x. FDUB numeral$iDUB x = numeral$iDUB (numeral$iDUB x)
+   
+   [<a name="LOG_compute-val"><b>LOG_compute</b></a>]  Theorem
+      
+      ⊢ ∀m n.
+            LOG m n =
+            if m &lt; 2 ∨ n = 0 then FAIL LOG $var$(base &lt; 2 or n = 0) m n
+            else if n &lt; m then 0
+            else SUC (LOG m (n DIV m))
+   
+   [<a name="LOWEST_SET_BIT-val"><b>LOWEST_SET_BIT</b></a>]  Theorem
+      
+      ⊢ ∀n.
+            n ≠ 0 ⇒
+            LOWEST_SET_BIT n =
+            if ODD n then 0 else 1 + LOWEST_SET_BIT (DIV2 n)
+   
+   [<a name="LOWEST_SET_BIT_compute-val"><b>LOWEST_SET_BIT_compute</b></a>]  Theorem
+      
+      ⊢ (∀n.
+             LOWEST_SET_BIT (NUMERAL (BIT2 n)) =
+             SUC (LOWEST_SET_BIT (NUMERAL (SUC n)))) ∧
+        ∀n. LOWEST_SET_BIT (NUMERAL (BIT1 n)) = 0
+   
+   [<a name="MOD_2EXP-val"><b>MOD_2EXP</b></a>]  Theorem
+      
+      ⊢ (∀x. MOD_2EXP x 0 = 0) ∧
+        ∀x n. MOD_2EXP x (NUMERAL n) = NUMERAL (numeral_bit$iMOD_2EXP x n)
+   
+   [<a name="MOD_2EXP_EQ-val"><b>MOD_2EXP_EQ</b></a>]  Theorem
+      
+      ⊢ (∀a b. MOD_2EXP_EQ 0 a b ⇔ T) ∧
+        (∀n a b.
+             MOD_2EXP_EQ (SUC n) a b ⇔
+             (ODD a ⇔ ODD b) ∧ MOD_2EXP_EQ n (DIV2 a) (DIV2 b)) ∧
+        ∀n a. MOD_2EXP_EQ n a a ⇔ T
+   
+   [<a name="MOD_2EXP_MAX-val"><b>MOD_2EXP_MAX</b></a>]  Theorem
+      
+      ⊢ (∀a. MOD_2EXP_MAX 0 a ⇔ T) ∧
+        ∀n a. MOD_2EXP_MAX (SUC n) a ⇔ ODD a ∧ MOD_2EXP_MAX n (DIV2 a)
+   
+   [<a name="NUMERAL_BITWISE-val"><b>NUMERAL_BITWISE</b></a>]  Theorem
+      
+      ⊢ (∀x f a. BITWISE x f 0 0 = NUMERAL (numeral_bit$iBITWISE x f 0 0)) ∧
+        (∀x f a.
+             BITWISE x f (NUMERAL a) 0 =
+             NUMERAL (numeral_bit$iBITWISE x f (NUMERAL a) 0)) ∧
+        (∀x f b.
+             BITWISE x f 0 (NUMERAL b) =
+             NUMERAL (numeral_bit$iBITWISE x f 0 (NUMERAL b))) ∧
+        ∀x f a b.
+            BITWISE x f (NUMERAL a) (NUMERAL b) =
+            NUMERAL (numeral_bit$iBITWISE x f (NUMERAL a) (NUMERAL b))
+   
+   [<a name="NUMERAL_BIT_MODF-val"><b>NUMERAL_BIT_MODF</b></a>]  Theorem
+      
+      ⊢ (∀f x b e y. BIT_MODF 0 f x b e y = y) ∧
+        (∀n f b e y.
+             BIT_MODF (NUMERAL (BIT1 n)) f 0 b (NUMERAL e) y =
+             BIT_MODF (NUMERAL (BIT1 n) − 1) f 0 (b + 1)
+               (NUMERAL (numeral$iDUB e))
+               (if f b F then NUMERAL e + y else y)) ∧
+        (∀n f b e y.
+             BIT_MODF (NUMERAL (BIT2 n)) f 0 b (NUMERAL e) y =
+             BIT_MODF (NUMERAL (BIT1 n)) f 0 (b + 1)
+               (NUMERAL (numeral$iDUB e))
+               (if f b F then NUMERAL e + y else y)) ∧
+        (∀n f x b e y.
+             BIT_MODF (NUMERAL (BIT1 n)) f (NUMERAL x) b (NUMERAL e) y =
+             BIT_MODF (NUMERAL (BIT1 n) − 1) f (DIV2 (NUMERAL x)) (b + 1)
+               (NUMERAL (numeral$iDUB e))
+               (if f b (ODD x) then NUMERAL e + y else y)) ∧
+        ∀n f x b e y.
+            BIT_MODF (NUMERAL (BIT2 n)) f (NUMERAL x) b (NUMERAL e) y =
+            BIT_MODF (NUMERAL (BIT1 n)) f (DIV2 (NUMERAL x)) (b + 1)
+              (NUMERAL (numeral$iDUB e))
+              (if f b (ODD x) then NUMERAL e + y else y)
+   
+   [<a name="NUMERAL_BIT_MODIFY-val"><b>NUMERAL_BIT_MODIFY</b></a>]  Theorem
+      
+      ⊢ (∀m f. BIT_MODIFY (NUMERAL m) f 0 = BIT_MODF (NUMERAL m) f 0 0 1 0) ∧
+        ∀m f n.
+            BIT_MODIFY (NUMERAL m) f (NUMERAL n) =
+            BIT_MODF (NUMERAL m) f (NUMERAL n) 0 1 0
+   
+   [<a name="NUMERAL_BIT_REV-val"><b>NUMERAL_BIT_REV</b></a>]  Theorem
+      
+      ⊢ (∀x y. BIT_REV 0 x y = y) ∧
+        (∀n y.
+             BIT_REV (NUMERAL (BIT1 n)) 0 y =
+             BIT_REV (NUMERAL (BIT1 n) − 1) 0 (numeral$iDUB y)) ∧
+        (∀n y.
+             BIT_REV (NUMERAL (BIT2 n)) 0 y =
+             BIT_REV (NUMERAL (BIT1 n)) 0 (numeral$iDUB y)) ∧
+        (∀n x y.
+             BIT_REV (NUMERAL (BIT1 n)) (NUMERAL x) y =
+             BIT_REV (NUMERAL (BIT1 n) − 1) (DIV2 (NUMERAL x))
+               (if ODD x then BIT1 y else numeral$iDUB y)) ∧
+        ∀n x y.
+            BIT_REV (NUMERAL (BIT2 n)) (NUMERAL x) y =
+            BIT_REV (NUMERAL (BIT1 n)) (DIV2 (NUMERAL x))
+              (if ODD x then BIT1 y else numeral$iDUB y)
+   
+   [<a name="NUMERAL_BIT_REVERSE-val"><b>NUMERAL_BIT_REVERSE</b></a>]  Theorem
+      
+      ⊢ (∀m.
+             BIT_REVERSE (NUMERAL m) 0 =
+             NUMERAL (BIT_REV (NUMERAL m) 0 ZERO)) ∧
+        ∀n m.
+            BIT_REVERSE (NUMERAL m) (NUMERAL n) =
+            NUMERAL (BIT_REV (NUMERAL m) (NUMERAL n) ZERO)
+   
+   [<a name="NUMERAL_DIV_2EXP-val"><b>NUMERAL_DIV_2EXP</b></a>]  Theorem
+      
+      ⊢ (∀n. DIV_2EXP n 0 = 0) ∧
+        ∀n x.
+            DIV_2EXP n (NUMERAL x) =
+            NUMERAL (SFUNPOW numeral_bit$iDIV2 n x)
+   
+   [<a name="NUMERAL_SFUNPOW_FDUB-val"><b>NUMERAL_SFUNPOW_FDUB</b></a>]  Theorem
+      
+      ⊢ ∀f.
+            (∀x. SFUNPOW (FDUB f) 0 x = x) ∧
+            (∀y. SFUNPOW (FDUB f) y 0 = 0) ∧
+            (∀n x.
+                 SFUNPOW (FDUB f) (NUMERAL (BIT1 n)) x =
+                 SFUNPOW (FDUB (FDUB f)) (NUMERAL n) (FDUB f x)) ∧
+            ∀n x.
+                SFUNPOW (FDUB f) (NUMERAL (BIT2 n)) x =
+                SFUNPOW (FDUB (FDUB f)) (NUMERAL n) (FDUB f (FDUB f x))
+   
+   [<a name="NUMERAL_SFUNPOW_iDIV2-val"><b>NUMERAL_SFUNPOW_iDIV2</b></a>]  Theorem
+      
+      ⊢ (∀x. SFUNPOW numeral_bit$iDIV2 0 x = x) ∧
+        (∀y. SFUNPOW numeral_bit$iDIV2 y 0 = 0) ∧
+        (∀n x.
+             SFUNPOW numeral_bit$iDIV2 (NUMERAL (BIT1 n)) x =
+             SFUNPOW (FDUB numeral_bit$iDIV2) (NUMERAL n)
+               (numeral_bit$iDIV2 x)) ∧
+        ∀n x.
+            SFUNPOW numeral_bit$iDIV2 (NUMERAL (BIT2 n)) x =
+            SFUNPOW (FDUB numeral_bit$iDIV2) (NUMERAL n)
+              (numeral_bit$iDIV2 (numeral_bit$iDIV2 x))
+   
+   [<a name="NUMERAL_SFUNPOW_iDUB-val"><b>NUMERAL_SFUNPOW_iDUB</b></a>]  Theorem
+      
+      ⊢ (∀x. SFUNPOW numeral$iDUB 0 x = x) ∧
+        (∀y. SFUNPOW numeral$iDUB y 0 = 0) ∧
+        (∀n x.
+             SFUNPOW numeral$iDUB (NUMERAL (BIT1 n)) x =
+             SFUNPOW (FDUB numeral$iDUB) (NUMERAL n) (numeral$iDUB x)) ∧
+        ∀n x.
+            SFUNPOW numeral$iDUB (NUMERAL (BIT2 n)) x =
+            SFUNPOW (FDUB numeral$iDUB) (NUMERAL n)
+              (numeral$iDUB (numeral$iDUB x))
+   
+   [<a name="NUMERAL_TIMES_2EXP-val"><b>NUMERAL_TIMES_2EXP</b></a>]  Theorem
+      
+      ⊢ (∀n. TIMES_2EXP n 0 = 0) ∧
+        ∀n x. TIMES_2EXP n (NUMERAL x) = NUMERAL (SFUNPOW numeral$iDUB n x)
+   
+   [<a name="NUMERAL_iDIV2-val"><b>NUMERAL_iDIV2</b></a>]  Theorem
+      
+      ⊢ numeral_bit$iDIV2 ZERO = ZERO ∧
+        numeral_bit$iDIV2 (numeral_bit$iSUC ZERO) = ZERO ∧
+        numeral_bit$iDIV2 (BIT1 n) = n ∧
+        numeral_bit$iDIV2 (numeral_bit$iSUC (BIT1 n)) = numeral_bit$iSUC n ∧
+        numeral_bit$iDIV2 (BIT2 n) = numeral_bit$iSUC n ∧
+        numeral_bit$iDIV2 (numeral_bit$iSUC (BIT2 n)) = numeral_bit$iSUC n ∧
+        NUMERAL (numeral_bit$iSUC n) = NUMERAL (SUC n)
+   
+   [<a name="iBITWISE-val"><b>iBITWISE</b></a>]  Theorem
+      
+      ⊢ (∀opr a b. numeral_bit$iBITWISE 0 opr a b = ZERO) ∧
+        (∀x opr a b.
+             numeral_bit$iBITWISE (NUMERAL (BIT1 x)) opr a b =
+             (let
+                w =
+                  numeral_bit$iBITWISE (NUMERAL (BIT1 x) − 1) opr (DIV2 a)
+                    (DIV2 b)
+              in
+                if opr (ODD a) (ODD b) then BIT1 w else numeral$iDUB w)) ∧
+        ∀x opr a b.
+            numeral_bit$iBITWISE (NUMERAL (BIT2 x)) opr a b =
+            (let
+               w =
+                 numeral_bit$iBITWISE (NUMERAL (BIT1 x)) opr (DIV2 a)
+                   (DIV2 b)
+             in
+               if opr (ODD a) (ODD b) then BIT1 w else numeral$iDUB w)
+   
+   [<a name="iDUB_NUMERAL-val"><b>iDUB_NUMERAL</b></a>]  Theorem
+      
+      ⊢ numeral$iDUB (NUMERAL i) = NUMERAL (numeral$iDUB i)
+   
+   [<a name="numeral_ilog2-val"><b>numeral_ilog2</b></a>]  Theorem
+      
+      ⊢ numeral_bit$iLOG2 ZERO = 0 ∧
+        (∀n. numeral_bit$iLOG2 (BIT1 n) = 1 + numeral_bit$iLOG2 n) ∧
+        ∀n. numeral_bit$iLOG2 (BIT2 n) = 1 + numeral_bit$iLOG2 n
+   
+   [<a name="numeral_imod_2exp-val"><b>numeral_imod_2exp</b></a>]  Theorem
+      
+      ⊢ (∀n. numeral_bit$iMOD_2EXP 0 n = ZERO) ∧
+        (∀x n. numeral_bit$iMOD_2EXP x ZERO = ZERO) ∧
+        (∀x n.
+             numeral_bit$iMOD_2EXP (NUMERAL (BIT1 x)) (BIT1 n) =
+             BIT1 (numeral_bit$iMOD_2EXP (NUMERAL (BIT1 x) − 1) n)) ∧
+        (∀x n.
+             numeral_bit$iMOD_2EXP (NUMERAL (BIT2 x)) (BIT1 n) =
+             BIT1 (numeral_bit$iMOD_2EXP (NUMERAL (BIT1 x)) n)) ∧
+        (∀x n.
+             numeral_bit$iMOD_2EXP (NUMERAL (BIT1 x)) (BIT2 n) =
+             numeral$iDUB
+               (numeral_bit$iMOD_2EXP (NUMERAL (BIT1 x) − 1) (SUC n))) ∧
+        ∀x n.
+            numeral_bit$iMOD_2EXP (NUMERAL (BIT2 x)) (BIT2 n) =
+            numeral$iDUB (numeral_bit$iMOD_2EXP (NUMERAL (BIT1 x)) (SUC n))
+   
+   [<a name="numeral_log2-val"><b>numeral_log2</b></a>]  Theorem
+      
+      ⊢ (∀n. LOG2 (NUMERAL (BIT1 n)) = numeral_bit$iLOG2 (numeral$iDUB n)) ∧
+        ∀n. LOG2 (NUMERAL (BIT2 n)) = numeral_bit$iLOG2 (BIT1 n)
+   
+   [<a name="numeral_mod2-val"><b>numeral_mod2</b></a>]  Theorem
+      
+      ⊢ 0 MOD 2 = 0 ∧ (∀n. NUMERAL (BIT1 n) MOD 2 = 1) ∧
+        ∀n. NUMERAL (BIT2 n) MOD 2 = 0
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/extra_theories/numeral_bitScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

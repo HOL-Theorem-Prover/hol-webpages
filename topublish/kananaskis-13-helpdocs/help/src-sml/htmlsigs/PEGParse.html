@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure PEGParse</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure PEGParse</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/PEGParse.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature PEGParse =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  datatype ('tok,'nt,'value)pegsym =
+<a name="line5"></a>           empty of 'value
+<a name="line6"></a>         | any of 'tok -&gt; 'value
+<a name="line7"></a>         | tok of ('tok -&gt; bool) * ('tok -&gt; 'value)
+<a name="line8"></a>         | nt of 'nt * ('value -&gt; 'value)
+<a name="line9"></a>         | seq of ('tok,'nt,'value)pegsym * ('tok,'nt,'value)pegsym *
+<a name="line10"></a>                  ('value -&gt; 'value -&gt; 'value)
+<a name="line11"></a>         | choice of ('tok,'nt,'value)pegsym * ('tok,'nt,'value)pegsym *
+<a name="line12"></a>                     ('value -&gt; 'value) * ('value -&gt; 'value)
+<a name="line13"></a>         | rpt of ('tok,'nt,'value)pegsym * ('value list -&gt; 'value)
+<a name="line14"></a>         | not of ('tok,'nt,'value)pegsym * 'value
+<a name="line15"></a>
+<a name="line16"></a>  datatype ('tok,'nt,'value) grammar =
+<a name="line17"></a>           PEG of { start : ('tok,'nt,'value)pegsym,
+<a name="line18"></a>                    rules : 'nt -&gt; ('tok,'nt,'value)pegsym option }
+<a name="line19"></a>
+<a name="line20"></a>  datatype ('source,'tok,'nt,'value)kont =
+<a name="line21"></a>           ksym of ('tok,'nt,'value)pegsym * ('source,'tok,'nt,'value)kont *
+<a name="line22"></a>                   ('source,'tok,'nt,'value)kont
+<a name="line23"></a>         | appf1 of ('value -&gt; 'value) * ('source,'tok,'nt,'value)kont
+<a name="line24"></a>         | appf2 of ('value -&gt; 'value -&gt; 'value) * ('source,'tok,'nt,'value)kont
+<a name="line25"></a>         | returnTo of 'source * 'value option list *
+<a name="line26"></a>                       ('source,'tok,'nt,'value)kont
+<a name="line27"></a>         | poplist of ('value list -&gt; 'value) * ('source,'tok,'nt,'value)kont
+<a name="line28"></a>         | listsym of ('tok,'nt,'value)pegsym * ('value list -&gt; 'value) *
+<a name="line29"></a>                      ('source,'tok,'nt,'value)kont
+<a name="line30"></a>         | kdone
+<a name="line31"></a>         | kfailed
+<a name="line32"></a>
+<a name="line33"></a>
+<a name="line34"></a>  val pegexec : ('nt -&gt; ('tok,'nt,'value) pegsym) -&gt;
+<a name="line35"></a>                ('source -&gt; ('source * 'tok) option) -&gt;
+<a name="line36"></a>                ('tok,'nt,'value)pegsym -&gt;
+<a name="line37"></a>                'source -&gt;
+<a name="line38"></a>                'value option list -&gt;
+<a name="line39"></a>                ('source,'tok,'nt,'value)kont -&gt;
+<a name="line40"></a>                ('source,'tok,'nt,'value)kont -&gt;
+<a name="line41"></a>                ('source * 'value) option
+<a name="line42"></a>
+<a name="line43"></a>end
+<a name="line44"></a>
+<a name="line45"></a>(* [pegexec ntmap gettok sym input stk success failure]
+<a name="line46"></a>
+<a name="line47"></a>   The input/gettok pairing must be functional. In particular, PEGs
+<a name="line48"></a>   support backtracking so sensible behaviour can only be guaranteed
+<a name="line49"></a>   if repeated calls to the same input ('source) arguments always give
+<a name="line50"></a>   the same result.
+<a name="line51"></a>
+<a name="line52"></a>   The standard initial call to pegexec should be
+<a name="line53"></a>
+<a name="line54"></a>     pegexec ntmap gettok symbol input [] kdone kfailed
+<a name="line55"></a>*)
+<a name="line56"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/PEGParse.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

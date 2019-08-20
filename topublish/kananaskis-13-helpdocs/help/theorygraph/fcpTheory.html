@@ -1,0 +1,680 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: fcp</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "fcp"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "indexedListsTheory.html"><span class="strong">indexedLists</span></a>&nbsp;&nbsp;
+    <a href = "patternMatchesTheory.html"><span class="strong">patternMatches</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">bit0</span> <td> 1
+    <tr><td> <span class="strong">bit1</span> <td> 1
+    <tr><td> <span class="strong">cart</span> <td> 2
+    <tr><td> <span class="strong">finite_image</span> <td> 1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">:+</span>
+    <td>
+    :num -> α -> α[β] -> α[β]
+    <tr><td> <span class="strong">BIT0A</span> <td> :α -> α bit0
+    <tr><td> <span class="strong">BIT0B</span> <td> :α -> α bit0
+    <tr><td> <span class="strong">BIT1A</span> <td> :α -> α bit1
+    <tr><td> <span class="strong">BIT1B</span> <td> :α -> α bit1
+    <tr><td> <span class="strong">BIT1C</span> <td> :α bit1
+    <tr><td> <span class="strong">FCP</span> <td> :(num -> α) -> α[β]
+    <tr><td>
+    <span class="strong">FCP_CONCAT</span>
+    <td>
+    :α[β] -> α[γ] -> α[β + γ]
+    <tr><td> <span class="strong">FCP_CONS</span> <td> :α -> α[β] -> α[γ]
+    <tr><td>
+    <span class="strong">FCP_EVERY</span>
+    <td>
+    :(β -> bool) -> β[α] -> bool
+    <tr><td>
+    <span class="strong">FCP_EXISTS</span>
+    <td>
+    :(β -> bool) -> β[α] -> bool
+    <tr><td>
+    <span class="strong">FCP_FOLD</span>
+    <td>
+    :(β -> α -> β) -> β -> α[γ] -> β
+    <tr><td> <span class="strong">FCP_HD</span> <td> :α[β] -> α
+    <tr><td>
+    <span class="strong">FCP_MAP</span>
+    <td>
+    :(α -> β) -> α[γ] -> β[γ]
+    <tr><td> <span class="strong">FCP_TL</span> <td> :α[γ] -> α[β]
+    <tr><td>
+    <span class="strong">FCP_ZIP</span>
+    <td>
+    :α[β] -> γ[β] -> (α # γ)[β]
+    <tr><td>
+    <span class="strong">HAS_SIZE</span>
+    <td>
+    :(α -> bool) -> num -> bool
+    <tr><td> <span class="strong">L2V</span> <td> :α list -> α[β]
+    <tr><td> <span class="strong">V2L</span> <td> :α[β] -> α list
+    <tr><td>
+    <span class="strong">bit0_CASE</span>
+    <td>
+    :α bit0 -> (α -> β) -> (α -> β) -> β
+    <tr><td>
+    <span class="strong">bit0_size</span>
+    <td>
+    :(α -> num) -> α bit0 -> num
+    <tr><td>
+    <span class="strong">bit1_CASE</span>
+    <td>
+    :α bit1 -> (α -> β) -> (α -> β) -> β -> β
+    <tr><td>
+    <span class="strong">bit1_size</span>
+    <td>
+    :(α -> num) -> α bit1 -> num
+    <tr><td>
+    <span class="strong">dest_cart</span>
+    <td>
+    :α[β] -> β finite_image -> α
+    <tr><td>
+    <span class="strong">dest_finite_image</span>
+    <td>
+    :α finite_image -> α
+    <tr><td> <span class="strong">dimindex</span> <td> :α itself -> num
+    <tr><td>
+    <span class="strong">fcp_CASE</span>
+    <td>
+    :α[β] -> ((β finite_image -> α) -> γ) -> γ
+    <tr><td> <span class="strong">fcp_index</span> <td> :α[β] -> num -> α
+    <tr><td> <span class="strong">finite_index</span> <td> :num -> α
+    <tr><td>
+    <span class="strong">mk_cart</span>
+    <td>
+    :(β finite_image -> α) -> α[β]
+    <tr><td>
+    <span class="strong">mk_finite_image</span>
+    <td>
+    :α -> α finite_image
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">V2L_def</span>
+<DD>
+<pre>
+⊢ ∀v. V2L v = GENLIST ($' v) (dimindex (:β))
+</pre>
+
+<DT><span class="strong">L2V_def</span>
+<DD>
+<pre>
+⊢ ∀L. L2V L = FCP i. EL i L
+</pre>
+
+<DT><span class="strong">HAS_SIZE_def</span>
+<DD>
+<pre>
+⊢ ∀s n. s HAS_SIZE n ⇔ FINITE s ∧ (CARD s = n)
+</pre>
+
+<DT><span class="strong">finite_index_def</span>
+<DD>
+<pre>
+⊢ finite_index = @f. ∀x. ∃!n. n < dimindex (:α) ∧ (f n = x)
+</pre>
+
+<DT><span class="strong">finite_image_tybij</span>
+<DD>
+<pre>
+⊢ (∀a. mk_finite_image (dest_finite_image a) = a) ∧
+  ∀r.
+      (λx. (x = ARB) ∨ FINITE 𝕌(:α)) r ⇔
+      (dest_finite_image (mk_finite_image r) = r)
+</pre>
+
+<DT><span class="strong">finite_image_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION (λx. (x = ARB) ∨ FINITE 𝕌(:α)) rep
+</pre>
+
+<DT><span class="strong">FCP_ZIP_def</span>
+<DD>
+<pre>
+⊢ ∀a b. FCP_ZIP a b = FCP i. (a ' i,b ' i)
+</pre>
+
+<DT><span class="strong">FCP_UPDATE_def</span>
+<DD>
+<pre>
+⊢ ∀a b. a :+ b = (λm. FCP c. if a = c then b else m ' c)
+</pre>
+
+<DT><span class="strong">FCP_TL_def</span>
+<DD>
+<pre>
+⊢ ∀v. FCP_TL v = FCP i. v ' (SUC i)
+</pre>
+
+<DT><span class="strong">FCP_MAP_def</span>
+<DD>
+<pre>
+⊢ ∀f v. FCP_MAP f v = FCP i. f (v ' i)
+</pre>
+
+<DT><span class="strong">fcp_index</span>
+<DD>
+<pre>
+⊢ ∀x i. x ' i = dest_cart x (finite_index i)
+</pre>
+
+<DT><span class="strong">FCP_HD_def</span>
+<DD>
+<pre>
+⊢ ∀v. FCP_HD v = v ' 0
+</pre>
+
+<DT><span class="strong">FCP_FOLD_def</span>
+<DD>
+<pre>
+⊢ ∀f i v. FCP_FOLD f i v = FOLDL f i (V2L v)
+</pre>
+
+<DT><span class="strong">FCP_EXISTS_def</span>
+<DD>
+<pre>
+⊢ ∀P v. FCP_EXISTS P v ⇔ ∃i. i < dimindex (:α) ∧ P (v ' i)
+</pre>
+
+<DT><span class="strong">FCP_EVERY_def</span>
+<DD>
+<pre>
+⊢ ∀P v. FCP_EVERY P v ⇔ ∀i. dimindex (:α) ≤ i ∨ P (v ' i)
+</pre>
+
+<DT><span class="strong">FCP_CONS_def</span>
+<DD>
+<pre>
+⊢ ∀h v. FCP_CONS h v = (0 :+ h) (FCP i. v ' (PRE i))
+</pre>
+
+<DT><span class="strong">FCP_CONCAT_def</span>
+<DD>
+<pre>
+⊢ ∀a b.
+      FCP_CONCAT a b =
+      FCP i. if i < dimindex (:γ) then b ' i else a ' (i − dimindex (:γ))
+</pre>
+
+<DT><span class="strong">fcp_case_def</span>
+<DD>
+<pre>
+⊢ ∀h f. fcp_CASE (mk_cart h) f = f h
+</pre>
+
+<DT><span class="strong">FCP</span>
+<DD>
+<pre>
+⊢ $FCP = (λg. @f. ∀i. i < dimindex (:β) ⇒ (f ' i = g i))
+</pre>
+
+<DT><span class="strong">dimindex_def</span>
+<DD>
+<pre>
+⊢ dimindex (:α) = if FINITE 𝕌(:α) then CARD 𝕌(:α) else 1
+</pre>
+
+<DT><span class="strong">cart_tybij</span>
+<DD>
+<pre>
+⊢ (∀a. mk_cart (dest_cart a) = a) ∧
+  ∀r. (λf. T) r ⇔ (dest_cart (mk_cart r) = r)
+</pre>
+
+<DT><span class="strong">cart_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION (λf. T) rep
+</pre>
+
+<DT><span class="strong">bit1_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep.
+      TYPE_DEFINITION
+        (λa0.
+             ∀ $var$('bit1').
+                 (∀a0.
+                      (∃a.
+                           a0 =
+                           (λa. ind_type$CONSTR 0 a (λn. ind_type$BOTTOM)) a) ∨
+                      (∃a.
+                           a0 =
+                           (λa.
+                                ind_type$CONSTR (SUC 0) a
+                                  (λn. ind_type$BOTTOM)) a) ∨
+                      (a0 =
+                       ind_type$CONSTR (SUC (SUC 0)) ARB (λn. ind_type$BOTTOM)) ⇒
+                      $var$('bit1') a0) ⇒
+                 $var$('bit1') a0) rep
+</pre>
+
+<DT><span class="strong">bit1_size_def</span>
+<DD>
+<pre>
+⊢ (∀f a. bit1_size f (BIT1A a) = 1 + f a) ∧
+  (∀f a. bit1_size f (BIT1B a) = 1 + f a) ∧ ∀f. bit1_size f BIT1C = 0
+</pre>
+
+<DT><span class="strong">bit1_case_def</span>
+<DD>
+<pre>
+⊢ (∀a f f1 v. bit1_CASE (BIT1A a) f f1 v = f a) ∧
+  (∀a f f1 v. bit1_CASE (BIT1B a) f f1 v = f1 a) ∧
+  ∀f f1 v. bit1_CASE BIT1C f f1 v = v
+</pre>
+
+<DT><span class="strong">bit0_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep.
+      TYPE_DEFINITION
+        (λa0.
+             ∀ $var$('bit0').
+                 (∀a0.
+                      (∃a.
+                           a0 =
+                           (λa. ind_type$CONSTR 0 a (λn. ind_type$BOTTOM)) a) ∨
+                      (∃a.
+                           a0 =
+                           (λa.
+                                ind_type$CONSTR (SUC 0) a
+                                  (λn. ind_type$BOTTOM)) a) ⇒
+                      $var$('bit0') a0) ⇒
+                 $var$('bit0') a0) rep
+</pre>
+
+<DT><span class="strong">bit0_size_def</span>
+<DD>
+<pre>
+⊢ (∀f a. bit0_size f (BIT0A a) = 1 + f a) ∧
+  ∀f a. bit0_size f (BIT0B a) = 1 + f a
+</pre>
+
+<DT><span class="strong">bit0_case_def</span>
+<DD>
+<pre>
+⊢ (∀a f f1. bit0_CASE (BIT0A a) f f1 = f a) ∧
+  ∀a f f1. bit0_CASE (BIT0B a) f f1 = f1 a
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">V2L_L2V</span>
+<DD>
+<pre>
+⊢ ∀x. (dimindex (:β) = LENGTH x) ⇒ (V2L (L2V x) = x)
+</pre>
+
+<DT><span class="strong">READ_TL</span>
+<DD>
+<pre>
+⊢ ∀i a. i < dimindex (:β) ⇒ (FCP_TL a ' i = a ' (SUC i))
+</pre>
+
+<DT><span class="strong">READ_L2V</span>
+<DD>
+<pre>
+⊢ ∀i a. i < dimindex (:β) ⇒ (L2V a ' i = EL i a)
+</pre>
+
+<DT><span class="strong">NULL_V2L</span>
+<DD>
+<pre>
+⊢ ∀v. ¬NULL (V2L v)
+</pre>
+
+<DT><span class="strong">NOT_FINITE_IMP_dimindex_1</span>
+<DD>
+<pre>
+⊢ INFINITE 𝕌(:α) ⇒ (dimindex (:α) = 1)
+</pre>
+
+<DT><span class="strong">LENGTH_V2L</span>
+<DD>
+<pre>
+⊢ ∀v. LENGTH (V2L v) = dimindex (:β)
+</pre>
+
+<DT><span class="strong">index_sum</span>
+<DD>
+<pre>
+⊢ dimindex (:α + β) =
+  if FINITE 𝕌(:α) ∧ FINITE 𝕌(:β) then dimindex (:α) + dimindex (:β) else 1
+</pre>
+
+<DT><span class="strong">index_one</span>
+<DD>
+<pre>
+⊢ dimindex (:unit) = 1
+</pre>
+
+<DT><span class="strong">index_comp</span>
+<DD>
+<pre>
+⊢ ∀f n.
+      $FCP f ' n =
+      if n < dimindex (:β) then f n
+      else FAIL $' $var$(FCP out of bounds) ($FCP f) n
+</pre>
+
+<DT><span class="strong">index_bit1</span>
+<DD>
+<pre>
+⊢ dimindex (:α bit1) = if FINITE 𝕌(:α) then 2 * dimindex (:α) + 1 else 1
+</pre>
+
+<DT><span class="strong">index_bit0</span>
+<DD>
+<pre>
+⊢ dimindex (:α bit0) = if FINITE 𝕌(:α) then 2 * dimindex (:α) else 1
+</pre>
+
+<DT><span class="strong">finite_sum</span>
+<DD>
+<pre>
+⊢ FINITE 𝕌(:α + β) ⇔ FINITE 𝕌(:α) ∧ FINITE 𝕌(:β)
+</pre>
+
+<DT><span class="strong">finite_one</span>
+<DD>
+<pre>
+⊢ FINITE 𝕌(:unit)
+</pre>
+
+<DT><span class="strong">finite_bit1</span>
+<DD>
+<pre>
+⊢ FINITE 𝕌(:α bit1) ⇔ FINITE 𝕌(:α)
+</pre>
+
+<DT><span class="strong">finite_bit0</span>
+<DD>
+<pre>
+⊢ FINITE 𝕌(:α bit0) ⇔ FINITE 𝕌(:α)
+</pre>
+
+<DT><span class="strong">FCP_UPDATE_IMP_ID</span>
+<DD>
+<pre>
+⊢ ∀m a v. (m ' a = v) ⇒ ((a :+ v) m = m)
+</pre>
+
+<DT><span class="strong">FCP_UPDATE_EQ</span>
+<DD>
+<pre>
+⊢ ∀m a b c. (a :+ c) ((a :+ b) m) = (a :+ c) m
+</pre>
+
+<DT><span class="strong">FCP_UPDATE_COMMUTES</span>
+<DD>
+<pre>
+⊢ ∀m a b c d. a ≠ b ⇒ ((a :+ c) ((b :+ d) m) = (b :+ d) ((a :+ c) m))
+</pre>
+
+<DT><span class="strong">FCP_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀f g. (∀i. i < dimindex (:β) ⇒ (f ' i = g i)) ⇔ ($FCP g = f)
+</pre>
+
+<DT><span class="strong">FCP_TL</span>
+<DD>
+<pre>
+⊢ ∀v.
+      1 < dimindex (:β) ∧ (dimindex (:γ) = dimindex (:β) − 1) ⇒
+      (FCP_TL v = L2V (TL (V2L v)))
+</pre>
+
+<DT><span class="strong">fcp_subst_comp</span>
+<DD>
+<pre>
+⊢ ∀a b f. (x :+ y) ($FCP f) = FCP c. if x = c then y else f c
+</pre>
+
+<DT><span class="strong">FCP_MAP</span>
+<DD>
+<pre>
+⊢ ∀f v. FCP_MAP f v = L2V (MAP f (V2L v))
+</pre>
+
+<DT><span class="strong">fcp_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀f. P (mk_cart f)) ⇒ ∀a. P a
+</pre>
+
+<DT><span class="strong">FCP_HD</span>
+<DD>
+<pre>
+⊢ ∀v. FCP_HD v = HD (V2L v)
+</pre>
+
+<DT><span class="strong">FCP_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀P v. FCP_EXISTS P v ⇔ EXISTS P (V2L v)
+</pre>
+
+<DT><span class="strong">FCP_EVERY</span>
+<DD>
+<pre>
+⊢ ∀P v. FCP_EVERY P v ⇔ EVERY P (V2L v)
+</pre>
+
+<DT><span class="strong">FCP_ETA</span>
+<DD>
+<pre>
+⊢ ∀g. (FCP i. g ' i) = g
+</pre>
+
+<DT><span class="strong">FCP_CONS</span>
+<DD>
+<pre>
+⊢ ∀a v. FCP_CONS a v = L2V (a::V2L v)
+</pre>
+
+<DT><span class="strong">FCP_BETA</span>
+<DD>
+<pre>
+⊢ ∀i. i < dimindex (:β) ⇒ ($FCP g ' i = g i)
+</pre>
+
+<DT><span class="strong">fcp_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f. ∃g. ∀h. g (mk_cart h) = f h
+</pre>
+
+<DT><span class="strong">FCP_APPLY_UPDATE_THM</span>
+<DD>
+<pre>
+⊢ ∀m a w b.
+      (a :+ w) m ' b =
+      if b < dimindex (:β) then if a = b then w else m ' b
+      else FAIL $' $var$(index out of range) ((a :+ w) m) b
+</pre>
+
+<DT><span class="strong">EL_V2L</span>
+<DD>
+<pre>
+⊢ ∀i v. i < dimindex (:β) ⇒ (EL i (V2L v) = v ' i)
+</pre>
+
+<DT><span class="strong">DIMINDEX_GE_1</span>
+<DD>
+<pre>
+⊢ 1 ≤ dimindex (:α)
+</pre>
+
+<DT><span class="strong">datatype_bit1</span>
+<DD>
+<pre>
+⊢ DATATYPE (bit1 BIT1A BIT1B BIT1C)
+</pre>
+
+<DT><span class="strong">datatype_bit0</span>
+<DD>
+<pre>
+⊢ DATATYPE (bit0 BIT0A BIT0B)
+</pre>
+
+<DT><span class="strong">CART_EQ</span>
+<DD>
+<pre>
+⊢ ∀x y. (x = y) ⇔ ∀i. i < dimindex (:β) ⇒ (x ' i = y ' i)
+</pre>
+
+<DT><span class="strong">card_dimindex</span>
+<DD>
+<pre>
+⊢ FINITE 𝕌(:α) ⇒ (CARD 𝕌(:α) = dimindex (:α))
+</pre>
+
+<DT><span class="strong">bit1_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀bb. (∃a. bb = BIT1A a) ∨ (∃a. bb = BIT1B a) ∨ (bb = BIT1C)
+</pre>
+
+<DT><span class="strong">bit1_induction</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a. P (BIT1A a)) ∧ (∀a. P (BIT1B a)) ∧ P BIT1C ⇒ ∀b. P b
+</pre>
+
+<DT><span class="strong">bit1_distinct</span>
+<DD>
+<pre>
+⊢ (∀a' a. BIT1A a ≠ BIT1B a') ∧ (∀a. BIT1A a ≠ BIT1C) ∧ ∀a. BIT1B a ≠ BIT1C
+</pre>
+
+<DT><span class="strong">bit1_case_eq</span>
+<DD>
+<pre>
+⊢ (bit1_CASE x f f1 v = v') ⇔
+  (∃a. (x = BIT1A a) ∧ (f a = v')) ∨ (∃a. (x = BIT1B a) ∧ (f1 a = v')) ∨
+  (x = BIT1C) ∧ (v = v')
+</pre>
+
+<DT><span class="strong">bit1_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' f f1 v.
+      (M = M') ∧ (∀a. (M' = BIT1A a) ⇒ (f a = f' a)) ∧
+      (∀a. (M' = BIT1B a) ⇒ (f1 a = f1' a)) ∧ ((M' = BIT1C) ⇒ (v = v')) ⇒
+      (bit1_CASE M f f1 v = bit1_CASE M' f' f1' v')
+</pre>
+
+<DT><span class="strong">bit1_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f0 f1 f2.
+      ∃fn.
+          (∀a. fn (BIT1A a) = f0 a) ∧ (∀a. fn (BIT1B a) = f1 a) ∧
+          (fn BIT1C = f2)
+</pre>
+
+<DT><span class="strong">bit1_11</span>
+<DD>
+<pre>
+⊢ (∀a a'. (BIT1A a = BIT1A a') ⇔ (a = a')) ∧
+  ∀a a'. (BIT1B a = BIT1B a') ⇔ (a = a')
+</pre>
+
+<DT><span class="strong">bit0_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀bb. (∃a. bb = BIT0A a) ∨ ∃a. bb = BIT0B a
+</pre>
+
+<DT><span class="strong">bit0_induction</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a. P (BIT0A a)) ∧ (∀a. P (BIT0B a)) ⇒ ∀b. P b
+</pre>
+
+<DT><span class="strong">bit0_distinct</span>
+<DD>
+<pre>
+⊢ ∀a' a. BIT0A a ≠ BIT0B a'
+</pre>
+
+<DT><span class="strong">bit0_case_eq</span>
+<DD>
+<pre>
+⊢ (bit0_CASE x f f1 = v) ⇔
+  (∃a. (x = BIT0A a) ∧ (f a = v)) ∨ ∃a. (x = BIT0B a) ∧ (f1 a = v)
+</pre>
+
+<DT><span class="strong">bit0_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' f f1.
+      (M = M') ∧ (∀a. (M' = BIT0A a) ⇒ (f a = f' a)) ∧
+      (∀a. (M' = BIT0B a) ⇒ (f1 a = f1' a)) ⇒
+      (bit0_CASE M f f1 = bit0_CASE M' f' f1')
+</pre>
+
+<DT><span class="strong">bit0_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f0 f1. ∃fn. (∀a. fn (BIT0A a) = f0 a) ∧ ∀a. fn (BIT0B a) = f1 a
+</pre>
+
+<DT><span class="strong">bit0_11</span>
+<DD>
+<pre>
+⊢ (∀a a'. (BIT0A a = BIT0A a') ⇔ (a = a')) ∧
+  ∀a a'. (BIT0B a = BIT0B a') ⇔ (a = a')
+</pre>
+
+<DT><span class="strong">APPLY_FCP_UPDATE_ID</span>
+<DD>
+<pre>
+⊢ ∀m a. (a :+ m ' a) m = m
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

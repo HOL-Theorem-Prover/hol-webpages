@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>ConseqConv.EXT_DEPTH_CONSEQ_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>EXT_DEPTH_CONSEQ_CONV : conseq_conv_congruence list -&gt;
+                        depth_conseq_conv_cache_opt -&gt; int option -&gt;
+                        bool -&gt;
+                        (bool * int option * (thm list -&gt; directed_conseq_conv)) list -&gt;
+                        thm list -&gt;
+                        directed_conseq_conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/ConseqConv.html">ConseqConv</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The general depth consequence conversion of which
+</SPAN><SPAN class = "BRKT">DEPTH_CONSEQ_CONV</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">REDEPTH_CONSEQ_CONV</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">ONCE_DEPTH_CONSEQ_CONV</SPAN><SPAN class = "TEXT"> etc
+are just instantiations.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">DEPTH_CONSEQ_CONV</SPAN><SPAN class = "TEXT"> and similar conversions are able to apply a
+consequence conversion by breaking down the structure of a term using
+lemmata about </SPAN><SPAN class = "BRKT">/\</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">\/</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">~</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">==&gt;</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">if-then-else</SPAN><SPAN class = "TEXT"> and quantification.
+While doing so, these conversions collect various amounts of context information.
+</SPAN><SPAN class = "BRKT">EXT_DEPTH_CONSEQ_CONV</SPAN><SPAN class = "TEXT"> </SPAN><SPAN class = "BRKT">congruence_list</SPAN><SPAN class = "TEXT"> </SPAN><SPAN class = "BRKT">cache_opt</SPAN><SPAN class = "TEXT"> </SPAN><SPAN class = "BRKT">step_opt</SPAN><SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">redepth</SPAN><SPAN class = "TEXT"> </SPAN><SPAN class = "BRKT">convL</SPAN><SPAN class = "TEXT"> </SPAN><SPAN class = "BRKT">context</SPAN><SPAN class = "TEXT"> is the function used by these other
+depth conversions. For this purpose, the</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">cache_opt</SPAN><SPAN class = "TEXT"> determines which cache to use: </SPAN><SPAN class = "BRKT">NONE</SPAN><SPAN class = "TEXT"> means no caching; a standard
+cache that stores everything is configured by
+</SPAN><SPAN class = "BRKT">CONSEQ_CONV_default_cache_opt</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The number of steps taken is determined by </SPAN><SPAN class = "BRKT">step_opt</SPAN><SPAN class = "TEXT">. </SPAN><SPAN class = "BRKT">NONE</SPAN><SPAN class = "TEXT"> means
+arbitrarily many; </SPAN><SPAN class = "BRKT">SOME&nbsp;n</SPAN><SPAN class = "TEXT"> means at most n. </SPAN><SPAN class = "BRKT">ONCE_DEPTH_CONSEQ_CONV</SPAN><SPAN class = "TEXT">
+for example uses </SPAN><SPAN class = "BRKT">SOME&nbsp;1</SPAN><SPAN class = "TEXT">. The parameter </SPAN><SPAN class = "BRKT">redepth</SPAN><SPAN class = "TEXT"> determines whether
+modified terms should be revisited and </SPAN><SPAN class = "BRKT">convL</SPAN><SPAN class = "TEXT"> is a basically a list
+of directed consequence conversions of the conversions that should be
+applied at subpositions. Its entries consist of a flag, whether to
+apply the conversion before or after descending into subterms; the
+weight (i.e. the number of counted steps) for the conversion, and a
+function from the context (a list of theorems) to the conversion.
+</SPAN><SPAN class = "BRKT">context</SPAN><SPAN class = "TEXT"> provides additional context that might be used.</SPAN>
+<P>
+<SPAN class = "TEXT">The first parameter </SPAN><SPAN class = "BRKT">congruence_list</SPAN><SPAN class = "TEXT"> is a list of congruence functions that
+determine how to break down terms. Each element of this list has to be
+a function </SPAN><SPAN class = "BRKT">congruence&nbsp;context&nbsp;sys&nbsp;dir&nbsp;t</SPAN><SPAN class = "TEXT"> which returns a pair of the
+number of performed steps and a resulting theorem. </SPAN><SPAN class = "BRKT">sys</SPAN><SPAN class = "TEXT"> is a callback
+that allows to apply the depth conversion recursively to
+subterms. </SPAN><SPAN class = "BRKT">context</SPAN><SPAN class = "TEXT"> represents the context that can be used. If you ignore the
+slightly different return type, the congruence is otherwise a directed consequence
+conversion. If the congruence can&rsquo;t be applied, it should either fail
+or raise an </SPAN><SPAN class = "BRKT">UNCHANGED</SPAN><SPAN class = "TEXT"> exception. The callback </SPAN><SPAN class = "BRKT">sys</SPAN><SPAN class = "TEXT"> gets the number
+of already performed steps, a direction and a term. It then returns a
+accumulated number of steps and a thm option. It never fails. The
+number of steps is used to abort if the maximum number of globally
+allowed steps has been reached. The first call of </SPAN><SPAN class = "BRKT">sys</SPAN><SPAN class = "TEXT"> should get
+</SPAN><SPAN class = "BRKT">0</SPAN><SPAN class = "TEXT">, then the accumulated number has to be passed. The congruence
+should return the finally accumulated number of steps.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "ConseqConv.DEPTH_CONSEQ_CONV.html">DEPTH_CONSEQ_CONV</A>,
+<A HREF = "ConseqConv.REDEPTH_CONSEQ_CONV.html">REDEPTH_CONSEQ_CONV</A>,
+<A HREF = "ConseqConv.ONCE_DEPTH_CONSEQ_CONV.html">ONCE_DEPTH_CONSEQ_CONV</A>,
+<A HREF = "ConseqConv.NUM_DEPTH_CONSEQ_CONV.html">NUM_DEPTH_CONSEQ_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

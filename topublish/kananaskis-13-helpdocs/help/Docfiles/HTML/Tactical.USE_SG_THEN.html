@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactical.USE_SG_THEN</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>USE_SG_THEN : thm_tactic -&gt; int -&gt; int -&gt; list_tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactical.html">Tactical</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Allows the user to use one subgoal to prove another</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In </SPAN><SPAN class = "BRKT">USE_SG_THEN&nbsp;ttac&nbsp;nu&nbsp;np</SPAN><SPAN class = "TEXT">, of the current goal list, subgoal number
+</SPAN><SPAN class = "BRKT">nu</SPAN><SPAN class = "TEXT"> can be used in proving subgoal number </SPAN><SPAN class = "BRKT">np</SPAN><SPAN class = "TEXT">.
+Subgoal number </SPAN><SPAN class = "BRKT">nu</SPAN><SPAN class = "TEXT"> is used as a lemma by </SPAN><SPAN class = "BRKT">ttac</SPAN><SPAN class = "TEXT">
+to simplify subgoal number </SPAN><SPAN class = "BRKT">np</SPAN><SPAN class = "TEXT">. That is, if
+subgoal number </SPAN><SPAN class = "BRKT">nu</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">A&nbsp;?-&nbsp;u</SPAN><SPAN class = "TEXT">, subgoal number </SPAN><SPAN class = "BRKT">np</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">A1&nbsp;?-&nbsp;t1</SPAN><SPAN class = "TEXT">, and
+</SPAN><DIV class = "XMPL"><pre>
+    A1 ?- t1
+   ==========  ttac (u |- u)
+    A2 ?- t2
+</pre></DIV>
+<SPAN class = "TEXT">
+then the list-tactic </SPAN><SPAN class = "BRKT">USE_SG_THEN&nbsp;ttac&nbsp;nu&nbsp;np</SPAN><SPAN class = "TEXT"> gives this same result
+(new subgoal(s)) for subgoal </SPAN><SPAN class = "BRKT">np</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">This list-tactic will be invalid unless </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> is a subset of </SPAN><SPAN class = "BRKT">A1</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Note that in the interactive system,
+subgoals are printed in reverse order of their numbering.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">USE_SG_THEN</SPAN><SPAN class = "TEXT"> will fail </SPAN><SPAN class = "BRKT">ttac&nbsp;(u&nbsp;|-&nbsp;u)</SPAN><SPAN class = "TEXT"> fails on subgoal number </SPAN><SPAN class = "BRKT">np</SPAN><SPAN class = "TEXT">,
+or if indices </SPAN><SPAN class = "BRKT">np</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">nu</SPAN><SPAN class = "TEXT"> are out of range.  Note that the subgoals in the
+current subgoal list are numbered starting from 1.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Where two subgoals are similar and not easy to prove, one can be used to
+help prove the other.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Here subgoal 1 is assumed, so as to help in proving subgoal 2.
+</SPAN><DIV class = "XMPL"><pre>
+r \/ s
+------------------------------------
+  0.  p
+  1.  q
+
+
+r
+------------------------------------
+  0.  p
+  1.  q
+
+2 subgoals
+:
+   proof
+
+&gt; elt (USE_SG_THEN ASSUME_TAC 1 2) ;
+OK..
+2 subgoals:
+val it =
+
+r \/ s
+------------------------------------
+  0.  p
+  1.  q
+  2.  r
+
+
+r
+------------------------------------
+  0.  p
+  1.  q
+
+2 subgoals
+:
+   proof
+</pre></DIV>
+<SPAN class = "TEXT">
+Here is an example where the assumptions differ.
+Subgoal 2 is used to solve subgoal 1,
+but the assumption </SPAN><SPAN class = "BRKT">p'</SPAN><SPAN class = "TEXT"> of subgoal 2 remains to be proved.
+Without </SPAN><SPAN class = "BRKT">VALIDATE_LT</SPAN><SPAN class = "TEXT">, the list-tactic would be invalid.
+</SPAN><DIV class = "XMPL"><pre>
+r
+------------------------------------
+  0.  p'
+  1.  q
+
+
+r
+------------------------------------
+  0.  p
+  1.  q
+
+2 subgoals
+:
+   proof
+
+&gt; elt (VALIDATE_LT (USE_SG_THEN ACCEPT_TAC 2 1)) ;
+OK..
+2 subgoals:
+val it =
+
+r
+------------------------------------
+  0.  p'
+  1.  q
+
+
+p'
+------------------------------------
+  0.  p
+  1.  q
+
+2 subgoals
+:
+   proof
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Some users may expect the generated tactic to be </SPAN><SPAN class = "BRKT">ttac&nbsp;(A&nbsp;|-&nbsp;u)</SPAN><SPAN class = "TEXT">, rather
+than </SPAN><SPAN class = "BRKT">ttac&nbsp;(u&nbsp;|-&nbsp;u)</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

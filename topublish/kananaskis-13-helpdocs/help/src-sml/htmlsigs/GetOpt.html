@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure GetOpt</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure GetOpt</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="file:///Users/nor190/various-HOLs/develop/tools/Holmake/GetOpt.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* getopt-sig.sml
+<a name="line2"></a> *
+<a name="line3"></a> * COPYRIGHT (c) 1998 Bell Labs, Lucent Technologies.
+<a name="line4"></a> *
+<a name="line5"></a> * A SML port of GNU's getopt library.
+<a name="line6"></a> *
+<a name="line7"></a> * This port is derived from Sven Panne's
+<a name="line8"></a> * &lt;Sven.Panne@informatik.uni-muenchen.de&gt;
+<a name="line9"></a> * implementation of the getopt library in Haskell &lt;http://www.haskell.org&gt;
+<a name="line10"></a> *
+<a name="line11"></a> * The following comments are lifted from Sven's code:
+<a name="line12"></a> *
+<a name="line13"></a> *   Two rather obscure features are missing: The Bash 2.0 non-option hack (if
+<a name="line14"></a> *   you don't already know it, you probably don't want to hear about it...)
+<a name="line15"></a> *   and the recognition of long options with a single dash (e.g. '-help' is
+<a name="line16"></a> *   recognised as '--help', as long as there is no short option 'h').
+<a name="line17"></a> *
+<a name="line18"></a> *   Other differences between GNU's getopt and this implementation:
+<a name="line19"></a> *     * To enforce a coherent description of options and arguments, there are
+<a name="line20"></a> *       explanation fields in the option/argument descriptor.
+<a name="line21"></a> *     * Error messages are now more informative, but no longer POSIX
+<a name="line22"></a> *       compliant... :-(
+<a name="line23"></a> *
+<a name="line24"></a> *
+<a name="line25"></a> *
+<a name="line26"></a> * A difference with Sven's port: errors now invoke an error callback, rather
+<a name="line27"></a> * than returning error strings while continuing processing options.
+<a name="line28"></a> * The full generality of the latter does not seem justified.
+<a name="line29"></a> *)
+<a name="line30"></a>
+<a name="line31"></a>
+<a name="line32"></a>signature GetOpt =
+<a name="line33"></a>  sig
+<a name="line34"></a>
+<a name="line35"></a>      datatype 'a arg_order
+<a name="line36"></a>        = RequireOrder
+<a name="line37"></a>        | Permute
+<a name="line38"></a>        | ReturnInOrder of string -&gt; 'a
+<a name="line39"></a>      (* What to do with options following non-options:
+<a name="line40"></a>       * RequireOrder: no option processing after first non-option
+<a name="line41"></a>       * Permute: freely intersperse options and non-options
+<a name="line42"></a>       * ReturnInOrder: wrap non-options into options
+<a name="line43"></a>       *)
+<a name="line44"></a>
+<a name="line45"></a>      datatype 'a arg_descr
+<a name="line46"></a>        = NoArg of unit -&gt; 'a
+<a name="line47"></a>        | ReqArg of (string -&gt; 'a) * string
+<a name="line48"></a>        | OptArg of (string option -&gt; 'a) * string
+<a name="line49"></a>      (* Description of an argument option:
+<a name="line50"></a>       * NoArg: no argument required
+<a name="line51"></a>       * ReqArg: option requires an argument; the string is the argument name
+<a name="line52"></a>       * OptArg: optional argument; the string is the argument name
+<a name="line53"></a>       *)
+<a name="line54"></a>
+<a name="line55"></a>      type 'a opt_descr = {
+<a name="line56"></a>          short : string,
+<a name="line57"></a>          long : string list,
+<a name="line58"></a>          desc : 'a arg_descr,
+<a name="line59"></a>          help : string
+<a name="line60"></a>        }
+<a name="line61"></a>      (* Description of a single option *)
+<a name="line62"></a>
+<a name="line63"></a>      val usageInfo : {
+<a name="line64"></a>	      header : string,
+<a name="line65"></a>	      options : 'a opt_descr list
+<a name="line66"></a>	    } -&gt; string
+<a name="line67"></a>      (* takes a header string and a list of option descriptions and
+<a name="line68"></a>       * returns a string explaining the usage information.  A newline will
+<a name="line69"></a>       * be added following the header, so it should not be newline terminated.
+<a name="line70"></a>       *)
+<a name="line71"></a>
+<a name="line72"></a>      val getOpt : {
+<a name="line73"></a>	      argOrder : 'a arg_order,
+<a name="line74"></a>	      options : 'a opt_descr list,
+<a name="line75"></a>	      errFn : string -&gt; unit
+<a name="line76"></a>	    } -&gt; string list -&gt; ('a list * string list)
+<a name="line77"></a>      (* takes as argument an arg_order to specify the non-options
+<a name="line78"></a>       * handling, a list of option descriptions, an error callback,
+<a name="line79"></a>       * and a command line containing the options and arguments,
+<a name="line80"></a>       * and returns a list of (options, non-options)
+<a name="line81"></a>       *)
+<a name="line82"></a>
+<a name="line83"></a>  end
+<a name="line84"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="file:///Users/nor190/various-HOLs/develop/tools/Holmake/GetOpt.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-12</a></em></p></body></html>

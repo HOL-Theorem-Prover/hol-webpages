@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Lib.total</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>total : ('a -&gt; 'b) -&gt; 'a -&gt; 'b option</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Lib.html">Lib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Converts a partial function to a total function.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In ML, there are two main ways for a function to signal that it has been
+called on an element outside of its intended domain of application:
+exceptions and options. The function </SPAN><SPAN class = "BRKT">total</SPAN><SPAN class = "TEXT"> maps a function that may
+raise an exception to one that returns an element in the option type.
+Thus, if </SPAN><SPAN class = "BRKT">f&nbsp;x</SPAN><SPAN class = "TEXT"> results in any exception other than </SPAN><SPAN class = "BRKT">Interrupt</SPAN><SPAN class = "TEXT"> being
+raised, then </SPAN><SPAN class = "BRKT">total&nbsp;f&nbsp;x</SPAN><SPAN class = "TEXT"> returns </SPAN><SPAN class = "BRKT">NONE</SPAN><SPAN class = "TEXT">. If </SPAN><SPAN class = "BRKT">f&nbsp;x</SPAN><SPAN class = "TEXT"> raises </SPAN><SPAN class = "BRKT">Interrupt</SPAN><SPAN class = "TEXT">,
+then </SPAN><SPAN class = "BRKT">total&nbsp;f&nbsp;x</SPAN><SPAN class = "TEXT"> likewise raises </SPAN><SPAN class = "BRKT">Interrupt</SPAN><SPAN class = "TEXT">. If </SPAN><SPAN class = "BRKT">f&nbsp;x</SPAN><SPAN class = "TEXT"> returns </SPAN><SPAN class = "BRKT">y</SPAN><SPAN class = "TEXT">, then
+</SPAN><SPAN class = "BRKT">total&nbsp;f&nbsp;x</SPAN><SPAN class = "TEXT"> returns </SPAN><SPAN class = "BRKT">SOME&nbsp;y</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">total</SPAN><SPAN class = "TEXT"> has an inverse </SPAN><SPAN class = "BRKT">partial</SPAN><SPAN class = "TEXT">. Generally speaking,
+</SPAN><SPAN class = "BRKT">(partial&nbsp;err&nbsp;o&nbsp;total)&nbsp;f</SPAN><SPAN class = "TEXT"> equals </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">, provided that </SPAN><SPAN class = "BRKT">err</SPAN><SPAN class = "TEXT"> is the only
+exception that </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> raises. Similarly, </SPAN><SPAN class = "BRKT">(total&nbsp;o&nbsp;partial&nbsp;err)&nbsp;f</SPAN><SPAN class = "TEXT"> is equal
+to </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When application of the first argument to the second argument raises
+</SPAN><SPAN class = "BRKT">Interrupt</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- 3 div 0;
+! Uncaught exception:
+! Div
+
+- total (op div) (3,0);
+&gt; val it = NONE : int option
+
+- (partial Div o total) (op div) (3,0);
+! Uncaught exception:
+! Div
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Lib.partial.html">partial</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

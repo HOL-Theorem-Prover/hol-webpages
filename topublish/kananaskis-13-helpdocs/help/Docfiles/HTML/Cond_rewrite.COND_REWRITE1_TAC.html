@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Cond_rewrite.COND_REWRITE1_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>COND_REWRITE1_TAC : thm_tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Cond_rewrite.html">Cond_rewrite</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A simple conditional rewriting tactic.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">COND_REWRITE1_TAC</SPAN><SPAN class = "TEXT"> is a front end of the conditional rewriting
+tactic </SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT">. The input theorem should be in the following form
+</SPAN><DIV class = "XMPL"><pre>
+   A |- !x11 ... . P1 ==&gt; ... !xm1 ... . Pm ==&gt; (!x ... . Q = R)
+</pre></DIV>
+<SPAN class = "TEXT">
+where each antecedent </SPAN><SPAN class = "BRKT">Pi</SPAN><SPAN class = "TEXT"> itself may be a conjunction or disjunction.
+This theorem is transformed to a standard form expected by
+</SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT"> which carries out the actual rewriting.
+The transformation is performed by </SPAN><SPAN class = "BRKT">COND_REWR_CANON</SPAN><SPAN class = "TEXT">. The search function
+passed to </SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">search_top_down</SPAN><SPAN class = "TEXT">. The effect of applying
+this tactic is to substitute into the goal instances of the right hand
+side of the conclusion of the input theorem </SPAN><SPAN class = "BRKT">Ri'</SPAN><SPAN class = "TEXT"> for the
+corresponding instances of the left hand side. The search is top-down
+left-to-right. All matches found by the search function are
+substituted. New subgoals corresponding to the instances of the
+antecedents which do not appear in the assumption of the original goal
+are created. See manual page of </SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT"> for details of how the
+instantiation and substitution are done.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">COND_REWRITE1_TAC&nbsp;th</SPAN><SPAN class = "TEXT">  fails if </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> cannot be transformed into the
+required form by the function </SPAN><SPAN class = "BRKT">COND_REWR_CANON</SPAN><SPAN class = "TEXT">. Otherwise, it fails if no match
+is found or the theorem cannot be instantiated.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following example illustrates a straightforward use of </SPAN><SPAN class = "BRKT">COND_REWRITE1_TAC</SPAN><SPAN class = "TEXT">.
+We use the built-in theorem </SPAN><SPAN class = "BRKT">LESS_MOD</SPAN><SPAN class = "TEXT"> as the input theorem.
+</SPAN><DIV class = "XMPL"><pre>
+   #LESS_MOD;;
+   Theorem LESS_MOD autoloading from theory `arithmetic` ...
+   LESS_MOD = |- !n k. k &lt; n ==&gt; (k MOD n = k)
+
+   |- !n k. k &lt; n ==&gt; (k MOD n = k)
+</pre></DIV>
+<SPAN class = "TEXT">
+We set up a goal
+</SPAN><DIV class = "XMPL"><pre>
+   #g"2 MOD 3 = 2";;
+   "2 MOD 3 = 2"
+
+   () : void
+</pre></DIV>
+<SPAN class = "TEXT">
+and then apply the tactic
+</SPAN><DIV class = "XMPL"><pre>
+   #e(COND_REWRITE1_TAC LESS_MOD);;
+   OK..
+   2 subgoals
+   "2 = 2"
+       [ "2 &lt; 3" ]
+
+   "2 &lt; 3"
+
+   () : void
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Cond_rewrite.COND_REWR_TAC.html">COND_REWR_TAC</A>,
+<A HREF = "Cond_rewrite.COND_REWRITE1_CONV.html">COND_REWRITE1_CONV</A>,
+<A HREF = "Cond_rewrite.COND_REWR_CONV.html">COND_REWR_CONV</A>,
+<A HREF = "Cond_rewrite.COND_REWR_CANON.html">COND_REWR_CANON</A>,
+<A HREF = "Cond_rewrite.search_top_down.html">search_top_down</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

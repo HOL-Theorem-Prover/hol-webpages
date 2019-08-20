@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: dirGraph</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "dirGraph"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "indexedListsTheory.html"><span class="strong">indexedLists</span></a>&nbsp;&nbsp;
+    <a href = "patternMatchesTheory.html"><span class="strong">patternMatches</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">EXCLUDE</span>
+    <td>
+    :(β -> α list) -> (β -> bool) -> β -> α list
+    <tr><td>
+    <span class="strong">Parents</span>
+    <td>
+    :(α -> β list) -> α -> bool
+    <tr><td>
+    <span class="strong">REACH</span>
+    <td>
+    :(α -> α list) -> α -> α -> bool
+    <tr><td>
+    <span class="strong">REACH_LIST</span>
+    <td>
+    :(α -> α list) -> α list -> α -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">REACH_LIST_def</span>
+<DD>
+<pre>
+⊢ ∀G nodes y. REACH_LIST G nodes y ⇔ ∃x. MEM x nodes ∧ y ∈ REACH G x
+</pre>
+
+<DT><span class="strong">REACH_def</span>
+<DD>
+<pre>
+⊢ ∀G. REACH G = (λx y. MEM y (G x))⃰
+</pre>
+
+<DT><span class="strong">Parents_def</span>
+<DD>
+<pre>
+⊢ ∀G. Parents G = {x | G x ≠ []}
+</pre>
+
+<DT><span class="strong">EXCLUDE_def</span>
+<DD>
+<pre>
+⊢ ∀G ex node. EXCLUDE G ex node = if node ∈ ex then [] else G node
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">REACH_LEM2</span>
+<DD>
+<pre>
+⊢ ∀G x y. REACH G x y ⇒ ∀z. ¬REACH G z y ⇒ REACH (EXCLUDE G {z}) x y
+</pre>
+
+<DT><span class="strong">REACH_LEM1</span>
+<DD>
+<pre>
+⊢ ∀p G seen.
+      p ∉ seen ⇒
+      (REACH (EXCLUDE G seen) p =
+       p INSERT REACH_LIST (EXCLUDE G (p INSERT seen)) (G p))
+</pre>
+
+<DT><span class="strong">REACH_EXCLUDE</span>
+<DD>
+<pre>
+⊢ ∀G x. REACH (EXCLUDE G x) = (λx' y. x' ∉ x ∧ MEM y (G x'))⃰
+</pre>
+
+<DT><span class="strong">EXCLUDE_LEM</span>
+<DD>
+<pre>
+⊢ ∀G x l. EXCLUDE G (x INSERT l) = EXCLUDE (EXCLUDE G l) {x}
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

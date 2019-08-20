@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>PairRules.PALPHA</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>PALPHA : term -&gt; term -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/PairRules.html">PairRules</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">pair</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Proves equality of paired alpha-equivalent terms.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to a pair of terms </SPAN><SPAN class = "BRKT">t1</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">t1'</SPAN><SPAN class = "TEXT"> which are
+alpha-equivalent, </SPAN><SPAN class = "BRKT">ALPHA</SPAN><SPAN class = "TEXT"> returns the theorem </SPAN><SPAN class = "BRKT">|-&nbsp;t1&nbsp;=&nbsp;t1'</SPAN><SPAN class = "TEXT">.
+</SPAN><DIV class = "XMPL"><pre>
+
+   -------------  PALPHA "t1" "t1'"
+    |- t1 = t1'
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">The difference between </SPAN><SPAN class = "BRKT">PALPHA</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">ALPHA</SPAN><SPAN class = "TEXT"> is that
+</SPAN><SPAN class = "BRKT">PALPHA</SPAN><SPAN class = "TEXT"> is prepared to consider pair structures of different
+structure to be alpha-equivalent.
+In its most trivial case this means that </SPAN><SPAN class = "BRKT">PALPHA</SPAN><SPAN class = "TEXT"> can consider
+a variable and a pair to alpha-equivalent.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails unless the terms provided are alpha-equivalent.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- PALPHA (Term `\(x:'a,y:'a). (x,y)`) (Term`\xy:'a#'a. xy`);
+&gt; val it = |- (\(x,y). (x,y)) = (\xy. xy) : thm
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Alpha-converting a paired abstraction to a nonpaired abstraction
+can introduce instances of the terms </SPAN><SPAN class = "BRKT">FST</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">SND</SPAN><SPAN class = "TEXT">.
+A paired abstraction and a nonpaired abstraction will be considered
+equivalent by </SPAN><SPAN class = "BRKT">PALPHA</SPAN><SPAN class = "TEXT"> if the nonpaired abstraction contains all
+those instances of </SPAN><SPAN class = "BRKT">FST</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">SND</SPAN><SPAN class = "TEXT"> present in the paired
+abstraction, plus the minimum additional instances of </SPAN><SPAN class = "BRKT">FST</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">SND</SPAN><SPAN class = "TEXT">.
+For example:
+</SPAN><DIV class = "XMPL"><pre>
+   - PALPHA
+      (Term `\(x:'a,y:'b). (f x y (x,y)):'c`)
+      (Term `\xy:'a#'b. (f (FST xy) (SND xy) xy):'c`);
+   &gt; val it = |- (\(x,y). f x y (x,y)) = (\xy. f (FST xy) (SND xy) xy) : thm
+
+   - PALPHA
+      (Term `\(x:'a,y:'b). (f x y (x,y)):'c`)
+      (Term `\xy:'a#'b. (f (FST xy) (SND xy) (FST xy, SND xy)):'c`)
+     handle e =&gt; Raise e;
+
+   Exception raised at ??.failwith:
+   PALPHA
+   ! Uncaught exception:
+   ! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Thm.ALPHA.html">ALPHA</A>,
+<A HREF = "Term.aconv.html">aconv</A>,
+<A HREF = "PairRules.PALPHA_CONV.html">PALPHA_CONV</A>,
+<A HREF = "PairRules.GEN_PALPHA_CONV.html">GEN_PALPHA_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

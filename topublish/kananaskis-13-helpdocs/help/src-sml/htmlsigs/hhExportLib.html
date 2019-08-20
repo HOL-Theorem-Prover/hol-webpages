@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure hhExportLib</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure hhExportLib</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/holyhammer/hhExportLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature hhExportLib =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>include Abbrev
+<a name="line5"></a>
+<a name="line6"></a>  val hh_dir : string
+<a name="line7"></a>
+<a name="line8"></a>  type formula_info = {
+<a name="line9"></a>    cval : (term * int) list,
+<a name="line10"></a>    tyopl : ((string * string) * int) list
+<a name="line11"></a>  }
+<a name="line12"></a>
+<a name="line13"></a>  val os : TextIO.outstream -&gt; string -&gt; unit
+<a name="line14"></a>  val osn : TextIO.outstream -&gt; string -&gt; unit
+<a name="line15"></a>  val oiter : TextIO.outstream -&gt;
+<a name="line16"></a>    string -&gt; (TextIO.outstream -&gt; 'a -&gt; unit) -&gt; 'a list -&gt; unit
+<a name="line17"></a>
+<a name="line18"></a>  (* naming *)
+<a name="line19"></a>  val cid_of : term -&gt; (string * string)
+<a name="line20"></a>
+<a name="line21"></a>  val name_v : term -&gt; string
+<a name="line22"></a>  val namea_v : (term * int) -&gt; string
+<a name="line23"></a>  val name_vartype : hol_type -&gt; string
+<a name="line24"></a>  val name_cid : (string * string) -&gt; string
+<a name="line25"></a>  val namea_cid : ((string * string) * int) -&gt; string
+<a name="line26"></a>  val name_c: term -&gt; string
+<a name="line27"></a>  val name_cv: term -&gt; string
+<a name="line28"></a>  val namea_c : (term * int) -&gt; string
+<a name="line29"></a>  val namea_cv : (term * int) -&gt; string
+<a name="line30"></a>  val name_tyop : (string * string) -&gt; string
+<a name="line31"></a>  val name_thm : (string * string) -&gt; string
+<a name="line32"></a>
+<a name="line33"></a>  val name_tyu_mono : hol_type -&gt; string
+<a name="line34"></a>  val namea_obj_mono : (term * int) -&gt; string
+<a name="line35"></a>  val namea_obj_poly : (term * int) -&gt; string
+<a name="line36"></a>
+<a name="line37"></a>  val name_def : int -&gt; string -&gt; string
+<a name="line38"></a>  val name_arityeq : term * int -&gt; string
+<a name="line39"></a>
+<a name="line40"></a>  val all_tyop : hol_type -&gt; ((string * string) * int) list
+<a name="line41"></a>
+<a name="line42"></a>  (* comparison *)
+<a name="line43"></a>  val id_compare : (string * string) * (string * string) -&gt; order
+<a name="line44"></a>  val ida_compare :
+<a name="line45"></a>    ((string * string) * int) * ((string * string) * int) -&gt; order
+<a name="line46"></a>  val tma_compare : (term * int) * (term * int) -&gt; order
+<a name="line47"></a>
+<a name="line48"></a>  val compare_namethm : (string * thm) * (string * thm) -&gt; order
+<a name="line49"></a>  val type_set : term -&gt; hol_type list
+<a name="line50"></a>
+<a name="line51"></a>  (* type *)
+<a name="line52"></a>  val ttype : string
+<a name="line53"></a>  val otype : string
+<a name="line54"></a>
+<a name="line55"></a>  val type_vars_in_term : term -&gt; hol_type list
+<a name="line56"></a>  val strip_funty_n : int -&gt; hol_type -&gt; hol_type list
+<a name="line57"></a>  val strip_funty : hol_type -&gt; (hol_type * hol_type list)
+<a name="line58"></a>
+<a name="line59"></a>  val full_match_type :
+<a name="line60"></a>    hol_type -&gt; hol_type -&gt; {redex: hol_type, residue: hol_type} list
+<a name="line61"></a>  val typearg_of_c : term -&gt; hol_type list
+<a name="line62"></a>  val typearg_of_cvapp : term -&gt; hol_type list
+<a name="line63"></a>  val add_tyargltag : string -&gt; term -&gt; string
+<a name="line64"></a>
+<a name="line65"></a>  (* term *)
+<a name="line66"></a>  val full_apply_const : term -&gt; term
+<a name="line67"></a>  val apply_cva : (term * int) -&gt; (term * term list)
+<a name="line68"></a>
+<a name="line69"></a>  val tyopset_of_tyl : hol_type list -&gt; ((string * string) * int) list
+<a name="line70"></a>  val add_zeroarity : (term * int) list -&gt; (term * int) list
+<a name="line71"></a>  val collect_tyop : term -&gt; ((string * string) * int) list
+<a name="line72"></a>
+<a name="line73"></a>  (* thm *)
+<a name="line74"></a>  val older_than : thm -&gt; 'a * thm -&gt; bool
+<a name="line75"></a>  val depo_of_thm : thm -&gt; (string * string) list option
+<a name="line76"></a>  val depo_of_thmid : (string * string) -&gt; (string * string) list option
+<a name="line77"></a>
+<a name="line78"></a>  val fetch_thm : (string * string) -&gt; thm
+<a name="line79"></a>
+<a name="line80"></a>  val combin_axioml : (string * term) list
+<a name="line81"></a>  val p_axioml : (string * thm) list
+<a name="line82"></a>  val app_axioml : (string * thm) list
+<a name="line83"></a>
+<a name="line84"></a>  (* definitions *)
+<a name="line85"></a>  val logic_l1 : (string * string) list
+<a name="line86"></a>  val quant_l2 : (string * string) list
+<a name="line87"></a>  val boolop_cval : (term * int) list
+<a name="line88"></a>  val uniq_cvdef_mgc : (term * int) list -&gt; (term * int) list
+<a name="line89"></a>  val uniq_cvdef_arity : (term * int) list -&gt; term list
+<a name="line90"></a>
+<a name="line91"></a>  (* dependencies *)
+<a name="line92"></a>  val add_chainy_dep :
+<a name="line93"></a>    string list -&gt; string -&gt;
+<a name="line94"></a>    (string * thm) list -&gt;
+<a name="line95"></a>    ((string * string) * (string * string) list) list
+<a name="line96"></a>
+<a name="line97"></a>  val add_bushy_dep :
+<a name="line98"></a>    string -&gt; (string * thm) list -&gt;
+<a name="line99"></a>    ((string * string) * (string * string) list) list
+<a name="line100"></a>
+<a name="line101"></a>  (* theory order *)
+<a name="line102"></a>  val before_elem: ''a -&gt; ''a list -&gt; ''a list
+<a name="line103"></a>  val sorted_ancestry : string list -&gt; string list
+<a name="line104"></a>
+<a name="line105"></a>
+<a name="line106"></a>end
+<a name="line107"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/holyhammer/hhExportLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

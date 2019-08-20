@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>numLib.SUC_TO_NUMERAL_DEFN_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>SUC_TO_NUMERAL_DEFN_CONV : conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/numLib.html">numLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Translates equations using </SPAN><SPAN class = "BRKT">SUC&nbsp;n</SPAN><SPAN class = "TEXT"> to use numeral constructors instead.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This conversion modifies conjunctions of universally quantified
+equations so that any argument terms of the form </SPAN><SPAN class = "BRKT">SUC&nbsp;x</SPAN><SPAN class = "TEXT"> on the LHS of
+the equations (with </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> one of the equation&rsquo;s universally quantified
+variables), are translated to a form appropriate for rewriting when
+the argument term is a numeral.</SPAN>
+<P>
+<SPAN class = "TEXT">This procedure uses the following theorem:
+</SPAN><DIV class = "XMPL"><pre>
+  |- !f g. (!n. f (SUC n) = g n (SUC n)) =
+           (!n. f (NUMERAL (BIT1 n)) =
+                g (NUMERAL (BIT1 n)) (NUMERAL (BIT1 n) - 1)) /\
+           (!n. f (NUMERAL (BIT2 n)) =
+                g (NUMERAL (BIT2 n)) (NUMERAL (BIT1 n)))
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- CONV_RULE SUC_TO_NUMERAL_DEFN_CONV arithmeticTheory.FACT;
+&gt; val it =
+    |- (FACT 0 = 1) /\
+       (!n.
+          FACT (NUMERAL (BIT1 n)) =
+            NUMERAL (BIT1 n) * FACT (NUMERAL (BIT1 n) - 1)) /\
+       !n.
+         FACT (NUMERAL (BIT2 n)) =
+           NUMERAL (BIT2 n) * FACT (NUMERAL (BIT1 n)) : thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the input term is not the conjunction of universally
+quantified equations, where there may be just one conjunct, and where
+equations may have no quantification at all.  Those conjuncts which
+don&rsquo;t involve terms of the form </SPAN><SPAN class = "BRKT">SUC&nbsp;x</SPAN><SPAN class = "TEXT"> are returned unchanged.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Useful for translating definitions over numbers (which often involve
+</SPAN><SPAN class = "BRKT">SUC</SPAN><SPAN class = "TEXT"> terms), into a form that can be used to work with numerals
+easily.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "numLib.num_CONV.html">num_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>

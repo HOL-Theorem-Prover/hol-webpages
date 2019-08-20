@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure mlNeuralNetwork</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure mlNeuralNetwork</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/AI/machine_learning/mlNeuralNetwork.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature mlNeuralNetwork =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  type vect = real vector
+<a name="line5"></a>  type mat = real vector vector
+<a name="line6"></a>
+<a name="line7"></a>  (* hyperparameters *)
+<a name="line8"></a>  val learningrate_glob : real ref
+<a name="line9"></a>
+<a name="line10"></a>  (* activation *)
+<a name="line11"></a>  val tanh : real -&gt; real
+<a name="line12"></a>  val dtanh : real -&gt; real
+<a name="line13"></a>  val relu : real -&gt; real
+<a name="line14"></a>  val drelu : real -&gt; real
+<a name="line15"></a>  val leakyrelu : real -&gt; real
+<a name="line16"></a>  val dleakyrelu : real -&gt; real
+<a name="line17"></a>
+<a name="line18"></a>  (* neural network *)
+<a name="line19"></a>  type layer = {a : real -&gt; real, da : real -&gt; real, w : real vector vector}
+<a name="line20"></a>  type nn = layer list
+<a name="line21"></a>
+<a name="line22"></a>  type fpdata =
+<a name="line23"></a>    {layer : layer,
+<a name="line24"></a>     inv   : real vector,
+<a name="line25"></a>     outv  : real vector,
+<a name="line26"></a>     outnv : real vector}
+<a name="line27"></a>
+<a name="line28"></a>  type bpdata =
+<a name="line29"></a>    {doutnv : real vector,
+<a name="line30"></a>     doutv  : real vector,
+<a name="line31"></a>     dinv   : real vector,
+<a name="line32"></a>     dw     : real vector vector}
+<a name="line33"></a>
+<a name="line34"></a>  (* weights randomly initialized *)
+<a name="line35"></a>  val random_nn : (real -&gt; real) * (real -&gt; real) -&gt; int list -&gt; nn
+<a name="line36"></a>
+<a name="line37"></a>  (* forward and backward pass *)
+<a name="line38"></a>  val fp_nn        : nn -&gt; real vector -&gt; fpdata list
+<a name="line39"></a>  val infer_nn     : nn -&gt; real vector -&gt; real vector
+<a name="line40"></a>  val bp_nn        : fpdata list -&gt; real vector -&gt; bpdata list
+<a name="line41"></a>  val bp_nn_wocost : fpdata list -&gt; real vector -&gt; bpdata list
+<a name="line42"></a>
+<a name="line43"></a>  (* weight updates *)
+<a name="line44"></a>  val update_nn         : nn -&gt; mat list -&gt; nn
+<a name="line45"></a>  val smult_dwl         : real -&gt; mat list -&gt; mat list
+<a name="line46"></a>  val sum_dwll          : mat list list -&gt; mat list
+<a name="line47"></a>  val mean_square_error : real vector -&gt; real
+<a name="line48"></a>  val average_loss      : bpdata list list -&gt; real
+<a name="line49"></a>
+<a name="line50"></a>  (* training *)
+<a name="line51"></a>  val train_nn : int -&gt; int -&gt; nn -&gt; int -&gt; (vect * vect) list -&gt; nn
+<a name="line52"></a>
+<a name="line53"></a>  (* input/output *)
+<a name="line54"></a>  val reall_to_string : real list -&gt; string
+<a name="line55"></a>  val string_to_reall : string -&gt; real list
+<a name="line56"></a>  val string_of_wl : mat list -&gt; string
+<a name="line57"></a>  val string_of_nn : nn -&gt; string
+<a name="line58"></a>  val read_wl_sl : string list -&gt; mat list
+<a name="line59"></a>  val read_nn_sl : string list -&gt; nn
+<a name="line60"></a>  val write_nn : string -&gt; nn -&gt; unit
+<a name="line61"></a>  val read_nn : string -&gt; nn
+<a name="line62"></a>  val write_exl : string -&gt; (vect * vect) list -&gt; unit
+<a name="line63"></a>  val read_exl : string -&gt; (vect * vect) list
+<a name="line64"></a>
+<a name="line65"></a>
+<a name="line66"></a>end
+<a name="line67"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/AI/machine_learning/mlNeuralNetwork.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

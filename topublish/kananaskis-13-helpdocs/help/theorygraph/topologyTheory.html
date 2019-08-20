@@ -1,0 +1,511 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: topology</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "topology"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "quotientTheory.html"><span class="strong">quotient</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">topology</span>
+    <td>
+    1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">closed</span>
+    <td>
+    :α topology -> bool
+    <tr><td>
+    <span class="strong">closed_in</span>
+    <td>
+    :α topology -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">hull</span>
+    <td>
+    :((α -> bool) -> bool) -> (α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">istopology</span>
+    <td>
+    :((α -> bool) -> bool) -> bool
+    <tr><td>
+    <span class="strong">limpt</span>
+    <td>
+    :α topology -> α -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">neigh</span>
+    <td>
+    :α topology -> (α -> bool) # α -> bool
+    <tr><td> <span class="strong">open</span> <td> :α topology -> bool
+    <tr><td>
+    <span class="strong">open_in</span>
+    <td>
+    :α topology -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">topology</span>
+    <td>
+    :((α -> bool) -> bool) -> α topology
+    <tr><td>
+    <span class="strong">topspace</span>
+    <td>
+    :α topology -> α -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">topspace</span>
+<DD>
+<pre>
+⊢ ∀top. topspace top = BIGUNION {s | open_in top s}
+</pre>
+
+<DT><span class="strong">topology_tybij</span>
+<DD>
+<pre>
+⊢ (∀a. topology (open_in a) = a) ∧
+  ∀r. istopology r ⇔ (open_in (topology r) = r)
+</pre>
+
+<DT><span class="strong">topology_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION istopology rep
+</pre>
+
+<DT><span class="strong">open_DEF</span>
+<DD>
+<pre>
+⊢ ∀s. open s ⇔ open_in s 𝕌(:α)
+</pre>
+
+<DT><span class="strong">neigh</span>
+<DD>
+<pre>
+⊢ ∀top N x. neigh top (N,x) ⇔ ∃P. open_in top P ∧ P ⊆ N ∧ P x
+</pre>
+
+<DT><span class="strong">limpt</span>
+<DD>
+<pre>
+⊢ ∀top x S'. limpt top x S' ⇔ ∀N. neigh top (N,x) ⇒ ∃y. x ≠ y ∧ S' y ∧ N y
+</pre>
+
+<DT><span class="strong">istopology</span>
+<DD>
+<pre>
+⊢ ∀L.
+      istopology L ⇔
+      ∅ ∈ L ∧ (∀s t. s ∈ L ∧ t ∈ L ⇒ s ∩ t ∈ L) ∧ ∀k. k ⊆ L ⇒ BIGUNION k ∈ L
+</pre>
+
+<DT><span class="strong">hull</span>
+<DD>
+<pre>
+⊢ ∀P s. P hull s = BIGINTER {t | P t ∧ s ⊆ t}
+</pre>
+
+<DT><span class="strong">closed_in</span>
+<DD>
+<pre>
+⊢ ∀top s.
+      closed_in top s ⇔ s ⊆ topspace top ∧ open_in top (topspace top DIFF s)
+</pre>
+
+<DT><span class="strong">closed_DEF</span>
+<DD>
+<pre>
+⊢ ∀s. closed s ⇔ closed_in s 𝕌(:α)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">TOPOLOGY_EQ</span>
+<DD>
+<pre>
+⊢ ∀top1 top2. (top1 = top2) ⇔ ∀s. open_in top1 s ⇔ open_in top2 s
+</pre>
+
+<DT><span class="strong">SUBSET_HULL</span>
+<DD>
+<pre>
+⊢ ∀P s t. P t ⇒ (P hull s ⊆ t ⇔ s ⊆ t)
+</pre>
+
+<DT><span class="strong">P_HULL</span>
+<DD>
+<pre>
+⊢ ∀P s. (∀f. (∀s. s ∈ f ⇒ P s) ⇒ P (BIGINTER f)) ⇒ P (P hull s)
+</pre>
+
+<DT><span class="strong">OPEN_UNOPEN</span>
+<DD>
+<pre>
+⊢ ∀S' top. open_in top S' ⇔ (BIGUNION {P | open_in top P ∧ P ⊆ S'} = S')
+</pre>
+
+<DT><span class="strong">open_topspace</span>
+<DD>
+<pre>
+⊢ ∀top. open top ⇒ (topspace top = 𝕌(:α))
+</pre>
+
+<DT><span class="strong">OPEN_SUBOPEN</span>
+<DD>
+<pre>
+⊢ ∀S' top. open_in top S' ⇔ ∀x. S' x ⇒ ∃P. P x ∧ open_in top P ∧ P ⊆ S'
+</pre>
+
+<DT><span class="strong">OPEN_OWN_NEIGH</span>
+<DD>
+<pre>
+⊢ ∀S' top x. open_in top S' ∧ S' x ⇒ neigh top (S',x)
+</pre>
+
+<DT><span class="strong">OPEN_NEIGH</span>
+<DD>
+<pre>
+⊢ ∀S' top. open_in top S' ⇔ ∀x. S' x ⇒ ∃N. neigh top (N,x) ∧ N ⊆ S'
+</pre>
+
+<DT><span class="strong">OPEN_IN_UNION</span>
+<DD>
+<pre>
+⊢ ∀top s t. open_in top s ∧ open_in top t ⇒ open_in top (s ∪ t)
+</pre>
+
+<DT><span class="strong">OPEN_IN_TOPSPACE</span>
+<DD>
+<pre>
+⊢ ∀top. open_in top (topspace top)
+</pre>
+
+<DT><span class="strong">OPEN_IN_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀top s. open_in top s ⇒ s ⊆ topspace top
+</pre>
+
+<DT><span class="strong">OPEN_IN_SUBOPEN</span>
+<DD>
+<pre>
+⊢ ∀top s. open_in top s ⇔ ∀x. x ∈ s ⇒ ∃t. open_in top t ∧ x ∈ t ∧ t ⊆ s
+</pre>
+
+<DT><span class="strong">OPEN_IN_INTER</span>
+<DD>
+<pre>
+⊢ ∀top s t. open_in top s ∧ open_in top t ⇒ open_in top (s ∩ t)
+</pre>
+
+<DT><span class="strong">OPEN_IN_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀top. open_in top ∅
+</pre>
+
+<DT><span class="strong">OPEN_IN_DIFF</span>
+<DD>
+<pre>
+⊢ ∀top s t. open_in top s ∧ closed_in top t ⇒ open_in top (s DIFF t)
+</pre>
+
+<DT><span class="strong">OPEN_IN_CLOSED_IN_EQ</span>
+<DD>
+<pre>
+⊢ ∀top s.
+      open_in top s ⇔ s ⊆ topspace top ∧ closed_in top (topspace top DIFF s)
+</pre>
+
+<DT><span class="strong">OPEN_IN_CLOSED_IN</span>
+<DD>
+<pre>
+⊢ ∀top s.
+      s ⊆ topspace top ⇒ (open_in top s ⇔ closed_in top (topspace top DIFF s))
+</pre>
+
+<DT><span class="strong">OPEN_IN_CLAUSES</span>
+<DD>
+<pre>
+⊢ ∀top.
+      open_in top ∅ ∧
+      (∀s t. open_in top s ∧ open_in top t ⇒ open_in top (s ∩ t)) ∧
+      ∀k. (∀s. s ∈ k ⇒ open_in top s) ⇒ open_in top (BIGUNION k)
+</pre>
+
+<DT><span class="strong">OPEN_IN_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀top k. (∀s. s ∈ k ⇒ open_in top s) ⇒ open_in top (BIGUNION k)
+</pre>
+
+<DT><span class="strong">OPEN_IN_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀top s.
+      FINITE s ∧ s ≠ ∅ ∧ (∀t. t ∈ s ⇒ open_in top t) ⇒
+      open_in top (BIGINTER s)
+</pre>
+
+<DT><span class="strong">ISTOPOLOGY_OPEN_IN</span>
+<DD>
+<pre>
+⊢ ∀top. istopology (open_in top)
+</pre>
+
+<DT><span class="strong">IS_HULL</span>
+<DD>
+<pre>
+⊢ ∀P s. (∀f. (∀s. s ∈ f ⇒ P s) ⇒ P (BIGINTER f)) ⇒ (P s ⇔ ∃t. s = P hull t)
+</pre>
+
+<DT><span class="strong">HULLS_EQ</span>
+<DD>
+<pre>
+⊢ ∀P s t.
+      (∀f. (∀s. s ∈ f ⇒ P s) ⇒ P (BIGINTER f)) ∧ s ⊆ P hull t ∧ t ⊆ P hull s ⇒
+      (P hull s = P hull t)
+</pre>
+
+<DT><span class="strong">HULL_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀P s t. s ⊆ t ∧ P t ∧ (∀t'. s ⊆ t' ∧ P t' ⇒ t ⊆ t') ⇒ (P hull s = t)
+</pre>
+
+<DT><span class="strong">HULL_UNION_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀P s t. (P hull s) ∪ (P hull t) ⊆ P hull s ∪ t
+</pre>
+
+<DT><span class="strong">HULL_UNION_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀P s t. P hull s ∪ t = P hull s ∪ (P hull t)
+</pre>
+
+<DT><span class="strong">HULL_UNION_LEFT</span>
+<DD>
+<pre>
+⊢ ∀P s t. P hull s ∪ t = P hull (P hull s) ∪ t
+</pre>
+
+<DT><span class="strong">HULL_UNION</span>
+<DD>
+<pre>
+⊢ ∀P s t. P hull s ∪ t = P hull (P hull s) ∪ (P hull t)
+</pre>
+
+<DT><span class="strong">HULL_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀P s. s ⊆ P hull s
+</pre>
+
+<DT><span class="strong">HULL_REDUNDANT_EQ</span>
+<DD>
+<pre>
+⊢ ∀P a s. a ∈ P hull s ⇔ (P hull (a INSERT s) = P hull s)
+</pre>
+
+<DT><span class="strong">HULL_REDUNDANT</span>
+<DD>
+<pre>
+⊢ ∀P a s. a ∈ P hull s ⇒ (P hull (a INSERT s) = P hull s)
+</pre>
+
+<DT><span class="strong">HULL_P_AND_Q</span>
+<DD>
+<pre>
+⊢ ∀P Q.
+      (∀f. (∀s. s ∈ f ⇒ P s) ⇒ P (BIGINTER f)) ∧
+      (∀f. (∀s. s ∈ f ⇒ Q s) ⇒ Q (BIGINTER f)) ∧ (∀s. Q s ⇒ Q (P hull s)) ⇒
+      ((λx. P x ∧ Q x) hull s = P hull (Q hull s))
+</pre>
+
+<DT><span class="strong">HULL_P</span>
+<DD>
+<pre>
+⊢ ∀P s. P s ⇒ (P hull s = s)
+</pre>
+
+<DT><span class="strong">HULL_MONO</span>
+<DD>
+<pre>
+⊢ ∀P s t. s ⊆ t ⇒ P hull s ⊆ P hull t
+</pre>
+
+<DT><span class="strong">HULL_MINIMAL</span>
+<DD>
+<pre>
+⊢ ∀P s t. s ⊆ t ∧ P t ⇒ P hull s ⊆ t
+</pre>
+
+<DT><span class="strong">HULL_INDUCT</span>
+<DD>
+<pre>
+⊢ ∀P p s. (∀x. x ∈ s ⇒ p x) ∧ P {x | p x} ⇒ ∀x. x ∈ P hull s ⇒ p x
+</pre>
+
+<DT><span class="strong">HULL_INC</span>
+<DD>
+<pre>
+⊢ ∀P s x. x ∈ s ⇒ x ∈ P hull s
+</pre>
+
+<DT><span class="strong">HULL_IMAGE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀P f s.
+      P (P hull s) ∧ (∀s. P s ⇒ P (IMAGE f s)) ⇒
+      P hull IMAGE f s ⊆ IMAGE f (P hull s)
+</pre>
+
+<DT><span class="strong">HULL_IMAGE_GALOIS</span>
+<DD>
+<pre>
+⊢ ∀P f g s.
+      (∀s. P (P hull s)) ∧ (∀s. P s ⇒ P (IMAGE f s)) ∧
+      (∀s. P s ⇒ P (IMAGE g s)) ∧ (∀s t. s ⊆ IMAGE g t ⇔ IMAGE f s ⊆ t) ⇒
+      (P hull IMAGE f s = IMAGE f (P hull s))
+</pre>
+
+<DT><span class="strong">HULL_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀P f s.
+      (∀s. P (P hull s)) ∧ (∀s. P (IMAGE f s) ⇔ P s) ∧
+      (∀x y. (f x = f y) ⇒ (x = y)) ∧ (∀y. ∃x. f x = y) ⇒
+      (P hull IMAGE f s = IMAGE f (P hull s))
+</pre>
+
+<DT><span class="strong">HULL_HULL</span>
+<DD>
+<pre>
+⊢ ∀P s. P hull (P hull s) = P hull s
+</pre>
+
+<DT><span class="strong">HULL_EQ</span>
+<DD>
+<pre>
+⊢ ∀P s. (∀f. (∀s. s ∈ f ⇒ P s) ⇒ P (BIGINTER f)) ⇒ ((P hull s = s) ⇔ P s)
+</pre>
+
+<DT><span class="strong">HULL_ANTIMONO</span>
+<DD>
+<pre>
+⊢ ∀P Q s. P ⊆ Q ⇒ Q hull s ⊆ P hull s
+</pre>
+
+<DT><span class="strong">closed_topspace</span>
+<DD>
+<pre>
+⊢ ∀top. closed top ⇒ (topspace top = 𝕌(:α))
+</pre>
+
+<DT><span class="strong">CLOSED_LIMPT</span>
+<DD>
+<pre>
+⊢ ∀top. closed top ⇒ ∀S'. closed_in top S' ⇔ ∀x. limpt top x S' ⇒ S' x
+</pre>
+
+<DT><span class="strong">CLOSED_IN_UNION</span>
+<DD>
+<pre>
+⊢ ∀top s t. closed_in top s ∧ closed_in top t ⇒ closed_in top (s ∪ t)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_TOPSPACE</span>
+<DD>
+<pre>
+⊢ ∀top. closed_in top (topspace top)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀top s. closed_in top s ⇒ s ⊆ topspace top
+</pre>
+
+<DT><span class="strong">CLOSED_IN_OPEN_IN_COMPL</span>
+<DD>
+<pre>
+⊢ ∀top. closed top ⇒ ∀s. closed_in top s ⇔ open_in top (COMPL s)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_INTER</span>
+<DD>
+<pre>
+⊢ ∀top s t. closed_in top s ∧ closed_in top t ⇒ closed_in top (s ∩ t)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀top. closed_in top ∅
+</pre>
+
+<DT><span class="strong">CLOSED_IN_DIFF</span>
+<DD>
+<pre>
+⊢ ∀top s t. closed_in top s ∧ open_in top t ⇒ closed_in top (s DIFF t)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀top s.
+      FINITE s ∧ (∀t. t ∈ s ⇒ closed_in top t) ⇒ closed_in top (BIGUNION s)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀top k. k ≠ ∅ ∧ (∀s. s ∈ k ⇒ closed_in top s) ⇒ closed_in top (BIGINTER k)
+</pre>
+
+<DT><span class="strong">BIGUNION_2</span>
+<DD>
+<pre>
+⊢ ∀s t. BIGUNION {s; t} = s ∪ t
+</pre>
+
+<DT><span class="strong">BIGINTER_2</span>
+<DD>
+<pre>
+⊢ ∀s t. BIGINTER {s; t} = s ∩ t
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: sum_num</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "sum_num"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "indexedListsTheory.html"><span class="strong">indexedLists</span></a>&nbsp;&nbsp;
+    <a href = "patternMatchesTheory.html"><span class="strong">patternMatches</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">GSUM</span>
+    <td>
+    :num # num -> (num -> num) -> num
+    <tr><td> <span class="strong">SUM</span> <td> :num -> (num -> num) -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">SUM_def</span>
+<DD>
+<pre>
+⊢ (∀f. SUM 0 f = 0) ∧ ∀m f. SUM (SUC m) f = SUM m f + f m
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">SUM_ZERO</span>
+<DD>
+<pre>
+⊢ ∀n f. (∀m. m < n ⇒ (f m = 0)) ⇔ (SUM n f = 0)
+</pre>
+
+<DT><span class="strong">SUM_MONO</span>
+<DD>
+<pre>
+⊢ ∀m n f. m ≤ n ∧ f n ≠ 0 ⇒ SUM m f < SUM (SUC n) f
+</pre>
+
+<DT><span class="strong">SUM_LESS</span>
+<DD>
+<pre>
+⊢ ∀m n f. (∃q. m ≤ q ∧ q < n ∧ f q ≠ 0) ⇔ SUM m f < SUM n f
+</pre>
+
+<DT><span class="strong">SUM_FUN_EQUAL</span>
+<DD>
+<pre>
+⊢ ∀f g. (∀x. x < n ⇒ (f x = g x)) ⇒ (SUM n f = SUM n g)
+</pre>
+
+<DT><span class="strong">SUM_FOLDL</span>
+<DD>
+<pre>
+⊢ ∀n f. SUM n f = FOLDL (λx n. f n + x) 0 (COUNT_LIST n)
+</pre>
+
+<DT><span class="strong">SUM_EQUAL</span>
+<DD>
+<pre>
+⊢ ∀m n f.
+      (SUM m f = SUM n f) ⇔
+      m ≤ n ∧ (∀q. m ≤ q ∧ q < n ⇒ (f q = 0)) ∨
+      n < m ∧ ∀q. n ≤ q ∧ q < m ⇒ (f q = 0)
+</pre>
+
+<DT><span class="strong">SUM_compute</span>
+<DD>
+<pre>
+⊢ (∀f. SUM 0 f = 0) ∧
+  (∀m f.
+       SUM (NUMERAL (BIT1 m)) f =
+       SUM (NUMERAL (BIT1 m) − 1) f + f (NUMERAL (BIT1 m) − 1)) ∧
+  ∀m f.
+      SUM (NUMERAL (BIT2 m)) f =
+      SUM (NUMERAL (BIT1 m)) f + f (NUMERAL (BIT1 m))
+</pre>
+
+<DT><span class="strong">SUM_1</span>
+<DD>
+<pre>
+⊢ ∀f. SUM 1 f = f 0
+</pre>
+
+<DT><span class="strong">SUM</span>
+<DD>
+<pre>
+⊢ ∀m f. SUM m f = GSUM (0,m) f
+</pre>
+
+<DT><span class="strong">GSUM_ZERO</span>
+<DD>
+<pre>
+⊢ ∀p n f. (∀m. p ≤ m ∧ m < p + n ⇒ (f m = 0)) ⇔ (GSUM (p,n) f = 0)
+</pre>
+
+<DT><span class="strong">GSUM_MONO</span>
+<DD>
+<pre>
+⊢ ∀p m n f. m ≤ n ∧ f (p + n) ≠ 0 ⇒ GSUM (p,m) f < GSUM (p,SUC n) f
+</pre>
+
+<DT><span class="strong">GSUM_LESS</span>
+<DD>
+<pre>
+⊢ ∀p m n f.
+      (∃q. m + p ≤ q ∧ q < n + p ∧ f q ≠ 0) ⇔ GSUM (p,m) f < GSUM (p,n) f
+</pre>
+
+<DT><span class="strong">GSUM_ind</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∀n f. P (n,0) f) ∧ (∀n m f. P (n,m) f ⇒ P (n,SUC m) f) ⇒
+      ∀v v1 v2. P (v,v1) v2
+</pre>
+
+<DT><span class="strong">GSUM_FUN_EQUAL</span>
+<DD>
+<pre>
+⊢ ∀p n f g.
+      (∀x. p ≤ x ∧ x < p + n ⇒ (f x = g x)) ⇒ (GSUM (p,n) f = GSUM (p,n) g)
+</pre>
+
+<DT><span class="strong">GSUM_EQUAL</span>
+<DD>
+<pre>
+⊢ ∀p m n f.
+      (GSUM (p,m) f = GSUM (p,n) f) ⇔
+      m ≤ n ∧ (∀q. p + m ≤ q ∧ q < p + n ⇒ (f q = 0)) ∨
+      n < m ∧ ∀q. p + n ≤ q ∧ q < p + m ⇒ (f q = 0)
+</pre>
+
+<DT><span class="strong">GSUM_def</span>
+<DD>
+<pre>
+⊢ (∀n f. GSUM (n,0) f = 0) ∧
+  ∀n m f. GSUM (n,SUC m) f = GSUM (n,m) f + f (n + m)
+</pre>
+
+<DT><span class="strong">GSUM_compute</span>
+<DD>
+<pre>
+⊢ (∀n f. GSUM (n,0) f = 0) ∧
+  (∀n m f.
+       GSUM (n,NUMERAL (BIT1 m)) f =
+       GSUM (n,NUMERAL (BIT1 m) − 1) f + f (n + (NUMERAL (BIT1 m) − 1))) ∧
+  ∀n m f.
+      GSUM (n,NUMERAL (BIT2 m)) f =
+      GSUM (n,NUMERAL (BIT1 m)) f + f (n + NUMERAL (BIT1 m))
+</pre>
+
+<DT><span class="strong">GSUM_ADD</span>
+<DD>
+<pre>
+⊢ ∀p m n f. GSUM (p,m + n) f = GSUM (p,m) f + GSUM (p + m,n) f
+</pre>
+
+<DT><span class="strong">GSUM_1</span>
+<DD>
+<pre>
+⊢ ∀m f. GSUM (m,1) f = f m
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

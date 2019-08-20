@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: nets</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "nets"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "metricTheory.html"><span class="strong">metric</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">bounded</span>
+    <td>
+    :α metric # (β -> β -> bool) -> (β -> α) -> bool
+    <tr><td> <span class="strong">dorder</span> <td> :(α -> α -> bool) -> bool
+    <tr><td>
+    <span class="strong">tends</span>
+    <td>
+    :(β -> α) -> α -> α topology # (β -> β -> bool) -> bool
+    <tr><td>
+    <span class="strong">tendsto</span>
+    <td>
+    :α metric # α -> α -> α -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">tendsto</span>
+<DD>
+<pre>
+⊢ ∀m x y z. tendsto (m,x) y z ⇔ 0 < dist m (x,y) ∧ dist m (x,y) ≤ dist m (x,z)
+</pre>
+
+<DT><span class="strong">tends</span>
+<DD>
+<pre>
+⊢ ∀s l top g.
+      (s tends l) (top,g) ⇔
+      ∀N. neigh top (N,l) ⇒ ∃n. g n n ∧ ∀m. g m n ⇒ N (s m)
+</pre>
+
+<DT><span class="strong">dorder</span>
+<DD>
+<pre>
+⊢ ∀g. dorder g ⇔ ∀x y. g x x ∧ g y y ⇒ ∃z. g z z ∧ ∀w. g w z ⇒ g w x ∧ g w y
+</pre>
+
+<DT><span class="strong">bounded</span>
+<DD>
+<pre>
+⊢ ∀m g f. bounded (m,g) f ⇔ ∃k x N. g N N ∧ ∀n. g n N ⇒ dist m (f n,x) < k
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">SEQ_TENDS</span>
+<DD>
+<pre>
+⊢ ∀d x x0.
+      (x tends x0) (mtop d,$>=) ⇔
+      ∀e. 0 < e ⇒ ∃N. ∀n. n ≥ N ⇒ dist d (x n,x0) < e
+</pre>
+
+<DT><span class="strong">NET_SUB</span>
+<DD>
+<pre>
+⊢ ∀g.
+      dorder g ⇒
+      ∀x x0 y y0.
+          (x tends x0) (mtop mr1,g) ∧ (y tends y0) (mtop mr1,g) ⇒
+          ((λn. x n − y n) tends (x0 − y0)) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">NET_NULL_MUL</span>
+<DD>
+<pre>
+⊢ ∀g.
+      dorder g ⇒
+      ∀x y.
+          bounded (mr1,g) x ∧ (y tends 0) (mtop mr1,g) ⇒
+          ((λn. x n * y n) tends 0) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">NET_NULL_CMUL</span>
+<DD>
+<pre>
+⊢ ∀g k x. (x tends 0) (mtop mr1,g) ⇒ ((λn. k * x n) tends 0) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">NET_NULL_ADD</span>
+<DD>
+<pre>
+⊢ ∀g.
+      dorder g ⇒
+      ∀x y.
+          (x tends 0) (mtop mr1,g) ∧ (y tends 0) (mtop mr1,g) ⇒
+          ((λn. x n + y n) tends 0) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">NET_NULL</span>
+<DD>
+<pre>
+⊢ ∀g x x0. (x tends x0) (mtop mr1,g) ⇔ ((λn. x n − x0) tends 0) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">NET_NEG</span>
+<DD>
+<pre>
+⊢ ∀g.
+      dorder g ⇒
+      ∀x x0. (x tends x0) (mtop mr1,g) ⇔ ((λn. -x n) tends -x0) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">NET_MUL</span>
+<DD>
+<pre>
+⊢ ∀g.
+      dorder g ⇒
+      ∀x y x0 y0.
+          (x tends x0) (mtop mr1,g) ∧ (y tends y0) (mtop mr1,g) ⇒
+          ((λn. x n * y n) tends (x0 * y0)) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">NET_LE</span>
+<DD>
+<pre>
+⊢ ∀g.
+      dorder g ⇒
+      ∀x x0 y y0.
+          (x tends x0) (mtop mr1,g) ∧ (y tends y0) (mtop mr1,g) ∧
+          (∃N. g N N ∧ ∀n. g n N ⇒ x n ≤ y n) ⇒
+          x0 ≤ y0
+</pre>
+
+<DT><span class="strong">NET_INV</span>
+<DD>
+<pre>
+⊢ ∀g.
+      dorder g ⇒
+      ∀x x0.
+          (x tends x0) (mtop mr1,g) ∧ x0 ≠ 0 ⇒
+          ((λn. (x n)⁻¹) tends x0⁻¹) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">NET_DIV</span>
+<DD>
+<pre>
+⊢ ∀g.
+      dorder g ⇒
+      ∀x x0 y y0.
+          (x tends x0) (mtop mr1,g) ∧ (y tends y0) (mtop mr1,g) ∧ y0 ≠ 0 ⇒
+          ((λn. x n / y n) tends (x0 / y0)) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">NET_CONV_NZ</span>
+<DD>
+<pre>
+⊢ ∀g x x0.
+      (x tends x0) (mtop mr1,g) ∧ x0 ≠ 0 ⇒ ∃N. g N N ∧ ∀n. g n N ⇒ x n ≠ 0
+</pre>
+
+<DT><span class="strong">NET_CONV_IBOUNDED</span>
+<DD>
+<pre>
+⊢ ∀g x x0. (x tends x0) (mtop mr1,g) ∧ x0 ≠ 0 ⇒ bounded (mr1,g) (λn. (x n)⁻¹)
+</pre>
+
+<DT><span class="strong">NET_CONV_BOUNDED</span>
+<DD>
+<pre>
+⊢ ∀g x x0. (x tends x0) (mtop mr1,g) ⇒ bounded (mr1,g) x
+</pre>
+
+<DT><span class="strong">NET_ADD</span>
+<DD>
+<pre>
+⊢ ∀g.
+      dorder g ⇒
+      ∀x x0 y y0.
+          (x tends x0) (mtop mr1,g) ∧ (y tends y0) (mtop mr1,g) ⇒
+          ((λn. x n + y n) tends (x0 + y0)) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">NET_ABS</span>
+<DD>
+<pre>
+⊢ ∀g x x0.
+      (x tends x0) (mtop mr1,g) ⇒ ((λn. abs (x n)) tends abs x0) (mtop mr1,g)
+</pre>
+
+<DT><span class="strong">MTOP_TENDS_UNIQ</span>
+<DD>
+<pre>
+⊢ ∀g d.
+      dorder g ⇒ (x tends x0) (mtop d,g) ∧ (x tends x1) (mtop d,g) ⇒ (x0 = x1)
+</pre>
+
+<DT><span class="strong">MTOP_TENDS</span>
+<DD>
+<pre>
+⊢ ∀d g x x0.
+      (x tends x0) (mtop d,g) ⇔
+      ∀e. 0 < e ⇒ ∃n. g n n ∧ ∀m. g m n ⇒ dist d (x m,x0) < e
+</pre>
+
+<DT><span class="strong">MR1_BOUNDED</span>
+<DD>
+<pre>
+⊢ ∀g f. bounded (mr1,g) f ⇔ ∃k N. g N N ∧ ∀n. g n N ⇒ abs (f n) < k
+</pre>
+
+<DT><span class="strong">LIM_TENDS2</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 f x0 y0.
+      limpt (mtop m1) x0 𝕌(:α) ⇒
+      ((f tends y0) (mtop m2,tendsto (m1,x0)) ⇔
+       ∀e.
+           0 < e ⇒
+           ∃d.
+               0 < d ∧
+               ∀x.
+                   0 < dist m1 (x,x0) ∧ dist m1 (x,x0) < d ⇒
+                   dist m2 (f x,y0) < e)
+</pre>
+
+<DT><span class="strong">LIM_TENDS</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 f x0 y0.
+      limpt (mtop m1) x0 𝕌(:α) ⇒
+      ((f tends y0) (mtop m2,tendsto (m1,x0)) ⇔
+       ∀e.
+           0 < e ⇒
+           ∃d.
+               0 < d ∧
+               ∀x.
+                   0 < dist m1 (x,x0) ∧ dist m1 (x,x0) ≤ d ⇒
+                   dist m2 (f x,y0) < e)
+</pre>
+
+<DT><span class="strong">DORDER_TENDSTO</span>
+<DD>
+<pre>
+⊢ ∀m x. dorder (tendsto (m,x))
+</pre>
+
+<DT><span class="strong">DORDER_NGE</span>
+<DD>
+<pre>
+⊢ dorder $>=
+</pre>
+
+<DT><span class="strong">DORDER_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀g.
+      dorder g ⇒
+      ∀P Q.
+          (∃n. g n n ∧ ∀m. g m n ⇒ P m) ∧ (∃n. g n n ∧ ∀m. g m n ⇒ Q m) ⇒
+          ∃n. g n n ∧ ∀m. g m n ⇒ P m ∧ Q m
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

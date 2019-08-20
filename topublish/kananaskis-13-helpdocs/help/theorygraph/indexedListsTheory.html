@@ -1,0 +1,435 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: indexedLists</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "indexedLists"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "rich_listTheory.html"><span class="strong">rich_list</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">FOLDRi</span>
+    <td>
+    :(num -> β -> α -> α) -> α -> β list -> α
+    <tr><td>
+    <span class="strong">LIST_RELi</span>
+    <td>
+    :(num -> α -> β -> bool) -> α list -> β list -> bool
+    <tr><td>
+    <span class="strong">MAP2i</span>
+    <td>
+    :(num -> β -> γ -> α) -> β list -> γ list -> α list
+    <tr><td>
+    <span class="strong">MAP2ia</span>
+    <td>
+    :(num -> β -> γ -> α) -> num -> β list -> γ list -> α list
+    <tr><td>
+    <span class="strong">MAPi</span>
+    <td>
+    :(num -> β -> α) -> β list -> α list
+    <tr><td>
+    <span class="strong">MAPi_ACC</span>
+    <td>
+    :(num -> β -> α) -> num -> α list -> β list -> α list
+    <tr><td> <span class="strong">delN</span> <td> :num -> α list -> α list
+    <tr><td> <span class="strong">findi</span> <td> :α -> α list -> num
+    <tr><td>
+    <span class="strong">fupdLast</span>
+    <td>
+    :(α -> α) -> α list -> α list
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">MAPi_def</span>
+<DD>
+<pre>
+⊢ (∀f. MAPi f [] = []) ∧ ∀f h t. MAPi f (h::t) = f 0 h::MAPi (f ∘ SUC) t
+</pre>
+
+<DT><span class="strong">MAPi_ACC_def</span>
+<DD>
+<pre>
+⊢ (∀f i a. MAPi_ACC f i a [] = REVERSE a) ∧
+  ∀f i a h t. MAPi_ACC f i a (h::t) = MAPi_ACC f (i + 1) (f i h::a) t
+</pre>
+
+<DT><span class="strong">LIST_RELi_def</span>
+<DD>
+<pre>
+⊢ LIST_RELi =
+  (λR a0 a1.
+       ∀LIST_RELi'.
+           (∀a0 a1.
+                (a0 = []) ∧ (a1 = []) ∨
+                (∃h1 h2 l1 l2.
+                     (a0 = l1 ++ [h1]) ∧ (a1 = l2 ++ [h2]) ∧
+                     R (LENGTH l1) h1 h2 ∧ LIST_RELi' l1 l2) ⇒
+                LIST_RELi' a0 a1) ⇒
+           LIST_RELi' a0 a1)
+</pre>
+
+<DT><span class="strong">FOLDRi_def</span>
+<DD>
+<pre>
+⊢ (∀f a. FOLDRi f a [] = a) ∧
+  ∀f a h t. FOLDRi f a (h::t) = f 0 h (FOLDRi (f ∘ SUC) a t)
+</pre>
+
+<DT><span class="strong">findi_def</span>
+<DD>
+<pre>
+⊢ (∀x. findi x [] = 0) ∧
+  ∀x h t. findi x (h::t) = if x = h then 0 else 1 + findi x t
+</pre>
+
+<DT><span class="strong">delN_def</span>
+<DD>
+<pre>
+⊢ (∀i. delN i [] = []) ∧
+  ∀i h t. delN i (h::t) = if i = 0 then t else h::delN (i − 1) t
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">MEM_MAPi</span>
+<DD>
+<pre>
+⊢ ∀x f l. MEM x (MAPi f l) ⇔ ∃n. n < LENGTH l ∧ (x = f n (EL n l))
+</pre>
+
+<DT><span class="strong">MEM_findi</span>
+<DD>
+<pre>
+⊢ MEM x l ⇒ findi x l < LENGTH l
+</pre>
+
+<DT><span class="strong">MAPi_GENLIST</span>
+<DD>
+<pre>
+⊢ ∀l f. MAPi f l = GENLIST (S f (combin$C EL l)) (LENGTH l)
+</pre>
+
+<DT><span class="strong">MAPi_CONG'</span>
+<DD>
+<pre>
+⊢ (l1 = l2) ⇒
+  (∀x n. (x = EL n l2) ⇒ n < LENGTH l2 ⇒ (f1 n x = f2 n x)) ⇒
+  (MAPi f1 l1 = MAPi f2 l2)
+</pre>
+
+<DT><span class="strong">MAPi_CONG</span>
+<DD>
+<pre>
+⊢ ∀l1 l2 f1 f2.
+      (l1 = l2) ∧ (∀x n. MEM x l2 ⇒ (f1 n x = f2 n x)) ⇒
+      (MAPi f1 l1 = MAPi f2 l2)
+</pre>
+
+<DT><span class="strong">MAPi_compute</span>
+<DD>
+<pre>
+⊢ MAPi f l = MAPi_ACC f 0 [] l
+</pre>
+
+<DT><span class="strong">MAPi_APPEND</span>
+<DD>
+<pre>
+⊢ ∀l1 l2 f. MAPi f (l1 ++ l2) = MAPi f l1 ++ MAPi (f ∘ $+ (LENGTH l1)) l2
+</pre>
+
+<DT><span class="strong">MAPi_ACC_MAPi</span>
+<DD>
+<pre>
+⊢ MAPi_ACC f n a l = REVERSE a ++ MAPi (f ∘ $+ n) l
+</pre>
+
+<DT><span class="strong">MAP_MAPi</span>
+<DD>
+<pre>
+⊢ ∀f g l. MAP f (MAPi g l) = MAPi ($o f ∘ g) l
+</pre>
+
+<DT><span class="strong">MAP2ia_NIL2</span>
+<DD>
+<pre>
+⊢ indexedLists$MAP2ia f i l1 [] = []
+</pre>
+
+<DT><span class="strong">MAP2ia_ind</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∀f i v0. P f i [] v0) ∧ (∀f i v7 v8. P f i (v7::v8) []) ∧
+      (∀f i h1 t1 h2 t2. P f (i + 1) t1 t2 ⇒ P f i (h1::t1) (h2::t2)) ⇒
+      ∀v v1 v2 v3. P v v1 v2 v3
+</pre>
+
+<DT><span class="strong">MAP2ia_def</span>
+<DD>
+<pre>
+⊢ (∀v0 i f. indexedLists$MAP2ia f i [] v0 = []) ∧
+  (∀v8 v7 i f. indexedLists$MAP2ia f i (v7::v8) [] = []) ∧
+  ∀t2 t1 i h2 h1 f.
+      indexedLists$MAP2ia f i (h1::t1) (h2::t2) =
+      f i h1 h2::indexedLists$MAP2ia f (i + 1) t1 t2
+</pre>
+
+<DT><span class="strong">MAP2i_NIL2</span>
+<DD>
+<pre>
+⊢ MAP2i f l1 [] = []
+</pre>
+
+<DT><span class="strong">MAP2i_ind</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∀f v0. P f [] v0) ∧ (∀f v5 v6. P f (v5::v6) []) ∧
+      (∀f h1 t1 h2 t2. P (f ∘ SUC) t1 t2 ⇒ P f (h1::t1) (h2::t2)) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">MAP2i_def</span>
+<DD>
+<pre>
+⊢ (∀v0 f. MAP2i f [] v0 = []) ∧ (∀v6 v5 f. MAP2i f (v5::v6) [] = []) ∧
+  ∀t2 t1 h2 h1 f. MAP2i f (h1::t1) (h2::t2) = f 0 h1 h2::MAP2i (f ∘ SUC) t1 t2
+</pre>
+
+<DT><span class="strong">MAP2i_compute</span>
+<DD>
+<pre>
+⊢ MAP2i f l1 l2 = indexedLists$MAP2ia f 0 l1 l2
+</pre>
+
+<DT><span class="strong">LT_SUC</span>
+<DD>
+<pre>
+⊢ n < SUC m ⇔ (n = 0) ∨ ∃n0. (n = SUC n0) ∧ n0 < m
+</pre>
+
+<DT><span class="strong">LIST_RELi_thm</span>
+<DD>
+<pre>
+⊢ (LIST_RELi R [] x ⇔ (x = [])) ∧
+  (LIST_RELi R (h::t) l ⇔
+   ∃h' t'. (l = h'::t') ∧ R 0 h h' ∧ LIST_RELi (R ∘ SUC) t t')
+</pre>
+
+<DT><span class="strong">LIST_RELi_strongind</span>
+<DD>
+<pre>
+⊢ ∀R LIST_RELi'.
+      LIST_RELi' [] [] ∧
+      (∀h1 h2 l1 l2.
+           R (LENGTH l1) h1 h2 ∧ LIST_RELi R l1 l2 ∧ LIST_RELi' l1 l2 ⇒
+           LIST_RELi' (l1 ++ [h1]) (l2 ++ [h2])) ⇒
+      ∀a0 a1. LIST_RELi R a0 a1 ⇒ LIST_RELi' a0 a1
+</pre>
+
+<DT><span class="strong">LIST_RELi_rules</span>
+<DD>
+<pre>
+⊢ ∀R.
+      LIST_RELi R [] [] ∧
+      ∀h1 h2 l1 l2.
+          R (LENGTH l1) h1 h2 ∧ LIST_RELi R l1 l2 ⇒
+          LIST_RELi R (l1 ++ [h1]) (l2 ++ [h2])
+</pre>
+
+<DT><span class="strong">LIST_RELi_LENGTH</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. LIST_RELi R l1 l2 ⇒ (LENGTH l1 = LENGTH l2)
+</pre>
+
+<DT><span class="strong">LIST_RELi_ind</span>
+<DD>
+<pre>
+⊢ ∀R LIST_RELi'.
+      LIST_RELi' [] [] ∧
+      (∀h1 h2 l1 l2.
+           R (LENGTH l1) h1 h2 ∧ LIST_RELi' l1 l2 ⇒
+           LIST_RELi' (l1 ++ [h1]) (l2 ++ [h2])) ⇒
+      ∀a0 a1. LIST_RELi R a0 a1 ⇒ LIST_RELi' a0 a1
+</pre>
+
+<DT><span class="strong">LIST_RELi_EL_EQN</span>
+<DD>
+<pre>
+⊢ LIST_RELi R l1 l2 ⇔
+  (LENGTH l1 = LENGTH l2) ∧ ∀i. i < LENGTH l1 ⇒ R i (EL i l1) (EL i l2)
+</pre>
+
+<DT><span class="strong">LIST_RELi_cases</span>
+<DD>
+<pre>
+⊢ ∀R a0 a1.
+      LIST_RELi R a0 a1 ⇔
+      (a0 = []) ∧ (a1 = []) ∨
+      ∃h1 h2 l1 l2.
+          (a0 = l1 ++ [h1]) ∧ (a1 = l2 ++ [h2]) ∧ R (LENGTH l1) h1 h2 ∧
+          LIST_RELi R l1 l2
+</pre>
+
+<DT><span class="strong">LIST_RELi_APPEND_I</span>
+<DD>
+<pre>
+⊢ LIST_RELi R l1 l2 ∧ LIST_RELi (R ∘ $+ (LENGTH l1)) m1 m2 ⇒
+  LIST_RELi R (l1 ++ m1) (l2 ++ m2)
+</pre>
+
+<DT><span class="strong">LENGTH_MAPi</span>
+<DD>
+<pre>
+⊢ ∀f l. LENGTH (MAPi f l) = LENGTH l
+</pre>
+
+<DT><span class="strong">LENGTH_MAP2i</span>
+<DD>
+<pre>
+⊢ ∀f l1 l2. LENGTH (MAP2i f l1 l2) = MIN (LENGTH l1) (LENGTH l2)
+</pre>
+
+<DT><span class="strong">GENLIST_CONG</span>
+<DD>
+<pre>
+⊢ (∀m. m < n ⇒ (f1 m = f2 m)) ⇒ (GENLIST f1 n = GENLIST f2 n)
+</pre>
+
+<DT><span class="strong">fupdLast_ind</span>
+<DD>
+<pre>
+⊢ ∀P.
+      (∀f. P f []) ∧ (∀f h. P f [h]) ∧
+      (∀f h v4 v5. P f (v4::v5) ⇒ P f (h::v4::v5)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">fupdLast_FRONT_LAST</span>
+<DD>
+<pre>
+⊢ fupdLast f l = if l = [] then [] else FRONT l ++ [f (LAST l)]
+</pre>
+
+<DT><span class="strong">fupdLast_EQ_NIL</span>
+<DD>
+<pre>
+⊢ ((fupdLast f x = []) ⇔ (x = [])) ∧ (([] = fupdLast f x) ⇔ (x = []))
+</pre>
+
+<DT><span class="strong">fupdLast_def</span>
+<DD>
+<pre>
+⊢ (∀f. fupdLast f [] = []) ∧ (∀h f. fupdLast f [h] = [f h]) ∧
+  ∀v5 v4 h f. fupdLast f (h::v4::v5) = h::fupdLast f (v4::v5)
+</pre>
+
+<DT><span class="strong">FOLDRi_CONG'</span>
+<DD>
+<pre>
+⊢ (l1 = l2) ∧ (∀n a. n < LENGTH l2 ⇒ (f1 n (EL n l2) a = f2 n (EL n l2) a)) ∧
+  (a1 = a2) ⇒
+  (FOLDRi f1 a1 l1 = FOLDRi f2 a2 l2)
+</pre>
+
+<DT><span class="strong">FOLDRi_CONG</span>
+<DD>
+<pre>
+⊢ (l1 = l2) ⇒
+  (∀n e a. n < LENGTH l2 ⇒ MEM e l2 ⇒ (f1 n e a = f2 n e a)) ⇒
+  (a1 = a2) ⇒
+  (FOLDRi f1 a1 l1 = FOLDRi f2 a2 l2)
+</pre>
+
+<DT><span class="strong">FOLDRi_APPEND</span>
+<DD>
+<pre>
+⊢ ∀f. FOLDRi f a (l1 ++ l2) = FOLDRi f (FOLDRi (f ∘ $+ (LENGTH l1)) a l2) l1
+</pre>
+
+<DT><span class="strong">FOLDR_MAPi</span>
+<DD>
+<pre>
+⊢ ∀f g a l. FOLDR f a (MAPi g l) = FOLDRi ($o f ∘ g) a l
+</pre>
+
+<DT><span class="strong">findi_EL</span>
+<DD>
+<pre>
+⊢ ∀l n. n < LENGTH l ∧ ALL_DISTINCT l ⇒ (findi (EL n l) l = n)
+</pre>
+
+<DT><span class="strong">EL_MAPi</span>
+<DD>
+<pre>
+⊢ ∀f n l. n < LENGTH l ⇒ (EL n (MAPi f l) = f n (EL n l))
+</pre>
+
+<DT><span class="strong">EL_MAP2i</span>
+<DD>
+<pre>
+⊢ ∀f l1 l2 n.
+      n < LENGTH l1 ∧ n < LENGTH l2 ⇒
+      (EL n (MAP2i f l1 l2) = f n (EL n l1) (EL n l2))
+</pre>
+
+<DT><span class="strong">EL_findi</span>
+<DD>
+<pre>
+⊢ ∀l x. MEM x l ⇒ (EL (findi x l) l = x)
+</pre>
+
+<DT><span class="strong">EL_delN_BEFORE</span>
+<DD>
+<pre>
+⊢ ∀l i j. i < j ∧ j < LENGTH l ⇒ (EL i (delN j l) = EL i l)
+</pre>
+
+<DT><span class="strong">EL_delN_AFTER</span>
+<DD>
+<pre>
+⊢ ∀l i j. j ≤ i ∧ i + 1 < LENGTH l ⇒ (EL i (delN j l) = EL (i + 1) l)
+</pre>
+
+<DT><span class="strong">delN_shortens</span>
+<DD>
+<pre>
+⊢ ∀l i. i < LENGTH l ⇒ (LENGTH (delN i l) = LENGTH l − 1)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

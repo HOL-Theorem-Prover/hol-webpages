@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure patternMatchesTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure patternMatchesTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/pattern_matches/patternMatchesScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature patternMatchesTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#APPLY_REDUNDANT_ROWS_INFO_def-val">APPLY_REDUNDANT_ROWS_INFO_def</a> : thm
+<a name="line7"></a>    val <a href="#IS_REDUNDANT_ROWS_INFO_def-val">IS_REDUNDANT_ROWS_INFO_def</a> : thm
+<a name="line8"></a>    val <a href="#PMATCH_EQUIV_ROWS_def-val">PMATCH_EQUIV_ROWS_def</a> : thm
+<a name="line9"></a>    val <a href="#PMATCH_EXPAND_PRED_def-val">PMATCH_EXPAND_PRED_def</a> : thm
+<a name="line10"></a>    val <a href="#PMATCH_FLATTEN_FUN_def-val">PMATCH_FLATTEN_FUN_def</a> : thm
+<a name="line11"></a>    val <a href="#PMATCH_INCOMPLETE_def-val">PMATCH_INCOMPLETE_def</a> : thm
+<a name="line12"></a>    val <a href="#PMATCH_IS_EXHAUSTIVE_def-val">PMATCH_IS_EXHAUSTIVE_def</a> : thm
+<a name="line13"></a>    val <a href="#PMATCH_ROW_COND_EX_def-val">PMATCH_ROW_COND_EX_def</a> : thm
+<a name="line14"></a>    val <a href="#PMATCH_ROW_COND_NOT_EX_OR_EQ_def-val">PMATCH_ROW_COND_NOT_EX_OR_EQ_def</a> : thm
+<a name="line15"></a>    val <a href="#PMATCH_ROW_COND_def-val">PMATCH_ROW_COND_def</a> : thm
+<a name="line16"></a>    val <a href="#PMATCH_ROW_LIFT_def-val">PMATCH_ROW_LIFT_def</a> : thm
+<a name="line17"></a>    val <a href="#PMATCH_ROW_REDUNDANT_def-val">PMATCH_ROW_REDUNDANT_def</a> : thm
+<a name="line18"></a>    val <a href="#PMATCH_ROW_def-val">PMATCH_ROW_def</a> : thm
+<a name="line19"></a>    val <a href="#PMATCH_def-val">PMATCH_def</a> : thm
+<a name="line20"></a>    val <a href="#REDUNDANT_ROWS_INFOS_CONJ_def-val">REDUNDANT_ROWS_INFOS_CONJ_def</a> : thm
+<a name="line21"></a>    val <a href="#REDUNDANT_ROWS_INFOS_DISJ_def-val">REDUNDANT_ROWS_INFOS_DISJ_def</a> : thm
+<a name="line22"></a>    val <a href="#STRONGEST_REDUNDANT_ROWS_INFO_AUX_def-val">STRONGEST_REDUNDANT_ROWS_INFO_AUX_def</a> : thm
+<a name="line23"></a>    val <a href="#STRONGEST_REDUNDANT_ROWS_INFO_def-val">STRONGEST_REDUNDANT_ROWS_INFO_def</a> : thm
+<a name="line24"></a>  
+<a name="line25"></a>  (*  Theorems  *)
+<a name="line26"></a>    val <a href="#APPLY_REDUNDANT_ROWS_INFO_THMS-val">APPLY_REDUNDANT_ROWS_INFO_THMS</a> : thm
+<a name="line27"></a>    val <a href="#EL1_STRONGEST_REDUNDANT_ROWS_INFO_AUX-val">EL1_STRONGEST_REDUNDANT_ROWS_INFO_AUX</a> : thm
+<a name="line28"></a>    val <a href="#EL2_STRONGEST_REDUNDANT_ROWS_INFO_AUX-val">EL2_STRONGEST_REDUNDANT_ROWS_INFO_AUX</a> : thm
+<a name="line29"></a>    val <a href="#EL_STRONGEST_REDUNDANT_ROWS_INFO-val">EL_STRONGEST_REDUNDANT_ROWS_INFO</a> : thm
+<a name="line30"></a>    val <a href="#FST_STRONGEST_REDUNDANT_ROWS_INFO_AUX-val">FST_STRONGEST_REDUNDANT_ROWS_INFO_AUX</a> : thm
+<a name="line31"></a>    val <a href="#GUARDS_ELIM_THM-val">GUARDS_ELIM_THM</a> : thm
+<a name="line32"></a>    val <a href="#IS_REDUNDANT_ROWS_INFO_CONS-val">IS_REDUNDANT_ROWS_INFO_CONS</a> : thm
+<a name="line33"></a>    val <a href="#IS_REDUNDANT_ROWS_INFO_EXTRACT_IS_EXHAUSTIVE-val">IS_REDUNDANT_ROWS_INFO_EXTRACT_IS_EXHAUSTIVE</a> : thm
+<a name="line34"></a>    val <a href="#IS_REDUNDANT_ROWS_INFO_NIL-val">IS_REDUNDANT_ROWS_INFO_NIL</a> : thm
+<a name="line35"></a>    val <a href="#IS_REDUNDANT_ROWS_INFO_SNOC-val">IS_REDUNDANT_ROWS_INFO_SNOC</a> : thm
+<a name="line36"></a>    val <a href="#IS_REDUNDANT_ROWS_INFO_SNOC_PMATCH_ROW-val">IS_REDUNDANT_ROWS_INFO_SNOC_PMATCH_ROW</a> : thm
+<a name="line37"></a>    val <a href="#LENGTH_STRONGEST_REDUNDANT_ROWS_INFO-val">LENGTH_STRONGEST_REDUNDANT_ROWS_INFO</a> : thm
+<a name="line38"></a>    val <a href="#LENGTH_STRONGEST_REDUNDANT_ROWS_INFO_AUX-val">LENGTH_STRONGEST_REDUNDANT_ROWS_INFO_AUX</a> : thm
+<a name="line39"></a>    val <a href="#PMATCH_APPEND_SEM-val">PMATCH_APPEND_SEM</a> : thm
+<a name="line40"></a>    val <a href="#PMATCH_COND_SELECT_UNIQUE-val">PMATCH_COND_SELECT_UNIQUE</a> : thm
+<a name="line41"></a>    val <a href="#PMATCH_CONG-val">PMATCH_CONG</a> : thm
+<a name="line42"></a>    val <a href="#PMATCH_EQUIV_APPEND-val">PMATCH_EQUIV_APPEND</a> : thm
+<a name="line43"></a>    val <a href="#PMATCH_EQUIV_ROWS_CONS_NONE-val">PMATCH_EQUIV_ROWS_CONS_NONE</a> : thm
+<a name="line44"></a>    val <a href="#PMATCH_EQUIV_ROWS_EQUIV_EXPAND-val">PMATCH_EQUIV_ROWS_EQUIV_EXPAND</a> : thm
+<a name="line45"></a>    val <a href="#PMATCH_EQUIV_ROWS_MATCH-val">PMATCH_EQUIV_ROWS_MATCH</a> : thm
+<a name="line46"></a>    val <a href="#PMATCH_EQUIV_ROWS_is_equiv_1-val">PMATCH_EQUIV_ROWS_is_equiv_1</a> : thm
+<a name="line47"></a>    val <a href="#PMATCH_EQUIV_ROWS_is_equiv_2-val">PMATCH_EQUIV_ROWS_is_equiv_2</a> : thm
+<a name="line48"></a>    val <a href="#PMATCH_EQUIV_ROWS_is_equiv_3-val">PMATCH_EQUIV_ROWS_is_equiv_3</a> : thm
+<a name="line49"></a>    val <a href="#PMATCH_EVAL-val">PMATCH_EVAL</a> : thm
+<a name="line50"></a>    val <a href="#PMATCH_EVAL_MATCH-val">PMATCH_EVAL_MATCH</a> : thm
+<a name="line51"></a>    val <a href="#PMATCH_EXPAND_PRED_THM-val">PMATCH_EXPAND_PRED_THM</a> : thm
+<a name="line52"></a>    val <a href="#PMATCH_EXPAND_PRED_THM_GEN-val">PMATCH_EXPAND_PRED_THM_GEN</a> : thm
+<a name="line53"></a>    val <a href="#PMATCH_EXTEND_BASE-val">PMATCH_EXTEND_BASE</a> : thm
+<a name="line54"></a>    val <a href="#PMATCH_EXTEND_BOTH-val">PMATCH_EXTEND_BOTH</a> : thm
+<a name="line55"></a>    val <a href="#PMATCH_EXTEND_BOTH_ID-val">PMATCH_EXTEND_BOTH_ID</a> : thm
+<a name="line56"></a>    val <a href="#PMATCH_EXTEND_OLD-val">PMATCH_EXTEND_OLD</a> : thm
+<a name="line57"></a>    val <a href="#PMATCH_FLATTEN_FUN_PMATCH_ROW-val">PMATCH_FLATTEN_FUN_PMATCH_ROW</a> : thm
+<a name="line58"></a>    val <a href="#PMATCH_FLATTEN_THM-val">PMATCH_FLATTEN_THM</a> : thm
+<a name="line59"></a>    val <a href="#PMATCH_FLATTEN_THM_SINGLE-val">PMATCH_FLATTEN_THM_SINGLE</a> : thm
+<a name="line60"></a>    val <a href="#PMATCH_INTRO_CATCHALL-val">PMATCH_INTRO_CATCHALL</a> : thm
+<a name="line61"></a>    val <a href="#PMATCH_IS_EXHAUSTIVE_CONTRADICT-val">PMATCH_IS_EXHAUSTIVE_CONTRADICT</a> : thm
+<a name="line62"></a>    val <a href="#PMATCH_IS_EXHAUSTIVE_LIFT-val">PMATCH_IS_EXHAUSTIVE_LIFT</a> : thm
+<a name="line63"></a>    val <a href="#PMATCH_IS_EXHAUSTIVE_REWRITES-val">PMATCH_IS_EXHAUSTIVE_REWRITES</a> : thm
+<a name="line64"></a>    val <a href="#PMATCH_LIFT_THM-val">PMATCH_LIFT_THM</a> : thm
+<a name="line65"></a>    val <a href="#PMATCH_PRED_UNROLL_CONS-val">PMATCH_PRED_UNROLL_CONS</a> : thm
+<a name="line66"></a>    val <a href="#PMATCH_PRED_UNROLL_NIL-val">PMATCH_PRED_UNROLL_NIL</a> : thm
+<a name="line67"></a>    val <a href="#PMATCH_REMOVE_ARB-val">PMATCH_REMOVE_ARB</a> : thm
+<a name="line68"></a>    val <a href="#PMATCH_REMOVE_ARB_NO_OVERLAP-val">PMATCH_REMOVE_ARB_NO_OVERLAP</a> : thm
+<a name="line69"></a>    val <a href="#PMATCH_ROWS_DROP_REDUNDANT-val">PMATCH_ROWS_DROP_REDUNDANT</a> : thm
+<a name="line70"></a>    val <a href="#PMATCH_ROWS_DROP_REDUNDANT_PMATCH_ROWS-val">PMATCH_ROWS_DROP_REDUNDANT_PMATCH_ROWS</a> : thm
+<a name="line71"></a>    val <a href="#PMATCH_ROWS_DROP_REDUNDANT_ROWS_INFO_EQUIV-val">PMATCH_ROWS_DROP_REDUNDANT_ROWS_INFO_EQUIV</a> : thm
+<a name="line72"></a>    val <a href="#PMATCH_ROWS_DROP_REDUNDANT_TRIVIAL_SOUNDNESS-val">PMATCH_ROWS_DROP_REDUNDANT_TRIVIAL_SOUNDNESS</a> : thm
+<a name="line73"></a>    val <a href="#PMATCH_ROWS_DROP_REDUNDANT_TRIVIAL_SOUNDNESS_EQUIV-val">PMATCH_ROWS_DROP_REDUNDANT_TRIVIAL_SOUNDNESS_EQUIV</a> : thm
+<a name="line74"></a>    val <a href="#PMATCH_ROWS_DROP_SUBSUMED-val">PMATCH_ROWS_DROP_SUBSUMED</a> : thm
+<a name="line75"></a>    val <a href="#PMATCH_ROWS_DROP_SUBSUMED_PMATCH_ROWS-val">PMATCH_ROWS_DROP_SUBSUMED_PMATCH_ROWS</a> : thm
+<a name="line76"></a>    val <a href="#PMATCH_ROW_COND_DEF_GSYM-val">PMATCH_ROW_COND_DEF_GSYM</a> : thm
+<a name="line77"></a>    val <a href="#PMATCH_ROW_COND_EX_FALSE-val">PMATCH_ROW_COND_EX_FALSE</a> : thm
+<a name="line78"></a>    val <a href="#PMATCH_ROW_COND_EX_FULL_DEF-val">PMATCH_ROW_COND_EX_FULL_DEF</a> : thm
+<a name="line79"></a>    val <a href="#PMATCH_ROW_COND_EX_IMP_REWRITE-val">PMATCH_ROW_COND_EX_IMP_REWRITE</a> : thm
+<a name="line80"></a>    val <a href="#PMATCH_ROW_COND_EX_WEAKEN-val">PMATCH_ROW_COND_EX_WEAKEN</a> : thm
+<a name="line81"></a>    val <a href="#PMATCH_ROW_COND_NOT_EX_OR_EQ_FIRST_ROW-val">PMATCH_ROW_COND_NOT_EX_OR_EQ_FIRST_ROW</a> : thm
+<a name="line82"></a>    val <a href="#PMATCH_ROW_COND_NOT_EX_OR_EQ_NIL-val">PMATCH_ROW_COND_NOT_EX_OR_EQ_NIL</a> : thm
+<a name="line83"></a>    val <a href="#PMATCH_ROW_COND_NOT_EX_OR_EQ_NOT_FIRST_ROW-val">PMATCH_ROW_COND_NOT_EX_OR_EQ_NOT_FIRST_ROW</a> : thm
+<a name="line84"></a>    val <a href="#PMATCH_ROW_CONG-val">PMATCH_ROW_CONG</a> : thm
+<a name="line85"></a>    val <a href="#PMATCH_ROW_EQ_AUX-val">PMATCH_ROW_EQ_AUX</a> : thm
+<a name="line86"></a>    val <a href="#PMATCH_ROW_EQ_NONE-val">PMATCH_ROW_EQ_NONE</a> : thm
+<a name="line87"></a>    val <a href="#PMATCH_ROW_EQ_SOME-val">PMATCH_ROW_EQ_SOME</a> : thm
+<a name="line88"></a>    val <a href="#PMATCH_ROW_EVAL_COND_EX-val">PMATCH_ROW_EVAL_COND_EX</a> : thm
+<a name="line89"></a>    val <a href="#PMATCH_ROW_EXTEND_INPUT-val">PMATCH_ROW_EXTEND_INPUT</a> : thm
+<a name="line90"></a>    val <a href="#PMATCH_ROW_LIFT_THM-val">PMATCH_ROW_LIFT_THM</a> : thm
+<a name="line91"></a>    val <a href="#PMATCH_ROW_NEQ_NONE-val">PMATCH_ROW_NEQ_NONE</a> : thm
+<a name="line92"></a>    val <a href="#PMATCH_ROW_REDUNDANT_0-val">PMATCH_ROW_REDUNDANT_0</a> : thm
+<a name="line93"></a>    val <a href="#PMATCH_ROW_REDUNDANT_APPEND_GE-val">PMATCH_ROW_REDUNDANT_APPEND_GE</a> : thm
+<a name="line94"></a>    val <a href="#PMATCH_ROW_REDUNDANT_APPEND_LT-val">PMATCH_ROW_REDUNDANT_APPEND_LT</a> : thm
+<a name="line95"></a>    val <a href="#PMATCH_ROW_REDUNDANT_NIL-val">PMATCH_ROW_REDUNDANT_NIL</a> : thm
+<a name="line96"></a>    val <a href="#PMATCH_ROW_REDUNDANT_SUC-val">PMATCH_ROW_REDUNDANT_SUC</a> : thm
+<a name="line97"></a>    val <a href="#PMATCH_ROW_REMOVE_DOUBLE_BINDS_THM-val">PMATCH_ROW_REMOVE_DOUBLE_BINDS_THM</a> : thm
+<a name="line98"></a>    val <a href="#PMATCH_ROW_REMOVE_FUN-val">PMATCH_ROW_REMOVE_FUN</a> : thm
+<a name="line99"></a>    val <a href="#PMATCH_ROW_REMOVE_FUN_VAR-val">PMATCH_ROW_REMOVE_FUN_VAR</a> : thm
+<a name="line100"></a>    val <a href="#REDUNDANT_ROWS_INFOS_CONJ_REWRITE-val">REDUNDANT_ROWS_INFOS_CONJ_REWRITE</a> : thm
+<a name="line101"></a>    val <a href="#REDUNDANT_ROWS_INFOS_CONJ_THM-val">REDUNDANT_ROWS_INFOS_CONJ_THM</a> : thm
+<a name="line102"></a>    val <a href="#REDUNDANT_ROWS_INFOS_DISJ_THM-val">REDUNDANT_ROWS_INFOS_DISJ_THM</a> : thm
+<a name="line103"></a>    val <a href="#REDUNDANT_ROWS_INFO_TO_PMATCH_EQ-val">REDUNDANT_ROWS_INFO_TO_PMATCH_EQ</a> : thm
+<a name="line104"></a>    val <a href="#STRONGEST_REDUNDANT_ROWS_INFO_OK-val">STRONGEST_REDUNDANT_ROWS_INFO_OK</a> : thm
+<a name="line105"></a>    val <a href="#some_var_bool_F-val">some_var_bool_F</a> : thm
+<a name="line106"></a>    val <a href="#some_var_bool_T-val">some_var_bool_T</a> : thm
+<a name="line107"></a>  
+<a name="line108"></a>  val patternMatches_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line109"></a>(*
+   [quantHeuristics] Parent theory of "patternMatches"
+   
+   [rich_list] Parent theory of "patternMatches"
+   
+   [<a name="APPLY_REDUNDANT_ROWS_INFO_def-val"><b>APPLY_REDUNDANT_ROWS_INFO_def</b></a>]  Definition
+      
+      ⊢ ∀is xs.
+            APPLY_REDUNDANT_ROWS_INFO is xs =
+            MAP SND (FILTER (λx. ¬FST x) (ZIP (is,xs)))
+   
+   [<a name="IS_REDUNDANT_ROWS_INFO_def-val"><b>IS_REDUNDANT_ROWS_INFO_def</b></a>]  Definition
+      
+      ⊢ ∀v rows c infos.
+            IS_REDUNDANT_ROWS_INFO v rows c infos ⇔
+            (LENGTH rows = LENGTH infos) ∧
+            (∀i.
+                 i &lt; LENGTH rows ⇒
+                 EL i infos ⇒
+                 PMATCH_ROW_REDUNDANT v rows i) ∧
+            (EVERY (λr. r v = NONE) rows ⇒ c)
+   
+   [<a name="PMATCH_EQUIV_ROWS_def-val"><b>PMATCH_EQUIV_ROWS_def</b></a>]  Definition
+      
+      ⊢ ∀v rows1 rows2.
+            PMATCH_EQUIV_ROWS v rows1 rows2 ⇔
+            (PMATCH v rows1 = PMATCH v rows2) ∧
+            ((∃r. MEM r rows1 ∧ IS_SOME (r v)) ⇔
+             ∃r. MEM r rows2 ∧ IS_SOME (r v))
+   
+   [<a name="PMATCH_EXPAND_PRED_def-val"><b>PMATCH_EXPAND_PRED_def</b></a>]  Definition
+      
+      ⊢ (∀P v rows_before.
+             PMATCH_EXPAND_PRED P v rows_before [] ⇔
+             ¬PMATCH_IS_EXHAUSTIVE v (REVERSE rows_before) ⇒ P ARB) ∧
+        ∀P v rows_before r rows_after.
+            PMATCH_EXPAND_PRED P v rows_before (r::rows_after) ⇔
+            (r v ≠ NONE ⇒
+             EVERY (λr'. r' v ≠ NONE ⇒ (r' v = r v)) rows_before ⇒
+             P (THE (r v))) ∧
+            PMATCH_EXPAND_PRED P v (r::rows_before) rows_after
+   
+   [<a name="PMATCH_FLATTEN_FUN_def-val"><b>PMATCH_FLATTEN_FUN_def</b></a>]  Definition
+      
+      ⊢ ∀p g row v.
+            PMATCH_FLATTEN_FUN p g row v =
+            case some x. PMATCH_ROW_COND p g v x of
+              NONE =&gt; NONE
+            | SOME x =&gt; row x x
+   
+   [<a name="PMATCH_INCOMPLETE_def-val"><b>PMATCH_INCOMPLETE_def</b></a>]  Definition
+      
+      ⊢ PMATCH_INCOMPLETE = ARB
+   
+   [<a name="PMATCH_IS_EXHAUSTIVE_def-val"><b>PMATCH_IS_EXHAUSTIVE_def</b></a>]  Definition
+      
+      ⊢ ∀v rs. PMATCH_IS_EXHAUSTIVE v rs ⇔ EXISTS (λr. IS_SOME (r v)) rs
+   
+   [<a name="PMATCH_ROW_COND_EX_def-val"><b>PMATCH_ROW_COND_EX_def</b></a>]  Definition
+      
+      ⊢ ∀i p g. PMATCH_ROW_COND_EX i p g ⇔ ∃x. PMATCH_ROW_COND p g i x
+   
+   [<a name="PMATCH_ROW_COND_NOT_EX_OR_EQ_def-val"><b>PMATCH_ROW_COND_NOT_EX_OR_EQ_def</b></a>]  Definition
+      
+      ⊢ ∀i r rows.
+            PMATCH_ROW_COND_NOT_EX_OR_EQ i r rows ⇔
+            ¬(r i ≠ NONE) ∨
+            EXISTS (λrow. row i ≠ NONE) rows ∧ (THE (r i) = PMATCH i rows)
+   
+   [<a name="PMATCH_ROW_COND_def-val"><b>PMATCH_ROW_COND_def</b></a>]  Definition
+      
+      ⊢ ∀pat guard inp v.
+            PMATCH_ROW_COND pat guard inp v ⇔ (pat v = inp) ∧ guard v
+   
+   [<a name="PMATCH_ROW_LIFT_def-val"><b>PMATCH_ROW_LIFT_def</b></a>]  Definition
+      
+      ⊢ ∀f r. PMATCH_ROW_LIFT f r = (λx. OPTION_MAP f (r x))
+   
+   [<a name="PMATCH_ROW_REDUNDANT_def-val"><b>PMATCH_ROW_REDUNDANT_def</b></a>]  Definition
+      
+      ⊢ ∀v rs i.
+            PMATCH_ROW_REDUNDANT v rs i ⇔
+            i &lt; LENGTH rs ∧
+            (IS_SOME (EL i rs v) ⇒ ∃j. j &lt; i ∧ IS_SOME (EL j rs v))
+   
+   [<a name="PMATCH_ROW_def-val"><b>PMATCH_ROW_def</b></a>]  Definition
+      
+      ⊢ ∀pat guard rhs i.
+            PMATCH_ROW pat guard rhs i =
+            OPTION_MAP rhs (some v. PMATCH_ROW_COND pat guard i v)
+   
+   [<a name="PMATCH_def-val"><b>PMATCH_def</b></a>]  Definition
+      
+      ⊢ (∀v. PMATCH v [] = PMATCH_INCOMPLETE) ∧
+        ∀v r rs. PMATCH v (r::rs) = option_CASE (r v) (PMATCH v rs) I
+   
+   [<a name="REDUNDANT_ROWS_INFOS_CONJ_def-val"><b>REDUNDANT_ROWS_INFOS_CONJ_def</b></a>]  Definition
+      
+      ⊢ ∀ip1 ip2.
+            REDUNDANT_ROWS_INFOS_CONJ ip1 ip2 =
+            MAP2 (λi1 i2. i1 ∧ i2) ip1 ip2
+   
+   [<a name="REDUNDANT_ROWS_INFOS_DISJ_def-val"><b>REDUNDANT_ROWS_INFOS_DISJ_def</b></a>]  Definition
+      
+      ⊢ ∀ip1 ip2.
+            REDUNDANT_ROWS_INFOS_DISJ ip1 ip2 =
+            MAP2 (λi1 i2. i1 ∨ i2) ip1 ip2
+   
+   [<a name="STRONGEST_REDUNDANT_ROWS_INFO_AUX_def-val"><b>STRONGEST_REDUNDANT_ROWS_INFO_AUX_def</b></a>]  Definition
+      
+      ⊢ (∀v p infos.
+             STRONGEST_REDUNDANT_ROWS_INFO_AUX v [] p infos = (p,infos)) ∧
+        ∀v r rows p infos.
+            STRONGEST_REDUNDANT_ROWS_INFO_AUX v (r::rows) p infos =
+            STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows (p ∧ (r v = NONE))
+              (SNOC (p ⇒ (r v = NONE)) infos)
+   
+   [<a name="STRONGEST_REDUNDANT_ROWS_INFO_def-val"><b>STRONGEST_REDUNDANT_ROWS_INFO_def</b></a>]  Definition
+      
+      ⊢ ∀v rows.
+            STRONGEST_REDUNDANT_ROWS_INFO v rows =
+            SND (STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows T [])
+   
+   [<a name="APPLY_REDUNDANT_ROWS_INFO_THMS-val"><b>APPLY_REDUNDANT_ROWS_INFO_THMS</b></a>]  Theorem
+      
+      ⊢ (APPLY_REDUNDANT_ROWS_INFO [] [] = []) ∧
+        (∀is x xs.
+             APPLY_REDUNDANT_ROWS_INFO (T::is) (x::xs) =
+             APPLY_REDUNDANT_ROWS_INFO is xs) ∧
+        ∀is x xs.
+            APPLY_REDUNDANT_ROWS_INFO (F::is) (x::xs) =
+            x::APPLY_REDUNDANT_ROWS_INFO is xs
+   
+   [<a name="EL1_STRONGEST_REDUNDANT_ROWS_INFO_AUX-val"><b>EL1_STRONGEST_REDUNDANT_ROWS_INFO_AUX</b></a>]  Theorem
+      
+      ⊢ ∀v rows p infos i.
+            i &lt; LENGTH infos ⇒
+            (EL i (SND (STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows p infos)) ⇔
+             EL i infos)
+   
+   [<a name="EL2_STRONGEST_REDUNDANT_ROWS_INFO_AUX-val"><b>EL2_STRONGEST_REDUNDANT_ROWS_INFO_AUX</b></a>]  Theorem
+      
+      ⊢ ∀v rows p infos i.
+            i ≥ LENGTH infos ∧ i &lt; LENGTH rows + LENGTH infos ⇒
+            (EL i (SND (STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows p infos)) ⇔
+             p ∧ EVERY (λr. r v = NONE) (TAKE (i − LENGTH infos) rows) ⇒
+             (EL (i − LENGTH infos) rows v = NONE))
+   
+   [<a name="EL_STRONGEST_REDUNDANT_ROWS_INFO-val"><b>EL_STRONGEST_REDUNDANT_ROWS_INFO</b></a>]  Theorem
+      
+      ⊢ ∀v rows i.
+            i &lt; LENGTH rows ⇒
+            (EL i (STRONGEST_REDUNDANT_ROWS_INFO v rows) ⇔
+             EVERY (λr. r v = NONE) (TAKE i rows) ⇒ (EL i rows v = NONE))
+   
+   [<a name="FST_STRONGEST_REDUNDANT_ROWS_INFO_AUX-val"><b>FST_STRONGEST_REDUNDANT_ROWS_INFO_AUX</b></a>]  Theorem
+      
+      ⊢ ∀v rows p infos.
+            FST (STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows p infos) ⇔
+            p ∧ EVERY (λr. r v = NONE) rows
+   
+   [<a name="GUARDS_ELIM_THM-val"><b>GUARDS_ELIM_THM</b></a>]  Theorem
+      
+      ⊢ ∀v rs1 rs2 p g r.
+            (∀x1 x2. (p x1 = p x2) ⇒ (x1 = x2)) ⇒
+            (PMATCH v (rs1 ⧺ PMATCH_ROW p g r::rs2) =
+             PMATCH v
+               (rs1 ⧺
+                PMATCH_ROW p (λx. T)
+                    (λx. if g x then r x else PMATCH (p x) rs2)::rs2))
+   
+   [<a name="IS_REDUNDANT_ROWS_INFO_CONS-val"><b>IS_REDUNDANT_ROWS_INFO_CONS</b></a>]  Theorem
+      
+      ⊢ IS_REDUNDANT_ROWS_INFO v (row::rows) c (i::infos') ⇔
+        (LENGTH rows = LENGTH infos') ∧ (i ⇒ (row v = NONE)) ∧
+        ((row v = NONE) ⇒ IS_REDUNDANT_ROWS_INFO v rows c infos')
+   
+   [<a name="IS_REDUNDANT_ROWS_INFO_EXTRACT_IS_EXHAUSTIVE-val"><b>IS_REDUNDANT_ROWS_INFO_EXTRACT_IS_EXHAUSTIVE</b></a>]  Theorem
+      
+      ⊢ ∀v rows c infos.
+            IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+            ¬c ⇒
+            PMATCH_IS_EXHAUSTIVE v rows
+   
+   [<a name="IS_REDUNDANT_ROWS_INFO_NIL-val"><b>IS_REDUNDANT_ROWS_INFO_NIL</b></a>]  Theorem
+      
+      ⊢ ∀v. IS_REDUNDANT_ROWS_INFO v [] T []
+   
+   [<a name="IS_REDUNDANT_ROWS_INFO_SNOC-val"><b>IS_REDUNDANT_ROWS_INFO_SNOC</b></a>]  Theorem
+      
+      ⊢ ∀v rows c infos r i c'.
+            IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+            ((r v = NONE) ⇒ c ⇒ c') ⇒
+            (c ⇒ i ⇒ (r v = NONE)) ⇒
+            IS_REDUNDANT_ROWS_INFO v (SNOC r rows) c' (SNOC i infos)
+   
+   [<a name="IS_REDUNDANT_ROWS_INFO_SNOC_PMATCH_ROW-val"><b>IS_REDUNDANT_ROWS_INFO_SNOC_PMATCH_ROW</b></a>]  Theorem
+      
+      ⊢ ∀v rows c infos p g r c'.
+            IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+            (¬PMATCH_ROW_COND_EX v p g ⇒ (c ⇔ c')) ⇒
+            IS_REDUNDANT_ROWS_INFO v (SNOC (PMATCH_ROW p g r) rows) c'
+              (SNOC (c ⇒ ¬PMATCH_ROW_COND_EX v p g) infos)
+   
+   [<a name="LENGTH_STRONGEST_REDUNDANT_ROWS_INFO-val"><b>LENGTH_STRONGEST_REDUNDANT_ROWS_INFO</b></a>]  Theorem
+      
+      ⊢ LENGTH (STRONGEST_REDUNDANT_ROWS_INFO v rows) = LENGTH rows
+   
+   [<a name="LENGTH_STRONGEST_REDUNDANT_ROWS_INFO_AUX-val"><b>LENGTH_STRONGEST_REDUNDANT_ROWS_INFO_AUX</b></a>]  Theorem
+      
+      ⊢ ∀v rows p infos.
+            LENGTH (SND (STRONGEST_REDUNDANT_ROWS_INFO_AUX v rows p infos)) =
+            LENGTH rows + LENGTH infos
+   
+   [<a name="PMATCH_APPEND_SEM-val"><b>PMATCH_APPEND_SEM</b></a>]  Theorem
+      
+      ⊢ ∀v rows1 rows2.
+            PMATCH v (rows1 ⧺ rows2) =
+            if ∃r. MEM r rows1 ∧ IS_SOME (r v) then PMATCH v rows1
+            else PMATCH v rows2
+   
+   [<a name="PMATCH_COND_SELECT_UNIQUE-val"><b>PMATCH_COND_SELECT_UNIQUE</b></a>]  Theorem
+      
+      ⊢ ∀p g i.
+            (∀x1 x2. g x1 ∧ g x2 ∧ (p x1 = p x2) ⇒ (x1 = x2)) ⇒
+            ∀x.
+                PMATCH_ROW_COND p g i x ⇒
+                ((@y. PMATCH_ROW_COND p g i y) = x)
+   
+   [<a name="PMATCH_CONG-val"><b>PMATCH_CONG</b></a>]  Theorem
+      
+      ⊢ ∀v v' rows rows' r r'.
+            (v = v') ∧ (r v' = r' v') ∧ (PMATCH v' rows = PMATCH v' rows') ⇒
+            (PMATCH v (r::rows) = PMATCH v' (r'::rows'))
+   
+   [<a name="PMATCH_EQUIV_APPEND-val"><b>PMATCH_EQUIV_APPEND</b></a>]  Theorem
+      
+      ⊢ ∀v rows1a rows1b rows2a rows2b.
+            PMATCH_EQUIV_ROWS v rows1a rows1b ⇒
+            PMATCH_EQUIV_ROWS v rows2a rows2b ⇒
+            PMATCH_EQUIV_ROWS v (rows1a ⧺ rows2a) (rows1b ⧺ rows2b)
+   
+   [<a name="PMATCH_EQUIV_ROWS_CONS_NONE-val"><b>PMATCH_EQUIV_ROWS_CONS_NONE</b></a>]  Theorem
+      
+      ⊢ (row v = NONE) ⇒
+        (PMATCH_EQUIV_ROWS v (row::rows) = PMATCH_EQUIV_ROWS v rows)
+   
+   [<a name="PMATCH_EQUIV_ROWS_EQUIV_EXPAND-val"><b>PMATCH_EQUIV_ROWS_EQUIV_EXPAND</b></a>]  Theorem
+      
+      ⊢ PMATCH_EQUIV_ROWS v rows1 rows2 ⇔
+        (PMATCH_EQUIV_ROWS v rows1 = PMATCH_EQUIV_ROWS v rows2)
+   
+   [<a name="PMATCH_EQUIV_ROWS_MATCH-val"><b>PMATCH_EQUIV_ROWS_MATCH</b></a>]  Theorem
+      
+      ⊢ PMATCH_EQUIV_ROWS v rows1 rows2 ⇒ (PMATCH v rows1 = PMATCH v rows2)
+   
+   [<a name="PMATCH_EQUIV_ROWS_is_equiv_1-val"><b>PMATCH_EQUIV_ROWS_is_equiv_1</b></a>]  Theorem
+      
+      ⊢ ∀v rows. PMATCH_EQUIV_ROWS v rows rows
+   
+   [<a name="PMATCH_EQUIV_ROWS_is_equiv_2-val"><b>PMATCH_EQUIV_ROWS_is_equiv_2</b></a>]  Theorem
+      
+      ⊢ ∀v rows1 rows2.
+            PMATCH_EQUIV_ROWS v rows1 rows2 ⇔
+            PMATCH_EQUIV_ROWS v rows2 rows1
+   
+   [<a name="PMATCH_EQUIV_ROWS_is_equiv_3-val"><b>PMATCH_EQUIV_ROWS_is_equiv_3</b></a>]  Theorem
+      
+      ⊢ ∀v rows1 rows2 rows3.
+            PMATCH_EQUIV_ROWS v rows1 rows2 ⇒
+            PMATCH_EQUIV_ROWS v rows2 rows3 ⇒
+            PMATCH_EQUIV_ROWS v rows1 rows3
+   
+   [<a name="PMATCH_EVAL-val"><b>PMATCH_EVAL</b></a>]  Theorem
+      
+      ⊢ (PMATCH v [] = PMATCH_INCOMPLETE) ∧
+        (PMATCH v (PMATCH_ROW p g r::rs) =
+         if ∃x. PMATCH_ROW_COND p g v x then
+           r (@x. PMATCH_ROW_COND p g v x)
+         else PMATCH v rs)
+   
+   [<a name="PMATCH_EVAL_MATCH-val"><b>PMATCH_EVAL_MATCH</b></a>]  Theorem
+      
+      ⊢ PMATCH_ROW p g r v ≠ NONE ⇒
+        (PMATCH v (PMATCH_ROW p g r::rs) = r (@x. PMATCH_ROW_COND p g v x))
+   
+   [<a name="PMATCH_EXPAND_PRED_THM-val"><b>PMATCH_EXPAND_PRED_THM</b></a>]  Theorem
+      
+      ⊢ ∀P v rows. P (PMATCH v rows) ⇔ PMATCH_EXPAND_PRED P v [] rows
+   
+   [<a name="PMATCH_EXPAND_PRED_THM_GEN-val"><b>PMATCH_EXPAND_PRED_THM_GEN</b></a>]  Theorem
+      
+      ⊢ ∀P v rows_before rows_after.
+            PMATCH_EXPAND_PRED P v rows_before rows_after ⇔
+            EVERY (λr. PMATCH_ROW_COND_NOT_EX_OR_EQ v r rows_after)
+              rows_before ⇒
+            P (PMATCH v rows_after)
+   
+   [<a name="PMATCH_EXTEND_BASE-val"><b>PMATCH_EXTEND_BASE</b></a>]  Theorem
+      
+      ⊢ ∀v_old v_new. PMATCH v_old [] = PMATCH v_new []
+   
+   [<a name="PMATCH_EXTEND_BOTH-val"><b>PMATCH_EXTEND_BOTH</b></a>]  Theorem
+      
+      ⊢ ∀v_old v_new rows_old rows_new r_old r_new.
+            (r_old v_old = r_new v_new) ⇒
+            (PMATCH v_old rows_old = PMATCH v_new rows_new) ⇒
+            (PMATCH v_old (r_old::rows_old) =
+             PMATCH v_new (r_new::rows_new))
+   
+   [<a name="PMATCH_EXTEND_BOTH_ID-val"><b>PMATCH_EXTEND_BOTH_ID</b></a>]  Theorem
+      
+      ⊢ ∀v rows_old rows_new r.
+            (PMATCH v rows_old = PMATCH v rows_new) ⇒
+            (PMATCH v (r::rows_old) = PMATCH v (r::rows_new))
+   
+   [<a name="PMATCH_EXTEND_OLD-val"><b>PMATCH_EXTEND_OLD</b></a>]  Theorem
+      
+      ⊢ ∀v_old v_new rows_old rows_new r_old.
+            (r_old v_old = NONE) ⇒
+            (PMATCH v_old rows_old = PMATCH v_new rows_new) ⇒
+            (PMATCH v_old (r_old::rows_old) = PMATCH v_new rows_new)
+   
+   [<a name="PMATCH_FLATTEN_FUN_PMATCH_ROW-val"><b>PMATCH_FLATTEN_FUN_PMATCH_ROW</b></a>]  Theorem
+      
+      ⊢ ∀p.
+            (∀x1 x2. (p x1 = p x2) ⇒ (x1 = x2)) ⇒
+            ∀g p' g' r'.
+                PMATCH_FLATTEN_FUN p g (λx. PMATCH_ROW p' (g' x) (r' x)) =
+                PMATCH_ROW (λx. p (p' x)) (λx. g (p' x) ∧ g' (p' x) x)
+                  (λx. r' (p' x) x)
+   
+   [<a name="PMATCH_FLATTEN_THM-val"><b>PMATCH_FLATTEN_THM</b></a>]  Theorem
+      
+      ⊢ ∀v p g rows1 rows2 rows.
+            (∀x. PMATCH_IS_EXHAUSTIVE x (MAP (λr. r x) rows)) ⇒
+            (PMATCH v
+               (rows1 ⧺
+                PMATCH_ROW p g (λx. PMATCH x (MAP (λr. r x) rows))::rows2) =
+             PMATCH v
+               (rows1 ⧺ MAP (λr. PMATCH_FLATTEN_FUN p g r) rows ⧺ rows2))
+   
+   [<a name="PMATCH_FLATTEN_THM_SINGLE-val"><b>PMATCH_FLATTEN_THM_SINGLE</b></a>]  Theorem
+      
+      ⊢ ∀v p g rows.
+            (∀x. PMATCH_IS_EXHAUSTIVE x (MAP (λr. r x) rows)) ⇒
+            PMATCH_EQUIV_ROWS v
+              [PMATCH_ROW p g (λx. PMATCH x (MAP (λr. r x) rows))]
+              (MAP (λr. PMATCH_FLATTEN_FUN p g r) rows)
+   
+   [<a name="PMATCH_INTRO_CATCHALL-val"><b>PMATCH_INTRO_CATCHALL</b></a>]  Theorem
+      
+      ⊢ PMATCH v rows =
+        PMATCH v (SNOC (PMATCH_ROW (λ_0. _0) (λ_0. T) (λ_0. ARB)) rows)
+   
+   [<a name="PMATCH_IS_EXHAUSTIVE_CONTRADICT-val"><b>PMATCH_IS_EXHAUSTIVE_CONTRADICT</b></a>]  Theorem
+      
+      ⊢ ∀v rs. (EVERY (λr. r v = NONE) rs ⇒ F) ⇒ PMATCH_IS_EXHAUSTIVE v rs
+   
+   [<a name="PMATCH_IS_EXHAUSTIVE_LIFT-val"><b>PMATCH_IS_EXHAUSTIVE_LIFT</b></a>]  Theorem
+      
+      ⊢ ∀f v rows.
+            PMATCH_IS_EXHAUSTIVE v rows ⇒
+            PMATCH_IS_EXHAUSTIVE v (MAP (PMATCH_ROW_LIFT f) rows)
+   
+   [<a name="PMATCH_IS_EXHAUSTIVE_REWRITES-val"><b>PMATCH_IS_EXHAUSTIVE_REWRITES</b></a>]  Theorem
+      
+      ⊢ (∀v. PMATCH_IS_EXHAUSTIVE v [] ⇔ F) ∧
+        ∀v r rs.
+            PMATCH_IS_EXHAUSTIVE v (r::rs) ⇔
+            r v ≠ NONE ∨ PMATCH_IS_EXHAUSTIVE v rs
+   
+   [<a name="PMATCH_LIFT_THM-val"><b>PMATCH_LIFT_THM</b></a>]  Theorem
+      
+      ⊢ ∀f v rows.
+            PMATCH_IS_EXHAUSTIVE v rows ⇒
+            (f (PMATCH v rows) = PMATCH v (MAP (PMATCH_ROW_LIFT f) rows))
+   
+   [<a name="PMATCH_PRED_UNROLL_CONS-val"><b>PMATCH_PRED_UNROLL_CONS</b></a>]  Theorem
+      
+      ⊢ ∀P v r rows.
+            P (PMATCH v (r::rows)) ⇔
+            (r v ≠ NONE ⇒ P (THE (r v))) ∧
+            (PMATCH_ROW_COND_NOT_EX_OR_EQ v r rows ⇒ P (PMATCH v rows))
+   
+   [<a name="PMATCH_PRED_UNROLL_NIL-val"><b>PMATCH_PRED_UNROLL_NIL</b></a>]  Theorem
+      
+      ⊢ ∀P v. P (PMATCH v []) = P ARB
+   
+   [<a name="PMATCH_REMOVE_ARB-val"><b>PMATCH_REMOVE_ARB</b></a>]  Theorem
+      
+      ⊢ ∀p g r v rows.
+            (∀x. r x = ARB) ⇒
+            (PMATCH v (SNOC (PMATCH_ROW p g r) rows) = PMATCH v rows)
+   
+   [<a name="PMATCH_REMOVE_ARB_NO_OVERLAP-val"><b>PMATCH_REMOVE_ARB_NO_OVERLAP</b></a>]  Theorem
+      
+      ⊢ ∀v p g r rows1 rows2.
+            (∀x. r x = ARB) ∧
+            (∀x. (v = p x) ∧ g x ⇒ EVERY (λrow. row (p x) = NONE) rows2) ⇒
+            (PMATCH v (rows1 ⧺ PMATCH_ROW p g r::rows2) =
+             PMATCH v (rows1 ⧺ rows2))
+   
+   [<a name="PMATCH_ROWS_DROP_REDUNDANT-val"><b>PMATCH_ROWS_DROP_REDUNDANT</b></a>]  Theorem
+      
+      ⊢ ∀r1 r2 rows1 rows2 rows3 v.
+            (IS_SOME (r2 v) ⇒ IS_SOME (r1 v)) ⇒
+            (PMATCH v (rows1 ⧺ r1::rows2 ⧺ r2::rows3) =
+             PMATCH v (rows1 ⧺ r1::rows2 ⧺ rows3))
+   
+   [<a name="PMATCH_ROWS_DROP_REDUNDANT_PMATCH_ROWS-val"><b>PMATCH_ROWS_DROP_REDUNDANT_PMATCH_ROWS</b></a>]  Theorem
+      
+      ⊢ ∀p g r p' g' r' rows1 rows2 rows3 v.
+            (∀x'. (v = p' x') ∧ g' x' ⇒ ∃x. (p' x' = p x) ∧ g x) ⇒
+            (PMATCH v
+               (rows1 ⧺ PMATCH_ROW p g r::rows2 ⧺
+                PMATCH_ROW p' g' r'::rows3) =
+             PMATCH v (rows1 ⧺ PMATCH_ROW p g r::rows2 ⧺ rows3))
+   
+   [<a name="PMATCH_ROWS_DROP_REDUNDANT_ROWS_INFO_EQUIV-val"><b>PMATCH_ROWS_DROP_REDUNDANT_ROWS_INFO_EQUIV</b></a>]  Theorem
+      
+      ⊢ ∀v c rows infos.
+            IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+            PMATCH_EQUIV_ROWS v rows (APPLY_REDUNDANT_ROWS_INFO infos rows)
+   
+   [<a name="PMATCH_ROWS_DROP_REDUNDANT_TRIVIAL_SOUNDNESS-val"><b>PMATCH_ROWS_DROP_REDUNDANT_TRIVIAL_SOUNDNESS</b></a>]  Theorem
+      
+      ⊢ ∀v rows n.
+            n &lt; LENGTH rows ∧ IS_SOME (EL n rows v) ⇒
+            (PMATCH v rows = PMATCH v (TAKE (SUC n) rows))
+   
+   [<a name="PMATCH_ROWS_DROP_REDUNDANT_TRIVIAL_SOUNDNESS_EQUIV-val"><b>PMATCH_ROWS_DROP_REDUNDANT_TRIVIAL_SOUNDNESS_EQUIV</b></a>]  Theorem
+      
+      ⊢ ∀v rows n.
+            n &lt; LENGTH rows ∧ IS_SOME (EL n rows v) ⇒
+            PMATCH_EQUIV_ROWS v rows (TAKE (SUC n) rows)
+   
+   [<a name="PMATCH_ROWS_DROP_SUBSUMED-val"><b>PMATCH_ROWS_DROP_SUBSUMED</b></a>]  Theorem
+      
+      ⊢ ∀r1 r2 rows1 rows2 rows3 v.
+            (∀x. (r1 v = SOME x) ⇒ (r2 v = SOME x)) ∧
+            (IS_SOME (r1 v) ⇒ EVERY (λrow. row v = NONE) rows2) ⇒
+            (PMATCH v (rows1 ⧺ r1::(rows2 ⧺ r2::rows3)) =
+             PMATCH v (rows1 ⧺ rows2 ⧺ r2::rows3))
+   
+   [<a name="PMATCH_ROWS_DROP_SUBSUMED_PMATCH_ROWS-val"><b>PMATCH_ROWS_DROP_SUBSUMED_PMATCH_ROWS</b></a>]  Theorem
+      
+      ⊢ ∀p g r p' g' r' rows1 rows2 rows3 v.
+            (∀x. (v = p x) ∧ g x ⇒ ∃x'. (p x = p' x') ∧ g' x') ∧
+            (∀x x'. (v = p x) ∧ (p x = p' x') ∧ g x ∧ g' x' ⇒ (r x = r' x')) ∧
+            (∀x. (v = p x) ∧ g x ⇒ EVERY (λrow. row (p x) = NONE) rows2) ⇒
+            (PMATCH v
+               (rows1 ⧺
+                PMATCH_ROW p g r::(rows2 ⧺ PMATCH_ROW p' g' r'::rows3)) =
+             PMATCH v (rows1 ⧺ rows2 ⧺ PMATCH_ROW p' g' r'::rows3))
+   
+   [<a name="PMATCH_ROW_COND_DEF_GSYM-val"><b>PMATCH_ROW_COND_DEF_GSYM</b></a>]  Theorem
+      
+      ⊢ PMATCH_ROW_COND pat guard inp v ⇔ (inp = pat v) ∧ guard v
+   
+   [<a name="PMATCH_ROW_COND_EX_FALSE-val"><b>PMATCH_ROW_COND_EX_FALSE</b></a>]  Theorem
+      
+      ⊢ ∀v p g. (∀x. ¬g x) ⇒ (PMATCH_ROW_COND_EX v p g ⇔ F)
+   
+   [<a name="PMATCH_ROW_COND_EX_FULL_DEF-val"><b>PMATCH_ROW_COND_EX_FULL_DEF</b></a>]  Theorem
+      
+      ⊢ PMATCH_ROW_COND_EX i p g ⇔ ∃x. (i = p x) ∧ g x
+   
+   [<a name="PMATCH_ROW_COND_EX_IMP_REWRITE-val"><b>PMATCH_ROW_COND_EX_IMP_REWRITE</b></a>]  Theorem
+      
+      ⊢ ∀v p g p' g' RES.
+            PMATCH_ROW_COND_EX v p g ⇒
+            (∀x. g x ⇒ ((∃x'. (p' x' = p x) ∧ g' x') ⇔ RES)) ⇒
+            (PMATCH_ROW_COND_EX v p' g' ⇔ RES)
+   
+   [<a name="PMATCH_ROW_COND_EX_WEAKEN-val"><b>PMATCH_ROW_COND_EX_WEAKEN</b></a>]  Theorem
+      
+      ⊢ ∀f v p g p' g'.
+            ¬PMATCH_ROW_COND_EX v p g ⇒
+            (∀x. p' x = p (f x)) ⇒
+            (PMATCH_ROW_COND_EX v p' g' ⇔
+             PMATCH_ROW_COND_EX v p' (λx. g' x ∧ ¬g (f x)))
+   
+   [<a name="PMATCH_ROW_COND_NOT_EX_OR_EQ_FIRST_ROW-val"><b>PMATCH_ROW_COND_NOT_EX_OR_EQ_FIRST_ROW</b></a>]  Theorem
+      
+      ⊢ ∀i r r' rows.
+            r' i ≠ NONE ⇒
+            (PMATCH_ROW_COND_NOT_EX_OR_EQ i r (r'::rows) ⇔
+             r i ≠ NONE ⇒ (r i = r' i))
+   
+   [<a name="PMATCH_ROW_COND_NOT_EX_OR_EQ_NIL-val"><b>PMATCH_ROW_COND_NOT_EX_OR_EQ_NIL</b></a>]  Theorem
+      
+      ⊢ PMATCH_ROW_COND_NOT_EX_OR_EQ i r [] ⇔ r i ≠ NONE ⇒ F
+   
+   [<a name="PMATCH_ROW_COND_NOT_EX_OR_EQ_NOT_FIRST_ROW-val"><b>PMATCH_ROW_COND_NOT_EX_OR_EQ_NOT_FIRST_ROW</b></a>]  Theorem
+      
+      ⊢ PMATCH_ROW_COND_NOT_EX_OR_EQ i r' rows ⇒
+        (PMATCH_ROW_COND_NOT_EX_OR_EQ i r (r'::rows) ⇔
+         PMATCH_ROW_COND_NOT_EX_OR_EQ i r rows)
+   
+   [<a name="PMATCH_ROW_CONG-val"><b>PMATCH_ROW_CONG</b></a>]  Theorem
+      
+      ⊢ ∀p p' g g' r r' v v'.
+            (p = p') ∧ (v = v') ∧ (∀x. (v = p x) ⇒ (g x ⇔ g' x)) ∧
+            (∀x. (v = p x) ∧ g x ⇒ (r x = r' x)) ⇒
+            (PMATCH_ROW p g r v = PMATCH_ROW p' g' r' v')
+   
+   [<a name="PMATCH_ROW_EQ_AUX-val"><b>PMATCH_ROW_EQ_AUX</b></a>]  Theorem
+      
+      ⊢ (∀i.
+             (∃x. PMATCH_ROW_COND p g i x) ⇔
+             ∃x'. PMATCH_ROW_COND p' g' i x') ∧
+        (∀x x'. (p x = p' x') ∧ g x ∧ g' x' ⇒ (r x = r' x')) ⇒
+        (PMATCH_ROW p g r = PMATCH_ROW p' g' r')
+   
+   [<a name="PMATCH_ROW_EQ_NONE-val"><b>PMATCH_ROW_EQ_NONE</b></a>]  Theorem
+      
+      ⊢ (PMATCH_ROW p g r i = NONE) ⇔ ∀x. ¬PMATCH_ROW_COND p g i x
+   
+   [<a name="PMATCH_ROW_EQ_SOME-val"><b>PMATCH_ROW_EQ_SOME</b></a>]  Theorem
+      
+      ⊢ (PMATCH_ROW p g r i = SOME y) ⇒
+        ∃x. PMATCH_ROW_COND p g i x ∧ (y = r x)
+   
+   [<a name="PMATCH_ROW_EVAL_COND_EX-val"><b>PMATCH_ROW_EVAL_COND_EX</b></a>]  Theorem
+      
+      ⊢ PMATCH_ROW_COND_EX i p g ⇒
+        (PMATCH_ROW p g r i = SOME (r (@x. PMATCH_ROW_COND p g i x)))
+   
+   [<a name="PMATCH_ROW_EXTEND_INPUT-val"><b>PMATCH_ROW_EXTEND_INPUT</b></a>]  Theorem
+      
+      ⊢ ∀v v' f' f p g r p'.
+            (∀x'. (v' = p' x') ⇒ (p (f x') = v)) ∧
+            (∀x. (v = p x) ⇒ ∃x'. p' x' = v') ∧
+            (∀x y. (p x = p y) ⇒ (x = y)) ⇒
+            (PMATCH_ROW p (g (f' v')) (r (f' v')) v =
+             PMATCH_ROW p' (λx. g (f' (p' x)) (f x))
+               (λx. r (f' (p' x)) (f x)) v')
+   
+   [<a name="PMATCH_ROW_LIFT_THM-val"><b>PMATCH_ROW_LIFT_THM</b></a>]  Theorem
+      
+      ⊢ ∀f p g r.
+            PMATCH_ROW_LIFT f (PMATCH_ROW p g r) =
+            PMATCH_ROW p g (λx. f (r x))
+   
+   [<a name="PMATCH_ROW_NEQ_NONE-val"><b>PMATCH_ROW_NEQ_NONE</b></a>]  Theorem
+      
+      ⊢ PMATCH_ROW p g r i ≠ NONE ⇔ PMATCH_ROW_COND_EX i p g
+   
+   [<a name="PMATCH_ROW_REDUNDANT_0-val"><b>PMATCH_ROW_REDUNDANT_0</b></a>]  Theorem
+      
+      ⊢ PMATCH_ROW_REDUNDANT v (r::rs) 0 ⇔ (r v = NONE)
+   
+   [<a name="PMATCH_ROW_REDUNDANT_APPEND_GE-val"><b>PMATCH_ROW_REDUNDANT_APPEND_GE</b></a>]  Theorem
+      
+      ⊢ ∀v rs1 rs2 i.
+            ¬(i &lt; LENGTH rs1) ⇒
+            (PMATCH_ROW_REDUNDANT v (rs1 ⧺ rs2) i ⇔
+             ¬EVERY (λr. r v = NONE) rs1 ∧ i &lt; LENGTH rs1 + LENGTH rs2 ∨
+             PMATCH_ROW_REDUNDANT v rs2 (i − LENGTH rs1))
+   
+   [<a name="PMATCH_ROW_REDUNDANT_APPEND_LT-val"><b>PMATCH_ROW_REDUNDANT_APPEND_LT</b></a>]  Theorem
+      
+      ⊢ ∀v rs1 rs2 i.
+            i &lt; LENGTH rs1 ⇒
+            (PMATCH_ROW_REDUNDANT v (rs1 ⧺ rs2) i ⇔
+             PMATCH_ROW_REDUNDANT v rs1 i)
+   
+   [<a name="PMATCH_ROW_REDUNDANT_NIL-val"><b>PMATCH_ROW_REDUNDANT_NIL</b></a>]  Theorem
+      
+      ⊢ PMATCH_ROW_REDUNDANT v [] i ⇔ F
+   
+   [<a name="PMATCH_ROW_REDUNDANT_SUC-val"><b>PMATCH_ROW_REDUNDANT_SUC</b></a>]  Theorem
+      
+      ⊢ ∀v r rs i.
+            PMATCH_ROW_REDUNDANT v (r::rs) (SUC i) ⇔
+            r v ≠ NONE ∧ i &lt; LENGTH rs ∨ PMATCH_ROW_REDUNDANT v rs i
+   
+   [<a name="PMATCH_ROW_REMOVE_DOUBLE_BINDS_THM-val"><b>PMATCH_ROW_REMOVE_DOUBLE_BINDS_THM</b></a>]  Theorem
+      
+      ⊢ ∀g p1 g1 r1 p2 g2 r2.
+            (∀x y. (p1 x = p1 y) ⇒ (x = y)) ∧ (∀x. p2 (g x) = p1 x) ∧
+            (∀x'. g2 x' ⇔ ∃x. (x' = g x) ∧ g1 x) ∧ (∀x. r2 (g x) = r1 x) ⇒
+            (PMATCH_ROW p1 g1 r1 = PMATCH_ROW p2 g2 r2)
+   
+   [<a name="PMATCH_ROW_REMOVE_FUN-val"><b>PMATCH_ROW_REMOVE_FUN</b></a>]  Theorem
+      
+      ⊢ ∀ff v p g r.
+            (∀x y. (ff x = ff y) ⇒ (x = y)) ⇒
+            (PMATCH_ROW (λx. ff (p x)) g r (ff v) =
+             PMATCH_ROW (λx. p x) g r v)
+   
+   [<a name="PMATCH_ROW_REMOVE_FUN_VAR-val"><b>PMATCH_ROW_REMOVE_FUN_VAR</b></a>]  Theorem
+      
+      ⊢ ∀v v' f p g r p'.
+            (∀x'. (v' = p' x') ⇔ (p (f x') = v)) ∧
+            (∀x. (v = p x) ⇒ ∃x'. f x' = x) ∧ (∀x y. (p x = p y) ⇒ (x = y)) ⇒
+            (PMATCH_ROW p g r v =
+             PMATCH_ROW p' (λx. g (f x)) (λx. r (f x)) v')
+   
+   [<a name="REDUNDANT_ROWS_INFOS_CONJ_REWRITE-val"><b>REDUNDANT_ROWS_INFOS_CONJ_REWRITE</b></a>]  Theorem
+      
+      ⊢ (REDUNDANT_ROWS_INFOS_CONJ [] [] = []) ∧
+        (REDUNDANT_ROWS_INFOS_CONJ (i1::is1) (i2::is2) =
+         (i1 ∧ i2)::REDUNDANT_ROWS_INFOS_CONJ is1 is2)
+   
+   [<a name="REDUNDANT_ROWS_INFOS_CONJ_THM-val"><b>REDUNDANT_ROWS_INFOS_CONJ_THM</b></a>]  Theorem
+      
+      ⊢ ∀v rows c infos c' infos'.
+            IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+            (LENGTH infos' = LENGTH infos) ⇒
+            IS_REDUNDANT_ROWS_INFO v rows (c ∨ c')
+              (REDUNDANT_ROWS_INFOS_CONJ infos infos')
+   
+   [<a name="REDUNDANT_ROWS_INFOS_DISJ_THM-val"><b>REDUNDANT_ROWS_INFOS_DISJ_THM</b></a>]  Theorem
+      
+      ⊢ ∀v rows c infos c' infos'.
+            IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+            IS_REDUNDANT_ROWS_INFO v rows c' infos' ⇒
+            IS_REDUNDANT_ROWS_INFO v rows (c ∧ c')
+              (REDUNDANT_ROWS_INFOS_DISJ infos infos')
+   
+   [<a name="REDUNDANT_ROWS_INFO_TO_PMATCH_EQ-val"><b>REDUNDANT_ROWS_INFO_TO_PMATCH_EQ</b></a>]  Theorem
+      
+      ⊢ ∀v c rows infos.
+            IS_REDUNDANT_ROWS_INFO v rows c infos ⇒
+            (PMATCH v rows =
+             PMATCH v (APPLY_REDUNDANT_ROWS_INFO infos rows))
+   
+   [<a name="STRONGEST_REDUNDANT_ROWS_INFO_OK-val"><b>STRONGEST_REDUNDANT_ROWS_INFO_OK</b></a>]  Theorem
+      
+      ⊢ IS_REDUNDANT_ROWS_INFO v rows (EVERY (λr. r v = NONE) rows)
+          (STRONGEST_REDUNDANT_ROWS_INFO v rows)
+   
+   [<a name="some_var_bool_F-val"><b>some_var_bool_F</b></a>]  Theorem
+      
+      ⊢ (some x. ¬x) = SOME F
+   
+   [<a name="some_var_bool_T-val"><b>some_var_bool_T</b></a>]  Theorem
+      
+      ⊢ (some x. x) = SOME T
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/pattern_matches/patternMatchesScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

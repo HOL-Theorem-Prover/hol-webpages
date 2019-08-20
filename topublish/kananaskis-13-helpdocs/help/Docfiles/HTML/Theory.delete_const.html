@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Theory.delete_const</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>delete_const : string -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Theory.html">Theory</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Remove a term constant from the current signature.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An invocation </SPAN><SPAN class = "BRKT">delete_const&nbsp;s</SPAN><SPAN class = "TEXT"> removes the constant denoted by </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">
+from the current HOL segment. All types, terms, and theorems that
+depend on that constant become garbage.</SPAN>
+<P>
+<SPAN class = "TEXT">The implementation ensures that a deleted constant is never equal
+to a subsequently declared constant, even if it has the same name and type.
+Furthermore, although garbage types, terms, and theorems may exist in
+a session, and may even have been stored in the current segment for
+export, no theorem, definition, or axiom that is garbage is exported
+when </SPAN><SPAN class = "BRKT">export_theory</SPAN><SPAN class = "TEXT"> is invoked.</SPAN>
+<P>
+<SPAN class = "TEXT">The prettyprinter highlights deleted constants.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If a constant named </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> has not been declared in the current segment,
+a warning will be issued, but an exception will not be raised.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- Define `foo x = if x=0 then 1 else x * foo (x-1)`;
+Equations stored under "foo_def".
+Induction stored under "foo_ind".
+&gt; val it = |- foo x = (if x = 0 then 1 else x * foo (x - 1)) : thm
+
+- val th = EVAL (Term `foo 4`);
+&gt; val th = |- foo 4 = 24 : thm
+
+- delete_const "foo";
+&gt; val it = () : unit
+
+- th;
+&gt; val it = |- scratch$old-&gt;foo&lt;-old 4 = 24 : thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A type, term, or theorem that depends on a deleted constant may be
+detected by invoking the appropriate &lsquo;uptodate&rsquo; entrypoint.</SPAN>
+<P>
+<SPAN class = "TEXT">It may happen that a theorem </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is proved with the use of another
+theorem </SPAN><SPAN class = "BRKT">th1</SPAN><SPAN class = "TEXT"> that subsequently becomes garbage because a
+constant </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> was deleted. If </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> does not occur in </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">, then </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> does
+not become garbage, which may be contrary to expectation. The conservative
+extension property of HOL says that </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is still provable, even in
+the absence of </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Theory.delete_type.html">delete_type</A>,
+<A HREF = "Theory.uptodate_type.html">uptodate_type</A>,
+<A HREF = "Theory.uptodate_term.html">uptodate_term</A>,
+<A HREF = "Theory.uptodate_thm.html">uptodate_thm</A>,
+<A HREF = "Theory.scrub.html">scrub</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-13</div></BODY></HTML>
