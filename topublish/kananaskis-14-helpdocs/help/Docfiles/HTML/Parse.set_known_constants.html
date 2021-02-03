@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Parse.set_known_constants</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Parse.set_known_constants : string list -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Specifies the list of names that should be parsed as constants.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Parse</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">One of the final phases of parsing is the resolution of free names in
+putative terms as either variables, constants or overloaded constants.
+If such a free name is not overloaded, then the list of known
+constants is consulted to determine whether or not to treat it as a
+constant.  If the name is not present in the list, then it will be
+treated as a free variable.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.  If a name is specified in the list of constants that is
+not in fact a constant, a warning message is printed, and that name is
+ignored.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- known_constants();
+&gt; val it =
+    ["bool_case", "ARB", "TYPE_DEFINITION", "ONTO", "ONE_ONE", "COND",
+     "LET", "?!", "~", "F", "\\/", "/\\", "!", "T", "?", "@",
+     "==&gt;", "="]
+    : string list
+- Term`p /\ q`;
+&gt; val it = `p /\ q` : term
+- set_known_constants (Lib.subtract (known_constants()) ["/\\"]);
+&gt; val it = () : unit
+- Term`p /\ q`;
+&lt;&lt;HOL message: inventing new type variable names: 'a, 'b, 'c.&gt;&gt;
+&gt; val it = `p /\ q` : term
+- strip_comb it;
+&gt; val it = (`$/\`, [`p`, `q`]) : term * term list
+- dest_var (#1 it);
+&gt; val it = ("/\\", `:'a -&gt; 'b -&gt; 'c`) : string * hol_type
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When writing library code that calls the parser, it can be useful to
+know exactly what constants the parser will "recognise".</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function does not affect the contents of a theory.  A constant
+made invisible using this call is still really present in the theory;
+it is just harder to find.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.hidden.html">hidden</A>,
+<A HREF = "Parse.hide.html">hide</A>,
+<A HREF = "Parse.known_constants.html">known_constants</A>,
+<A HREF = "Parse.reveal.html">reveal</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>bossLib.gs</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>gs : thm list -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Simplifies assumptions and goal conclusion until a normal form is reached.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">gs&nbsp;ths</SPAN><SPAN class = "TEXT"> produces a simplification tactic that repeatedly
+simplifies with the theorems </SPAN><SPAN class = "BRKT">ths</SPAN><SPAN class = "TEXT">, the stateful simpset, the natural
+number arithmetic decision procedure and normalizer, and
+let-elimination (as done by </SPAN><SPAN class = "BRKT">simp</SPAN><SPAN class = "TEXT">) over both a goal&rsquo;s assumptions and
+the goal&rsquo;s conclusion.</SPAN>
+<P>
+<SPAN class = "TEXT">Assumptions are simplified first, with assumption terms simplified in
+turn in a context that includes all of the other assumptions. After
+simplification, if an assumption has been reduced to </SPAN><SPAN class = "BRKT">T</SPAN><SPAN class = "TEXT"> (truth), it
+is dropped. Otherwise, it is added back to the assumption list using
+</SPAN><SPAN class = "BRKT">STRIP_ASSUME_TAC</SPAN><SPAN class = "TEXT">. After this process of assumption simplification
+produces no further change (assessed using </SPAN><SPAN class = "BRKT">CHANGED_TAC</SPAN><SPAN class = "TEXT">), the goal&rsquo;s
+conclusion is also simplified, in a context that assumes all of the
+(now simplified) asssumptions.</SPAN>
+<P>
+<SPAN class = "TEXT">Theorems with restrictions (</SPAN><SPAN class = "BRKT">Once</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">Ntimes</SPAN><SPAN class = "TEXT">) passed to the </SPAN><SPAN class = "BRKT">gs</SPAN><SPAN class = "TEXT">
+tactic will not have those restrictions refreshed as invocations of
+the base simplification procedure are repeated. This means that the
+restricted theorems will likely only be applied to the first
+assumption where the left-hand-sides match.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails, but may loop.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The theorem </SPAN><SPAN class = "BRKT">SUB_CANCEL</SPAN><SPAN class = "TEXT"> has two preconditions:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; arithmeticTheory.SUB_CANCEL;
+   val it = ⊢ ∀p n m. n ≤ p ∧ m ≤ p ⇒ (p − n = p − m ⇔ n = m): thm
+</pre></DIV>
+<SPAN class = "TEXT">
+If those preconditions are distributed awkwardly in a goal, neither
+</SPAN><SPAN class = "BRKT">fs</SPAN><SPAN class = "TEXT"> nor </SPAN><SPAN class = "BRKT">rfs</SPAN><SPAN class = "TEXT"> (which make passes over the assumptions in a particular
+order) may be able to apply the rewrite. However, </SPAN><SPAN class = "BRKT">gs</SPAN><SPAN class = "TEXT"> will make
+progress:
+</SPAN><DIV class = "XMPL"><pre>
+   x ≤ b, b - x = b - y, y ≤ b   ?- x * y &lt; 10
+  ==============================================  gs[SUB_CANCEL]
+           y ≤ b, x = y          ?- y ** 2 &lt; 10
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The accompanying functions </SPAN><SPAN class = "BRKT">gvs</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">gnvs</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">gns</SPAN><SPAN class = "TEXT"> are similar, but
+tweak the behaviours slightly. The functions with </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> in their name
+eliminate equalities (the </SPAN><SPAN class = "BRKT">x&nbsp;=&nbsp;y</SPAN><SPAN class = "TEXT"> in the example above, say), and the
+functions with </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> in the name do not use </SPAN><SPAN class = "BRKT">STRIP_ASSUME_TAC</SPAN><SPAN class = "TEXT"> when
+adding assumptions back to the goal. The latter can prevent
+case-splits.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactical.CHANGED_TAC.html">CHANGED_TAC</A>,
+<A HREF = "bossLib.simp.html">simp</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

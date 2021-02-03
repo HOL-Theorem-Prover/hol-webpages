@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure mlibTerm</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure mlibTerm</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibTerm.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ========================================================================= *)
+<a name="line2"></a>(* BASIC FIRST-ORDER LOGIC MANIPULATIONS                                     *)
+<a name="line3"></a>(* Copyright (c) 2001-2004 Joe Hurd.                                         *)
+<a name="line4"></a>(* ========================================================================= *)
+<a name="line5"></a>
+<a name="line6"></a>signature mlibTerm =
+<a name="line7"></a>sig
+<a name="line8"></a>
+<a name="line9"></a>type 'a pp = 'a mlibUseful.pp
+<a name="line10"></a>type ('a,'b) maplet = ('a, 'b) mlibUseful.maplet
+<a name="line11"></a>type 'a quotation = 'a mlibParser.quotation
+<a name="line12"></a>type infixities = mlibParser.infixities
+<a name="line13"></a>
+<a name="line14"></a>(* Datatypes for terms and formulas *)
+<a name="line15"></a>datatype term =
+<a name="line16"></a>  Var of string
+<a name="line17"></a>| Fn  of string * term list
+<a name="line18"></a>
+<a name="line19"></a>datatype formula =
+<a name="line20"></a>  True
+<a name="line21"></a>| False
+<a name="line22"></a>| Atom   of term
+<a name="line23"></a>| Not    of formula
+<a name="line24"></a>| And    of formula * formula
+<a name="line25"></a>| Or     of formula * formula
+<a name="line26"></a>| Imp    of formula * formula
+<a name="line27"></a>| Iff    of formula * formula
+<a name="line28"></a>| Forall of string * formula
+<a name="line29"></a>| Exists of string * formula
+<a name="line30"></a>
+<a name="line31"></a>(* Contructors and destructors *)
+<a name="line32"></a>val dest_var : term -&gt; string
+<a name="line33"></a>val is_var   : term -&gt; bool
+<a name="line34"></a>
+<a name="line35"></a>val dest_fn     : term -&gt; string * term list
+<a name="line36"></a>val is_fn       : term -&gt; bool
+<a name="line37"></a>val fn_name     : term -&gt; string
+<a name="line38"></a>val fn_args     : term -&gt; term list
+<a name="line39"></a>val fn_arity    : term -&gt; int
+<a name="line40"></a>val fn_function : term -&gt; string * int
+<a name="line41"></a>
+<a name="line42"></a>val mk_const   : string -&gt; term
+<a name="line43"></a>val dest_const : term -&gt; string
+<a name="line44"></a>val is_const   : term -&gt; bool
+<a name="line45"></a>
+<a name="line46"></a>val mk_binop   : string -&gt; term * term -&gt; term
+<a name="line47"></a>val dest_binop : string -&gt; term -&gt; term * term
+<a name="line48"></a>val is_binop   : string -&gt; term -&gt; bool
+<a name="line49"></a>
+<a name="line50"></a>val dest_atom : formula -&gt; term
+<a name="line51"></a>val is_atom   : formula -&gt; bool
+<a name="line52"></a>
+<a name="line53"></a>val dest_neg : formula -&gt; formula
+<a name="line54"></a>val is_neg   : formula -&gt; bool
+<a name="line55"></a>
+<a name="line56"></a>val list_mk_conj : formula list -&gt; formula
+<a name="line57"></a>val strip_conj   : formula -&gt; formula list
+<a name="line58"></a>val flatten_conj : formula -&gt; formula list
+<a name="line59"></a>
+<a name="line60"></a>val list_mk_disj : formula list -&gt; formula
+<a name="line61"></a>val strip_disj   : formula -&gt; formula list
+<a name="line62"></a>val flatten_disj : formula -&gt; formula list
+<a name="line63"></a>
+<a name="line64"></a>val list_mk_forall : string list * formula -&gt; formula
+<a name="line65"></a>val strip_forall   : formula -&gt; string list * formula
+<a name="line66"></a>
+<a name="line67"></a>val list_mk_exists : string list * formula -&gt; formula
+<a name="line68"></a>val strip_exists   : formula -&gt; string list * formula
+<a name="line69"></a>
+<a name="line70"></a>(* New variables *)
+<a name="line71"></a>val new_var  : unit -&gt; term
+<a name="line72"></a>val new_vars : int -&gt; term list
+<a name="line73"></a>
+<a name="line74"></a>(* Sizes of terms and formulas *)
+<a name="line75"></a>val term_size    : term -&gt; int
+<a name="line76"></a>val formula_size : formula -&gt; int
+<a name="line77"></a>
+<a name="line78"></a>(* Total comparison functions for terms and formulas *)
+<a name="line79"></a>val term_compare    : term * term -&gt; order
+<a name="line80"></a>val formula_compare : formula * formula -&gt; order
+<a name="line81"></a>
+<a name="line82"></a>(* Operations on literals *)
+<a name="line83"></a>val mk_literal   : bool * formula -&gt; formula
+<a name="line84"></a>val dest_literal : formula -&gt; bool * formula
+<a name="line85"></a>val is_literal   : formula -&gt; bool
+<a name="line86"></a>val literal_atom : formula -&gt; formula
+<a name="line87"></a>
+<a name="line88"></a>(* Operations on formula negations *)
+<a name="line89"></a>val negative : formula -&gt; bool
+<a name="line90"></a>val positive : formula -&gt; bool
+<a name="line91"></a>val negate   : formula -&gt; formula
+<a name="line92"></a>
+<a name="line93"></a>(* Functions and relations in a formula *)
+<a name="line94"></a>val functions      : formula -&gt; (string * int) list
+<a name="line95"></a>val function_names : formula -&gt; string list
+<a name="line96"></a>val relations      : formula -&gt; (string * int) list
+<a name="line97"></a>val relation_names : formula -&gt; string list
+<a name="line98"></a>
+<a name="line99"></a>(* The equality relation has a special status *)
+<a name="line100"></a>val eq_rel    : string * int
+<a name="line101"></a>val mk_eq     : term * term -&gt; formula
+<a name="line102"></a>val dest_eq   : formula -&gt; term * term
+<a name="line103"></a>val is_eq     : formula -&gt; bool
+<a name="line104"></a>val refl      : term -&gt; formula
+<a name="line105"></a>val sym       : formula -&gt; formula
+<a name="line106"></a>val lhs       : formula -&gt; term
+<a name="line107"></a>val rhs       : formula -&gt; term
+<a name="line108"></a>val eq_occurs : formula -&gt; bool
+<a name="line109"></a>
+<a name="line110"></a>(* Free variables *)
+<a name="line111"></a>val FVT        : term -&gt; string list
+<a name="line112"></a>val FVTL       : string list -&gt; term list -&gt; string list
+<a name="line113"></a>val FV         : formula -&gt; string list
+<a name="line114"></a>val FVL        : string list -&gt; formula list -&gt; string list
+<a name="line115"></a>val specialize : formula -&gt; formula
+<a name="line116"></a>val generalize : formula -&gt; formula
+<a name="line117"></a>
+<a name="line118"></a>(* Subterms *)
+<a name="line119"></a>val subterm          : int list -&gt; term -&gt; term
+<a name="line120"></a>val rewrite          : (int list, term) maplet -&gt; term -&gt; term
+<a name="line121"></a>val subterms         : int list -&gt; term -&gt; (int list, term) maplet list
+<a name="line122"></a>val literal_subterm  : int list -&gt; formula -&gt; term
+<a name="line123"></a>val literal_rewrite  : (int list, term) maplet -&gt; formula -&gt; formula
+<a name="line124"></a>val literal_subterms : formula -&gt; (int list, term) maplet list
+<a name="line125"></a>
+<a name="line126"></a>(* A datatype to antiquote both terms and formulas *)
+<a name="line127"></a>datatype thing = mlibTerm of term | Formula of formula;
+<a name="line128"></a>
+<a name="line129"></a>(* Operators parsed and printed infix *)
+<a name="line130"></a>val infixes : infixities ref
+<a name="line131"></a>
+<a name="line132"></a>(* Deciding whether a string denotes a variable or constant *)
+<a name="line133"></a>val var_string : (string -&gt; bool) ref
+<a name="line134"></a>
+<a name="line135"></a>(* Parsing *)
+<a name="line136"></a>val string_to_term'    : infixities -&gt; string -&gt; term  (* purely functional *)
+<a name="line137"></a>val string_to_formula' : infixities -&gt; string -&gt; formula
+<a name="line138"></a>val parse_term'        : infixities -&gt; thing quotation -&gt; term
+<a name="line139"></a>val parse_formula'     : infixities -&gt; thing quotation -&gt; formula
+<a name="line140"></a>val string_to_term     : string -&gt; term                (* uses !infixes *)
+<a name="line141"></a>val string_to_formula  : string -&gt; formula
+<a name="line142"></a>val parse_term         : thing quotation -&gt; term
+<a name="line143"></a>val parse_formula      : thing quotation -&gt; formula
+<a name="line144"></a>
+<a name="line145"></a>(* Pretty-printing *)
+<a name="line146"></a>val pp_term'           : infixities -&gt; term pp         (* purely functional *)
+<a name="line147"></a>val pp_formula'        : infixities -&gt; formula pp
+<a name="line148"></a>val term_to_string'    : infixities -&gt; int -&gt; term -&gt; string
+<a name="line149"></a>val formula_to_string' : infixities -&gt; int -&gt; formula -&gt; string
+<a name="line150"></a>val pp_term            : term pp                       (* uses !infixes    *)
+<a name="line151"></a>val pp_formula         : formula pp                    (* and !LINE_LENGTH *)
+<a name="line152"></a>val term_to_string     : term -&gt; string
+<a name="line153"></a>val formula_to_string  : formula -&gt; string
+<a name="line154"></a>
+<a name="line155"></a>end
+<a name="line156"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibTerm.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

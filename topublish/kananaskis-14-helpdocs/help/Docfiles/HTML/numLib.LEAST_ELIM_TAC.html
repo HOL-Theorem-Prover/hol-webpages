@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>numLib.LEAST_ELIM_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>LEAST_ELIM_TAC : tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/numLib.html">numLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Eliminates a </SPAN><SPAN class = "BRKT">LEAST</SPAN><SPAN class = "TEXT"> term from the current goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">LEAST_ELIM_TAC</SPAN><SPAN class = "TEXT"> searches the goal it is applied to for free sub-terms
+involving the </SPAN><SPAN class = "BRKT">LEAST</SPAN><SPAN class = "TEXT"> operator, of the form </SPAN><SPAN class = "BRKT">$LEAST&nbsp;P</SPAN><SPAN class = "TEXT"> (</SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT"> will
+usually be an abstraction).  If such a term is found, the tactic
+produces a new goal where instances of the </SPAN><SPAN class = "BRKT">LEAST</SPAN><SPAN class = "TEXT">-term have
+disappeared.  The resulting goal will require the proof that there
+exists a value satisfying </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT">, and that a minimal value satisfies the
+original goal.</SPAN>
+<P>
+<SPAN class = "TEXT">Thus, </SPAN><SPAN class = "BRKT">LEAST_ELIM_TAC</SPAN><SPAN class = "TEXT"> can be seen as a higher-order match against the
+theorem
+</SPAN><DIV class = "XMPL"><pre>
+   |- !P Q.
+         (?n. P x) /\ (!n. (!m. m &lt; n ==&gt; ~P m) /\ P n ==&gt; Q n) ==&gt;
+         Q ($LEAST P)
+</pre></DIV>
+<SPAN class = "TEXT">
+where the new goal is the antecdent of the implication.  (This theorem
+is </SPAN><SPAN class = "BRKT">LEAST_ELIM</SPAN><SPAN class = "TEXT">, from theory </SPAN><SPAN class = "BRKT">while</SPAN><SPAN class = "TEXT">.)</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The tactic fails if there is no free </SPAN><SPAN class = "BRKT">LEAST</SPAN><SPAN class = "TEXT">-term in the goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to the goal
+</SPAN><DIV class = "XMPL"><pre>
+   ?- (LEAST n. 4 &lt; n) = 5
+</pre></DIV>
+<SPAN class = "TEXT">
+the tactic </SPAN><SPAN class = "BRKT">LEAST_ELIM_TAC</SPAN><SPAN class = "TEXT"> produces
+</SPAN><DIV class = "XMPL"><pre>
+   ?- (?n. 4 &lt; n) /\ !n. (!m. m &lt; n ==&gt; ~(4 &lt; m)) /\ 4 &lt; n ==&gt; (n = 5)
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This tactic assumes that there is indeed a least number satisfying the
+given predicate.  If there is not, then the </SPAN><SPAN class = "BRKT">LEAST</SPAN><SPAN class = "TEXT">-term will have an
+arbitrary value, and the proof should proceed by showing that the
+enclosing predicate </SPAN><SPAN class = "BRKT">Q</SPAN><SPAN class = "TEXT"> holds for all possible numbers.</SPAN>
+<P>
+<SPAN class = "TEXT">If there are multiple different </SPAN><SPAN class = "BRKT">LEAST</SPAN><SPAN class = "TEXT">-terms in the goal, then
+</SPAN><SPAN class = "BRKT">LEAST_ELIM_TAC</SPAN><SPAN class = "TEXT"> will pick the first free </SPAN><SPAN class = "BRKT">LEAST</SPAN><SPAN class = "TEXT">-term returned by the
+standard </SPAN><SPAN class = "BRKT">find_terms</SPAN><SPAN class = "TEXT"> function.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactic.DEEP_INTRO_TAC.html">DEEP_INTRO_TAC</A>,
+<A HREF = "Tactic.SELECT_ELIM_TAC.html">SELECT_ELIM_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

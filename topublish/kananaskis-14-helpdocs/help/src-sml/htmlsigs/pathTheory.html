@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure pathTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure pathTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/coalgebras/pathScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature pathTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#PL_def-val">PL_def</a> : thm
+<a name="line7"></a>    val <a href="#SN_def-val">SN_def</a> : thm
+<a name="line8"></a>    val <a href="#drop_def-val">drop_def</a> : thm
+<a name="line9"></a>    val <a href="#el_def-val">el_def</a> : thm
+<a name="line10"></a>    val <a href="#every_def-val">every_def</a> : thm
+<a name="line11"></a>    val <a href="#exists_def-val">exists_def</a> : thm
+<a name="line12"></a>    val <a href="#filter_def-val">filter_def</a> : thm
+<a name="line13"></a>    val <a href="#finite_def-val">finite_def</a> : thm
+<a name="line14"></a>    val <a href="#firstP_at_def-val">firstP_at_def</a> : thm
+<a name="line15"></a>    val <a href="#first_def-val">first_def</a> : thm
+<a name="line16"></a>    val <a href="#first_label_def-val">first_label_def</a> : thm
+<a name="line17"></a>    val <a href="#is_stopped_def-val">is_stopped_def</a> : thm
+<a name="line18"></a>    val <a href="#labels_def-val">labels_def</a> : thm
+<a name="line19"></a>    val <a href="#last_thm-val">last_thm</a> : thm
+<a name="line20"></a>    val <a href="#length_def-val">length_def</a> : thm
+<a name="line21"></a>    val <a href="#mem_def-val">mem_def</a> : thm
+<a name="line22"></a>    val <a href="#nth_label_def-val">nth_label_def</a> : thm
+<a name="line23"></a>    val <a href="#okpath_def-val">okpath_def</a> : thm
+<a name="line24"></a>    val <a href="#okpath_f_def-val">okpath_f_def</a> : thm
+<a name="line25"></a>    val <a href="#parallel_comp_def-val">parallel_comp_def</a> : thm
+<a name="line26"></a>    val <a href="#path_TY_DEF-val">path_TY_DEF</a> : thm
+<a name="line27"></a>    val <a href="#path_absrep_bijections-val">path_absrep_bijections</a> : thm
+<a name="line28"></a>    val <a href="#pconcat_def-val">pconcat_def</a> : thm
+<a name="line29"></a>    val <a href="#pcons_def-val">pcons_def</a> : thm
+<a name="line30"></a>    val <a href="#pgenerate_def-val">pgenerate_def</a> : thm
+<a name="line31"></a>    val <a href="#plink_def-val">plink_def</a> : thm
+<a name="line32"></a>    val <a href="#pmap_def-val">pmap_def</a> : thm
+<a name="line33"></a>    val <a href="#seg_def-val">seg_def</a> : thm
+<a name="line34"></a>    val <a href="#stopped_at_def-val">stopped_at_def</a> : thm
+<a name="line35"></a>    val <a href="#tail_def-val">tail_def</a> : thm
+<a name="line36"></a>    val <a href="#take_def-val">take_def</a> : thm
+<a name="line37"></a>    val <a href="#trace_machine_def-val">trace_machine_def</a> : thm
+<a name="line38"></a>    val <a href="#unfold_def-val">unfold_def</a> : thm
+<a name="line39"></a>  
+<a name="line40"></a>  (*  Theorems  *)
+<a name="line41"></a>    val <a href="#EXISTS_path-val">EXISTS_path</a> : thm
+<a name="line42"></a>    val <a href="#FORALL_path-val">FORALL_path</a> : thm
+<a name="line43"></a>    val <a href="#IN_PL_drop-val">IN_PL_drop</a> : thm
+<a name="line44"></a>    val <a href="#LTAKE_labels-val">LTAKE_labels</a> : thm
+<a name="line45"></a>    val <a href="#PL_0-val">PL_0</a> : thm
+<a name="line46"></a>    val <a href="#PL_downward_closed-val">PL_downward_closed</a> : thm
+<a name="line47"></a>    val <a href="#PL_drop-val">PL_drop</a> : thm
+<a name="line48"></a>    val <a href="#PL_pcons-val">PL_pcons</a> : thm
+<a name="line49"></a>    val <a href="#PL_pmap-val">PL_pmap</a> : thm
+<a name="line50"></a>    val <a href="#PL_seg-val">PL_seg</a> : thm
+<a name="line51"></a>    val <a href="#PL_stopped_at-val">PL_stopped_at</a> : thm
+<a name="line52"></a>    val <a href="#PL_take-val">PL_take</a> : thm
+<a name="line53"></a>    val <a href="#PL_thm-val">PL_thm</a> : thm
+<a name="line54"></a>    val <a href="#SN_finite_paths-val">SN_finite_paths</a> : thm
+<a name="line55"></a>    val <a href="#SN_finite_paths_EQ-val">SN_finite_paths_EQ</a> : thm
+<a name="line56"></a>    val <a href="#alt_length_thm-val">alt_length_thm</a> : thm
+<a name="line57"></a>    val <a href="#build_pcomp_trace-val">build_pcomp_trace</a> : thm
+<a name="line58"></a>    val <a href="#drop_compute-val">drop_compute</a> : thm
+<a name="line59"></a>    val <a href="#drop_eq_pcons-val">drop_eq_pcons</a> : thm
+<a name="line60"></a>    val <a href="#el_compute-val">el_compute</a> : thm
+<a name="line61"></a>    val <a href="#el_drop-val">el_drop</a> : thm
+<a name="line62"></a>    val <a href="#el_pgenerate-val">el_pgenerate</a> : thm
+<a name="line63"></a>    val <a href="#el_pmap-val">el_pmap</a> : thm
+<a name="line64"></a>    val <a href="#every_coinduction-val">every_coinduction</a> : thm
+<a name="line65"></a>    val <a href="#every_el-val">every_el</a> : thm
+<a name="line66"></a>    val <a href="#every_thm-val">every_thm</a> : thm
+<a name="line67"></a>    val <a href="#exists_el-val">exists_el</a> : thm
+<a name="line68"></a>    val <a href="#exists_induction-val">exists_induction</a> : thm
+<a name="line69"></a>    val <a href="#exists_thm-val">exists_thm</a> : thm
+<a name="line70"></a>    val <a href="#filter_every-val">filter_every</a> : thm
+<a name="line71"></a>    val <a href="#finite_drop-val">finite_drop</a> : thm
+<a name="line72"></a>    val <a href="#finite_labels-val">finite_labels</a> : thm
+<a name="line73"></a>    val <a href="#finite_length-val">finite_length</a> : thm
+<a name="line74"></a>    val <a href="#finite_okpath_ind-val">finite_okpath_ind</a> : thm
+<a name="line75"></a>    val <a href="#finite_path_end_cases-val">finite_path_end_cases</a> : thm
+<a name="line76"></a>    val <a href="#finite_path_ind-val">finite_path_ind</a> : thm
+<a name="line77"></a>    val <a href="#finite_paths_SN-val">finite_paths_SN</a> : thm
+<a name="line78"></a>    val <a href="#finite_pconcat-val">finite_pconcat</a> : thm
+<a name="line79"></a>    val <a href="#finite_plink-val">finite_plink</a> : thm
+<a name="line80"></a>    val <a href="#finite_pmap-val">finite_pmap</a> : thm
+<a name="line81"></a>    val <a href="#finite_seg-val">finite_seg</a> : thm
+<a name="line82"></a>    val <a href="#finite_take-val">finite_take</a> : thm
+<a name="line83"></a>    val <a href="#finite_thm-val">finite_thm</a> : thm
+<a name="line84"></a>    val <a href="#firstP_at_thm-val">firstP_at_thm</a> : thm
+<a name="line85"></a>    val <a href="#firstP_at_unique-val">firstP_at_unique</a> : thm
+<a name="line86"></a>    val <a href="#firstP_at_zero-val">firstP_at_zero</a> : thm
+<a name="line87"></a>    val <a href="#first_drop-val">first_drop</a> : thm
+<a name="line88"></a>    val <a href="#first_label_drop-val">first_label_drop</a> : thm
+<a name="line89"></a>    val <a href="#first_plink-val">first_plink</a> : thm
+<a name="line90"></a>    val <a href="#first_pmap-val">first_pmap</a> : thm
+<a name="line91"></a>    val <a href="#first_seg-val">first_seg</a> : thm
+<a name="line92"></a>    val <a href="#first_take-val">first_take</a> : thm
+<a name="line93"></a>    val <a href="#first_thm-val">first_thm</a> : thm
+<a name="line94"></a>    val <a href="#fromPath_11-val">fromPath_11</a> : thm
+<a name="line95"></a>    val <a href="#fromPath_onto-val">fromPath_onto</a> : thm
+<a name="line96"></a>    val <a href="#infinite_PL-val">infinite_PL</a> : thm
+<a name="line97"></a>    val <a href="#is_stopped_thm-val">is_stopped_thm</a> : thm
+<a name="line98"></a>    val <a href="#labels_LMAP-val">labels_LMAP</a> : thm
+<a name="line99"></a>    val <a href="#labels_plink-val">labels_plink</a> : thm
+<a name="line100"></a>    val <a href="#labels_unfold-val">labels_unfold</a> : thm
+<a name="line101"></a>    val <a href="#last_plink-val">last_plink</a> : thm
+<a name="line102"></a>    val <a href="#last_pmap-val">last_pmap</a> : thm
+<a name="line103"></a>    val <a href="#last_seg-val">last_seg</a> : thm
+<a name="line104"></a>    val <a href="#last_take-val">last_take</a> : thm
+<a name="line105"></a>    val <a href="#length_drop-val">length_drop</a> : thm
+<a name="line106"></a>    val <a href="#length_never_zero-val">length_never_zero</a> : thm
+<a name="line107"></a>    val <a href="#length_pmap-val">length_pmap</a> : thm
+<a name="line108"></a>    val <a href="#length_take-val">length_take</a> : thm
+<a name="line109"></a>    val <a href="#length_thm-val">length_thm</a> : thm
+<a name="line110"></a>    val <a href="#mem_thm-val">mem_thm</a> : thm
+<a name="line111"></a>    val <a href="#not_every-val">not_every</a> : thm
+<a name="line112"></a>    val <a href="#not_exists-val">not_exists</a> : thm
+<a name="line113"></a>    val <a href="#nth_label_LNTH-val">nth_label_LNTH</a> : thm
+<a name="line114"></a>    val <a href="#nth_label_LTAKE-val">nth_label_LTAKE</a> : thm
+<a name="line115"></a>    val <a href="#nth_label_compute-val">nth_label_compute</a> : thm
+<a name="line116"></a>    val <a href="#nth_label_drop-val">nth_label_drop</a> : thm
+<a name="line117"></a>    val <a href="#nth_label_pgenerate-val">nth_label_pgenerate</a> : thm
+<a name="line118"></a>    val <a href="#nth_label_pmap-val">nth_label_pmap</a> : thm
+<a name="line119"></a>    val <a href="#nth_label_take-val">nth_label_take</a> : thm
+<a name="line120"></a>    val <a href="#numeral_drop-val">numeral_drop</a> : thm
+<a name="line121"></a>    val <a href="#okpath_cases-val">okpath_cases</a> : thm
+<a name="line122"></a>    val <a href="#okpath_co_ind-val">okpath_co_ind</a> : thm
+<a name="line123"></a>    val <a href="#okpath_drop-val">okpath_drop</a> : thm
+<a name="line124"></a>    val <a href="#okpath_monotone-val">okpath_monotone</a> : thm
+<a name="line125"></a>    val <a href="#okpath_parallel_comp-val">okpath_parallel_comp</a> : thm
+<a name="line126"></a>    val <a href="#okpath_plink-val">okpath_plink</a> : thm
+<a name="line127"></a>    val <a href="#okpath_pmap-val">okpath_pmap</a> : thm
+<a name="line128"></a>    val <a href="#okpath_seg-val">okpath_seg</a> : thm
+<a name="line129"></a>    val <a href="#okpath_take-val">okpath_take</a> : thm
+<a name="line130"></a>    val <a href="#okpath_thm-val">okpath_thm</a> : thm
+<a name="line131"></a>    val <a href="#okpath_unfold-val">okpath_unfold</a> : thm
+<a name="line132"></a>    val <a href="#path_Axiom-val">path_Axiom</a> : thm
+<a name="line133"></a>    val <a href="#path_bisimulation-val">path_bisimulation</a> : thm
+<a name="line134"></a>    val <a href="#path_cases-val">path_cases</a> : thm
+<a name="line135"></a>    val <a href="#path_rep_bijections_thm-val">path_rep_bijections_thm</a> : thm
+<a name="line136"></a>    val <a href="#pconcat_eq_pcons-val">pconcat_eq_pcons</a> : thm
+<a name="line137"></a>    val <a href="#pconcat_eq_stopped-val">pconcat_eq_stopped</a> : thm
+<a name="line138"></a>    val <a href="#pconcat_thm-val">pconcat_thm</a> : thm
+<a name="line139"></a>    val <a href="#pcons_11-val">pcons_11</a> : thm
+<a name="line140"></a>    val <a href="#pgenerate_11-val">pgenerate_11</a> : thm
+<a name="line141"></a>    val <a href="#pgenerate_infinite-val">pgenerate_infinite</a> : thm
+<a name="line142"></a>    val <a href="#pgenerate_not_stopped-val">pgenerate_not_stopped</a> : thm
+<a name="line143"></a>    val <a href="#pgenerate_onto-val">pgenerate_onto</a> : thm
+<a name="line144"></a>    val <a href="#pmap_thm-val">pmap_thm</a> : thm
+<a name="line145"></a>    val <a href="#recursive_seg-val">recursive_seg</a> : thm
+<a name="line146"></a>    val <a href="#simulation_trace_inclusion-val">simulation_trace_inclusion</a> : thm
+<a name="line147"></a>    val <a href="#singleton_seg-val">singleton_seg</a> : thm
+<a name="line148"></a>    val <a href="#stopped_at_11-val">stopped_at_11</a> : thm
+<a name="line149"></a>    val <a href="#stopped_at_not_pcons-val">stopped_at_not_pcons</a> : thm
+<a name="line150"></a>    val <a href="#tail_drop-val">tail_drop</a> : thm
+<a name="line151"></a>    val <a href="#take_compute-val">take_compute</a> : thm
+<a name="line152"></a>    val <a href="#toPath_11-val">toPath_11</a> : thm
+<a name="line153"></a>    val <a href="#toPath_onto-val">toPath_onto</a> : thm
+<a name="line154"></a>    val <a href="#trace_machine_thm-val">trace_machine_thm</a> : thm
+<a name="line155"></a>    val <a href="#trace_machine_thm2-val">trace_machine_thm2</a> : thm
+<a name="line156"></a>    val <a href="#unfold_thm-val">unfold_thm</a> : thm
+<a name="line157"></a>    val <a href="#unfold_thm2-val">unfold_thm2</a> : thm
+<a name="line158"></a>  
+<a name="line159"></a>  val path_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line160"></a>(*
+   [fixedPoint] Parent theory of "path"
+   
+   [llist] Parent theory of "path"
+   
+   [<a name="PL_def-val"><b>PL_def</b></a>]  Definition
+      
+      ⊢ ∀p. PL p = {i | finite p ⇒ i &lt; THE (length p)}
+   
+   [<a name="SN_def-val"><b>SN_def</b></a>]  Definition
+      
+      ⊢ ∀R. SN R ⇔ WF (λx y. ∃l. R y l x)
+   
+   [<a name="drop_def-val"><b>drop_def</b></a>]  Definition
+      
+      ⊢ (∀p. drop 0 p = p) ∧ ∀n p. drop (SUC n) p = drop n (tail p)
+   
+   [<a name="el_def-val"><b>el_def</b></a>]  Definition
+      
+      ⊢ (∀p. el 0 p = first p) ∧ ∀n p. el (SUC n) p = el n (tail p)
+   
+   [<a name="every_def-val"><b>every_def</b></a>]  Definition
+      
+      ⊢ ∀P p. every P p ⇔ ¬exists ($¬ ∘ P) p
+   
+   [<a name="exists_def-val"><b>exists_def</b></a>]  Definition
+      
+      ⊢ ∀P p. exists P p ⇔ ∃i. firstP_at P p i
+   
+   [<a name="filter_def-val"><b>filter_def</b></a>]  Definition
+      
+      ⊢ ∀P. (∀x. P x ⇒ filter P (stopped_at x) = stopped_at x) ∧
+            ∀x r p.
+              filter P (pcons x r p) =
+              if P x then
+                if exists P p then pcons x r (filter P p) else stopped_at x
+              else filter P p
+   
+   [<a name="finite_def-val"><b>finite_def</b></a>]  Definition
+      
+      ⊢ ∀sigma. finite sigma ⇔ LFINITE (SND (fromPath sigma))
+   
+   [<a name="firstP_at_def-val"><b>firstP_at_def</b></a>]  Definition
+      
+      ⊢ ∀P p i.
+          firstP_at P p i ⇔ i ∈ PL p ∧ P (el i p) ∧ ∀j. j &lt; i ⇒ ¬P (el j p)
+   
+   [<a name="first_def-val"><b>first_def</b></a>]  Definition
+      
+      ⊢ ∀p. first p = FST (fromPath p)
+   
+   [<a name="first_label_def-val"><b>first_label_def</b></a>]  Definition
+      
+      ⊢ ∀x r p. first_label (pcons x r p) = r
+   
+   [<a name="is_stopped_def-val"><b>is_stopped_def</b></a>]  Definition
+      
+      ⊢ ∀p. is_stopped p ⇔ ∃x. p = stopped_at x
+   
+   [<a name="labels_def-val"><b>labels_def</b></a>]  Definition
+      
+      ⊢ (∀x. labels (stopped_at x) = [||]) ∧
+        ∀x r p. labels (pcons x r p) = r:::labels p
+   
+   [<a name="last_thm-val"><b>last_thm</b></a>]  Definition
+      
+      ⊢ (∀x. last (stopped_at x) = x) ∧ ∀x r p. last (pcons x r p) = last p
+   
+   [<a name="length_def-val"><b>length_def</b></a>]  Definition
+      
+      ⊢ ∀p. length p =
+            if finite p then
+              SOME (LENGTH (THE (toList (SND (fromPath p)))) + 1)
+            else NONE
+   
+   [<a name="mem_def-val"><b>mem_def</b></a>]  Definition
+      
+      ⊢ ∀s p. mem s p ⇔ ∃i. i ∈ PL p ∧ s = el i p
+   
+   [<a name="nth_label_def-val"><b>nth_label_def</b></a>]  Definition
+      
+      ⊢ (∀p. nth_label 0 p = first_label p) ∧
+        ∀n p. nth_label (SUC n) p = nth_label n (tail p)
+   
+   [<a name="okpath_def-val"><b>okpath_def</b></a>]  Definition
+      
+      ⊢ ∀R. okpath R = gfp (okpath_f R)
+   
+   [<a name="okpath_f_def-val"><b>okpath_f_def</b></a>]  Definition
+      
+      ⊢ ∀R X.
+          okpath_f R X =
+          {stopped_at x | x ∈ 𝕌(:α)} ∪
+          {pcons x r p | R x r (first p) ∧ p ∈ X}
+   
+   [<a name="parallel_comp_def-val"><b>parallel_comp_def</b></a>]  Definition
+      
+      ⊢ ∀m1 m2 s1 s2 l s1' s2'.
+          parallel_comp m1 m2 (s1,s2) l (s1',s2') ⇔
+          m1 s1 l s1' ∧ m2 s2 l s2'
+   
+   [<a name="path_TY_DEF-val"><b>path_TY_DEF</b></a>]  Definition
+      
+      ⊢ ∃rep. TYPE_DEFINITION (λx. T) rep
+   
+   [<a name="path_absrep_bijections-val"><b>path_absrep_bijections</b></a>]  Definition
+      
+      ⊢ (∀a. toPath (fromPath a) = a) ∧
+        ∀r. (λx. T) r ⇔ fromPath (toPath r) = r
+   
+   [<a name="pconcat_def-val"><b>pconcat_def</b></a>]  Definition
+      
+      ⊢ ∀p1 lab p2.
+          pconcat p1 lab p2 =
+          toPath
+            (first p1,
+             LAPPEND (SND (fromPath p1))
+               ((lab,first p2):::SND (fromPath p2)))
+   
+   [<a name="pcons_def-val"><b>pcons_def</b></a>]  Definition
+      
+      ⊢ ∀x r p. pcons x r p = toPath (x,(r,first p):::SND (fromPath p))
+   
+   [<a name="pgenerate_def-val"><b>pgenerate_def</b></a>]  Definition
+      
+      ⊢ ∀f g.
+          pgenerate f g = pcons (f 0) (g 0) (pgenerate (f ∘ SUC) (g ∘ SUC))
+   
+   [<a name="plink_def-val"><b>plink_def</b></a>]  Definition
+      
+      ⊢ (∀x p. plink (stopped_at x) p = p) ∧
+        ∀x r p1 p2. plink (pcons x r p1) p2 = pcons x r (plink p1 p2)
+   
+   [<a name="pmap_def-val"><b>pmap_def</b></a>]  Definition
+      
+      ⊢ ∀f g p. pmap f g p = toPath ((f ## LMAP (g ## f)) (fromPath p))
+   
+   [<a name="seg_def-val"><b>seg_def</b></a>]  Definition
+      
+      ⊢ ∀i j p. seg i j p = take (j − i) (drop i p)
+   
+   [<a name="stopped_at_def-val"><b>stopped_at_def</b></a>]  Definition
+      
+      ⊢ ∀x. stopped_at x = toPath (x,[||])
+   
+   [<a name="tail_def-val"><b>tail_def</b></a>]  Definition
+      
+      ⊢ ∀x r p. tail (pcons x r p) = p
+   
+   [<a name="take_def-val"><b>take_def</b></a>]  Definition
+      
+      ⊢ (∀p. take 0 p = stopped_at (first p)) ∧
+        ∀n p.
+          take (SUC n) p =
+          pcons (first p) (first_label p) (take n (tail p))
+   
+   [<a name="trace_machine_def-val"><b>trace_machine_def</b></a>]  Definition
+      
+      ⊢ ∀P s l s'. trace_machine P s l s' ⇔ P (s ++ [l]) ∧ s' = s ++ [l]
+   
+   [<a name="unfold_def-val"><b>unfold_def</b></a>]  Definition
+      
+      ⊢ ∀proj f s.
+          unfold proj f s =
+          toPath
+            (proj s,
+             LUNFOLD
+               (λs.
+                    OPTION_MAP (λ(next_s,lbl). (next_s,lbl,proj next_s))
+                      (f s)) s)
+   
+   [<a name="EXISTS_path-val"><b>EXISTS_path</b></a>]  Theorem
+      
+      ⊢ ∀P. (∃p. P p) ⇔ (∃x. P (stopped_at x)) ∨ ∃x r p. P (pcons x r p)
+   
+   [<a name="FORALL_path-val"><b>FORALL_path</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀p. P p) ⇔ (∀x. P (stopped_at x)) ∧ ∀x r p. P (pcons x r p)
+   
+   [<a name="IN_PL_drop-val"><b>IN_PL_drop</b></a>]  Theorem
+      
+      ⊢ ∀i j p. i ∈ PL p ⇒ (j ∈ PL (drop i p) ⇔ i + j ∈ PL p)
+   
+   [<a name="LTAKE_labels-val"><b>LTAKE_labels</b></a>]  Theorem
+      
+      ⊢ ∀n p l.
+          LTAKE n (labels p) = SOME l ⇔
+          n ∈ PL p ∧ toList (labels (take n p)) = SOME l
+   
+   [<a name="PL_0-val"><b>PL_0</b></a>]  Theorem
+      
+      ⊢ ∀p. 0 ∈ PL p
+   
+   [<a name="PL_downward_closed-val"><b>PL_downward_closed</b></a>]  Theorem
+      
+      ⊢ ∀i p. i ∈ PL p ⇒ ∀j. j &lt; i ⇒ j ∈ PL p
+   
+   [<a name="PL_drop-val"><b>PL_drop</b></a>]  Theorem
+      
+      ⊢ ∀p i. i ∈ PL p ⇒ PL (drop i p) = IMAGE (λn. n − i) (PL p)
+   
+   [<a name="PL_pcons-val"><b>PL_pcons</b></a>]  Theorem
+      
+      ⊢ ∀x r q. PL (pcons x r q) = 0 INSERT IMAGE SUC (PL q)
+   
+   [<a name="PL_pmap-val"><b>PL_pmap</b></a>]  Theorem
+      
+      ⊢ PL (pmap f g p) = PL p
+   
+   [<a name="PL_seg-val"><b>PL_seg</b></a>]  Theorem
+      
+      ⊢ ∀i j p. i ≤ j ∧ j ∈ PL p ⇒ PL (seg i j p) = {n | n ≤ j − i}
+   
+   [<a name="PL_stopped_at-val"><b>PL_stopped_at</b></a>]  Theorem
+      
+      ⊢ ∀x. PL (stopped_at x) = {0}
+   
+   [<a name="PL_take-val"><b>PL_take</b></a>]  Theorem
+      
+      ⊢ ∀p i. i ∈ PL p ⇒ PL (take i p) = {n | n ≤ i}
+   
+   [<a name="PL_thm-val"><b>PL_thm</b></a>]  Theorem
+      
+      ⊢ (∀x. PL (stopped_at x) = {0}) ∧
+        ∀x r q. PL (pcons x r q) = 0 INSERT IMAGE SUC (PL q)
+   
+   [<a name="SN_finite_paths-val"><b>SN_finite_paths</b></a>]  Theorem
+      
+      ⊢ ∀R p. SN R ∧ okpath R p ⇒ finite p
+   
+   [<a name="SN_finite_paths_EQ-val"><b>SN_finite_paths_EQ</b></a>]  Theorem
+      
+      ⊢ ∀R. SN R ⇔ ∀p. okpath R p ⇒ finite p
+   
+   [<a name="alt_length_thm-val"><b>alt_length_thm</b></a>]  Theorem
+      
+      ⊢ (∀x. length (stopped_at x) = SOME 1) ∧
+        ∀x r p. length (pcons x r p) = OPTION_MAP SUC (length p)
+   
+   [<a name="build_pcomp_trace-val"><b>build_pcomp_trace</b></a>]  Theorem
+      
+      ⊢ ∀m1 p1 m2 p2.
+          okpath m1 p1 ∧ okpath m2 p2 ∧ labels p1 = labels p2 ⇒
+          ∃p. okpath (parallel_comp m1 m2) p ∧ labels p = labels p1 ∧
+              first p = (first p1,first p2)
+   
+   [<a name="drop_compute-val"><b>drop_compute</b></a>]  Theorem
+      
+      ⊢ (∀p. drop 0 p = p) ∧
+        (∀n p.
+           drop (NUMERAL (BIT1 n)) p = drop (NUMERAL (BIT1 n) − 1) (tail p)) ∧
+        ∀n p. drop (NUMERAL (BIT2 n)) p = drop (NUMERAL (BIT1 n)) (tail p)
+   
+   [<a name="drop_eq_pcons-val"><b>drop_eq_pcons</b></a>]  Theorem
+      
+      ⊢ ∀n p h l t. n ∈ PL p ∧ drop n p = pcons h l t ⇒ n + 1 ∈ PL p
+   
+   [<a name="el_compute-val"><b>el_compute</b></a>]  Theorem
+      
+      ⊢ (∀p. el 0 p = first p) ∧
+        (∀n p. el (NUMERAL (BIT1 n)) p = el (NUMERAL (BIT1 n) − 1) (tail p)) ∧
+        ∀n p. el (NUMERAL (BIT2 n)) p = el (NUMERAL (BIT1 n)) (tail p)
+   
+   [<a name="el_drop-val"><b>el_drop</b></a>]  Theorem
+      
+      ⊢ ∀i j p. i + j ∈ PL p ⇒ el i (drop j p) = el (i + j) p
+   
+   [<a name="el_pgenerate-val"><b>el_pgenerate</b></a>]  Theorem
+      
+      ⊢ ∀n f g. el n (pgenerate f g) = f n
+   
+   [<a name="el_pmap-val"><b>el_pmap</b></a>]  Theorem
+      
+      ⊢ ∀i p. i ∈ PL p ⇒ el i (pmap f g p) = f (el i p)
+   
+   [<a name="every_coinduction-val"><b>every_coinduction</b></a>]  Theorem
+      
+      ⊢ ∀P Q.
+          (∀x. P (stopped_at x) ⇒ Q x) ∧
+          (∀x r p. P (pcons x r p) ⇒ Q x ∧ P p) ⇒
+          ∀p. P p ⇒ every Q p
+   
+   [<a name="every_el-val"><b>every_el</b></a>]  Theorem
+      
+      ⊢ ∀P p. every P p ⇔ ∀i. i ∈ PL p ⇒ P (el i p)
+   
+   [<a name="every_thm-val"><b>every_thm</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀x. every P (stopped_at x) ⇔ P x) ∧
+            ∀x r p. every P (pcons x r p) ⇔ P x ∧ every P p
+   
+   [<a name="exists_el-val"><b>exists_el</b></a>]  Theorem
+      
+      ⊢ ∀P p. exists P p ⇔ ∃i. i ∈ PL p ∧ P (el i p)
+   
+   [<a name="exists_induction-val"><b>exists_induction</b></a>]  Theorem
+      
+      ⊢ (∀x. Q x ⇒ P (stopped_at x)) ∧ (∀x r p. Q x ⇒ P (pcons x r p)) ∧
+        (∀x r p. P p ⇒ P (pcons x r p)) ⇒
+        ∀p. exists Q p ⇒ P p
+   
+   [<a name="exists_thm-val"><b>exists_thm</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀x. exists P (stopped_at x) ⇔ P x) ∧
+            ∀x r p. exists P (pcons x r p) ⇔ P x ∨ exists P p
+   
+   [<a name="filter_every-val"><b>filter_every</b></a>]  Theorem
+      
+      ⊢ ∀P p. exists P p ⇒ every P (filter P p)
+   
+   [<a name="finite_drop-val"><b>finite_drop</b></a>]  Theorem
+      
+      ⊢ ∀p n. n ∈ PL p ⇒ (finite (drop n p) ⇔ finite p)
+   
+   [<a name="finite_labels-val"><b>finite_labels</b></a>]  Theorem
+      
+      ⊢ ∀p. LFINITE (labels p) ⇔ finite p
+   
+   [<a name="finite_length-val"><b>finite_length</b></a>]  Theorem
+      
+      ⊢ ∀p. (finite p ⇔ ∃n. length p = SOME n) ∧
+            (¬finite p ⇔ length p = NONE)
+   
+   [<a name="finite_okpath_ind-val"><b>finite_okpath_ind</b></a>]  Theorem
+      
+      ⊢ ∀R. (∀x. P (stopped_at x)) ∧
+            (∀x r p.
+               okpath R p ∧ finite p ∧ R x r (first p) ∧ P p ⇒
+               P (pcons x r p)) ⇒
+            ∀sigma. okpath R sigma ∧ finite sigma ⇒ P sigma
+   
+   [<a name="finite_path_end_cases-val"><b>finite_path_end_cases</b></a>]  Theorem
+      
+      ⊢ ∀p. finite p ⇒
+            (∃x. p = stopped_at x) ∨
+            ∃p' l s. p = plink p' (pcons (last p') l (stopped_at s))
+   
+   [<a name="finite_path_ind-val"><b>finite_path_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀x. P (stopped_at x)) ∧
+            (∀x r p. finite p ∧ P p ⇒ P (pcons x r p)) ⇒
+            ∀q. finite q ⇒ P q
+   
+   [<a name="finite_paths_SN-val"><b>finite_paths_SN</b></a>]  Theorem
+      
+      ⊢ ∀R. (∀p. okpath R p ⇒ finite p) ⇒ SN R
+   
+   [<a name="finite_pconcat-val"><b>finite_pconcat</b></a>]  Theorem
+      
+      ⊢ ∀p1 lab p2. finite (pconcat p1 lab p2) ⇔ finite p1 ∧ finite p2
+   
+   [<a name="finite_plink-val"><b>finite_plink</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2. finite (plink p1 p2) ⇔ finite p1 ∧ finite p2
+   
+   [<a name="finite_pmap-val"><b>finite_pmap</b></a>]  Theorem
+      
+      ⊢ ∀f g p. finite (pmap f g p) ⇔ finite p
+   
+   [<a name="finite_seg-val"><b>finite_seg</b></a>]  Theorem
+      
+      ⊢ ∀p i j. i ≤ j ∧ j ∈ PL p ⇒ finite (seg i j p)
+   
+   [<a name="finite_take-val"><b>finite_take</b></a>]  Theorem
+      
+      ⊢ ∀p i. i ∈ PL p ⇒ finite (take i p)
+   
+   [<a name="finite_thm-val"><b>finite_thm</b></a>]  Theorem
+      
+      ⊢ (∀x. finite (stopped_at x) ⇔ T) ∧
+        ∀x r p. finite (pcons x r p) ⇔ finite p
+   
+   [<a name="firstP_at_thm-val"><b>firstP_at_thm</b></a>]  Theorem
+      
+      ⊢ (∀P x n. firstP_at P (stopped_at x) n ⇔ n = 0 ∧ P x) ∧
+        ∀P n x r p.
+          firstP_at P (pcons x r p) n ⇔
+          n = 0 ∧ P x ∨ 0 &lt; n ∧ ¬P x ∧ firstP_at P p (n − 1)
+   
+   [<a name="firstP_at_unique-val"><b>firstP_at_unique</b></a>]  Theorem
+      
+      ⊢ ∀P p n. firstP_at P p n ⇒ ∀m. firstP_at P p m ⇔ m = n
+   
+   [<a name="firstP_at_zero-val"><b>firstP_at_zero</b></a>]  Theorem
+      
+      ⊢ ∀P p. firstP_at P p 0 ⇔ P (first p)
+   
+   [<a name="first_drop-val"><b>first_drop</b></a>]  Theorem
+      
+      ⊢ ∀i p. i ∈ PL p ⇒ first (drop i p) = el i p
+   
+   [<a name="first_label_drop-val"><b>first_label_drop</b></a>]  Theorem
+      
+      ⊢ ∀i p. i ∈ PL p ⇒ first_label (drop i p) = nth_label i p
+   
+   [<a name="first_plink-val"><b>first_plink</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2. last p1 = first p2 ⇒ first (plink p1 p2) = first p1
+   
+   [<a name="first_pmap-val"><b>first_pmap</b></a>]  Theorem
+      
+      ⊢ ∀p. first (pmap f g p) = f (first p)
+   
+   [<a name="first_seg-val"><b>first_seg</b></a>]  Theorem
+      
+      ⊢ ∀i j p. i ≤ j ∧ j ∈ PL p ⇒ first (seg i j p) = el i p
+   
+   [<a name="first_take-val"><b>first_take</b></a>]  Theorem
+      
+      ⊢ ∀p i. first (take i p) = first p
+   
+   [<a name="first_thm-val"><b>first_thm</b></a>]  Theorem
+      
+      ⊢ (∀x. first (stopped_at x) = x) ∧ ∀x r p. first (pcons x r p) = x
+   
+   [<a name="fromPath_11-val"><b>fromPath_11</b></a>]  Theorem
+      
+      ⊢ ∀a a'. fromPath a = fromPath a' ⇔ a = a'
+   
+   [<a name="fromPath_onto-val"><b>fromPath_onto</b></a>]  Theorem
+      
+      ⊢ ∀r. ∃a. r = fromPath a
+   
+   [<a name="infinite_PL-val"><b>infinite_PL</b></a>]  Theorem
+      
+      ⊢ ∀p. ¬finite p ⇒ ∀i. i ∈ PL p
+   
+   [<a name="is_stopped_thm-val"><b>is_stopped_thm</b></a>]  Theorem
+      
+      ⊢ (∀x. is_stopped (stopped_at x) ⇔ T) ∧
+        ∀x r p. is_stopped (pcons x r p) ⇔ F
+   
+   [<a name="labels_LMAP-val"><b>labels_LMAP</b></a>]  Theorem
+      
+      ⊢ ∀p. labels p = LMAP FST (SND (fromPath p))
+   
+   [<a name="labels_plink-val"><b>labels_plink</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2. labels (plink p1 p2) = LAPPEND (labels p1) (labels p2)
+   
+   [<a name="labels_unfold-val"><b>labels_unfold</b></a>]  Theorem
+      
+      ⊢ ∀proj f s. labels (unfold proj f s) = LUNFOLD f s
+   
+   [<a name="last_plink-val"><b>last_plink</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2.
+          finite p1 ∧ finite p2 ∧ last p1 = first p2 ⇒
+          last (plink p1 p2) = last p2
+   
+   [<a name="last_pmap-val"><b>last_pmap</b></a>]  Theorem
+      
+      ⊢ ∀p. finite p ⇒ last (pmap f g p) = f (last p)
+   
+   [<a name="last_seg-val"><b>last_seg</b></a>]  Theorem
+      
+      ⊢ ∀i j p. i ≤ j ∧ j ∈ PL p ⇒ last (seg i j p) = el j p
+   
+   [<a name="last_take-val"><b>last_take</b></a>]  Theorem
+      
+      ⊢ ∀i p. i ∈ PL p ⇒ last (take i p) = el i p
+   
+   [<a name="length_drop-val"><b>length_drop</b></a>]  Theorem
+      
+      ⊢ ∀p n.
+          n ∈ PL p ⇒
+          length (drop n p) =
+          case length p of NONE =&gt; NONE | SOME m =&gt; SOME (m − n)
+   
+   [<a name="length_never_zero-val"><b>length_never_zero</b></a>]  Theorem
+      
+      ⊢ ∀p. length p ≠ SOME 0
+   
+   [<a name="length_pmap-val"><b>length_pmap</b></a>]  Theorem
+      
+      ⊢ ∀f g p. length (pmap f g p) = length p
+   
+   [<a name="length_take-val"><b>length_take</b></a>]  Theorem
+      
+      ⊢ ∀p i. i ∈ PL p ⇒ length (take i p) = SOME (i + 1)
+   
+   [<a name="length_thm-val"><b>length_thm</b></a>]  Theorem
+      
+      ⊢ (∀x. length (stopped_at x) = SOME 1) ∧
+        ∀x r p.
+          length (pcons x r p) =
+          if finite p then SOME (THE (length p) + 1) else NONE
+   
+   [<a name="mem_thm-val"><b>mem_thm</b></a>]  Theorem
+      
+      ⊢ (∀x s. mem s (stopped_at x) ⇔ s = x) ∧
+        ∀x r p s. mem s (pcons x r p) ⇔ s = x ∨ mem s p
+   
+   [<a name="not_every-val"><b>not_every</b></a>]  Theorem
+      
+      ⊢ ∀P p. ¬every P p ⇔ exists ($¬ ∘ P) p
+   
+   [<a name="not_exists-val"><b>not_exists</b></a>]  Theorem
+      
+      ⊢ ∀P p. ¬exists P p ⇔ every ($¬ ∘ P) p
+   
+   [<a name="nth_label_LNTH-val"><b>nth_label_LNTH</b></a>]  Theorem
+      
+      ⊢ ∀n p x.
+          LNTH n (labels p) = SOME x ⇔ n + 1 ∈ PL p ∧ nth_label n p = x
+   
+   [<a name="nth_label_LTAKE-val"><b>nth_label_LTAKE</b></a>]  Theorem
+      
+      ⊢ ∀n p l i v.
+          LTAKE n (labels p) = SOME l ∧ i &lt; LENGTH l ⇒
+          nth_label i p = EL i l
+   
+   [<a name="nth_label_compute-val"><b>nth_label_compute</b></a>]  Theorem
+      
+      ⊢ (∀p. nth_label 0 p = first_label p) ∧
+        (∀n p.
+           nth_label (NUMERAL (BIT1 n)) p =
+           nth_label (NUMERAL (BIT1 n) − 1) (tail p)) ∧
+        ∀n p.
+          nth_label (NUMERAL (BIT2 n)) p =
+          nth_label (NUMERAL (BIT1 n)) (tail p)
+   
+   [<a name="nth_label_drop-val"><b>nth_label_drop</b></a>]  Theorem
+      
+      ⊢ ∀i j p.
+          SUC (i + j) ∈ PL p ⇒ nth_label i (drop j p) = nth_label (i + j) p
+   
+   [<a name="nth_label_pgenerate-val"><b>nth_label_pgenerate</b></a>]  Theorem
+      
+      ⊢ ∀n f g. nth_label n (pgenerate f g) = g n
+   
+   [<a name="nth_label_pmap-val"><b>nth_label_pmap</b></a>]  Theorem
+      
+      ⊢ ∀i p. SUC i ∈ PL p ⇒ nth_label i (pmap f g p) = g (nth_label i p)
+   
+   [<a name="nth_label_take-val"><b>nth_label_take</b></a>]  Theorem
+      
+      ⊢ ∀n p i. i &lt; n ∧ n ∈ PL p ⇒ nth_label i (take n p) = nth_label i p
+   
+   [<a name="numeral_drop-val"><b>numeral_drop</b></a>]  Theorem
+      
+      ⊢ (∀n p.
+           drop (NUMERAL (BIT1 n)) p = drop (NUMERAL (BIT1 n) − 1) (tail p)) ∧
+        ∀n p. drop (NUMERAL (BIT2 n)) p = drop (NUMERAL (BIT1 n)) (tail p)
+   
+   [<a name="okpath_cases-val"><b>okpath_cases</b></a>]  Theorem
+      
+      ⊢ ∀R x.
+          okpath R x ⇔
+          (∃x'. x = stopped_at x') ∨
+          ∃x' r p. x = pcons x' r p ∧ R x' r (first p) ∧ okpath R p
+   
+   [<a name="okpath_co_ind-val"><b>okpath_co_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀x r p. P (pcons x r p) ⇒ R x r (first p) ∧ P p) ⇒
+            ∀p. P p ⇒ okpath R p
+   
+   [<a name="okpath_drop-val"><b>okpath_drop</b></a>]  Theorem
+      
+      ⊢ ∀R p i. i ∈ PL p ∧ okpath R p ⇒ okpath R (drop i p)
+   
+   [<a name="okpath_monotone-val"><b>okpath_monotone</b></a>]  Theorem
+      
+      ⊢ ∀R. monotone (okpath_f R)
+   
+   [<a name="okpath_parallel_comp-val"><b>okpath_parallel_comp</b></a>]  Theorem
+      
+      ⊢ ∀p m1 m2.
+          okpath (parallel_comp m1 m2) p ⇔
+          okpath m1 (pmap FST (λx. x) p) ∧ okpath m2 (pmap SND (λx. x) p)
+   
+   [<a name="okpath_plink-val"><b>okpath_plink</b></a>]  Theorem
+      
+      ⊢ ∀R p1 p2.
+          finite p1 ∧ last p1 = first p2 ⇒
+          (okpath R (plink p1 p2) ⇔ okpath R p1 ∧ okpath R p2)
+   
+   [<a name="okpath_pmap-val"><b>okpath_pmap</b></a>]  Theorem
+      
+      ⊢ ∀R f g p.
+          okpath R p ∧ (∀x r y. R x r y ⇒ R (f x) (g r) (f y)) ⇒
+          okpath R (pmap f g p)
+   
+   [<a name="okpath_seg-val"><b>okpath_seg</b></a>]  Theorem
+      
+      ⊢ ∀R p i j. i ≤ j ∧ j ∈ PL p ∧ okpath R p ⇒ okpath R (seg i j p)
+   
+   [<a name="okpath_take-val"><b>okpath_take</b></a>]  Theorem
+      
+      ⊢ ∀R p i. i ∈ PL p ∧ okpath R p ⇒ okpath R (take i p)
+   
+   [<a name="okpath_thm-val"><b>okpath_thm</b></a>]  Theorem
+      
+      ⊢ ∀R. (∀x. okpath R (stopped_at x)) ∧
+            ∀x r p. okpath R (pcons x r p) ⇔ R x r (first p) ∧ okpath R p
+   
+   [<a name="okpath_unfold-val"><b>okpath_unfold</b></a>]  Theorem
+      
+      ⊢ ∀P m proj f s.
+          P s ∧ (∀s s' l. P s ∧ f s = SOME (s',l) ⇒ P s') ∧
+          (∀s s' l. P s ∧ f s = SOME (s',l) ⇒ m (proj s) l (proj s')) ⇒
+          okpath m (unfold proj f s)
+   
+   [<a name="path_Axiom-val"><b>path_Axiom</b></a>]  Theorem
+      
+      ⊢ ∀f. ∃g. ∀x.
+          g x =
+          case f x of
+            (y,NONE) =&gt; stopped_at y
+          | (y,SOME (l,v)) =&gt; pcons y l (g v)
+   
+   [<a name="path_bisimulation-val"><b>path_bisimulation</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2.
+          p1 = p2 ⇔
+          ∃R. R p1 p2 ∧
+              ∀q1 q2.
+                R q1 q2 ⇒
+                (∃x. q1 = stopped_at x ∧ q2 = stopped_at x) ∨
+                ∃x r q1' q2'.
+                  q1 = pcons x r q1' ∧ q2 = pcons x r q2' ∧ R q1' q2'
+   
+   [<a name="path_cases-val"><b>path_cases</b></a>]  Theorem
+      
+      ⊢ ∀p. (∃x. p = stopped_at x) ∨ ∃x r q. p = pcons x r q
+   
+   [<a name="path_rep_bijections_thm-val"><b>path_rep_bijections_thm</b></a>]  Theorem
+      
+      ⊢ (∀a. toPath (fromPath a) = a) ∧ ∀r. fromPath (toPath r) = r
+   
+   [<a name="pconcat_eq_pcons-val"><b>pconcat_eq_pcons</b></a>]  Theorem
+      
+      ⊢ ∀x r p p1 lab p2.
+          (pconcat p1 lab p2 = pcons x r p ⇔
+           lab = r ∧ p1 = stopped_at x ∧ p = p2 ∨
+           ∃p1'. p1 = pcons x r p1' ∧ p = pconcat p1' lab p2) ∧
+          (pcons x r p = pconcat p1 lab p2 ⇔
+           lab = r ∧ p1 = stopped_at x ∧ p = p2 ∨
+           ∃p1'. p1 = pcons x r p1' ∧ p = pconcat p1' lab p2)
+   
+   [<a name="pconcat_eq_stopped-val"><b>pconcat_eq_stopped</b></a>]  Theorem
+      
+      ⊢ ∀p1 lab p2 x.
+          pconcat p1 lab p2 ≠ stopped_at x ∧
+          stopped_at x ≠ pconcat p1 lab p2
+   
+   [<a name="pconcat_thm-val"><b>pconcat_thm</b></a>]  Theorem
+      
+      ⊢ (∀x lab p2. pconcat (stopped_at x) lab p2 = pcons x lab p2) ∧
+        ∀x r p lab p2.
+          pconcat (pcons x r p) lab p2 = pcons x r (pconcat p lab p2)
+   
+   [<a name="pcons_11-val"><b>pcons_11</b></a>]  Theorem
+      
+      ⊢ ∀x r p y s q. pcons x r p = pcons y s q ⇔ x = y ∧ r = s ∧ p = q
+   
+   [<a name="pgenerate_11-val"><b>pgenerate_11</b></a>]  Theorem
+      
+      ⊢ ∀f1 g1 f2 g2. pgenerate f1 g1 = pgenerate f2 g2 ⇔ f1 = f2 ∧ g1 = g2
+   
+   [<a name="pgenerate_infinite-val"><b>pgenerate_infinite</b></a>]  Theorem
+      
+      ⊢ ∀f g. ¬finite (pgenerate f g)
+   
+   [<a name="pgenerate_not_stopped-val"><b>pgenerate_not_stopped</b></a>]  Theorem
+      
+      ⊢ ∀f g x. stopped_at x ≠ pgenerate f g
+   
+   [<a name="pgenerate_onto-val"><b>pgenerate_onto</b></a>]  Theorem
+      
+      ⊢ ∀p. ¬finite p ⇒ ∃f g. p = pgenerate f g
+   
+   [<a name="pmap_thm-val"><b>pmap_thm</b></a>]  Theorem
+      
+      ⊢ (∀x. pmap f g (stopped_at x) = stopped_at (f x)) ∧
+        ∀x r p. pmap f g (pcons x r p) = pcons (f x) (g r) (pmap f g p)
+   
+   [<a name="recursive_seg-val"><b>recursive_seg</b></a>]  Theorem
+      
+      ⊢ ∀i j p.
+          i &lt; j ∧ j ∈ PL p ⇒
+          seg i j p = pcons (el i p) (nth_label i p) (seg (i + 1) j p)
+   
+   [<a name="simulation_trace_inclusion-val"><b>simulation_trace_inclusion</b></a>]  Theorem
+      
+      ⊢ ∀R M1 M2 p t_init.
+          (∀s1 l s2 t1. R s1 t1 ∧ M1 s1 l s2 ⇒ ∃t2. R s2 t2 ∧ M2 t1 l t2) ∧
+          okpath M1 p ∧ R (first p) t_init ⇒
+          ∃q. okpath M2 q ∧ labels p = labels q ∧ first q = t_init
+   
+   [<a name="singleton_seg-val"><b>singleton_seg</b></a>]  Theorem
+      
+      ⊢ ∀i p. i ∈ PL p ⇒ seg i i p = stopped_at (el i p)
+   
+   [<a name="stopped_at_11-val"><b>stopped_at_11</b></a>]  Theorem
+      
+      ⊢ ∀x y. stopped_at x = stopped_at y ⇔ x = y
+   
+   [<a name="stopped_at_not_pcons-val"><b>stopped_at_not_pcons</b></a>]  Theorem
+      
+      ⊢ ∀x y r p. stopped_at x ≠ pcons y r p ∧ pcons y r p ≠ stopped_at x
+   
+   [<a name="tail_drop-val"><b>tail_drop</b></a>]  Theorem
+      
+      ⊢ ∀i p. i + 1 ∈ PL p ⇒ tail (drop i p) = drop (i + 1) p
+   
+   [<a name="take_compute-val"><b>take_compute</b></a>]  Theorem
+      
+      ⊢ (∀p. take 0 p = stopped_at (first p)) ∧
+        (∀n p.
+           take (NUMERAL (BIT1 n)) p =
+           pcons (first p) (first_label p)
+             (take (NUMERAL (BIT1 n) − 1) (tail p))) ∧
+        ∀n p.
+          take (NUMERAL (BIT2 n)) p =
+          pcons (first p) (first_label p)
+            (take (NUMERAL (BIT1 n)) (tail p))
+   
+   [<a name="toPath_11-val"><b>toPath_11</b></a>]  Theorem
+      
+      ⊢ ∀r r'. toPath r = toPath r' ⇔ r = r'
+   
+   [<a name="toPath_onto-val"><b>toPath_onto</b></a>]  Theorem
+      
+      ⊢ ∀a. ∃r. a = toPath r
+   
+   [<a name="trace_machine_thm-val"><b>trace_machine_thm</b></a>]  Theorem
+      
+      ⊢ ∀P tr.
+          (∀n l. LTAKE n tr = SOME l ⇒ P l) ⇒
+          ∃p. tr = labels p ∧ okpath (trace_machine P) p ∧ first p = []
+   
+   [<a name="trace_machine_thm2-val"><b>trace_machine_thm2</b></a>]  Theorem
+      
+      ⊢ ∀n l P p init.
+          okpath (trace_machine P) p ∧ P (first p) ⇒
+          LTAKE n (labels p) = SOME l ⇒
+          P (first p ++ l)
+   
+   [<a name="unfold_thm-val"><b>unfold_thm</b></a>]  Theorem
+      
+      ⊢ ∀proj f s.
+          unfold proj f s =
+          case f s of
+            NONE =&gt; stopped_at (proj s)
+          | SOME (s',l) =&gt; pcons (proj s) l (unfold proj f s')
+   
+   [<a name="unfold_thm2-val"><b>unfold_thm2</b></a>]  Theorem
+      
+      ⊢ ∀proj f x v1 v2.
+          (f x = NONE ⇒ unfold proj f x = stopped_at (proj x)) ∧
+          (f x = SOME (v1,v2) ⇒
+           unfold proj f x = pcons (proj x) v2 (unfold proj f v1))
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/coalgebras/pathScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>bossLib.type_rws</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>type_rws : hol_type -&gt; thm list</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">List rewrites for a concrete type.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An application </SPAN><SPAN class = "BRKT">type_rws&nbsp;ty</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> is a declared datatype,
+returns a list of rewrite rules corresponding to the type. The list
+typically contains theorems about the distinctness and injectivity of
+constructors, the definition of the case constant introduced at the
+time the type was defined, and any extra rewrites coming from the use of
+records.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> is not a declared datatype.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- type_rws ``:'a list``;
+
+&gt; val it =
+    [|- (!v f. list_CASE [] v f = v) /\ !a0 a1 v f. list_CASE (a0::a1) v f = f a0 a1,
+     |- !a1 a0. ~([] = a0::a1),
+     |- !a1 a0. ~(a0::a1 = []),
+     |- !a0 a1 a0' a1'. (a0::a1 = a0'::a1') = (a0 = a0') /\ (a1 = a1')]
+
+- Hol_datatype `point = &lt;| x:num ; y:num |&gt;`;
+&lt;&lt;HOL message: Defined type: "point"&gt;&gt;
+
+- type_rws ``:point``;
+&gt; val it =
+    [|- !a0 a1 f. point_CASE (point a0 a1) f = f a0 a1,
+     |- !a0 a1 a0' a1'. point a0 a1 = point a0' a1' &lt;=&gt; a0 = a0' /\ a1 = a1',
+     |- !p g f.
+      p with &lt;|y updated_by f; x updated_by g|&gt; =
+      p with &lt;|x updated_by g; y updated_by f|&gt;,
+     |- (!g f. y_fupd f o x_fupd g = x_fupd g o y_fupd f) /\
+    !h g f. y_fupd f o x_fupd g o h = x_fupd g o y_fupd f o h,
+     |- (!n n0. (point n n0).x = n) /\ !n n0. (point n n0).y = n0,
+     |- (!p f. (p with y updated_by f).x = p.x) /\
+    (!p f. (p with x updated_by f).y = p.y) /\
+    (!p f. (p with x updated_by f).x = f p.x) /\
+    !p f. (p with y updated_by f).y = f p.y,
+     |- !p n0 n. p with &lt;|x := n0; y := n|&gt; = &lt;|x := n0; y := n|&gt;,
+     |- !n01 n1 n02 n2.
+      &lt;|x := n01; y := n1|&gt; = &lt;|x := n02; y := n2|&gt; &lt;=&gt;
+      n01 = n02 /\ n1 = n2,
+     |- (!p g f.
+       p with &lt;|x updated_by f; x updated_by g|&gt; =
+       p with x updated_by f o g) /\
+    !p g f.
+      p with &lt;|y updated_by f; y updated_by g|&gt; =
+      p with y updated_by f o g,
+     |- ((!g f. x_fupd f o x_fupd g = x_fupd (f o g)) /\
+     !h g f. x_fupd f o x_fupd g o h = x_fupd (f o g) o h) /\
+    (!g f. y_fupd f o y_fupd g = y_fupd (f o g)) /\
+    !h g f. y_fupd f o y_fupd g o h = y_fupd (f o g) o h]
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">RW_TAC</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">SRW_TAC</SPAN><SPAN class = "TEXT"> automatically include these rewrites.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.rewrites.html">rewrites</A>,
+<A HREF = "bossLib.RW_TAC.html">RW_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

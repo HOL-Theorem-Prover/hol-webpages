@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Conv.IFC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>IFC : conv -&gt; conv -&gt; conv -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Conv.html">Conv</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Apply a conversion and branch to next conversion.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">IFC&nbsp;c1&nbsp;c2&nbsp;c3&nbsp;t</SPAN><SPAN class = "TEXT"> applies the conversion </SPAN><SPAN class = "BRKT">c1</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">.
+If this application succeeds (or raises </SPAN><SPAN class = "BRKT">UNCHANGED</SPAN><SPAN class = "TEXT">) then </SPAN><SPAN class = "BRKT">c2</SPAN><SPAN class = "TEXT"> is applied next.
+Otherwise, </SPAN><SPAN class = "BRKT">c3</SPAN><SPAN class = "TEXT"> is applied to </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails when </SPAN><SPAN class = "BRKT">c1</SPAN><SPAN class = "TEXT"> succeeds and </SPAN><SPAN class = "BRKT">c2</SPAN><SPAN class = "TEXT"> fails, or when </SPAN><SPAN class = "BRKT">c1</SPAN><SPAN class = "TEXT"> fails and </SPAN><SPAN class = "BRKT">c3</SPAN><SPAN class = "TEXT"> fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+   &gt; IFC (RATOR_CONV BETA_CONV) BETA_CONV NO_CONV ``(\x y. x ==&gt; y) T F``;
+   val it = |- T ==&gt; F : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The first </SPAN><SPAN class = "BRKT">RATOR_CONV&nbsp;BETA_CONV</SPAN><SPAN class = "TEXT"> succeeds and chains successfully with the second </SPAN><SPAN class = "BRKT">BETA_CONV</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+   &gt; IFC ALL_CONV BETA_CONV (RATOR_CONV BETA_CONV) ``(\x y. x ==&gt; y) T F``;
+   Exception - BETA_CONV: not a beta redex
+</pre></DIV>
+<SPAN class = "TEXT">
+Although </SPAN><SPAN class = "BRKT">ALL_CONV</SPAN><SPAN class = "TEXT"> succeeds, it does nothing, so </SPAN><SPAN class = "BRKT">BETA_CONV</SPAN><SPAN class = "TEXT"> is not applicable.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+   &gt; IFC NO_CONV BETA_CONV (RATOR_CONV BETA_CONV) ``(\x y. x ==&gt; y) T F``;
+   val it = |- (\y. T ==&gt; y) F : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+The </SPAN><SPAN class = "BRKT">NO_CONV</SPAN><SPAN class = "TEXT"> fails, so </SPAN><SPAN class = "BRKT">RATOR_CONV&nbsp;BETA_CONV</SPAN><SPAN class = "TEXT"> applies.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Conv.ORELSEC.html">ORELSEC</A>,
+<A HREF = "Conv.REPEATC.html">REPEATC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

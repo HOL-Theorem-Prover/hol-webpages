@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Arith.INSTANCE_T_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>INSTANCE_T_CONV : ((term -&gt; term list) -&gt; conv -&gt; conv)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Arith.html">Arith</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Function which allows a proof procedure to work on substitution instances of
+terms that are in the domain of the procedure.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function generalises a conversion that is used to prove formulae true. It
+does this by first replacing any syntactically unacceptable subterms with
+variables. It then attempts to prove the resulting generalised formula and if
+successful it re-instantiates the variables.</SPAN>
+<P>
+<SPAN class = "TEXT">The first argument should be a function which computes a list of subterms of a
+term which are syntactically unacceptable to the proof procedure. This
+function should include in its result any variables that do not appear in
+other subterms returned. The second argument is the proof procedure to be
+generalised; this should be a conversion which when successful returns an
+equation between the argument formula and </SPAN><SPAN class = "BRKT">T</SPAN><SPAN class = "TEXT"> (true).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if either of the applications of the argument functions fail, or if the
+conversion does not return an equation of the correct form.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+#FORALL_ARITH_CONV "!f m (n:num). (m &lt; (f n)) ==&gt; (m &lt;= (f n))";;
+evaluation failed     FORALL_ARITH_CONV -- formula not in the allowed subset
+
+#INSTANCE_T_CONV non_presburger_subterms FORALL_ARITH_CONV
+# "!f m (n:num). (m &lt; (f n)) ==&gt; (m &lt;= (f n))";;
+|- (!f m n. m &lt; (f n) ==&gt; m &lt;= (f n)) = T
+</pre></DIV>
+</DIV></DD>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

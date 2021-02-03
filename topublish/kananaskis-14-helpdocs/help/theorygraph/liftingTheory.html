@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: lifting</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "lifting"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "transferTheory.html"><span class="strong">transfer</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">Qt</span>
+    <td>
+    :(α -> α -> bool) -> (α -> β) -> (β -> α) -> (α -> β -> bool) -> bool
+    <tr><td>
+    <span class="strong">map_fun</span>
+    <td>
+    :(α -> γ) -> (δ -> β) -> (γ -> δ) -> α -> β
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">Qt_def</span>
+<DD>
+<pre>
+⊢ ∀R Abs Rep Tf.
+    Qt R Abs Rep Tf ⇔
+    (R = Tfᵀ ∘ᵣ Tf) ∧ (∀a b. Tf a b ⇒ (Abs a = b)) ∧ ∀a. Tf (Rep a) a
+</pre>
+
+<DT><span class="strong">map_fun_def</span>
+<DD>
+<pre>
+⊢ ∀f g h. (f ---> g) h = g ∘ h ∘ f
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">HK_thm2</span>
+<DD>
+<pre>
+⊢ Qt R Abs Rep Tf ∧ (f = Abs t) ∧ R t t ⇒ Tf t f
+</pre>
+
+<DT><span class="strong">Qt_EQ</span>
+<DD>
+<pre>
+⊢ Qt R Abs Rep Tf ⇒ (Tf |==> Tf |==> $<=>) R $=
+</pre>
+
+<DT><span class="strong">Qt_alt</span>
+<DD>
+<pre>
+⊢ Qt R Abs Rep Tf ⇔
+  (∀a. Abs (Rep a) = a) ∧ (∀a. R (Rep a) (Rep a)) ∧
+  (∀c1 c2. R c1 c2 ⇔ R c1 c1 ∧ R c2 c2 ∧ (Abs c1 = Abs c2)) ∧
+  (Tf = (λc a. R c c ∧ (Abs c = a)))
+</pre>
+
+<DT><span class="strong">Qt_alt_def2</span>
+<DD>
+<pre>
+⊢ Qt R Abs Rep Tf ⇔
+  (∀c a. Tf c a ⇒ (Abs c = a)) ∧ (∀a. Tf (Rep a) a) ∧
+  ∀c1 c2. R c1 c2 ⇔ Tf c1 (Abs c2) ∧ Tf c2 (Abs c1)
+</pre>
+
+<DT><span class="strong">Qt_right_unique</span>
+<DD>
+<pre>
+⊢ Qt R Abs Rep Tf ⇒ right_unique Tf
+</pre>
+
+<DT><span class="strong">Qt_surj</span>
+<DD>
+<pre>
+⊢ Qt R Abs Rep Tf ⇒ surj Tf
+</pre>
+
+<DT><span class="strong">R_repabs</span>
+<DD>
+<pre>
+⊢ Qt R Abs Rep Tf ⇒ ∀x. R x x ⇒ R (Rep (Abs x)) x
+</pre>
+
+<DT><span class="strong">funQ</span>
+<DD>
+<pre>
+⊢ Qt D AbsD RepD TfD ∧ Qt R AbsR RepR TfR ⇒
+  Qt (D |==> R) (RepD ---> AbsR) (AbsD ---> RepR) (TfD |==> TfR)
+</pre>
+
+<DT><span class="strong">idQ</span>
+<DD>
+<pre>
+⊢ Qt $= I I $=
+</pre>
+
+<DT><span class="strong">listQ</span>
+<DD>
+<pre>
+⊢ Qt R Abs Rep Tf ⇒ Qt (LIST_REL R) (MAP Abs) (MAP Rep) (LIST_REL Tf)
+</pre>
+
+<DT><span class="strong">map_fun_I</span>
+<DD>
+<pre>
+⊢ (f ---> I = flip $o f) ∧ (I ---> g = $o g)
+</pre>
+
+<DT><span class="strong">map_fun_id</span>
+<DD>
+<pre>
+⊢ I ---> I = I
+</pre>
+
+<DT><span class="strong">map_fun_o</span>
+<DD>
+<pre>
+⊢ f1 ∘ f2 ---> g1 ∘ g2 = (f2 ---> g1) ∘ (f1 ---> g2)
+</pre>
+
+<DT><span class="strong">map_fun_thm</span>
+<DD>
+<pre>
+⊢ (f ---> g) h x = g (h (f x))
+</pre>
+
+<DT><span class="strong">pairQ</span>
+<DD>
+<pre>
+⊢ Qt R1 Abs1 Rep1 Tf1 ∧ Qt R2 Abs2 Rep2 Tf2 ⇒
+  Qt (R1 ### R2) (Abs1 ## Abs2) (Rep1 ## Rep2) (Tf1 ### Tf2)
+</pre>
+
+<DT><span class="strong">setQ</span>
+<DD>
+<pre>
+⊢ Qt R Abs Rep Tf ⇒
+  Qt (R |==> $<=>) (PREIMAGE Rep) (PREIMAGE Abs) (Tf |==> $<=>)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

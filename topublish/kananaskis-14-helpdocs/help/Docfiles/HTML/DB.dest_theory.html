@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>DB.dest_theory</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>dest_theory : string -&gt; theory</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/DB.html">DB</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Return the contents of a theory.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An invocation </SPAN><SPAN class = "BRKT">dest_theory&nbsp;s</SPAN><SPAN class = "TEXT"> returns a structure
+</SPAN><DIV class = "XMPL"><pre>
+   THEORY(s,{types, consts, parents, axioms, definitions, theorems})
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">types</SPAN><SPAN class = "TEXT"> is a list of </SPAN><SPAN class = "BRKT">(string,int)</SPAN><SPAN class = "TEXT"> pairs that contains
+all the type operators declared in </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">consts</SPAN><SPAN class = "TEXT"> is a
+list of </SPAN><SPAN class = "BRKT">(string,hol_type)</SPAN><SPAN class = "TEXT"> pairs enumerating all the term constants
+declared in </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">parents</SPAN><SPAN class = "TEXT"> is a  list of strings denoting the parents
+of </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">axioms</SPAN><SPAN class = "TEXT"> is a list of </SPAN><SPAN class = "BRKT">(string,thm)</SPAN><SPAN class = "TEXT"> pairs denoting the axioms
+asserted in </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">definitions</SPAN><SPAN class = "TEXT"> is a list of </SPAN><SPAN class = "BRKT">(string,thm)</SPAN><SPAN class = "TEXT"> pairs denoting
+the definitions of </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">, and </SPAN><SPAN class = "BRKT">theorems</SPAN><SPAN class = "TEXT"> is a list of </SPAN><SPAN class = "BRKT">(string,thm)</SPAN><SPAN class = "TEXT">
+pairs denoting the theorems proved and stored in </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The call </SPAN><SPAN class = "BRKT">dest_theory&nbsp;"-"</SPAN><SPAN class = "TEXT"> may be used to access the contents of the
+current theory.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> is not the name of a loaded theory.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- dest_theory "option";
+&gt; val it =
+    Theory: option
+
+    Parents:
+        sum
+        one
+
+    Type constants:
+        option 1
+
+    Term constants:
+        option_case    :'b -&gt; ('a -&gt; 'b) -&gt; 'a option -&gt; 'b
+        NONE    :'a option
+        SOME    :'a -&gt; 'a option
+        IS_NONE    :'a option -&gt; bool
+        option_ABS    :'a + one -&gt; 'a option
+        IS_SOME    :'a option -&gt; bool
+        option_REP    :'a option -&gt; 'a + one
+        THE    :'a option -&gt; 'a
+        OPTION_JOIN    :'a option option -&gt; 'a option
+        OPTION_MAP    :('a -&gt; 'b) -&gt; 'a option -&gt; 'b option
+
+    Definitions:
+        option_TY_DEF  |- ?rep. TYPE_DEFINITION (\x. T) rep
+        option_REP_ABS_DEF
+        |- (!a. option_ABS (option_REP a) = a) /\
+           !r. (\x. T) r = (option_REP (option_ABS r) = r)
+        SOME_DEF  |- !x. SOME x = option_ABS (INL x)
+        NONE_DEF  |- NONE = option_ABS (INR ())
+        option_case_def
+        |- (!u f. case u f NONE = u) /\ !u f x. case u f (SOME x) = f x
+        OPTION_MAP_DEF
+        |- (!f x. OPTION_MAP f (SOME x) = SOME (f x)) /\
+           !f. OPTION_MAP f NONE = NONE
+        IS_SOME_DEF  |- (!x. IS_SOME (SOME x) = T) /\ (IS_SOME NONE = F)
+        IS_NONE_DEF  |- (!x. IS_NONE (SOME x) = F) /\ (IS_NONE NONE = T)
+        THE_DEF  |- !x. THE (SOME x) = x
+        OPTION_JOIN_DEF
+        |- (OPTION_JOIN NONE = NONE) /\ !x. OPTION_JOIN (SOME x) = x
+
+    Theorems:
+        option_Axiom  |- !e f. ?fn. (!x. fn (SOME x) = f x) /\ (fn NONE = e)
+        option_induction  |- !P. P NONE /\ (!a. P (SOME a)) ==&gt; !x. P x
+        SOME_11  |- !x y. (SOME x = SOME y) = (x = y)
+        NOT_NONE_SOME  |- !x. ~(NONE = SOME x)
+        NOT_SOME_NONE  |- !x. ~(SOME x = NONE)
+        option_nchotomy  |- !opt. (opt = NONE) \/ ?x. opt = SOME x
+        option_CLAUSES
+        |- (!x y. (SOME x = SOME y) = (x = y)) /\ (!x. THE (SOME x) = x) /\
+           (!x. ~(NONE = SOME x)) /\ (!x. ~(SOME x = NONE)) /\
+           (!x. IS_SOME (SOME x) = T) /\ (IS_SOME NONE = F) /\
+           (!x. IS_NONE x = (x = NONE)) /\ (!x. ~IS_SOME x = (x = NONE)) /\
+           (!x. IS_SOME x ==&gt; (SOME (THE x) = x)) /\
+           (!x. case NONE SOME x = x) /\ (!x. case x SOME x = x) /\
+           (!x. IS_NONE x ==&gt; (case e f x = e)) /\
+           (!x. IS_SOME x ==&gt; (case e f x = f (THE x))) /\
+           (!x. IS_SOME x ==&gt; (case e SOME x = x)) /\
+           (!u f. case u f NONE = u) /\ (!u f x. case u f (SOME x) = f x) /\
+           (!f x. OPTION_MAP f (SOME x) = SOME (f x)) /\
+           (!f. OPTION_MAP f NONE = NONE) /\ (OPTION_JOIN NONE = NONE) /\
+           !x. OPTION_JOIN (SOME x) = x
+        option_case_compute
+        |- case e f x = (if IS_SOME x then f (THE x) else e)
+        OPTION_MAP_EQ_SOME
+        |- !f x y. (OPTION_MAP f x = SOME y) = ?z. (x = SOME z) /\ (y = f z)
+        OPTION_MAP_EQ_NONE  |- !f x. (OPTION_MAP f x = NONE) = (x = NONE)
+        OPTION_JOIN_EQ_SOME
+        |- !x y. (OPTION_JOIN x = SOME y) = (x = SOME (SOME y))
+        option_case_cong
+        |- !M M' u f.
+             (M = M') /\ ((M' = NONE) ==&gt; (u = u')) /\
+             (!x. (M' = SOME x) ==&gt; (f x = f' x)) ==&gt;
+             (case u f M = case u' f' M')
+  : theory
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A prettyprinter is installed for the type </SPAN><SPAN class = "BRKT">theory</SPAN><SPAN class = "TEXT">, but the contents
+may still be accessed via pattern matching.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Hol_pp.print_theory.html">print_theory</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

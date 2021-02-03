@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>monadsyntax.enable_monadsyntax</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>enable_monadsyntax : unit -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/monadsyntax.html">monadsyntax</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Enables parsing and printing of monadic do/od syntax.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">enable_monadsyntax()</SPAN><SPAN class = "TEXT"> alters the parser and pretty-printer
+to support the do/od syntax for writing monadic values. This call
+should be followed by calls to </SPAN><SPAN class = "BRKT">enable_monad</SPAN><SPAN class = "TEXT"> (or </SPAN><SPAN class = "BRKT">weak_enable_monad</SPAN><SPAN class = "TEXT">)
+so that the do/od syntax can be linked to actual monadic types.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This first example gives a clear demonstration of the nature of the
+syntactic translation that the monad syntax implements because there
+is no specific enabled monad for the syntax to map to:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; monadsyntax.enable_monadsyntax();
+   val it = () : unit
+
+   &gt; “do M1 ; M2; od”;
+   val it = “monad_unitbind M1 M2” : term;
+
+   &gt; “do v &lt;- M1; w &lt;- M2 v 3; return (v + w); od”;
+   val it = “monad_bind M1 (λv. monad_bind (M2 v 3) (λw. return (v + w)))”
+            : term
+</pre></DIV>
+<SPAN class = "TEXT">
+The </SPAN><SPAN class = "BRKT">monad_bind</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">monad_unitbind</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">return</SPAN><SPAN class = "TEXT"> terms above are
+variables that would be instantiated with the appropriate terms
+given the available choices of enabled monads.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "monadsyntax.all_monads.html">all_monads</A>,
+<A HREF = "monadsyntax.enable_monad.html">enable_monad</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

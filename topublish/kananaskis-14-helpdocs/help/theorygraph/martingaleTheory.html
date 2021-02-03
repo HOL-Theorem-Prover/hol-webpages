@@ -1,0 +1,932 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: martingale</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "martingale"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "lebesgueTheory.html"><span class="strong">lebesgue</span></a>&nbsp;&nbsp;
+    <a href = "posetTheory.html"><span class="strong">poset</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">exhausting_sequence</span>
+    <td>
+    :α algebra -> (num -> α -> bool) -> bool
+    <tr><td>
+    <span class="strong">fcp_sigma</span>
+    <td>
+    :α[β] algebra -> α[γ] algebra -> α[β + γ] algebra
+    <tr><td>
+    <span class="strong">filtered_measure_space</span>
+    <td>
+    :α m_space -> (num -> α algebra) -> bool
+    <tr><td>
+    <span class="strong">filtration</span>
+    <td>
+    :α algebra -> (num -> α algebra) -> bool
+    <tr><td>
+    <span class="strong">general_filtered_measure_space</span>
+    <td>
+    :(α -> bool) # (α -> α -> bool) -> β m_space -> (α -> β algebra) -> bool
+    <tr><td>
+    <span class="strong">general_filtration</span>
+    <td>
+    :(α -> bool) # (α -> α -> bool) -> β algebra -> (α -> β algebra) -> bool
+    <tr><td>
+    <span class="strong">general_martingale</span>
+    <td>
+    :(α -> bool) # (α -> α -> bool) ->
+    β m_space -> (α -> β algebra) -> (α -> β -> extreal) -> bool
+    <tr><td>
+    <span class="strong">general_sigma</span>
+    <td>
+    :(α -> β -> γ) -> α algebra -> β algebra -> γ algebra
+    <tr><td>
+    <span class="strong">has_exhausting_sequence</span>
+    <td>
+    :α algebra -> bool
+    <tr><td>
+    <span class="strong">infty_sigma_algebra</span>
+    <td>
+    :(α -> bool) -> (num -> α algebra) -> α algebra
+    <tr><td> <span class="strong">lborel_2d</span> <td> :(real # real) m_space
+    <tr><td>
+    <span class="strong">martingale</span>
+    <td>
+    :α m_space -> (num -> α algebra) -> (num -> α -> extreal) -> bool
+    <tr><td>
+    <span class="strong">prod_measure</span>
+    <td>
+    :α m_space -> β m_space -> (α # β) m_space
+    <tr><td>
+    <span class="strong">sigma_finite_filtered_measure_space</span>
+    <td>
+    :α m_space -> (num -> α algebra) -> bool
+    <tr><td>
+    <span class="strong">sigma_finite_general_filtered_measure_space</span>
+    <td>
+    :(α -> bool) # (α -> α -> bool) -> β m_space -> (α -> β algebra) -> bool
+    <tr><td>
+    <span class="strong">sub_martingale</span>
+    <td>
+    :α m_space -> (num -> α algebra) -> (num -> α -> extreal) -> bool
+    <tr><td>
+    <span class="strong">sub_sigma_algebra</span>
+    <td>
+    :α algebra -> α algebra -> bool
+    <tr><td>
+    <span class="strong">super_martingale</span>
+    <td>
+    :α m_space -> (num -> α algebra) -> (num -> α -> extreal) -> bool
+    <tr><td>
+    <span class="strong">upwards_filtering</span>
+    <td>
+    :(α -> bool) # (α -> α -> bool) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">exhausting_sequence_def</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    exhausting_sequence a f ⇔
+    f ∈ (𝕌(:num) → subsets a) ∧ (∀n. f n ⊆ f (SUC n)) ∧
+    (BIGUNION (IMAGE f 𝕌(:num)) = space a)
+</pre>
+
+<DT><span class="strong">fcp_sigma_def</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fcp_sigma a b =
+    sigma (fcp_cross (space a) (space b)) (fcp_prod (subsets a) (subsets b))
+</pre>
+
+<DT><span class="strong">filtered_measure_space_def</span>
+<DD>
+<pre>
+⊢ ∀sp sts m a.
+    filtered_measure_space (sp,sts,m) a ⇔
+    measure_space (sp,sts,m) ∧ filtration (sp,sts) a
+</pre>
+
+<DT><span class="strong">filtration_def</span>
+<DD>
+<pre>
+⊢ ∀A a.
+    filtration A a ⇔
+    (∀n. sub_sigma_algebra (a n) A) ∧
+    ∀i j. i ≤ j ⇒ subsets (a i) ⊆ subsets (a j)
+</pre>
+
+<DT><span class="strong">general_filtered_measure_space_def</span>
+<DD>
+<pre>
+⊢ ∀J R sp sts m a.
+    filtered_measure_space (J,R) (sp,sts,m) a ⇔
+    measure_space (sp,sts,m) ∧ filtration (J,R) (sp,sts) a
+</pre>
+
+<DT><span class="strong">general_filtration_def</span>
+<DD>
+<pre>
+⊢ ∀J R A a.
+    filtration (J,R) A a ⇔
+    poset (J,R) ∧ (∀n. n ∈ J ⇒ sub_sigma_algebra (a n) A) ∧
+    ∀i j. i ∈ J ∧ j ∈ J ∧ R i j ⇒ subsets (a i) ⊆ subsets (a j)
+</pre>
+
+<DT><span class="strong">general_martingale_def</span>
+<DD>
+<pre>
+⊢ ∀J R m a u.
+    martingale (J,R) m a u ⇔
+    sigma_finite_filtered_measure_space (J,R) m a ∧
+    (∀n. n ∈ J ⇒ integrable m (u n)) ∧
+    ∀i j s.
+      i ∈ J ∧ j ∈ J ∧ R i j ∧ s ∈ subsets (a i) ⇒
+      (∫ m (λx. u i x * 𝟙 s x) = ∫ m (λx. u j x * 𝟙 s x))
+</pre>
+
+<DT><span class="strong">general_sigma_def</span>
+<DD>
+<pre>
+⊢ ∀cons A B.
+    general_sigma cons A B =
+    sigma (general_cross cons (space A) (space B))
+      (general_prod cons (subsets A) (subsets B))
+</pre>
+
+<DT><span class="strong">has_exhausting_sequence</span>
+<DD>
+<pre>
+⊢ ∀a. has_exhausting_sequence a ⇔ ∃f. exhausting_sequence a f
+</pre>
+
+<DT><span class="strong">infty_sigma_algebra_def</span>
+<DD>
+<pre>
+⊢ ∀sp a.
+    infty_sigma_algebra sp a =
+    sigma sp (BIGUNION (IMAGE (λi. subsets (a i)) 𝕌(:num)))
+</pre>
+
+<DT><span class="strong">lborel_2d_def</span>
+<DD>
+<pre>
+⊢ sigma_finite_measure_space lborel_2d ∧
+  (m_space lborel_2d = 𝕌(:real) × 𝕌(:real)) ∧
+  (measurable_sets lborel_2d =
+   subsets ((𝕌(:real),subsets borel) × (𝕌(:real),subsets borel))) ∧
+  (∀s t.
+     s ∈ subsets borel ∧ t ∈ subsets borel ⇒
+     (measure lborel_2d (s × t) = lambda s * lambda t)) ∧
+  ∀s. s ∈ measurable_sets lborel_2d ⇒
+      (∀x. (λy. 𝟙 s (x,y)) ∈ Borel_measurable borel) ∧
+      (∀y. (λx. 𝟙 s (x,y)) ∈ Borel_measurable borel) ∧
+      (λy. ∫⁺ lborel (λx. 𝟙 s (x,y))) ∈ Borel_measurable borel ∧
+      (λx. ∫⁺ lborel (λy. 𝟙 s (x,y))) ∈ Borel_measurable borel ∧
+      (measure lborel_2d s = ∫⁺ lborel (λy. ∫⁺ lborel (λx. 𝟙 s (x,y)))) ∧
+      (measure lborel_2d s = ∫⁺ lborel (λx. ∫⁺ lborel (λy. 𝟙 s (x,y))))
+</pre>
+
+<DT><span class="strong">martingale_def</span>
+<DD>
+<pre>
+⊢ ∀m a u.
+    martingale m a u ⇔
+    sigma_finite_filtered_measure_space m a ∧ (∀n. integrable m (u n)) ∧
+    ∀n s.
+      s ∈ subsets (a n) ⇒
+      (∫ m (λx. u (SUC n) x * 𝟙 s x) = ∫ m (λx. u n x * 𝟙 s x))
+</pre>
+
+<DT><span class="strong">prod_measure_def</span>
+<DD>
+<pre>
+⊢ ∀m1 m2.
+    m1 × m2 =
+    (m_space m1 × m_space m2,
+     subsets
+       ((m_space m1,measurable_sets m1) × (m_space m2,measurable_sets m2)),
+     (λs. ∫⁺ m2 (λy. ∫⁺ m1 (λx. 𝟙 s (x,y)))))
+</pre>
+
+<DT><span class="strong">sigma_finite_filtered_measure_space_def</span>
+<DD>
+<pre>
+⊢ ∀sp sts m a.
+    sigma_finite_filtered_measure_space (sp,sts,m) a ⇔
+    filtered_measure_space (sp,sts,m) a ∧ sigma_finite (sp,subsets (a 0),m)
+</pre>
+
+<DT><span class="strong">sigma_finite_general_filtered_measure_space_def</span>
+<DD>
+<pre>
+⊢ ∀J R sp sts m a.
+    sigma_finite_filtered_measure_space (J,R) (sp,sts,m) a ⇔
+    filtered_measure_space (J,R) (sp,sts,m) a ∧
+    ∀n. n ∈ J ⇒ sigma_finite (sp,subsets (a n),m)
+</pre>
+
+<DT><span class="strong">sub_martingale_def</span>
+<DD>
+<pre>
+⊢ ∀m a u.
+    sub_martingale m a u ⇔
+    sigma_finite_filtered_measure_space m a ∧ (∀n. integrable m (u n)) ∧
+    ∀n s.
+      s ∈ subsets (a n) ⇒
+      ∫ m (λx. u n x * 𝟙 s x) ≤ ∫ m (λx. u (SUC n) x * 𝟙 s x)
+</pre>
+
+<DT><span class="strong">sub_sigma_algebra_def</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    sub_sigma_algebra a b ⇔
+    sigma_algebra a ∧ sigma_algebra b ∧ (space a = space b) ∧
+    subsets a ⊆ subsets b
+</pre>
+
+<DT><span class="strong">super_martingale_def</span>
+<DD>
+<pre>
+⊢ ∀m a u.
+    super_martingale m a u ⇔
+    sigma_finite_filtered_measure_space m a ∧ (∀n. integrable m (u n)) ∧
+    ∀n s.
+      s ∈ subsets (a n) ⇒
+      ∫ m (λx. u (SUC n) x * 𝟙 s x) ≤ ∫ m (λx. u n x * 𝟙 s x)
+</pre>
+
+<DT><span class="strong">upwards_filtering_def</span>
+<DD>
+<pre>
+⊢ ∀J R.
+    upwards_filtering (J,R) ⇔ ∀a b. a ∈ J ∧ b ∈ J ⇒ ∃c. c ∈ J ∧ R a c ∧ R b c
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">EXISTENCE_OF_PROD_MEASURE</span>
+<DD>
+<pre>
+⊢ ∀X Y A B u v m0.
+    sigma_finite_measure_space (X,A,u) ∧ sigma_finite_measure_space (Y,B,v) ∧
+    (∀s t. s ∈ A ∧ t ∈ B ⇒ (m0 (s × t) = u s * v t)) ⇒
+    (∀s. s ∈ subsets ((X,A) × (Y,B)) ⇒
+         (∀x. x ∈ X ⇒ (λy. 𝟙 s (x,y)) ∈ Borel_measurable (Y,B)) ∧
+         (∀y. y ∈ Y ⇒ (λx. 𝟙 s (x,y)) ∈ Borel_measurable (X,A)) ∧
+         (λy. ∫⁺ (X,A,u) (λx. 𝟙 s (x,y))) ∈ Borel_measurable (Y,B) ∧
+         (λx. ∫⁺ (Y,B,v) (λy. 𝟙 s (x,y))) ∈ Borel_measurable (X,A)) ∧
+    ∃m. sigma_finite_measure_space (X × Y,subsets ((X,A) × (Y,B)),m) ∧
+        (∀s. s ∈ prod_sets A B ⇒ (m s = m0 s)) ∧
+        ∀s. s ∈ subsets ((X,A) × (Y,B)) ⇒
+            (m s = ∫⁺ (Y,B,v) (λy. ∫⁺ (X,A,u) (λx. 𝟙 s (x,y)))) ∧
+            (m s = ∫⁺ (X,A,u) (λx. ∫⁺ (Y,B,v) (λy. 𝟙 s (x,y))))
+</pre>
+
+<DT><span class="strong">EXISTENCE_OF_PROD_MEASURE'</span>
+<DD>
+<pre>
+⊢ ∀X Y A B u v m0.
+    sigma_finite_measure_space (X,A,u) ∧ sigma_finite_measure_space (Y,B,v) ∧
+    (∀s t. s ∈ A ∧ t ∈ B ⇒ (m0 (s × t) = u s * v t)) ⇒
+    (∀s. s ∈ subsets ((X,A) × (Y,B)) ⇒
+         (∀x. x ∈ X ⇒ (λy. 𝟙 s (x,y)) ∈ Borel_measurable (Y,B)) ∧
+         (∀y. y ∈ Y ⇒ (λx. 𝟙 s (x,y)) ∈ Borel_measurable (X,A)) ∧
+         (λy. ∫ (X,A,u) (λx. 𝟙 s (x,y))) ∈ Borel_measurable (Y,B) ∧
+         (λx. ∫ (Y,B,v) (λy. 𝟙 s (x,y))) ∈ Borel_measurable (X,A)) ∧
+    ∃m. sigma_finite_measure_space (X × Y,subsets ((X,A) × (Y,B)),m) ∧
+        (∀s. s ∈ prod_sets A B ⇒ (m s = m0 s)) ∧
+        ∀s. s ∈ subsets ((X,A) × (Y,B)) ⇒
+            (m s = ∫ (Y,B,v) (λy. ∫ (X,A,u) (λx. 𝟙 s (x,y)))) ∧
+            (m s = ∫ (X,A,u) (λx. ∫ (Y,B,v) (λy. 𝟙 s (x,y))))
+</pre>
+
+<DT><span class="strong">FILTRATION</span>
+<DD>
+<pre>
+⊢ ∀A a.
+    filtration A a ⇔
+    (∀n. sub_sigma_algebra (a n) A) ∧ (∀n. subsets (a n) ⊆ subsets A) ∧
+    ∀i j. i ≤ j ⇒ subsets (a i) ⊆ subsets (a j)
+</pre>
+
+<DT><span class="strong">FILTRATION_BOUNDED</span>
+<DD>
+<pre>
+⊢ ∀A a. filtration A a ⇒ ∀n. sub_sigma_algebra (a n) A
+</pre>
+
+<DT><span class="strong">FILTRATION_MONO</span>
+<DD>
+<pre>
+⊢ ∀A a. filtration A a ⇒ ∀i j. i ≤ j ⇒ subsets (a i) ⊆ subsets (a j)
+</pre>
+
+<DT><span class="strong">FILTRATION_SUBSETS</span>
+<DD>
+<pre>
+⊢ ∀A a. filtration A a ⇒ ∀n. subsets (a n) ⊆ subsets A
+</pre>
+
+<DT><span class="strong">FUBINI</span>
+<DD>
+<pre>
+⊢ ∀X Y A B u v f.
+    sigma_finite_measure_space (X,A,u) ∧ sigma_finite_measure_space (Y,B,v) ∧
+    f ∈ Borel_measurable ((X,A) × (Y,B)) ∧
+    (∫⁺ ((X,A,u) × (Y,B,v)) (abs ∘ f) ≠ +∞ ∨
+     ∫⁺ (Y,B,v) (λy. ∫⁺ (X,A,u) (λx. (abs ∘ f) (x,y))) ≠ +∞ ∨
+     ∫⁺ (X,A,u) (λx. ∫⁺ (Y,B,v) (λy. (abs ∘ f) (x,y))) ≠ +∞) ⇒
+    ∫⁺ ((X,A,u) × (Y,B,v)) (abs ∘ f) ≠ +∞ ∧
+    ∫⁺ (Y,B,v) (λy. ∫⁺ (X,A,u) (λx. (abs ∘ f) (x,y))) ≠ +∞ ∧
+    ∫⁺ (X,A,u) (λx. ∫⁺ (Y,B,v) (λy. (abs ∘ f) (x,y))) ≠ +∞ ∧
+    integrable ((X,A,u) × (Y,B,v)) f ∧
+    (AE y::(Y,B,v). integrable (X,A,u) (λx. f (x,y))) ∧
+    (AE x::(X,A,u). integrable (Y,B,v) (λy. f (x,y))) ∧
+    integrable (X,A,u) (λx. ∫ (Y,B,v) (λy. f (x,y))) ∧
+    integrable (Y,B,v) (λy. ∫ (X,A,u) (λx. f (x,y))) ∧
+    (∫ ((X,A,u) × (Y,B,v)) f = ∫ (Y,B,v) (λy. ∫ (X,A,u) (λx. f (x,y)))) ∧
+    (∫ ((X,A,u) × (Y,B,v)) f = ∫ (X,A,u) (λx. ∫ (Y,B,v) (λy. f (x,y))))
+</pre>
+
+<DT><span class="strong">FUBINI'</span>
+<DD>
+<pre>
+⊢ ∀X Y A B u v f.
+    sigma_finite_measure_space (X,A,u) ∧ sigma_finite_measure_space (Y,B,v) ∧
+    f ∈ Borel_measurable ((X,A) × (Y,B)) ∧
+    (∫ ((X,A,u) × (Y,B,v)) (abs ∘ f) ≠ +∞ ∨
+     ∫ (Y,B,v) (λy. ∫ (X,A,u) (λx. (abs ∘ f) (x,y))) ≠ +∞ ∨
+     ∫ (X,A,u) (λx. ∫ (Y,B,v) (λy. (abs ∘ f) (x,y))) ≠ +∞) ⇒
+    ∫ ((X,A,u) × (Y,B,v)) (abs ∘ f) ≠ +∞ ∧
+    ∫ (Y,B,v) (λy. ∫ (X,A,u) (λx. (abs ∘ f) (x,y))) ≠ +∞ ∧
+    ∫ (X,A,u) (λx. ∫ (Y,B,v) (λy. (abs ∘ f) (x,y))) ≠ +∞ ∧
+    integrable ((X,A,u) × (Y,B,v)) f ∧
+    (AE y::(Y,B,v). integrable (X,A,u) (λx. f (x,y))) ∧
+    (AE x::(X,A,u). integrable (Y,B,v) (λy. f (x,y))) ∧
+    integrable (X,A,u) (λx. ∫ (Y,B,v) (λy. f (x,y))) ∧
+    integrable (Y,B,v) (λy. ∫ (X,A,u) (λx. f (x,y))) ∧
+    (∫ ((X,A,u) × (Y,B,v)) f = ∫ (Y,B,v) (λy. ∫ (X,A,u) (λx. f (x,y)))) ∧
+    (∫ ((X,A,u) × (Y,B,v)) f = ∫ (X,A,u) (λx. ∫ (Y,B,v) (λy. f (x,y))))
+</pre>
+
+<DT><span class="strong">Fubini</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 f.
+    sigma_finite_measure_space m1 ∧ sigma_finite_measure_space m2 ∧
+    f ∈
+    Borel_measurable
+      ((m_space m1,measurable_sets m1) × (m_space m2,measurable_sets m2)) ∧
+    (∫⁺ (m1 × m2) (abs ∘ f) ≠ +∞ ∨
+     ∫⁺ m2 (λy. ∫⁺ m1 (λx. (abs ∘ f) (x,y))) ≠ +∞ ∨
+     ∫⁺ m1 (λx. ∫⁺ m2 (λy. (abs ∘ f) (x,y))) ≠ +∞) ⇒
+    ∫⁺ (m1 × m2) (abs ∘ f) ≠ +∞ ∧
+    ∫⁺ m2 (λy. ∫⁺ m1 (λx. (abs ∘ f) (x,y))) ≠ +∞ ∧
+    ∫⁺ m1 (λx. ∫⁺ m2 (λy. (abs ∘ f) (x,y))) ≠ +∞ ∧ integrable (m1 × m2) f ∧
+    (AE y::m2. integrable m1 (λx. f (x,y))) ∧
+    (AE x::m1. integrable m2 (λy. f (x,y))) ∧
+    integrable m1 (λx. ∫ m2 (λy. f (x,y))) ∧
+    integrable m2 (λy. ∫ m1 (λx. f (x,y))) ∧
+    (∫ (m1 × m2) f = ∫ m2 (λy. ∫ m1 (λx. f (x,y)))) ∧
+    (∫ (m1 × m2) f = ∫ m1 (λx. ∫ m2 (λy. f (x,y))))
+</pre>
+
+<DT><span class="strong">Fubini'</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 f.
+    sigma_finite_measure_space m1 ∧ sigma_finite_measure_space m2 ∧
+    f ∈
+    Borel_measurable
+      ((m_space m1,measurable_sets m1) × (m_space m2,measurable_sets m2)) ∧
+    (∫ (m1 × m2) (abs ∘ f) ≠ +∞ ∨ ∫ m2 (λy. ∫ m1 (λx. (abs ∘ f) (x,y))) ≠ +∞ ∨
+     ∫ m1 (λx. ∫ m2 (λy. (abs ∘ f) (x,y))) ≠ +∞) ⇒
+    ∫ (m1 × m2) (abs ∘ f) ≠ +∞ ∧ ∫ m2 (λy. ∫ m1 (λx. (abs ∘ f) (x,y))) ≠ +∞ ∧
+    ∫ m1 (λx. ∫ m2 (λy. (abs ∘ f) (x,y))) ≠ +∞ ∧ integrable (m1 × m2) f ∧
+    (AE y::m2. integrable m1 (λx. f (x,y))) ∧
+    (AE x::m1. integrable m2 (λy. f (x,y))) ∧
+    integrable m1 (λx. ∫ m2 (λy. f (x,y))) ∧
+    integrable m2 (λy. ∫ m1 (λx. f (x,y))) ∧
+    (∫ (m1 × m2) f = ∫ m2 (λy. ∫ m1 (λx. f (x,y)))) ∧
+    (∫ (m1 × m2) f = ∫ m1 (λx. ∫ m2 (λy. f (x,y))))
+</pre>
+
+<DT><span class="strong">INFTY_SIGMA_ALGEBRA_BOUNDED</span>
+<DD>
+<pre>
+⊢ ∀A a. filtration A a ⇒ sub_sigma_algebra (infty_sigma_algebra (space A) a) A
+</pre>
+
+<DT><span class="strong">INFTY_SIGMA_ALGEBRA_MAXIMAL</span>
+<DD>
+<pre>
+⊢ ∀A a.
+    filtration A a ⇒
+    ∀n. sub_sigma_algebra (a n) (infty_sigma_algebra (space A) a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_FROM_PROD_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀X Y A B f.
+    sigma_algebra (X,A) ∧ sigma_algebra (Y,B) ∧
+    f ∈ Borel_measurable ((X,A) × (Y,B)) ⇒
+    (∀y. y ∈ Y ⇒ (λx. f (x,y)) ∈ Borel_measurable (X,A)) ∧
+    ∀x. x ∈ X ⇒ (λy. f (x,y)) ∈ Borel_measurable (Y,B)
+</pre>
+
+<DT><span class="strong">MARTINGALE_BOTH_SUB_SUPER</span>
+<DD>
+<pre>
+⊢ ∀m a u. martingale m a u ⇔ sub_martingale m a u ∧ super_martingale m a u
+</pre>
+
+<DT><span class="strong">POSET_NUM_LE</span>
+<DD>
+<pre>
+⊢ poset (𝕌(:num),$<=)
+</pre>
+
+<DT><span class="strong">PROD_SIGMA_OF_GENERATOR</span>
+<DD>
+<pre>
+⊢ ∀X Y E G.
+    subset_class X E ∧ subset_class Y G ∧ has_exhausting_sequence (X,E) ∧
+    has_exhausting_sequence (Y,G) ⇒
+    ((X,E) × (Y,G) = sigma X E × sigma Y G)
+</pre>
+
+<DT><span class="strong">SIGMA_FINITE_FILTERED_MEASURE_SPACE_I</span>
+<DD>
+<pre>
+⊢ ∀sp sts a m.
+    sigma_finite_filtered_measure_space (sp,sts,m) a ⇒
+    ∀n. sigma_finite (sp,subsets (a n),m)
+</pre>
+
+<DT><span class="strong">SUB_SIGMA_ALGEBRA_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀a b. sub_sigma_algebra a b ∧ sub_sigma_algebra b a ⇒ (a = b)
+</pre>
+
+<DT><span class="strong">SUB_SIGMA_ALGEBRA_MEASURE_SPACE</span>
+<DD>
+<pre>
+⊢ ∀m a.
+    measure_space m ∧ sub_sigma_algebra a (m_space m,measurable_sets m) ⇒
+    measure_space (m_space m,subsets a,measure m)
+</pre>
+
+<DT><span class="strong">SUB_SIGMA_ALGEBRA_ORDER</span>
+<DD>
+<pre>
+⊢ Order sub_sigma_algebra
+</pre>
+
+<DT><span class="strong">SUB_SIGMA_ALGEBRA_REFL</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇒ sub_sigma_algebra a a
+</pre>
+
+<DT><span class="strong">SUB_SIGMA_ALGEBRA_TRANS</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    sub_sigma_algebra a b ∧ sub_sigma_algebra b c ⇒ sub_sigma_algebra a c
+</pre>
+
+<DT><span class="strong">TONELLI</span>
+<DD>
+<pre>
+⊢ ∀X Y A B u v f.
+    sigma_finite_measure_space (X,A,u) ∧ sigma_finite_measure_space (Y,B,v) ∧
+    f ∈ Borel_measurable ((X,A) × (Y,B)) ∧ (∀s. s ∈ X × Y ⇒ 0 ≤ f s) ⇒
+    (∀y. y ∈ Y ⇒ (λx. f (x,y)) ∈ Borel_measurable (X,A)) ∧
+    (∀x. x ∈ X ⇒ (λy. f (x,y)) ∈ Borel_measurable (Y,B)) ∧
+    (λx. ∫⁺ (Y,B,v) (λy. f (x,y))) ∈ Borel_measurable (X,A) ∧
+    (λy. ∫⁺ (X,A,u) (λx. f (x,y))) ∈ Borel_measurable (Y,B) ∧
+    (∫⁺ ((X,A,u) × (Y,B,v)) f = ∫⁺ (Y,B,v) (λy. ∫⁺ (X,A,u) (λx. f (x,y)))) ∧
+    (∫⁺ ((X,A,u) × (Y,B,v)) f = ∫⁺ (X,A,u) (λx. ∫⁺ (Y,B,v) (λy. f (x,y))))
+</pre>
+
+<DT><span class="strong">UNIQUENESS_OF_PROD_MEASURE</span>
+<DD>
+<pre>
+⊢ ∀X Y E G A B u v m m'.
+    subset_class X E ∧ subset_class Y G ∧ sigma_finite (X,E,u) ∧
+    sigma_finite (Y,G,v) ∧ (∀s t. s ∈ E ∧ t ∈ E ⇒ s ∩ t ∈ E) ∧
+    (∀s t. s ∈ G ∧ t ∈ G ⇒ s ∩ t ∈ G) ∧ (A = sigma X E) ∧ (B = sigma Y G) ∧
+    measure_space (X,subsets A,u) ∧ measure_space (Y,subsets B,v) ∧
+    measure_space (X × Y,subsets (A × B),m) ∧
+    measure_space (X × Y,subsets (A × B),m') ∧
+    (∀s t. s ∈ E ∧ t ∈ G ⇒ (m (s × t) = u s * v t)) ∧
+    (∀s t. s ∈ E ∧ t ∈ G ⇒ (m' (s × t) = u s * v t)) ⇒
+    ∀x. x ∈ subsets (A × B) ⇒ (m x = m' x)
+</pre>
+
+<DT><span class="strong">UNIQUENESS_OF_PROD_MEASURE'</span>
+<DD>
+<pre>
+⊢ ∀X Y A B u v m m'.
+    sigma_finite_measure_space (X,A,u) ∧ sigma_finite_measure_space (Y,B,v) ∧
+    measure_space (X × Y,subsets ((X,A) × (Y,B)),m) ∧
+    measure_space (X × Y,subsets ((X,A) × (Y,B)),m') ∧
+    (∀s t. s ∈ A ∧ t ∈ B ⇒ (m (s × t) = u s * v t)) ∧
+    (∀s t. s ∈ A ∧ t ∈ B ⇒ (m' (s × t) = u s * v t)) ⇒
+    ∀x. x ∈ subsets ((X,A) × (Y,B)) ⇒ (m x = m' x)
+</pre>
+
+<DT><span class="strong">exhausting_sequence_CROSS</span>
+<DD>
+<pre>
+⊢ ∀X Y A B f g.
+    exhausting_sequence (X,A) f ∧ exhausting_sequence (Y,B) g ⇒
+    exhausting_sequence (X × Y,prod_sets A B) (λn. f n × g n)
+</pre>
+
+<DT><span class="strong">exhausting_sequence_alt</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    exhausting_sequence a f ⇔
+    f ∈ (𝕌(:num) → subsets a) ∧ (∀m n. m ≤ n ⇒ f m ⊆ f n) ∧
+    (BIGUNION (IMAGE f 𝕌(:num)) = space a)
+</pre>
+
+<DT><span class="strong">exhausting_sequence_cross</span>
+<DD>
+<pre>
+⊢ ∀X Y A B f g.
+    exhausting_sequence (X,A) f ∧ exhausting_sequence (Y,B) g ⇒
+    exhausting_sequence (fcp_cross X Y,fcp_prod A B)
+      (λn. fcp_cross (f n) (g n))
+</pre>
+
+<DT><span class="strong">exhausting_sequence_general_cross</span>
+<DD>
+<pre>
+⊢ ∀cons X Y A B f g.
+    exhausting_sequence (X,A) f ∧ exhausting_sequence (Y,B) g ⇒
+    exhausting_sequence (general_cross cons X Y,general_prod cons A B)
+      (λn. general_cross cons (f n) (g n))
+</pre>
+
+<DT><span class="strong">existence_of_prod_measure</span>
+<DD>
+<pre>
+⊢ ∀X Y A B u v m0.
+    FINITE 𝕌(:β) ∧ FINITE 𝕌(:γ) ∧ sigma_finite_measure_space (X,A,u) ∧
+    sigma_finite_measure_space (Y,B,v) ∧
+    (∀s t. s ∈ A ∧ t ∈ B ⇒ (m0 (fcp_cross s t) = u s * v t)) ⇒
+    (∀s. s ∈ subsets (fcp_sigma (X,A) (Y,B)) ⇒
+         (∀x. x ∈ X ⇒ (λy. 𝟙 s (FCP_CONCAT x y)) ∈ Borel_measurable (Y,B)) ∧
+         (∀y. y ∈ Y ⇒ (λx. 𝟙 s (FCP_CONCAT x y)) ∈ Borel_measurable (X,A)) ∧
+         (λy. ∫⁺ (X,A,u) (λx. 𝟙 s (FCP_CONCAT x y))) ∈ Borel_measurable (Y,B) ∧
+         (λx. ∫⁺ (Y,B,v) (λy. 𝟙 s (FCP_CONCAT x y))) ∈ Borel_measurable (X,A)) ∧
+    ∃m. sigma_finite_measure_space
+          (fcp_cross X Y,subsets (fcp_sigma (X,A) (Y,B)),m) ∧
+        (∀s. s ∈ fcp_prod A B ⇒ (m s = m0 s)) ∧
+        ∀s. s ∈ subsets (fcp_sigma (X,A) (Y,B)) ⇒
+            (m s = ∫⁺ (Y,B,v) (λy. ∫⁺ (X,A,u) (λx. 𝟙 s (FCP_CONCAT x y)))) ∧
+            (m s = ∫⁺ (X,A,u) (λx. ∫⁺ (Y,B,v) (λy. 𝟙 s (FCP_CONCAT x y))))
+</pre>
+
+<DT><span class="strong">existence_of_prod_measure_general</span>
+<DD>
+<pre>
+⊢ ∀cons car cdr X Y A B u v m0.
+    pair_operation cons car cdr ∧ sigma_finite_measure_space (X,A,u) ∧
+    sigma_finite_measure_space (Y,B,v) ∧
+    (∀s t. s ∈ A ∧ t ∈ B ⇒ (m0 (general_cross cons s t) = u s * v t)) ⇒
+    (∀s. s ∈ subsets (general_sigma cons (X,A) (Y,B)) ⇒
+         (∀x. x ∈ X ⇒ (λy. 𝟙 s (cons x y)) ∈ Borel_measurable (Y,B)) ∧
+         (∀y. y ∈ Y ⇒ (λx. 𝟙 s (cons x y)) ∈ Borel_measurable (X,A)) ∧
+         (λy. ∫⁺ (X,A,u) (λx. 𝟙 s (cons x y))) ∈ Borel_measurable (Y,B) ∧
+         (λx. ∫⁺ (Y,B,v) (λy. 𝟙 s (cons x y))) ∈ Borel_measurable (X,A)) ∧
+    ∃m. sigma_finite_measure_space
+          (general_cross cons X Y,subsets (general_sigma cons (X,A) (Y,B)),m) ∧
+        (∀s. s ∈ general_prod cons A B ⇒ (m s = m0 s)) ∧
+        ∀s. s ∈ subsets (general_sigma cons (X,A) (Y,B)) ⇒
+            (m s = ∫⁺ (Y,B,v) (λy. ∫⁺ (X,A,u) (λx. 𝟙 s (cons x y)))) ∧
+            (m s = ∫⁺ (X,A,u) (λx. ∫⁺ (Y,B,v) (λy. 𝟙 s (cons x y))))
+</pre>
+
+<DT><span class="strong">fcp_sigma_alt</span>
+<DD>
+<pre>
+⊢ ∀A B. fcp_sigma A B = general_sigma FCP_CONCAT A B
+</pre>
+
+<DT><span class="strong">filtered_measure_space_alt</span>
+<DD>
+<pre>
+⊢ ∀m a.
+    filtered_measure_space m a ⇔
+    measure_space m ∧ filtration (m_space m,measurable_sets m) a
+</pre>
+
+<DT><span class="strong">filtration_alt</span>
+<DD>
+<pre>
+⊢ ∀A a. filtration A a ⇔ filtration (𝕌(:num),$<=) A a
+</pre>
+
+<DT><span class="strong">general_filtered_measure_space_alt</span>
+<DD>
+<pre>
+⊢ ∀sp sts m a.
+    filtered_measure_space (sp,sts,m) a ⇔
+    filtered_measure_space (𝕌(:num),$<=) (sp,sts,m) a
+</pre>
+
+<DT><span class="strong">general_sigma_of_generator</span>
+<DD>
+<pre>
+⊢ ∀cons car cdr X Y E G.
+    pair_operation cons car cdr ∧ subset_class X E ∧ subset_class Y G ∧
+    has_exhausting_sequence (X,E) ∧ has_exhausting_sequence (Y,G) ⇒
+    (general_sigma cons (X,E) (Y,G) =
+     general_sigma cons (sigma X E) (sigma Y G))
+</pre>
+
+<DT><span class="strong">has_exhausting_sequence_alt</span>
+<DD>
+<pre>
+⊢ ∀a. has_exhausting_sequence a ⇔
+      ∃f. f ∈ (𝕌(:num) → subsets a) ∧ (∀m n. m ≤ n ⇒ f m ⊆ f n) ∧
+          (BIGUNION (IMAGE f 𝕌(:num)) = space a)
+</pre>
+
+<DT><span class="strong">has_exhausting_sequence_def</span>
+<DD>
+<pre>
+⊢ ∀a. has_exhausting_sequence a ⇔
+      ∃f. f ∈ (𝕌(:num) → subsets a) ∧ (∀n. f n ⊆ f (SUC n)) ∧
+          (BIGUNION (IMAGE f 𝕌(:num)) = space a)
+</pre>
+
+<DT><span class="strong">integrable_cong_measure</span>
+<DD>
+<pre>
+⊢ ∀sp sts u v f.
+    measure_space (sp,sts,u) ∧ measure_space (sp,sts,v) ∧
+    (∀s. s ∈ sts ⇒ (u s = v s)) ⇒
+    (integrable (sp,sts,u) f ⇔ integrable (sp,sts,v) f)
+</pre>
+
+<DT><span class="strong">integrable_cong_measure'</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 f.
+    measure_space m1 ∧ measure_space m2 ∧ (m_space m1 = m_space m2) ∧
+    (measurable_sets m1 = measurable_sets m2) ∧
+    (∀s. s ∈ measurable_sets m1 ⇒ (measure m1 s = measure m2 s)) ⇒
+    (integrable m1 f ⇔ integrable m2 f)
+</pre>
+
+<DT><span class="strong">integral_cong_measure</span>
+<DD>
+<pre>
+⊢ ∀sp sts u v f.
+    measure_space (sp,sts,u) ∧ measure_space (sp,sts,v) ∧
+    (∀s. s ∈ sts ⇒ (u s = v s)) ⇒
+    (∫ (sp,sts,u) f = ∫ (sp,sts,v) f)
+</pre>
+
+<DT><span class="strong">integral_cong_measure'</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 f.
+    measure_space m1 ∧ measure_space m2 ∧ (m_space m1 = m_space m2) ∧
+    (measurable_sets m1 = measurable_sets m2) ∧
+    (∀s. s ∈ measurable_sets m1 ⇒ (measure m1 s = measure m2 s)) ⇒
+    (∫ m1 f = ∫ m2 f)
+</pre>
+
+<DT><span class="strong">integral_distr</span>
+<DD>
+<pre>
+⊢ ∀M B f u.
+    measure_space M ∧ sigma_algebra B ∧
+    f ∈ measurable (m_space M,measurable_sets M) B ∧ u ∈ Borel_measurable B ⇒
+    (∫ (space B,subsets B,distr M f) u = ∫ M (u ∘ f)) ∧
+    (integrable (space B,subsets B,distr M f) u ⇔ integrable M (u ∘ f))
+</pre>
+
+<DT><span class="strong">lborel_2d_prod_measure</span>
+<DD>
+<pre>
+⊢ ∀s. s ∈ measurable_sets lborel_2d ⇒
+      (measure lborel_2d s = measure (lborel × lborel) s)
+</pre>
+
+<DT><span class="strong">measure_space_prod_measure</span>
+<DD>
+<pre>
+⊢ ∀m1 m2.
+    sigma_finite_measure_space m1 ∧ sigma_finite_measure_space m2 ⇒
+    measure_space (m1 × m2)
+</pre>
+
+<DT><span class="strong">pos_fn_integral_cong_measure</span>
+<DD>
+<pre>
+⊢ ∀sp sts u v f.
+    measure_space (sp,sts,u) ∧ measure_space (sp,sts,v) ∧
+    (∀s. s ∈ sts ⇒ (u s = v s)) ∧ (∀x. x ∈ sp ⇒ 0 ≤ f x) ⇒
+    (∫⁺ (sp,sts,u) f = ∫⁺ (sp,sts,v) f)
+</pre>
+
+<DT><span class="strong">pos_fn_integral_cong_measure'</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 f.
+    measure_space m1 ∧ measure_space m2 ∧ (m_space m1 = m_space m2) ∧
+    (measurable_sets m1 = measurable_sets m2) ∧
+    (∀s. s ∈ measurable_sets m1 ⇒ (measure m1 s = measure m2 s)) ∧
+    (∀x. x ∈ m_space m1 ⇒ 0 ≤ f x) ⇒
+    (∫⁺ m1 f = ∫⁺ m2 f)
+</pre>
+
+<DT><span class="strong">pos_fn_integral_distr</span>
+<DD>
+<pre>
+⊢ ∀M B f u.
+    measure_space M ∧ sigma_algebra B ∧
+    f ∈ measurable (m_space M,measurable_sets M) B ∧ u ∈ Borel_measurable B ∧
+    (∀x. x ∈ space B ⇒ 0 ≤ u x) ⇒
+    (∫⁺ (space B,subsets B,distr M f) u = ∫⁺ M (u ∘ f))
+</pre>
+
+<DT><span class="strong">prod_sigma_alt</span>
+<DD>
+<pre>
+⊢ ∀A B. A × B = general_sigma $, A B
+</pre>
+
+<DT><span class="strong">prod_sigma_of_generator</span>
+<DD>
+<pre>
+⊢ ∀X Y E G.
+    FINITE 𝕌(:β) ∧ FINITE 𝕌(:γ) ∧ subset_class X E ∧ subset_class Y G ∧
+    has_exhausting_sequence (X,E) ∧ has_exhausting_sequence (Y,G) ⇒
+    (fcp_sigma (X,E) (Y,G) = fcp_sigma (sigma X E) (sigma Y G))
+</pre>
+
+<DT><span class="strong">sigma_algebra_general_sigma</span>
+<DD>
+<pre>
+⊢ ∀cons A B.
+    subset_class (space A) (subsets A) ∧ subset_class (space B) (subsets B) ⇒
+    sigma_algebra (general_sigma cons A B)
+</pre>
+
+<DT><span class="strong">sigma_algebra_prod_sigma</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    subset_class (space a) (subsets a) ∧ subset_class (space b) (subsets b) ⇒
+    sigma_algebra (fcp_sigma a b)
+</pre>
+
+<DT><span class="strong">sigma_algebra_prod_sigma'</span>
+<DD>
+<pre>
+⊢ ∀X Y A B.
+    subset_class X A ∧ subset_class Y B ⇒
+    sigma_algebra (fcp_sigma (X,A) (Y,B))
+</pre>
+
+<DT><span class="strong">sigma_finite_alt</span>
+<DD>
+<pre>
+⊢ ∀m. sigma_finite m ⇔
+      ∃f. (f ∈ (𝕌(:num) → measurable_sets m) ∧ (∀m n. m ≤ n ⇒ f m ⊆ f n) ∧
+           (BIGUNION (IMAGE f 𝕌(:num)) = m_space m)) ∧
+          ∀n. measure m (f n) < +∞
+</pre>
+
+<DT><span class="strong">sigma_finite_alt_exhausting_sequence</span>
+<DD>
+<pre>
+⊢ ∀m. sigma_finite m ⇔
+      ∃f. exhausting_sequence (m_space m,measurable_sets m) f ∧
+          ∀n. measure m (f n) < +∞
+</pre>
+
+<DT><span class="strong">sigma_finite_filtered_measure_space_alt</span>
+<DD>
+<pre>
+⊢ ∀sp sts m a.
+    sigma_finite_filtered_measure_space (sp,sts,m) a ⇔
+    sigma_finite_filtered_measure_space (𝕌(:num),$<=) (sp,sts,m) a
+</pre>
+
+<DT><span class="strong">sigma_finite_has_exhausting_sequence</span>
+<DD>
+<pre>
+⊢ ∀sp sts u. sigma_finite (sp,sts,u) ⇒ has_exhausting_sequence (sp,sts)
+</pre>
+
+<DT><span class="strong">uniqueness_of_prod_measure</span>
+<DD>
+<pre>
+⊢ ∀X Y E G A B u v m m'.
+    FINITE 𝕌(:β) ∧ FINITE 𝕌(:γ) ∧ subset_class X E ∧ subset_class Y G ∧
+    sigma_finite (X,E,u) ∧ sigma_finite (Y,G,v) ∧
+    (∀s t. s ∈ E ∧ t ∈ E ⇒ s ∩ t ∈ E) ∧ (∀s t. s ∈ G ∧ t ∈ G ⇒ s ∩ t ∈ G) ∧
+    (A = sigma X E) ∧ (B = sigma Y G) ∧ measure_space (X,subsets A,u) ∧
+    measure_space (Y,subsets B,v) ∧
+    measure_space (fcp_cross X Y,subsets (fcp_sigma A B),m) ∧
+    measure_space (fcp_cross X Y,subsets (fcp_sigma A B),m') ∧
+    (∀s t. s ∈ E ∧ t ∈ G ⇒ (m (fcp_cross s t) = u s * v t)) ∧
+    (∀s t. s ∈ E ∧ t ∈ G ⇒ (m' (fcp_cross s t) = u s * v t)) ⇒
+    ∀x. x ∈ subsets (fcp_sigma A B) ⇒ (m x = m' x)
+</pre>
+
+<DT><span class="strong">uniqueness_of_prod_measure'</span>
+<DD>
+<pre>
+⊢ ∀X Y A B u v m m'.
+    FINITE 𝕌(:β) ∧ FINITE 𝕌(:γ) ∧ sigma_finite_measure_space (X,A,u) ∧
+    sigma_finite_measure_space (Y,B,v) ∧
+    measure_space (fcp_cross X Y,subsets (fcp_sigma (X,A) (Y,B)),m) ∧
+    measure_space (fcp_cross X Y,subsets (fcp_sigma (X,A) (Y,B)),m') ∧
+    (∀s t. s ∈ A ∧ t ∈ B ⇒ (m (fcp_cross s t) = u s * v t)) ∧
+    (∀s t. s ∈ A ∧ t ∈ B ⇒ (m' (fcp_cross s t) = u s * v t)) ⇒
+    ∀x. x ∈ subsets (fcp_sigma (X,A) (Y,B)) ⇒ (m x = m' x)
+</pre>
+
+<DT><span class="strong">uniqueness_of_prod_measure_general</span>
+<DD>
+<pre>
+⊢ ∀cons car cdr X Y E G A B u v m m'.
+    pair_operation cons car cdr ∧ subset_class X E ∧ subset_class Y G ∧
+    sigma_finite (X,E,u) ∧ sigma_finite (Y,G,v) ∧
+    (∀s t. s ∈ E ∧ t ∈ E ⇒ s ∩ t ∈ E) ∧ (∀s t. s ∈ G ∧ t ∈ G ⇒ s ∩ t ∈ G) ∧
+    (A = sigma X E) ∧ (B = sigma Y G) ∧ measure_space (X,subsets A,u) ∧
+    measure_space (Y,subsets B,v) ∧
+    measure_space (general_cross cons X Y,subsets (general_sigma cons A B),m) ∧
+    measure_space (general_cross cons X Y,subsets (general_sigma cons A B),m') ∧
+    (∀s t. s ∈ E ∧ t ∈ G ⇒ (m (general_cross cons s t) = u s * v t)) ∧
+    (∀s t. s ∈ E ∧ t ∈ G ⇒ (m' (general_cross cons s t) = u s * v t)) ⇒
+    ∀x. x ∈ subsets (general_sigma cons A B) ⇒ (m x = m' x)
+</pre>
+
+<DT><span class="strong">uniqueness_of_prod_measure_general'</span>
+<DD>
+<pre>
+⊢ ∀cons car cdr X Y A B u v m m'.
+    pair_operation cons car cdr ∧ sigma_finite_measure_space (X,A,u) ∧
+    sigma_finite_measure_space (Y,B,v) ∧
+    measure_space
+      (general_cross cons X Y,subsets (general_sigma cons (X,A) (Y,B)),m) ∧
+    measure_space
+      (general_cross cons X Y,subsets (general_sigma cons (X,A) (Y,B)),m') ∧
+    (∀s t. s ∈ A ∧ t ∈ B ⇒ (m (general_cross cons s t) = u s * v t)) ∧
+    (∀s t. s ∈ A ∧ t ∈ B ⇒ (m' (general_cross cons s t) = u s * v t)) ⇒
+    ∀x. x ∈ subsets (general_sigma cons (X,A) (Y,B)) ⇒ (m x = m' x)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

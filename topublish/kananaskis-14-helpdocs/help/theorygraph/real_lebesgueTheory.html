@@ -1,0 +1,816 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: real_lebesgue</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "real_lebesgue"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "real_measureTheory.html"><span class="strong">real_measure</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">RN_deriv</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    ((α -> bool) -> real) -> α -> real
+    <tr><td>
+    <span class="strong">countable_space_integral</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (α -> real) -> real
+    <tr><td>
+    <span class="strong">finite_space_integral</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (α -> real) -> real
+    <tr><td>
+    <span class="strong">fn_minus</span>
+    <td>
+    :(α -> real) -> α -> real
+    <tr><td>
+    <span class="strong">fn_plus</span>
+    <td>
+    :(α -> real) -> α -> real
+    <tr><td>
+    <span class="strong">integrable</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (α -> real) -> bool
+    <tr><td>
+    <span class="strong">integral</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (α -> real) -> real
+    <tr><td>
+    <span class="strong">mon_upclose</span>
+    <td>
+    :(num -> num -> α -> real) -> num -> α -> real
+    <tr><td>
+    <span class="strong">mon_upclose_help</span>
+    <td>
+    :num -> (β -> num -> α -> real) -> β -> α -> real
+    <tr><td>
+    <span class="strong">mono_increasing</span>
+    <td>
+    :(num -> real) -> bool
+    <tr><td>
+    <span class="strong">nnfis</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (α -> real) -> real -> bool
+    <tr><td> <span class="strong">nonneg</span> <td> :(α -> real) -> bool
+    <tr><td>
+    <span class="strong">pos_fn_integral</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (α -> real) -> real
+    <tr><td>
+    <span class="strong">pos_simple_fn</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (α -> real) ->
+    (num -> bool) -> (num -> α -> bool) -> (num -> real) -> bool
+    <tr><td>
+    <span class="strong">pos_simple_fn_integral</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (β -> bool) -> (β -> α -> bool) -> (β -> real) -> real
+    <tr><td>
+    <span class="strong">prod_measure</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (β -> bool) # ((β -> bool) -> bool) # ((β -> bool) -> real) ->
+    (α # β -> bool) -> real
+    <tr><td>
+    <span class="strong">prod_measure_space</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (β -> bool) # ((β -> bool) -> bool) # ((β -> bool) -> real) ->
+    (α # β -> bool) # ((α # β -> bool) -> bool) # ((α # β -> bool) -> real)
+    <tr><td>
+    <span class="strong">psfis</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (α -> real) -> real -> bool
+    <tr><td>
+    <span class="strong">psfs</span>
+    <td>
+    :(α -> bool) # ((α -> bool) -> bool) # ((α -> bool) -> real) ->
+    (α -> real) -> (num -> bool) # (num -> α -> bool) # (num -> real) -> bool
+    <tr><td>
+    <span class="strong">upclose</span>
+    <td>
+    :(α -> real) -> (α -> real) -> α -> real
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">RN_deriv_def</span>
+<DD>
+<pre>
+⊢ ∀m v.
+    RN_deriv m v =
+    @f. measure_space m ∧ measure_space (m_space m,measurable_sets m,v) ∧
+        f ∈ borel_measurable (m_space m,measurable_sets m) ∧
+        ∀a. a ∈ measurable_sets m ⇒ (integral m (λx. f x * 𝟙 a x) = v a)
+</pre>
+
+<DT><span class="strong">countable_space_integral_def</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    countable_space_integral m f =
+    (let
+       e = enumerate (IMAGE f (m_space m))
+     in
+       suminf ((λr. r * measure m (PREIMAGE f {r} ∩ m_space m)) ∘ e))
+</pre>
+
+<DT><span class="strong">finite_space_integral_def</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    finite_space_integral m f =
+    ∑ (λr. r * measure m (PREIMAGE f {r} ∩ m_space m)) (IMAGE f (m_space m))
+</pre>
+
+<DT><span class="strong">fn_minus_def</span>
+<DD>
+<pre>
+⊢ ∀f. f⁻ = (λx. if 0 ≤ f x then 0 else -f x)
+</pre>
+
+<DT><span class="strong">fn_plus_def</span>
+<DD>
+<pre>
+⊢ ∀f. fn_plus f = (λx. if 0 ≤ f x then f x else 0)
+</pre>
+
+<DT><span class="strong">integrable_def</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    integrable m f ⇔
+    measure_space m ∧ (∃x. x ∈ nnfis m (fn_plus f)) ∧ ∃y. y ∈ nnfis m f⁻
+</pre>
+
+<DT><span class="strong">integral_def</span>
+<DD>
+<pre>
+⊢ ∀m f. integral m f = (@i. i ∈ nnfis m (fn_plus f)) − @j. j ∈ nnfis m f⁻
+</pre>
+
+<DT><span class="strong">mon_upclose_def</span>
+<DD>
+<pre>
+⊢ ∀u m. mon_upclose u m = mon_upclose_help m u m
+</pre>
+
+<DT><span class="strong">mon_upclose_help_def</span>
+<DD>
+<pre>
+⊢ (∀u m. mon_upclose_help 0 u m = u m 0) ∧
+  ∀n u m.
+    mon_upclose_help (SUC n) u m =
+    upclose (u m (SUC n)) (mon_upclose_help n u m)
+</pre>
+
+<DT><span class="strong">mono_increasing_def</span>
+<DD>
+<pre>
+⊢ ∀f. mono_increasing f ⇔ ∀m n. m ≤ n ⇒ f m ≤ f n
+</pre>
+
+<DT><span class="strong">nnfis_def</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    nnfis m f =
+    {y |
+     ∃u x. mono_convergent u f (m_space m) ∧ (∀n. x n ∈ psfis m (u n)) ∧ x ⟶ y}
+</pre>
+
+<DT><span class="strong">nonneg_def</span>
+<DD>
+<pre>
+⊢ ∀f. nonneg f ⇔ ∀x. 0 ≤ f x
+</pre>
+
+<DT><span class="strong">pos_fn_integral_def</span>
+<DD>
+<pre>
+⊢ ∀m f. pos_fn_integral m f = sup {r | (∃g. r ∈ psfis m g ∧ ∀x. g x ≤ f x)}
+</pre>
+
+<DT><span class="strong">pos_simple_fn_def</span>
+<DD>
+<pre>
+⊢ ∀m f s a x.
+    pos_simple_fn m f s a x ⇔
+    (∀t. 0 ≤ f t) ∧ (∀t. t ∈ m_space m ⇒ (f t = ∑ (λi. x i * 𝟙 (a i) t) s)) ∧
+    (∀i. i ∈ s ⇒ a i ∈ measurable_sets m) ∧ (∀i. 0 ≤ x i) ∧ FINITE s ∧
+    (∀i j. i ∈ s ∧ j ∈ s ∧ i ≠ j ⇒ DISJOINT (a i) (a j)) ∧
+    (BIGUNION (IMAGE a s) = m_space m)
+</pre>
+
+<DT><span class="strong">pos_simple_fn_integral_def</span>
+<DD>
+<pre>
+⊢ ∀m s a x. pos_simple_fn_integral m s a x = ∑ (λi. x i * measure m (a i)) s
+</pre>
+
+<DT><span class="strong">prod_measure_def</span>
+<DD>
+<pre>
+⊢ ∀m0 m1.
+    prod_measure m0 m1 =
+    (λa. integral m0 (λs0. measure m1 (PREIMAGE (λs1. (s0,s1)) a)))
+</pre>
+
+<DT><span class="strong">prod_measure_space_def</span>
+<DD>
+<pre>
+⊢ ∀m0 m1.
+    prod_measure_space m0 m1 =
+    (m_space m0 × m_space m1,
+     subsets
+       (sigma (m_space m0 × m_space m1)
+          (prod_sets (measurable_sets m0) (measurable_sets m1))),
+     prod_measure m0 m1)
+</pre>
+
+<DT><span class="strong">psfis_def</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    psfis m f = IMAGE (λ(s,a,x). pos_simple_fn_integral m s a x) (psfs m f)
+</pre>
+
+<DT><span class="strong">psfs_def</span>
+<DD>
+<pre>
+⊢ ∀m f. psfs m f = {(s,a,x) | pos_simple_fn m f s a x}
+</pre>
+
+<DT><span class="strong">upclose_def</span>
+<DD>
+<pre>
+⊢ ∀f g. upclose f g = (λt. max (f t) (g t))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">IN_psfis</span>
+<DD>
+<pre>
+⊢ ∀m r f.
+    r ∈ psfis m f ⇒
+    ∃s a x. pos_simple_fn m f s a x ∧ (r = pos_simple_fn_integral m s a x)
+</pre>
+
+<DT><span class="strong">borel_measurable_mon_conv_psfis</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧ f ∈ borel_measurable (m_space m,measurable_sets m) ∧
+    (∀t. t ∈ m_space m ⇒ 0 ≤ f t) ⇒
+    ∃u x. mono_convergent u f (m_space m) ∧ ∀n. x n ∈ psfis m (u n)
+</pre>
+
+<DT><span class="strong">countable_space_integral_reduce</span>
+<DD>
+<pre>
+⊢ ∀m f p n.
+    measure_space m ∧ positive m ∧
+    f ∈ borel_measurable (m_space m,measurable_sets m) ∧
+    COUNTABLE (IMAGE f (m_space m)) ∧
+    INFINITE (IMAGE (fn_plus f) (m_space m)) ∧
+    INFINITE (IMAGE f⁻ (m_space m)) ∧
+    (λr. r * measure m (PREIMAGE f⁻ {r} ∩ m_space m)) ∘
+    enumerate (IMAGE f⁻ (m_space m)) sums n ∧
+    (λr. r * measure m (PREIMAGE (fn_plus f) {r} ∩ m_space m)) ∘
+    enumerate (IMAGE (fn_plus f) (m_space m)) sums p ⇒
+    (integral m f = p − n)
+</pre>
+
+<DT><span class="strong">finite_POW_RN_deriv_reduce</span>
+<DD>
+<pre>
+⊢ ∀m v.
+    measure_space m ∧ FINITE (m_space m) ∧
+    measure_space (m_space m,measurable_sets m,v) ∧
+    (POW (m_space m) = measurable_sets m) ∧
+    (∀x. (measure m {x} = 0) ⇒ (v {x} = 0)) ⇒
+    ∀x. x ∈ m_space m ∧ measure m {x} ≠ 0 ⇒
+        (RN_deriv m v x = v {x} / measure m {x})
+</pre>
+
+<DT><span class="strong">finite_POW_prod_measure_reduce</span>
+<DD>
+<pre>
+⊢ ∀m0 m1.
+    measure_space m0 ∧ measure_space m1 ∧ FINITE (m_space m0) ∧
+    FINITE (m_space m1) ∧ (POW (m_space m0) = measurable_sets m0) ∧
+    (POW (m_space m1) = measurable_sets m1) ⇒
+    ∀a0 a1.
+      a0 ∈ measurable_sets m0 ∧ a1 ∈ measurable_sets m1 ⇒
+      (prod_measure m0 m1 (a0 × a1) = measure m0 a0 * measure m1 a1)
+</pre>
+
+<DT><span class="strong">finite_integral_on_set</span>
+<DD>
+<pre>
+⊢ ∀m f a.
+    measure_space m ∧ FINITE (m_space m) ∧
+    f ∈ borel_measurable (m_space m,measurable_sets m) ∧ a ∈ measurable_sets m ⇒
+    (integral m (λx. f x * 𝟙 a x) =
+     ∑ (λr. r * measure m (PREIMAGE f {r} ∩ a)) (IMAGE f a))
+</pre>
+
+<DT><span class="strong">finite_space_POW_integral_reduce</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧ (POW (m_space m) = measurable_sets m) ∧
+    FINITE (m_space m) ⇒
+    (integral m f = ∑ (λx. f x * measure m {x}) (m_space m))
+</pre>
+
+<DT><span class="strong">finite_space_integral_reduce</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧ f ∈ borel_measurable (m_space m,measurable_sets m) ∧
+    FINITE (m_space m) ⇒
+    (integral m f = finite_space_integral m f)
+</pre>
+
+<DT><span class="strong">fn_plus_fn_minus_borel_measurable</span>
+<DD>
+<pre>
+⊢ ∀f m.
+    measure_space m ∧ f ∈ borel_measurable (m_space m,measurable_sets m) ⇒
+    fn_plus f ∈ borel_measurable (m_space m,measurable_sets m) ∧
+    f⁻ ∈ borel_measurable (m_space m,measurable_sets m)
+</pre>
+
+<DT><span class="strong">fn_plus_fn_minus_borel_measurable_iff</span>
+<DD>
+<pre>
+⊢ ∀f m.
+    measure_space m ⇒
+    (f ∈ borel_measurable (m_space m,measurable_sets m) ⇔
+     fn_plus f ∈ borel_measurable (m_space m,measurable_sets m) ∧
+     f⁻ ∈ borel_measurable (m_space m,measurable_sets m))
+</pre>
+
+<DT><span class="strong">indicator_fn_split</span>
+<DD>
+<pre>
+⊢ ∀r s b.
+    FINITE r ∧ (BIGUNION (IMAGE b r) = s) ∧
+    (∀i j. i ∈ r ∧ j ∈ r ∧ i ≠ j ⇒ DISJOINT (b i) (b j)) ⇒
+    ∀a. a ⊆ s ⇒ (𝟙 a = (λx. ∑ (λi. 𝟙 (a ∩ b i) x) r))
+</pre>
+
+<DT><span class="strong">integral_add</span>
+<DD>
+<pre>
+⊢ ∀m f g.
+    integrable m f ∧ integrable m g ⇒
+    integrable m (λt. f t + g t) ∧
+    (integral m (λt. f t + g t) = integral m f + integral m g)
+</pre>
+
+<DT><span class="strong">integral_borel_measurable</span>
+<DD>
+<pre>
+⊢ ∀m f. integrable m f ⇒ f ∈ borel_measurable (m_space m,measurable_sets m)
+</pre>
+
+<DT><span class="strong">integral_cmul_indicator</span>
+<DD>
+<pre>
+⊢ ∀m s c.
+    measure_space m ∧ s ∈ measurable_sets m ⇒
+    (integral m (λx. c * 𝟙 s x) = c * measure m s)
+</pre>
+
+<DT><span class="strong">integral_indicator_fn</span>
+<DD>
+<pre>
+⊢ ∀m a.
+    measure_space m ∧ a ∈ measurable_sets m ⇒
+    (integral m (𝟙 a) = measure m a) ∧ integrable m (𝟙 a)
+</pre>
+
+<DT><span class="strong">integral_mono</span>
+<DD>
+<pre>
+⊢ ∀m f g.
+    integrable m f ∧ integrable m g ∧ (∀t. t ∈ m_space m ⇒ f t ≤ g t) ⇒
+    integral m f ≤ integral m g
+</pre>
+
+<DT><span class="strong">integral_times</span>
+<DD>
+<pre>
+⊢ ∀m f a.
+    integrable m f ⇒
+    integrable m (λt. a * f t) ∧ (integral m (λt. a * f t) = a * integral m f)
+</pre>
+
+<DT><span class="strong">integral_zero</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ (integral m (λx. 0) = 0)
+</pre>
+
+<DT><span class="strong">markov_ineq</span>
+<DD>
+<pre>
+⊢ ∀m f a n.
+    integrable m f ∧ 0 < a ∧ integrable m (λx. abs (f x) pow n) ⇒
+    measure m (PREIMAGE f {y | a ≤ y} ∩ m_space m) ≤
+    integral m (λx. abs (f x) pow n) / a pow n
+</pre>
+
+<DT><span class="strong">measure_space_finite_prod_measure_POW1</span>
+<DD>
+<pre>
+⊢ ∀m0 m1.
+    measure_space m0 ∧ measure_space m1 ∧ FINITE (m_space m0) ∧
+    FINITE (m_space m1) ∧ (POW (m_space m0) = measurable_sets m0) ∧
+    (POW (m_space m1) = measurable_sets m1) ⇒
+    measure_space (prod_measure_space m0 m1)
+</pre>
+
+<DT><span class="strong">measure_space_finite_prod_measure_POW2</span>
+<DD>
+<pre>
+⊢ ∀m0 m1.
+    measure_space m0 ∧ measure_space m1 ∧ FINITE (m_space m0) ∧
+    FINITE (m_space m1) ∧ (POW (m_space m0) = measurable_sets m0) ∧
+    (POW (m_space m1) = measurable_sets m1) ⇒
+    measure_space
+      (m_space m0 × m_space m1,POW (m_space m0 × m_space m1),
+       prod_measure m0 m1)
+</pre>
+
+<DT><span class="strong">measure_split</span>
+<DD>
+<pre>
+⊢ ∀r b m.
+    measure_space m ∧ FINITE r ∧ (BIGUNION (IMAGE b r) = m_space m) ∧
+    (∀i j. i ∈ r ∧ j ∈ r ∧ i ≠ j ⇒ DISJOINT (b i) (b j)) ∧
+    (∀i. i ∈ r ⇒ b i ∈ measurable_sets m) ⇒
+    ∀a. a ∈ measurable_sets m ⇒ (measure m a = ∑ (λi. measure m (a ∩ b i)) r)
+</pre>
+
+<DT><span class="strong">mon_upclose_help_compute</span>
+<DD>
+<pre>
+⊢ (∀u m. mon_upclose_help 0 u m = u m 0) ∧
+  (∀n u m.
+     mon_upclose_help (NUMERAL (BIT1 n)) u m =
+     upclose (u m (NUMERAL (BIT1 n)))
+       (mon_upclose_help (NUMERAL (BIT1 n) − 1) u m)) ∧
+  ∀n u m.
+    mon_upclose_help (NUMERAL (BIT2 n)) u m =
+    upclose (u m (NUMERAL (BIT2 n))) (mon_upclose_help (NUMERAL (BIT1 n)) u m)
+</pre>
+
+<DT><span class="strong">mon_upclose_psfis</span>
+<DD>
+<pre>
+⊢ ∀m u.
+    measure_space m ∧ (∀n n'. ∃a. a ∈ psfis m (u n n')) ⇒
+    ∃c. ∀n. c n ∈ psfis m (mon_upclose u n)
+</pre>
+
+<DT><span class="strong">mono_increasing_converges_to_sup</span>
+<DD>
+<pre>
+⊢ ∀f r.
+    (∀i. 0 ≤ f i) ∧ mono_increasing f ∧ f ⟶ r ⇒ (r = sup (IMAGE f 𝕌(:num)))
+</pre>
+
+<DT><span class="strong">nnfis_add</span>
+<DD>
+<pre>
+⊢ ∀f g m a b.
+    measure_space m ∧ a ∈ nnfis m f ∧ b ∈ nnfis m g ⇒
+    a + b ∈ nnfis m (λw. f w + g w)
+</pre>
+
+<DT><span class="strong">nnfis_borel_measurable</span>
+<DD>
+<pre>
+⊢ ∀m f a.
+    measure_space m ∧ a ∈ nnfis m f ⇒
+    f ∈ borel_measurable (m_space m,measurable_sets m)
+</pre>
+
+<DT><span class="strong">nnfis_dom_conv</span>
+<DD>
+<pre>
+⊢ ∀m f g b.
+    measure_space m ∧ f ∈ borel_measurable (m_space m,measurable_sets m) ∧
+    b ∈ nnfis m g ∧ (∀t. t ∈ m_space m ⇒ f t ≤ g t) ∧
+    (∀t. t ∈ m_space m ⇒ 0 ≤ f t) ⇒
+    ∃a. a ∈ nnfis m f ∧ a ≤ b
+</pre>
+
+<DT><span class="strong">nnfis_integral</span>
+<DD>
+<pre>
+⊢ ∀m f a.
+    measure_space m ∧ a ∈ nnfis m f ⇒ integrable m f ∧ (integral m f = a)
+</pre>
+
+<DT><span class="strong">nnfis_minus_nnfis_integral</span>
+<DD>
+<pre>
+⊢ ∀m f g a b.
+    measure_space m ∧ a ∈ nnfis m f ∧ b ∈ nnfis m g ⇒
+    integrable m (λt. f t − g t) ∧ (integral m (λt. f t − g t) = a − b)
+</pre>
+
+<DT><span class="strong">nnfis_mon_conv</span>
+<DD>
+<pre>
+⊢ ∀f m h x y.
+    measure_space m ∧ mono_convergent f h (m_space m) ∧
+    (∀n. x n ∈ nnfis m (f n)) ∧ x ⟶ y ⇒
+    y ∈ nnfis m h
+</pre>
+
+<DT><span class="strong">nnfis_mono</span>
+<DD>
+<pre>
+⊢ ∀f g m a b.
+    measure_space m ∧ a ∈ nnfis m f ∧ b ∈ nnfis m g ∧
+    (∀w. w ∈ m_space m ⇒ f w ≤ g w) ⇒
+    a ≤ b
+</pre>
+
+<DT><span class="strong">nnfis_pos_on_mspace</span>
+<DD>
+<pre>
+⊢ ∀f m a. measure_space m ∧ a ∈ nnfis m f ⇒ ∀x. x ∈ m_space m ⇒ 0 ≤ f x
+</pre>
+
+<DT><span class="strong">nnfis_times</span>
+<DD>
+<pre>
+⊢ ∀f m a z.
+    measure_space m ∧ a ∈ nnfis m f ∧ 0 ≤ z ⇒ z * a ∈ nnfis m (λw. z * f w)
+</pre>
+
+<DT><span class="strong">nnfis_unique</span>
+<DD>
+<pre>
+⊢ ∀f m a b. measure_space m ∧ a ∈ nnfis m f ∧ b ∈ nnfis m f ⇒ (a = b)
+</pre>
+
+<DT><span class="strong">pos_psfis</span>
+<DD>
+<pre>
+⊢ ∀r m f. measure_space m ∧ r ∈ psfis m f ⇒ 0 ≤ r
+</pre>
+
+<DT><span class="strong">pos_simple_fn_integral_REAL_SUM_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀m f s a x P.
+    measure_space m ∧ (∀i. i ∈ P ⇒ pos_simple_fn m (f i) (s i) (a i) (x i)) ∧
+    FINITE P ⇒
+    ∃s' a' x'.
+      pos_simple_fn m (λt. ∑ (λi. f i t) P) s' a' x' ∧
+      (pos_simple_fn_integral m s' a' x' =
+       ∑ (λi. pos_simple_fn_integral m (s i) (a i) (x i)) P)
+</pre>
+
+<DT><span class="strong">pos_simple_fn_integral_add</span>
+<DD>
+<pre>
+⊢ ∀m f s a x g s' b y.
+    measure_space m ∧ pos_simple_fn m f s a x ∧ pos_simple_fn m g s' b y ⇒
+    ∃s'' c z.
+      pos_simple_fn m (λx. f x + g x) s'' c z ∧
+      (pos_simple_fn_integral m s a x + pos_simple_fn_integral m s' b y =
+       pos_simple_fn_integral m s'' c z)
+</pre>
+
+<DT><span class="strong">pos_simple_fn_integral_indicator</span>
+<DD>
+<pre>
+⊢ ∀m A.
+    measure_space m ∧ A ∈ measurable_sets m ⇒
+    ∃s a x.
+      pos_simple_fn m (𝟙 A) s a x ∧
+      (pos_simple_fn_integral m s a x = measure m A)
+</pre>
+
+<DT><span class="strong">pos_simple_fn_integral_mono</span>
+<DD>
+<pre>
+⊢ ∀m f s a x g s' b y.
+    measure_space m ∧ pos_simple_fn m f s a x ∧ pos_simple_fn m g s' b y ∧
+    (∀x. f x ≤ g x) ⇒
+    pos_simple_fn_integral m s a x ≤ pos_simple_fn_integral m s' b y
+</pre>
+
+<DT><span class="strong">pos_simple_fn_integral_mono_on_mspace</span>
+<DD>
+<pre>
+⊢ ∀m f s a x g s' b y.
+    measure_space m ∧ pos_simple_fn m f s a x ∧ pos_simple_fn m g s' b y ∧
+    (∀x. x ∈ m_space m ⇒ f x ≤ g x) ⇒
+    pos_simple_fn_integral m s a x ≤ pos_simple_fn_integral m s' b y
+</pre>
+
+<DT><span class="strong">pos_simple_fn_integral_mult</span>
+<DD>
+<pre>
+⊢ ∀m f s a x.
+    measure_space m ∧ pos_simple_fn m f s a x ⇒
+    ∀z. 0 ≤ z ⇒
+        ∃s' b y.
+          pos_simple_fn m (λx. z * f x) s' b y ∧
+          (pos_simple_fn_integral m s' b y =
+           z * pos_simple_fn_integral m s a x)
+</pre>
+
+<DT><span class="strong">pos_simple_fn_integral_present</span>
+<DD>
+<pre>
+⊢ ∀m f s a x g s' b y.
+    measure_space m ∧ pos_simple_fn m f s a x ∧ pos_simple_fn m g s' b y ⇒
+    ∃z z' c k.
+      (∀t. t ∈ m_space m ⇒ (f t = ∑ (λi. z i * 𝟙 (c i) t) k)) ∧
+      (∀t. t ∈ m_space m ⇒ (g t = ∑ (λi. z' i * 𝟙 (c i) t) k)) ∧
+      (pos_simple_fn_integral m s a x = pos_simple_fn_integral m k c z) ∧
+      (pos_simple_fn_integral m s' b y = pos_simple_fn_integral m k c z') ∧
+      FINITE k ∧ (∀i j. i ∈ k ∧ j ∈ k ∧ i ≠ j ⇒ DISJOINT (c i) (c j)) ∧
+      (∀i. i ∈ k ⇒ c i ∈ measurable_sets m) ∧
+      (BIGUNION (IMAGE c k) = m_space m) ∧ (∀i. 0 ≤ z i) ∧ ∀i. 0 ≤ z' i
+</pre>
+
+<DT><span class="strong">pos_simple_fn_integral_unique</span>
+<DD>
+<pre>
+⊢ ∀m f s a x s' b y.
+    measure_space m ∧ pos_simple_fn m f s a x ∧ pos_simple_fn m f s' b y ⇒
+    (pos_simple_fn_integral m s a x = pos_simple_fn_integral m s' b y)
+</pre>
+
+<DT><span class="strong">psfis_REAL_SUM_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀m f a P.
+    measure_space m ∧ (∀i. i ∈ P ⇒ a i ∈ psfis m (f i)) ∧ FINITE P ⇒
+    ∑ a P ∈ psfis m (λt. ∑ (λi. f i t) P)
+</pre>
+
+<DT><span class="strong">psfis_add</span>
+<DD>
+<pre>
+⊢ ∀m f g a b.
+    measure_space m ∧ a ∈ psfis m f ∧ b ∈ psfis m g ⇒
+    a + b ∈ psfis m (λx. f x + g x)
+</pre>
+
+<DT><span class="strong">psfis_borel_measurable</span>
+<DD>
+<pre>
+⊢ ∀m f a.
+    measure_space m ∧ a ∈ psfis m f ⇒
+    f ∈ borel_measurable (m_space m,measurable_sets m)
+</pre>
+
+<DT><span class="strong">psfis_equiv</span>
+<DD>
+<pre>
+⊢ ∀f g a m.
+    measure_space m ∧ a ∈ psfis m f ∧ (∀t. 0 ≤ g t) ∧
+    (∀t. t ∈ m_space m ⇒ (f t = g t)) ⇒
+    a ∈ psfis m g
+</pre>
+
+<DT><span class="strong">psfis_indicator</span>
+<DD>
+<pre>
+⊢ ∀m A. measure_space m ∧ A ∈ measurable_sets m ⇒ measure m A ∈ psfis m (𝟙 A)
+</pre>
+
+<DT><span class="strong">psfis_intro</span>
+<DD>
+<pre>
+⊢ ∀m a x P.
+    measure_space m ∧ (∀i. i ∈ P ⇒ a i ∈ measurable_sets m) ∧ (∀i. 0 ≤ x i) ∧
+    FINITE P ⇒
+    ∑ (λi. x i * measure m (a i)) P ∈ psfis m (λt. ∑ (λi. x i * 𝟙 (a i) t) P)
+</pre>
+
+<DT><span class="strong">psfis_mono</span>
+<DD>
+<pre>
+⊢ ∀m f g a b.
+    measure_space m ∧ a ∈ psfis m f ∧ b ∈ psfis m g ∧
+    (∀x. x ∈ m_space m ⇒ f x ≤ g x) ⇒
+    a ≤ b
+</pre>
+
+<DT><span class="strong">psfis_mono_conv_mono</span>
+<DD>
+<pre>
+⊢ ∀m f u x y r s.
+    measure_space m ∧ mono_convergent u f (m_space m) ∧
+    (∀n. x n ∈ psfis m (u n)) ∧ (∀m n. m ≤ n ⇒ x m ≤ x n) ∧ x ⟶ y ∧
+    r ∈ psfis m s ∧ (∀a. a ∈ m_space m ⇒ s a ≤ f a) ⇒
+    r ≤ y
+</pre>
+
+<DT><span class="strong">psfis_mult</span>
+<DD>
+<pre>
+⊢ ∀m f a.
+    measure_space m ∧ a ∈ psfis m f ⇒
+    ∀z. 0 ≤ z ⇒ z * a ∈ psfis m (λx. z * f x)
+</pre>
+
+<DT><span class="strong">psfis_nnfis</span>
+<DD>
+<pre>
+⊢ ∀m f a. measure_space m ∧ a ∈ psfis m f ⇒ a ∈ nnfis m f
+</pre>
+
+<DT><span class="strong">psfis_nonneg</span>
+<DD>
+<pre>
+⊢ ∀m f a. a ∈ psfis m f ⇒ nonneg f
+</pre>
+
+<DT><span class="strong">psfis_present</span>
+<DD>
+<pre>
+⊢ ∀m f g a b.
+    measure_space m ∧ a ∈ psfis m f ∧ b ∈ psfis m g ⇒
+    ∃z z' c k.
+      (∀t. t ∈ m_space m ⇒ (f t = ∑ (λi. z i * 𝟙 (c i) t) k)) ∧
+      (∀t. t ∈ m_space m ⇒ (g t = ∑ (λi. z' i * 𝟙 (c i) t) k)) ∧
+      (a = pos_simple_fn_integral m k c z) ∧
+      (b = pos_simple_fn_integral m k c z') ∧ FINITE k ∧
+      (∀i j. i ∈ k ∧ j ∈ k ∧ i ≠ j ⇒ DISJOINT (c i) (c j)) ∧
+      (∀i. i ∈ k ⇒ c i ∈ measurable_sets m) ∧
+      (BIGUNION (IMAGE c k) = m_space m) ∧ (∀i. 0 ≤ z i) ∧ ∀i. 0 ≤ z' i
+</pre>
+
+<DT><span class="strong">psfis_unique</span>
+<DD>
+<pre>
+⊢ ∀m f a b. measure_space m ∧ a ∈ psfis m f ∧ b ∈ psfis m f ⇒ (a = b)
+</pre>
+
+<DT><span class="strong">upclose_psfis</span>
+<DD>
+<pre>
+⊢ ∀f g a b m.
+    measure_space m ∧ a ∈ psfis m f ∧ b ∈ psfis m g ⇒
+    ∃c. c ∈ psfis m (upclose f g)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

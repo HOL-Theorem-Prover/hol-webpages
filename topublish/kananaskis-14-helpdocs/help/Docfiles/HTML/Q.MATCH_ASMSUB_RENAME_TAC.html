@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Q.MATCH_ASMSUB_RENAME_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>MATCH_ASMSUB_RENAME_TAC : term quotation -&gt; string list -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Q.html">Q</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Finds a match for a pattern in assumptions; instantiates goal to rename or abbreviate.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to the goal </SPAN><SPAN class = "BRKT">(asl,w)</SPAN><SPAN class = "TEXT">, the tactic
+</SPAN><SPAN class = "BRKT">Q.MATCH_ASMSUB_RENAME_TAC&nbsp;q</SPAN><SPAN class = "TEXT"> parses the quotation </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> in the context
+of the goal, producing a term </SPAN><SPAN class = "BRKT">pat</SPAN><SPAN class = "TEXT"> to use as a pattern. The tactic
+then attempts a (first order) match of </SPAN><SPAN class = "BRKT">pat</SPAN><SPAN class = "TEXT"> against each term in
+</SPAN><SPAN class = "BRKT">asl</SPAN><SPAN class = "TEXT">, stopping when it finds an assumption that either matches </SPAN><SPAN class = "BRKT">pat</SPAN><SPAN class = "TEXT">
+in its entirety, or has a sub-term that matches </SPAN><SPAN class = "BRKT">pat</SPAN><SPAN class = "TEXT"> (holding
+existing free variables from the goal constant).</SPAN>
+<P>
+<SPAN class = "TEXT">In either case, the match will return an instantiation mapping the
+fresh free variables of </SPAN><SPAN class = "BRKT">pat</SPAN><SPAN class = "TEXT"> to terms occurring in the goal. This
+instantiation drops its bindings for variables whose names begin with
+an underscore, is next reversed, and is finally applied to the goal.
+This will both cause free variables in the goal to be renamed, and for
+larger terms to be replaced by variables (similar to what happens with
+the use of </SPAN><SPAN class = "BRKT">SPEC_TAC</SPAN><SPAN class = "TEXT">).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if there is no valid match for the pattern among the assumptions
+and their sub-terms. A valid match will not bind variables that are
+bound in the assumption being searched.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In the following example, the variable </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> is treated as if a
+constant, so the search for a match with the pattern does not succeed
+on the first assumption (featuring </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT">). Instead the second assumption
+provides the instantiation, and so the variable </SPAN><SPAN class = "BRKT">z</SPAN><SPAN class = "TEXT"> in the original is
+renamed to </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">.
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; Q.MATCH_ASMSUB_RENAME_TAC `x &lt; n`
+       ([``P(y &lt; m):bool``, ``Q(x &lt; z) : bool``], ``x + z &lt; 10``);
+   val it = ([([``P (y &lt; m)``, ``Q (x &lt; n)``], ``x + n &lt; 10``)],
+             fn): goal list * validation
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Q.MATCH_ASSUM_RENAME_TAC.html">MATCH_ASSUM_RENAME_TAC</A>,
+<A HREF = "Q.MATCH_GOALSUB_RENAME_TAC.html">MATCH_GOALSUB_RENAME_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

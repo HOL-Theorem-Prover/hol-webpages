@@ -1,0 +1,434 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: comparison</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "comparison"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "totoTheory.html"><span class="strong">toto</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">equiv_inj</span>
+    <td>
+    :(α -> α -> ordering) -> (β -> β -> ordering) -> (α -> β) -> bool
+    <tr><td>
+    <span class="strong">good_cmp</span>
+    <td>
+    :(α -> α -> ordering) -> bool
+    <tr><td>
+    <span class="strong">option_cmp2</span>
+    <td>
+    :(α -> β -> ordering) -> α option -> β option -> ordering
+    <tr><td>
+    <span class="strong">resp_equiv</span>
+    <td>
+    :(α -> α -> ordering) -> (α -> β -> γ) -> bool
+    <tr><td>
+    <span class="strong">resp_equiv2</span>
+    <td>
+    :(α -> α -> ordering) -> (β -> β -> ordering) -> (α -> β) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">equiv_inj_def</span>
+<DD>
+<pre>
+⊢ ∀cmp cmp2 f.
+    equiv_inj cmp cmp2 f ⇔
+    ∀k1 k2. (cmp2 (f k1) (f k2) = Equal) ⇒ (cmp k1 k2 = Equal)
+</pre>
+
+<DT><span class="strong">good_cmp_def</span>
+<DD>
+<pre>
+⊢ ∀cmp.
+    good_cmp cmp ⇔
+    (∀x. cmp x x = Equal) ∧ (∀x y. (cmp x y = Equal) ⇒ (cmp y x = Equal)) ∧
+    (∀x y. (cmp x y = Greater) ⇔ (cmp y x = Less)) ∧
+    (∀x y z. (cmp x y = Equal) ∧ (cmp y z = Less) ⇒ (cmp x z = Less)) ∧
+    (∀x y z. (cmp x y = Less) ∧ (cmp y z = Equal) ⇒ (cmp x z = Less)) ∧
+    (∀x y z. (cmp x y = Equal) ∧ (cmp y z = Equal) ⇒ (cmp x z = Equal)) ∧
+    ∀x y z. (cmp x y = Less) ∧ (cmp y z = Less) ⇒ (cmp x z = Less)
+</pre>
+
+<DT><span class="strong">resp_equiv2_def</span>
+<DD>
+<pre>
+⊢ ∀cmp cmp2 f.
+    resp_equiv2 cmp cmp2 f ⇔
+    ∀k1 k2. (cmp k1 k2 = Equal) ⇒ (cmp2 (f k1) (f k2) = Equal)
+</pre>
+
+<DT><span class="strong">resp_equiv_def</span>
+<DD>
+<pre>
+⊢ ∀cmp f. resp_equiv cmp f ⇔ ∀k1 k2 v. (cmp k1 k2 = Equal) ⇒ (f k1 v = f k2 v)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">TO_inv_invert</span>
+<DD>
+<pre>
+⊢ ∀c. TotOrd c ⇒ (TO_inv c = CURRY (invert_comparison ∘ cᴾ))
+</pre>
+
+<DT><span class="strong">TO_of_LinearOrder_LLEX</span>
+<DD>
+<pre>
+⊢ ∀R. irreflexive R ⇒
+      (TO_of_LinearOrder (LLEX R) = list_cmp (TO_of_LinearOrder R))
+</pre>
+
+<DT><span class="strong">TotOrd_list_cmp</span>
+<DD>
+<pre>
+⊢ ∀c. TotOrd c ⇒ TotOrd (list_cmp c)
+</pre>
+
+<DT><span class="strong">TotOrder_imp_good_cmp</span>
+<DD>
+<pre>
+⊢ ∀cmp. TotOrd cmp ⇒ good_cmp cmp
+</pre>
+
+<DT><span class="strong">antisym_resp_equiv</span>
+<DD>
+<pre>
+⊢ ∀cmp f.
+    (∀x y. (cmp x y = Equal) ⇒ (x = y)) ⇒
+    resp_equiv cmp f ∧ ∀cmp2. good_cmp cmp2 ⇒ resp_equiv2 cmp cmp2 f
+</pre>
+
+<DT><span class="strong">bool_cmp_antisym</span>
+<DD>
+<pre>
+⊢ ∀x y. (bool_cmp x y = Equal) ⇔ (x ⇔ y)
+</pre>
+
+<DT><span class="strong">bool_cmp_def</span>
+<DD>
+<pre>
+⊢ (bool_cmp T T = Equal) ∧ (bool_cmp F F = Equal) ∧ (bool_cmp T F = Greater) ∧
+  (bool_cmp F T = Less)
+</pre>
+
+<DT><span class="strong">bool_cmp_good</span>
+<DD>
+<pre>
+⊢ good_cmp bool_cmp
+</pre>
+
+<DT><span class="strong">char_cmp_antisym</span>
+<DD>
+<pre>
+⊢ ∀x y. (char_cmp x y = Equal) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">char_cmp_charOrd</span>
+<DD>
+<pre>
+⊢ char_cmp = charOrd
+</pre>
+
+<DT><span class="strong">char_cmp_def</span>
+<DD>
+<pre>
+⊢ ∀c1 c2. char_cmp c1 c2 = num_cmp (ORD c1) (ORD c2)
+</pre>
+
+<DT><span class="strong">char_cmp_good</span>
+<DD>
+<pre>
+⊢ good_cmp char_cmp
+</pre>
+
+<DT><span class="strong">cmp_thms</span>
+<DD>
+<pre>
+⊢ (Less ≠ Equal ∧ Less ≠ Greater ∧ Equal ≠ Greater) ∧
+  ((∀v0 v1 v2. (case Less of Less => v0 | Equal => v1 | Greater => v2) = v0) ∧
+   (∀v0 v1 v2. (case Equal of Less => v0 | Equal => v1 | Greater => v2) = v1) ∧
+   ∀v0 v1 v2. (case Greater of Less => v0 | Equal => v1 | Greater => v2) = v2) ∧
+  (∀a. (a = Less) ∨ (a = Equal) ∨ (a = Greater)) ∧
+  ∀cmp.
+    good_cmp cmp ⇔
+    (∀x. cmp x x = Equal) ∧ (∀x y. (cmp x y = Equal) ⇒ (cmp y x = Equal)) ∧
+    (∀x y. (cmp x y = Greater) ⇔ (cmp y x = Less)) ∧
+    (∀x y z. (cmp x y = Equal) ∧ (cmp y z = Less) ⇒ (cmp x z = Less)) ∧
+    (∀x y z. (cmp x y = Less) ∧ (cmp y z = Equal) ⇒ (cmp x z = Less)) ∧
+    (∀x y z. (cmp x y = Equal) ∧ (cmp y z = Equal) ⇒ (cmp x z = Equal)) ∧
+    ∀x y z. (cmp x y = Less) ∧ (cmp y z = Less) ⇒ (cmp x z = Less)
+</pre>
+
+<DT><span class="strong">good_cmp_Less_irrefl_trans</span>
+<DD>
+<pre>
+⊢ ∀cmp.
+    good_cmp cmp ⇒
+    irreflexive (λk k'. cmp k k' = Less) ∧ transitive (λk k'. cmp k k' = Less)
+</pre>
+
+<DT><span class="strong">good_cmp_Less_trans</span>
+<DD>
+<pre>
+⊢ ∀cmp. good_cmp cmp ⇒ transitive (λk k'. cmp k k' = Less)
+</pre>
+
+<DT><span class="strong">good_cmp_thm</span>
+<DD>
+<pre>
+⊢ ∀cmp.
+    good_cmp cmp ⇔
+    (∀x. cmp x x = Equal) ∧
+    ∀x y z.
+      ((cmp x y = Greater) ⇔ (cmp y x = Less)) ∧
+      ((cmp x y = Less) ∧ (cmp y z = Equal) ⇒ (cmp x z = Less)) ∧
+      ((cmp x y = Less) ∧ (cmp y z = Less) ⇒ (cmp x z = Less))
+</pre>
+
+<DT><span class="strong">good_cmp_trans</span>
+<DD>
+<pre>
+⊢ ∀cmp. good_cmp cmp ⇒ transitive (λ(k,v) (k',v'). cmp k k' = Less)
+</pre>
+
+<DT><span class="strong">list_cmp_ListOrd</span>
+<DD>
+<pre>
+⊢ ∀c. TotOrd c ⇒ (list_cmp c = ListOrd (TO c))
+</pre>
+
+<DT><span class="strong">list_cmp_antisym</span>
+<DD>
+<pre>
+⊢ ∀cmp x y.
+    (∀x y. (cmp x y = Equal) ⇔ (x = y)) ⇒
+    ((list_cmp cmp x y = Equal) ⇔ (x = y))
+</pre>
+
+<DT><span class="strong">list_cmp_cong</span>
+<DD>
+<pre>
+⊢ ∀cmp l1 l2 cmp' l1' l2'.
+    (l1 = l1') ∧ (l2 = l2') ∧
+    (∀x x'. MEM x l1' ∧ MEM x' l2' ⇒ (cmp x x' = cmp' x x')) ⇒
+    (list_cmp cmp l1 l2 = list_cmp cmp' l1' l2')
+</pre>
+
+<DT><span class="strong">list_cmp_equal_list_rel</span>
+<DD>
+<pre>
+⊢ ∀cmp l1 l2.
+    (list_cmp cmp l1 l2 = Equal) ⇔ LIST_REL (λx y. cmp x y = Equal) l1 l2
+</pre>
+
+<DT><span class="strong">list_cmp_good</span>
+<DD>
+<pre>
+⊢ ∀cmp. good_cmp cmp ⇒ good_cmp (list_cmp cmp)
+</pre>
+
+<DT><span class="strong">num_cmp_antisym</span>
+<DD>
+<pre>
+⊢ ∀x y. (num_cmp x y = Equal) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">num_cmp_def</span>
+<DD>
+<pre>
+⊢ ∀n1 n2.
+    num_cmp n1 n2 =
+    if n1 = n2 then Equal else if n1 < n2 then Less else Greater
+</pre>
+
+<DT><span class="strong">num_cmp_good</span>
+<DD>
+<pre>
+⊢ good_cmp num_cmp
+</pre>
+
+<DT><span class="strong">num_cmp_numOrd</span>
+<DD>
+<pre>
+⊢ num_cmp = numOrd
+</pre>
+
+<DT><span class="strong">option_cmp2_TO_inv</span>
+<DD>
+<pre>
+⊢ ∀c. option_cmp2 c = TO_inv (option_cmp (TO_inv c))
+</pre>
+
+<DT><span class="strong">option_cmp2_antisym</span>
+<DD>
+<pre>
+⊢ ∀cmp x y.
+    (∀x y. (cmp x y = Equal) ⇔ (x = y)) ⇒
+    ((option_cmp2 cmp x y = Equal) ⇔ (x = y))
+</pre>
+
+<DT><span class="strong">option_cmp2_cong</span>
+<DD>
+<pre>
+⊢ ∀cmp v1 v2 cmp' v1' v2'.
+    (v1 = v1') ∧ (v2 = v2') ∧
+    (∀x x'. (v1' = SOME x) ∧ (v2' = SOME x') ⇒ (cmp x x' = cmp' x x')) ⇒
+    (option_cmp2 cmp v1 v2 = option_cmp2 cmp' v1' v2')
+</pre>
+
+<DT><span class="strong">option_cmp2_def</span>
+<DD>
+<pre>
+⊢ (option_cmp2 cmp NONE NONE = Equal) ∧
+  (option_cmp2 cmp NONE (SOME x') = Greater) ∧
+  (option_cmp2 cmp (SOME x) NONE = Less) ∧
+  (option_cmp2 cmp (SOME x) (SOME y) = cmp x y)
+</pre>
+
+<DT><span class="strong">option_cmp2_good</span>
+<DD>
+<pre>
+⊢ ∀cmp. good_cmp cmp ⇒ good_cmp (option_cmp2 cmp)
+</pre>
+
+<DT><span class="strong">option_cmp2_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀cmp. P cmp NONE NONE) ∧ (∀cmp x. P cmp NONE (SOME x)) ∧
+      (∀cmp x. P cmp (SOME x) NONE) ∧ (∀cmp x y. P cmp (SOME x) (SOME y)) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">option_cmp_antisym</span>
+<DD>
+<pre>
+⊢ ∀cmp x y.
+    (∀x y. (cmp x y = Equal) ⇔ (x = y)) ⇒
+    ((option_cmp cmp x y = Equal) ⇔ (x = y))
+</pre>
+
+<DT><span class="strong">option_cmp_cong</span>
+<DD>
+<pre>
+⊢ ∀cmp v1 v2 cmp' v1' v2'.
+    (v1 = v1') ∧ (v2 = v2') ∧
+    (∀x x'. (v1' = SOME x) ∧ (v2' = SOME x') ⇒ (cmp x x' = cmp' x x')) ⇒
+    (option_cmp cmp v1 v2 = option_cmp cmp' v1' v2')
+</pre>
+
+<DT><span class="strong">option_cmp_def</span>
+<DD>
+<pre>
+⊢ (option_cmp c NONE NONE = Equal) ∧ (option_cmp c NONE (SOME v0) = Less) ∧
+  (option_cmp c (SOME v3) NONE = Greater) ∧
+  (option_cmp c (SOME v1) (SOME v2) = c v1 v2)
+</pre>
+
+<DT><span class="strong">option_cmp_good</span>
+<DD>
+<pre>
+⊢ ∀cmp. good_cmp cmp ⇒ good_cmp (option_cmp cmp)
+</pre>
+
+<DT><span class="strong">pair_cmp_antisym</span>
+<DD>
+<pre>
+⊢ ∀cmp1 cmp2 x y.
+    (∀x y. (cmp1 x y = Equal) ⇔ (x = y)) ∧
+    (∀x y. (cmp2 x y = Equal) ⇔ (x = y)) ⇒
+    ((pair_cmp cmp1 cmp2 x y = Equal) ⇔ (x = y))
+</pre>
+
+<DT><span class="strong">pair_cmp_cong</span>
+<DD>
+<pre>
+⊢ ∀cmp1 cmp2 v1 v2 cmp1' cmp2' v1' v2'.
+    (v1 = v1') ∧ (v2 = v2') ∧
+    (∀a b c d. (v1' = (a,b)) ∧ (v2' = (c,d)) ⇒ (cmp1 a c = cmp1' a c)) ∧
+    (∀a b c d. (v1' = (a,b)) ∧ (v2' = (c,d)) ⇒ (cmp2 b d = cmp2' b d)) ⇒
+    (pair_cmp cmp1 cmp2 v1 v2 = pair_cmp cmp1' cmp2' v1' v2')
+</pre>
+
+<DT><span class="strong">pair_cmp_def</span>
+<DD>
+<pre>
+⊢ pair_cmp c1 c2 x y =
+  case c1 (FST x) (FST y) of
+    Less => Less
+  | Equal => c2 (SND x) (SND y)
+  | Greater => Greater
+</pre>
+
+<DT><span class="strong">pair_cmp_good</span>
+<DD>
+<pre>
+⊢ ∀cmp1 cmp2. good_cmp cmp1 ∧ good_cmp cmp2 ⇒ good_cmp (pair_cmp cmp1 cmp2)
+</pre>
+
+<DT><span class="strong">pair_cmp_lexTO</span>
+<DD>
+<pre>
+⊢ ∀R V. TotOrd R ∧ TotOrd V ⇒ (pair_cmp R V = R lexTO V)
+</pre>
+
+<DT><span class="strong">string_cmp_antisym</span>
+<DD>
+<pre>
+⊢ ∀x y. (string_cmp x y = Equal) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">string_cmp_def</span>
+<DD>
+<pre>
+⊢ string_cmp = list_cmp char_cmp
+</pre>
+
+<DT><span class="strong">string_cmp_good</span>
+<DD>
+<pre>
+⊢ good_cmp string_cmp
+</pre>
+
+<DT><span class="strong">string_cmp_stringto</span>
+<DD>
+<pre>
+⊢ string_cmp = apto stringto
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

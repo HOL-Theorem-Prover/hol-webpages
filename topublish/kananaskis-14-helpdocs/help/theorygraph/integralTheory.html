@@ -1,0 +1,663 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: integral</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "integral"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "transcTheory.html"><span class="strong">transc</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">integrable</span>
+    <td>
+    :real # real -> (real -> real) -> bool
+    <tr><td>
+    <span class="strong">integral</span>
+    <td>
+    :real # real -> (real -> real) -> real
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">integrable_def</span>
+<DD>
+<pre>
+⊢ ∀a b f. integrable (a,b) f ⇔ ∃i. Dint (a,b) f i
+</pre>
+
+<DT><span class="strong">integral_def</span>
+<DD>
+<pre>
+⊢ ∀a b f. integral (a,b) f = @i. Dint (a,b) f i
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">BOLZANO_LEMMA_ALT</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a b c. a ≤ b ∧ b ≤ c ∧ P a b ∧ P b c ⇒ P a c) ∧
+      (∀x. ∃d. 0 < d ∧ ∀a b. a ≤ x ∧ x ≤ b ∧ b − a < d ⇒ P a b) ⇒
+      ∀a b. a ≤ b ⇒ P a b
+</pre>
+
+<DT><span class="strong">CONT_UNIFORM</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    a ≤ b ∧ (∀x. a ≤ x ∧ x ≤ b ⇒ f contl x) ⇒
+    ∀e. 0 < e ⇒
+        ∃d. 0 < d ∧
+            ∀x y.
+              a ≤ x ∧ x ≤ b ∧ a ≤ y ∧ y ≤ b ∧ abs (x − y) < d ⇒
+              abs (f x − f y) < e
+</pre>
+
+<DT><span class="strong">DINT_0</span>
+<DD>
+<pre>
+⊢ ∀a b. Dint (a,b) (λx. 0) 0
+</pre>
+
+<DT><span class="strong">DINT_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g a b i j.
+    Dint (a,b) f i ∧ Dint (a,b) g j ⇒ Dint (a,b) (λx. f x + g x) (i + j)
+</pre>
+
+<DT><span class="strong">DINT_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f a b c i. Dint (a,b) f i ⇒ Dint (a,b) (λx. c * f x) (c * i)
+</pre>
+
+<DT><span class="strong">DINT_COMBINE</span>
+<DD>
+<pre>
+⊢ ∀f a b c i j.
+    a ≤ b ∧ b ≤ c ∧ Dint (a,b) f i ∧ Dint (b,c) f j ⇒ Dint (a,c) f (i + j)
+</pre>
+
+<DT><span class="strong">DINT_CONST</span>
+<DD>
+<pre>
+⊢ ∀a b c. Dint (a,b) (λx. c) (c * (b − a))
+</pre>
+
+<DT><span class="strong">DINT_DELTA</span>
+<DD>
+<pre>
+⊢ ∀a b c. Dint (a,b) (λx. if x = c then 1 else 0) 0
+</pre>
+
+<DT><span class="strong">DINT_DELTA_LEFT</span>
+<DD>
+<pre>
+⊢ ∀a b. Dint (a,b) (λx. if x = a then 1 else 0) 0
+</pre>
+
+<DT><span class="strong">DINT_DELTA_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀a b. Dint (a,b) (λx. if x = b then 1 else 0) 0
+</pre>
+
+<DT><span class="strong">DINT_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g a b i j.
+    a ≤ b ∧ Dint (a,b) f i ∧ Dint (a,b) g j ∧
+    (∀x. a ≤ x ∧ x ≤ b ⇒ (f x = g x)) ⇒
+    (i = j)
+</pre>
+
+<DT><span class="strong">DINT_FINITE_SPIKE</span>
+<DD>
+<pre>
+⊢ ∀f g a b s i.
+    FINITE s ∧ (∀x. a ≤ x ∧ x ≤ b ∧ x ∉ s ⇒ (f x = g x)) ∧ Dint (a,b) f i ⇒
+    Dint (a,b) g i
+</pre>
+
+<DT><span class="strong">DINT_INTEGRAL</span>
+<DD>
+<pre>
+⊢ ∀f a b i. a ≤ b ∧ Dint (a,b) f i ⇒ (integral (a,b) f = i)
+</pre>
+
+<DT><span class="strong">DINT_LE</span>
+<DD>
+<pre>
+⊢ ∀f g a b i j.
+    a ≤ b ∧ Dint (a,b) f i ∧ Dint (a,b) g j ∧ (∀x. a ≤ x ∧ x ≤ b ⇒ f x ≤ g x) ⇒
+    i ≤ j
+</pre>
+
+<DT><span class="strong">DINT_LINEAR</span>
+<DD>
+<pre>
+⊢ ∀f g a b i j.
+    Dint (a,b) f i ∧ Dint (a,b) g j ⇒
+    Dint (a,b) (λx. m * f x + n * g x) (m * i + n * j)
+</pre>
+
+<DT><span class="strong">DINT_NEG</span>
+<DD>
+<pre>
+⊢ ∀f a b i. Dint (a,b) f i ⇒ Dint (a,b) (λx. -f x) (-i)
+</pre>
+
+<DT><span class="strong">DINT_POINT_SPIKE</span>
+<DD>
+<pre>
+⊢ ∀f g a b c i.
+    (∀x. a ≤ x ∧ x ≤ b ∧ x ≠ c ⇒ (f x = g x)) ∧ Dint (a,b) f i ⇒
+    Dint (a,b) g i
+</pre>
+
+<DT><span class="strong">DINT_SUB</span>
+<DD>
+<pre>
+⊢ ∀f g a b i j.
+    Dint (a,b) f i ∧ Dint (a,b) g j ⇒ Dint (a,b) (λx. f x − g x) (i − j)
+</pre>
+
+<DT><span class="strong">DINT_TRIANGLE</span>
+<DD>
+<pre>
+⊢ ∀f a b i j.
+    a ≤ b ∧ Dint (a,b) f i ∧ Dint (a,b) (λx. abs (f x)) j ⇒ abs i ≤ j
+</pre>
+
+<DT><span class="strong">DINT_WRONG</span>
+<DD>
+<pre>
+⊢ ∀a b f i. b < a ⇒ Dint (a,b) f i
+</pre>
+
+<DT><span class="strong">DIVISION_APPEND</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    (∃D1 p1. tdiv (a,b) (D1,p1) ∧ fine g (D1,p1)) ∧
+    (∃D2 p2. tdiv (b,c) (D2,p2) ∧ fine g (D2,p2)) ⇒
+    ∃D p. tdiv (a,c) (D,p) ∧ fine g (D,p)
+</pre>
+
+<DT><span class="strong">DIVISION_APPEND_EXPLICIT</span>
+<DD>
+<pre>
+⊢ ∀a b c g d1 p1 d2 p2.
+    tdiv (a,b) (d1,p1) ∧ fine g (d1,p1) ∧ tdiv (b,c) (d2,p2) ∧ fine g (d2,p2) ⇒
+    tdiv (a,c)
+      ((λn. if n < dsize d1 then d1 n else d2 (n − dsize d1)),
+       (λn. if n < dsize d1 then p1 n else p2 (n − dsize d1))) ∧
+    fine g
+      ((λn. if n < dsize d1 then d1 n else d2 (n − dsize d1)),
+       (λn. if n < dsize d1 then p1 n else p2 (n − dsize d1))) ∧
+    ∀f. rsum
+          ((λn. if n < dsize d1 then d1 n else d2 (n − dsize d1)),
+           (λn. if n < dsize d1 then p1 n else p2 (n − dsize d1))) f =
+        rsum (d1,p1) f + rsum (d2,p2) f
+</pre>
+
+<DT><span class="strong">DIVISION_APPEND_STRONG</span>
+<DD>
+<pre>
+⊢ ∀a b c D1 p1 D2 p2.
+    tdiv (a,b) (D1,p1) ∧ fine g (D1,p1) ∧ tdiv (b,c) (D2,p2) ∧ fine g (D2,p2) ⇒
+    ∃D p.
+      tdiv (a,c) (D,p) ∧ fine g (D,p) ∧
+      ∀f. rsum (D,p) f = rsum (D1,p1) f + rsum (D2,p2) f
+</pre>
+
+<DT><span class="strong">DIVISION_BOUNDS</span>
+<DD>
+<pre>
+⊢ ∀d a b. division (a,b) d ⇒ ∀n. a ≤ d n ∧ d n ≤ b
+</pre>
+
+<DT><span class="strong">DIVISION_DSIZE_EQ</span>
+<DD>
+<pre>
+⊢ ∀a b d n.
+    division (a,b) d ∧ d n < d (SUC n) ∧ (d (SUC (SUC n)) = d (SUC n)) ⇒
+    (dsize d = SUC n)
+</pre>
+
+<DT><span class="strong">DIVISION_DSIZE_EQ_ALT</span>
+<DD>
+<pre>
+⊢ ∀a b d n.
+    division (a,b) d ∧ (d (SUC n) = d n) ∧ (∀i. i < n ⇒ d i < d (SUC i)) ⇒
+    (dsize d = n)
+</pre>
+
+<DT><span class="strong">DIVISION_DSIZE_GE</span>
+<DD>
+<pre>
+⊢ ∀a b d n. division (a,b) d ∧ d n < d (SUC n) ⇒ SUC n ≤ dsize d
+</pre>
+
+<DT><span class="strong">DIVISION_DSIZE_LE</span>
+<DD>
+<pre>
+⊢ ∀a b d n. division (a,b) d ∧ (d (SUC n) = d n) ⇒ dsize d ≤ n
+</pre>
+
+<DT><span class="strong">DIVISION_INTERMEDIATE</span>
+<DD>
+<pre>
+⊢ ∀d a b c.
+    division (a,b) d ∧ a ≤ c ∧ c ≤ b ⇒
+    ∃n. n ≤ dsize d ∧ d n ≤ c ∧ c ≤ d (SUC n)
+</pre>
+
+<DT><span class="strong">DIVISION_LE_SUC</span>
+<DD>
+<pre>
+⊢ ∀d a b. division (a,b) d ⇒ ∀n. d n ≤ d (SUC n)
+</pre>
+
+<DT><span class="strong">DIVISION_MONO_LE</span>
+<DD>
+<pre>
+⊢ ∀d a b. division (a,b) d ⇒ ∀m n. m ≤ n ⇒ d m ≤ d n
+</pre>
+
+<DT><span class="strong">DIVISION_MONO_LE_SUC</span>
+<DD>
+<pre>
+⊢ ∀d a b. division (a,b) d ⇒ ∀n. d n ≤ d (SUC n)
+</pre>
+
+<DT><span class="strong">DSIZE_EQ</span>
+<DD>
+<pre>
+⊢ ∀a b D.
+    division (a,b) D ⇒ (sum (0,dsize D) (λn. D (SUC n) − D n) − (b − a) = 0)
+</pre>
+
+<DT><span class="strong">EQ_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. (SUC m = SUC n) ⇔ (m = n)
+</pre>
+
+<DT><span class="strong">GAUGE_MIN_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s gs n.
+    (∀m. m ≤ n ⇒ gauge s (gs m)) ⇒
+    ∃g. gauge s g ∧ ∀d p. fine g (d,p) ⇒ ∀m. m ≤ n ⇒ fine (gs m) (d,p)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    a ≤ b ∧ integrable (a,b) f ∧ integrable (a,b) g ⇒
+    integrable (a,b) (λx. f x + g x)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_CAUCHY</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    integrable (a,b) f ⇔
+    ∀e. 0 < e ⇒
+        ∃g. gauge (λx. a ≤ x ∧ x ≤ b) g ∧
+            ∀d1 p1 d2 p2.
+              tdiv (a,b) (d1,p1) ∧ fine g (d1,p1) ∧ tdiv (a,b) (d2,p2) ∧
+              fine g (d2,p2) ⇒
+              abs (rsum (d1,p1) f − rsum (d2,p2) f) < e
+</pre>
+
+<DT><span class="strong">INTEGRABLE_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f a b c. a ≤ b ∧ integrable (a,b) f ⇒ integrable (a,b) (λx. c * f x)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_COMBINE</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    a ≤ b ∧ b ≤ c ∧ integrable (a,b) f ∧ integrable (b,c) f ⇒
+    integrable (a,c) f
+</pre>
+
+<DT><span class="strong">INTEGRABLE_CONST</span>
+<DD>
+<pre>
+⊢ ∀a b c. integrable (a,b) (λx. c)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_CONTINUOUS</span>
+<DD>
+<pre>
+⊢ ∀f a b. (∀x. a ≤ x ∧ x ≤ b ⇒ f contl x) ⇒ integrable (a,b) f
+</pre>
+
+<DT><span class="strong">INTEGRABLE_DINT</span>
+<DD>
+<pre>
+⊢ ∀f a b. integrable (a,b) f ⇒ Dint (a,b) f (integral (a,b) f)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_LIMIT</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (∀e. 0 < e ⇒
+         ∃g. (∀x. a ≤ x ∧ x ≤ b ⇒ abs (f x − g x) ≤ e) ∧ integrable (a,b) g) ⇒
+    integrable (a,b) f
+</pre>
+
+<DT><span class="strong">INTEGRABLE_POINT_SPIKE</span>
+<DD>
+<pre>
+⊢ ∀f g a b c.
+    (∀x. a ≤ x ∧ x ≤ b ∧ x ≠ c ⇒ (f x = g x)) ∧ integrable (a,b) f ⇒
+    integrable (a,b) g
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SPLIT_SIDES</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    a ≤ c ∧ c ≤ b ∧ integrable (a,b) f ⇒
+    ∃i. ∀e.
+      0 < e ⇒
+      ∃g. gauge (λx. a ≤ x ∧ x ≤ b) g ∧
+          ∀d1 p1 d2 p2.
+            tdiv (a,c) (d1,p1) ∧ fine g (d1,p1) ∧ tdiv (c,b) (d2,p2) ∧
+            fine g (d2,p2) ⇒
+            abs (rsum (d1,p1) f + rsum (d2,p2) f − i) < e
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SUBINTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b c d. a ≤ c ∧ c ≤ d ∧ d ≤ b ∧ integrable (a,b) f ⇒ integrable (c,d) f
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SUBINTERVAL_LEFT</span>
+<DD>
+<pre>
+⊢ ∀f a b c. a ≤ c ∧ c ≤ b ∧ integrable (a,b) f ⇒ integrable (a,c) f
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SUBINTERVAL_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀f a b c. a ≤ c ∧ c ≤ b ∧ integrable (a,b) f ⇒ integrable (c,b) f
+</pre>
+
+<DT><span class="strong">INTEGRAL_0</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ (integral (a,b) (λx. 0) = 0)
+</pre>
+
+<DT><span class="strong">INTEGRAL_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    a ≤ b ∧ integrable (a,b) f ∧ integrable (a,b) g ⇒
+    (integral (a,b) (λx. f x + g x) = integral (a,b) f + integral (a,b) g)
+</pre>
+
+<DT><span class="strong">INTEGRAL_BY_PARTS</span>
+<DD>
+<pre>
+⊢ ∀f g f' g' a b.
+    a ≤ b ∧ (∀x. a ≤ x ∧ x ≤ b ⇒ (f diffl f' x) x) ∧
+    (∀x. a ≤ x ∧ x ≤ b ⇒ (g diffl g' x) x) ∧
+    integrable (a,b) (λx. f' x * g x) ∧ integrable (a,b) (λx. f x * g' x) ⇒
+    (integral (a,b) (λx. f x * g' x) =
+     f b * g b − f a * g a − integral (a,b) (λx. f' x * g x))
+</pre>
+
+<DT><span class="strong">INTEGRAL_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f c a b.
+    a ≤ b ∧ integrable (a,b) f ⇒
+    (integral (a,b) (λx. c * f x) = c * integral (a,b) f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMBINE</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    a ≤ b ∧ b ≤ c ∧ integrable (a,c) f ⇒
+    (integral (a,c) f = integral (a,b) f + integral (b,c) f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_CONST</span>
+<DD>
+<pre>
+⊢ ∀a b c. a ≤ b ⇒ (integral (a,b) (λx. c) = c * (b − a))
+</pre>
+
+<DT><span class="strong">INTEGRAL_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g a b i.
+    Dint (a,b) f i ∧ (∀x. a ≤ x ∧ x ≤ b ⇒ (f x = g x)) ⇒ Dint (a,b) g i
+</pre>
+
+<DT><span class="strong">INTEGRAL_LE</span>
+<DD>
+<pre>
+⊢ ∀f g a b i j.
+    a ≤ b ∧ integrable (a,b) f ∧ integrable (a,b) g ∧
+    (∀x. a ≤ x ∧ x ≤ b ⇒ f x ≤ g x) ⇒
+    integral (a,b) f ≤ integral (a,b) g
+</pre>
+
+<DT><span class="strong">INTEGRAL_MVT1</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    a ≤ b ∧ (∀x. a ≤ x ∧ x ≤ b ⇒ f contl x) ⇒
+    ∃x. a ≤ x ∧ x ≤ b ∧ (integral (a,b) f = f x * (b − a))
+</pre>
+
+<DT><span class="strong">INTEGRAL_SUB</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    a ≤ b ∧ integrable (a,b) f ∧ integrable (a,b) g ⇒
+    (integral (a,b) (λx. f x − g x) = integral (a,b) f − integral (a,b) g)
+</pre>
+
+<DT><span class="strong">INTEGRATION_BY_PARTS</span>
+<DD>
+<pre>
+⊢ ∀f g f' g' a b.
+    a ≤ b ∧ (∀x. a ≤ x ∧ x ≤ b ⇒ (f diffl f' x) x) ∧
+    (∀x. a ≤ x ∧ x ≤ b ⇒ (g diffl g' x) x) ⇒
+    Dint (a,b) (λx. f' x * g x + f x * g' x) (f b * g b − f a * g a)
+</pre>
+
+<DT><span class="strong">LE_0</span>
+<DD>
+<pre>
+⊢ ∀n. 0 ≤ n
+</pre>
+
+<DT><span class="strong">LE_LT</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇔ m < n ∨ (m = n)
+</pre>
+
+<DT><span class="strong">LT</span>
+<DD>
+<pre>
+⊢ (∀m. m < 0 ⇔ F) ∧ ∀m n. m < SUC n ⇔ (m = n) ∨ m < n
+</pre>
+
+<DT><span class="strong">LT_0</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < SUC n
+</pre>
+
+<DT><span class="strong">LT_LE</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ⇔ m ≤ n ∧ m ≠ n
+</pre>
+
+<DT><span class="strong">REAL_ARCH_POW</span>
+<DD>
+<pre>
+⊢ ∀x y. 1 < x ⇒ ∃n. y < x pow n
+</pre>
+
+<DT><span class="strong">REAL_ARCH_POW2</span>
+<DD>
+<pre>
+⊢ ∀x. ∃n. x < 2 pow n
+</pre>
+
+<DT><span class="strong">REAL_LE_INV2</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ x ≤ y ⇒ y⁻¹ ≤ x⁻¹
+</pre>
+
+<DT><span class="strong">REAL_LE_LMUL1</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 ≤ x ∧ y ≤ z ⇒ x * y ≤ x * z
+</pre>
+
+<DT><span class="strong">REAL_LE_RMUL1</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≤ y ∧ 0 ≤ z ⇒ x * z ≤ y * z
+</pre>
+
+<DT><span class="strong">REAL_LT_MIN</span>
+<DD>
+<pre>
+⊢ ∀x y z. z < min x y ⇔ z < x ∧ z < y
+</pre>
+
+<DT><span class="strong">REAL_POW_LBOUND</span>
+<DD>
+<pre>
+⊢ ∀x n. 0 ≤ x ⇒ 1 + &n * x ≤ (1 + x) pow n
+</pre>
+
+<DT><span class="strong">REAL_POW_LE_1</span>
+<DD>
+<pre>
+⊢ ∀n x. 1 ≤ x ⇒ 1 ≤ x pow n
+</pre>
+
+<DT><span class="strong">REAL_POW_MONO</span>
+<DD>
+<pre>
+⊢ ∀m n x. 1 ≤ x ∧ m ≤ n ⇒ x pow m ≤ x pow n
+</pre>
+
+<DT><span class="strong">RSUM_BOUND</span>
+<DD>
+<pre>
+⊢ ∀a b d p e f.
+    tdiv (a,b) (d,p) ∧ (∀x. a ≤ x ∧ x ≤ b ⇒ abs (f x) ≤ e) ⇒
+    abs (rsum (d,p) f) ≤ e * (b − a)
+</pre>
+
+<DT><span class="strong">RSUM_DIFF_BOUND</span>
+<DD>
+<pre>
+⊢ ∀a b d p e f g.
+    tdiv (a,b) (d,p) ∧ (∀x. a ≤ x ∧ x ≤ b ⇒ abs (f x − g x) ≤ e) ⇒
+    abs (rsum (d,p) f − rsum (d,p) g) ≤ e * (b − a)
+</pre>
+
+<DT><span class="strong">SUM_DIFFS</span>
+<DD>
+<pre>
+⊢ ∀m n. sum (m,n) (λi. d (SUC i) − d i) = d (m + n) − d m
+</pre>
+
+<DT><span class="strong">SUM_EQ_0</span>
+<DD>
+<pre>
+⊢ (∀r. m ≤ r ∧ r < m + n ⇒ (f r = 0)) ⇒ (sum (m,n) f = 0)
+</pre>
+
+<DT><span class="strong">SUM_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀f n p. sum (m,n) f + sum (m + n,p) f = sum (m,n + p) f
+</pre>
+
+<DT><span class="strong">SUP_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀P a b.
+    (∃x. a ≤ x ∧ x ≤ b ∧ P x) ⇒
+    ∃s. a ≤ s ∧ s ≤ b ∧ ∀y. y < s ⇔ ∃x. a ≤ x ∧ x ≤ b ∧ P x ∧ y < x
+</pre>
+
+<DT><span class="strong">TDIV_BOUNDS</span>
+<DD>
+<pre>
+⊢ ∀d p a b. tdiv (a,b) (d,p) ⇒ ∀n. a ≤ d n ∧ d n ≤ b ∧ a ≤ p n ∧ p n ≤ b
+</pre>
+
+<DT><span class="strong">TDIV_LE</span>
+<DD>
+<pre>
+⊢ ∀d p a b. tdiv (a,b) (d,p) ⇒ a ≤ b
+</pre>
+
+<DT><span class="strong">num_MAX</span>
+<DD>
+<pre>
+⊢ ∀P. (∃x. P x) ∧ (∃M. ∀x. P x ⇒ x ≤ M) ⇔ ∃m. P m ∧ ∀x. P x ⇒ x ≤ m
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

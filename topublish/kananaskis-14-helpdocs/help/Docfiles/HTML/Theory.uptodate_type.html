@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Theory.uptodate_type</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>uptodate_type : hol_type -&gt; bool</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Theory.html">Theory</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Tells if a type is out of date.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Operations in the current theory segment of HOL allow one to redefine
+types and constants. This can cause theorems to become invalid. As a
+result, HOL has a rudimentary consistency maintenance system built
+around the notion of whether type operators and term constants are
+"up-to-date".</SPAN>
+<P>
+<SPAN class = "TEXT">An invocation </SPAN><SPAN class = "BRKT">uptodate_type&nbsp;ty</SPAN><SPAN class = "TEXT">, checks </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> to see if it has been
+built from any out of date components, returning </SPAN><SPAN class = "BRKT">false</SPAN><SPAN class = "TEXT"> just in case it
+has.  The definition of </SPAN><SPAN class = "BRKT">out-of-date</SPAN><SPAN class = "TEXT"> is mutually recursive among types,
+terms, and theorems. A type variable never out-of-date. A compound
+type is out-of-date if either (a) its type operator is out-of-date, or
+(b) any of its argument types are out-of-date. A type operator is
+out-of-date if it has been re-declared or if the witness theorem used to
+justify the type in the call to </SPAN><SPAN class = "BRKT">new_type_definition</SPAN><SPAN class = "TEXT"> is
+out-of-date. Only a component of the current theory segment may be
+out-of-date. All items from ancestor theories are fixed, and unable to
+be overwritten, thus are always up-to-date.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- Hol_datatype `foo = A | B of 'a`;
+&lt;&lt;HOL message: Defined type: "foo"&gt;&gt;
+&gt; val it = () : unit
+
+- val ty = Type `:'a foo list`;
+&gt; val ty = `:'a foo list` : hol_type
+
+- uptodate_type ty;
+&gt; val it = true : bool
+
+- delete_type "foo";
+&gt; val it = () : unit
+
+- uptodate_type ty;
+&gt; val it = false : bool
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Theory.uptodate_term.html">uptodate_term</A>,
+<A HREF = "Theory.uptodate_thm.html">uptodate_thm</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

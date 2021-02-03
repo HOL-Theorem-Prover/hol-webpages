@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure liftingTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure liftingTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/transfer/liftingScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature liftingTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#Qt_def-val">Qt_def</a> : thm
+<a name="line7"></a>    val <a href="#map_fun_def-val">map_fun_def</a> : thm
+<a name="line8"></a>  
+<a name="line9"></a>  (*  Theorems  *)
+<a name="line10"></a>    val <a href="#HK_thm2-val">HK_thm2</a> : thm
+<a name="line11"></a>    val <a href="#Qt_EQ-val">Qt_EQ</a> : thm
+<a name="line12"></a>    val <a href="#Qt_alt-val">Qt_alt</a> : thm
+<a name="line13"></a>    val <a href="#Qt_alt_def2-val">Qt_alt_def2</a> : thm
+<a name="line14"></a>    val <a href="#Qt_right_unique-val">Qt_right_unique</a> : thm
+<a name="line15"></a>    val <a href="#Qt_surj-val">Qt_surj</a> : thm
+<a name="line16"></a>    val <a href="#R_repabs-val">R_repabs</a> : thm
+<a name="line17"></a>    val <a href="#funQ-val">funQ</a> : thm
+<a name="line18"></a>    val <a href="#idQ-val">idQ</a> : thm
+<a name="line19"></a>    val <a href="#listQ-val">listQ</a> : thm
+<a name="line20"></a>    val <a href="#map_fun_I-val">map_fun_I</a> : thm
+<a name="line21"></a>    val <a href="#map_fun_id-val">map_fun_id</a> : thm
+<a name="line22"></a>    val <a href="#map_fun_o-val">map_fun_o</a> : thm
+<a name="line23"></a>    val <a href="#map_fun_thm-val">map_fun_thm</a> : thm
+<a name="line24"></a>    val <a href="#pairQ-val">pairQ</a> : thm
+<a name="line25"></a>    val <a href="#setQ-val">setQ</a> : thm
+<a name="line26"></a>  
+<a name="line27"></a>  val lifting_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line28"></a>(*
+   [transfer] Parent theory of "lifting"
+   
+   [<a name="Qt_def-val"><b>Qt_def</b></a>]  Definition
+      
+      ⊢ ∀R Abs Rep Tf.
+          Qt R Abs Rep Tf ⇔
+          R = Tfᵀ ∘ᵣ Tf ∧ (∀a b. Tf a b ⇒ Abs a = b) ∧ ∀a. Tf (Rep a) a
+   
+   [<a name="map_fun_def-val"><b>map_fun_def</b></a>]  Definition
+      
+      ⊢ ∀f g h. (f ---&gt; g) h = g ∘ h ∘ f
+   
+   [<a name="HK_thm2-val"><b>HK_thm2</b></a>]  Theorem
+      
+      ⊢ Qt R Abs Rep Tf ∧ f = Abs t ∧ R t t ⇒ Tf t f
+   
+   [<a name="Qt_EQ-val"><b>Qt_EQ</b></a>]  Theorem
+      
+      ⊢ Qt R Abs Rep Tf ⇒ (Tf |==&gt; Tf |==&gt; $&lt;=&gt;) R $=
+   
+   [<a name="Qt_alt-val"><b>Qt_alt</b></a>]  Theorem
+      
+      ⊢ Qt R Abs Rep Tf ⇔
+        (∀a. Abs (Rep a) = a) ∧ (∀a. R (Rep a) (Rep a)) ∧
+        (∀c1 c2. R c1 c2 ⇔ R c1 c1 ∧ R c2 c2 ∧ Abs c1 = Abs c2) ∧
+        Tf = (λc a. R c c ∧ Abs c = a)
+   
+   [<a name="Qt_alt_def2-val"><b>Qt_alt_def2</b></a>]  Theorem
+      
+      ⊢ Qt R Abs Rep Tf ⇔
+        (∀c a. Tf c a ⇒ Abs c = a) ∧ (∀a. Tf (Rep a) a) ∧
+        ∀c1 c2. R c1 c2 ⇔ Tf c1 (Abs c2) ∧ Tf c2 (Abs c1)
+   
+   [<a name="Qt_right_unique-val"><b>Qt_right_unique</b></a>]  Theorem
+      
+      ⊢ Qt R Abs Rep Tf ⇒ right_unique Tf
+   
+   [<a name="Qt_surj-val"><b>Qt_surj</b></a>]  Theorem
+      
+      ⊢ Qt R Abs Rep Tf ⇒ surj Tf
+   
+   [<a name="R_repabs-val"><b>R_repabs</b></a>]  Theorem
+      
+      ⊢ Qt R Abs Rep Tf ⇒ ∀x. R x x ⇒ R (Rep (Abs x)) x
+   
+   [<a name="funQ-val"><b>funQ</b></a>]  Theorem
+      
+      ⊢ Qt D AbsD RepD TfD ∧ Qt R AbsR RepR TfR ⇒
+        Qt (D |==&gt; R) (RepD ---&gt; AbsR) (AbsD ---&gt; RepR) (TfD |==&gt; TfR)
+   
+   [<a name="idQ-val"><b>idQ</b></a>]  Theorem
+      
+      ⊢ Qt $= I I $=
+   
+   [<a name="listQ-val"><b>listQ</b></a>]  Theorem
+      
+      ⊢ Qt R Abs Rep Tf ⇒ Qt (LIST_REL R) (MAP Abs) (MAP Rep) (LIST_REL Tf)
+   
+   [<a name="map_fun_I-val"><b>map_fun_I</b></a>]  Theorem
+      
+      ⊢ f ---&gt; I = flip $o f ∧ I ---&gt; g = $o g
+   
+   [<a name="map_fun_id-val"><b>map_fun_id</b></a>]  Theorem
+      
+      ⊢ I ---&gt; I = I
+   
+   [<a name="map_fun_o-val"><b>map_fun_o</b></a>]  Theorem
+      
+      ⊢ f1 ∘ f2 ---&gt; g1 ∘ g2 = (f2 ---&gt; g1) ∘ (f1 ---&gt; g2)
+   
+   [<a name="map_fun_thm-val"><b>map_fun_thm</b></a>]  Theorem
+      
+      ⊢ (f ---&gt; g) h x = g (h (f x))
+   
+   [<a name="pairQ-val"><b>pairQ</b></a>]  Theorem
+      
+      ⊢ Qt R1 Abs1 Rep1 Tf1 ∧ Qt R2 Abs2 Rep2 Tf2 ⇒
+        Qt (R1 ### R2) (Abs1 ## Abs2) (Rep1 ## Rep2) (Tf1 ### Tf2)
+   
+   [<a name="setQ-val"><b>setQ</b></a>]  Theorem
+      
+      ⊢ Qt R Abs Rep Tf ⇒
+        Qt (R |==&gt; $&lt;=&gt;) (PREIMAGE Rep) (PREIMAGE Abs) (Tf |==&gt; $&lt;=&gt;)
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/transfer/liftingScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

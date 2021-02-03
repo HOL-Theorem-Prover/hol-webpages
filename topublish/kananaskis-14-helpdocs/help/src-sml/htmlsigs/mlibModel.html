@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure mlibModel</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure mlibModel</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibModel.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ========================================================================= *)
+<a name="line2"></a>(* FINITE MODELS                                                             *)
+<a name="line3"></a>(* Copyright (c) 2003-2004 Joe Hurd.                                         *)
+<a name="line4"></a>(* ========================================================================= *)
+<a name="line5"></a>
+<a name="line6"></a>signature mlibModel =
+<a name="line7"></a>sig
+<a name="line8"></a>
+<a name="line9"></a>type 'a pp   = 'a mlibUseful.pp
+<a name="line10"></a>type term    = mlibTerm.term
+<a name="line11"></a>type formula = mlibTerm.formula
+<a name="line12"></a>
+<a name="line13"></a>(* The parts of the model that are fixed and cannot be perturbed *)
+<a name="line14"></a>(* Note: a model of size N has integer elements 0...N-1 *)
+<a name="line15"></a>type fix = int -&gt; {func : (string * int list) -&gt; int option,
+<a name="line16"></a>                   pred : (string * int list) -&gt; bool option}
+<a name="line17"></a>val fix_merge  : fix -&gt; fix -&gt; fix
+<a name="line18"></a>val fix_mergel : fix list -&gt; fix
+<a name="line19"></a>val map_fix    : (string -&gt; string option) -&gt; fix -&gt; fix
+<a name="line20"></a>val pure_fix   : fix  (* = *)
+<a name="line21"></a>val basic_fix  : fix  (* id fst snd #1 #2 #3 &lt;&gt; *)
+<a name="line22"></a>val modulo_fix : fix  (* 0 1 2 suc pre ~ + - * exp mod *)
+<a name="line23"></a>                      (* &lt; &lt;= &gt; &gt;= is_0 divides odd even *)
+<a name="line24"></a>val heap_fix   : fix  (* 0 1 2 suc pre + - * exp &lt; &lt;= &gt; &gt;= is_0 *)
+<a name="line25"></a>val set_fix    : fix  (* empty univ union inter compl card in subset *)
+<a name="line26"></a>
+<a name="line27"></a>(* Parameters *)
+<a name="line28"></a>type parameters = {size : int, fix : fix}
+<a name="line29"></a>val defaults    : parameters
+<a name="line30"></a>val update_size : (int -&gt; int) -&gt; parameters -&gt; parameters
+<a name="line31"></a>val update_fix  : (fix -&gt; fix) -&gt; parameters -&gt; parameters
+<a name="line32"></a>
+<a name="line33"></a>(* The type of finite models *)
+<a name="line34"></a>type model
+<a name="line35"></a>
+<a name="line36"></a>(* Basic operations *)
+<a name="line37"></a>val new  : parameters -&gt; model
+<a name="line38"></a>val size : model -&gt; int
+<a name="line39"></a>
+<a name="line40"></a>(* Evaluate ground terms and sentences *)
+<a name="line41"></a>val evaluate_term    : model -&gt; term -&gt; int
+<a name="line42"></a>val evaluate_formula : model -&gt; formula -&gt; bool
+<a name="line43"></a>
+<a name="line44"></a>(* Check whether a random grounding of a formula is satisfied by the model *)
+<a name="line45"></a>val check  : model -&gt; formula -&gt; bool
+<a name="line46"></a>val checkn : model -&gt; formula -&gt; int -&gt; int
+<a name="line47"></a>val count  : model -&gt; formula -&gt; int * int  (* num of satisfying groundings *)
+<a name="line48"></a>
+<a name="line49"></a>(* Try to make formulas true by applying random perturbations to the model *)
+<a name="line50"></a>val perturb : formula list -&gt; int -&gt; model -&gt; model
+<a name="line51"></a>
+<a name="line52"></a>(* Pretty-printing *)
+<a name="line53"></a>val pp_model          : model pp
+<a name="line54"></a>val term_to_string    : model -&gt; term -&gt; string
+<a name="line55"></a>val formula_to_string : model -&gt; formula -&gt; string
+<a name="line56"></a>
+<a name="line57"></a>end
+<a name="line58"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibModel.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

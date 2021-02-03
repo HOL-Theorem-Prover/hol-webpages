@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: dft</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "dft"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "dirGraphTheory.html"><span class="strong">dirGraph</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">DFT</span>
+    <td>
+    :(β -> β list) -> (β -> α -> α) -> β list -> β list -> α -> α
+    <tr><td>
+    <span class="strong">Rel</span>
+    <td>
+    :(α -> β list) # γ # α list # δ list # ε -> num # num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">Rel_def</span>
+<DD>
+<pre>
+⊢ ∀G f seen to_visit acc.
+    Rel (G,f,seen,to_visit,acc) =
+    (CARD (Parents G DIFF LIST_TO_SET seen),LENGTH to_visit)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">DFT_ALL_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀G seen to_visit.
+    FINITE (Parents G) ⇒ ALL_DISTINCT (DFT G CONS seen to_visit [])
+</pre>
+
+<DT><span class="strong">DFT_CONS</span>
+<DD>
+<pre>
+⊢ ∀G f seen to_visit acc a b.
+    FINITE (Parents G) ∧ (f = CONS) ∧ (acc = a ++ b) ⇒
+    (DFT G f seen to_visit acc = DFT G f seen to_visit a ++ b)
+</pre>
+
+<DT><span class="strong">DFT_FOLD</span>
+<DD>
+<pre>
+⊢ ∀G f seen to_visit acc.
+    FINITE (Parents G) ⇒
+    (DFT G f seen to_visit acc = FOLDR f acc (DFT G CONS seen to_visit []))
+</pre>
+
+<DT><span class="strong">DFT_REACH_1</span>
+<DD>
+<pre>
+⊢ ∀G f seen to_visit acc.
+    FINITE (Parents G) ∧ (f = CONS) ⇒
+    ∀x. MEM x (DFT G f seen to_visit acc) ⇒
+        x ∈ REACH_LIST G to_visit ∨ MEM x acc
+</pre>
+
+<DT><span class="strong">DFT_REACH_2</span>
+<DD>
+<pre>
+⊢ ∀G f seen to_visit acc x.
+    FINITE (Parents G) ∧ (f = CONS) ∧
+    x ∈ REACH_LIST (EXCLUDE G (LIST_TO_SET seen)) to_visit ∧ ¬MEM x seen ⇒
+    MEM x (DFT G f seen to_visit acc)
+</pre>
+
+<DT><span class="strong">DFT_REACH_THM</span>
+<DD>
+<pre>
+⊢ ∀G to_visit.
+    FINITE (Parents G) ⇒
+    ∀x. x ∈ REACH_LIST G to_visit ⇔ MEM x (DFT G CONS [] to_visit [])
+</pre>
+
+<DT><span class="strong">DFT_def</span>
+<DD>
+<pre>
+⊢ FINITE (Parents G) ⇒
+  (DFT G f seen [] acc = acc) ∧
+  (DFT G f seen (visit_now::visit_later) acc =
+   if MEM visit_now seen then DFT G f seen visit_later acc
+   else
+     DFT G f (visit_now::seen) (G visit_now ++ visit_later) (f visit_now acc))
+</pre>
+
+<DT><span class="strong">DFT_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀G f seen visit_now visit_later acc.
+         P G f seen [] acc ∧
+         ((FINITE (Parents G) ∧ ¬MEM visit_now seen ⇒
+           P G f (visit_now::seen) (G visit_now ++ visit_later)
+             (f visit_now acc)) ∧
+          (FINITE (Parents G) ∧ MEM visit_now seen ⇒
+           P G f seen visit_later acc) ⇒
+          P G f seen (visit_now::visit_later) acc)) ⇒
+      ∀v v1 v2 v3 v4. P v v1 v2 v3 v4
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

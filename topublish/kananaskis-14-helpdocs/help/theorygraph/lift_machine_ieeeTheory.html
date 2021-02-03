@@ -1,0 +1,330 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: lift_machine_ieee</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "lift_machine_ieee"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "machine_ieeeTheory.html"><span class="strong">machine_ieee</span></a>&nbsp;&nbsp;
+    <a href = "lift_ieeeTheory.html"><span class="strong">lift_ieee</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">interval</span>
+    <td>
+    :real -> real -> real -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">interval_def</span>
+<DD>
+<pre>
+⊢ ∀a b. a .. b = {x | a ≤ x ∧ x < b}
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">fp16_float_add_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp16_isFinite a ∧ fp16_isFinite b ∧
+    abs (fp16_to_real a + fp16_to_real b) ∈
+    (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+    fp16_isFinite (fp16_add roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 11 ∧
+        (fp16_to_real (fp16_add roundTiesToEven a b) =
+         (fp16_to_real a + fp16_to_real b) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp16_float_div_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp16_isFinite a ∧ fp16_isFinite b ∧ ¬fp16_isZero b ∧
+    abs (fp16_to_real a / fp16_to_real b) ∈
+    (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+    fp16_isFinite (fp16_div roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 11 ∧
+        (fp16_to_real (fp16_div roundTiesToEven a b) =
+         fp16_to_real a / fp16_to_real b * (1 + e))
+</pre>
+
+<DT><span class="strong">fp16_float_mul_add_relative</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    fp16_isFinite a ∧ fp16_isFinite b ∧ fp16_isFinite c ∧
+    abs (fp16_to_real a * fp16_to_real b + fp16_to_real c) ∈
+    (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+    fp16_isFinite (fp16_mul_add roundTiesToEven a b c) ∧
+    ∃e. abs e ≤ 1 / 2 pow 11 ∧
+        (fp16_to_real (fp16_mul_add roundTiesToEven a b c) =
+         (fp16_to_real a * fp16_to_real b + fp16_to_real c) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp16_float_mul_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp16_isFinite a ∧ fp16_isFinite b ∧
+    abs (fp16_to_real a * fp16_to_real b) ∈
+    (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+    fp16_isFinite (fp16_mul roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 11 ∧
+        (fp16_to_real (fp16_mul roundTiesToEven a b) =
+         fp16_to_real a * fp16_to_real b * (1 + e))
+</pre>
+
+<DT><span class="strong">fp16_float_mul_sub_relative</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    fp16_isFinite a ∧ fp16_isFinite b ∧ fp16_isFinite c ∧
+    abs (fp16_to_real a * fp16_to_real b − fp16_to_real c) ∈
+    (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+    fp16_isFinite (fp16_mul_sub roundTiesToEven a b c) ∧
+    ∃e. abs e ≤ 1 / 2 pow 11 ∧
+        (fp16_to_real (fp16_mul_sub roundTiesToEven a b c) =
+         (fp16_to_real a * fp16_to_real b − fp16_to_real c) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp16_float_sqrt_relative</span>
+<DD>
+<pre>
+⊢ ∀a. fp16_isFinite a ∧ ¬word_msb a ∧
+      abs (sqrt (fp16_to_real a)) ∈
+      (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+      fp16_isFinite (fp16_sqrt roundTiesToEven a) ∧
+      ∃e. abs e ≤ 1 / 2 pow 11 ∧
+          (fp16_to_real (fp16_sqrt roundTiesToEven a) =
+           sqrt (fp16_to_real a) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp16_float_sub_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp16_isFinite a ∧ fp16_isFinite b ∧
+    abs (fp16_to_real a − fp16_to_real b) ∈
+    (1 / 2 pow 14 .. 2 pow 30 / 2 pow 15 * (2 − 1 / 2 pow 11)) ⇒
+    fp16_isFinite (fp16_sub roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 11 ∧
+        (fp16_to_real (fp16_sub roundTiesToEven a b) =
+         (fp16_to_real a − fp16_to_real b) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp32_float_add_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp32_isFinite a ∧ fp32_isFinite b ∧
+    abs (fp32_to_real a + fp32_to_real b) ∈
+    (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+    fp32_isFinite (fp32_add roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 24 ∧
+        (fp32_to_real (fp32_add roundTiesToEven a b) =
+         (fp32_to_real a + fp32_to_real b) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp32_float_div_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp32_isFinite a ∧ fp32_isFinite b ∧ ¬fp32_isZero b ∧
+    abs (fp32_to_real a / fp32_to_real b) ∈
+    (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+    fp32_isFinite (fp32_div roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 24 ∧
+        (fp32_to_real (fp32_div roundTiesToEven a b) =
+         fp32_to_real a / fp32_to_real b * (1 + e))
+</pre>
+
+<DT><span class="strong">fp32_float_mul_add_relative</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    fp32_isFinite a ∧ fp32_isFinite b ∧ fp32_isFinite c ∧
+    abs (fp32_to_real a * fp32_to_real b + fp32_to_real c) ∈
+    (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+    fp32_isFinite (fp32_mul_add roundTiesToEven a b c) ∧
+    ∃e. abs e ≤ 1 / 2 pow 24 ∧
+        (fp32_to_real (fp32_mul_add roundTiesToEven a b c) =
+         (fp32_to_real a * fp32_to_real b + fp32_to_real c) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp32_float_mul_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp32_isFinite a ∧ fp32_isFinite b ∧
+    abs (fp32_to_real a * fp32_to_real b) ∈
+    (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+    fp32_isFinite (fp32_mul roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 24 ∧
+        (fp32_to_real (fp32_mul roundTiesToEven a b) =
+         fp32_to_real a * fp32_to_real b * (1 + e))
+</pre>
+
+<DT><span class="strong">fp32_float_mul_sub_relative</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    fp32_isFinite a ∧ fp32_isFinite b ∧ fp32_isFinite c ∧
+    abs (fp32_to_real a * fp32_to_real b − fp32_to_real c) ∈
+    (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+    fp32_isFinite (fp32_mul_sub roundTiesToEven a b c) ∧
+    ∃e. abs e ≤ 1 / 2 pow 24 ∧
+        (fp32_to_real (fp32_mul_sub roundTiesToEven a b c) =
+         (fp32_to_real a * fp32_to_real b − fp32_to_real c) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp32_float_sqrt_relative</span>
+<DD>
+<pre>
+⊢ ∀a. fp32_isFinite a ∧ ¬word_msb a ∧
+      abs (sqrt (fp32_to_real a)) ∈
+      (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+      fp32_isFinite (fp32_sqrt roundTiesToEven a) ∧
+      ∃e. abs e ≤ 1 / 2 pow 24 ∧
+          (fp32_to_real (fp32_sqrt roundTiesToEven a) =
+           sqrt (fp32_to_real a) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp32_float_sub_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp32_isFinite a ∧ fp32_isFinite b ∧
+    abs (fp32_to_real a − fp32_to_real b) ∈
+    (1 / 2 pow 126 .. 2 pow 254 / 2 pow 127 * (2 − 1 / 2 pow 24)) ⇒
+    fp32_isFinite (fp32_sub roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 24 ∧
+        (fp32_to_real (fp32_sub roundTiesToEven a b) =
+         (fp32_to_real a − fp32_to_real b) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp64_float_add_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp64_isFinite a ∧ fp64_isFinite b ∧
+    abs (fp64_to_real a + fp64_to_real b) ∈
+    (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+    fp64_isFinite (fp64_add roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 53 ∧
+        (fp64_to_real (fp64_add roundTiesToEven a b) =
+         (fp64_to_real a + fp64_to_real b) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp64_float_div_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp64_isFinite a ∧ fp64_isFinite b ∧ ¬fp64_isZero b ∧
+    abs (fp64_to_real a / fp64_to_real b) ∈
+    (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+    fp64_isFinite (fp64_div roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 53 ∧
+        (fp64_to_real (fp64_div roundTiesToEven a b) =
+         fp64_to_real a / fp64_to_real b * (1 + e))
+</pre>
+
+<DT><span class="strong">fp64_float_mul_add_relative</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    fp64_isFinite a ∧ fp64_isFinite b ∧ fp64_isFinite c ∧
+    abs (fp64_to_real a * fp64_to_real b + fp64_to_real c) ∈
+    (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+    fp64_isFinite (fp64_mul_add roundTiesToEven a b c) ∧
+    ∃e. abs e ≤ 1 / 2 pow 53 ∧
+        (fp64_to_real (fp64_mul_add roundTiesToEven a b c) =
+         (fp64_to_real a * fp64_to_real b + fp64_to_real c) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp64_float_mul_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp64_isFinite a ∧ fp64_isFinite b ∧
+    abs (fp64_to_real a * fp64_to_real b) ∈
+    (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+    fp64_isFinite (fp64_mul roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 53 ∧
+        (fp64_to_real (fp64_mul roundTiesToEven a b) =
+         fp64_to_real a * fp64_to_real b * (1 + e))
+</pre>
+
+<DT><span class="strong">fp64_float_mul_sub_relative</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    fp64_isFinite a ∧ fp64_isFinite b ∧ fp64_isFinite c ∧
+    abs (fp64_to_real a * fp64_to_real b − fp64_to_real c) ∈
+    (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+    fp64_isFinite (fp64_mul_sub roundTiesToEven a b c) ∧
+    ∃e. abs e ≤ 1 / 2 pow 53 ∧
+        (fp64_to_real (fp64_mul_sub roundTiesToEven a b c) =
+         (fp64_to_real a * fp64_to_real b − fp64_to_real c) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp64_float_sqrt_relative</span>
+<DD>
+<pre>
+⊢ ∀a. fp64_isFinite a ∧ ¬word_msb a ∧
+      abs (sqrt (fp64_to_real a)) ∈
+      (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+      fp64_isFinite (fp64_sqrt roundTiesToEven a) ∧
+      ∃e. abs e ≤ 1 / 2 pow 53 ∧
+          (fp64_to_real (fp64_sqrt roundTiesToEven a) =
+           sqrt (fp64_to_real a) * (1 + e))
+</pre>
+
+<DT><span class="strong">fp64_float_sub_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    fp64_isFinite a ∧ fp64_isFinite b ∧
+    abs (fp64_to_real a − fp64_to_real b) ∈
+    (1 / 2 pow 1022 .. 2 pow 2046 / 2 pow 1023 * (2 − 1 / 2 pow 53)) ⇒
+    fp64_isFinite (fp64_sub roundTiesToEven a b) ∧
+    ∃e. abs e ≤ 1 / 2 pow 53 ∧
+        (fp64_to_real (fp64_sub roundTiesToEven a b) =
+         (fp64_to_real a − fp64_to_real b) * (1 + e))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

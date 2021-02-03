@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>PairedLambda.PAIRED_BETA_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>PAIRED_BETA_CONV : conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/PairedLambda.html">PairedLambda</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Performs generalized beta conversion for tupled beta-redexes.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">paireLib</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The conversion </SPAN><SPAN class = "BRKT">PAIRED_BETA_CONV</SPAN><SPAN class = "TEXT"> implements beta-reduction for certain
+applications of tupled lambda abstractions called &lsquo;tupled beta-redexes&rsquo;.
+Tupled lambda abstractions have the form </SPAN><SPAN class = "BRKT">\&lt;vs&gt;.tm</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">&lt;vs&gt;</SPAN><SPAN class = "TEXT"> is an
+arbitrarily-nested tuple of variables called a &lsquo;varstruct&rsquo;. For the
+purposes of </SPAN><SPAN class = "BRKT">PAIRED_BETA_CONV</SPAN><SPAN class = "TEXT">, the syntax of varstructs is given by:
+</SPAN><DIV class = "XMPL"><pre>
+   &lt;vs&gt;  ::=   (v1,v2)  |  (&lt;vs&gt;,v)  |  (v,&lt;vs&gt;)  |  (&lt;vs&gt;,&lt;vs&gt;)
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">v1</SPAN><SPAN class = "TEXT">, and </SPAN><SPAN class = "BRKT">v2</SPAN><SPAN class = "TEXT"> range over variables.  A tupled beta-redex
+is an application of the form </SPAN><SPAN class = "BRKT">(\&lt;vs&gt;.tm)&nbsp;t</SPAN><SPAN class = "TEXT">, where the term </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is a
+nested tuple of values having the same structure as the varstruct </SPAN><SPAN class = "BRKT">&lt;vs&gt;</SPAN><SPAN class = "TEXT">. For
+example, the term:
+</SPAN><DIV class = "XMPL"><pre>
+   (\((a,b),(c,d)). a + b + c + d)  ((1,2),(3,4))
+</pre></DIV>
+<SPAN class = "TEXT">
+is a tupled beta-redex, but the term:
+</SPAN><DIV class = "XMPL"><pre>
+   (\((a,b),(c,d)). a + b + c + d)  ((1,2),p)
+</pre></DIV>
+<SPAN class = "TEXT">
+is not, since </SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT"> is not a pair of terms.</SPAN>
+<P>
+<SPAN class = "TEXT">Given a tupled beta-redex </SPAN><SPAN class = "BRKT">(\&lt;vs&gt;.tm)&nbsp;t</SPAN><SPAN class = "TEXT">, the conversion </SPAN><SPAN class = "BRKT">PAIRED_BETA_CONV</SPAN><SPAN class = "TEXT">
+performs generalized beta-reduction and returns the theorem
+</SPAN><DIV class = "XMPL"><pre>
+   |-  (\&lt;vs&gt;.tm) t = t[t1,...,tn/v1,...,vn]
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> is the subterm of the tuple </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> that corresponds to
+the variable </SPAN><SPAN class = "BRKT">vi</SPAN><SPAN class = "TEXT"> in the varstruct </SPAN><SPAN class = "BRKT">&lt;vs&gt;</SPAN><SPAN class = "TEXT">. In the simplest case, the
+varstruct </SPAN><SPAN class = "BRKT">&lt;vs&gt;</SPAN><SPAN class = "TEXT"> is flat, as in the term:
+</SPAN><DIV class = "XMPL"><pre>
+   (\(v1,...,vn).t) (t1,...,tn)
+</pre></DIV>
+<SPAN class = "TEXT">
+When applied to a term of this form, </SPAN><SPAN class = "BRKT">PAIRED_BETA_CONV</SPAN><SPAN class = "TEXT"> returns:
+</SPAN><DIV class = "XMPL"><pre>
+   |- (\(v1, ... ,vn).t) (t1, ... ,tn) = t[t1,...,tn/v1,...,vn]
+</pre></DIV>
+<SPAN class = "TEXT">
+As with ordinary beta-conversion, bound variables may be renamed to
+prevent free variable capture.  That is, the term </SPAN><SPAN class = "BRKT">t[t1,...,tn/v1,...,vn]</SPAN><SPAN class = "TEXT"> in
+this theorem is the result of substituting </SPAN><SPAN class = "BRKT">ti</SPAN><SPAN class = "TEXT"> for </SPAN><SPAN class = "BRKT">vi</SPAN><SPAN class = "TEXT"> in parallel in </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">,
+with suitable renaming of variables to prevent free variables in </SPAN><SPAN class = "BRKT">t1</SPAN><SPAN class = "TEXT">, ...,
+</SPAN><SPAN class = "BRKT">tn</SPAN><SPAN class = "TEXT"> becoming bound in the result.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">PAIRED_BETA_CONV&nbsp;tm</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> is not a tupled beta-redex, as described
+above.  Note that ordinary beta-redexes are specifically excluded:
+</SPAN><SPAN class = "BRKT">PAIRED_BETA_CONV</SPAN><SPAN class = "TEXT"> fails when applied to </SPAN><SPAN class = "BRKT">(\v.t)u</SPAN><SPAN class = "TEXT">.  For these beta-redexes,
+use </SPAN><SPAN class = "BRKT">BETA_CONV</SPAN><SPAN class = "TEXT">, or </SPAN><SPAN class = "BRKT">GEN_BETA_CONV</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following is a typical use of the conversion:
+</SPAN><DIV class = "XMPL"><pre>
+   - PairedLambda.PAIRED_BETA_CONV
+        (Term `(\((a,b),(c,d)). a + b + c + d)  ((1,2),(3,4))`);
+   &gt; val it = |- (\((a,b),c,d). a+b+c+d) ((1,2),3,4) = 1+2+3+4 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Note that the term to which the tupled lambda abstraction
+is applied must have the same structure as the varstruct.  For example,
+the following succeeds:
+</SPAN><DIV class = "XMPL"><pre>
+   - PairedLambda.PAIRED_BETA_CONV
+         (Term `(\((a,b),p). a + b)  ((1,2),(3+5,4))`);
+   &gt; val it = |- (\((a,b),p). a + b)((1,2),3 + 5,4) = 1 + 2 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+but the following call fails:
+</SPAN><DIV class = "XMPL"><pre>
+   - PairedLambda.PAIRED_BETA_CONV
+       (Term `(\((a,b),(c,d)). a + b + c + d)  ((1,2),p)`);
+   ! Uncaught exception:
+   ! HOL_ERR
+</pre></DIV>
+<SPAN class = "TEXT">
+because </SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT"> is not a pair.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Thm.BETA_CONV.html">BETA_CONV</A>,
+<A HREF = "Conv.BETA_RULE.html">BETA_RULE</A>,
+<A HREF = "Tactic.BETA_TAC.html">BETA_TAC</A>,
+<A HREF = "Drule.LIST_BETA_CONV.html">LIST_BETA_CONV</A>,
+<A HREF = "Drule.RIGHT_BETA.html">RIGHT_BETA</A>,
+<A HREF = "Drule.RIGHT_LIST_BETA.html">RIGHT_LIST_BETA</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

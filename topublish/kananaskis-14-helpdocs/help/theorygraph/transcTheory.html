@@ -1,0 +1,1572 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: transc</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "transc"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "powserTheory.html"><span class="strong">powser</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">Dint</span>
+    <td>
+    :real # real -> (real -> real) -> real -> bool
+    <tr><td> <span class="strong">acs</span> <td> :real -> real
+    <tr><td> <span class="strong">asn</span> <td> :real -> real
+    <tr><td> <span class="strong">atn</span> <td> :real -> real
+    <tr><td> <span class="strong">cos</span> <td> :real -> real
+    <tr><td>
+    <span class="strong">division</span>
+    <td>
+    :real # real -> (num -> real) -> bool
+    <tr><td> <span class="strong">dsize</span> <td> :(num -> real) -> num
+    <tr><td> <span class="strong">exp</span> <td> :real -> real
+    <tr><td>
+    <span class="strong">fine</span>
+    <td>
+    :(real -> real) -> (num -> real) # (num -> real) -> bool
+    <tr><td>
+    <span class="strong">gauge</span>
+    <td>
+    :(real -> bool) -> (real -> real) -> bool
+    <tr><td> <span class="strong">ln</span> <td> :real -> real
+    <tr><td> <span class="strong">pi</span> <td> :real
+    <tr><td> <span class="strong">root</span> <td> :num -> real -> real
+    <tr><td> <span class="strong">rpow</span> <td> :real -> real -> real
+    <tr><td>
+    <span class="strong">rsum</span>
+    <td>
+    :(num -> real) # (num -> real) -> (real -> real) -> real
+    <tr><td> <span class="strong">sin</span> <td> :real -> real
+    <tr><td> <span class="strong">sqrt</span> <td> :real -> real
+    <tr><td> <span class="strong">tan</span> <td> :real -> real
+    <tr><td>
+    <span class="strong">tdiv</span>
+    <td>
+    :real # real -> (num -> real) # (num -> real) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">Dint</span>
+<DD>
+<pre>
+⊢ ∀a b f k.
+    Dint (a,b) f k ⇔
+    ∀e. 0 < e ⇒
+        ∃g. gauge (λx. a ≤ x ∧ x ≤ b) g ∧
+            ∀D p. tdiv (a,b) (D,p) ∧ fine g (D,p) ⇒ abs (rsum (D,p) f − k) < e
+</pre>
+
+<DT><span class="strong">acs</span>
+<DD>
+<pre>
+⊢ ∀y. acs y = @x. 0 ≤ x ∧ x ≤ pi ∧ (cos x = y)
+</pre>
+
+<DT><span class="strong">asn</span>
+<DD>
+<pre>
+⊢ ∀y. asn y = @x. -(pi / 2) ≤ x ∧ x ≤ pi / 2 ∧ (sin x = y)
+</pre>
+
+<DT><span class="strong">atn</span>
+<DD>
+<pre>
+⊢ ∀y. atn y = @x. -(pi / 2) < x ∧ x < pi / 2 ∧ (tan x = y)
+</pre>
+
+<DT><span class="strong">cos</span>
+<DD>
+<pre>
+⊢ ∀x. cos x =
+      suminf
+        (λn.
+             (λn. if EVEN n then -1 pow (n DIV 2) / &FACT n else 0) n *
+             x pow n)
+</pre>
+
+<DT><span class="strong">division</span>
+<DD>
+<pre>
+⊢ ∀a b D.
+    division (a,b) D ⇔
+    (D 0 = a) ∧ ∃N. (∀n. n < N ⇒ D n < D (SUC n)) ∧ ∀n. n ≥ N ⇒ (D n = b)
+</pre>
+
+<DT><span class="strong">dsize</span>
+<DD>
+<pre>
+⊢ ∀D. dsize D = @N. (∀n. n < N ⇒ D n < D (SUC n)) ∧ ∀n. n ≥ N ⇒ (D n = D N)
+</pre>
+
+<DT><span class="strong">exp</span>
+<DD>
+<pre>
+⊢ ∀x. exp x = suminf (λn. (λn. (&FACT n)⁻¹) n * x pow n)
+</pre>
+
+<DT><span class="strong">fine</span>
+<DD>
+<pre>
+⊢ ∀g D p. fine g (D,p) ⇔ ∀n. n < dsize D ⇒ D (SUC n) − D n < g (p n)
+</pre>
+
+<DT><span class="strong">gauge</span>
+<DD>
+<pre>
+⊢ ∀E g. gauge E g ⇔ ∀x. E x ⇒ 0 < g x
+</pre>
+
+<DT><span class="strong">ln</span>
+<DD>
+<pre>
+⊢ ∀x. ln x = @u. exp u = x
+</pre>
+
+<DT><span class="strong">pi</span>
+<DD>
+<pre>
+⊢ pi = 2 * @x. 0 ≤ x ∧ x ≤ 2 ∧ (cos x = 0)
+</pre>
+
+<DT><span class="strong">root</span>
+<DD>
+<pre>
+⊢ ∀n x. root n x = @u. (0 < x ⇒ 0 < u) ∧ (u pow n = x)
+</pre>
+
+<DT><span class="strong">rpow_def</span>
+<DD>
+<pre>
+⊢ ∀a b. a powr b = exp (b * ln a)
+</pre>
+
+<DT><span class="strong">rsum</span>
+<DD>
+<pre>
+⊢ ∀D p f. rsum (D,p) f = sum (0,dsize D) (λn. f (p n) * (D (SUC n) − D n))
+</pre>
+
+<DT><span class="strong">sin</span>
+<DD>
+<pre>
+⊢ ∀x. sin x =
+      suminf
+        (λn.
+             (λn. if EVEN n then 0 else -1 pow ((n − 1) DIV 2) / &FACT n) n *
+             x pow n)
+</pre>
+
+<DT><span class="strong">sqrt</span>
+<DD>
+<pre>
+⊢ ∀x. sqrt x = root 2 x
+</pre>
+
+<DT><span class="strong">tan</span>
+<DD>
+<pre>
+⊢ ∀x. tan x = sin x / cos x
+</pre>
+
+<DT><span class="strong">tdiv</span>
+<DD>
+<pre>
+⊢ ∀a b D p.
+    tdiv (a,b) (D,p) ⇔ division (a,b) D ∧ ∀n. D n ≤ p n ∧ p n ≤ D (SUC n)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ACS</span>
+<DD>
+<pre>
+⊢ ∀y. -1 ≤ y ∧ y ≤ 1 ⇒ 0 ≤ acs y ∧ acs y ≤ pi ∧ (cos (acs y) = y)
+</pre>
+
+<DT><span class="strong">ACS_BOUNDS</span>
+<DD>
+<pre>
+⊢ ∀y. -1 ≤ y ∧ y ≤ 1 ⇒ 0 ≤ acs y ∧ acs y ≤ pi
+</pre>
+
+<DT><span class="strong">ACS_BOUNDS_LT</span>
+<DD>
+<pre>
+⊢ ∀y. -1 < y ∧ y < 1 ⇒ 0 < acs y ∧ acs y < pi
+</pre>
+
+<DT><span class="strong">ACS_COS</span>
+<DD>
+<pre>
+⊢ ∀y. -1 ≤ y ∧ y ≤ 1 ⇒ (cos (acs y) = y)
+</pre>
+
+<DT><span class="strong">ASN</span>
+<DD>
+<pre>
+⊢ ∀y. -1 ≤ y ∧ y ≤ 1 ⇒ -(pi / 2) ≤ asn y ∧ asn y ≤ pi / 2 ∧ (sin (asn y) = y)
+</pre>
+
+<DT><span class="strong">ASN_BOUNDS</span>
+<DD>
+<pre>
+⊢ ∀y. -1 ≤ y ∧ y ≤ 1 ⇒ -(pi / 2) ≤ asn y ∧ asn y ≤ pi / 2
+</pre>
+
+<DT><span class="strong">ASN_BOUNDS_LT</span>
+<DD>
+<pre>
+⊢ ∀y. -1 < y ∧ y < 1 ⇒ -(pi / 2) < asn y ∧ asn y < pi / 2
+</pre>
+
+<DT><span class="strong">ASN_SIN</span>
+<DD>
+<pre>
+⊢ ∀y. -1 ≤ y ∧ y ≤ 1 ⇒ (sin (asn y) = y)
+</pre>
+
+<DT><span class="strong">ATN</span>
+<DD>
+<pre>
+⊢ ∀y. -(pi / 2) < atn y ∧ atn y < pi / 2 ∧ (tan (atn y) = y)
+</pre>
+
+<DT><span class="strong">ATN_BOUNDS</span>
+<DD>
+<pre>
+⊢ ∀y. -(pi / 2) < atn y ∧ atn y < pi / 2
+</pre>
+
+<DT><span class="strong">ATN_TAN</span>
+<DD>
+<pre>
+⊢ ∀y. tan (atn y) = y
+</pre>
+
+<DT><span class="strong">BASE_RPOW_LE</span>
+<DD>
+<pre>
+⊢ ∀a b c. 0 < a ∧ 0 < c ∧ 0 < b ⇒ (a powr b ≤ c powr b ⇔ a ≤ c)
+</pre>
+
+<DT><span class="strong">BASE_RPOW_LT</span>
+<DD>
+<pre>
+⊢ ∀a b c. 0 < a ∧ 0 < c ∧ 0 < b ⇒ (a powr b < c powr b ⇔ a < c)
+</pre>
+
+<DT><span class="strong">COS_0</span>
+<DD>
+<pre>
+⊢ cos 0 = 1
+</pre>
+
+<DT><span class="strong">COS_2</span>
+<DD>
+<pre>
+⊢ cos 2 < 0
+</pre>
+
+<DT><span class="strong">COS_ACS</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ∧ x ≤ pi ⇒ (acs (cos x) = x)
+</pre>
+
+<DT><span class="strong">COS_ADD</span>
+<DD>
+<pre>
+⊢ ∀x y. cos (x + y) = cos x * cos y − sin x * sin y
+</pre>
+
+<DT><span class="strong">COS_ASN_NZ</span>
+<DD>
+<pre>
+⊢ ∀x. -1 < x ∧ x < 1 ⇒ cos (asn x) ≠ 0
+</pre>
+
+<DT><span class="strong">COS_ATN_NZ</span>
+<DD>
+<pre>
+⊢ ∀x. cos (atn x) ≠ 0
+</pre>
+
+<DT><span class="strong">COS_BOUND</span>
+<DD>
+<pre>
+⊢ ∀x. abs (cos x) ≤ 1
+</pre>
+
+<DT><span class="strong">COS_BOUNDS</span>
+<DD>
+<pre>
+⊢ ∀x. -1 ≤ cos x ∧ cos x ≤ 1
+</pre>
+
+<DT><span class="strong">COS_CONVERGES</span>
+<DD>
+<pre>
+⊢ ∀x. (λn. (λn. if EVEN n then -1 pow (n DIV 2) / &FACT n else 0) n * x pow n) sums
+      cos x
+</pre>
+
+<DT><span class="strong">COS_DOUBLE</span>
+<DD>
+<pre>
+⊢ ∀x. cos (2 * x) = (cos x)² − (sin x)²
+</pre>
+
+<DT><span class="strong">COS_FDIFF</span>
+<DD>
+<pre>
+⊢ diffs (λn. if EVEN n then -1 pow (n DIV 2) / &FACT n else 0) =
+  (λn. -(λn. if EVEN n then 0 else -1 pow ((n − 1) DIV 2) / &FACT n) n)
+</pre>
+
+<DT><span class="strong">COS_ISZERO</span>
+<DD>
+<pre>
+⊢ ∃!x. 0 ≤ x ∧ x ≤ 2 ∧ (cos x = 0)
+</pre>
+
+<DT><span class="strong">COS_NEG</span>
+<DD>
+<pre>
+⊢ ∀x. cos (-x) = cos x
+</pre>
+
+<DT><span class="strong">COS_NPI</span>
+<DD>
+<pre>
+⊢ ∀n. cos (&n * pi) = -1 pow n
+</pre>
+
+<DT><span class="strong">COS_PAIRED</span>
+<DD>
+<pre>
+⊢ ∀x. (λn. -1 pow n / &FACT (2 * n) * x pow (2 * n)) sums cos x
+</pre>
+
+<DT><span class="strong">COS_PERIODIC</span>
+<DD>
+<pre>
+⊢ ∀x. cos (x + 2 * pi) = cos x
+</pre>
+
+<DT><span class="strong">COS_PERIODIC_PI</span>
+<DD>
+<pre>
+⊢ ∀x. cos (x + pi) = -cos x
+</pre>
+
+<DT><span class="strong">COS_PI</span>
+<DD>
+<pre>
+⊢ cos pi = -1
+</pre>
+
+<DT><span class="strong">COS_PI2</span>
+<DD>
+<pre>
+⊢ cos (pi / 2) = 0
+</pre>
+
+<DT><span class="strong">COS_POS_PI</span>
+<DD>
+<pre>
+⊢ ∀x. -(pi / 2) < x ∧ x < pi / 2 ⇒ 0 < cos x
+</pre>
+
+<DT><span class="strong">COS_POS_PI2</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ∧ x < pi / 2 ⇒ 0 < cos x
+</pre>
+
+<DT><span class="strong">COS_POS_PI2_LE</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ∧ x ≤ pi / 2 ⇒ 0 ≤ cos x
+</pre>
+
+<DT><span class="strong">COS_POS_PI_LE</span>
+<DD>
+<pre>
+⊢ ∀x. -(pi / 2) ≤ x ∧ x ≤ pi / 2 ⇒ 0 ≤ cos x
+</pre>
+
+<DT><span class="strong">COS_SIN</span>
+<DD>
+<pre>
+⊢ ∀x. cos x = sin (pi / 2 − x)
+</pre>
+
+<DT><span class="strong">COS_SIN_SQ</span>
+<DD>
+<pre>
+⊢ ∀x. -(pi / 2) ≤ x ∧ x ≤ pi / 2 ⇒ (cos x = sqrt (1 − (sin x)²))
+</pre>
+
+<DT><span class="strong">COS_SIN_SQRT</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ cos x ⇒ (cos x = sqrt (1 − (sin x)²))
+</pre>
+
+<DT><span class="strong">COS_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀y. -1 ≤ y ∧ y ≤ 1 ⇒ ∃!x. 0 ≤ x ∧ x ≤ pi ∧ (cos x = y)
+</pre>
+
+<DT><span class="strong">COS_ZERO</span>
+<DD>
+<pre>
+⊢ ∀x. (cos x = 0) ⇔
+      (∃n. ¬EVEN n ∧ (x = &n * (pi / 2))) ∨
+      ∃n. ¬EVEN n ∧ (x = -(&n * (pi / 2)))
+</pre>
+
+<DT><span class="strong">COS_ZERO_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ∧ (cos x = 0) ⇒ ∃n. ¬EVEN n ∧ (x = &n * (pi / 2))
+</pre>
+
+<DT><span class="strong">DIFF_ACS</span>
+<DD>
+<pre>
+⊢ ∀x. -1 < x ∧ x < 1 ⇒ (acs diffl -(sqrt (1 − x²))⁻¹) x
+</pre>
+
+<DT><span class="strong">DIFF_ACS_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀x. -1 < x ∧ x < 1 ⇒ (acs diffl (-sin (acs x))⁻¹) x
+</pre>
+
+<DT><span class="strong">DIFF_ASN</span>
+<DD>
+<pre>
+⊢ ∀x. -1 < x ∧ x < 1 ⇒ (asn diffl (sqrt (1 − x²))⁻¹) x
+</pre>
+
+<DT><span class="strong">DIFF_ASN_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀x. -1 < x ∧ x < 1 ⇒ (asn diffl (cos (asn x))⁻¹) x
+</pre>
+
+<DT><span class="strong">DIFF_ATN</span>
+<DD>
+<pre>
+⊢ ∀x. (atn diffl (1 + x²)⁻¹) x
+</pre>
+
+<DT><span class="strong">DIFF_COMPOSITE</span>
+<DD>
+<pre>
+⊢ ((f diffl l) x ∧ f x ≠ 0 ⇒ ((λx. (f x)⁻¹) diffl -(l / (f x)²)) x) ∧
+  ((f diffl l) x ∧ (g diffl m) x ∧ g x ≠ 0 ⇒
+   ((λx. f x / g x) diffl ((l * g x − m * f x) / (g x)²)) x) ∧
+  ((f diffl l) x ∧ (g diffl m) x ⇒ ((λx. f x + g x) diffl (l + m)) x) ∧
+  ((f diffl l) x ∧ (g diffl m) x ⇒
+   ((λx. f x * g x) diffl (l * g x + m * f x)) x) ∧
+  ((f diffl l) x ∧ (g diffl m) x ⇒ ((λx. f x − g x) diffl (l − m)) x) ∧
+  ((f diffl l) x ⇒ ((λx. -f x) diffl -l) x) ∧
+  ((g diffl m) x ⇒ ((λx. g x pow n) diffl (&n * g x pow (n − 1) * m)) x) ∧
+  ((g diffl m) x ⇒ ((λx. exp (g x)) diffl (exp (g x) * m)) x) ∧
+  ((g diffl m) x ⇒ ((λx. sin (g x)) diffl (cos (g x) * m)) x) ∧
+  ((g diffl m) x ⇒ ((λx. cos (g x)) diffl (-sin (g x) * m)) x)
+</pre>
+
+<DT><span class="strong">DIFF_COMPOSITE_EXP</span>
+<DD>
+<pre>
+⊢ ∀g m x. (g diffl m) x ⇒ ((λx. exp (g x)) diffl (exp (g x) * m)) x
+</pre>
+
+<DT><span class="strong">DIFF_COS</span>
+<DD>
+<pre>
+⊢ ∀x. (cos diffl -sin x) x
+</pre>
+
+<DT><span class="strong">DIFF_EXP</span>
+<DD>
+<pre>
+⊢ ∀x. (exp diffl exp x) x
+</pre>
+
+<DT><span class="strong">DIFF_LN</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ (ln diffl x⁻¹) x
+</pre>
+
+<DT><span class="strong">DIFF_LN_COMPOSITE</span>
+<DD>
+<pre>
+⊢ ∀g m x. (g diffl m) x ∧ 0 < g x ⇒ ((λx. ln (g x)) diffl ((g x)⁻¹ * m)) x
+</pre>
+
+<DT><span class="strong">DIFF_RPOW</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ⇒ ((λx. x powr y) diffl (y * x powr (y − 1))) x
+</pre>
+
+<DT><span class="strong">DIFF_SIN</span>
+<DD>
+<pre>
+⊢ ∀x. (sin diffl cos x) x
+</pre>
+
+<DT><span class="strong">DIFF_TAN</span>
+<DD>
+<pre>
+⊢ ∀x. cos x ≠ 0 ⇒ (tan diffl (cos x)² ⁻¹) x
+</pre>
+
+<DT><span class="strong">DINT_UNIQ</span>
+<DD>
+<pre>
+⊢ ∀a b f k1 k2. a ≤ b ∧ Dint (a,b) f k1 ∧ Dint (a,b) f k2 ⇒ (k1 = k2)
+</pre>
+
+<DT><span class="strong">DIVISION_0</span>
+<DD>
+<pre>
+⊢ ∀a b. (a = b) ⇒ (dsize (λn. if n = 0 then a else b) = 0)
+</pre>
+
+<DT><span class="strong">DIVISION_1</span>
+<DD>
+<pre>
+⊢ ∀a b. a < b ⇒ (dsize (λn. if n = 0 then a else b) = 1)
+</pre>
+
+<DT><span class="strong">DIVISION_APPEND</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    (∃D1 p1. tdiv (a,b) (D1,p1) ∧ fine g (D1,p1)) ∧
+    (∃D2 p2. tdiv (b,c) (D2,p2) ∧ fine g (D2,p2)) ⇒
+    ∃D p. tdiv (a,c) (D,p) ∧ fine g (D,p)
+</pre>
+
+<DT><span class="strong">DIVISION_EQ</span>
+<DD>
+<pre>
+⊢ ∀D a b. division (a,b) D ⇒ ((a = b) ⇔ (dsize D = 0))
+</pre>
+
+<DT><span class="strong">DIVISION_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀a b g.
+    a ≤ b ∧ gauge (λx. a ≤ x ∧ x ≤ b) g ⇒
+    ∃D p. tdiv (a,b) (D,p) ∧ fine g (D,p)
+</pre>
+
+<DT><span class="strong">DIVISION_GT</span>
+<DD>
+<pre>
+⊢ ∀D a b. division (a,b) D ⇒ ∀n. n < dsize D ⇒ D n < D (dsize D)
+</pre>
+
+<DT><span class="strong">DIVISION_LBOUND</span>
+<DD>
+<pre>
+⊢ ∀D a b. division (a,b) D ⇒ ∀r. a ≤ D r
+</pre>
+
+<DT><span class="strong">DIVISION_LBOUND_LT</span>
+<DD>
+<pre>
+⊢ ∀D a b. division (a,b) D ∧ dsize D ≠ 0 ⇒ ∀n. a < D (SUC n)
+</pre>
+
+<DT><span class="strong">DIVISION_LE</span>
+<DD>
+<pre>
+⊢ ∀D a b. division (a,b) D ⇒ a ≤ b
+</pre>
+
+<DT><span class="strong">DIVISION_LHS</span>
+<DD>
+<pre>
+⊢ ∀D a b. division (a,b) D ⇒ (D 0 = a)
+</pre>
+
+<DT><span class="strong">DIVISION_LT</span>
+<DD>
+<pre>
+⊢ ∀D a b. division (a,b) D ⇒ ∀n. n < dsize D ⇒ D 0 < D (SUC n)
+</pre>
+
+<DT><span class="strong">DIVISION_LT_GEN</span>
+<DD>
+<pre>
+⊢ ∀D a b m n. division (a,b) D ∧ m < n ∧ n ≤ dsize D ⇒ D m < D n
+</pre>
+
+<DT><span class="strong">DIVISION_RHS</span>
+<DD>
+<pre>
+⊢ ∀D a b. division (a,b) D ⇒ (D (dsize D) = b)
+</pre>
+
+<DT><span class="strong">DIVISION_SINGLE</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ division (a,b) (λn. if n = 0 then a else b)
+</pre>
+
+<DT><span class="strong">DIVISION_THM</span>
+<DD>
+<pre>
+⊢ ∀D a b.
+    division (a,b) D ⇔
+    (D 0 = a) ∧ (∀n. n < dsize D ⇒ D n < D (SUC n)) ∧
+    ∀n. n ≥ dsize D ⇒ (D n = b)
+</pre>
+
+<DT><span class="strong">DIVISION_UBOUND</span>
+<DD>
+<pre>
+⊢ ∀D a b. division (a,b) D ⇒ ∀r. D r ≤ b
+</pre>
+
+<DT><span class="strong">DIVISION_UBOUND_LT</span>
+<DD>
+<pre>
+⊢ ∀D a b n. division (a,b) D ∧ n < dsize D ⇒ D n < b
+</pre>
+
+<DT><span class="strong">EXP_0</span>
+<DD>
+<pre>
+⊢ exp 0 = 1
+</pre>
+
+<DT><span class="strong">EXP_ADD</span>
+<DD>
+<pre>
+⊢ ∀x y. exp (x + y) = exp x * exp y
+</pre>
+
+<DT><span class="strong">EXP_ADD_MUL</span>
+<DD>
+<pre>
+⊢ ∀x y. exp (x + y) * exp (-x) = exp y
+</pre>
+
+<DT><span class="strong">EXP_CONVERGES</span>
+<DD>
+<pre>
+⊢ ∀x. (λn. (λn. (&FACT n)⁻¹) n * x pow n) sums exp x
+</pre>
+
+<DT><span class="strong">EXP_FDIFF</span>
+<DD>
+<pre>
+⊢ diffs (λn. (&FACT n)⁻¹) = (λn. (&FACT n)⁻¹)
+</pre>
+
+<DT><span class="strong">EXP_INJ</span>
+<DD>
+<pre>
+⊢ ∀x y. (exp x = exp y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">EXP_LE_X</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ 1 + x ≤ exp x
+</pre>
+
+<DT><span class="strong">EXP_LN</span>
+<DD>
+<pre>
+⊢ ∀x. (exp (ln x) = x) ⇔ 0 < x
+</pre>
+
+<DT><span class="strong">EXP_LT_1</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ 1 < exp x
+</pre>
+
+<DT><span class="strong">EXP_MONO_IMP</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇒ exp x < exp y
+</pre>
+
+<DT><span class="strong">EXP_MONO_LE</span>
+<DD>
+<pre>
+⊢ ∀x y. exp x ≤ exp y ⇔ x ≤ y
+</pre>
+
+<DT><span class="strong">EXP_MONO_LT</span>
+<DD>
+<pre>
+⊢ ∀x y. exp x < exp y ⇔ x < y
+</pre>
+
+<DT><span class="strong">EXP_N</span>
+<DD>
+<pre>
+⊢ ∀n x. exp (&n * x) = exp x pow n
+</pre>
+
+<DT><span class="strong">EXP_NEG</span>
+<DD>
+<pre>
+⊢ ∀x. exp (-x) = (exp x)⁻¹
+</pre>
+
+<DT><span class="strong">EXP_NEG_MUL</span>
+<DD>
+<pre>
+⊢ ∀x. exp x * exp (-x) = 1
+</pre>
+
+<DT><span class="strong">EXP_NEG_MUL2</span>
+<DD>
+<pre>
+⊢ ∀x. exp (-x) * exp x = 1
+</pre>
+
+<DT><span class="strong">EXP_NZ</span>
+<DD>
+<pre>
+⊢ ∀x. exp x ≠ 0
+</pre>
+
+<DT><span class="strong">EXP_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ exp x
+</pre>
+
+<DT><span class="strong">EXP_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < exp x
+</pre>
+
+<DT><span class="strong">EXP_SUB</span>
+<DD>
+<pre>
+⊢ ∀x y. exp (x − y) = exp x / exp y
+</pre>
+
+<DT><span class="strong">EXP_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀y. 0 < y ⇒ ∃x. exp x = y
+</pre>
+
+<DT><span class="strong">EXP_TOTAL_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀y. 1 ≤ y ⇒ ∃x. 0 ≤ x ∧ x ≤ y − 1 ∧ (exp x = y)
+</pre>
+
+<DT><span class="strong">FINE_MIN</span>
+<DD>
+<pre>
+⊢ ∀g1 g2 D p.
+    fine (λx. if g1 x < g2 x then g1 x else g2 x) (D,p) ⇒
+    fine g1 (D,p) ∧ fine g2 (D,p)
+</pre>
+
+<DT><span class="strong">FTC1</span>
+<DD>
+<pre>
+⊢ ∀f f' a b.
+    a ≤ b ∧ (∀x. a ≤ x ∧ x ≤ b ⇒ (f diffl f' x) x) ⇒ Dint (a,b) f' (f b − f a)
+</pre>
+
+<DT><span class="strong">GAUGE_MIN</span>
+<DD>
+<pre>
+⊢ ∀E g1 g2.
+    gauge E g1 ∧ gauge E g2 ⇒ gauge E (λx. if g1 x < g2 x then g1 x else g2 x)
+</pre>
+
+<DT><span class="strong">GEN_RPOW</span>
+<DD>
+<pre>
+⊢ ∀a n. 0 < a ⇒ (a pow n = a powr &n)
+</pre>
+
+<DT><span class="strong">INTEGRAL_NULL</span>
+<DD>
+<pre>
+⊢ ∀f a. Dint (a,a) f 0
+</pre>
+
+<DT><span class="strong">LN_1</span>
+<DD>
+<pre>
+⊢ ln 1 = 0
+</pre>
+
+<DT><span class="strong">LN_DIV</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ (ln (x / y) = ln x − ln y)
+</pre>
+
+<DT><span class="strong">LN_EXP</span>
+<DD>
+<pre>
+⊢ ∀x. ln (exp x) = x
+</pre>
+
+<DT><span class="strong">LN_INJ</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ ((ln x = ln y) ⇔ (x = y))
+</pre>
+
+<DT><span class="strong">LN_INV</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ (ln x⁻¹ = -ln x)
+</pre>
+
+<DT><span class="strong">LN_LE</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ ln (1 + x) ≤ x
+</pre>
+
+<DT><span class="strong">LN_LT_X</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ ln x < x
+</pre>
+
+<DT><span class="strong">LN_MONO_LE</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ (ln x ≤ ln y ⇔ x ≤ y)
+</pre>
+
+<DT><span class="strong">LN_MONO_LT</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ (ln x < ln y ⇔ x < y)
+</pre>
+
+<DT><span class="strong">LN_MUL</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ (ln (x * y) = ln x + ln y)
+</pre>
+
+<DT><span class="strong">LN_POS</span>
+<DD>
+<pre>
+⊢ ∀x. 1 ≤ x ⇒ 0 ≤ ln x
+</pre>
+
+<DT><span class="strong">LN_POW</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 < x ⇒ (ln (x pow n) = &n * ln x)
+</pre>
+
+<DT><span class="strong">LN_RPOW</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 < a ⇒ (ln (a powr b) = b * ln a)
+</pre>
+
+<DT><span class="strong">MCLAURIN</span>
+<DD>
+<pre>
+⊢ ∀f diff h n.
+    0 < h ∧ 0 < n ∧ (diff 0 = f) ∧
+    (∀m t. m < n ∧ 0 ≤ t ∧ t ≤ h ⇒ (diff m diffl diff (SUC m) t) t) ⇒
+    ∃t. 0 < t ∧ t < h ∧
+        (f h =
+         sum (0,n) (λm. diff m 0 / &FACT m * h pow m) +
+         diff n t / &FACT n * h pow n)
+</pre>
+
+<DT><span class="strong">MCLAURIN_ALL_LE</span>
+<DD>
+<pre>
+⊢ ∀f diff.
+    (diff 0 = f) ∧ (∀m x. (diff m diffl diff (SUC m) x) x) ⇒
+    ∀x n. ∃t.
+      abs t ≤ abs x ∧
+      (f x =
+       sum (0,n) (λm. diff m 0 / &FACT m * x pow m) +
+       diff n t / &FACT n * x pow n)
+</pre>
+
+<DT><span class="strong">MCLAURIN_ALL_LT</span>
+<DD>
+<pre>
+⊢ ∀f diff.
+    (diff 0 = f) ∧ (∀m x. (diff m diffl diff (SUC m) x) x) ⇒
+    ∀x n.
+      x ≠ 0 ∧ 0 < n ⇒
+      ∃t. 0 < abs t ∧ abs t < abs x ∧
+          (f x =
+           sum (0,n) (λm. diff m 0 / &FACT m * x pow m) +
+           diff n t / &FACT n * x pow n)
+</pre>
+
+<DT><span class="strong">MCLAURIN_EXP_LE</span>
+<DD>
+<pre>
+⊢ ∀x n. ∃t.
+    abs t ≤ abs x ∧
+    (exp x = sum (0,n) (λm. x pow m / &FACT m) + exp t / &FACT n * x pow n)
+</pre>
+
+<DT><span class="strong">MCLAURIN_EXP_LT</span>
+<DD>
+<pre>
+⊢ ∀x n.
+    x ≠ 0 ∧ 0 < n ⇒
+    ∃t. 0 < abs t ∧ abs t < abs x ∧
+        (exp x = sum (0,n) (λm. x pow m / &FACT m) + exp t / &FACT n * x pow n)
+</pre>
+
+<DT><span class="strong">MCLAURIN_NEG</span>
+<DD>
+<pre>
+⊢ ∀f diff h n.
+    h < 0 ∧ 0 < n ∧ (diff 0 = f) ∧
+    (∀m t. m < n ∧ h ≤ t ∧ t ≤ 0 ⇒ (diff m diffl diff (SUC m) t) t) ⇒
+    ∃t. h < t ∧ t < 0 ∧
+        (f h =
+         sum (0,n) (λm. diff m 0 / &FACT m * h pow m) +
+         diff n t / &FACT n * h pow n)
+</pre>
+
+<DT><span class="strong">MCLAURIN_ZERO</span>
+<DD>
+<pre>
+⊢ ∀diff n x.
+    (x = 0) ∧ 0 < n ⇒
+    (sum (0,n) (λm. diff m 0 / &FACT m * x pow m) = diff 0 0)
+</pre>
+
+<DT><span class="strong">ONE_RPOW</span>
+<DD>
+<pre>
+⊢ ∀a. 0 < a ⇒ (1 powr a = 1)
+</pre>
+
+<DT><span class="strong">PI2</span>
+<DD>
+<pre>
+⊢ pi / 2 = @x. 0 ≤ x ∧ x ≤ 2 ∧ (cos x = 0)
+</pre>
+
+<DT><span class="strong">PI2_BOUNDS</span>
+<DD>
+<pre>
+⊢ 0 < pi / 2 ∧ pi / 2 < 2
+</pre>
+
+<DT><span class="strong">PI_POS</span>
+<DD>
+<pre>
+⊢ 0 < pi
+</pre>
+
+<DT><span class="strong">POW_2_SQRT</span>
+<DD>
+<pre>
+⊢ 0 ≤ x ⇒ (sqrt x² = x)
+</pre>
+
+<DT><span class="strong">POW_ROOT_POS</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 ≤ x ⇒ (root (SUC n) (x pow SUC n) = x)
+</pre>
+
+<DT><span class="strong">REAL_DIV_SQRT</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ (x / sqrt x = sqrt x)
+</pre>
+
+<DT><span class="strong">ROOT_0</span>
+<DD>
+<pre>
+⊢ ∀n. root (SUC n) 0 = 0
+</pre>
+
+<DT><span class="strong">ROOT_1</span>
+<DD>
+<pre>
+⊢ ∀n. root (SUC n) 1 = 1
+</pre>
+
+<DT><span class="strong">ROOT_DIV</span>
+<DD>
+<pre>
+⊢ ∀n x y.
+    0 ≤ x ∧ 0 ≤ y ⇒ (root (SUC n) (x / y) = root (SUC n) x / root (SUC n) y)
+</pre>
+
+<DT><span class="strong">ROOT_INV</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 ≤ x ⇒ (root (SUC n) x⁻¹ = (root (SUC n) x)⁻¹)
+</pre>
+
+<DT><span class="strong">ROOT_LN</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 < x ⇒ (root (SUC n) x = exp (ln x / &SUC n))
+</pre>
+
+<DT><span class="strong">ROOT_LT_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 < x ⇒ (exp (ln x / &SUC n) pow SUC n = x)
+</pre>
+
+<DT><span class="strong">ROOT_MONO_LE</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ x ≤ y ⇒ root (SUC n) x ≤ root (SUC n) y
+</pre>
+
+<DT><span class="strong">ROOT_MUL</span>
+<DD>
+<pre>
+⊢ ∀n x y.
+    0 ≤ x ∧ 0 ≤ y ⇒ (root (SUC n) (x * y) = root (SUC n) x * root (SUC n) y)
+</pre>
+
+<DT><span class="strong">ROOT_POS</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 ≤ x ⇒ 0 ≤ root (SUC n) x
+</pre>
+
+<DT><span class="strong">ROOT_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 < x ⇒ 0 < root (SUC n) x
+</pre>
+
+<DT><span class="strong">ROOT_POS_UNIQ</span>
+<DD>
+<pre>
+⊢ ∀n x y. 0 ≤ x ∧ 0 ≤ y ∧ (y pow SUC n = x) ⇒ (root (SUC n) x = y)
+</pre>
+
+<DT><span class="strong">ROOT_POW_POS</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 ≤ x ⇒ (root (SUC n) x pow SUC n = x)
+</pre>
+
+<DT><span class="strong">RPOW_0</span>
+<DD>
+<pre>
+⊢ ∀a. 0 < a ⇒ (a powr 0 = 1)
+</pre>
+
+<DT><span class="strong">RPOW_1</span>
+<DD>
+<pre>
+⊢ ∀a. 0 < a ⇒ (a powr 1 = a)
+</pre>
+
+<DT><span class="strong">RPOW_ADD</span>
+<DD>
+<pre>
+⊢ ∀a b c. a powr (b + c) = a powr b * a powr c
+</pre>
+
+<DT><span class="strong">RPOW_ADD_MUL</span>
+<DD>
+<pre>
+⊢ ∀a b c. a powr (b + c) * a powr -b = a powr c
+</pre>
+
+<DT><span class="strong">RPOW_DIV</span>
+<DD>
+<pre>
+⊢ ∀a b c. 0 < a ∧ 0 < b ⇒ ((a / b) powr c = a powr c / b powr c)
+</pre>
+
+<DT><span class="strong">RPOW_DIV_BASE</span>
+<DD>
+<pre>
+⊢ ∀x t. 0 < x ⇒ (x powr t / x = x powr (t − 1))
+</pre>
+
+<DT><span class="strong">RPOW_INV</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 < a ⇒ (a⁻¹ powr b = (a powr b)⁻¹)
+</pre>
+
+<DT><span class="strong">RPOW_LE</span>
+<DD>
+<pre>
+⊢ ∀a b c. 1 < a ⇒ (a powr b ≤ a powr c ⇔ b ≤ c)
+</pre>
+
+<DT><span class="strong">RPOW_LT</span>
+<DD>
+<pre>
+⊢ ∀a b c. 1 < a ⇒ (a powr b < a powr c ⇔ b < c)
+</pre>
+
+<DT><span class="strong">RPOW_MUL</span>
+<DD>
+<pre>
+⊢ ∀a b c. 0 < a ∧ 0 < b ⇒ ((a * b) powr c = a powr c * b powr c)
+</pre>
+
+<DT><span class="strong">RPOW_NZ</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 ≠ a ⇒ a powr b ≠ 0
+</pre>
+
+<DT><span class="strong">RPOW_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 < a ⇒ 0 < a powr b
+</pre>
+
+<DT><span class="strong">RPOW_RPOW</span>
+<DD>
+<pre>
+⊢ ∀a b c. 0 < a ⇒ ((a powr b) powr c = a powr (b * c))
+</pre>
+
+<DT><span class="strong">RPOW_SUB</span>
+<DD>
+<pre>
+⊢ ∀a b c. a powr (b − c) = a powr b / a powr c
+</pre>
+
+<DT><span class="strong">RPOW_SUC_N</span>
+<DD>
+<pre>
+⊢ ∀a n. 0 < a ⇒ (a powr (&n + 1) = a pow SUC n)
+</pre>
+
+<DT><span class="strong">RPOW_UNIQ_BASE</span>
+<DD>
+<pre>
+⊢ ∀a b c. 0 < a ∧ 0 < c ∧ 0 ≠ b ∧ (a powr b = c powr b) ⇒ (a = c)
+</pre>
+
+<DT><span class="strong">RPOW_UNIQ_EXP</span>
+<DD>
+<pre>
+⊢ ∀a b c. 1 < a ∧ 0 < c ∧ 0 < b ∧ (a powr b = a powr c) ⇒ (b = c)
+</pre>
+
+<DT><span class="strong">SIN_0</span>
+<DD>
+<pre>
+⊢ sin 0 = 0
+</pre>
+
+<DT><span class="strong">SIN_ACS_NZ</span>
+<DD>
+<pre>
+⊢ ∀x. -1 < x ∧ x < 1 ⇒ sin (acs x) ≠ 0
+</pre>
+
+<DT><span class="strong">SIN_ADD</span>
+<DD>
+<pre>
+⊢ ∀x y. sin (x + y) = sin x * cos y + cos x * sin y
+</pre>
+
+<DT><span class="strong">SIN_ASN</span>
+<DD>
+<pre>
+⊢ ∀x. -(pi / 2) ≤ x ∧ x ≤ pi / 2 ⇒ (asn (sin x) = x)
+</pre>
+
+<DT><span class="strong">SIN_BOUND</span>
+<DD>
+<pre>
+⊢ ∀x. abs (sin x) ≤ 1
+</pre>
+
+<DT><span class="strong">SIN_BOUNDS</span>
+<DD>
+<pre>
+⊢ ∀x. -1 ≤ sin x ∧ sin x ≤ 1
+</pre>
+
+<DT><span class="strong">SIN_CIRCLE</span>
+<DD>
+<pre>
+⊢ ∀x. (sin x)² + (cos x)² = 1
+</pre>
+
+<DT><span class="strong">SIN_CONVERGES</span>
+<DD>
+<pre>
+⊢ ∀x. (λn.
+           (λn. if EVEN n then 0 else -1 pow ((n − 1) DIV 2) / &FACT n) n *
+           x pow n) sums sin x
+</pre>
+
+<DT><span class="strong">SIN_COS</span>
+<DD>
+<pre>
+⊢ ∀x. sin x = cos (pi / 2 − x)
+</pre>
+
+<DT><span class="strong">SIN_COS_ADD</span>
+<DD>
+<pre>
+⊢ ∀x y.
+    (sin (x + y) − (sin x * cos y + cos x * sin y))² +
+    (cos (x + y) − (cos x * cos y − sin x * sin y))² = 0
+</pre>
+
+<DT><span class="strong">SIN_COS_NEG</span>
+<DD>
+<pre>
+⊢ ∀x. (sin (-x) + sin x)² + (cos (-x) − cos x)² = 0
+</pre>
+
+<DT><span class="strong">SIN_COS_SQ</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ∧ x ≤ pi ⇒ (sin x = sqrt (1 − (cos x)²))
+</pre>
+
+<DT><span class="strong">SIN_COS_SQRT</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ sin x ⇒ (sin x = sqrt (1 − (cos x)²))
+</pre>
+
+<DT><span class="strong">SIN_DOUBLE</span>
+<DD>
+<pre>
+⊢ ∀x. sin (2 * x) = 2 * (sin x * cos x)
+</pre>
+
+<DT><span class="strong">SIN_FDIFF</span>
+<DD>
+<pre>
+⊢ diffs (λn. if EVEN n then 0 else -1 pow ((n − 1) DIV 2) / &FACT n) =
+  (λn. if EVEN n then -1 pow (n DIV 2) / &FACT n else 0)
+</pre>
+
+<DT><span class="strong">SIN_NEG</span>
+<DD>
+<pre>
+⊢ ∀x. sin (-x) = -sin x
+</pre>
+
+<DT><span class="strong">SIN_NEGLEMMA</span>
+<DD>
+<pre>
+⊢ ∀x. -sin x =
+      suminf
+        (λn.
+             -((λn. if EVEN n then 0 else -1 pow ((n − 1) DIV 2) / &FACT n) n *
+              x pow n))
+</pre>
+
+<DT><span class="strong">SIN_NPI</span>
+<DD>
+<pre>
+⊢ ∀n. sin (&n * pi) = 0
+</pre>
+
+<DT><span class="strong">SIN_PAIRED</span>
+<DD>
+<pre>
+⊢ ∀x. (λn. -1 pow n / &FACT (2 * n + 1) * x pow (2 * n + 1)) sums sin x
+</pre>
+
+<DT><span class="strong">SIN_PERIODIC</span>
+<DD>
+<pre>
+⊢ ∀x. sin (x + 2 * pi) = sin x
+</pre>
+
+<DT><span class="strong">SIN_PERIODIC_PI</span>
+<DD>
+<pre>
+⊢ ∀x. sin (x + pi) = -sin x
+</pre>
+
+<DT><span class="strong">SIN_PI</span>
+<DD>
+<pre>
+⊢ sin pi = 0
+</pre>
+
+<DT><span class="strong">SIN_PI2</span>
+<DD>
+<pre>
+⊢ sin (pi / 2) = 1
+</pre>
+
+<DT><span class="strong">SIN_POS</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ∧ x < 2 ⇒ 0 < sin x
+</pre>
+
+<DT><span class="strong">SIN_POS_PI</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ∧ x < pi ⇒ 0 < sin x
+</pre>
+
+<DT><span class="strong">SIN_POS_PI2</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ∧ x < pi / 2 ⇒ 0 < sin x
+</pre>
+
+<DT><span class="strong">SIN_POS_PI2_LE</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ∧ x ≤ pi / 2 ⇒ 0 ≤ sin x
+</pre>
+
+<DT><span class="strong">SIN_POS_PI_LE</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ∧ x ≤ pi ⇒ 0 ≤ sin x
+</pre>
+
+<DT><span class="strong">SIN_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀y. -1 ≤ y ∧ y ≤ 1 ⇒ ∃!x. -(pi / 2) ≤ x ∧ x ≤ pi / 2 ∧ (sin x = y)
+</pre>
+
+<DT><span class="strong">SIN_ZERO</span>
+<DD>
+<pre>
+⊢ ∀x. (sin x = 0) ⇔
+      (∃n. EVEN n ∧ (x = &n * (pi / 2))) ∨ ∃n. EVEN n ∧ (x = -(&n * (pi / 2)))
+</pre>
+
+<DT><span class="strong">SIN_ZERO_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ∧ (sin x = 0) ⇒ ∃n. EVEN n ∧ (x = &n * (pi / 2))
+</pre>
+
+<DT><span class="strong">SQRT_0</span>
+<DD>
+<pre>
+⊢ sqrt 0 = 0
+</pre>
+
+<DT><span class="strong">SQRT_1</span>
+<DD>
+<pre>
+⊢ sqrt 1 = 1
+</pre>
+
+<DT><span class="strong">SQRT_DIV</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 ≤ y ⇒ (sqrt (x / y) = sqrt x / sqrt y)
+</pre>
+
+<DT><span class="strong">SQRT_EQ</span>
+<DD>
+<pre>
+⊢ ∀x y. (x² = y) ∧ 0 ≤ x ⇒ (x = sqrt y)
+</pre>
+
+<DT><span class="strong">SQRT_EVEN_POW2</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN n ⇒ (sqrt (2 pow n) = 2 pow (n DIV 2))
+</pre>
+
+<DT><span class="strong">SQRT_INV</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ (sqrt x⁻¹ = (sqrt x)⁻¹)
+</pre>
+
+<DT><span class="strong">SQRT_MONO_LE</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ x ≤ y ⇒ sqrt x ≤ sqrt y
+</pre>
+
+<DT><span class="strong">SQRT_MUL</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 ≤ y ⇒ (sqrt (x * y) = sqrt x * sqrt y)
+</pre>
+
+<DT><span class="strong">SQRT_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ 0 ≤ sqrt x
+</pre>
+
+<DT><span class="strong">SQRT_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ 0 < sqrt x
+</pre>
+
+<DT><span class="strong">SQRT_POS_UNIQ</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 ≤ y ∧ (y² = x) ⇒ (sqrt x = y)
+</pre>
+
+<DT><span class="strong">SQRT_POW2</span>
+<DD>
+<pre>
+⊢ ∀x. ((sqrt x)² = x) ⇔ 0 ≤ x
+</pre>
+
+<DT><span class="strong">SQRT_POW_2</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ ((sqrt x)² = x)
+</pre>
+
+<DT><span class="strong">TAN_0</span>
+<DD>
+<pre>
+⊢ tan 0 = 0
+</pre>
+
+<DT><span class="strong">TAN_ADD</span>
+<DD>
+<pre>
+⊢ ∀x y.
+    cos x ≠ 0 ∧ cos y ≠ 0 ∧ cos (x + y) ≠ 0 ⇒
+    (tan (x + y) = (tan x + tan y) / (1 − tan x * tan y))
+</pre>
+
+<DT><span class="strong">TAN_ATN</span>
+<DD>
+<pre>
+⊢ ∀x. -(pi / 2) < x ∧ x < pi / 2 ⇒ (atn (tan x) = x)
+</pre>
+
+<DT><span class="strong">TAN_DOUBLE</span>
+<DD>
+<pre>
+⊢ ∀x. cos x ≠ 0 ∧ cos (2 * x) ≠ 0 ⇒ (tan (2 * x) = 2 * tan x / (1 − (tan x)²))
+</pre>
+
+<DT><span class="strong">TAN_NEG</span>
+<DD>
+<pre>
+⊢ ∀x. tan (-x) = -tan x
+</pre>
+
+<DT><span class="strong">TAN_NPI</span>
+<DD>
+<pre>
+⊢ ∀n. tan (&n * pi) = 0
+</pre>
+
+<DT><span class="strong">TAN_PERIODIC</span>
+<DD>
+<pre>
+⊢ ∀x. tan (x + 2 * pi) = tan x
+</pre>
+
+<DT><span class="strong">TAN_PI</span>
+<DD>
+<pre>
+⊢ tan pi = 0
+</pre>
+
+<DT><span class="strong">TAN_POS_PI2</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ∧ x < pi / 2 ⇒ 0 < tan x
+</pre>
+
+<DT><span class="strong">TAN_SEC</span>
+<DD>
+<pre>
+⊢ ∀x. cos x ≠ 0 ⇒ (1 + (tan x)² = (cos x)⁻¹ ²)
+</pre>
+
+<DT><span class="strong">TAN_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀y. ∃!x. -(pi / 2) < x ∧ x < pi / 2 ∧ (tan x = y)
+</pre>
+
+<DT><span class="strong">TAN_TOTAL_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀y. 0 < y ⇒ ∃x. 0 < x ∧ x < pi / 2 ∧ y < tan x
+</pre>
+
+<DT><span class="strong">TAN_TOTAL_POS</span>
+<DD>
+<pre>
+⊢ ∀y. 0 ≤ y ⇒ ∃x. 0 ≤ x ∧ x < pi / 2 ∧ (tan x = y)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

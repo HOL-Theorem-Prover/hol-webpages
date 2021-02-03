@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Conv.PAT_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>PAT_CONV : term -&gt; conv -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Conv.html">Conv</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Applies a conversion at specific sub-terms, following a pattern</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The call </SPAN><SPAN class = "BRKT">PAT_CONV&nbsp;``\x1&nbsp;...&nbsp;xn.&nbsp;t[x1,...,xn]``&nbsp;cnv</SPAN><SPAN class = "TEXT"> returns a new
+conversion that applies </SPAN><SPAN class = "BRKT">cnv</SPAN><SPAN class = "TEXT"> to subterms of the target term
+corresponding to the free instances of any </SPAN><SPAN class = "BRKT">xi</SPAN><SPAN class = "TEXT"> in the pattern
+</SPAN><SPAN class = "BRKT">t[x1,...,xn]</SPAN><SPAN class = "TEXT">. The fact that the pattern is a function has no logical
+significance; it is just used as a convenient format for the pattern.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails until applied to a term, but then it may fail if the core conversion does on the chosen subterms, or if the pattern doesn’t match the structure of the term.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Here we choose to evaluate just two subterms:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; PAT_CONV ``\x. x + a + x`` numLib.REDUCE_CONV
+              ``(1 + 2) + (3 + 4) + (5 + 6)``;
+   val it : thm = |- 1 + 2 + (3 + 4) + (5 + 6) = 3 + (3 + 4) + 11
+</pre></DIV>
+<SPAN class = "TEXT">
+while here we swap two particular quantifiers in a long chain:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; PAT_CONV ``\x. !x1 x2 x3 x4 x5. x`` SWAP_FORALL_CONV
+              ``!a b c d e f g h. something``
+   &lt;&lt;HOL message: inventing new type variable names: ...&gt;&gt;
+   val it =
+     |- (!a b c d e f g h. something) &lt;=&gt;
+        !a b c d e g f h. something: thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Multiple bound variables will only be necessary if the conversion
+needs to be applied to sub-terms of different types.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Conv.ABS_CONV.html">ABS_CONV</A>,
+<A HREF = "Conv.COMB_CONV.html">COMB_CONV</A>,
+<A HREF = "Conv.PATH_CONV.html">PATH_CONV</A>,
+<A HREF = "Conv.RAND_CONV.html">RAND_CONV</A>,
+<A HREF = "Conv.RATOR_CONV.html">RATOR_CONV</A>,
+<A HREF = "Conv.SUB_CONV.html">SUB_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

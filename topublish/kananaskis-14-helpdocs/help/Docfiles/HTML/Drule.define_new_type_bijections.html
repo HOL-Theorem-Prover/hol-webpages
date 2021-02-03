@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Drule.define_new_type_bijections</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>define_new_type_bijections :
+  {name:string, ABS:string, REP:string, tyax:thm} -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Drule.html">Drule</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Introduces abstraction and representation functions for a defined type.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The result of making a type definition using </SPAN><SPAN class = "BRKT">new_type_definition</SPAN><SPAN class = "TEXT"> is a
+theorem of the following form:
+</SPAN><DIV class = "XMPL"><pre>
+   |- ?rep:nty-&gt;ty. TYPE_DEFINITION P rep
+</pre></DIV>
+<SPAN class = "TEXT">
+which asserts only the existence of a bijection from the type it
+defines (in this case, </SPAN><SPAN class = "BRKT">nty</SPAN><SPAN class = "TEXT">) to the corresponding subset of an existing type
+(here, </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">) whose characteristic function is specified by </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT">.  To
+automatically introduce constants that in fact denote this bijection and its
+inverse, the ML function </SPAN><SPAN class = "BRKT">define_new_type_bijections</SPAN><SPAN class = "TEXT"> is provided.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">name</SPAN><SPAN class = "TEXT"> is the name under which the constant definition (a constant
+specification, in fact) made by </SPAN><SPAN class = "BRKT">define_new_type_bijections</SPAN><SPAN class = "TEXT"> will be
+stored in the current theory segment. </SPAN><SPAN class = "BRKT">tyax</SPAN><SPAN class = "TEXT"> must be a definitional
+axiom of the form returned by </SPAN><SPAN class = "BRKT">new_type_definition</SPAN><SPAN class = "TEXT">. </SPAN><SPAN class = "BRKT">ABS</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">REP</SPAN><SPAN class = "TEXT"> are
+the user-specified names for the two constants that are to be defined.
+These constants are defined so as to denote mutually inverse bijections
+between the defined type, whose definition is given by </SPAN><SPAN class = "BRKT">tyax</SPAN><SPAN class = "TEXT">, and the
+representing type of this defined type.</SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is a theorem of the form returned by </SPAN><SPAN class = "BRKT">new_type_definition</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   |- ?rep:newty-&gt;ty. TYPE_DEFINITION P rep
+</pre></DIV>
+<SPAN class = "TEXT">
+then evaluating:
+</SPAN><DIV class = "XMPL"><pre>
+   define_new_type_bijections{name="name",ABS="abs",REP="rep",tyax=th} th
+</pre></DIV>
+<SPAN class = "TEXT">
+automatically defines two new constants </SPAN><SPAN class = "BRKT">abs:ty-&gt;newty</SPAN><SPAN class = "TEXT"> and
+</SPAN><SPAN class = "BRKT">rep:newty-&gt;ty</SPAN><SPAN class = "TEXT"> such that:
+</SPAN><DIV class = "XMPL"><pre>
+   |- (!a. abs(rep a) = a) /\ (!r. P r = (rep(abs r) = r))
+</pre></DIV>
+<SPAN class = "TEXT">
+This theorem, which is the defining property for the constants </SPAN><SPAN class = "BRKT">abs</SPAN><SPAN class = "TEXT">
+and </SPAN><SPAN class = "BRKT">rep</SPAN><SPAN class = "TEXT">, is stored under the name </SPAN><SPAN class = "BRKT">name</SPAN><SPAN class = "TEXT"> in the current theory segment.  It
+is also the value returned by </SPAN><SPAN class = "BRKT">define_new_type_bijections</SPAN><SPAN class = "TEXT">.  The theorem states
+that </SPAN><SPAN class = "BRKT">abs</SPAN><SPAN class = "TEXT"> is the left inverse of </SPAN><SPAN class = "BRKT">rep</SPAN><SPAN class = "TEXT"> and, for values satisfying </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT">, that
+</SPAN><SPAN class = "BRKT">rep</SPAN><SPAN class = "TEXT"> is the left inverse of </SPAN><SPAN class = "BRKT">abs</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call </SPAN><SPAN class = "BRKT">define_new_type_bijections{name,ABS,REP,tyax}</SPAN><SPAN class = "TEXT"> fails
+if </SPAN><SPAN class = "BRKT">tyax</SPAN><SPAN class = "TEXT"> is not a theorem of the form returned by </SPAN><SPAN class = "BRKT">new_type_definition</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Definition.new_type_definition.html">new_type_definition</A>,
+<A HREF = "Drule.prove_abs_fn_one_one.html">prove_abs_fn_one_one</A>,
+<A HREF = "Drule.prove_abs_fn_onto.html">prove_abs_fn_onto</A>,
+<A HREF = "Drule.prove_rep_fn_one_one.html">prove_rep_fn_one_one</A>,
+<A HREF = "Drule.prove_rep_fn_onto.html">prove_rep_fn_onto</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

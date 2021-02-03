@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>computeLib.listItems</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>listItems : compset -&gt; ((string * string) * transform list) list</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/computeLib.html">computeLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">List elements in compset</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">compute</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">listItems</SPAN><SPAN class = "TEXT"> expects a simplification set and returns a
+listing of its elements, in the form of an association list mapping
+constant names to the transformations that can be performed on
+applications of that constant. For a given constant, more than one
+transformation can be attached.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+   &gt; val compset = computeLib.bool_compset()
+   val compset = &lt;compset&gt; : computeLib.compset
+
+   &gt; computeLib.listItems compset;
+   val it =
+      [(("/\\", "bool"),
+        [RRules
+          [|- $/\ F = (\t. F),
+           |- $/\ T = (\t. t)],
+         RRules
+          [|- !t. t /\ t &lt;=&gt; t,
+           |- !t. t /\ F &lt;=&gt; F,
+           |- !t. t /\ T &lt;=&gt; t]]),
+       (("=", "min"),
+        [RRules
+          [|- $&lt;=&gt; F = (\t. ~t),
+           |- $&lt;=&gt; T = (\t. t)],
+         RRules
+          [|- !x. (x = x) &lt;=&gt; T],
+         RRules
+          [|- !t. (t &lt;=&gt; F) &lt;=&gt; ~t,
+           |- !t. (t &lt;=&gt; T) &lt;=&gt; t]]),
+       (("==&gt;", "min"),
+        [RRules
+          [|- $==&gt; F = (\t. T),
+           |- $==&gt; T = (\t. t)],
+         RRules
+          [|- !t. t ==&gt; F &lt;=&gt; ~t,
+           |- !t. t ==&gt; t &lt;=&gt; T,
+           |- !t. t ==&gt; T &lt;=&gt; T]]),
+       (("COND", "bool"),
+        [RRules
+          [|- COND F = (\t1 t2. t2),
+           |- COND T = (\t1 t2. t1)],
+         RRules
+          [|- !t b. (if b then t else t) = t]]),
+       (("F", "bool"), []),
+       (("LET", "bool"),
+        [RRules
+          [|- !x f. LET f x = f x]]),
+       (("T", "bool"), []),
+       (("\\/", "bool"),
+        [RRules
+          [|- $\/ F = (\t. t),
+           |- $\/ T = (\t. T)],
+         RRules
+          [|- !t. t \/ t &lt;=&gt; t,
+           |- !t. t \/ F &lt;=&gt; t,
+           |- !t. t \/ T &lt;=&gt; T]]),
+       (("literal_case", "bool"),
+        [RRules
+          [|- !x f. literal_case f x = f x]]),
+       (("~", "bool"),
+        [RRules
+          [|- ~F &lt;=&gt; T,
+           |- ~T &lt;=&gt; F,
+           |- !t. ~~t &lt;=&gt; t]])]
+     : ((string * string) * transform list) list
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Should never fail.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "computeLib.bool_compset.html">bool_compset</A>,
+<A HREF = "bossLib.EVAL.html">EVAL</A>,
+<A HREF = "computeLib.transform.html">transform</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

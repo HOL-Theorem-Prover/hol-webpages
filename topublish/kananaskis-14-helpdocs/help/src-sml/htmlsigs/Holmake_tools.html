@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure Holmake_tools</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Holmake_tools</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="file:///Users/nor190/various-hols/develop/tools/Holmake/Holmake_tools.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Holmake_tools =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  datatype CodeType = datatype Holmake_tools_dtype.CodeType
+<a name="line5"></a>  datatype ArticleType = datatype Holmake_tools_dtype.ArticleType
+<a name="line6"></a>  datatype File = datatype Holmake_tools_dtype.File
+<a name="line7"></a>  datatype buildcmds = datatype Holmake_tools_dtype.buildcmds
+<a name="line8"></a>
+<a name="line9"></a>  val |> : 'a * ('a -&gt; 'b) -&gt; 'b
+<a name="line10"></a>
+<a name="line11"></a>  (* simple list things *)
+<a name="line12"></a>  val member : ''a -&gt; ''a list -&gt; bool
+<a name="line13"></a>  val set_unionl : ''a list -&gt; ''a list -&gt; ''a list
+<a name="line14"></a>  val delete : ''a -&gt; ''a list -&gt; ''a list
+<a name="line15"></a>  val set_diffl : ''a list -&gt; ''a list -&gt; ''a list
+<a name="line16"></a>  val remove_duplicates : ''a list -&gt; ''a list
+<a name="line17"></a>
+<a name="line18"></a>  (* comparisons *)
+<a name="line19"></a>  type 'a cmp = 'a * 'a -&gt; order
+<a name="line20"></a>  val pair_compare : 'a cmp * 'b cmp -&gt; ('a * 'b) cmp
+<a name="line21"></a>  val inv_img_cmp  : ('b -&gt; 'a) -&gt; 'a cmp -&gt; 'b cmp
+<a name="line22"></a>  val lex_compare  : 'a cmp -&gt; 'a list cmp
+<a name="line23"></a>
+<a name="line24"></a>  (* fixed constants *)
+<a name="line25"></a>  val DEFAULT_OVERLAY : string
+<a name="line26"></a>
+<a name="line27"></a>  (* string/path manipulations *)
+<a name="line28"></a>  val normPath : string -&gt; string
+<a name="line29"></a>  val fullPath : string list -&gt; string
+<a name="line30"></a>  val spacify : string list -&gt; string
+<a name="line31"></a>  val nspaces : (string -&gt; unit) -&gt; int -&gt; unit
+<a name="line32"></a>  val collapse_bslash_lines : string -&gt; string
+<a name="line33"></a>  val realspace_delimited_fields : string -&gt; string list
+<a name="line34"></a>  val kernelid_fname : string
+<a name="line35"></a>  val concatWithf : ('a -&gt; string) -&gt; string -&gt; 'a list -&gt; string
+<a name="line36"></a>
+<a name="line37"></a>  (* exceptions *)
+<a name="line38"></a>  structure Exception : sig
+<a name="line39"></a>    datatype 'a result = Res of 'a | Exn of exn
+<a name="line40"></a>    val get_res : 'a result -&gt; 'a option
+<a name="line41"></a>    val get_exn : 'a result -&gt; exn option
+<a name="line42"></a>    val capture : ('a -&gt; 'b) -&gt; 'a -&gt; 'b result
+<a name="line43"></a>    val release : 'a result -&gt; 'a
+<a name="line44"></a>  end
+<a name="line45"></a>
+<a name="line46"></a>
+<a name="line47"></a>  (* sets *)
+<a name="line48"></a>  type 'a set = 'a Binaryset.set
+<a name="line49"></a>  val set_add : 'a -&gt; 'a set -&gt; 'a set
+<a name="line50"></a>  val set_addList : 'a list -&gt; 'a set -&gt; 'a set
+<a name="line51"></a>  val set_union : 'a set -&gt; 'a set -&gt; 'a set
+<a name="line52"></a>  val set_diff : 'a set -&gt; 'a set -&gt; 'a set
+<a name="line53"></a>  val set_exists : ('a -&gt; bool) -&gt; 'a set -&gt; bool
+<a name="line54"></a>  val set_concatWith : ('a -&gt; string) -&gt; string -&gt; 'a set -&gt; string
+<a name="line55"></a>  val set_mapPartial : ('a -&gt; 'b option) -&gt; 'b set -&gt; 'a set -&gt; 'b set
+<a name="line56"></a>  val listItems : 'a set -&gt; 'a list
+<a name="line57"></a>
+<a name="line58"></a>  (* terminal stuff: colouring of strings, getting width *)
+<a name="line59"></a>  val red : string -&gt; string
+<a name="line60"></a>  val boldred : string -&gt; string
+<a name="line61"></a>  val boldgreen : string -&gt; string
+<a name="line62"></a>  val boldyellow : string -&gt; string
+<a name="line63"></a>  val bold : string -&gt; string
+<a name="line64"></a>  val dim : string -&gt; string
+<a name="line65"></a>  val CLR_EOL : string
+<a name="line66"></a>  val getWidth : unit -&gt; int
+<a name="line67"></a>
+<a name="line68"></a>  (* diagnostics/output *)
+<a name="line69"></a>  type output_functions = {warn : string -&gt; unit,
+<a name="line70"></a>                           info : string -&gt; unit,
+<a name="line71"></a>                           chatty : string -&gt; unit,
+<a name="line72"></a>                           tgtfatal : string -&gt; unit,
+<a name="line73"></a>                           diag : string -&gt; (unit -&gt; string) -&gt; unit}
+<a name="line74"></a>  (* 0 : quiet, 1 : normal, 2 : chatty, 3 : everything + debug info *)
+<a name="line75"></a>  val output_functions :
+<a name="line76"></a>      {chattiness:int,
+<a name="line77"></a>       debug: {ins:string list,outs:string list} option,
+<a name="line78"></a>       usepfx:bool} -&gt; output_functions
+<a name="line79"></a>  val die_with : string -&gt; 'a
+<a name="line80"></a>
+<a name="line81"></a>
+<a name="line82"></a>  val check_distrib : string -&gt; string option
+<a name="line83"></a>    (* check_distrib s returns SOME(HOLDIR/bin/s) if we are under some HOLDIR.*)
+<a name="line84"></a>  val do_lastmade_checks: output_functions -&gt;
+<a name="line85"></a>                          {no_lastmakercheck : bool} -&gt;
+<a name="line86"></a>                          unit
+<a name="line87"></a>
+<a name="line88"></a>
+<a name="line89"></a>  (* File IO *)
+<a name="line90"></a>  val string_part : File -&gt; string
+<a name="line91"></a>  val toCodeType : string -&gt; CodeType
+<a name="line92"></a>  val toFile : string -&gt; File
+<a name="line93"></a>  val codeToString : CodeType -&gt; string
+<a name="line94"></a>  val articleToString : ArticleType -&gt; string
+<a name="line95"></a>  val fromFile : File -&gt; string
+<a name="line96"></a>  val fromFileNoSuf : File -&gt; string
+<a name="line97"></a>  val file_compare : File * File -&gt; order
+<a name="line98"></a>  val primary_dependent : File -&gt; File option
+<a name="line99"></a>  val exists_readable : string -&gt; bool
+<a name="line100"></a>  val extract_theory : string list -&gt; string option
+<a name="line101"></a>
+<a name="line102"></a>  val clean_dir : {extra_cleans: string list} -&gt; unit
+<a name="line103"></a>  val clean_depdir : {depdirname : string} -&gt; bool
+<a name="line104"></a>  val clean_forReloc : {holheap : string option} -&gt; unit
+<a name="line105"></a>  val pushdir : string -&gt; ('a -&gt; 'b) -&gt; ('a -&gt; 'b)
+<a name="line106"></a>
+<a name="line107"></a>
+<a name="line108"></a>
+<a name="line109"></a>
+<a name="line110"></a>  structure hmdir : sig
+<a name="line111"></a>    type t
+<a name="line112"></a>    val extendp : {base : t, extension : string} -&gt; t
+<a name="line113"></a>    val extend : {base : t, extension : t} -&gt; t
+<a name="line114"></a>    val toString : t -&gt; string
+<a name="line115"></a>    val toAbsPath : t -&gt; string
+<a name="line116"></a>    val pretty_dir : t -&gt; string (* uses holpathdb abbreviations *)
+<a name="line117"></a>    val fromPath : {origin: string, path : string} -&gt; t
+<a name="line118"></a>    val sort : t list -&gt; t list
+<a name="line119"></a>    val curdir : unit -&gt; t
+<a name="line120"></a>    val compare : t * t -&gt; order
+<a name="line121"></a>    val eqdir : t -&gt; t -&gt; bool
+<a name="line122"></a>    val chdir : t -&gt; unit
+<a name="line123"></a>  end
+<a name="line124"></a>  val nice_dir : string -&gt; string (* prints a dir with ~ when HOME is set *)
+<a name="line125"></a>  type include_info = {includes : string list, preincludes : string list}
+<a name="line126"></a>  val empty_incinfo : include_info
+<a name="line127"></a>  type dirset = hmdir.t Binaryset.set
+<a name="line128"></a>  type incset_pair = {pres : dirset, incs : dirset}
+<a name="line129"></a>  val empty_dirset : dirset
+<a name="line130"></a>  type incdirmap = (hmdir.t,incset_pair) Binarymap.dict
+<a name="line131"></a>  val empty_incdirmap : incdirmap
+<a name="line132"></a>  type holmake_dirinfo = {
+<a name="line133"></a>    visited : hmdir.t Binaryset.set,
+<a name="line134"></a>    incdirmap : incdirmap
+<a name="line135"></a>  }
+<a name="line136"></a>  type holmake_result = holmake_dirinfo option
+<a name="line137"></a>
+<a name="line138"></a>  val process_hypat_options :
+<a name="line139"></a>      string -&gt; {noecho : bool, ignore_error : bool, command : string}
+<a name="line140"></a>
+<a name="line141"></a>  (* nicely format a list of makefile targets *)
+<a name="line142"></a>  val target_string : string list -&gt; string
+<a name="line143"></a>
+<a name="line144"></a>  val holdep_arg : File -&gt; File option
+<a name="line145"></a>
+<a name="line146"></a>  structure hm_target : sig
+<a name="line147"></a>    type t
+<a name="line148"></a>    val empty_tgtset : t Binaryset.set
+<a name="line149"></a>    val mk : hmdir.t * File -&gt; t
+<a name="line150"></a>    val compare : t * t -&gt; order
+<a name="line151"></a>    val toString : t -&gt; string
+<a name="line152"></a>    val tgtset_diff : t list -&gt; t list -&gt; t list
+<a name="line153"></a>    val tgtexists_readable : t -&gt; bool
+<a name="line154"></a>    val localFile : File -&gt; t
+<a name="line155"></a>    val filestr_to_tgt : string -&gt; t (* directory dependent *)
+<a name="line156"></a>    val setHMF_text : string -&gt; t -&gt; t
+<a name="line157"></a>    val setFile : File -&gt; t -&gt; t
+<a name="line158"></a>    val dirpart : t -&gt; hmdir.t
+<a name="line159"></a>    val filepart : t -&gt; File
+<a name="line160"></a>    val HMF_text : t -&gt; string option
+<a name="line161"></a>  end
+<a name="line162"></a>
+<a name="line163"></a>  type dep = hm_target.t
+<a name="line164"></a>  val tgt_toString : dep -&gt; string
+<a name="line165"></a>
+<a name="line166"></a>  val generate_all_plausible_targets :
+<a name="line167"></a>        (string -&gt; unit) -&gt; dep option -&gt; dep list
+<a name="line168"></a>
+<a name="line169"></a>
+<a name="line170"></a>  val get_direct_dependencies :
+<a name="line171"></a>      {incinfo : include_info, DEPDIR : string,
+<a name="line172"></a>       output_functions : output_functions,
+<a name="line173"></a>       extra_targets : dep list } -&gt;
+<a name="line174"></a>      File -&gt; dep list
+<a name="line175"></a>  exception HolDepFailed
+<a name="line176"></a>
+<a name="line177"></a>  val forces_update_of : string * string -&gt; bool
+<a name="line178"></a>  val depforces_update_of : dep * dep -&gt; bool
+<a name="line179"></a>
+<a name="line180"></a>
+<a name="line181"></a>end
+<a name="line182"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="file:///Users/nor190/various-hols/develop/tools/Holmake/Holmake_tools.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-13</a></em></p></body></html>

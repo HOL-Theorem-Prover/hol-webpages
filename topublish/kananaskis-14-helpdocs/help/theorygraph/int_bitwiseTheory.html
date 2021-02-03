@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: int_bitwise</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "int_bitwise"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "int_arithTheory.html"><span class="strong">int_arith</span></a>&nbsp;&nbsp;
+    <a href = "OmegaTheory.html"><span class="strong">Omega</span></a>&nbsp;&nbsp;
+    <a href = "bitTheory.html"><span class="strong">bit</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">bits_bitwise</span>
+    <td>
+    :(β -> γ -> α) -> β list # β -> γ list # γ -> α list # α
+    <tr><td>
+    <span class="strong">bits_of_int</span>
+    <td>
+    :int -> bool list # bool
+    <tr><td> <span class="strong">bits_of_num</span> <td> :num -> bool list
+    <tr><td> <span class="strong">int_and</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">int_bit</span> <td> :num -> int -> bool
+    <tr><td>
+    <span class="strong">int_bitwise</span>
+    <td>
+    :(bool -> bool -> bool) -> int -> int -> int
+    <tr><td> <span class="strong">int_not</span> <td> :int -> int
+    <tr><td>
+    <span class="strong">int_of_bits</span>
+    <td>
+    :bool list # bool -> int
+    <tr><td> <span class="strong">int_or</span> <td> :int -> int -> int
+    <tr><td>
+    <span class="strong">int_shift_left</span>
+    <td>
+    :num -> int -> int
+    <tr><td>
+    <span class="strong">int_shift_right</span>
+    <td>
+    :num -> int -> int
+    <tr><td> <span class="strong">int_xor</span> <td> :int -> int -> int
+    <tr><td> <span class="strong">num_of_bits</span> <td> :bool list -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">bits_of_int_def</span>
+<DD>
+<pre>
+⊢ ∀i. bits_of_int i =
+      if i < 0 then (MAP $¬ (bits_of_num (Num (int_not i))),T)
+      else (bits_of_num (Num i),F)
+</pre>
+
+<DT><span class="strong">bits_of_num_primitive_def</span>
+<DD>
+<pre>
+⊢ bits_of_num =
+  WFREC (@R. WF R ∧ ∀n. n ≠ 0 ⇒ R (n DIV 2) n)
+    (λbits_of_num a. I (if a = 0 then [] else ODD a::bits_of_num (a DIV 2)))
+</pre>
+
+<DT><span class="strong">int_and_def</span>
+<DD>
+<pre>
+⊢ int_and = int_bitwise $/\
+</pre>
+
+<DT><span class="strong">int_bit_def</span>
+<DD>
+<pre>
+⊢ ∀b i.
+    int_bit b i ⇔ if i < 0 then ¬BIT b (Num (int_not i)) else BIT b (Num i)
+</pre>
+
+<DT><span class="strong">int_bitwise_def</span>
+<DD>
+<pre>
+⊢ ∀f i j.
+    int_bitwise f i j =
+    int_of_bits (bits_bitwise f (bits_of_int i) (bits_of_int j))
+</pre>
+
+<DT><span class="strong">int_not_def</span>
+<DD>
+<pre>
+⊢ ∀i. int_not i = 0 − i − 1
+</pre>
+
+<DT><span class="strong">int_of_bits_def</span>
+<DD>
+<pre>
+⊢ ∀bs rest.
+    int_of_bits (bs,rest) =
+    if rest then int_not (&num_of_bits (MAP $¬ bs)) else &num_of_bits bs
+</pre>
+
+<DT><span class="strong">int_or_def</span>
+<DD>
+<pre>
+⊢ int_or = int_bitwise $\/
+</pre>
+
+<DT><span class="strong">int_shift_left_def</span>
+<DD>
+<pre>
+⊢ ∀n i.
+    int_shift_left n i =
+    (let (bs,r) = bits_of_int i in int_of_bits (GENLIST (K F) n ++ bs,r))
+</pre>
+
+<DT><span class="strong">int_shift_right_def</span>
+<DD>
+<pre>
+⊢ ∀n i.
+    int_shift_right n i =
+    (let (bs,r) = bits_of_int i in int_of_bits (DROP n bs,r))
+</pre>
+
+<DT><span class="strong">int_xor_def</span>
+<DD>
+<pre>
+⊢ int_xor = int_bitwise (λx y. x ⇎ y)
+</pre>
+
+<DT><span class="strong">num_of_bits_primitive_def</span>
+<DD>
+<pre>
+⊢ num_of_bits =
+  WFREC (@R. WF R ∧ (∀bs. R bs (F::bs)) ∧ ∀bs. R bs (T::bs))
+    (λnum_of_bits a.
+         case a of
+           [] => I 0
+         | T::bs => I (1 + 2 * num_of_bits bs)
+         | F::bs => I (2 * num_of_bits bs))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">bits_bitwise_def</span>
+<DD>
+<pre>
+⊢ (∀r2 r1 f. bits_bitwise f ([],r1) ([],r2) = ([],f r1 r2)) ∧
+  (∀r2 r1 f bs2 b2.
+     bits_bitwise f ([],r1) (b2::bs2,r2) =
+     (let (bs,r) = bits_bitwise f ([],r1) (bs2,r2) in (f r1 b2::bs,r))) ∧
+  (∀r2 r1 f bs1 b1.
+     bits_bitwise f (b1::bs1,r1) ([],r2) =
+     (let (bs,r) = bits_bitwise f (bs1,r1) ([],r2) in (f b1 r2::bs,r))) ∧
+  ∀r2 r1 f bs2 bs1 b2 b1.
+    bits_bitwise f (b1::bs1,r1) (b2::bs2,r2) =
+    (let (bs,r) = bits_bitwise f (bs1,r1) (bs2,r2) in (f b1 b2::bs,r))
+</pre>
+
+<DT><span class="strong">bits_bitwise_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀f r1 r2. P f ([],r1) ([],r2)) ∧
+      (∀f r1 b2 bs2 r2. P f ([],r1) (bs2,r2) ⇒ P f ([],r1) (b2::bs2,r2)) ∧
+      (∀f b1 bs1 r1 r2. P f (bs1,r1) ([],r2) ⇒ P f (b1::bs1,r1) ([],r2)) ∧
+      (∀f b1 bs1 r1 b2 bs2 r2.
+         P f (bs1,r1) (bs2,r2) ⇒ P f (b1::bs1,r1) (b2::bs2,r2)) ⇒
+      ∀v v1 v2 v3 v4. P v (v1,v2) (v3,v4)
+</pre>
+
+<DT><span class="strong">bits_of_num_def</span>
+<DD>
+<pre>
+⊢ ∀n. bits_of_num n = if n = 0 then [] else ODD n::bits_of_num (n DIV 2)
+</pre>
+
+<DT><span class="strong">bits_of_num_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n. (n ≠ 0 ⇒ P (n DIV 2)) ⇒ P n) ⇒ ∀v. P v
+</pre>
+
+<DT><span class="strong">int_bit_and</span>
+<DD>
+<pre>
+⊢ ∀j i n. int_bit n (int_and i j) ⇔ int_bit n i ∧ int_bit n j
+</pre>
+
+<DT><span class="strong">int_bit_bitwise</span>
+<DD>
+<pre>
+⊢ ∀n f i j. int_bit n (int_bitwise f i j) ⇔ f (int_bit n i) (int_bit n j)
+</pre>
+
+<DT><span class="strong">int_bit_equiv</span>
+<DD>
+<pre>
+⊢ ∀i j. (i = j) ⇔ ∀n. int_bit n i ⇔ int_bit n j
+</pre>
+
+<DT><span class="strong">int_bit_int_of_bits</span>
+<DD>
+<pre>
+⊢ int_bit n (int_of_bits b) ⇔
+  if n < LENGTH (FST b) then EL n (FST b) else SND b
+</pre>
+
+<DT><span class="strong">int_bit_not</span>
+<DD>
+<pre>
+⊢ ∀b i. int_bit b (int_not i) ⇔ ¬int_bit b i
+</pre>
+
+<DT><span class="strong">int_bit_or</span>
+<DD>
+<pre>
+⊢ ∀j i n. int_bit n (int_or i j) ⇔ int_bit n i ∨ int_bit n j
+</pre>
+
+<DT><span class="strong">int_bit_shift_left</span>
+<DD>
+<pre>
+⊢ ∀b n i. int_bit b (int_shift_left n i) ⇔ n ≤ b ∧ int_bit (b − n) i
+</pre>
+
+<DT><span class="strong">int_bit_shift_right</span>
+<DD>
+<pre>
+⊢ ∀b n i. int_bit b (int_shift_right n i) ⇔ int_bit (b + n) i
+</pre>
+
+<DT><span class="strong">int_bit_xor</span>
+<DD>
+<pre>
+⊢ ∀j i n. int_bit n (int_xor i j) ⇔ (int_bit n i ⇎ int_bit n j)
+</pre>
+
+<DT><span class="strong">int_not</span>
+<DD>
+<pre>
+⊢ int_not = int_bitwise (λx y. ¬y) 0
+</pre>
+
+<DT><span class="strong">int_not_not</span>
+<DD>
+<pre>
+⊢ ∀i. int_not (int_not i) = i
+</pre>
+
+<DT><span class="strong">int_of_bits_bits_of_int</span>
+<DD>
+<pre>
+⊢ ∀i. int_of_bits (bits_of_int i) = i
+</pre>
+
+<DT><span class="strong">num_of_bits_def</span>
+<DD>
+<pre>
+⊢ (num_of_bits [] = 0) ∧ (∀bs. num_of_bits (F::bs) = 2 * num_of_bits bs) ∧
+  ∀bs. num_of_bits (T::bs) = 1 + 2 * num_of_bits bs
+</pre>
+
+<DT><span class="strong">num_of_bits_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P [] ∧ (∀bs. P bs ⇒ P (F::bs)) ∧ (∀bs. P bs ⇒ P (T::bs)) ⇒ ∀v. P v
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

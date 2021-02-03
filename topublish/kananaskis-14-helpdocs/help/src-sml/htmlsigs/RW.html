@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure RW</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure RW</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/tfl/src/RW.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature RW =
+<a name="line2"></a>sig
+<a name="line3"></a>  include Abbrev
+<a name="line4"></a>
+<a name="line5"></a>  (* Simplification sets *)
+<a name="line6"></a>  type simpls
+<a name="line7"></a>  val empty_simpls : simpls
+<a name="line8"></a>  val dest_simpls  : simpls -&gt; {congs:thm list, rws:thm list}
+<a name="line9"></a>  val mk_simpls    : (thm -&gt; thm) -&gt; thm -&gt; thm list
+<a name="line10"></a>  val MK_RULES     : thm -&gt; thm list
+<a name="line11"></a>  val add_rws      : simpls -&gt; thm list -&gt; simpls
+<a name="line12"></a>  val add_congs    : simpls -&gt; thm list -&gt; simpls
+<a name="line13"></a>  val join_simpls  : simpls -&gt; simpls -&gt; simpls
+<a name="line14"></a>  val std_simpls   : simpls
+<a name="line15"></a>  val pp_simpls    : simpls PP.pprinter
+<a name="line16"></a>  val embedded_ref : (term -&gt; term -&gt; bool) ref
+<a name="line17"></a>
+<a name="line18"></a>  (* The implicit simplification set *)
+<a name="line19"></a>  val add_implicit_congs  : thm list -&gt; unit
+<a name="line20"></a>  val add_implicit_rws    : thm list -&gt; unit
+<a name="line21"></a>  val add_implicit_simpls : simpls -&gt; unit
+<a name="line22"></a>  val implicit_simpls : unit -&gt; simpls
+<a name="line23"></a>  val set_implicit_simpls : simpls -&gt; unit
+<a name="line24"></a>
+<a name="line25"></a>  (* Solvers and monitoring *)
+<a name="line26"></a>  val solver_err : unit -&gt; 'a
+<a name="line27"></a>  val rw_solver : simpls -&gt; thm list -&gt; term -&gt; thm
+<a name="line28"></a>  val std_solver : 'a -&gt; thm list -&gt; term -&gt; thm
+<a name="line29"></a>  val always_fails : 'a -&gt; 'b -&gt; 'c -&gt; 'd
+<a name="line30"></a>
+<a name="line31"></a>  (* Tells whether to add context to the simpls as term is traversed *)
+<a name="line32"></a>  datatype context_policy = ADD | DONT_ADD
+<a name="line33"></a>
+<a name="line34"></a>  (* The atomic conditional term rewriter. *)
+<a name="line35"></a>  val RW_STEP:{context:'a * context_policy, simpls:simpls,
+<a name="line36"></a>               prover:simpls -&gt; 'a -&gt; term -&gt; thm}
+<a name="line37"></a>               -&gt; term -&gt; thm
+<a name="line38"></a>
+<a name="line39"></a>  type cntxt_solver = {context:thm list * context_policy,
+<a name="line40"></a>                       simpls:simpls,
+<a name="line41"></a>                       prover:simpls -&gt; thm list -&gt; term -&gt; thm};
+<a name="line42"></a>
+<a name="line43"></a>  type strategy = (cntxt_solver -&gt; term -&gt; thm)
+<a name="line44"></a>               -&gt; (cntxt_solver -&gt; term -&gt; thm)
+<a name="line45"></a>
+<a name="line46"></a>  val DEPTH   : strategy
+<a name="line47"></a>  val REDEPTH : strategy
+<a name="line48"></a>  val TOP_DEPTH : strategy
+<a name="line49"></a>  val ONCE_DEPTH : strategy
+<a name="line50"></a>  val RATOR : strategy
+<a name="line51"></a>  val RAND  : strategy
+<a name="line52"></a>  val ABST  : strategy
+<a name="line53"></a>
+<a name="line54"></a>  datatype repetitions = Once | Fully | Special of strategy
+<a name="line55"></a>  datatype rules   = Default of thm list
+<a name="line56"></a>                   | Pure of thm list
+<a name="line57"></a>                   | Simpls of simpls * thm list
+<a name="line58"></a>  datatype context = Context of thm list * context_policy
+<a name="line59"></a>  datatype congs   = Congs of thm list
+<a name="line60"></a>  datatype solver  = Solver of simpls -&gt; thm list -&gt; term -&gt; thm
+<a name="line61"></a>
+<a name="line62"></a>  (* Parameterized rewriters for terms, theorems, and goals *)
+<a name="line63"></a>  val Rewrite      :repetitions -&gt; rules*context*congs*solver -&gt; conv
+<a name="line64"></a>  val REWRITE_RULE :repetitions -&gt; rules*context*congs*solver -&gt; thm -&gt; thm
+<a name="line65"></a>  val ASM_REWRITE_RULE:repetitions -&gt; rules*context*congs*solver -&gt; thm -&gt; thm
+<a name="line66"></a>  val REWRITE_TAC     :repetitions -&gt; rules*context*congs*solver -&gt; tactic
+<a name="line67"></a>  val ASM_REWRITE_TAC :repetitions -&gt; rules*context*congs*solver -&gt; tactic
+<a name="line68"></a>
+<a name="line69"></a>
+<a name="line70"></a>  (* Specialized rewriters for different types *)
+<a name="line71"></a>  (* Terms *)
+<a name="line72"></a>
+<a name="line73"></a>  val CRW_CONV          : thm list -&gt; term -&gt; thm
+<a name="line74"></a>  val RW_CONV           : thm list -&gt; term -&gt; thm
+<a name="line75"></a>  val PURE_RW_CONV      : thm list -&gt; term -&gt; thm
+<a name="line76"></a>  val ONCE_RW_CONV      : thm list -&gt; term -&gt; thm
+<a name="line77"></a>  val PURE_ONCE_RW_CONV : thm list -&gt; term -&gt; thm
+<a name="line78"></a>
+<a name="line79"></a>
+<a name="line80"></a>  (* Theorems *)
+<a name="line81"></a>  val CRW_RULE          : thm list -&gt; thm -&gt; thm
+<a name="line82"></a>  val RW_RULE           : thm list -&gt; thm -&gt; thm
+<a name="line83"></a>  val PURE_RW_RULE      : thm list -&gt; thm -&gt; thm
+<a name="line84"></a>  val ONCE_RW_RULE      : thm list -&gt; thm -&gt; thm
+<a name="line85"></a>  val PURE_ONCE_RW_RULE : thm list -&gt; thm -&gt; thm
+<a name="line86"></a>
+<a name="line87"></a>  val ASM_CRW_RULE      : thm list -&gt; thm -&gt; thm
+<a name="line88"></a>  val ASM_RW_RULE       : thm list -&gt; thm -&gt; thm
+<a name="line89"></a>  val PURE_ASM_RW_RULE  : thm list -&gt; thm -&gt; thm
+<a name="line90"></a>  val ONCE_ASM_RW_RULE  : thm list -&gt; thm -&gt; thm
+<a name="line91"></a>  val PURE_ONCE_ASM_RW_RULE : thm list -&gt; thm -&gt; thm
+<a name="line92"></a>
+<a name="line93"></a>
+<a name="line94"></a>  (* Goals *)
+<a name="line95"></a>  val RW_TAC          : thm list -&gt; tactic
+<a name="line96"></a>  val CRW_TAC         : thm list -&gt; tactic
+<a name="line97"></a>  val PURE_RW_TAC     : thm list -&gt; tactic
+<a name="line98"></a>  val ONCE_RW_TAC     : thm list -&gt; tactic
+<a name="line99"></a>  val PURE_ONCE_RW_TAC: thm list -&gt; tactic
+<a name="line100"></a>
+<a name="line101"></a>  val ASM_RW_TAC      : thm list -&gt; tactic
+<a name="line102"></a>  val ASM_CRW_TAC     : thm list -&gt; tactic
+<a name="line103"></a>  val PURE_ASM_RW_TAC : thm list -&gt; tactic
+<a name="line104"></a>  val ONCE_ASM_RW_TAC : thm list -&gt; tactic
+<a name="line105"></a>  val PURE_ONCE_ASM_RW_TAC : thm list -&gt; tactic
+<a name="line106"></a>
+<a name="line107"></a>  (* Folding in beta-conversion and a user-given standard simpset *)
+<a name="line108"></a>  val Simpl : tactic -&gt; thm list -&gt; thm list -&gt; tactic
+<a name="line109"></a>
+<a name="line110"></a>end
+<a name="line111"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/tfl/src/RW.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

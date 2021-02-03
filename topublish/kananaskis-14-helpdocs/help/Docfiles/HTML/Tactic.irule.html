@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactic.irule</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>irule : thm_tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactic.html">Tactic</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Reduces the goal using a supplied implication, with matching.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When applied to a theorem of the form
+</SPAN><DIV class = "XMPL"><pre>
+   A' |- !x1...xn. s ==&gt; !y1...ym. t ==&gt; !z1...zk. u
+</pre></DIV>
+<SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">irule</SPAN><SPAN class = "TEXT"> produces a tactic that reduces a goal whose conclusion </SPAN><SPAN class = "BRKT">u'</SPAN><SPAN class = "TEXT"> is
+a substitution and/or type instance of </SPAN><SPAN class = "BRKT">u</SPAN><SPAN class = "TEXT"> to the corresponding
+instances of </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> and of </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">. Any variables free in </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> but not
+in </SPAN><SPAN class = "BRKT">u</SPAN><SPAN class = "TEXT"> will be existentially quantified in the resulting subgoal, and
+a variable free in both </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> will result in a subgoal which is
+</SPAN><SPAN class = "BRKT">s&nbsp;/\&nbsp;t</SPAN><SPAN class = "TEXT">, existentially quantified</SPAN>
+<P>
+<SPAN class = "TEXT">The following diagram is simplified: more implications and quantified
+variables than shown are allowed.
+</SPAN><DIV class = "XMPL"><pre>
+     A ?- u'
+  =========================  irule (A' |- !x. s ==&gt; !y. t ==&gt; u)
+   A ?- (?z. s') /\ ?w. t'
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">z</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">w</SPAN><SPAN class = "TEXT"> are (type instances of) variables among </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">y</SPAN><SPAN class = "TEXT">
+that do not occur free in </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">. The assumptions </SPAN><SPAN class = "BRKT">A'</SPAN><SPAN class = "TEXT">,
+instantiated, are added as further new subgoals.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails unless the theorem, when stripped of universal quantification and
+antecedents of implications, can be instantiated to match the goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The supplied theorem is pre-processed using </SPAN><SPAN class = "BRKT">IRULE_CANON</SPAN><SPAN class = "TEXT">, which
+removes the universal quantifiers and antecedents of implications, and
+existentially quantifies variables which were instantiated but
+appeared only in the antecedents of implications.</SPAN>
+<P>
+<SPAN class = "TEXT">Then </SPAN><SPAN class = "BRKT">MATCH_MP_TAC</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">MATCH_ACCEPT_TAC</SPAN><SPAN class = "TEXT"> is applied (depending on
+whether or not the result of the preprocessing is an implication). To
+avoid preprocessing entirely, one can use </SPAN><SPAN class = "BRKT">prim_irule</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">With goal </SPAN><SPAN class = "BRKT">R&nbsp;a&nbsp;(f&nbsp;b)</SPAN><SPAN class = "TEXT"> and theorem </SPAN><SPAN class = "BRKT">thm</SPAN><SPAN class = "TEXT"> being
+</SPAN><DIV class = "XMPL"><pre>
+   |- !x u. P u x ==&gt; !w y. Q w x y ==&gt; R x (f y)
+</pre></DIV>
+<SPAN class = "TEXT">
+the proof step </SPAN><SPAN class = "BRKT">e&nbsp;(irule&nbsp;thm)</SPAN><SPAN class = "TEXT"> gives new goal </SPAN><SPAN class = "BRKT">(?u.&nbsp;P&nbsp;u&nbsp;a)&nbsp;/\&nbsp;?w.&nbsp;Q&nbsp;w&nbsp;a&nbsp;b</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">With goal </SPAN><SPAN class = "BRKT">a&nbsp;=&nbsp;b</SPAN><SPAN class = "TEXT"> and theorem </SPAN><SPAN class = "BRKT">trans</SPAN><SPAN class = "TEXT">
+</SPAN><DIV class = "XMPL"><pre>
+   |- !x y. (x = y) ==&gt; !z. (y = z) ==&gt; (x = z)
+</pre></DIV>
+<SPAN class = "TEXT">
+the proof step </SPAN><SPAN class = "BRKT">e&nbsp;(irule&nbsp;trans)</SPAN><SPAN class = "TEXT"> gives new goal
+</SPAN><DIV class = "XMPL"><pre>
+   ?y. (a = y) /\ (y = b)
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactic.irule_at.html">irule_at</A>,
+<A HREF = "Tactic.MATCH_MP_TAC.html">MATCH_MP_TAC</A>,
+<A HREF = "Tactic.prim_irule.html">prim_irule</A>,
+<A HREF = "Drule.IRULE_CANON.html">IRULE_CANON</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

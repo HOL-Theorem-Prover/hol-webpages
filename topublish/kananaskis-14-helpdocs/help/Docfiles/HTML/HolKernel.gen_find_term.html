@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>HolKernel.gen_find_term</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>gen_find_term : (term list * term -&gt; 'a option) -&gt; term -&gt; 'a option</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/HolKernel.html">HolKernel</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Finds first value in range of partial function mapped over sub-terms of a term.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If a call to </SPAN><SPAN class = "BRKT">gen_find_term&nbsp;f&nbsp;t</SPAN><SPAN class = "TEXT"> returns </SPAN><SPAN class = "BRKT">SOME&nbsp;v</SPAN><SPAN class = "TEXT">, then that result is
+the first value returned by a call of function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to one of the
+sub-terms of term </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">. The function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> is successively passed
+sub-terms of </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> starting with </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> itself and then proceeding in a
+top-down, left-to-right traversal.</SPAN>
+<P>
+<SPAN class = "TEXT">The additional list of terms passed to the function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> is the list of bound variables &ldquo;governing&rdquo; the sub-term in question, with the innermost bound variable first in the list.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">gen_find_term&nbsp;f&nbsp;t</SPAN><SPAN class = "TEXT"> will fail if </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> fails when applied to any of the sub-terms of </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+&gt; gen_find_term (fn x =&gt; SOME x) ``SUC x``;
+val it = SOME ([], ``SUC x``) : (term list * term) option
+
+&gt; gen_find_term
+    (fn (bvs,t) =&gt; if null bvs andalso
+                      (is_var t orelse numSyntax.is_numeral t)
+                   then
+                     Lib.total (match_term ``x:num``) t
+                   else NONE)
+    ``SUC z + (\y. y) 5``;
+val it =
+  SOME ([{redex = ``x``, residue = ``z``}], [])] :
+   ((term, term) Term.subst * (hol_type, hol_type) Term.subst) option
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function is used to implement </SPAN><SPAN class = "BRKT">bvk_find_term</SPAN><SPAN class = "TEXT">. This function
+could itself be approximated by returning the last value in the list
+returned by </SPAN><SPAN class = "BRKT">gen_find_terms</SPAN><SPAN class = "TEXT">. Such an implementation would be less
+efficient because it would unnecessarily construct a list of all
+possible results. It would also be semantically different if </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> had
+side effects.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "HolKernel.bvk_find_term.html">bvk_find_term</A>,
+<A HREF = "HolKernel.find_term.html">find_term</A>,
+<A HREF = "HolKernel.gen_find_terms.html">gen_find_terms</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

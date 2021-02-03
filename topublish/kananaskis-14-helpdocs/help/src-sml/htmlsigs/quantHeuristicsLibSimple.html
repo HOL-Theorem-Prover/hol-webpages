@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure quantHeuristicsLibSimple</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure quantHeuristicsLibSimple</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quantHeuristics/quantHeuristicsLibSimple.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature quantHeuristicsLibSimple =
+<a name="line2"></a>sig
+<a name="line3"></a>  include Abbrev
+<a name="line4"></a>
+<a name="line5"></a>  (************************************)
+<a name="line6"></a>  (* Main functionality               *)
+<a name="line7"></a>  (************************************)
+<a name="line8"></a>
+<a name="line9"></a>  (* SIMPLE_QUANT_INSTANTIATE_CONV implements functionality for
+<a name="line10"></a>     finding GAP guesses fast. Moreover, the found instantiations may
+<a name="line11"></a>     not contain free variables. As such, the functionality is similar
+<a name="line12"></a>     to Unwind. It allows more syntax than Unwind and can be
+<a name="line13"></a>     extended. It is much faster than the general quantifier
+<a name="line14"></a>     instantiations heuristics, but also far less powerful. *)
+<a name="line15"></a>
+<a name="line16"></a>  val SIMPLE_QUANT_INSTANTIATE_CONV   : conv
+<a name="line17"></a>  val SIMPLE_QUANT_INST_ss            : simpLib.ssfrag
+<a name="line18"></a>  val SIMPLE_QUANT_INSTANTIATE_TAC    : tactic
+<a name="line19"></a>
+<a name="line20"></a>  val SIMPLE_EXISTS_INSTANTIATE_CONV  : conv
+<a name="line21"></a>  val SIMPLE_FORALL_INSTANTIATE_CONV  : conv
+<a name="line22"></a>  val SIMPLE_UEXISTS_INSTANTIATE_CONV : conv
+<a name="line23"></a>  val SIMPLE_SOME_INSTANTIATE_CONV    : conv
+<a name="line24"></a>  val SIMPLE_SELECT_INSTANTIATE_CONV  : conv
+<a name="line25"></a>
+<a name="line26"></a>
+<a name="line27"></a>
+<a name="line28"></a>  (************************************)
+<a name="line29"></a>  (* Extensions                       *)
+<a name="line30"></a>  (************************************)
+<a name="line31"></a>
+<a name="line32"></a>  (* A simple_guess_seaech_fun is a function that searches a guess. Given a
+<a name="line33"></a>
+<a name="line34"></a>     - avoid : a set of variables to avoid in the instantiation
+<a name="line35"></a>     - ty    : search a guess for either universal or existential quantification
+<a name="line36"></a>     - v     : variable to search an instance for
+<a name="line37"></a>     - tm    : a term to search an instantiation in
+<a name="line38"></a>
+<a name="line39"></a>     it (if it succeeds) results in a theorem of the form
+<a name="line40"></a>
+<a name="line41"></a>       |- SIMPLE_GUESS_EXISTS v i tm
+<a name="line42"></a>
+<a name="line43"></a>     or
+<a name="line44"></a>
+<a name="line45"></a>       |- SIMPLE_GUESS_FORALL v i tm
+<a name="line46"></a>
+<a name="line47"></a>     depending on the value of ty. Moreover i does not contain any
+<a name="line48"></a>     variable from avoid.
+<a name="line49"></a>
+<a name="line50"></a>     Having an additional callback argument to search guesses for
+<a name="line51"></a>     subterms is also useful. combine_sgsfwcs then allows combining a
+<a name="line52"></a>     list of such search functions with callback into a single search
+<a name="line53"></a>     function.
+<a name="line54"></a>  *)
+<a name="line55"></a>
+<a name="line56"></a>  datatype simple_guess_type = sgty_exists | sgty_forall
+<a name="line57"></a>  type simple_guess_search_fun = term HOLset.set -&gt; simple_guess_type -&gt; term -&gt;
+<a name="line58"></a>                                 term -&gt; thm
+<a name="line59"></a>  type simple_guess_search_fun_with_callback =
+<a name="line60"></a>       simple_guess_search_fun -&gt; simple_guess_search_fun
+<a name="line61"></a>
+<a name="line62"></a>  val combine_sgsfwcs : simple_guess_search_fun_with_callback list -&gt;
+<a name="line63"></a>                        simple_guess_search_fun
+<a name="line64"></a>
+<a name="line65"></a>  (* search functions for common operations *)
+<a name="line66"></a>  val sgsfwc_eq     : simple_guess_search_fun_with_callback (* v = _ / _ = v *)
+<a name="line67"></a>  val sgsfwc_eq_var : simple_guess_search_fun_with_callback (* v *)
+<a name="line68"></a>  val sgsfwc_neg    : simple_guess_search_fun_with_callback (* ~ _ *)
+<a name="line69"></a>  val sgsfwc_and    : simple_guess_search_fun_with_callback (* _ /\ _ *)
+<a name="line70"></a>  val sgsfwc_or     : simple_guess_search_fun_with_callback (* _ \/ _ *)
+<a name="line71"></a>  val sgsfwc_imp    : simple_guess_search_fun_with_callback (* _ ==&gt; _ *)
+<a name="line72"></a>  val sgsfwc_forall : simple_guess_search_fun_with_callback (* !z. _ *)
+<a name="line73"></a>  val sgsfwc_exists : simple_guess_search_fun_with_callback (* ?z. _ *)
+<a name="line74"></a>
+<a name="line75"></a>  (* to find guesses for equations, a function can also be applied to
+<a name="line76"></a>     both sides of the equation first. For example, to find guesses
+<a name="line77"></a>     for "x" in "(x, y) = f z" it might be useful to apply "FST" to
+<a name="line78"></a>     both sides. This is done by "sgsfwc_eq_fun". It gets a list of
+<a name="line79"></a>     functions to try. Entries of this list are triples containing the
+<a name="line80"></a>     function to apply, a check when to apply and a theorem about how
+<a name="line81"></a>     to rewrite in case the check succeeds.  For FST the entries would
+<a name="line82"></a>     look like: (``FST``, pairSyntax.is_pair, pairTheory.FST). *)
+<a name="line83"></a>  val sgsfwc_eq_fun : (term * (term -&gt; bool) * thm) list -&gt; (* ?z. _ = _ *)
+<a name="line84"></a>                      simple_guess_search_fun_with_callback
+<a name="line85"></a>
+<a name="line86"></a>  (* List of eq_funs for pairs, lists, options and sum types. *)
+<a name="line87"></a>  val default_eq_funs : (term * (term -&gt; bool) * thm) list
+<a name="line88"></a>
+<a name="line89"></a>  val default_sgsfwcs : simple_guess_search_fun_with_callback list
+<a name="line90"></a>
+<a name="line91"></a>  (* Generalised conversions that allow specifying which search functions to
+<a name="line92"></a>     use *)
+<a name="line93"></a>  val SIMPLE_EXISTS_INSTANTIATE_CONV_GEN  :
+<a name="line94"></a>      simple_guess_search_fun_with_callback list -&gt; conv
+<a name="line95"></a>  val SIMPLE_FORALL_INSTANTIATE_CONV_GEN  :
+<a name="line96"></a>      simple_guess_search_fun_with_callback list -&gt; conv
+<a name="line97"></a>  val SIMPLE_UEXISTS_INSTANTIATE_CONV_GEN :
+<a name="line98"></a>      simple_guess_search_fun_with_callback list -&gt; conv
+<a name="line99"></a>  val SIMPLE_SOME_INSTANTIATE_CONV_GEN    :
+<a name="line100"></a>      simple_guess_search_fun_with_callback list -&gt; conv
+<a name="line101"></a>  val SIMPLE_SELECT_INSTANTIATE_CONV_GEN  :
+<a name="line102"></a>      simple_guess_search_fun_with_callback list -&gt; conv
+<a name="line103"></a>
+<a name="line104"></a>  val SIMPLE_QUANT_INSTANTIATE_CONV_GEN   :
+<a name="line105"></a>      simple_guess_search_fun_with_callback list -&gt; conv
+<a name="line106"></a>  val SIMPLE_QUANT_INST_GEN_ss            :
+<a name="line107"></a>      simple_guess_search_fun_with_callback list -&gt; simpLib.ssfrag
+<a name="line108"></a>
+<a name="line109"></a>end
+<a name="line110"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/quantHeuristics/quantHeuristicsLibSimple.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

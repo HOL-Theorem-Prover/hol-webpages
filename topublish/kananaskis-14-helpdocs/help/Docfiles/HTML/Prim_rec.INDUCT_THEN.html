@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Prim_rec.INDUCT_THEN</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>INDUCT_THEN : (thm -&gt; thm_tactic -&gt; tactic)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Prim_rec.html">Prim_rec</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Structural induction tactic for automatically-defined concrete types.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">INDUCT_THEN</SPAN><SPAN class = "TEXT"> implements structural induction tactics for
+arbitrary concrete recursive types of the kind definable by </SPAN><SPAN class = "BRKT">define_type</SPAN><SPAN class = "TEXT">.  The
+first argument to </SPAN><SPAN class = "BRKT">INDUCT_THEN</SPAN><SPAN class = "TEXT"> is a structural induction theorem for the
+concrete type in question. This theorem must have the form of an induction
+theorem of the kind returned by </SPAN><SPAN class = "BRKT">prove_induction_thm</SPAN><SPAN class = "TEXT">. When applied to such a
+theorem, the function </SPAN><SPAN class = "BRKT">INDUCT_THEN</SPAN><SPAN class = "TEXT"> constructs specialized tactic for
+doing structural induction on the concrete type in question.</SPAN>
+<P>
+<SPAN class = "TEXT">The second argument to </SPAN><SPAN class = "BRKT">INDUCT_THEN</SPAN><SPAN class = "TEXT"> is a function that determines what is be
+done with the induction hypotheses in the goal-directed proof by structural
+induction.  Suppose that </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is a structural induction theorem for a concrete
+data type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">, and that </SPAN><SPAN class = "BRKT">A&nbsp;?-&nbsp;!x.P</SPAN><SPAN class = "TEXT"> is a universally-quantified goal in which
+the variable </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> ranges over values of type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">. If the type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> has </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">
+constructors </SPAN><SPAN class = "BRKT">C1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">Cn</SPAN><SPAN class = "TEXT"> and &lsquo;</SPAN><SPAN class = "BRKT">Ci(vs)</SPAN><SPAN class = "TEXT">&rsquo; represents a (curried) application
+of the </SPAN><SPAN class = "BRKT">i</SPAN><SPAN class = "TEXT">th constructor to a sequence of variables, then if </SPAN><SPAN class = "BRKT">ttac</SPAN><SPAN class = "TEXT"> is a
+function that maps the induction hypotheses </SPAN><SPAN class = "BRKT">hypi</SPAN><SPAN class = "TEXT"> of the </SPAN><SPAN class = "BRKT">i</SPAN><SPAN class = "TEXT">th subgoal
+to the tactic:
+</SPAN><DIV class = "XMPL"><pre>
+      A  ?- P[Ci(vs)/x]
+   ======================  MAP_EVERY ttac hypi
+         A1 ?- Gi
+</pre></DIV>
+<SPAN class = "TEXT">
+then </SPAN><SPAN class = "BRKT">INDUCT_THEN&nbsp;th&nbsp;ttac</SPAN><SPAN class = "TEXT"> is an induction tactic that decomposes
+the goal </SPAN><SPAN class = "BRKT">A&nbsp;?-&nbsp;!x.P</SPAN><SPAN class = "TEXT"> into a set of </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> subgoals, one for each constructor,
+as follows:
+</SPAN><DIV class = "XMPL"><pre>
+            A ?- !x.P
+  ================================  INDUCT_THEN th ttac
+     A1 ?- G1  ...   An ?- Gn
+</pre></DIV>
+<SPAN class = "TEXT">
+The resulting subgoals correspond to the cases in a structural
+induction on the variable </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> of type </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT">, with induction hypotheses treated
+as determined by </SPAN><SPAN class = "BRKT">ttac</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">INDUCT_THEN&nbsp;th&nbsp;ttac&nbsp;g</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is not a structural induction theorem of
+the form returned by </SPAN><SPAN class = "BRKT">prove_induction_thm</SPAN><SPAN class = "TEXT">, or if the goal does not have the
+form </SPAN><SPAN class = "BRKT">A&nbsp;?-&nbsp;!x:ty.P</SPAN><SPAN class = "TEXT"> where </SPAN><SPAN class = "BRKT">ty</SPAN><SPAN class = "TEXT"> is the type for which </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is the induction
+theorem, or if </SPAN><SPAN class = "BRKT">ttac</SPAN><SPAN class = "TEXT"> fails for any subgoal in the induction.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The built-in structural induction theorem for lists is:
+</SPAN><DIV class = "XMPL"><pre>
+   |- !P. P[] /\ (!t. P t ==&gt; (!h. P(CONS h t))) ==&gt; (!l. P l)
+</pre></DIV>
+<SPAN class = "TEXT">
+When </SPAN><SPAN class = "BRKT">INDUCT_THEN</SPAN><SPAN class = "TEXT"> is applied to this theorem, it constructs
+and returns a specialized induction tactic (parameterized by a theorem-tactic)
+for doing induction on lists:
+</SPAN><DIV class = "XMPL"><pre>
+   - val LIST_INDUCT_THEN = INDUCT_THEN listTheory.list_INDUCT;
+</pre></DIV>
+<SPAN class = "TEXT">
+The resulting function, when supplied with the </SPAN><SPAN class = "BRKT">thm_tactic</SPAN><SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">ASSUME_TAC</SPAN><SPAN class = "TEXT">, returns a tactic that decomposes a goal </SPAN><SPAN class = "BRKT">?-&nbsp;!l.P[l]</SPAN><SPAN class = "TEXT"> into the
+base case </SPAN><SPAN class = "BRKT">?-&nbsp;P[NIL]</SPAN><SPAN class = "TEXT"> and a step case </SPAN><SPAN class = "BRKT">P[l]&nbsp;?-&nbsp;!h.&nbsp;P[CONS&nbsp;h&nbsp;l]</SPAN><SPAN class = "TEXT">, where the
+induction hypothesis </SPAN><SPAN class = "BRKT">P[l]</SPAN><SPAN class = "TEXT"> in the step case has been put on the assumption
+list.  That is, the tactic:
+</SPAN><DIV class = "XMPL"><pre>
+   LIST_INDUCT_THEN ASSUME_TAC
+</pre></DIV>
+<SPAN class = "TEXT">
+does structural induction on lists, putting any induction hypotheses
+that arise onto the assumption list:
+</SPAN><DIV class = "XMPL"><pre>
+                      A ?- !l. P
+   =======================================================
+    A |- P[NIL/l]   A u {P[l'/l]} ?- !h. P[(CONS h l')/l]
+</pre></DIV>
+<SPAN class = "TEXT">
+Likewise </SPAN><SPAN class = "BRKT">LIST_INDUCT_THEN&nbsp;STRIP_ASSUME_TAC</SPAN><SPAN class = "TEXT"> will also do induction
+on lists, but will strip induction hypotheses apart before adding them to the
+assumptions (this may be useful if P is a conjunction or a disjunction, or is
+existentially quantified).  By contrast, the tactic:
+</SPAN><DIV class = "XMPL"><pre>
+   LIST_INDUCT_THEN MP_TAC
+</pre></DIV>
+<SPAN class = "TEXT">
+will decompose the goal as follows:
+</SPAN><DIV class = "XMPL"><pre>
+                      A ?- !l. P
+   =====================================================
+    A |- P[NIL/l]   A ?- P[l'/l] ==&gt; !h. P[CONS h l'/l]
+</pre></DIV>
+<SPAN class = "TEXT">
+That is, the induction hypothesis becomes the antecedent of an
+implication expressing the step case in the induction, rather than an
+assumption of the step-case subgoal.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Prim_rec.new_recursive_definition.html">new_recursive_definition</A>,
+<A HREF = "Prim_rec.prove_cases_thm.html">prove_cases_thm</A>,
+<A HREF = "Prim_rec.prove_constructors_distinct.html">prove_constructors_distinct</A>,
+<A HREF = "Prim_rec.prove_constructors_one_one.html">prove_constructors_one_one</A>,
+<A HREF = "Prim_rec.prove_induction_thm.html">prove_induction_thm</A>,
+<A HREF = "Prim_rec.prove_rec_fn_exists.html">prove_rec_fn_exists</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

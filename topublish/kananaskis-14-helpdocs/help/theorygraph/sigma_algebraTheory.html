@@ -1,0 +1,1477 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: sigma_algebra</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "sigma_algebra"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "util_probTheory.html"><span class="strong">util_prob</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">algebra</span>
+    <td>
+    :α algebra -> bool
+    <tr><td>
+    <span class="strong">dynkin</span>
+    <td>
+    :(α -> bool) -> ((α -> bool) -> bool) -> α algebra
+    <tr><td> <span class="strong">dynkin_system</span> <td> :α algebra -> bool
+    <tr><td>
+    <span class="strong">measurable</span>
+    <td>
+    :α algebra -> β algebra -> (α -> β) -> bool
+    <tr><td>
+    <span class="strong">prod_sigma</span>
+    <td>
+    :α algebra -> β algebra -> (α # β) algebra
+    <tr><td> <span class="strong">ring</span> <td> :α algebra -> bool
+    <tr><td> <span class="strong">semiring</span> <td> :α algebra -> bool
+    <tr><td>
+    <span class="strong">sigma</span>
+    <td>
+    :(α -> bool) -> ((α -> bool) -> bool) -> α algebra
+    <tr><td> <span class="strong">sigma_algebra</span> <td> :α algebra -> bool
+    <tr><td>
+    <span class="strong">sigma_function</span>
+    <td>
+    :(α -> bool) -> β algebra -> (α -> β) -> α algebra
+    <tr><td>
+    <span class="strong">sigma_functions</span>
+    <td>
+    :(α -> bool) ->
+    ('index -> β algebra) ->
+    ('index -> α -> β) -> ('index -> bool) -> α algebra
+    <tr><td>
+    <span class="strong">sigma_sets</span>
+    <td>
+    :(α -> bool) -> ((α -> bool) -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">smallest_ring</span>
+    <td>
+    :(α -> bool) -> ((α -> bool) -> bool) -> α algebra
+    <tr><td> <span class="strong">space</span> <td> :α algebra -> α -> bool
+    <tr><td>
+    <span class="strong">subset_class</span>
+    <td>
+    :(α -> bool) -> ((α -> bool) -> bool) -> bool
+    <tr><td>
+    <span class="strong">subsets</span>
+    <td>
+    :α algebra -> (α -> bool) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">algebra_def</span>
+<DD>
+<pre>
+⊢ ∀a. algebra a ⇔
+      subset_class (space a) (subsets a) ∧ ∅ ∈ subsets a ∧
+      (∀s. s ∈ subsets a ⇒ space a DIFF s ∈ subsets a) ∧
+      ∀s t. s ∈ subsets a ∧ t ∈ subsets a ⇒ s ∪ t ∈ subsets a
+</pre>
+
+<DT><span class="strong">dynkin_def</span>
+<DD>
+<pre>
+⊢ ∀sp sts. dynkin sp sts = (sp,BIGINTER {d | sts ⊆ d ∧ dynkin_system (sp,d)})
+</pre>
+
+<DT><span class="strong">dynkin_system_def</span>
+<DD>
+<pre>
+⊢ ∀d. dynkin_system d ⇔
+      subset_class (space d) (subsets d) ∧ space d ∈ subsets d ∧
+      (∀s. s ∈ subsets d ⇒ space d DIFF s ∈ subsets d) ∧
+      ∀f. f ∈ (𝕌(:num) → subsets d) ∧ (∀i j. i ≠ j ⇒ DISJOINT (f i) (f j)) ⇒
+          BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets d
+</pre>
+
+<DT><span class="strong">measurable_def</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    measurable a b =
+    {f |
+     sigma_algebra a ∧ sigma_algebra b ∧ f ∈ (space a → space b) ∧
+     ∀s. s ∈ subsets b ⇒ PREIMAGE f s ∩ space a ∈ subsets a}
+</pre>
+
+<DT><span class="strong">prod_sigma_def</span>
+<DD>
+<pre>
+⊢ ∀a b. a × b = sigma (space a × space b) (prod_sets (subsets a) (subsets b))
+</pre>
+
+<DT><span class="strong">ring_def</span>
+<DD>
+<pre>
+⊢ ∀r. ring r ⇔
+      subset_class (space r) (subsets r) ∧ ∅ ∈ subsets r ∧
+      (∀s t. s ∈ subsets r ∧ t ∈ subsets r ⇒ s ∪ t ∈ subsets r) ∧
+      ∀s t. s ∈ subsets r ∧ t ∈ subsets r ⇒ s DIFF t ∈ subsets r
+</pre>
+
+<DT><span class="strong">semiring_def</span>
+<DD>
+<pre>
+⊢ ∀r. semiring r ⇔
+      subset_class (space r) (subsets r) ∧ ∅ ∈ subsets r ∧
+      (∀s t. s ∈ subsets r ∧ t ∈ subsets r ⇒ s ∩ t ∈ subsets r) ∧
+      ∀s t.
+        s ∈ subsets r ∧ t ∈ subsets r ⇒
+        ∃c. c ⊆ subsets r ∧ FINITE c ∧ disjoint c ∧ (s DIFF t = BIGUNION c)
+</pre>
+
+<DT><span class="strong">sigma_algebra_def</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇔
+      algebra a ∧ ∀c. COUNTABLE c ∧ c ⊆ subsets a ⇒ BIGUNION c ∈ subsets a
+</pre>
+
+<DT><span class="strong">sigma_def</span>
+<DD>
+<pre>
+⊢ ∀sp sts. sigma sp sts = (sp,BIGINTER {s | sts ⊆ s ∧ sigma_algebra (sp,s)})
+</pre>
+
+<DT><span class="strong">sigma_function_def</span>
+<DD>
+<pre>
+⊢ ∀sp A f. sigma sp A f = (sp,IMAGE (λs. PREIMAGE f s ∩ sp) (subsets A))
+</pre>
+
+<DT><span class="strong">sigma_functions_def</span>
+<DD>
+<pre>
+⊢ ∀sp A f J.
+    sigma sp A f J =
+    sigma sp
+      (BIGUNION
+         (IMAGE (λi. IMAGE (λs. PREIMAGE (f i) s ∩ sp) (subsets (A i))) J))
+</pre>
+
+<DT><span class="strong">sigma_sets_def</span>
+<DD>
+<pre>
+⊢ sigma_sets =
+  (λsp st a0.
+       ∀sigma_sets'.
+         (∀a0.
+            (a0 = ∅) ∨ st a0 ∨ (∃a. (a0 = sp DIFF a) ∧ sigma_sets' a) ∨
+            (∃A. (a0 = BIGUNION {A i | i ∈ 𝕌(:num)}) ∧ ∀i. sigma_sets' (A i)) ⇒
+            sigma_sets' a0) ⇒
+         sigma_sets' a0)
+</pre>
+
+<DT><span class="strong">smallest_ring_def</span>
+<DD>
+<pre>
+⊢ ∀sp sts. smallest_ring sp sts = (sp,BIGINTER {s | sts ⊆ s ∧ ring (sp,s)})
+</pre>
+
+<DT><span class="strong">space_def</span>
+<DD>
+<pre>
+⊢ ∀x y. space (x,y) = x
+</pre>
+
+<DT><span class="strong">subset_class_def</span>
+<DD>
+<pre>
+⊢ ∀sp sts. subset_class sp sts ⇔ ∀x. x ∈ sts ⇒ x ⊆ sp
+</pre>
+
+<DT><span class="strong">subsets_def</span>
+<DD>
+<pre>
+⊢ ∀x y. subsets (x,y) = y
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ALGEBRA_ALT_INTER</span>
+<DD>
+<pre>
+⊢ ∀a. algebra a ⇔
+      subset_class (space a) (subsets a) ∧ ∅ ∈ subsets a ∧
+      (∀s. s ∈ subsets a ⇒ space a DIFF s ∈ subsets a) ∧
+      ∀s t. s ∈ subsets a ∧ t ∈ subsets a ⇒ s ∩ t ∈ subsets a
+</pre>
+
+<DT><span class="strong">ALGEBRA_COMPL</span>
+<DD>
+<pre>
+⊢ ∀a s. algebra a ∧ s ∈ subsets a ⇒ space a DIFF s ∈ subsets a
+</pre>
+
+<DT><span class="strong">ALGEBRA_COMPL_SETS</span>
+<DD>
+<pre>
+⊢ ∀sp sts a. algebra (sp,sts) ∧ a ∈ sts ⇒ sp DIFF a ∈ sts
+</pre>
+
+<DT><span class="strong">ALGEBRA_DIFF</span>
+<DD>
+<pre>
+⊢ ∀a s t. algebra a ∧ s ∈ subsets a ∧ t ∈ subsets a ⇒ s DIFF t ∈ subsets a
+</pre>
+
+<DT><span class="strong">ALGEBRA_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀a. algebra a ⇒ ∅ ∈ subsets a
+</pre>
+
+<DT><span class="strong">ALGEBRA_FINITE_UNION</span>
+<DD>
+<pre>
+⊢ ∀a c. algebra a ∧ FINITE c ∧ c ⊆ subsets a ⇒ BIGUNION c ∈ subsets a
+</pre>
+
+<DT><span class="strong">ALGEBRA_IMP_RING</span>
+<DD>
+<pre>
+⊢ ∀a. algebra a ⇒ ring a
+</pre>
+
+<DT><span class="strong">ALGEBRA_IMP_SEMIRING</span>
+<DD>
+<pre>
+⊢ ∀a. algebra a ⇒ semiring a
+</pre>
+
+<DT><span class="strong">ALGEBRA_INTER</span>
+<DD>
+<pre>
+⊢ ∀a s t. algebra a ∧ s ∈ subsets a ∧ t ∈ subsets a ⇒ s ∩ t ∈ subsets a
+</pre>
+
+<DT><span class="strong">ALGEBRA_INTER_SPACE</span>
+<DD>
+<pre>
+⊢ ∀a s. algebra a ∧ s ∈ subsets a ⇒ (space a ∩ s = s) ∧ (s ∩ space a = s)
+</pre>
+
+<DT><span class="strong">ALGEBRA_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀sp sts a. algebra (sp,sts) ∧ a ∈ sts ⇒ algebra (a,IMAGE (λs. s ∩ a) sts)
+</pre>
+
+<DT><span class="strong">ALGEBRA_SETS_COLLECT_CONST</span>
+<DD>
+<pre>
+⊢ ∀sp sts P. algebra (sp,sts) ⇒ {x | x ∈ sp ∧ P} ∈ sts
+</pre>
+
+<DT><span class="strong">ALGEBRA_SETS_COLLECT_IMP</span>
+<DD>
+<pre>
+⊢ ∀sp sts P Q.
+    algebra (sp,sts) ∧ {x | x ∈ sp ∧ P x} ∈ sts ⇒
+    {x | x ∈ sp ∧ Q x} ∈ sts ⇒
+    {x | x ∈ sp ∧ (Q x ⇒ P x)} ∈ sts
+</pre>
+
+<DT><span class="strong">ALGEBRA_SETS_COLLECT_NEG</span>
+<DD>
+<pre>
+⊢ ∀sp sts P.
+    algebra (sp,sts) ∧ {x | x ∈ sp ∧ P x} ∈ sts ⇒ {x | x ∈ sp ∧ ¬P x} ∈ sts
+</pre>
+
+<DT><span class="strong">ALGEBRA_SINGLE_SET</span>
+<DD>
+<pre>
+⊢ ∀X S. X ⊆ S ⇒ algebra (S,{∅; X; S DIFF X; S})
+</pre>
+
+<DT><span class="strong">ALGEBRA_SPACE</span>
+<DD>
+<pre>
+⊢ ∀a. algebra a ⇒ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">ALGEBRA_UNION</span>
+<DD>
+<pre>
+⊢ ∀a s t. algebra a ∧ s ∈ subsets a ∧ t ∈ subsets a ⇒ s ∪ t ∈ subsets a
+</pre>
+
+<DT><span class="strong">DYNKIN</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    subset_class sp sts ⇒
+    sts ⊆ subsets (dynkin sp sts) ∧ dynkin_system (dynkin sp sts) ∧
+    subset_class sp (subsets (dynkin sp sts))
+</pre>
+
+<DT><span class="strong">DYNKIN_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀d. dynkin_system d ∧
+      (∀s t. s ∈ subsets d ∧ t ∈ subsets d ⇒ s ∩ t ∈ subsets d) ⇔
+      sigma_algebra d
+</pre>
+
+<DT><span class="strong">DYNKIN_MONOTONE</span>
+<DD>
+<pre>
+⊢ ∀sp a b. a ⊆ b ⇒ subsets (dynkin sp a) ⊆ subsets (dynkin sp b)
+</pre>
+
+<DT><span class="strong">DYNKIN_SMALLEST</span>
+<DD>
+<pre>
+⊢ ∀sp sts D.
+    sts ⊆ D ∧ D ⊆ subsets (dynkin sp sts) ∧ dynkin_system (sp,D) ⇒
+    (D = subsets (dynkin sp sts))
+</pre>
+
+<DT><span class="strong">DYNKIN_STABLE</span>
+<DD>
+<pre>
+⊢ ∀d. dynkin_system d ⇒ (dynkin (space d) (subsets d) = d)
+</pre>
+
+<DT><span class="strong">DYNKIN_STABLE_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀sp sts. dynkin_system (sp,sts) ⇒ (dynkin sp sts = (sp,sts))
+</pre>
+
+<DT><span class="strong">DYNKIN_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    dynkin_system b ∧ a ⊆ subsets b ⇒ subsets (dynkin (space b) a) ⊆ subsets b
+</pre>
+
+<DT><span class="strong">DYNKIN_SUBSET_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    subset_class sp sts ⇒ subsets (dynkin sp sts) ⊆ subsets (sigma sp sts)
+</pre>
+
+<DT><span class="strong">DYNKIN_SUBSET_SUBSETS</span>
+<DD>
+<pre>
+⊢ ∀sp a. a ⊆ subsets (dynkin sp a)
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_ALT</span>
+<DD>
+<pre>
+⊢ ∀d. dynkin_system d ⇔
+      subset_class (space d) (subsets d) ∧ space d ∈ subsets d ∧
+      (∀s. s ∈ subsets d ⇒ space d DIFF s ∈ subsets d) ∧
+      (∀f. f ∈ (𝕌(:num) → subsets d) ∧ (f 0 = ∅) ∧ (∀n. f n ⊆ f (SUC n)) ⇒
+           BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets d) ∧
+      ∀f. f ∈ (𝕌(:num) → subsets d) ∧ (∀i j. i ≠ j ⇒ DISJOINT (f i) (f j)) ⇒
+          BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets d
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_ALT_MONO</span>
+<DD>
+<pre>
+⊢ ∀d. dynkin_system d ⇔
+      subset_class (space d) (subsets d) ∧ space d ∈ subsets d ∧
+      (∀s t. s ∈ subsets d ∧ t ∈ subsets d ∧ s ⊆ t ⇒ t DIFF s ∈ subsets d) ∧
+      ∀f. f ∈ (𝕌(:num) → subsets d) ∧ (f 0 = ∅) ∧ (∀n. f n ⊆ f (SUC n)) ⇒
+          BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets d
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_COMPL</span>
+<DD>
+<pre>
+⊢ ∀d s. dynkin_system d ∧ s ∈ subsets d ⇒ space d DIFF s ∈ subsets d
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_COUNTABLY_DUNION</span>
+<DD>
+<pre>
+⊢ ∀d f.
+    dynkin_system d ∧ f ∈ (𝕌(:num) → subsets d) ∧
+    (∀i j. i ≠ j ⇒ DISJOINT (f i) (f j)) ⇒
+    BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets d
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_DUNION</span>
+<DD>
+<pre>
+⊢ ∀d s t.
+    dynkin_system d ∧ s ∈ subsets d ∧ t ∈ subsets d ∧ DISJOINT s t ⇒
+    s ∪ t ∈ subsets d
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀d. dynkin_system d ⇒ ∅ ∈ subsets d
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀p f.
+    dynkin_system p ∧ f ∈ (𝕌(:num) → subsets p) ∧ (f 0 = ∅) ∧
+    (∀n. f n ⊆ f (SUC n)) ⇒
+    BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets p
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_SPACE</span>
+<DD>
+<pre>
+⊢ ∀d. dynkin_system d ⇒ space d ∈ subsets d
+</pre>
+
+<DT><span class="strong">DYNKIN_THM</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    subset_class sp sts ∧ (∀s t. s ∈ sts ∧ t ∈ sts ⇒ s ∩ t ∈ sts) ⇒
+    (dynkin sp sts = sigma sp sts)
+</pre>
+
+<DT><span class="strong">INTER_SPACE_EQ1</span>
+<DD>
+<pre>
+⊢ ∀sp sts. subset_class sp sts ⇒ ∀x. x ∈ sts ⇒ (sp ∩ x = x)
+</pre>
+
+<DT><span class="strong">INTER_SPACE_REDUCE</span>
+<DD>
+<pre>
+⊢ ∀sp sts. subset_class sp sts ⇒ ∀x. x ∈ sts ⇒ (x ∩ sp = x)
+</pre>
+
+<DT><span class="strong">IN_DYNKIN</span>
+<DD>
+<pre>
+⊢ ∀sp a x. x ∈ a ⇒ x ∈ subsets (dynkin sp a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE</span>
+<DD>
+<pre>
+⊢ ∀a b f.
+    f ∈ measurable a b ⇔
+    sigma_algebra a ∧ sigma_algebra b ∧ f ∈ (space a → space b) ∧
+    ∀s. s ∈ subsets b ⇒ PREIMAGE f s ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀sp a x. x ∈ a ⇒ x ∈ subsets (sigma sp a)
+</pre>
+
+<DT><span class="strong">MEASUBABLE_BIGUNION_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀a b f.
+    sigma_algebra a ∧ sigma_algebra b ∧ f ∈ (space a → space b) ∧
+    (∀s. s ∈ subsets b ⇒ PREIMAGE f s ∈ subsets a) ⇒
+    ∀c. COUNTABLE c ∧ c ⊆ IMAGE (PREIMAGE f) (subsets b) ⇒
+        BIGUNION c ∈ IMAGE (PREIMAGE f) (subsets b)
+</pre>
+
+<DT><span class="strong">MEASURABLE_BIGUNION_PROPERTY</span>
+<DD>
+<pre>
+⊢ ∀a b f.
+    sigma_algebra a ∧ sigma_algebra b ∧ f ∈ (space a → space b) ∧
+    (∀s. s ∈ subsets b ⇒ PREIMAGE f s ∈ subsets a) ⇒
+    ∀c. c ⊆ subsets b ⇒
+        (PREIMAGE f (BIGUNION c) = BIGUNION (IMAGE (PREIMAGE f) c))
+</pre>
+
+<DT><span class="strong">MEASURABLE_COMP</span>
+<DD>
+<pre>
+⊢ ∀f g a b c. f ∈ measurable a b ∧ g ∈ measurable b c ⇒ g ∘ f ∈ measurable a c
+</pre>
+
+<DT><span class="strong">MEASURABLE_COMP_STRONG</span>
+<DD>
+<pre>
+⊢ ∀f g a b c.
+    f ∈ measurable a b ∧ sigma_algebra c ∧ g ∈ (space b → space c) ∧
+    (∀x. x ∈ subsets c ⇒ PREIMAGE g x ∩ IMAGE f (space a) ∈ subsets b) ⇒
+    g ∘ f ∈ measurable a c
+</pre>
+
+<DT><span class="strong">MEASURABLE_COMP_STRONGER</span>
+<DD>
+<pre>
+⊢ ∀f g a b c t.
+    f ∈ measurable a b ∧ sigma_algebra c ∧ g ∈ (space b → space c) ∧
+    IMAGE f (space a) ⊆ t ∧ (∀s. s ∈ subsets c ⇒ PREIMAGE g s ∩ t ∈ subsets b) ⇒
+    g ∘ f ∈ measurable a c
+</pre>
+
+<DT><span class="strong">MEASURABLE_DIFF_PROPERTY</span>
+<DD>
+<pre>
+⊢ ∀a b f.
+    sigma_algebra a ∧ sigma_algebra b ∧ f ∈ (space a → space b) ∧
+    (∀s. s ∈ subsets b ⇒ PREIMAGE f s ∈ subsets a) ⇒
+    ∀s. s ∈ subsets b ⇒
+        (PREIMAGE f (space b DIFF s) = space a DIFF PREIMAGE f s)
+</pre>
+
+<DT><span class="strong">MEASURABLE_I</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇒ I ∈ measurable a a
+</pre>
+
+<DT><span class="strong">MEASURABLE_LIFT</span>
+<DD>
+<pre>
+⊢ ∀f a b. f ∈ measurable a b ⇒ f ∈ measurable a (sigma (space b) (subsets b))
+</pre>
+
+<DT><span class="strong">MEASURABLE_PROD_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀a a1 a2 f.
+    sigma_algebra a ∧ FST ∘ f ∈ measurable a a1 ∧ SND ∘ f ∈ measurable a a2 ⇒
+    f ∈
+    measurable a
+      (sigma (space a1 × space a2) (prod_sets (subsets a1) (subsets a2)))
+</pre>
+
+<DT><span class="strong">MEASURABLE_PROD_SIGMA'</span>
+<DD>
+<pre>
+⊢ ∀a a1 a2 f.
+    sigma_algebra a ∧ FST ∘ f ∈ measurable a a1 ∧ SND ∘ f ∈ measurable a a2 ⇒
+    f ∈ measurable a (a1 × a2)
+</pre>
+
+<DT><span class="strong">MEASURABLE_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀f a b sp.
+    sigma_algebra a ∧ subset_class sp b ∧ f ∈ (space a → sp) ∧
+    (∀s. s ∈ b ⇒ PREIMAGE f s ∩ space a ∈ subsets a) ⇒
+    f ∈ measurable a (sigma sp b)
+</pre>
+
+<DT><span class="strong">MEASURABLE_SIGMA_PREIMAGES</span>
+<DD>
+<pre>
+⊢ ∀a b f.
+    sigma_algebra a ∧ sigma_algebra b ∧ f ∈ (space a → space b) ∧
+    (∀s. s ∈ subsets b ⇒ PREIMAGE f s ∈ subsets a) ⇒
+    sigma_algebra (space a,IMAGE (PREIMAGE f) (subsets b))
+</pre>
+
+<DT><span class="strong">MEASURABLE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀a b. measurable a b ⊆ measurable a (sigma (space b) (subsets b))
+</pre>
+
+<DT><span class="strong">MEASURABLE_UP_LIFT</span>
+<DD>
+<pre>
+⊢ ∀sp a b c f.
+    f ∈ measurable (sp,a) c ∧ sigma_algebra (sp,b) ∧ a ⊆ b ⇒
+    f ∈ measurable (sp,b) c
+</pre>
+
+<DT><span class="strong">MEASURABLE_UP_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀a b. measurable a b ⊆ measurable (sigma (space a) (subsets a)) b
+</pre>
+
+<DT><span class="strong">MEASURABLE_UP_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀sp a b c.
+    a ⊆ b ∧ sigma_algebra (sp,b) ⇒ measurable (sp,a) c ⊆ measurable (sp,b) c
+</pre>
+
+<DT><span class="strong">POW_ALGEBRA</span>
+<DD>
+<pre>
+⊢ ∀sp. algebra (sp,POW sp)
+</pre>
+
+<DT><span class="strong">POW_SIGMA_ALGEBRA</span>
+<DD>
+<pre>
+⊢ ∀sp. sigma_algebra (sp,POW sp)
+</pre>
+
+<DT><span class="strong">PREIMAGE_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀Z sp sts f.
+    subset_class sp sts ∧ f ∈ (Z → sp) ⇒
+    (IMAGE (λs. PREIMAGE f s ∩ Z) (subsets (sigma sp sts)) =
+     subsets (sigma Z (IMAGE (λs. PREIMAGE f s ∩ Z) sts)))
+</pre>
+
+<DT><span class="strong">PREIMAGE_SIGMA_ALGEBRA</span>
+<DD>
+<pre>
+⊢ ∀sp A f.
+    sigma_algebra A ∧ f ∈ (sp → space A) ⇒
+    sigma_algebra (sp,IMAGE (λs. PREIMAGE f s ∩ sp) (subsets A))
+</pre>
+
+<DT><span class="strong">RING_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀sp sts A n.
+    ring (sp,sts) ∧ IMAGE A 𝕌(:num) ⊆ sts ⇒ BIGUNION {A i | i < n} ∈ sts
+</pre>
+
+<DT><span class="strong">RING_DIFF</span>
+<DD>
+<pre>
+⊢ ∀r s t. ring r ∧ s ∈ subsets r ∧ t ∈ subsets r ⇒ s DIFF t ∈ subsets r
+</pre>
+
+<DT><span class="strong">RING_DIFF_ALT</span>
+<DD>
+<pre>
+⊢ ∀a b sp sts. ring (sp,sts) ∧ a ∈ sts ∧ b ∈ sts ⇒ a DIFF b ∈ sts
+</pre>
+
+<DT><span class="strong">RING_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀r. ring r ⇒ ∅ ∈ subsets r
+</pre>
+
+<DT><span class="strong">RING_FINITE_BIGUNION1</span>
+<DD>
+<pre>
+⊢ ∀X sp sts. ring (sp,sts) ∧ FINITE X ⇒ X ⊆ sts ⇒ BIGUNION X ∈ sts
+</pre>
+
+<DT><span class="strong">RING_FINITE_BIGUNION2</span>
+<DD>
+<pre>
+⊢ ∀A N sp sts.
+    ring (sp,sts) ∧ FINITE N ∧ (∀i. i ∈ N ⇒ A i ∈ sts) ⇒
+    BIGUNION {A i | i ∈ N} ∈ sts
+</pre>
+
+<DT><span class="strong">RING_FINITE_INTER</span>
+<DD>
+<pre>
+⊢ ∀r f n.
+    ring r ∧ 0 < n ∧ (∀i. i < n ⇒ f i ∈ subsets r) ⇒
+    BIGINTER (IMAGE f (count n)) ∈ subsets r
+</pre>
+
+<DT><span class="strong">RING_FINITE_UNION</span>
+<DD>
+<pre>
+⊢ ∀r c. ring r ∧ c ⊆ subsets r ∧ FINITE c ⇒ BIGUNION c ∈ subsets r
+</pre>
+
+<DT><span class="strong">RING_FINITE_UNION_ALT</span>
+<DD>
+<pre>
+⊢ ∀r f n.
+    ring r ∧ (∀i. i < n ⇒ f i ∈ subsets r) ⇒
+    BIGUNION (IMAGE f (count n)) ∈ subsets r
+</pre>
+
+<DT><span class="strong">RING_IMP_SEMIRING</span>
+<DD>
+<pre>
+⊢ ∀r. ring r ⇒ semiring r
+</pre>
+
+<DT><span class="strong">RING_INSERT</span>
+<DD>
+<pre>
+⊢ ∀x A sp sts. ring (sp,sts) ∧ {x} ∈ sts ∧ A ∈ sts ⇒ x INSERT A ∈ sts
+</pre>
+
+<DT><span class="strong">RING_INTER</span>
+<DD>
+<pre>
+⊢ ∀r s t. ring r ∧ s ∈ subsets r ∧ t ∈ subsets r ⇒ s ∩ t ∈ subsets r
+</pre>
+
+<DT><span class="strong">RING_SETS_COLLECT_FINITE</span>
+<DD>
+<pre>
+⊢ ∀sp sts s P.
+    ring (sp,sts) ∧ (∀i. i ∈ s ⇒ {x | x ∈ sp ∧ P i x} ∈ sts) ∧ FINITE s ⇒
+    {x | x ∈ sp ∧ ∃i. i ∈ s ∧ P i x} ∈ sts
+</pre>
+
+<DT><span class="strong">RING_SPACE_IMP_ALGEBRA</span>
+<DD>
+<pre>
+⊢ ∀r. ring r ∧ space r ∈ subsets r ⇒ algebra r
+</pre>
+
+<DT><span class="strong">RING_UNION</span>
+<DD>
+<pre>
+⊢ ∀r s t. ring r ∧ s ∈ subsets r ∧ t ∈ subsets r ⇒ s ∪ t ∈ subsets r
+</pre>
+
+<DT><span class="strong">SEMIRING_DIFF</span>
+<DD>
+<pre>
+⊢ ∀r s t.
+    semiring r ∧ s ∈ subsets r ∧ t ∈ subsets r ⇒
+    ∃c. c ⊆ subsets r ∧ FINITE c ∧ disjoint c ∧ (s DIFF t = BIGUNION c)
+</pre>
+
+<DT><span class="strong">SEMIRING_DIFF_ALT</span>
+<DD>
+<pre>
+⊢ ∀r s t.
+    semiring r ∧ s ∈ subsets r ∧ t ∈ subsets r ⇒
+    ∃f n.
+      (∀i. i < n ⇒ f i ∈ subsets r) ∧
+      (∀i j. i < n ∧ j < n ∧ i ≠ j ⇒ DISJOINT (f i) (f j)) ∧
+      (s DIFF t = BIGUNION (IMAGE f (count n)))
+</pre>
+
+<DT><span class="strong">SEMIRING_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀r. semiring r ⇒ ∅ ∈ subsets r
+</pre>
+
+<DT><span class="strong">SEMIRING_INTER</span>
+<DD>
+<pre>
+⊢ ∀r s t. semiring r ∧ s ∈ subsets r ∧ t ∈ subsets r ⇒ s ∩ t ∈ subsets r
+</pre>
+
+<DT><span class="strong">SEMIRING_PROD_SETS</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    semiring a ∧ semiring b ⇒
+    semiring (space a × space b,prod_sets (subsets a) (subsets b))
+</pre>
+
+<DT><span class="strong">SEMIRING_PROD_SETS'</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    sigma_algebra a ∧ sigma_algebra b ⇒
+    semiring (space a × space b,prod_sets (subsets a) (subsets b))
+</pre>
+
+<DT><span class="strong">SEMIRING_SETS_COLLECT</span>
+<DD>
+<pre>
+⊢ ∀sp sts P Q.
+    semiring (sp,sts) ∧ {x | x ∈ sp ∧ P x} ∈ sts ∧ {x | x ∈ sp ∧ Q x} ∈ sts ⇒
+    {x | x ∈ sp ∧ P x ∧ Q x} ∈ sts
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA</span>
+<DD>
+<pre>
+⊢ ∀p. sigma_algebra p ⇔
+      subset_class (space p) (subsets p) ∧ ∅ ∈ subsets p ∧
+      (∀s. s ∈ subsets p ⇒ space p DIFF s ∈ subsets p) ∧
+      ∀c. COUNTABLE c ∧ c ⊆ subsets p ⇒ BIGUNION c ∈ subsets p
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_ALGEBRA</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇒ algebra a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_ALT</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇔
+      algebra a ∧
+      ∀f. f ∈ (𝕌(:num) → subsets a) ⇒ BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_ALT_DISJOINT</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇔
+      algebra a ∧
+      ∀f. f ∈ (𝕌(:num) → subsets a) ∧ (∀m n. m ≠ n ⇒ DISJOINT (f m) (f n)) ⇒
+          BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_ALT_MONO</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇔
+      algebra a ∧
+      ∀f. f ∈ (𝕌(:num) → subsets a) ∧ (f 0 = ∅) ∧ (∀n. f n ⊆ f (SUC n)) ⇒
+          BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_ALT_SPACE</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇔
+      subset_class (space a) (subsets a) ∧ space a ∈ subsets a ∧
+      (∀s. s ∈ subsets a ⇒ space a DIFF s ∈ subsets a) ∧
+      ∀f. f ∈ (𝕌(:num) → subsets a) ⇒ BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_COMPL</span>
+<DD>
+<pre>
+⊢ ∀a s. sigma_algebra a ∧ s ∈ subsets a ⇒ space a DIFF s ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_COUNTABLE_INT</span>
+<DD>
+<pre>
+⊢ ∀sp sts A X.
+    sigma_algebra (sp,sts) ∧ IMAGE A X ⊆ sts ∧ X ≠ ∅ ⇒
+    BIGINTER {A x | x ∈ X} ∈ sts
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_COUNTABLE_INT'</span>
+<DD>
+<pre>
+⊢ ∀sp sts A X.
+    sigma_algebra (sp,sts) ∧ COUNTABLE X ∧ X ≠ ∅ ∧ IMAGE A X ⊆ sts ⇒
+    BIGINTER {A x | x ∈ X} ∈ sts
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_COUNTABLE_UN</span>
+<DD>
+<pre>
+⊢ ∀sp sts A X.
+    sigma_algebra (sp,sts) ∧ IMAGE A X ⊆ sts ⇒ BIGUNION {A x | x ∈ X} ∈ sts
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_COUNTABLE_UN'</span>
+<DD>
+<pre>
+⊢ ∀sp sts A X.
+    sigma_algebra (sp,sts) ∧ IMAGE A X ⊆ sts ∧ COUNTABLE X ⇒
+    BIGUNION {A x | x ∈ X} ∈ sts
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_COUNTABLE_UNION</span>
+<DD>
+<pre>
+⊢ ∀a c. sigma_algebra a ∧ COUNTABLE c ∧ c ⊆ subsets a ⇒ BIGUNION c ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_DIFF</span>
+<DD>
+<pre>
+⊢ ∀a s t.
+    sigma_algebra a ∧ s ∈ subsets a ∧ t ∈ subsets a ⇒ s DIFF t ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇒ ∅ ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_ENUM</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ∧ f ∈ (𝕌(:num) → subsets a) ⇒
+    BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_FN</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇔
+      subset_class (space a) (subsets a) ∧ ∅ ∈ subsets a ∧
+      (∀s. s ∈ subsets a ⇒ space a DIFF s ∈ subsets a) ∧
+      ∀f. f ∈ (𝕌(:num) → subsets a) ⇒ BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_FN_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇒
+      subset_class (space a) (subsets a) ∧ ∅ ∈ subsets a ∧
+      (∀s. s ∈ subsets a ⇒ space a DIFF s ∈ subsets a) ∧
+      ∀f. f ∈ (𝕌(:num) → subsets a) ⇒ BIGINTER (IMAGE f 𝕌(:num)) ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_FN_DISJOINT</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇔
+      subset_class (space a) (subsets a) ∧ ∅ ∈ subsets a ∧
+      (∀s. s ∈ subsets a ⇒ space a DIFF s ∈ subsets a) ∧
+      (∀s t. s ∈ subsets a ∧ t ∈ subsets a ⇒ s ∪ t ∈ subsets a) ∧
+      ∀f. f ∈ (𝕌(:num) → subsets a) ∧ (∀m n. m ≠ n ⇒ DISJOINT (f m) (f n)) ⇒
+          BIGUNION (IMAGE f 𝕌(:num)) ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_IMP_DYNKIN_SYSTEM</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇒ dynkin_system a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_INTER</span>
+<DD>
+<pre>
+⊢ ∀a s t. sigma_algebra a ∧ s ∈ subsets a ∧ t ∈ subsets a ⇒ s ∩ t ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_PROD_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    subset_class (space a) (subsets a) ∧ subset_class (space b) (subsets b) ⇒
+    sigma_algebra (a × b)
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_PROD_SIGMA'</span>
+<DD>
+<pre>
+⊢ ∀X Y A B.
+    subset_class X A ∧ subset_class Y B ⇒ sigma_algebra ((X,A) × (Y,B))
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀sp sts a.
+    sigma_algebra (sp,sts) ∧ a ∈ sts ⇒ sigma_algebra (a,IMAGE (λs. s ∩ a) sts)
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_RESTRICT_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀sp sts a. sigma_algebra (sp,sts) ∧ a ∈ sts ⇒ IMAGE (λs. s ∩ a) sts ⊆ sts
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀sp sts. subset_class sp sts ⇒ sigma_algebra (sigma sp sts)
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_SPACE</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇒ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_UNION</span>
+<DD>
+<pre>
+⊢ ∀a s t. sigma_algebra a ∧ s ∈ subsets a ∧ t ∈ subsets a ⇒ s ∪ t ∈ subsets a
+</pre>
+
+<DT><span class="strong">SIGMA_CONG</span>
+<DD>
+<pre>
+⊢ ∀sp a b.
+    (subsets (sigma sp a) = subsets (sigma sp b)) ⇒ (sigma sp a = sigma sp b)
+</pre>
+
+<DT><span class="strong">SIGMA_MEASURABLE</span>
+<DD>
+<pre>
+⊢ ∀sp A f.
+    sigma_algebra A ∧ f ∈ (sp → space A) ⇒ f ∈ measurable (sigma sp A f) A
+</pre>
+
+<DT><span class="strong">SIGMA_MONOTONE</span>
+<DD>
+<pre>
+⊢ ∀sp a b. a ⊆ b ⇒ subsets (sigma sp a) ⊆ subsets (sigma sp b)
+</pre>
+
+<DT><span class="strong">SIGMA_POW</span>
+<DD>
+<pre>
+⊢ ∀s. sigma s (POW s) = (s,POW s)
+</pre>
+
+<DT><span class="strong">SIGMA_PROPERTY</span>
+<DD>
+<pre>
+⊢ ∀sp p a.
+    subset_class sp p ∧ ∅ ∈ p ∧ a ⊆ p ∧
+    (∀s. s ∈ p ∩ subsets (sigma sp a) ⇒ sp DIFF s ∈ p) ∧
+    (∀c. COUNTABLE c ∧ c ⊆ p ∩ subsets (sigma sp a) ⇒ BIGUNION c ∈ p) ⇒
+    subsets (sigma sp a) ⊆ p
+</pre>
+
+<DT><span class="strong">SIGMA_PROPERTY_ALT</span>
+<DD>
+<pre>
+⊢ ∀sp p a.
+    subset_class sp p ∧ ∅ ∈ p ∧ a ⊆ p ∧
+    (∀s. s ∈ p ∩ subsets (sigma sp a) ⇒ sp DIFF s ∈ p) ∧
+    (∀f. f ∈ (𝕌(:num) → p ∩ subsets (sigma sp a)) ⇒
+         BIGUNION (IMAGE f 𝕌(:num)) ∈ p) ⇒
+    subsets (sigma sp a) ⊆ p
+</pre>
+
+<DT><span class="strong">SIGMA_PROPERTY_DISJOINT</span>
+<DD>
+<pre>
+⊢ ∀sp p a.
+    algebra (sp,a) ∧ a ⊆ p ∧
+    (∀s. s ∈ p ∩ subsets (sigma sp a) ⇒ sp DIFF s ∈ p) ∧
+    (∀f. f ∈ (𝕌(:num) → p ∩ subsets (sigma sp a)) ∧ (f 0 = ∅) ∧
+         (∀n. f n ⊆ f (SUC n)) ⇒
+         BIGUNION (IMAGE f 𝕌(:num)) ∈ p) ∧
+    (∀f. f ∈ (𝕌(:num) → p ∩ subsets (sigma sp a)) ∧
+         (∀i j. i ≠ j ⇒ DISJOINT (f i) (f j)) ⇒
+         BIGUNION (IMAGE f 𝕌(:num)) ∈ p) ⇒
+    subsets (sigma sp a) ⊆ p
+</pre>
+
+<DT><span class="strong">SIGMA_PROPERTY_DISJOINT_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀sp a d.
+    algebra (sp,a) ∧ a ⊆ d ∧ dynkin_system (sp,d) ⇒ subsets (sigma sp a) ⊆ d
+</pre>
+
+<DT><span class="strong">SIGMA_PROPERTY_DISJOINT_LEMMA1</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    algebra (sp,sts) ⇒
+    ∀s t.
+      s ∈ sts ∧ t ∈ subsets (dynkin sp sts) ⇒ s ∩ t ∈ subsets (dynkin sp sts)
+</pre>
+
+<DT><span class="strong">SIGMA_PROPERTY_DISJOINT_LEMMA2</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    algebra (sp,sts) ⇒
+    ∀s t.
+      s ∈ subsets (dynkin sp sts) ∧ t ∈ subsets (dynkin sp sts) ⇒
+      s ∩ t ∈ subsets (dynkin sp sts)
+</pre>
+
+<DT><span class="strong">SIGMA_PROPERTY_DISJOINT_WEAK</span>
+<DD>
+<pre>
+⊢ ∀sp p a.
+    subset_class sp p ∧ ∅ ∈ p ∧ a ⊆ p ∧
+    (∀s. s ∈ p ∩ subsets (sigma sp a) ⇒ sp DIFF s ∈ p) ∧
+    (∀s t. s ∈ p ∧ t ∈ p ⇒ s ∪ t ∈ p) ∧
+    (∀f. f ∈ (𝕌(:num) → p ∩ subsets (sigma sp a)) ∧
+         (∀m n. m ≠ n ⇒ DISJOINT (f m) (f n)) ⇒
+         BIGUNION (IMAGE f 𝕌(:num)) ∈ p) ⇒
+    subsets (sigma sp a) ⊆ p
+</pre>
+
+<DT><span class="strong">SIGMA_PROPERTY_DISJOINT_WEAK_ALT</span>
+<DD>
+<pre>
+⊢ ∀sp p a.
+    algebra (sp,a) ∧ a ⊆ p ∧ subset_class sp p ∧ (∀s. s ∈ p ⇒ sp DIFF s ∈ p) ∧
+    (∀f. f ∈ (𝕌(:num) → p) ∧ (f 0 = ∅) ∧ (∀n. f n ⊆ f (SUC n)) ⇒
+         BIGUNION (IMAGE f 𝕌(:num)) ∈ p) ∧
+    (∀f. f ∈ (𝕌(:num) → p) ∧ (∀m n. m ≠ n ⇒ DISJOINT (f m) (f n)) ⇒
+         BIGUNION (IMAGE f 𝕌(:num)) ∈ p) ⇒
+    subsets (sigma sp a) ⊆ p
+</pre>
+
+<DT><span class="strong">SIGMA_REDUCE</span>
+<DD>
+<pre>
+⊢ ∀sp a. (sp,subsets (sigma sp a)) = sigma sp a
+</pre>
+
+<DT><span class="strong">SIGMA_SIMULTANEOUSLY_MEASURABLE</span>
+<DD>
+<pre>
+⊢ ∀sp A f J.
+    (∀i. i ∈ J ⇒ sigma_algebra (A i)) ∧ (∀i. f i ∈ (sp → space (A i))) ⇒
+    ∀i. i ∈ J ⇒ f i ∈ measurable (sigma sp A f J) (A i)
+</pre>
+
+<DT><span class="strong">SIGMA_SMALLEST</span>
+<DD>
+<pre>
+⊢ ∀sp sts A.
+    sts ⊆ A ∧ A ⊆ subsets (sigma sp sts) ∧ sigma_algebra (sp,A) ⇒
+    (A = subsets (sigma sp sts))
+</pre>
+
+<DT><span class="strong">SIGMA_STABLE</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇒ (sigma (space a) (subsets a) = a)
+</pre>
+
+<DT><span class="strong">SIGMA_STABLE_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀sp sts. sigma_algebra (sp,sts) ⇒ (sigma sp sts = (sp,sts))
+</pre>
+
+<DT><span class="strong">SIGMA_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    sigma_algebra b ∧ a ⊆ subsets b ⇒ subsets (sigma (space b) a) ⊆ subsets b
+</pre>
+
+<DT><span class="strong">SIGMA_SUBSET_SUBSETS</span>
+<DD>
+<pre>
+⊢ ∀sp a. a ⊆ subsets (sigma sp a)
+</pre>
+
+<DT><span class="strong">SMALLEST_RING</span>
+<DD>
+<pre>
+⊢ ∀sp sts. subset_class sp sts ⇒ ring (smallest_ring sp sts)
+</pre>
+
+<DT><span class="strong">SMALLEST_RING_OF_SEMIRING</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    semiring (sp,sts) ⇒
+    (subsets (smallest_ring sp sts) =
+     {BIGUNION c | c ⊆ sts ∧ FINITE c ∧ disjoint c})
+</pre>
+
+<DT><span class="strong">SMALLEST_RING_SUBSET_SUBSETS</span>
+<DD>
+<pre>
+⊢ ∀sp a. a ⊆ subsets (smallest_ring sp a)
+</pre>
+
+<DT><span class="strong">SPACE</span>
+<DD>
+<pre>
+⊢ ∀a. (space a,subsets a) = a
+</pre>
+
+<DT><span class="strong">SPACE_DYNKIN</span>
+<DD>
+<pre>
+⊢ ∀sp sts. space (dynkin sp sts) = sp
+</pre>
+
+<DT><span class="strong">SPACE_PROD_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀a b. space (a × b) = space a × space b
+</pre>
+
+<DT><span class="strong">SPACE_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀sp a. space (sigma sp a) = sp
+</pre>
+
+<DT><span class="strong">SPACE_SMALLEST_RING</span>
+<DD>
+<pre>
+⊢ ∀sp sts. space (smallest_ring sp sts) = sp
+</pre>
+
+<DT><span class="strong">UNIV_SIGMA_ALGEBRA</span>
+<DD>
+<pre>
+⊢ sigma_algebra (𝕌(:α),𝕌(:α -> bool))
+</pre>
+
+<DT><span class="strong">algebra_alt</span>
+<DD>
+<pre>
+⊢ ∀sp sts. algebra (sp,sts) ⇔ ring (sp,sts) ∧ sp ∈ sts
+</pre>
+
+<DT><span class="strong">algebra_alt_inter</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    algebra (sp,sts) ⇔
+    sts ⊆ POW sp ∧ ∅ ∈ sts ∧ (∀a. a ∈ sts ⇒ sp DIFF a ∈ sts) ∧
+    ∀a b. a ∈ sts ∧ b ∈ sts ⇒ a ∩ b ∈ sts
+</pre>
+
+<DT><span class="strong">algebra_alt_union</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    algebra (sp,sts) ⇔
+    sts ⊆ POW sp ∧ ∅ ∈ sts ∧ (∀a. a ∈ sts ⇒ sp DIFF a ∈ sts) ∧
+    ∀a b. a ∈ sts ∧ b ∈ sts ⇒ a ∪ b ∈ sts
+</pre>
+
+<DT><span class="strong">prod_sigma_alt_sigma_functions</span>
+<DD>
+<pre>
+⊢ ∀A B.
+    sigma_algebra A ∧ sigma_algebra B ⇒
+    (A × B = sigma (space A × space B) (binary A B) (binary FST SND) {0; 1})
+</pre>
+
+<DT><span class="strong">ring_alt</span>
+<DD>
+<pre>
+⊢ ring (sp,sts) ⇔
+  subset_class sp sts ∧ ∅ ∈ sts ∧ (∀s t. s ∈ sts ∧ t ∈ sts ⇒ s ∪ t ∈ sts) ∧
+  ∀s t. s ∈ sts ∧ t ∈ sts ⇒ s DIFF t ∈ sts
+</pre>
+
+<DT><span class="strong">ring_alt_pow</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    ring (sp,sts) ⇔
+    sts ⊆ POW sp ∧ ∅ ∈ sts ∧ (∀s t. s ∈ sts ∧ t ∈ sts ⇒ s ∪ t ∈ sts) ∧
+    ∀s t. s ∈ sts ∧ t ∈ sts ⇒ s DIFF t ∈ sts
+</pre>
+
+<DT><span class="strong">ring_alt_pow_imp</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    sts ⊆ POW sp ∧ ∅ ∈ sts ∧ (∀a b. a ∈ sts ∧ b ∈ sts ⇒ a ∪ b ∈ sts) ∧
+    (∀a b. a ∈ sts ∧ b ∈ sts ⇒ a DIFF b ∈ sts) ⇒
+    ring (sp,sts)
+</pre>
+
+<DT><span class="strong">ring_and_semiring</span>
+<DD>
+<pre>
+⊢ ∀r. ring r ⇔
+      semiring r ∧ ∀s t. s ∈ subsets r ∧ t ∈ subsets r ⇒ s ∪ t ∈ subsets r
+</pre>
+
+<DT><span class="strong">ring_disjointed_sets</span>
+<DD>
+<pre>
+⊢ ∀sp sts A.
+    ring (sp,sts) ∧ IMAGE A 𝕌(:num) ⊆ sts ⇒
+    IMAGE (λn. disjointed A n) 𝕌(:num) ⊆ sts
+</pre>
+
+<DT><span class="strong">semiring_alt</span>
+<DD>
+<pre>
+⊢ semiring (sp,sts) ⇔
+  subset_class sp sts ∧ ∅ ∈ sts ∧ (∀s t. s ∈ sts ∧ t ∈ sts ⇒ s ∩ t ∈ sts) ∧
+  ∀s t.
+    s ∈ sts ∧ t ∈ sts ⇒
+    ∃c. c ⊆ sts ∧ FINITE c ∧ disjoint c ∧ (s DIFF t = BIGUNION c)
+</pre>
+
+<DT><span class="strong">sigma_algebra_alt</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    sigma_algebra (sp,sts) ⇔
+    algebra (sp,sts) ∧
+    ∀A. IMAGE A 𝕌(:num) ⊆ sts ⇒ BIGUNION {A i | i ∈ 𝕌(:num)} ∈ sts
+</pre>
+
+<DT><span class="strong">sigma_algebra_alt_pow</span>
+<DD>
+<pre>
+⊢ ∀sp sts.
+    sigma_algebra (sp,sts) ⇔
+    sts ⊆ POW sp ∧ ∅ ∈ sts ∧ (∀s. s ∈ sts ⇒ sp DIFF s ∈ sts) ∧
+    ∀A. IMAGE A 𝕌(:num) ⊆ sts ⇒ BIGUNION {A i | i ∈ 𝕌(:num)} ∈ sts
+</pre>
+
+<DT><span class="strong">sigma_algebra_sigma_sets</span>
+<DD>
+<pre>
+⊢ ∀sp st. st ⊆ POW sp ⇒ sigma_algebra (sp,sigma_sets sp st)
+</pre>
+
+<DT><span class="strong">sigma_sets_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀sp st A.
+    st ⊆ POW sp ⇒
+    (∀i. A i ∈ sigma_sets sp st) ⇒
+    BIGINTER {A i | i ∈ 𝕌(:num)} ∈ sigma_sets sp st
+</pre>
+
+<DT><span class="strong">sigma_sets_BIGINTER2</span>
+<DD>
+<pre>
+⊢ ∀sp st A N.
+    st ⊆ POW sp ∧ (∀i. i ∈ N ⇒ A i ∈ sigma_sets sp st) ∧ N ≠ ∅ ⇒
+    BIGINTER {A i | i ∈ N} ∈ sigma_sets sp st
+</pre>
+
+<DT><span class="strong">sigma_sets_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀sp st A.
+    (∀i. A i ∈ sigma_sets sp st) ⇒
+    BIGUNION {A i | i ∈ 𝕌(:num)} ∈ sigma_sets sp st
+</pre>
+
+<DT><span class="strong">sigma_sets_basic</span>
+<DD>
+<pre>
+⊢ ∀sp st a. a ∈ st ⇒ a ∈ sigma_sets sp st
+</pre>
+
+<DT><span class="strong">sigma_sets_cases</span>
+<DD>
+<pre>
+⊢ ∀sp st a0.
+    sigma_sets sp st a0 ⇔
+    (a0 = ∅) ∨ st a0 ∨ (∃a. (a0 = sp DIFF a) ∧ sigma_sets sp st a) ∨
+    ∃A. (a0 = BIGUNION {A i | i ∈ 𝕌(:num)}) ∧ ∀i. sigma_sets sp st (A i)
+</pre>
+
+<DT><span class="strong">sigma_sets_compl</span>
+<DD>
+<pre>
+⊢ ∀sp st a. a ∈ sigma_sets sp st ⇒ sp DIFF a ∈ sigma_sets sp st
+</pre>
+
+<DT><span class="strong">sigma_sets_empty</span>
+<DD>
+<pre>
+⊢ ∀sp st. ∅ ∈ sigma_sets sp st
+</pre>
+
+<DT><span class="strong">sigma_sets_fixpoint</span>
+<DD>
+<pre>
+⊢ ∀sp sts. sigma_algebra (sp,sts) ⇒ (sigma_sets sp sts = sts)
+</pre>
+
+<DT><span class="strong">sigma_sets_ind</span>
+<DD>
+<pre>
+⊢ ∀sp st sigma_sets'.
+    sigma_sets' ∅ ∧ (∀a. st a ⇒ sigma_sets' a) ∧
+    (∀a. sigma_sets' a ⇒ sigma_sets' (sp DIFF a)) ∧
+    (∀A. (∀i. sigma_sets' (A i)) ⇒ sigma_sets' (BIGUNION {A i | i ∈ 𝕌(:num)})) ⇒
+    ∀a0. sigma_sets sp st a0 ⇒ sigma_sets' a0
+</pre>
+
+<DT><span class="strong">sigma_sets_into_sp</span>
+<DD>
+<pre>
+⊢ ∀sp st. st ⊆ POW sp ⇒ ∀x. x ∈ sigma_sets sp st ⇒ x ⊆ sp
+</pre>
+
+<DT><span class="strong">sigma_sets_least_sigma_algebra</span>
+<DD>
+<pre>
+⊢ ∀sp A.
+    A ⊆ POW sp ⇒
+    (sigma_sets sp A = BIGINTER {B | A ⊆ B ∧ sigma_algebra (sp,B)})
+</pre>
+
+<DT><span class="strong">sigma_sets_rules</span>
+<DD>
+<pre>
+⊢ ∀sp st.
+    sigma_sets sp st ∅ ∧ (∀a. st a ⇒ sigma_sets sp st a) ∧
+    (∀a. sigma_sets sp st a ⇒ sigma_sets sp st (sp DIFF a)) ∧
+    ∀A. (∀i. sigma_sets sp st (A i)) ⇒
+        sigma_sets sp st (BIGUNION {A i | i ∈ 𝕌(:num)})
+</pre>
+
+<DT><span class="strong">sigma_sets_strongind</span>
+<DD>
+<pre>
+⊢ ∀sp st sigma_sets'.
+    sigma_sets' ∅ ∧ (∀a. st a ⇒ sigma_sets' a) ∧
+    (∀a. sigma_sets sp st a ∧ sigma_sets' a ⇒ sigma_sets' (sp DIFF a)) ∧
+    (∀A. (∀i. sigma_sets sp st (A i) ∧ sigma_sets' (A i)) ⇒
+         sigma_sets' (BIGUNION {A i | i ∈ 𝕌(:num)})) ⇒
+    ∀a0. sigma_sets sp st a0 ⇒ sigma_sets' a0
+</pre>
+
+<DT><span class="strong">sigma_sets_subset</span>
+<DD>
+<pre>
+⊢ ∀sp sts st. sigma_algebra (sp,sts) ∧ st ⊆ sts ⇒ sigma_sets sp st ⊆ sts
+</pre>
+
+<DT><span class="strong">sigma_sets_superset_generator</span>
+<DD>
+<pre>
+⊢ ∀X A. A ⊆ sigma_sets X A
+</pre>
+
+<DT><span class="strong">sigma_sets_top</span>
+<DD>
+<pre>
+⊢ ∀sp A. sp ∈ sigma_sets sp A
+</pre>
+
+<DT><span class="strong">sigma_sets_union</span>
+<DD>
+<pre>
+⊢ ∀sp st a b.
+    a ∈ sigma_sets sp st ∧ b ∈ sigma_sets sp st ⇒ a ∪ b ∈ sigma_sets sp st
+</pre>
+
+<DT><span class="strong">subset_class_POW</span>
+<DD>
+<pre>
+⊢ ∀sp. subset_class sp (POW sp)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

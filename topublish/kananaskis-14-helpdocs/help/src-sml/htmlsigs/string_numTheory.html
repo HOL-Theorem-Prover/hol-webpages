@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure string_numTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure string_numTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/string/string_numScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature string_numTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#n2nsum_def-val">n2nsum_def</a> : thm
+<a name="line7"></a>    val <a href="#n2s_primitive_def-val">n2s_primitive_def</a> : thm
+<a name="line8"></a>    val <a href="#nsum2n_def-val">nsum2n_def</a> : thm
+<a name="line9"></a>    val <a href="#s2n_def-val">s2n_def</a> : thm
+<a name="line10"></a>    val <a href="#s2ssum_def-val">s2ssum_def</a> : thm
+<a name="line11"></a>    val <a href="#ssum2s_def-val">ssum2s_def</a> : thm
+<a name="line12"></a>  
+<a name="line13"></a>  (*  Theorems  *)
+<a name="line14"></a>    val <a href="#n2nsum_nsum2n-val">n2nsum_nsum2n</a> : thm
+<a name="line15"></a>    val <a href="#n2s_11-val">n2s_11</a> : thm
+<a name="line16"></a>    val <a href="#n2s_def-val">n2s_def</a> : thm
+<a name="line17"></a>    val <a href="#n2s_ind-val">n2s_ind</a> : thm
+<a name="line18"></a>    val <a href="#n2s_onto-val">n2s_onto</a> : thm
+<a name="line19"></a>    val <a href="#n2s_s2n-val">n2s_s2n</a> : thm
+<a name="line20"></a>    val <a href="#nsum2n_n2nsum-val">nsum2n_n2nsum</a> : thm
+<a name="line21"></a>    val <a href="#s2n_11-val">s2n_11</a> : thm
+<a name="line22"></a>    val <a href="#s2n_n2s-val">s2n_n2s</a> : thm
+<a name="line23"></a>    val <a href="#s2n_onto-val">s2n_onto</a> : thm
+<a name="line24"></a>    val <a href="#s2ssum_ssum2s-val">s2ssum_ssum2s</a> : thm
+<a name="line25"></a>    val <a href="#ssum2s_s2ssum-val">ssum2s_s2ssum</a> : thm
+<a name="line26"></a>  
+<a name="line27"></a>  val string_num_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line28"></a>(*
+   [string] Parent theory of "string_num"
+   
+   [<a name="n2nsum_def-val"><b>n2nsum_def</b></a>]  Definition
+      
+      ⊢ ∀n. n2nsum n = if ODD n then INL (n DIV 2) else INR (n DIV 2)
+   
+   [<a name="n2s_primitive_def-val"><b>n2s_primitive_def</b></a>]  Definition
+      
+      ⊢ n2s =
+        WFREC
+          (@R. WF R ∧
+               ∀n r0 r.
+                 n ≠ 0 ∧ r0 = n MOD 256 ∧ r = (if r0 = 0 then 256 else r0) ⇒
+                 R ((n − r) DIV 256) n)
+          (λn2s a.
+               I
+                 (if a = 0 then ""
+                  else
+                    (let
+                       r0 = a MOD 256;
+                       r = if r0 = 0 then 256 else r0;
+                       s0 = n2s ((a − r) DIV 256)
+                     in
+                       STRING (CHR (r − 1)) s0)))
+   
+   [<a name="nsum2n_def-val"><b>nsum2n_def</b></a>]  Definition
+      
+      ⊢ (∀n. nsum2n (INL n) = 2 * n + 1) ∧ ∀n. nsum2n (INR n) = 2 * n
+   
+   [<a name="s2n_def-val"><b>s2n_def</b></a>]  Definition
+      
+      ⊢ s2n "" = 0 ∧ ∀c s. s2n (STRING c s) = s2n s * 256 + ORD c + 1
+   
+   [<a name="s2ssum_def-val"><b>s2ssum_def</b></a>]  Definition
+      
+      ⊢ ∀s. s2ssum s = SUM_MAP n2s n2s (n2nsum (s2n s))
+   
+   [<a name="ssum2s_def-val"><b>ssum2s_def</b></a>]  Definition
+      
+      ⊢ ∀sm. ssum2s sm = n2s (nsum2n (SUM_MAP s2n s2n sm))
+   
+   [<a name="n2nsum_nsum2n-val"><b>n2nsum_nsum2n</b></a>]  Theorem
+      
+      ⊢ n2nsum (nsum2n ns) = ns
+   
+   [<a name="n2s_11-val"><b>n2s_11</b></a>]  Theorem
+      
+      ⊢ n2s x = n2s y ⇔ x = y
+   
+   [<a name="n2s_def-val"><b>n2s_def</b></a>]  Theorem
+      
+      ⊢ ∀n. n2s n =
+            if n = 0 then ""
+            else
+              (let
+                 r0 = n MOD 256;
+                 r = if r0 = 0 then 256 else r0;
+                 s0 = n2s ((n − r) DIV 256)
+               in
+                 STRING (CHR (r − 1)) s0)
+   
+   [<a name="n2s_ind-val"><b>n2s_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀n. (∀r0 r.
+                    n ≠ 0 ∧ r0 = n MOD 256 ∧
+                    r = (if r0 = 0 then 256 else r0) ⇒
+                    P ((n − r) DIV 256)) ⇒
+                 P n) ⇒
+            ∀v. P v
+   
+   [<a name="n2s_onto-val"><b>n2s_onto</b></a>]  Theorem
+      
+      ⊢ ∀s. ∃n. s = n2s n
+   
+   [<a name="n2s_s2n-val"><b>n2s_s2n</b></a>]  Theorem
+      
+      ⊢ n2s (s2n s) = s
+   
+   [<a name="nsum2n_n2nsum-val"><b>nsum2n_n2nsum</b></a>]  Theorem
+      
+      ⊢ nsum2n (n2nsum n) = n
+   
+   [<a name="s2n_11-val"><b>s2n_11</b></a>]  Theorem
+      
+      ⊢ s2n x = s2n y ⇔ x = y
+   
+   [<a name="s2n_n2s-val"><b>s2n_n2s</b></a>]  Theorem
+      
+      ⊢ ∀n. s2n (n2s n) = n
+   
+   [<a name="s2n_onto-val"><b>s2n_onto</b></a>]  Theorem
+      
+      ⊢ ∀n. ∃s. n = s2n s
+   
+   [<a name="s2ssum_ssum2s-val"><b>s2ssum_ssum2s</b></a>]  Theorem
+      
+      ⊢ s2ssum (ssum2s sm) = sm
+   
+   [<a name="ssum2s_s2ssum-val"><b>ssum2s_s2ssum</b></a>]  Theorem
+      
+      ⊢ ssum2s (s2ssum s) = s
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/string/string_numScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

@@ -1,0 +1,1978 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: borel</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "borel"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "real_borelTheory.html"><span class="strong">real_borel</span></a>&nbsp;&nbsp;
+    <a href = "measureTheory.html"><span class="strong">measure</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">AE</span>
+    <td>
+    :(real -> bool) -> bool
+    <tr><td> <span class="strong">Borel</span> <td> :extreal algebra
+    <tr><td>
+    <span class="strong">almost_everywhere</span>
+    <td>
+    :α m_space -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">ext_indicator_fn</span>
+    <td>
+    :(α -> bool) -> α -> extreal
+    <tr><td> <span class="strong">ext_lborel</span> <td> :extreal m_space
+    <tr><td>
+    <span class="strong">fn_minus</span>
+    <td>
+    :(α -> extreal) -> α -> extreal
+    <tr><td>
+    <span class="strong">fn_plus</span>
+    <td>
+    :(α -> extreal) -> α -> extreal
+    <tr><td> <span class="strong">lambda0</span> <td> :real measure
+    <tr><td> <span class="strong">lborel</span> <td> :real m_space
+    <tr><td> <span class="strong">lebesgue</span> <td> :real m_space
+    <tr><td> <span class="strong">nonneg</span> <td> :(α -> extreal) -> bool
+    <tr><td>
+    <span class="strong">set_liminf</span>
+    <td>
+    :(num -> α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">set_limsup</span>
+    <td>
+    :(num -> α -> bool) -> α -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">AE_def</span>
+<DD>
+<pre>
+⊢ $AE = (λP. almost_everywhere lebesgue P)
+</pre>
+
+<DT><span class="strong">Borel</span>
+<DD>
+<pre>
+⊢ Borel =
+  (𝕌(:extreal),
+   {B' |
+    ∃B S.
+      (B' = IMAGE Normal B ∪ S) ∧ B ∈ subsets borel ∧
+      S ∈ {∅; {−∞}; {+∞}; {−∞; +∞}}})
+</pre>
+
+<DT><span class="strong">almost_everywhere_def</span>
+<DD>
+<pre>
+⊢ ∀m P.
+    almost_everywhere m P ⇔ ∃N. null_set m N ∧ ∀x. x ∈ m_space m DIFF N ⇒ P x
+</pre>
+
+<DT><span class="strong">ext_lborel_def</span>
+<DD>
+<pre>
+⊢ ext_lborel = (space Borel,subsets Borel,lambda ∘ real_set)
+</pre>
+
+<DT><span class="strong">fn_minus_def</span>
+<DD>
+<pre>
+⊢ ∀f. f⁻ = (λx. if f x < 0 then -f x else 0)
+</pre>
+
+<DT><span class="strong">fn_plus_def</span>
+<DD>
+<pre>
+⊢ ∀f. f⁺ = (λx. if 0 < f x then f x else 0)
+</pre>
+
+<DT><span class="strong">indicator_fn_def</span>
+<DD>
+<pre>
+⊢ ∀s. 𝟙 s = (λx. if x ∈ s then 1 else 0)
+</pre>
+
+<DT><span class="strong">lambda0_def</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ (lambda0 (right_open_interval a b) = Normal (b − a))
+</pre>
+
+<DT><span class="strong">lborel_def</span>
+<DD>
+<pre>
+⊢ (∀s. s ∈ subsets right_open_intervals ⇒ (lambda s = lambda0 s)) ∧
+  ((m_space lborel,measurable_sets lborel) = borel) ∧ measure_space lborel
+</pre>
+
+<DT><span class="strong">lebesgue_def</span>
+<DD>
+<pre>
+⊢ lebesgue =
+  (𝕌(:real),{A | ∀n. indicator A integrable_on line n},
+   (λA. sup {Normal (∫ (line n) (indicator A)) | n ∈ 𝕌(:num)}))
+</pre>
+
+<DT><span class="strong">nonneg_def</span>
+<DD>
+<pre>
+⊢ ∀f. nonneg f ⇔ ∀x. 0 ≤ f x
+</pre>
+
+<DT><span class="strong">set_liminf_def</span>
+<DD>
+<pre>
+⊢ ∀E. liminf E = BIGUNION (IMAGE (λm. BIGINTER {E n | m ≤ n}) 𝕌(:num))
+</pre>
+
+<DT><span class="strong">set_limsup_def</span>
+<DD>
+<pre>
+⊢ ∀E. limsup E = BIGINTER (IMAGE (λm. BIGUNION {E n | m ≤ n}) 𝕌(:num))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">AE_ALT</span>
+<DD>
+<pre>
+⊢ ∀m P. (AE x::m. P x) ⇔ ∃N. null_set m N ∧ {x | x ∈ m_space m ∧ ¬P x} ⊆ N
+</pre>
+
+<DT><span class="strong">AE_I</span>
+<DD>
+<pre>
+⊢ ∀N M P. null_set M N ⇒ {x | x ∈ m_space M ∧ ¬P x} ⊆ N ⇒ AE x::M. P x
+</pre>
+
+<DT><span class="strong">AE_IMP_MEASURABLE_SETS</span>
+<DD>
+<pre>
+⊢ ∀m P.
+    complete_measure_space m ∧ (AE x::m. P x) ⇒
+    {x | x ∈ m_space m ∧ P x} ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">AE_NOT_IN</span>
+<DD>
+<pre>
+⊢ ∀N M. null_set M N ⇒ AE x::M. x ∉ N
+</pre>
+
+<DT><span class="strong">AE_THM</span>
+<DD>
+<pre>
+⊢ ∀m P. (AE x::m. P x) ⇔ almost_everywhere m P
+</pre>
+
+<DT><span class="strong">AE_all_S</span>
+<DD>
+<pre>
+⊢ ∀M S' P.
+    measure_space M ⇒
+    (∀i. S' i ⇒ AE x::M. (λx. P i x) x) ⇒
+    ∀i'. AE x::M. (λx. S' i' ⇒ P i' x) x
+</pre>
+
+<DT><span class="strong">AE_all_countable</span>
+<DD>
+<pre>
+⊢ ∀t M P.
+    measure_space M ⇒
+    ((∀i. COUNTABLE (t i) ⇒ AE x::M. (λx. P i x) x) ⇔
+     ∀i. AE x::M. (λx. P i x) x)
+</pre>
+
+<DT><span class="strong">AE_default</span>
+<DD>
+<pre>
+⊢ ∀P. (AE x. P x) ⇔ AE x::lebesgue. P x
+</pre>
+
+<DT><span class="strong">AE_filter</span>
+<DD>
+<pre>
+⊢ ∀m P. (AE x::m. P x) ⇔ ∃N. N ∈ null_set m ∧ {x | x ∈ m_space m ∧ x ∉ P} ⊆ N
+</pre>
+
+<DT><span class="strong">AE_iff_measurable</span>
+<DD>
+<pre>
+⊢ ∀N M P.
+    measure_space M ∧ N ∈ measurable_sets M ⇒
+    ({x | x ∈ m_space M ∧ ¬P x} = N) ⇒
+    ((AE x::M. P x) ⇔ (measure M N = 0))
+</pre>
+
+<DT><span class="strong">AE_iff_null</span>
+<DD>
+<pre>
+⊢ ∀M P.
+    measure_space M ∧ {x | x ∈ m_space M ∧ ¬P x} ∈ measurable_sets M ⇒
+    ((AE x::M. P x) ⇔ null_set M {x | x ∈ m_space M ∧ ¬P x})
+</pre>
+
+<DT><span class="strong">AE_iff_null_sets</span>
+<DD>
+<pre>
+⊢ ∀N M.
+    measure_space M ∧ N ∈ measurable_sets M ⇒
+    (null_set M N ⇔ AE x::M. {x | ¬N x} x)
+</pre>
+
+<DT><span class="strong">AE_impl</span>
+<DD>
+<pre>
+⊢ ∀P M Q. measure_space M ⇒ (P ⇒ AE x::M. Q x) ⇒ AE x::M. (λx. P ⇒ Q x) x
+</pre>
+
+<DT><span class="strong">AE_not_in</span>
+<DD>
+<pre>
+⊢ ∀N M. null_set M N ⇒ AE x::M. {x | ¬N x} x
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_INFINITY</span>
+<DD>
+<pre>
+⊢ {+∞} ∈ subsets Borel ∧ {−∞} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS</span>
+<DD>
+<pre>
+⊢ (∀c. {x | x < c} ∈ subsets Borel) ∧ (∀c. {x | c < x} ∈ subsets Borel) ∧
+  (∀c. {x | x ≤ c} ∈ subsets Borel) ∧ (∀c. {x | c ≤ x} ∈ subsets Borel) ∧
+  (∀c d. {x | c ≤ x ∧ x < d} ∈ subsets Borel) ∧
+  (∀c d. {x | c < x ∧ x ≤ d} ∈ subsets Borel) ∧
+  (∀c d. {x | c ≤ x ∧ x ≤ d} ∈ subsets Borel) ∧
+  (∀c d. {x | c < x ∧ x < d} ∈ subsets Borel) ∧ (∀c. {c} ∈ subsets Borel) ∧
+  ∀c. {x | x ≠ c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS1</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x < c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS10</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x ≠ c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS2</span>
+<DD>
+<pre>
+⊢ ∀c. {x | c ≤ x} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS3</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x ≤ c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS4</span>
+<DD>
+<pre>
+⊢ ∀c. {x | c < x} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS5</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c ≤ x ∧ x < d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS6</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c < x ∧ x ≤ d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS7</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c ≤ x ∧ x ≤ d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS8</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c < x ∧ x < d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS9</span>
+<DD>
+<pre>
+⊢ ∀c. {c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_CC</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c ≤ x ∧ x ≤ d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_CO</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c ≤ x ∧ x < d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_CR</span>
+<DD>
+<pre>
+⊢ ∀c. {x | c ≤ x} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ s ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_NOT_SING</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x ≠ c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_OC</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c < x ∧ x ≤ d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_OO</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c < x ∧ x < d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_OR</span>
+<DD>
+<pre>
+⊢ ∀c. {x | c < x} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_RC</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x ≤ c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_RO</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x < c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_SING</span>
+<DD>
+<pre>
+⊢ ∀c. {c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_SING'</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x = c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">Borel_def</span>
+<DD>
+<pre>
+⊢ Borel = sigma 𝕌(:extreal) (IMAGE (λa. {x | x < Normal a}) 𝕌(:real))
+</pre>
+
+<DT><span class="strong">Borel_eq_ge</span>
+<DD>
+<pre>
+⊢ Borel = sigma 𝕌(:extreal) (IMAGE (λa. {x | Normal a ≤ x}) 𝕌(:real))
+</pre>
+
+<DT><span class="strong">Borel_eq_gr</span>
+<DD>
+<pre>
+⊢ Borel = sigma 𝕌(:extreal) (IMAGE (λa. {x | Normal a < x}) 𝕌(:real))
+</pre>
+
+<DT><span class="strong">Borel_eq_le</span>
+<DD>
+<pre>
+⊢ Borel = sigma 𝕌(:extreal) (IMAGE (λa. {x | x ≤ Normal a}) 𝕌(:real))
+</pre>
+
+<DT><span class="strong">FN_ABS</span>
+<DD>
+<pre>
+⊢ ∀f x. (abs ∘ f) x = f⁺ x + f⁻ x
+</pre>
+
+<DT><span class="strong">FN_ABS'</span>
+<DD>
+<pre>
+⊢ ∀f. abs ∘ f = (λx. f⁺ x + f⁻ x)
+</pre>
+
+<DT><span class="strong">FN_DECOMP</span>
+<DD>
+<pre>
+⊢ ∀f x. f x = f⁺ x − f⁻ x
+</pre>
+
+<DT><span class="strong">FN_DECOMP'</span>
+<DD>
+<pre>
+⊢ ∀f. f = (λx. f⁺ x − f⁻ x)
+</pre>
+
+<DT><span class="strong">FN_MINUS_ABS_ZERO</span>
+<DD>
+<pre>
+⊢ ∀f. (abs ∘ f)⁻ = (λx. 0)
+</pre>
+
+<DT><span class="strong">FN_MINUS_ADD_LE</span>
+<DD>
+<pre>
+⊢ ∀f g x.
+    f x ≠ −∞ ∧ g x ≠ −∞ ∨ f x ≠ +∞ ∧ g x ≠ +∞ ⇒
+    (λx. f x + g x)⁻ x ≤ f⁻ x + g⁻ x
+</pre>
+
+<DT><span class="strong">FN_MINUS_ALT</span>
+<DD>
+<pre>
+⊢ ∀f. f⁻ = (λx. -min (f x) 0)
+</pre>
+
+<DT><span class="strong">FN_MINUS_ALT'</span>
+<DD>
+<pre>
+⊢ ∀f. f⁻ = (λx. -min 0 (f x))
+</pre>
+
+<DT><span class="strong">FN_MINUS_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f c.
+    (0 ≤ c ⇒ ((λx. Normal c * f x)⁻ = (λx. Normal c * f⁻ x))) ∧
+    (c ≤ 0 ⇒ ((λx. Normal c * f x)⁻ = (λx. -Normal c * f⁺ x)))
+</pre>
+
+<DT><span class="strong">FN_MINUS_CMUL_full</span>
+<DD>
+<pre>
+⊢ ∀f c.
+    (0 ≤ c ⇒ ((λx. c * f x)⁻ = (λx. c * f⁻ x))) ∧
+    (c ≤ 0 ⇒ ((λx. c * f x)⁻ = (λx. -c * f⁺ x)))
+</pre>
+
+<DT><span class="strong">FN_MINUS_FMUL</span>
+<DD>
+<pre>
+⊢ ∀f c. (∀x. 0 ≤ c x) ⇒ ((λx. c x * f x)⁻ = (λx. c x * f⁻ x))
+</pre>
+
+<DT><span class="strong">FN_MINUS_INFTY_IMP</span>
+<DD>
+<pre>
+⊢ ∀f x. (f⁻ x = +∞) ⇒ (f⁺ x = 0)
+</pre>
+
+<DT><span class="strong">FN_MINUS_LE_ABS</span>
+<DD>
+<pre>
+⊢ ∀f x. f⁻ x ≤ abs (f x)
+</pre>
+
+<DT><span class="strong">FN_MINUS_NOT_INFTY</span>
+<DD>
+<pre>
+⊢ ∀f. (∀x. f x ≠ −∞) ⇒ ∀x. f⁻ x ≠ +∞
+</pre>
+
+<DT><span class="strong">FN_MINUS_NOT_INFTY'</span>
+<DD>
+<pre>
+⊢ ∀f x. f x ≠ −∞ ⇒ f⁻ x ≠ +∞
+</pre>
+
+<DT><span class="strong">FN_MINUS_POS</span>
+<DD>
+<pre>
+⊢ ∀g x. 0 ≤ g⁻ x
+</pre>
+
+<DT><span class="strong">FN_MINUS_POS_ZERO</span>
+<DD>
+<pre>
+⊢ ∀g. (∀x. 0 ≤ g x) ⇒ (g⁻ = (λx. 0))
+</pre>
+
+<DT><span class="strong">FN_MINUS_REDUCE</span>
+<DD>
+<pre>
+⊢ ∀f x. 0 ≤ f x ⇒ (f⁻ x = 0)
+</pre>
+
+<DT><span class="strong">FN_MINUS_TO_PLUS</span>
+<DD>
+<pre>
+⊢ ∀f. (λx. -f x)⁻ = f⁺
+</pre>
+
+<DT><span class="strong">FN_MINUS_ZERO</span>
+<DD>
+<pre>
+⊢ (λx. 0)⁻ = (λx. 0)
+</pre>
+
+<DT><span class="strong">FN_PLUS_ABS_SELF</span>
+<DD>
+<pre>
+⊢ ∀f. (abs ∘ f)⁺ = abs ∘ f
+</pre>
+
+<DT><span class="strong">FN_PLUS_ADD_LE</span>
+<DD>
+<pre>
+⊢ ∀f g x. (λx. f x + g x)⁺ x ≤ f⁺ x + g⁺ x
+</pre>
+
+<DT><span class="strong">FN_PLUS_ALT</span>
+<DD>
+<pre>
+⊢ ∀f. f⁺ = (λx. max (f x) 0)
+</pre>
+
+<DT><span class="strong">FN_PLUS_ALT'</span>
+<DD>
+<pre>
+⊢ ∀f. f⁺ = (λx. max 0 (f x))
+</pre>
+
+<DT><span class="strong">FN_PLUS_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f c.
+    (0 ≤ c ⇒ ((λx. Normal c * f x)⁺ = (λx. Normal c * f⁺ x))) ∧
+    (c ≤ 0 ⇒ ((λx. Normal c * f x)⁺ = (λx. -Normal c * f⁻ x)))
+</pre>
+
+<DT><span class="strong">FN_PLUS_CMUL_full</span>
+<DD>
+<pre>
+⊢ ∀f c.
+    (0 ≤ c ⇒ ((λx. c * f x)⁺ = (λx. c * f⁺ x))) ∧
+    (c ≤ 0 ⇒ ((λx. c * f x)⁺ = (λx. -c * f⁻ x)))
+</pre>
+
+<DT><span class="strong">FN_PLUS_FMUL</span>
+<DD>
+<pre>
+⊢ ∀f c. (∀x. 0 ≤ c x) ⇒ ((λx. c x * f x)⁺ = (λx. c x * f⁺ x))
+</pre>
+
+<DT><span class="strong">FN_PLUS_INFTY_IMP</span>
+<DD>
+<pre>
+⊢ ∀f x. (f⁺ x = +∞) ⇒ (f⁻ x = 0)
+</pre>
+
+<DT><span class="strong">FN_PLUS_LE_ABS</span>
+<DD>
+<pre>
+⊢ ∀f x. f⁺ x ≤ abs (f x)
+</pre>
+
+<DT><span class="strong">FN_PLUS_NEG_ZERO</span>
+<DD>
+<pre>
+⊢ ∀g. (∀x. g x ≤ 0) ⇒ (g⁺ = (λx. 0))
+</pre>
+
+<DT><span class="strong">FN_PLUS_NOT_INFTY</span>
+<DD>
+<pre>
+⊢ ∀f. (∀x. f x ≠ +∞) ⇒ ∀x. f⁺ x ≠ +∞
+</pre>
+
+<DT><span class="strong">FN_PLUS_NOT_INFTY'</span>
+<DD>
+<pre>
+⊢ ∀f x. f x ≠ +∞ ⇒ f⁺ x ≠ +∞
+</pre>
+
+<DT><span class="strong">FN_PLUS_POS</span>
+<DD>
+<pre>
+⊢ ∀g x. 0 ≤ g⁺ x
+</pre>
+
+<DT><span class="strong">FN_PLUS_POS_ID</span>
+<DD>
+<pre>
+⊢ ∀g. (∀x. 0 ≤ g x) ⇒ (g⁺ = g)
+</pre>
+
+<DT><span class="strong">FN_PLUS_REDUCE</span>
+<DD>
+<pre>
+⊢ ∀f x. 0 ≤ f x ⇒ (f⁺ x = f x)
+</pre>
+
+<DT><span class="strong">FN_PLUS_TO_MINUS</span>
+<DD>
+<pre>
+⊢ ∀f. (λx. -f x)⁺ = f⁻
+</pre>
+
+<DT><span class="strong">FN_PLUS_ZERO</span>
+<DD>
+<pre>
+⊢ (λx. 0)⁺ = (λx. 0)
+</pre>
+
+<DT><span class="strong">FORALL_IMP_AE</span>
+<DD>
+<pre>
+⊢ ∀m P. measure_space m ∧ (∀x. x ∈ m_space m ⇒ P x) ⇒ AE x::m. P x
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_ABS</span>
+<DD>
+<pre>
+⊢ ∀s. abs ∘ 𝟙 s = 𝟙 s
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_ABS_MUL</span>
+<DD>
+<pre>
+⊢ ∀f s. abs ∘ (λx. f x * 𝟙 s x) = (λx. (abs ∘ f) x * 𝟙 s x)
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_CROSS</span>
+<DD>
+<pre>
+⊢ ∀s t x y. 𝟙 (s × t) (x,y) = 𝟙 s x * 𝟙 t y
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_DIFF</span>
+<DD>
+<pre>
+⊢ ∀A B. 𝟙 (A DIFF B) = (λt. 𝟙 A t − 𝟙 (A ∩ B) t)
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_DIFF_SPACE</span>
+<DD>
+<pre>
+⊢ ∀A B sp. A ⊆ sp ∧ B ⊆ sp ⇒ (𝟙 (A ∩ (sp DIFF B)) = (λt. 𝟙 A t − 𝟙 (A ∩ B) t))
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀x. 𝟙 ∅ x = 0
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_FCP_CROSS</span>
+<DD>
+<pre>
+⊢ ∀s t x y.
+    FINITE 𝕌(:β) ∧ FINITE 𝕌(:γ) ⇒
+    (𝟙 (fcp_cross s t) (FCP_CONCAT x y) = 𝟙 s x * 𝟙 t y)
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_INTER</span>
+<DD>
+<pre>
+⊢ ∀A B. 𝟙 (A ∩ B) = (λt. 𝟙 A t * 𝟙 B t)
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_INTER_MIN</span>
+<DD>
+<pre>
+⊢ ∀A B. 𝟙 (A ∩ B) = (λt. min (𝟙 A t) (𝟙 B t))
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_LE_1</span>
+<DD>
+<pre>
+⊢ ∀s x. 𝟙 s x ≤ 1
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_MONO</span>
+<DD>
+<pre>
+⊢ ∀s t x. s ⊆ t ⇒ 𝟙 s x ≤ 𝟙 t x
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_MUL_INTER</span>
+<DD>
+<pre>
+⊢ ∀A B. (λt. 𝟙 A t * 𝟙 B t) = (λt. 𝟙 (A ∩ B) t)
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_NOT_INFTY</span>
+<DD>
+<pre>
+⊢ ∀s x. 𝟙 s x ≠ −∞ ∧ 𝟙 s x ≠ +∞
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_POS</span>
+<DD>
+<pre>
+⊢ ∀s x. 0 ≤ 𝟙 s x
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_SING_0</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ y ⇒ (𝟙 {x} y = 0)
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_SING_1</span>
+<DD>
+<pre>
+⊢ ∀x y. (x = y) ⇒ (𝟙 {x} y = 1)
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_UNION</span>
+<DD>
+<pre>
+⊢ ∀A B. 𝟙 (A ∪ B) = (λt. 𝟙 A t + 𝟙 B t − 𝟙 (A ∩ B) t)
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_UNION_MAX</span>
+<DD>
+<pre>
+⊢ ∀A B. 𝟙 (A ∪ B) = (λt. max (𝟙 A t) (𝟙 B t))
+</pre>
+
+<DT><span class="strong">INDICATOR_FN_UNION_MIN</span>
+<DD>
+<pre>
+⊢ ∀A B. 𝟙 (A ∪ B) = (λt. min (𝟙 A t + 𝟙 B t) 1)
+</pre>
+
+<DT><span class="strong">IN_LIMINF</span>
+<DD>
+<pre>
+⊢ ∀A x. x ∈ liminf A ⇔ ∃m. ∀n. m ≤ n ⇒ x ∈ A n
+</pre>
+
+<DT><span class="strong">IN_LIMSUP</span>
+<DD>
+<pre>
+⊢ ∀A x. x ∈ limsup A ⇔ ∃N. INFINITE N ∧ ∀n. n ∈ N ⇒ x ∈ A n
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇔
+    sigma_algebra a ∧ f ∈ (space a → 𝕌(:extreal)) ∧
+    ∀c. {x | f x < Normal c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_2D_FUNCTION</span>
+<DD>
+<pre>
+⊢ ∀a X Y f.
+    sigma_algebra a ∧ X ∈ Borel_measurable a ∧ Y ∈ Borel_measurable a ∧
+    f ∈ Borel_measurable (Borel × Borel) ⇒
+    (λx. f (X x,Y x)) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_2D_VECTOR</span>
+<DD>
+<pre>
+⊢ ∀a X Y.
+    sigma_algebra a ∧ X ∈ Borel_measurable a ∧ Y ∈ Borel_measurable a ⇒
+    (λx. (X x,Y x)) ∈ measurable a (Borel × Borel)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ABS</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ (g x = abs (f x))) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ABS'</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒ abs ∘ f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ADD</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ f x ≠ −∞ ∧ g x ≠ −∞ ∨ f x ≠ +∞ ∧ g x ≠ +∞) ∧
+    (∀x. x ∈ space a ⇒ (h x = f x + g x)) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ADD'</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ (h x = f x + g x)) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_AE_EQ</span>
+<DD>
+<pre>
+⊢ ∀m f g.
+    complete_measure_space m ∧ (AE x::m. f x = g x) ∧
+    f ∈ Borel_measurable (m_space m,measurable_sets m) ⇒
+    g ∈ Borel_measurable (m_space m,measurable_sets m)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALL</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇒
+    (∀c. {x | f x < c} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | c ≤ f x} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | f x ≤ c} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | c < f x} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c ≤ f x ∧ f x < d} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c < f x ∧ f x ≤ d} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c ≤ f x ∧ f x ≤ d} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c < f x ∧ f x < d} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | f x = c} ∩ space a ∈ subsets a) ∧
+    ∀c. {x | f x ≠ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALL_MEASURE</span>
+<DD>
+<pre>
+⊢ ∀f m.
+    f ∈ Borel_measurable (m_space m,measurable_sets m) ⇒
+    (∀c. {x | f x < c} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | c ≤ f x} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | f x ≤ c} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | c < f x} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c ≤ f x ∧ f x < d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c < f x ∧ f x ≤ d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c ≤ f x ∧ f x ≤ d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c < f x ∧ f x < d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | f x = c} ∩ m_space m ∈ measurable_sets m) ∧
+    ∀c. {x | f x ≠ c} ∩ m_space m ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT1</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇔
+    sigma_algebra a ∧ f ∈ (space a → 𝕌(:extreal)) ∧
+    ∀c. {x | Normal c ≤ f x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT1_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | c ≤ f x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT2</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇔
+    sigma_algebra a ∧ f ∈ (space a → 𝕌(:extreal)) ∧
+    ∀c. {x | f x ≤ Normal c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT2_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | f x ≤ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT3</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇔
+    sigma_algebra a ∧ f ∈ (space a → 𝕌(:extreal)) ∧
+    ∀c. {x | Normal c < f x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT3_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | c < f x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT4</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    (∀x. f x ≠ −∞) ⇒
+    (f ∈ Borel_measurable a ⇔
+     sigma_algebra a ∧ f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c d. {x | Normal c ≤ f x ∧ f x < Normal d} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT4_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c ≤ f x ∧ f x < d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT5</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    (∀x. f x ≠ −∞) ⇒
+    (f ∈ Borel_measurable a ⇔
+     sigma_algebra a ∧ f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c d. {x | Normal c < f x ∧ f x ≤ Normal d} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT5_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c < f x ∧ f x ≤ d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT6</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    (∀x. f x ≠ −∞) ⇒
+    (f ∈ Borel_measurable a ⇔
+     sigma_algebra a ∧ f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c d. {x | Normal c ≤ f x ∧ f x ≤ Normal d} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT6_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c ≤ f x ∧ f x ≤ d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT7</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    (∀x. f x ≠ −∞) ⇒
+    (f ∈ Borel_measurable a ⇔
+     sigma_algebra a ∧ f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c d. {x | Normal c < f x ∧ f x < Normal d} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT7_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c < f x ∧ f x < d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT8</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | f x = c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT9</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | f x ≠ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_ABS</span>
+<DD>
+<pre>
+⊢ abs ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_I</span>
+<DD>
+<pre>
+⊢ (λx. x) ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CC</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c ≤ f x ∧ f x ≤ d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CMUL</span>
+<DD>
+<pre>
+⊢ ∀a f g z.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ (g x = Normal z * f x)) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CMUL_INDICATOR</span>
+<DD>
+<pre>
+⊢ ∀a z s.
+    sigma_algebra a ∧ s ∈ subsets a ⇒
+    (λx. Normal z * 𝟙 s x) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CMUL_INDICATOR'</span>
+<DD>
+<pre>
+⊢ ∀a c s.
+    sigma_algebra a ∧ s ∈ subsets a ⇒ (λx. c * 𝟙 s x) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CO</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c ≤ f x ∧ f x < d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CONST</span>
+<DD>
+<pre>
+⊢ ∀a k f.
+    sigma_algebra a ∧ (∀x. x ∈ space a ⇒ (f x = k)) ⇒ f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CONST'</span>
+<DD>
+<pre>
+⊢ ∀a k. sigma_algebra a ⇒ (λx. k) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CR</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | c ≤ f x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_EQ</span>
+<DD>
+<pre>
+⊢ ∀m f g.
+    (∀x. x ∈ m_space m ⇒ (f x = g x)) ∧
+    g ∈ Borel_measurable (m_space m,measurable_sets m) ⇒
+    f ∈ Borel_measurable (m_space m,measurable_sets m)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_EQ'</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    (∀x. x ∈ space a ⇒ (f x = g x)) ∧ g ∈ Borel_measurable a ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_FN_MINUS</span>
+<DD>
+<pre>
+⊢ ∀a f. f ∈ Borel_measurable a ⇒ f⁻ ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_FN_PLUS</span>
+<DD>
+<pre>
+⊢ ∀a f. f ∈ Borel_measurable a ⇒ f⁺ ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | f x < c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_IMP_BOREL</span>
+<DD>
+<pre>
+⊢ ∀f m.
+    f ∈ borel_measurable (m_space m,measurable_sets m) ⇒
+    Normal ∘ f ∈ Borel_measurable (m_space m,measurable_sets m)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_IMP_BOREL'</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ∧ f ∈ borel_measurable a ⇒ Normal ∘ f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_INDICATOR</span>
+<DD>
+<pre>
+⊢ ∀a A f.
+    sigma_algebra a ∧ A ∈ subsets a ∧ (∀x. x ∈ space a ⇒ (f x = 𝟙 A x)) ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_LE</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ⇒
+    {x | f x ≤ g x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_LT</span>
+<DD>
+<pre>
+⊢ ∀f g a.
+    f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ⇒
+    {x | f x < g x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MAX</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ⇒
+    (λx. max (f x) (g x)) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MAXIMAL</span>
+<DD>
+<pre>
+⊢ ∀N. FINITE N ⇒
+      ∀g f a.
+        sigma_algebra a ∧ (∀n. g n ∈ Borel_measurable a) ∧
+        (∀x. f x = sup (IMAGE (λn. g n x) N)) ⇒
+        f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MIN</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ⇒
+    (λx. min (f x) (g x)) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MINIMAL</span>
+<DD>
+<pre>
+⊢ ∀N. FINITE N ⇒
+      ∀g f a.
+        sigma_algebra a ∧ (∀n. g n ∈ Borel_measurable a) ∧
+        (∀x. f x = inf (IMAGE (λn. g n x) N)) ⇒
+        f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MINUS</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ (g x = -f x)) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MONO_SUP</span>
+<DD>
+<pre>
+⊢ ∀fn f a.
+    sigma_algebra a ∧ (∀n. fn n ∈ Borel_measurable a) ∧
+    (∀n x. x ∈ space a ⇒ fn n x ≤ fn (SUC n) x) ∧
+    (∀x. x ∈ space a ⇒ (f x = sup (IMAGE (λn. fn n x) 𝕌(:num)))) ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MUL</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ (h x = f x * g x)) ∧
+    (∀x. x ∈ space a ⇒ f x ≠ −∞ ∧ f x ≠ +∞ ∧ g x ≠ −∞ ∧ g x ≠ +∞) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MUL_INDICATOR</span>
+<DD>
+<pre>
+⊢ ∀a f s.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ s ∈ subsets a ⇒
+    (λx. f x * 𝟙 s x) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MUL_INDICATOR_EQ</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ⇒
+    (f ∈ Borel_measurable a ⇔ (λx. f x * 𝟙 (space a) x) ∈ Borel_measurable a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_NEGINF</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ {x | f x = −∞} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_NOT_NEGINF</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ {x | f x ≠ −∞} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_NOT_POSINF</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ {x | f x ≠ +∞} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_NOT_SING</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | f x ≠ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_OC</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c < f x ∧ f x ≤ d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_OO</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c < f x ∧ f x < d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_OR</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | c < f x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_PLUS_MINUS</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    f ∈ Borel_measurable a ⇔ f⁺ ∈ Borel_measurable a ∧ f⁻ ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_POSINF</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ {x | f x = +∞} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_POW</span>
+<DD>
+<pre>
+⊢ ∀n a f.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ f x ≠ −∞ ∧ f x ≠ +∞) ⇒
+    (λx. f x pow n) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_RC</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | f x ≤ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_RO</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | f x < c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SING</span>
+<DD>
+<pre>
+⊢ ∀f a. f ∈ Borel_measurable a ⇒ ∀c. {x | f x = c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SQR</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ (g x = (f x)²)) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SUB</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ f x ≠ −∞ ∧ g x ≠ +∞ ∨ f x ≠ +∞ ∧ g x ≠ −∞) ∧
+    (∀x. x ∈ space a ⇒ (h x = f x − g x)) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SUB'</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ (h x = f x − g x)) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SUM</span>
+<DD>
+<pre>
+⊢ ∀a f g s.
+    FINITE s ∧ sigma_algebra a ∧ (∀i. i ∈ s ⇒ f i ∈ Borel_measurable a) ∧
+    (∀i x. i ∈ s ∧ x ∈ space a ⇒ f i x ≠ −∞) ∧
+    (∀x. x ∈ space a ⇒ (g x = ∑ (λi. f i x) s)) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SUMINF</span>
+<DD>
+<pre>
+⊢ ∀fn f a.
+    sigma_algebra a ∧ (∀n. fn n ∈ Borel_measurable a) ∧
+    (∀i x. x ∈ space a ⇒ 0 ≤ fn i x) ∧
+    (∀x. x ∈ space a ⇒ (f x = suminf (λn. fn n x))) ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_TIMES</span>
+<DD>
+<pre>
+⊢ ∀m f g h.
+    measure_space m ∧ f ∈ Borel_measurable (m_space m,measurable_sets m) ∧
+    g ∈ Borel_measurable (m_space m,measurable_sets m) ∧
+    (∀x. x ∈ m_space m ⇒ (h x = f x * g x)) ⇒
+    h ∈ Borel_measurable (m_space m,measurable_sets m)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_TIMES'</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ (h x = f x * g x)) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">MEASURABLE_BOREL</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    f ∈ Borel_measurable a ⇔
+    sigma_algebra a ∧ f ∈ (space a → 𝕌(:extreal)) ∧
+    ∀c. PREIMAGE f {x | x < Normal c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_LBOREL</span>
+<DD>
+<pre>
+⊢ measure_space ext_lborel
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_BOREL</span>
+<DD>
+<pre>
+⊢ sigma_algebra Borel
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_BOREL_2D</span>
+<DD>
+<pre>
+⊢ sigma_algebra (Borel × Borel)
+</pre>
+
+<DT><span class="strong">SIGMA_FINITE_LBOREL</span>
+<DD>
+<pre>
+⊢ sigma_finite ext_lborel
+</pre>
+
+<DT><span class="strong">SPACE_BOREL</span>
+<DD>
+<pre>
+⊢ space Borel = 𝕌(:extreal)
+</pre>
+
+<DT><span class="strong">SPACE_BOREL_2D</span>
+<DD>
+<pre>
+⊢ space (Borel × Borel) = 𝕌(:extreal # extreal)
+</pre>
+
+<DT><span class="strong">absolutely_integrable_on_indicator</span>
+<DD>
+<pre>
+⊢ ∀A X. indicator A absolutely_integrable_on X ⇔ indicator A integrable_on X
+</pre>
+
+<DT><span class="strong">borel_eq_real_set</span>
+<DD>
+<pre>
+⊢ borel = (𝕌(:real),IMAGE real_set (subsets Borel))
+</pre>
+
+<DT><span class="strong">borel_imp_lebesgue_measurable</span>
+<DD>
+<pre>
+⊢ ∀f. f ∈ borel_measurable (space borel,subsets borel) ⇒
+      f ∈ borel_measurable (m_space lebesgue,measurable_sets lebesgue)
+</pre>
+
+<DT><span class="strong">borel_imp_lebesgue_sets</span>
+<DD>
+<pre>
+⊢ ∀s. s ∈ subsets borel ⇒ s ∈ measurable_sets lebesgue
+</pre>
+
+<DT><span class="strong">countably_additive_lebesgue</span>
+<DD>
+<pre>
+⊢ countably_additive lebesgue
+</pre>
+
+<DT><span class="strong">fn_minus</span>
+<DD>
+<pre>
+⊢ ∀f x. f⁻ x = -min 0 (f x)
+</pre>
+
+<DT><span class="strong">fn_minus_mul_indicator</span>
+<DD>
+<pre>
+⊢ ∀f s. (λx. f x * 𝟙 s x)⁻ = (λx. f⁻ x * 𝟙 s x)
+</pre>
+
+<DT><span class="strong">fn_plus</span>
+<DD>
+<pre>
+⊢ ∀f x. f⁺ x = max 0 (f x)
+</pre>
+
+<DT><span class="strong">fn_plus_mul_indicator</span>
+<DD>
+<pre>
+⊢ ∀f s. (λx. f x * 𝟙 s x)⁺ = (λx. f⁺ x * 𝟙 s x)
+</pre>
+
+<DT><span class="strong">has_integral_indicator_UNIV</span>
+<DD>
+<pre>
+⊢ ∀s A x.
+    (indicator (s ∩ A) has_integral x) 𝕌(:real) ⇔
+    (indicator s has_integral x) A
+</pre>
+
+<DT><span class="strong">has_integral_interval_cube</span>
+<DD>
+<pre>
+⊢ ∀a b n.
+    (indicator (interval [(a,b)]) has_integral
+     content (interval [(a,b)] ∩ line n)) (line n)
+</pre>
+
+<DT><span class="strong">in_borel_measurable_continuous_on</span>
+<DD>
+<pre>
+⊢ ∀f. f continuous_on 𝕌(:real) ⇒ f ∈ borel_measurable borel
+</pre>
+
+<DT><span class="strong">in_borel_measurable_from_Borel</span>
+<DD>
+<pre>
+⊢ ∀a f. f ∈ Borel_measurable a ⇒ real ∘ f ∈ borel_measurable a
+</pre>
+
+<DT><span class="strong">in_borel_measurable_imp</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧
+    (∀s. open s ⇒ PREIMAGE f s ∩ m_space m ∈ measurable_sets m) ⇒
+    f ∈ borel_measurable (m_space m,measurable_sets m)
+</pre>
+
+<DT><span class="strong">in_measurable_sigma_pow</span>
+<DD>
+<pre>
+⊢ ∀m sp N f.
+    measure_space m ∧ N ⊆ POW sp ∧ f ∈ (m_space m → sp) ∧
+    (∀y. y ∈ N ⇒ PREIMAGE f y ∩ m_space m ∈ measurable_sets m) ⇒
+    f ∈ measurable (m_space m,measurable_sets m) (sigma sp N)
+</pre>
+
+<DT><span class="strong">in_sets_lebesgue</span>
+<DD>
+<pre>
+⊢ ∀A. (∀n. indicator A integrable_on line n) ⇒ A ∈ measurable_sets lebesgue
+</pre>
+
+<DT><span class="strong">in_sets_lebesgue_imp</span>
+<DD>
+<pre>
+⊢ ∀A n. A ∈ measurable_sets lebesgue ⇒ indicator A integrable_on line n
+</pre>
+
+<DT><span class="strong">indicator_fn_general_cross</span>
+<DD>
+<pre>
+⊢ ∀cons car cdr s t x y.
+    pair_operation cons car cdr ⇒
+    (𝟙 (general_cross cons s t) (cons x y) = 𝟙 s x * 𝟙 t y)
+</pre>
+
+<DT><span class="strong">indicator_fn_normal</span>
+<DD>
+<pre>
+⊢ ∀s x. ∃r. (𝟙 s x = Normal r) ∧ 0 ≤ r ∧ r ≤ 1
+</pre>
+
+<DT><span class="strong">indicator_fn_split</span>
+<DD>
+<pre>
+⊢ ∀r s b.
+    FINITE r ∧ (BIGUNION (IMAGE b r) = s) ∧
+    (∀i j. i ∈ r ∧ j ∈ r ∧ i ≠ j ⇒ DISJOINT (b i) (b j)) ⇒
+    ∀a. a ⊆ s ⇒ (𝟙 a = (λx. ∑ (λi. 𝟙 (a ∩ b i) x) r))
+</pre>
+
+<DT><span class="strong">indicator_fn_suminf</span>
+<DD>
+<pre>
+⊢ ∀a x.
+    (∀m n. m ≠ n ⇒ DISJOINT (a m) (a n)) ⇒
+    (suminf (λi. 𝟙 (a i) x) = 𝟙 (BIGUNION (IMAGE a 𝕌(:num))) x)
+</pre>
+
+<DT><span class="strong">integrable_indicator_UNIV</span>
+<DD>
+<pre>
+⊢ ∀s A. indicator (s ∩ A) integrable_on 𝕌(:real) ⇔ indicator s integrable_on A
+</pre>
+
+<DT><span class="strong">integral_indicator_UNIV</span>
+<DD>
+<pre>
+⊢ ∀s A. ∫ 𝕌(:real) (indicator (s ∩ A)) = ∫ A (indicator s)
+</pre>
+
+<DT><span class="strong">integral_one</span>
+<DD>
+<pre>
+⊢ ∀A. ∫ A (λx. 1) = ∫ 𝕌(:real) (indicator A)
+</pre>
+
+<DT><span class="strong">lambda0_empty</span>
+<DD>
+<pre>
+⊢ lambda0 ∅ = 0
+</pre>
+
+<DT><span class="strong">lambda0_not_infty</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    lambda0 (right_open_interval a b) ≠ +∞ ∧
+    lambda0 (right_open_interval a b) ≠ −∞
+</pre>
+
+<DT><span class="strong">lambda_closed_interval</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ (lambda (interval [(a,b)]) = Normal (b − a))
+</pre>
+
+<DT><span class="strong">lambda_closed_interval_content</span>
+<DD>
+<pre>
+⊢ ∀a b. lambda (interval [(a,b)]) = Normal (content (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">lambda_empty</span>
+<DD>
+<pre>
+⊢ lambda ∅ = 0
+</pre>
+
+<DT><span class="strong">lambda_eq</span>
+<DD>
+<pre>
+⊢ ∀m. (∀a b.
+         measure m (interval [(a,b)]) = Normal (content (interval [(a,b)]))) ∧
+      measure_space m ∧ (m_space m = space borel) ∧
+      (measurable_sets m = subsets borel) ⇒
+      ∀s. s ∈ subsets borel ⇒ (lambda s = measure m s)
+</pre>
+
+<DT><span class="strong">lambda_eq_lebesgue</span>
+<DD>
+<pre>
+⊢ ∀s. s ∈ subsets borel ⇒ (lambda s = measure lebesgue s)
+</pre>
+
+<DT><span class="strong">lambda_not_infty</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    lambda (right_open_interval a b) ≠ +∞ ∧
+    lambda (right_open_interval a b) ≠ −∞
+</pre>
+
+<DT><span class="strong">lambda_open_interval</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ (lambda (interval (a,b)) = Normal (b − a))
+</pre>
+
+<DT><span class="strong">lambda_prop</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ (lambda (right_open_interval a b) = Normal (b − a))
+</pre>
+
+<DT><span class="strong">lambda_sing</span>
+<DD>
+<pre>
+⊢ ∀c. lambda {c} = 0
+</pre>
+
+<DT><span class="strong">lborel0_additive</span>
+<DD>
+<pre>
+⊢ additive lborel0
+</pre>
+
+<DT><span class="strong">lborel0_finite_additive</span>
+<DD>
+<pre>
+⊢ finite_additive lborel0
+</pre>
+
+<DT><span class="strong">lborel0_positive</span>
+<DD>
+<pre>
+⊢ positive lborel0
+</pre>
+
+<DT><span class="strong">lborel0_premeasure</span>
+<DD>
+<pre>
+⊢ premeasure lborel0
+</pre>
+
+<DT><span class="strong">lborel0_subadditive</span>
+<DD>
+<pre>
+⊢ subadditive lborel0
+</pre>
+
+<DT><span class="strong">lborel_subset_lebesgue</span>
+<DD>
+<pre>
+⊢ measurable_sets lborel ⊆ measurable_sets lebesgue
+</pre>
+
+<DT><span class="strong">lebesgue_closed_interval</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ (measure lebesgue (interval [(a,b)]) = Normal (b − a))
+</pre>
+
+<DT><span class="strong">lebesgue_closed_interval_content</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    measure lebesgue (interval [(a,b)]) = Normal (content (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">lebesgue_empty</span>
+<DD>
+<pre>
+⊢ measure lebesgue ∅ = 0
+</pre>
+
+<DT><span class="strong">lebesgue_eq_lambda</span>
+<DD>
+<pre>
+⊢ ∀s. s ∈ subsets borel ⇒ (measure lebesgue s = lambda s)
+</pre>
+
+<DT><span class="strong">lebesgue_measure_iff_LIMSEQ</span>
+<DD>
+<pre>
+⊢ ∀A m.
+    A ∈ measurable_sets lebesgue ∧ 0 ≤ m ⇒
+    ((measure lebesgue A = Normal m) ⇔
+     ((λn. ∫ (line n) (indicator A)) ⟶ m) sequentially)
+</pre>
+
+<DT><span class="strong">lebesgue_of_negligible</span>
+<DD>
+<pre>
+⊢ ∀s. negligible s ⇒ (measure lebesgue s = 0)
+</pre>
+
+<DT><span class="strong">lebesgue_open_interval</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ (measure lebesgue (interval (a,b)) = Normal (b − a))
+</pre>
+
+<DT><span class="strong">lebesgue_sing</span>
+<DD>
+<pre>
+⊢ ∀c. measure lebesgue {c} = 0
+</pre>
+
+<DT><span class="strong">liminf_limsup</span>
+<DD>
+<pre>
+⊢ ∀E. COMPL (liminf E) = limsup (COMPL ∘ E)
+</pre>
+
+<DT><span class="strong">liminf_limsup_sp</span>
+<DD>
+<pre>
+⊢ ∀sp E. (∀n. E n ⊆ sp) ⇒ (sp DIFF liminf E = limsup (λn. sp DIFF E n))
+</pre>
+
+<DT><span class="strong">limseq_indicator_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀A x.
+    ((λk. indicator (BIGUNION {A i | i < k}) x) ⟶
+     indicator (BIGUNION {A i | i ∈ 𝕌(:num)}) x) sequentially
+</pre>
+
+<DT><span class="strong">limsup_suminf_indicator</span>
+<DD>
+<pre>
+⊢ ∀A. limsup A = {x | suminf (λn. 𝟙 (A n) x) = +∞}
+</pre>
+
+<DT><span class="strong">limsup_suminf_indicator_space</span>
+<DD>
+<pre>
+⊢ ∀a A.
+    sigma_algebra a ∧ (∀n. A n ∈ subsets a) ⇒
+    (limsup A = {x | x ∈ space a ∧ (suminf (λn. 𝟙 (A n) x) = +∞)})
+</pre>
+
+<DT><span class="strong">m_space_lborel</span>
+<DD>
+<pre>
+⊢ m_space lborel = space borel
+</pre>
+
+<DT><span class="strong">measure_lebesgue</span>
+<DD>
+<pre>
+⊢ measure lebesgue =
+  (λA. sup {Normal (∫ (line n) (indicator A)) | n ∈ 𝕌(:num)})
+</pre>
+
+<DT><span class="strong">measure_liminf</span>
+<DD>
+<pre>
+⊢ ∀p A.
+    measure_space p ∧ (∀n. A n ∈ measurable_sets p) ⇒
+    (measure p (liminf A) =
+     sup (IMAGE (λm. measure p (BIGINTER {A n | m ≤ n})) 𝕌(:num)))
+</pre>
+
+<DT><span class="strong">measure_limsup</span>
+<DD>
+<pre>
+⊢ ∀p A.
+    measure_space p ∧ measure p (BIGUNION (IMAGE A 𝕌(:num))) < +∞ ∧
+    (∀n. A n ∈ measurable_sets p) ⇒
+    (measure p (limsup A) =
+     inf (IMAGE (λm. measure p (BIGUNION {A n | m ≤ n})) 𝕌(:num)))
+</pre>
+
+<DT><span class="strong">measure_limsup_finite</span>
+<DD>
+<pre>
+⊢ ∀p A.
+    measure_space p ∧ measure p (m_space p) < +∞ ∧
+    (∀n. A n ∈ measurable_sets p) ⇒
+    (measure p (limsup A) =
+     inf (IMAGE (λm. measure p (BIGUNION {A n | m ≤ n})) 𝕌(:num)))
+</pre>
+
+<DT><span class="strong">measure_space_lborel</span>
+<DD>
+<pre>
+⊢ measure_space lborel
+</pre>
+
+<DT><span class="strong">measure_space_lebesgue</span>
+<DD>
+<pre>
+⊢ measure_space lebesgue
+</pre>
+
+<DT><span class="strong">negligible_in_lebesgue</span>
+<DD>
+<pre>
+⊢ ∀s. negligible s ⇒ s ∈ measurable_sets lebesgue
+</pre>
+
+<DT><span class="strong">nonneg_abs</span>
+<DD>
+<pre>
+⊢ ∀f. nonneg (abs ∘ f)
+</pre>
+
+<DT><span class="strong">nonneg_fn_abs</span>
+<DD>
+<pre>
+⊢ ∀f. nonneg f ⇒ (abs ∘ f = f)
+</pre>
+
+<DT><span class="strong">nonneg_fn_minus</span>
+<DD>
+<pre>
+⊢ ∀f. nonneg f ⇒ (f⁻ = (λx. 0))
+</pre>
+
+<DT><span class="strong">nonneg_fn_plus</span>
+<DD>
+<pre>
+⊢ ∀f. nonneg f ⇒ (f⁺ = f)
+</pre>
+
+<DT><span class="strong">positive_lebesgue</span>
+<DD>
+<pre>
+⊢ positive lebesgue
+</pre>
+
+<DT><span class="strong">seq_le_imp_lim_le</span>
+<DD>
+<pre>
+⊢ ∀x y f. (∀n. f n ≤ x) ∧ (f ⟶ y) sequentially ⇒ y ≤ x
+</pre>
+
+<DT><span class="strong">seq_mono_le</span>
+<DD>
+<pre>
+⊢ ∀f x n. (∀n. f n ≤ f (n + 1)) ∧ (f ⟶ x) sequentially ⇒ f n ≤ x
+</pre>
+
+<DT><span class="strong">set_limsup_alt</span>
+<DD>
+<pre>
+⊢ ∀E. limsup E = BIGINTER (IMAGE (λn. BIGUNION (IMAGE E (from n))) 𝕌(:num))
+</pre>
+
+<DT><span class="strong">sets_lborel</span>
+<DD>
+<pre>
+⊢ measurable_sets lborel = subsets borel
+</pre>
+
+<DT><span class="strong">sets_lebesgue</span>
+<DD>
+<pre>
+⊢ measurable_sets lebesgue = {A | ∀n. indicator A integrable_on line n}
+</pre>
+
+<DT><span class="strong">sigma_algebra_lebesgue</span>
+<DD>
+<pre>
+⊢ sigma_algebra (𝕌(:real),{A | ∀n. indicator A integrable_on line n})
+</pre>
+
+<DT><span class="strong">sigma_finite_lborel</span>
+<DD>
+<pre>
+⊢ sigma_finite lborel
+</pre>
+
+<DT><span class="strong">space_lborel</span>
+<DD>
+<pre>
+⊢ m_space lborel = 𝕌(:real)
+</pre>
+
+<DT><span class="strong">space_lebesgue</span>
+<DD>
+<pre>
+⊢ m_space lebesgue = 𝕌(:real)
+</pre>
+
+<DT><span class="strong">sup_sequence</span>
+<DD>
+<pre>
+⊢ ∀f l.
+    mono_increasing f ⇒
+    ((f ⟶ l) sequentially ⇔
+     (sup (IMAGE (λn. Normal (f n)) 𝕌(:num)) = Normal l))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

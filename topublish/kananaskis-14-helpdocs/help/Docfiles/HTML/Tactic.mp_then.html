@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactic.mp_then</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>mp_then : match_position -&gt; thm_tactic -&gt; thm -&gt; thm -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactic.html">Tactic</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Matches two theorems against each other and then continues</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">mp_then</SPAN><SPAN class = "TEXT"> tactic combines two theorems (one or both of which will
+typically come from the current goal&rsquo;s assumptions) using modus ponens
+in a controlled way, and then passes the result of this to a
+continuation theorem-tactic.</SPAN>
+<P>
+<SPAN class = "TEXT">Thus </SPAN><SPAN class = "BRKT">mp_then&nbsp;ttac&nbsp;pos&nbsp;ith&nbsp;th</SPAN><SPAN class = "TEXT"> is a tactic in the usual &ldquo;</SPAN><SPAN class = "BRKT">_then</SPAN><SPAN class = "TEXT">&rdquo;
+fashion which produces a theorem and then applies the </SPAN><SPAN class = "BRKT">ttac</SPAN><SPAN class = "TEXT">
+continuation to that result. The theorems </SPAN><SPAN class = "BRKT">ith</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> are the two
+theorems: </SPAN><SPAN class = "BRKT">ith</SPAN><SPAN class = "TEXT"> contains the implication, and the other has a
+conclusion matching one of the antecedents of the implication.</SPAN>
+<P>
+<SPAN class = "TEXT">An implication&rsquo;s antecedents are calculated by first normalising the
+implication so that it is of the form
+</SPAN><DIV class = "XMPL"><pre>
+  !v1 .. vn. ant1 /\ ant2 .. /\ antn ==&gt; concl
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">pos</SPAN><SPAN class = "TEXT"> parameter indicates how to find the antecedent. There are
+four possible forms for </SPAN><SPAN class = "BRKT">pos</SPAN><SPAN class = "TEXT"> (constructors for the </SPAN><SPAN class = "BRKT">match_position</SPAN><SPAN class = "TEXT">
+type). It can be </SPAN><SPAN class = "BRKT">Any</SPAN><SPAN class = "TEXT">, which tells </SPAN><SPAN class = "BRKT">mp_then</SPAN><SPAN class = "TEXT"> to search for anything
+that works. It can be </SPAN><SPAN class = "BRKT">Pat&nbsp;q</SPAN><SPAN class = "TEXT">, with </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> a quotation, which means to
+find anything matching </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> that works. It can be </SPAN><SPAN class = "BRKT">Pos&nbsp;f</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> is
+a function of type </SPAN><SPAN class = "BRKT">term&nbsp;list&nbsp;-&gt;&nbsp;term</SPAN><SPAN class = "TEXT">, and is typically a value such
+as </SPAN><SPAN class = "BRKT">hd</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">el&nbsp;n</SPAN><SPAN class = "TEXT"> for some number </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">last</SPAN><SPAN class = "TEXT">. This function is passed
+the list of all </SPAN><SPAN class = "BRKT">ith</SPAN><SPAN class = "TEXT">&rsquo;s antecedents to pick the right one. Finally,
+the </SPAN><SPAN class = "BRKT">pos</SPAN><SPAN class = "TEXT"> parameter might be </SPAN><SPAN class = "BRKT">Concl</SPAN><SPAN class = "TEXT">, meaning that the conclusion of
+</SPAN><SPAN class = "BRKT">ith</SPAN><SPAN class = "TEXT"> is treated as a negated assumption. This allows implications to
+be used in a contrapositive way.</SPAN>
+<P>
+<SPAN class = "TEXT">In practice, there are some common patterns for obtaining </SPAN><SPAN class = "BRKT">ith</SPAN><SPAN class = "TEXT"> and
+</SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">. Apart from the fully applied version above, you might also see:
+</SPAN><DIV class = "XMPL"><pre>
+   &lt;sel&gt;_assum (mp_then pos ttac ith)
+
+   &lt;sel&gt;_assum (&lt;sel&gt;_assum o mp_then pos ttac)
+
+   disch_then(&lt;sel&gt;_assum o mp_then pos ttac)
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">&lt;sel&gt;</SPAN><SPAN class = "TEXT"> is one of </SPAN><SPAN class = "BRKT">first</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">last</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">qpat</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">goal</SPAN><SPAN class = "TEXT">, possibly
+with an appended </SPAN><SPAN class = "BRKT">_x</SPAN><SPAN class = "TEXT">; the usual ways of obtaining theorems from the
+current goal. Where there are two selectors used, the outermost is
+used for the selection of the implicational theorem and the innermost
+selects </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">. In the first example, the </SPAN><SPAN class = "BRKT">ith</SPAN><SPAN class = "TEXT"> value is provided in the
+call, and is presumably an existing theorem rather than an assumption
+from the goal.</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">goal_assum</SPAN><SPAN class = "TEXT"> selector is worth special mention since it&rsquo;s
+especially useful with </SPAN><SPAN class = "BRKT">mp_then</SPAN><SPAN class = "TEXT">: it turns an existentially quantified
+goal </SPAN><SPAN class = "BRKT">?x.&nbsp;P&nbsp;x</SPAN><SPAN class = "TEXT"> into the assumption </SPAN><SPAN class = "BRKT">!x.&nbsp;P&nbsp;x&nbsp;==&gt;&nbsp;F</SPAN><SPAN class = "TEXT"> thereby providing a
+theorem with antecedents to match on. In conjunction with </SPAN><SPAN class = "BRKT">mp_tac</SPAN><SPAN class = "TEXT">
+(which will put the revised implication back into the goal as an
+existential once more) it has the effect of instantiating the
+existential quantifier in order to match a provided subterm (similar
+to </SPAN><SPAN class = "BRKT">part_match_exists_tac</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">asm_exists_tac</SPAN><SPAN class = "TEXT">).</SPAN>
+<P>
+<SPAN class = "TEXT">Finally, note that the </SPAN><SPAN class = "BRKT">Pat</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">Any</SPAN><SPAN class = "TEXT"> position selectors will
+backtrack across the set of theorem antecedents to find a match that
+makes the whole application succeed.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If the provided implicational theorem doesn&rsquo;t have a match at a
+compatible position for the second provided theorem, or if no such
+match then allows the continuation </SPAN><SPAN class = "BRKT">ttac</SPAN><SPAN class = "TEXT"> to succeed.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactical.goal_assum.html">goal_assum</A>,
+<A HREF = "Tactic.resolve_then.html">resolve_then</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

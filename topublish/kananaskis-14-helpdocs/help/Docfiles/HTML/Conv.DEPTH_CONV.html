@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Conv.DEPTH_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>DEPTH_CONV : conv -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Conv.html">Conv</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Applies a conversion repeatedly to all the sub-terms of a term, in bottom-up
+order.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">DEPTH_CONV&nbsp;c&nbsp;tm</SPAN><SPAN class = "TEXT"> repeatedly applies the conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> to all the subterms of
+the term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT">, including the term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> itself.  The supplied conversion is
+applied repeatedly (zero or more times, as is done by </SPAN><SPAN class = "BRKT">REPEATC</SPAN><SPAN class = "TEXT">) to each
+subterm until it fails. The conversion is applied to subterms in bottom-up
+order.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">DEPTH_CONV&nbsp;c&nbsp;tm</SPAN><SPAN class = "TEXT"> never fails but can diverge if the conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> can be
+applied repeatedly to some subterm of </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> without failing.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following example shows how </SPAN><SPAN class = "BRKT">DEPTH_CONV</SPAN><SPAN class = "TEXT"> applies a conversion to all
+subterms to which it applies:
+</SPAN><DIV class = "XMPL"><pre>
+   - DEPTH_CONV BETA_CONV (Term `(\x. (\y. y + x) 1) 2`);
+   &gt; val it = |- (\x. (\y. y + x)1)2 = 1 + 2 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Here, there are two beta-redexes in the input term, one of which
+occurs within the other. </SPAN><SPAN class = "BRKT">DEPTH_CONV&nbsp;BETA_CONV</SPAN><SPAN class = "TEXT"> applies beta-conversion to
+innermost beta-redex </SPAN><SPAN class = "BRKT">(\y.&nbsp;y&nbsp;+&nbsp;x)&nbsp;1</SPAN><SPAN class = "TEXT"> first.  The outermost beta-redex is then
+</SPAN><SPAN class = "BRKT">(\x.&nbsp;1&nbsp;+&nbsp;x)&nbsp;2</SPAN><SPAN class = "TEXT">, and beta-conversion of this redex gives </SPAN><SPAN class = "BRKT">1&nbsp;+&nbsp;2</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Because </SPAN><SPAN class = "BRKT">DEPTH_CONV</SPAN><SPAN class = "TEXT"> applies a conversion bottom-up, the final result may still
+contain subterms to which the supplied conversion applies.  For example, in:
+</SPAN><DIV class = "XMPL"><pre>
+   - DEPTH_CONV BETA_CONV (Term `(\f x. (f x) + 1) (\y.y) 2`);
+   &gt; val it = |- (\f x. (f x) + 1)(\y. y)2 = ((\y. y)2) + 1 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+the right-hand side of the result still contains a beta-redex,
+because the redex </SPAN><SPAN class = "BRKT">(\y.y)2</SPAN><SPAN class = "TEXT"> is introduced by virtue of an application of
+</SPAN><SPAN class = "BRKT">BETA_CONV</SPAN><SPAN class = "TEXT"> higher-up in the structure of the input term.  By contrast,
+in the example:
+</SPAN><DIV class = "XMPL"><pre>
+   - DEPTH_CONV BETA_CONV (Term `(\f x. (f x)) (\y.y) 2`);
+   &gt; val it = |- (\f x. f x)(\y. y)2 = 2 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+all beta-redexes are eliminated, because </SPAN><SPAN class = "BRKT">DEPTH_CONV</SPAN><SPAN class = "TEXT"> repeats the
+supplied conversion (in this case, </SPAN><SPAN class = "BRKT">BETA_CONV</SPAN><SPAN class = "TEXT">) at each subterm (in this case,
+at the top-level term).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If the conversion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> implements the evaluation of a function in logic, then
+</SPAN><SPAN class = "BRKT">DEPTH_CONV&nbsp;c</SPAN><SPAN class = "TEXT"> will do bottom-up evaluation of nested applications of it.
+For example, the conversion </SPAN><SPAN class = "BRKT">ADD_CONV</SPAN><SPAN class = "TEXT"> implements addition of natural number
+constants within the logic. Thus, the effect of:
+</SPAN><DIV class = "XMPL"><pre>
+   - DEPTH_CONV reduceLib.ADD_CONV (Term `(1 + 2) + (3 + 4 + 5)`);
+   &gt; val it = |- (1 + 2) + (3 + (4 + 5)) = 15 : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+is to compute the sum represented by the input term.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The implementation of this function uses failure to avoid rebuilding
+unchanged subterms. That is to say, during execution the exception
+</SPAN><SPAN class = "BRKT">QConv.UNCHANGED</SPAN><SPAN class = "TEXT"> may be generated and later trapped. The behaviour of
+the function is dependent on this use of failure. So, if the
+conversion given as an argument happens to generate the same
+exception, the operation of </SPAN><SPAN class = "BRKT">DEPTH_CONV</SPAN><SPAN class = "TEXT"> will be unpredictable.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Conv.ONCE_DEPTH_CONV.html">ONCE_DEPTH_CONV</A>,
+<A HREF = "Conv.REDEPTH_CONV.html">REDEPTH_CONV</A>,
+<A HREF = "Conv.TOP_DEPTH_CONV.html">TOP_DEPTH_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

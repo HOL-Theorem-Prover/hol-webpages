@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>boolSyntax.sep_type_unify</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>sep_type_unify : hol_type -&gt; hol_type -&gt;
+        (hol_type,hol_type) subst * (hol_type,hol_type) subst</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/boolSyntax.html">boolSyntax</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Calculates a pair of substitutions </SPAN><SPAN class = "BRKT">(theta1,&nbsp;theta2)</SPAN><SPAN class = "TEXT"> such that instantiating
+the first argument with </SPAN><SPAN class = "BRKT">theta1</SPAN><SPAN class = "TEXT"> equals the second argument instatiated with
+</SPAN><SPAN class = "BRKT">theta2</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">sep_type_unify&nbsp;ty1&nbsp;ty2</SPAN><SPAN class = "TEXT"> succeeds, then
+</SPAN><DIV class = "XMPL"><pre>
+    type_subst (sep_type_unify ty1 ty2 |&gt; fst) ty1 =
+      type_subst (sep_type_unify ty1 ty2 |&gt; snd) ty2
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If no such substitution can be found.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- let val alpha_list = Type `:'a list`
+  in
+     sep_type_unify alpha alpha_list
+  end;
+&gt; val it = ([{redex = “:α”, residue = “:α list”}], []):
+   (hol_type, hol_type) Lib.subst * (hol_type, hol_type) subst
+
+- let val ty1 = Type `:'a -&gt; 'b -&gt; 'b`
+      val ty2 = Type `:'a list -&gt; 'b list -&gt; 'a list`
+  in
+    sep_type_unify ty1 ty2
+  end;
+&gt; val it =
+   ([{redex = “:β”, residue = “:α list”},
+     {redex = “:α”, residue = “:α list”}], [{redex = “:β”, residue = “:α”}]):
+   (hol_type, hol_type) Lib.subst * (hol_type, hol_type) subst
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">Note that in these examples, </SPAN><SPAN class = "BRKT">type_unify</SPAN><SPAN class = "TEXT"> would fail due to an occurs
+check:
+</SPAN><DIV class = "XMPL"><pre>
+- let val ty1 = Type `:'a -&gt; 'b -&gt; 'b`
+      val ty2 = Type `:'a list -&gt; 'b list -&gt; 'a list`
+  in
+    type_unify ty1 ty2
+  end;
+
+  Exception raised at boolSyntax.type_unify:
+  occurs check
+  Exception-
+     HOL_ERR
+       {message = "occurs check", origin_function = "type_unify",
+        origin_structure = "boolSyntax"} raised
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">sep_type_unify</SPAN><SPAN class = "TEXT"> is similar to </SPAN><SPAN class = "BRKT">type_unify</SPAN><SPAN class = "TEXT">, but does not run into problems with
+occurs checks. It first renames all type variables, then attempt to unify the
+argument types, returning two separate substitutions as a result.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "boolSyntax.type_unify.html">type_unify</A>,
+<A HREF = "Type.type_subst.html">type_subst</A>,
+<A HREF = "Term.inst.html">inst</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

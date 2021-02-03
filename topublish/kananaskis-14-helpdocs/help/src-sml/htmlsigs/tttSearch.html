@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure tttSearch</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure tttSearch</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/tactictoe/src/tttSearch.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature tttSearch =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  include Abbrev
+<a name="line5"></a>
+<a name="line6"></a>  type tnn = mlTreeNeuralNetwork.tnn
+<a name="line7"></a>  val predtac_time : real ref
+<a name="line8"></a>  val reward_time : real ref
+<a name="line9"></a>  val reorder_time : real ref
+<a name="line10"></a>
+<a name="line11"></a>  datatype sstatus = StacProved | StacSaturated | StacUndecided | StacFresh
+<a name="line12"></a>  datatype gstatus = GoalProved | GoalSaturated | GoalUndecided
+<a name="line13"></a>  datatype nstatus = NodeProved | NodeSaturated | NodeUndecided
+<a name="line14"></a>  datatype searchstatus = SearchProved | SearchSaturated | SearchTimeout
+<a name="line15"></a>  datatype proofstatus =  Proof of string | ProofSaturated | ProofTimeout
+<a name="line16"></a>
+<a name="line17"></a>  val string_of_sstatus : sstatus -&gt; string
+<a name="line18"></a>
+<a name="line19"></a>  type id = (int * int * int list) list
+<a name="line20"></a>  val id_compare : id * id -&gt; order
+<a name="line21"></a>  type stac_record =
+<a name="line22"></a>   {token : tttToken.token, atyl : tttToken.aty list,
+<a name="line23"></a>    svis : real, ssum : real, sstatus : sstatus}
+<a name="line24"></a>  type argtree = (int list, stac_record) Redblackmap.dict
+<a name="line25"></a>  type goal_record =
+<a name="line26"></a>   {goal : goal, gvis : real, gsum : real, gstatus : gstatus,
+<a name="line27"></a>    stacv : argtree vector,
+<a name="line28"></a>    siblingd : (goal list, unit) Redblackmap.dict}
+<a name="line29"></a>  type node =
+<a name="line30"></a>   {nvis : real, nsum : real, nstatus : nstatus,
+<a name="line31"></a>    goalv : goal_record vector,
+<a name="line32"></a>    parentd : (goal, unit) Redblackmap.dict}
+<a name="line33"></a>  type tree = (id, node) Redblackmap.dict
+<a name="line34"></a>
+<a name="line35"></a>  val backstatus_arg : sstatus list -&gt; sstatus
+<a name="line36"></a>  val backstatus_stacv : argtree vector -&gt; gstatus
+<a name="line37"></a>  val backstatus_goalv : goal_record vector -&gt; nstatus
+<a name="line38"></a>
+<a name="line39"></a>  type searchobj =
+<a name="line40"></a>    {predtac : goal -&gt; (string * tttToken.aty list) list,
+<a name="line41"></a>     predarg : string -&gt; tttToken.aty -&gt; goal -&gt; tttToken.token list,
+<a name="line42"></a>     parsetoken : tttToken.parsetoken,
+<a name="line43"></a>     vnno: tnn option, pnno: tnn option, anno: tnn option}
+<a name="line44"></a>
+<a name="line45"></a>  val starttree_of_goal : searchobj -&gt; goal -&gt; tree
+<a name="line46"></a>  val starttree_of_gstacarg : searchobj -&gt;
+<a name="line47"></a>    goal * string * tttToken.token list -&gt; tree
+<a name="line48"></a>
+<a name="line49"></a>  val search_loop : searchobj -&gt; int option -&gt; tree -&gt; searchstatus * tree
+<a name="line50"></a>  val search : searchobj -&gt; goal -&gt; proofstatus * tree
+<a name="line51"></a>
+<a name="line52"></a>end
+<a name="line53"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/tactictoe/src/tttSearch.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

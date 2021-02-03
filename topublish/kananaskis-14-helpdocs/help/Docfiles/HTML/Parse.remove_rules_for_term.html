@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Parse.remove_rules_for_term</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Parse.remove_rules_for_term : string -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Removes parsing/pretty-printing rules from the global grammar.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Parse</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Calling </SPAN><SPAN class = "BRKT">remove_rules_for_term&nbsp;s</SPAN><SPAN class = "TEXT"> removes all those rules (if any) in
+the global grammar that are for the term </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">.  The string specifies
+the name of the term that the rule is for, not a token that may happen
+to be used in concrete syntax for the term.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The universal quantifier can have its special binder status removed using
+this function:
+</SPAN><DIV class = "XMPL"><pre>
+   - val t = Term`!x. P x /\ ~Q x`;
+   &lt;&lt;HOL message: inventing new type variable names: 'a.&gt;&gt;
+   &gt; val t = `!x. P x /\ ~Q x` : term
+   - remove_rules_for_term "!";
+   &gt; val it = () : unit
+   - t;
+   &gt; val it = `! (\x. P x /\ ~Q x)` : term
+</pre></DIV>
+<SPAN class = "TEXT">
+Similarly, one can remove the two rules for conditional
+expressions and see the raw syntax as follows:
+</SPAN><DIV class = "XMPL"><pre>
+   - val t = Term`if p then q else r`;
+   &lt;&lt;HOL message: inventing new type variable names: 'a.&gt;&gt;
+   &gt; val t = `if p then q else r` : term
+   - remove_rules_for_term "COND";
+   &gt; val it = () : unit
+   - t;
+   &gt; val it = `COND p q r` : term
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">There is a companion </SPAN><SPAN class = "BRKT">temp_remove_rules_for_term</SPAN><SPAN class = "TEXT"> function,
+which has the same effect on the global grammar, but which does not
+cause this effect to persist when the current theory is exported.</SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.remove_termtok.html">remove_termtok</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

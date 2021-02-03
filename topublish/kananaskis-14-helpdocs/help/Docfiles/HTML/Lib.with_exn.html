@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Lib.with_exn</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>with_exn : ('a -&gt; 'b) -&gt; 'a -&gt; exn -&gt; 'b</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Lib.html">Lib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Apply a function to an argument, raising supplied exception on failure.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An evaluation of </SPAN><SPAN class = "BRKT">with_exn&nbsp;f&nbsp;x&nbsp;e</SPAN><SPAN class = "TEXT"> applies function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to
+argument </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT">. If that computation finishes with </SPAN><SPAN class = "BRKT">y</SPAN><SPAN class = "TEXT">, then </SPAN><SPAN class = "BRKT">y</SPAN><SPAN class = "TEXT"> is
+the result. Otherwise, </SPAN><SPAN class = "BRKT">f&nbsp;x</SPAN><SPAN class = "TEXT"> raised an exception, and the exception
+</SPAN><SPAN class = "BRKT">e</SPAN><SPAN class = "TEXT"> is raised instead. However, if </SPAN><SPAN class = "BRKT">f&nbsp;x</SPAN><SPAN class = "TEXT"> raises the </SPAN><SPAN class = "BRKT">Interrupt</SPAN><SPAN class = "TEXT">
+exception, then </SPAN><SPAN class = "BRKT">with_exn&nbsp;f&nbsp;x&nbsp;e</SPAN><SPAN class = "TEXT"> results in the </SPAN><SPAN class = "BRKT">Interrupt</SPAN><SPAN class = "TEXT"> exception
+being raised.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When </SPAN><SPAN class = "BRKT">f&nbsp;x</SPAN><SPAN class = "TEXT"> fails or is interrupted.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- with_exn dest_comb (Term`\x. x /\ y`) (Fail "My kingdom for a horse");
+! Uncaught exception:
+! Fail  "My kingdom for a horse"
+
+- with_exn (fn _ =&gt; raise Interrupt) 1 (Fail "My kingdom for a horse");
+&gt; Interrupted.
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Often </SPAN><SPAN class = "BRKT">with_exn</SPAN><SPAN class = "TEXT"> can be used to clean up programming where lots of
+exceptions may be handled. For example, taking apart a compound term of
+a certain desired form may fail at several places, but a uniform error
+message is desired.
+</SPAN><DIV class = "XMPL"><pre>
+   local val expected = mk_HOL_ERR "" "dest_quant" "expected !v.M or ?v.M"
+   in
+   fun dest_quant tm =
+     let val (q,body) = with_exn dest_comb tm expected
+         val (p as (v,M)) = with_exn dest_abs body expected
+     in
+        if q = universal orelse q = existential
+          then p
+          else raise expected
+     end
+   end
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Feedback.wrap_exn.html">wrap_exn</A>,
+<A HREF = "Lib.assert_exn.html">assert_exn</A>,
+<A HREF = "Lib.assert.html">assert</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure Parse</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Parse</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Parse.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Parse = sig
+<a name="line2"></a>
+<a name="line3"></a>  type term = Term.term
+<a name="line4"></a>  type hol_type = Type.hol_type
+<a name="line5"></a>  type thm = Thm.thm
+<a name="line6"></a>  type associativity = HOLgrammars.associativity
+<a name="line7"></a>  type pp_element = term_grammar.pp_element
+<a name="line8"></a>  type PhraseBlockStyle = term_grammar.PhraseBlockStyle
+<a name="line9"></a>  type ParenStyle = term_grammar.ParenStyle
+<a name="line10"></a>  type block_info = term_grammar.block_info
+<a name="line11"></a>  type 'a frag = 'a PP.frag
+<a name="line12"></a>  type 'a pprinter = 'a -&gt; HOLPP.pretty
+<a name="line13"></a>
+<a name="line14"></a>  datatype fixity = datatype term_grammar_dtype.fixity
+<a name="line15"></a>  val fixityToString : fixity -&gt; string
+<a name="line16"></a>
+<a name="line17"></a>  type grammarDB_info = type_grammar.grammar * term_grammar.grammar
+<a name="line18"></a>  val grammarDB : {thyname:string} -&gt; grammarDB_info option
+<a name="line19"></a>  val set_grammar_ancestry : string list -&gt; unit
+<a name="line20"></a>
+<a name="line21"></a>  (* Parsing Types *)
+<a name="line22"></a>
+<a name="line23"></a>  val type_grammar : unit -&gt; type_grammar.grammar
+<a name="line24"></a>  val Type         : hol_type frag list -&gt; hol_type
+<a name="line25"></a>  val <a href="../../Docfiles/HTML/Parse..OQ3.html">==</a>           : hol_type frag list -&gt; 'a -&gt; hol_type
+<a name="line26"></a>
+<a name="line27"></a>  val add_type : string -&gt; unit
+<a name="line28"></a>  val add_qtype : {Thy:string,Name:string} -&gt; unit
+<a name="line29"></a>  val temp_add_type : string -&gt; unit
+<a name="line30"></a>  val temp_add_qtype : {Thy:string,Name:string} -&gt; unit
+<a name="line31"></a>  val <a href="../../Docfiles/HTML/Parse.add_infix_type.html">add_infix_type</a> : {Prec : int,
+<a name="line32"></a>                        ParseName : string option,
+<a name="line33"></a>                        Name : string,
+<a name="line34"></a>                        Assoc : associativity} -&gt; unit
+<a name="line35"></a>  val temp_add_infix_type : {Prec : int,
+<a name="line36"></a>                             ParseName : string option,
+<a name="line37"></a>                             Name : string,
+<a name="line38"></a>                             Assoc : associativity} -&gt; unit
+<a name="line39"></a>
+<a name="line40"></a>  val temp_thytype_abbrev : KernelSig.kernelname * hol_type * bool -&gt; unit
+<a name="line41"></a>  val <a href="../../Docfiles/HTML/Parse.thytype_abbrev.html">thytype_abbrev</a> : KernelSig.kernelname * hol_type * bool -&gt; unit
+<a name="line42"></a>  val temp_type_abbrev : string * hol_type -&gt; unit
+<a name="line43"></a>  val <a href="../../Docfiles/HTML/Parse.type_abbrev.html">type_abbrev</a> : string * hol_type -&gt; unit
+<a name="line44"></a>  val temp_disable_tyabbrev_printing : string -&gt; unit
+<a name="line45"></a>  val <a href="../../Docfiles/HTML/Parse.disable_tyabbrev_printing.html">disable_tyabbrev_printing</a> : string -&gt; unit
+<a name="line46"></a>  val <a href="../../Docfiles/HTML/Parse.remove_type_abbrev.html">remove_type_abbrev</a> : string -&gt; unit
+<a name="line47"></a>  val temp_remove_type_abbrev : string -&gt; unit
+<a name="line48"></a>  val temp_type_abbrev_pp : string * hol_type -&gt; unit
+<a name="line49"></a>  val <a href="../../Docfiles/HTML/Parse.type_abbrev_pp.html">type_abbrev_pp</a> : string * hol_type -&gt; unit
+<a name="line50"></a>
+<a name="line51"></a>  (* Parsing terms *)
+<a name="line52"></a>
+<a name="line53"></a>  val post_process_term: (term -&gt; term) ref
+<a name="line54"></a>  val add_absyn_postprocessor : string -&gt; unit
+<a name="line55"></a>  val temp_add_absyn_postprocessor :
+<a name="line56"></a>      (string * term_grammar.absyn_postprocessor) -&gt; unit
+<a name="line57"></a>  val temp_remove_absyn_postprocessor :
+<a name="line58"></a>      string -&gt; term_grammar.absyn_postprocessor option
+<a name="line59"></a>  val temp_add_preterm_processor :
+<a name="line60"></a>      string * int -&gt; term_grammar.preterm_processor -&gt; unit
+<a name="line61"></a>  val temp_remove_preterm_processor :
+<a name="line62"></a>      string * int -&gt; term_grammar.preterm_processor option
+<a name="line63"></a>
+<a name="line64"></a>  val absyn_to_term    : term_grammar.grammar -&gt; Absyn.absyn -&gt; term
+<a name="line65"></a>  val absyn_to_preterm : Absyn.absyn -&gt; Preterm.preterm Pretype.in_env
+<a name="line66"></a>  val <a href="../../Docfiles/HTML/Parse.Absyn.html">Absyn</a>            : term frag list -&gt; Absyn.absyn
+<a name="line67"></a>  val Preterm          : term frag list -&gt; Preterm.preterm
+<a name="line68"></a>  val <a href="../../Docfiles/HTML/Parse.Term.html">Term</a>             : term frag list -&gt; term
+<a name="line69"></a>  val typedTerm        : term frag list -&gt; hol_type -&gt; term
+<a name="line70"></a>  val <a href="../../Docfiles/HTML/Parse.ty_antiq.html">ty_antiq</a>         : hol_type -&gt; term
+<a name="line71"></a>  val <a href="../../Docfiles/HTML/Parse.parse_in_context.html">parse_in_context</a> : term list -&gt; term frag list -&gt; term
+<a name="line72"></a>  val typed_parse_in_context : hol_type -&gt; term list -&gt; term frag list -&gt; term
+<a name="line73"></a>  val <a href="../../Docfiles/HTML/Parse.parse_from_grammars.html">parse_from_grammars</a> :
+<a name="line74"></a>      (type_grammar.grammar * term_grammar.grammar) -&gt;
+<a name="line75"></a>      ((hol_type frag list -&gt; hol_type) * (term frag list -&gt; term))
+<a name="line76"></a>  val <a href="../../Docfiles/HTML/Parse.print_from_grammars.html">print_from_grammars</a> :
+<a name="line77"></a>      (type_grammar.grammar * term_grammar.grammar) -&gt;
+<a name="line78"></a>      (hol_type pprinter * term pprinter)
+<a name="line79"></a>  val <a href="../../Docfiles/HTML/Parse.print_term_by_grammar.html">print_term_by_grammar</a> :
+<a name="line80"></a>        (type_grammar.grammar * term_grammar.grammar) -&gt; term -&gt; unit
+<a name="line81"></a>  val <a href="../../Docfiles/HTML/Parse.print_without_macros.html">print_without_macros</a> : term -&gt; unit
+<a name="line82"></a>
+<a name="line83"></a>  val <a href="../../Docfiles/HTML/Parse.term_grammar.html">term_grammar</a> : unit -&gt; term_grammar.grammar
+<a name="line84"></a>
+<a name="line85"></a>  val print_term_grammar : unit -&gt; unit
+<a name="line86"></a>
+<a name="line87"></a>  (* the following functions modify the grammar, and do so in such a
+<a name="line88"></a>     way that the exported theory will have the same grammar  *)
+<a name="line89"></a>
+<a name="line90"></a>  val add_const  : string -&gt; unit
+<a name="line91"></a>  val <a href="../../Docfiles/HTML/Parse.add_infix.html">add_infix</a>  : string * int * associativity -&gt; unit
+<a name="line92"></a>  val std_binder_precedence : int
+<a name="line93"></a>  val <a href="../../Docfiles/HTML/Parse.add_rule.html">add_rule</a>   : {term_name : string, fixity :fixity,
+<a name="line94"></a>                    pp_elements: pp_element list, paren_style : ParenStyle,
+<a name="line95"></a>                    block_style : PhraseBlockStyle * block_info} -&gt; unit
+<a name="line96"></a>  val <a href="../../Docfiles/HTML/Parse.add_listform.html">add_listform</a> : {separator : pp_element list, leftdelim : pp_element list,
+<a name="line97"></a>                      rightdelim : pp_element list, cons : string,
+<a name="line98"></a>                      nilstr : string, block_info : block_info} -&gt; unit
+<a name="line99"></a>  val <a href="../../Docfiles/HTML/Parse.add_numeral_form.html">add_numeral_form</a> : (char * string option) -&gt; unit
+<a name="line100"></a>  val <a href="../../Docfiles/HTML/Parse.add_strliteral_form.html">add_strliteral_form</a> : {ldelim:string,inj:term} -&gt; unit
+<a name="line101"></a>  val remove_strliteral_form : {tmnm : string} -&gt; unit
+<a name="line102"></a>  val <a href="../../Docfiles/HTML/Parse.add_bare_numeral_form.html">add_bare_numeral_form</a> : (char * string option) -&gt; unit
+<a name="line103"></a>  val give_num_priority : char -&gt; unit
+<a name="line104"></a>  val remove_numeral_form : char -&gt; unit
+<a name="line105"></a>  val <a href="../../Docfiles/HTML/Parse.associate_restriction.html">associate_restriction</a> : (string * string) -&gt; unit
+<a name="line106"></a>  val <a href="../../Docfiles/HTML/Parse.prefer_form_with_tok.html">prefer_form_with_tok</a> : {term_name : string, tok : string} -&gt; unit
+<a name="line107"></a>  val <a href="../../Docfiles/HTML/Parse.set_fixity.html">set_fixity</a> : string -&gt; fixity -&gt; unit
+<a name="line108"></a>  val <a href="../../Docfiles/HTML/Parse.set_mapped_fixity.html">set_mapped_fixity</a> : {term_name : string, tok : string, fixity : fixity} -&gt;
+<a name="line109"></a>                          unit
+<a name="line110"></a>
+<a name="line111"></a>  val <a href="../../Docfiles/HTML/Parse.remove_rules_for_term.html">remove_rules_for_term</a> : string -&gt; unit
+<a name="line112"></a>  val <a href="../../Docfiles/HTML/Parse.remove_termtok.html">remove_termtok</a> : {term_name : string, tok : string} -&gt; unit
+<a name="line113"></a>
+<a name="line114"></a>  (* overloading and records *)
+<a name="line115"></a>
+<a name="line116"></a>  val <a href="../../Docfiles/HTML/Parse.overload_on.html">overload_on</a> : string * term -&gt; unit
+<a name="line117"></a>  val inferior_overload_on : string * term -&gt; unit
+<a name="line118"></a>  val overload_on_by_nametype : string -&gt; {Name: string, Thy: string} -&gt; unit
+<a name="line119"></a>  val send_to_back_overload : string -&gt; {Name: string, Thy: string} -&gt; unit
+<a name="line120"></a>  val bring_to_front_overload : string -&gt; {Name: string, Thy: string} -&gt; unit
+<a name="line121"></a>  val <a href="../../Docfiles/HTML/Parse.clear_overloads_on.html">clear_overloads_on</a> : string -&gt; unit
+<a name="line122"></a>  val <a href="../../Docfiles/HTML/Parse.remove_ovl_mapping.html">remove_ovl_mapping</a> : string -&gt; {Name:string, Thy:string} -&gt; unit
+<a name="line123"></a>  val gen_remove_ovl_mapping : string -&gt; term -&gt; unit
+<a name="line124"></a>  val add_record_field : string * term -&gt; unit
+<a name="line125"></a>  val add_record_fupdate : string * term -&gt; unit
+<a name="line126"></a>
+<a name="line127"></a>  (* information about overloads and abbreviations;
+<a name="line128"></a>     call interactively for information printed to stdout *)
+<a name="line129"></a>  val <a href="../../Docfiles/HTML/Parse.overload_info_for.html">overload_info_for</a> : string -&gt; unit
+<a name="line130"></a>
+<a name="line131"></a>  (* printing without overloads or abbreviations *)
+<a name="line132"></a>  val <a href="../../Docfiles/HTML/Parse.pp_term_without_overloads_on.html">pp_term_without_overloads_on</a> : string list -&gt; term pprinter
+<a name="line133"></a>  val pp_term_without_overloads : (string * term) list -&gt; term pprinter
+<a name="line134"></a>  val pp_type_without_abbrevs : string list -&gt; hol_type pprinter
+<a name="line135"></a>
+<a name="line136"></a>  (* adding and removing user parsers and printers to the grammar *)
+<a name="line137"></a>
+<a name="line138"></a>  val <a href="../../Docfiles/HTML/Parse.add_user_printer.html">add_user_printer</a> : (string * term) -&gt; unit
+<a name="line139"></a>  val <a href="../../Docfiles/HTML/Parse.remove_user_printer.html">remove_user_printer</a> : string -&gt; (term * term_grammar.userprinter) option
+<a name="line140"></a>  val constant_string_printer : string -&gt; term_grammar.userprinter
+<a name="line141"></a>
+<a name="line142"></a> (* the following functions affect the grammar, but not so that the
+<a name="line143"></a>    grammar exported to disk will be modified *)
+<a name="line144"></a>
+<a name="line145"></a>  val <a href="../../Docfiles/HTML/Parse.temp_set_grammars.html">temp_set_grammars</a> : (type_grammar.grammar * term_grammar.grammar) -&gt; unit
+<a name="line146"></a>  val temp_add_rule :
+<a name="line147"></a>    {term_name : string, fixity : fixity,
+<a name="line148"></a>     pp_elements: pp_element list, paren_style : ParenStyle,
+<a name="line149"></a>     block_style : PhraseBlockStyle * block_info}  -&gt; unit
+<a name="line150"></a>  val temp_add_infix : (string * int * associativity) -&gt; unit
+<a name="line151"></a>  val temp_add_listform : {separator : pp_element list,
+<a name="line152"></a>                           leftdelim : pp_element list,
+<a name="line153"></a>                           rightdelim : pp_element list, cons : string,
+<a name="line154"></a>                           nilstr : string, block_info : block_info} -&gt; unit
+<a name="line155"></a>  val temp_add_numeral_form : (char * string option) -&gt; unit
+<a name="line156"></a>  val temp_add_bare_numeral_form : (char * string option) -&gt; unit
+<a name="line157"></a>  val temp_give_num_priority : char -&gt; unit
+<a name="line158"></a>  val temp_add_strliteral_form : {ldelim:string,inj:term} -&gt; unit
+<a name="line159"></a>  val temp_remove_strliteral_form : {tmnm : string} -&gt; unit
+<a name="line160"></a>  val temp_remove_numeral_form : char -&gt; unit
+<a name="line161"></a>  val temp_associate_restriction : (string * string) -&gt; unit
+<a name="line162"></a>  val temp_prefer_form_with_tok : {term_name : string, tok : string} -&gt; unit
+<a name="line163"></a>  val temp_set_fixity : string -&gt; fixity -&gt; unit
+<a name="line164"></a>  val temp_set_mapped_fixity :
+<a name="line165"></a>      {term_name : string, tok : string, fixity : fixity} -&gt; unit
+<a name="line166"></a>
+<a name="line167"></a>  val temp_remove_rules_for_term : string -&gt; unit
+<a name="line168"></a>  val temp_remove_termtok : {term_name : string, tok : string} -&gt; unit
+<a name="line169"></a>  val temp_set_associativity : (int * associativity) -&gt; unit
+<a name="line170"></a>
+<a name="line171"></a>  val temp_overload_on : string * term -&gt; unit
+<a name="line172"></a>  val temp_inferior_overload_on : string * term -&gt; unit
+<a name="line173"></a>  val temp_overload_on_by_nametype : string -&gt; {Name:string,Thy:string} -&gt; unit
+<a name="line174"></a>  val temp_send_to_back_overload : string -&gt; {Name:string,Thy:string} -&gt; unit
+<a name="line175"></a>  val temp_bring_to_front_overload : string -&gt; {Name:string,Thy:string} -&gt; unit
+<a name="line176"></a>  val temp_clear_overloads_on : string -&gt; unit
+<a name="line177"></a>  val temp_remove_ovl_mapping : string -&gt; {Name:string, Thy:string} -&gt; unit
+<a name="line178"></a>  val temp_gen_remove_ovl_mapping : string -&gt; term -&gt; unit
+<a name="line179"></a>
+<a name="line180"></a>  val temp_add_record_field : string * term -&gt; unit
+<a name="line181"></a>  val temp_add_record_fupdate : string * term -&gt; unit
+<a name="line182"></a>
+<a name="line183"></a>  val temp_add_user_printer : (string * term * term_grammar.userprinter) -&gt;
+<a name="line184"></a>                              unit
+<a name="line185"></a>  val temp_remove_user_printer : string -&gt;
+<a name="line186"></a>                                 (term * term_grammar.userprinter) option
+<a name="line187"></a>
+<a name="line188"></a>  val try_grammar_extension : ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line189"></a>
+<a name="line190"></a>
+<a name="line191"></a>  (* Pretty printing *)
+<a name="line192"></a>  val current_backend : PPBackEnd.t ref
+<a name="line193"></a>  val interactive_ppbackend : unit -&gt; PPBackEnd.t
+<a name="line194"></a>  val mlower : (term_pp_types.printing_info,'a)smpp.t -&gt; HOLPP.pretty
+<a name="line195"></a>  val pp_term : term pprinter
+<a name="line196"></a>  val pp_type : hol_type pprinter
+<a name="line197"></a>  val pp_thm : thm pprinter
+<a name="line198"></a>  val stdprinters : ((term -&gt; string) * (hol_type -&gt; string)) option
+<a name="line199"></a>
+<a name="line200"></a>  val term_pp_with_delimiters : term pprinter -&gt; term pprinter
+<a name="line201"></a>  val type_pp_with_delimiters : hol_type pprinter -&gt; hol_type pprinter
+<a name="line202"></a>  val get_term_printer : unit -&gt; term pprinter
+<a name="line203"></a>  val set_term_printer : term pprinter -&gt; term pprinter
+<a name="line204"></a>
+<a name="line205"></a>  val minprint               : term -&gt; string
+<a name="line206"></a>  val <a href="../../Docfiles/HTML/Parse.rawterm_pp.html">rawterm_pp</a>             : ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line207"></a>  val add_style_to_string    : PPBackEnd.pp_style list -&gt; string -&gt; string
+<a name="line208"></a>  val print_with_style       : PPBackEnd.pp_style list -&gt; string -&gt; unit
+<a name="line209"></a>  val <a href="../../Docfiles/HTML/Parse.term_to_string.html">term_to_string</a>         : term -&gt; string
+<a name="line210"></a>  val type_to_string         : hol_type -&gt; string
+<a name="line211"></a>  val thm_to_string          : thm -&gt; string
+<a name="line212"></a>
+<a name="line213"></a>  val print_thm              : thm -&gt; unit
+<a name="line214"></a>  val print_type             : hol_type -&gt; unit
+<a name="line215"></a>  val <a href="../../Docfiles/HTML/Parse.print_term.html">print_term</a>             : term -&gt; unit
+<a name="line216"></a>
+<a name="line217"></a>
+<a name="line218"></a>  val export_theorems_as_docfiles : string -&gt; (string * thm) list -&gt; unit
+<a name="line219"></a>
+<a name="line220"></a>  val <a href="../../Docfiles/HTML/Parse.hide.html">hide</a>   : string -&gt; ({Name : string, Thy : string} list *
+<a name="line221"></a>                          {Name : string, Thy : string} list)
+<a name="line222"></a>  val <a href="../../Docfiles/HTML/Parse.update_overload_maps.html">update_overload_maps</a> :
+<a name="line223"></a>    string -&gt; ({Name : string, Thy : string} list *
+<a name="line224"></a>               {Name : string, Thy : string} list) -&gt; unit
+<a name="line225"></a>
+<a name="line226"></a>  val <a href="../../Docfiles/HTML/Parse.reveal.html">reveal</a> : string -&gt; unit
+<a name="line227"></a>  val <a href="../../Docfiles/HTML/Parse.hidden.html">hidden</a> : string -&gt; bool
+<a name="line228"></a>  val <a href="../../Docfiles/HTML/Parse.known_constants.html">known_constants</a>     : unit -&gt; string list
+<a name="line229"></a>  val <a href="../../Docfiles/HTML/Parse.set_known_constants.html">set_known_constants</a> : string list -&gt; unit
+<a name="line230"></a>  val is_constname : string -&gt; bool
+<a name="line231"></a>
+<a name="line232"></a>  val LEFT       : associativity
+<a name="line233"></a>  val RIGHT      : associativity
+<a name="line234"></a>  val NONASSOC   : associativity
+<a name="line235"></a>
+<a name="line236"></a>  val Infixl     : int -&gt; fixity
+<a name="line237"></a>  val Infixr     : int -&gt; fixity
+<a name="line238"></a>  val fixity     : string -&gt; fixity option
+<a name="line239"></a>
+<a name="line240"></a>  (* more constructors/values that come across from term_grammar *)
+<a name="line241"></a>
+<a name="line242"></a>  val TM               : pp_element
+<a name="line243"></a>  val TOK              : string -&gt; pp_element
+<a name="line244"></a>  val BreakSpace       : int * int -&gt; pp_element
+<a name="line245"></a>  val HardSpace        : int -&gt; pp_element
+<a name="line246"></a>  val BeginFinalBlock  : block_info -&gt; pp_element
+<a name="line247"></a>  val EndInitialBlock  : block_info -&gt; pp_element
+<a name="line248"></a>  val PPBlock          : pp_element list * block_info -&gt; pp_element
+<a name="line249"></a>  val ListForm         : {separator:pp_element list, cons : string,
+<a name="line250"></a>                          nilstr : string, block_info : block_info} -&gt;
+<a name="line251"></a>                         pp_element
+<a name="line252"></a>
+<a name="line253"></a>  val OnlyIfNecessary  : ParenStyle
+<a name="line254"></a>  val ParoundName      : ParenStyle
+<a name="line255"></a>  val ParoundPrec      : ParenStyle
+<a name="line256"></a>  val Always           : ParenStyle
+<a name="line257"></a>  val NotEvenIfRand    : ParenStyle
+<a name="line258"></a>
+<a name="line259"></a>  val AroundEachPhrase : PhraseBlockStyle
+<a name="line260"></a>  val AroundSamePrec   : PhraseBlockStyle
+<a name="line261"></a>  val AroundSameName   : PhraseBlockStyle
+<a name="line262"></a>  val NoPhrasing       : PhraseBlockStyle
+<a name="line263"></a>
+<a name="line264"></a>  val min_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line265"></a>  val merge_grammars : string list -&gt;
+<a name="line266"></a>                       type_grammar.grammar * term_grammar.grammar
+<a name="line267"></a>  val <a href="../../Docfiles/HTML/Parse.current_grammars.html">current_grammars</a> : unit -&gt; type_grammar.grammar * term_grammar.grammar
+<a name="line268"></a>
+<a name="line269"></a>  structure Unicode : sig
+<a name="line270"></a>    val unicode_version : {u:string,tmnm:string} -&gt; unit
+<a name="line271"></a>    val temp_unicode_version : {u:string,tmnm:string} -&gt; unit
+<a name="line272"></a>
+<a name="line273"></a>    structure UChar : UnicodeChars
+<a name="line274"></a>  end
+<a name="line275"></a>
+<a name="line276"></a>
+<a name="line277"></a>end
+<a name="line278"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Parse.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Thm_cont.DISCH_THEN</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>DISCH_THEN : (thm_tactic -&gt; tactic)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Thm_cont.html">Thm_cont</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Undischarges an antecedent of an implication and passes it to a theorem-tactic.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">DISCH_THEN</SPAN><SPAN class = "TEXT"> removes the antecedent and then creates a theorem by </SPAN><SPAN class = "BRKT">ASSUME</SPAN><SPAN class = "TEXT">ing
+it. This new theorem is passed to the theorem-tactic given as </SPAN><SPAN class = "BRKT">DISCH_THEN</SPAN><SPAN class = "TEXT">&rsquo;s
+argument. The consequent tactic is then applied. Thus:
+</SPAN><DIV class = "XMPL"><pre>
+   DISCH_THEN f (asl, t1 ==&gt; t2) = f(ASSUME t1) (asl,t2)
+</pre></DIV>
+<SPAN class = "TEXT">
+For example, if
+</SPAN><DIV class = "XMPL"><pre>
+    A ?- t
+   ========  f (ASSUME u)
+    B ?- v
+</pre></DIV>
+<SPAN class = "TEXT">
+then
+</SPAN><DIV class = "XMPL"><pre>
+    A ?- u ==&gt; t
+   ==============  DISCH_THEN f
+       B ?- v
+</pre></DIV>
+<SPAN class = "TEXT">
+Note that </SPAN><SPAN class = "BRKT">DISCH_THEN</SPAN><SPAN class = "TEXT"> treats </SPAN><SPAN class = "BRKT">~u</SPAN><SPAN class = "TEXT"> as </SPAN><SPAN class = "BRKT">u&nbsp;==&gt;&nbsp;F</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">DISCH_THEN</SPAN><SPAN class = "TEXT"> will fail for goals which are not implications or negations.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following shows how </SPAN><SPAN class = "BRKT">DISCH_THEN</SPAN><SPAN class = "TEXT"> can be used to preprocess an antecedent
+before adding it to the assumptions.
+</SPAN><DIV class = "XMPL"><pre>
+    A ?- (x = y) ==&gt; t
+   ====================  DISCH_THEN (ASSUME_TAC o SYM)
+     A u {y = x} ?- t
+</pre></DIV>
+<SPAN class = "TEXT">
+In many cases, it is possible to use an antecedent and then throw it
+away:
+</SPAN><DIV class = "XMPL"><pre>
+    A ?- (x = y) ==&gt; t x
+   ======================  DISCH_THEN (\th. PURE_REWRITE_TAC [th])
+          A ?- t y
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Thm.DISCH.html">DISCH</A>,
+<A HREF = "Drule.DISCH_ALL.html">DISCH_ALL</A>,
+<A HREF = "Tactic.DISCH_TAC.html">DISCH_TAC</A>,
+<A HREF = "Drule.NEG_DISCH.html">NEG_DISCH</A>,
+<A HREF = "Tactic.FILTER_DISCH_TAC.html">FILTER_DISCH_TAC</A>,
+<A HREF = "Tactic.FILTER_DISCH_THEN.html">FILTER_DISCH_THEN</A>,
+<A HREF = "Tactic.STRIP_TAC.html">STRIP_TAC</A>,
+<A HREF = "Drule.UNDISCH.html">UNDISCH</A>,
+<A HREF = "Drule.UNDISCH_ALL.html">UNDISCH_ALL</A>,
+<A HREF = "Tactic.UNDISCH_TAC.html">UNDISCH_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactical.ADD_SGS_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>ADD_SGS_TAC : term list -&gt; tactic -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactical.html">Tactical</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Adds extra sub-goals to the outcome of a tactic,
+as may be required to make an invalid tactic valid.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Suppose </SPAN><SPAN class = "BRKT">tac</SPAN><SPAN class = "TEXT"> applied to the goal </SPAN><SPAN class = "BRKT">(asl,w)</SPAN><SPAN class = "TEXT"> produces new goal list </SPAN><SPAN class = "BRKT">gl</SPAN><SPAN class = "TEXT">.
+Then </SPAN><SPAN class = "BRKT">ADD_SGS_TAC&nbsp;tml&nbsp;tac&nbsp;(asl,w)</SPAN><SPAN class = "TEXT"> produces, as new goals,
+</SPAN><SPAN class = "BRKT">gl</SPAN><SPAN class = "TEXT"> and, additionally, </SPAN><SPAN class = "BRKT">(asl,tm)</SPAN><SPAN class = "TEXT"> for each </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> in </SPAN><SPAN class = "BRKT">tml</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Then, if the justification returned by </SPAN><SPAN class = "BRKT">tac</SPAN><SPAN class = "TEXT">,
+when applied to the proved goals </SPAN><SPAN class = "BRKT">gl</SPAN><SPAN class = "TEXT">,
+gives a theorem which uses some additional assumption </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> in </SPAN><SPAN class = "BRKT">tml</SPAN><SPAN class = "TEXT">,
+then the proved goal </SPAN><SPAN class = "BRKT">(asl,tm)</SPAN><SPAN class = "TEXT"> is used to remove </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> from the assumption list
+of that theorem.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">ADD_SGS_TAC&nbsp;tml&nbsp;tac&nbsp;(asl,w)</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">tac&nbsp;(asl,w)</SPAN><SPAN class = "TEXT"> fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Where a tactic </SPAN><SPAN class = "BRKT">tac</SPAN><SPAN class = "TEXT"> requires certain assumptions </SPAN><SPAN class = "BRKT">tml</SPAN><SPAN class = "TEXT">
+to be present in the goal,
+which are not present but are capable of being proved,
+</SPAN><SPAN class = "BRKT">ADD_SGS_TAC&nbsp;tml&nbsp;tac</SPAN><SPAN class = "TEXT"> will conveniently set up new subgoals to prove the missing
+assumptions.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">VALIDATE&nbsp;tac</SPAN><SPAN class = "TEXT"> is similar and will usually be easier to use,
+but its extra new subgoals may occur in an unpredictable order.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Given a goal with an implication in the assumptions,
+one can split it into two subgoals, defining an auxiliary function
+</SPAN><DIV class = "XMPL"><pre>
+fun split_imp_asm th =
+  let val (tm, thu) = UNDISCH_TM th ;
+  in ADD_SGS_TAC [tm] (ASSUME_TAC thu) end ;
+</pre></DIV>
+<SPAN class = "TEXT">
+This can be used as follows:
+</SPAN><DIV class = "XMPL"><pre>
+1 subgoal:
+val it =
+
+r
+------------------------------------
+  p ==&gt; q
+:
+   proof
+
+&gt; e (FIRST_X_ASSUM split_imp_asm) ;
+
+OK..
+2 subgoals:
+val it =
+
+r
+------------------------------------
+  q
+
+p
+
+2 subgoals
+:
+   proof
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">To propose a term, prove it as a subgoal and then use it to prove
+the goal, as is done using </SPAN><SPAN class = "BRKT">SUBGOAL_THEN&nbsp;tm&nbsp;ASSUME_TAC</SPAN><SPAN class = "TEXT">,
+can also be done by </SPAN><SPAN class = "BRKT">ADD_SGS_TAC&nbsp;[tm]&nbsp;(ASSUME_TAC&nbsp;(ASSUME&nbsp;tm))</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactical.VALIDATE.html">VALIDATE</A>,
+<A HREF = "Tactical.GEN_VALIDATE.html">GEN_VALIDATE</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

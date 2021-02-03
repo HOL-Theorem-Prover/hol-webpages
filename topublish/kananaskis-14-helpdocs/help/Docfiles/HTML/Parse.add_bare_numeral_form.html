@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Parse.add_bare_numeral_form</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>add_bare_numeral_form : (char * string option) -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Adds support for annotated numerals to the parser/pretty-printer.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Parse</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The function </SPAN><SPAN class = "BRKT">add_bare_numeral_form</SPAN><SPAN class = "TEXT"> allows the user to give special
+meaning to strings of digits that are suffixed with single characters.
+A call to this function with pair argument </SPAN><SPAN class = "BRKT">(c,&nbsp;s)</SPAN><SPAN class = "TEXT"> adds </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> as a
+possible suffix.  Subsequently, if a sequence of digits is parsed, and
+it has the character </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> directly after the digits, then the natural
+number corresponding to these digits is made the argument of the
+&ldquo;map function&rdquo; corresponding to </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">This map function is computed as follows: if the </SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> option value is
+</SPAN><SPAN class = "BRKT">NONE</SPAN><SPAN class = "TEXT">, then the function is considered to be the identity and never
+really appears; the digits denote a natural number.  If the value of
+</SPAN><SPAN class = "BRKT">s</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">SOME&nbsp;s'</SPAN><SPAN class = "TEXT">, then the parser translates the string to an
+application of </SPAN><SPAN class = "BRKT">s'</SPAN><SPAN class = "TEXT"> to the natural number denoted by the digits.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the suffix character is not a letter.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following function, </SPAN><SPAN class = "BRKT">binary_of</SPAN><SPAN class = "TEXT">, defined with equations:
+</SPAN><DIV class = "XMPL"><pre>
+   val bthm =
+     |- binary_of n = if n = 0 then 0
+                      else n MOD 10 + 2 * binary_of (n DIV 10) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+can be used to convert numbers whose decimal notation is
+</SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT">, to numbers whose binary notation is </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> (as long as </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT"> only
+involves zeroes and ones).</SPAN>
+<P>
+<SPAN class = "TEXT">The following call to </SPAN><SPAN class = "BRKT">add_bare_numeral_form</SPAN><SPAN class = "TEXT"> then sets up a numeral
+form that could be used by users wanting to deal with binary numbers:
+</SPAN><DIV class = "XMPL"><pre>
+   - add_bare_numeral_form(#"b", SOME "binary_of");
+   &gt; val it = () : unit
+
+   - Term`1011b`;
+   &gt; val it = `1011b` : term
+
+   - dest_comb it;
+   &gt; val it = (`binary_of`, `1011`) : term * term
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">It is highly recommended that users avoid using suffixes that
+might be interpreted as hexadecimal digits A to F, in either upper or
+lower case.  Further, HOL convention has it that suffix character
+should be lower case.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If one has a range of values that are usefully indexed by natural
+numbers, the function </SPAN><SPAN class = "BRKT">add_bare_numeral_form</SPAN><SPAN class = "TEXT"> provides a syntactically
+convenient way of reading and writing these values.  If there are
+other functions in the range type such that the mapping function is a
+homomorphism from the natural numbers, then </SPAN><SPAN class = "BRKT">add_numeral_form</SPAN><SPAN class = "TEXT"> could
+be used, and the appropriate operators (</SPAN><SPAN class = "BRKT">+</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">*</SPAN><SPAN class = "TEXT"> etc) overloaded.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.add_numeral_form.html">add_numeral_form</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Kananaskis-14</div></BODY></HTML>

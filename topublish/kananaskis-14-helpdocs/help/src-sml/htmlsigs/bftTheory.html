@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure bftTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure bftTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/search/bftScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature bftTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#Rel_def-val">Rel_def</a> : thm
+<a name="line7"></a>  
+<a name="line8"></a>  (*  Theorems  *)
+<a name="line9"></a>    val <a href="#BFT_ALL_DISTINCT-val">BFT_ALL_DISTINCT</a> : thm
+<a name="line10"></a>    val <a href="#BFT_CONS-val">BFT_CONS</a> : thm
+<a name="line11"></a>    val <a href="#BFT_FOLD-val">BFT_FOLD</a> : thm
+<a name="line12"></a>    val <a href="#BFT_REACH_1-val">BFT_REACH_1</a> : thm
+<a name="line13"></a>    val <a href="#BFT_REACH_2-val">BFT_REACH_2</a> : thm
+<a name="line14"></a>    val <a href="#BFT_REACH_THM-val">BFT_REACH_THM</a> : thm
+<a name="line15"></a>    val <a href="#BFT_def-val">BFT_def</a> : thm
+<a name="line16"></a>    val <a href="#BFT_ind-val">BFT_ind</a> : thm
+<a name="line17"></a>  
+<a name="line18"></a>  val bft_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line19"></a>(*
+   [dirGraph] Parent theory of "bft"
+   
+   [<a name="Rel_def-val"><b>Rel_def</b></a>]  Definition
+      
+      ⊢ ∀G f seen fringe acc.
+          Rel (G,f,seen,fringe,acc) =
+          (CARD (Parents G DIFF set seen),LENGTH fringe)
+   
+   [<a name="BFT_ALL_DISTINCT-val"><b>BFT_ALL_DISTINCT</b></a>]  Theorem
+      
+      ⊢ ∀G seen fringe.
+          FINITE (Parents G) ⇒ ALL_DISTINCT (BFT G CONS seen fringe [])
+   
+   [<a name="BFT_CONS-val"><b>BFT_CONS</b></a>]  Theorem
+      
+      ⊢ ∀G f seen fringe acc a b.
+          FINITE (Parents G) ∧ f = CONS ∧ acc = a ⧺ b ⇒
+          BFT G f seen fringe acc = BFT G f seen fringe a ⧺ b
+   
+   [<a name="BFT_FOLD-val"><b>BFT_FOLD</b></a>]  Theorem
+      
+      ⊢ ∀G f seen fringe acc.
+          FINITE (Parents G) ⇒
+          BFT G f seen fringe acc = FOLDR f acc (BFT G CONS seen fringe [])
+   
+   [<a name="BFT_REACH_1-val"><b>BFT_REACH_1</b></a>]  Theorem
+      
+      ⊢ ∀G f seen fringe acc.
+          FINITE (Parents G) ∧ f = CONS ⇒
+          ∀x. MEM x (BFT G f seen fringe acc) ⇒
+              x ∈ REACH_LIST G fringe ∨ MEM x acc
+   
+   [<a name="BFT_REACH_2-val"><b>BFT_REACH_2</b></a>]  Theorem
+      
+      ⊢ ∀G f seen fringe acc x.
+          FINITE (Parents G) ∧ f = CONS ∧
+          x ∈ REACH_LIST (EXCLUDE G (set seen)) fringe ∧ ¬MEM x seen ⇒
+          MEM x (BFT G f seen fringe acc)
+   
+   [<a name="BFT_REACH_THM-val"><b>BFT_REACH_THM</b></a>]  Theorem
+      
+      ⊢ ∀G fringe.
+          FINITE (Parents G) ⇒
+          ∀x. x ∈ REACH_LIST G fringe ⇔ MEM x (BFT G CONS [] fringe [])
+   
+   [<a name="BFT_def-val"><b>BFT_def</b></a>]  Theorem
+      
+      ⊢ FINITE (Parents G) ⇒
+        BFT G f seen [] acc = acc ∧
+        BFT G f seen (h::t) acc =
+        if MEM h seen then BFT G f seen t acc
+        else BFT G f (h::seen) (t ⧺ G h) (f h acc)
+   
+   [<a name="BFT_ind-val"><b>BFT_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀G f seen h t acc.
+               P G f seen [] acc ∧
+               ((FINITE (Parents G) ∧ ¬MEM h seen ⇒
+                 P G f (h::seen) (t ⧺ G h) (f h acc)) ∧
+                (FINITE (Parents G) ∧ MEM h seen ⇒ P G f seen t acc) ⇒
+                P G f seen (h::t) acc)) ⇒
+            ∀v v1 v2 v3 v4. P v v1 v2 v3 v4
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/search/bftScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

@@ -1,0 +1,5409 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: integration</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "integration"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "derivativeTheory.html"><span class="strong">derivative</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">FINE</span>
+    <td>
+    :(α -> β -> bool) -> (α # (β -> bool) -> bool) -> bool
+    <tr><td>
+    <span class="strong">HK_integral</span>
+    <td>
+    :(real -> bool) -> (real -> real) -> real
+    <tr><td>
+    <span class="strong">absolutely_integrable_on</span>
+    <td>
+    :(real -> real) -> (real -> bool) -> bool
+    <tr><td> <span class="strong">content</span> <td> :(real -> bool) -> real
+    <tr><td>
+    <span class="strong">division_of</span>
+    <td>
+    :((real -> bool) -> bool) -> (real -> bool) -> bool
+    <tr><td>
+    <span class="strong">division_points</span>
+    <td>
+    :(real -> bool) -> ((real -> bool) -> bool) -> num # real -> bool
+    <tr><td>
+    <span class="strong">equiintegrable_on</span>
+    <td>
+    :((real -> real) -> bool) -> (real -> bool) -> bool
+    <tr><td>
+    <span class="strong">gauge_def</span>
+    <td>
+    :(real -> real -> bool) -> bool
+    <tr><td>
+    <span class="strong">has_bounded_setvariation_on</span>
+    <td>
+    :((real -> bool) -> real) -> (real -> bool) -> bool
+    <tr><td>
+    <span class="strong">has_bounded_variation_on</span>
+    <td>
+    :(real -> real) -> (real -> bool) -> bool
+    <tr><td>
+    <span class="strong">has_integral</span>
+    <td>
+    :(real -> real) -> real -> (real -> bool) -> bool
+    <tr><td>
+    <span class="strong">has_integral_compact_interval</span>
+    <td>
+    :(real -> real) -> real -> (real -> bool) -> bool
+    <tr><td>
+    <span class="strong">indicator</span>
+    <td>
+    :(real -> bool) -> real -> real
+    <tr><td>
+    <span class="strong">integrable_on</span>
+    <td>
+    :(real -> real) -> (real -> bool) -> bool
+    <tr><td>
+    <span class="strong">interval_lowerbound</span>
+    <td>
+    :(real -> bool) -> real
+    <tr><td>
+    <span class="strong">interval_upperbound</span>
+    <td>
+    :(real -> bool) -> real
+    <tr><td>
+    <span class="strong">lifted</span>
+    <td>
+    :(β -> γ -> α) -> β option -> γ option -> α option
+    <tr><td>
+    <span class="strong">negligible</span>
+    <td>
+    :(real -> bool) -> bool
+    <tr><td>
+    <span class="strong">operative</span>
+    <td>
+    :(α -> α -> α) -> ((real -> bool) -> α) -> bool
+    <tr><td>
+    <span class="strong">set_variation</span>
+    <td>
+    :(real -> bool) -> ((real -> bool) -> real) -> real
+    <tr><td>
+    <span class="strong">tagged_division_of</span>
+    <td>
+    :(real # (real -> bool) -> bool) -> (real -> bool) -> bool
+    <tr><td>
+    <span class="strong">tagged_partial_division_of</span>
+    <td>
+    :(real # (real -> bool) -> bool) -> (real -> bool) -> bool
+    <tr><td>
+    <span class="strong">vector_variation</span>
+    <td>
+    :(real -> bool) -> (real -> real) -> real
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">FINE</span>
+<DD>
+<pre>
+⊢ ∀d s. d FINE s ⇔ ∀x k. (x,k) ∈ s ⇒ k ⊆ d x
+</pre>
+
+<DT><span class="strong">absolutely_integrable_on</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f absolutely_integrable_on s ⇔
+    f integrable_on s ∧ (λx. abs (f x)) integrable_on s
+</pre>
+
+<DT><span class="strong">content</span>
+<DD>
+<pre>
+⊢ ∀s. content s =
+      if s = ∅ then 0 else interval_upperbound s − interval_lowerbound s
+</pre>
+
+<DT><span class="strong">division_of</span>
+<DD>
+<pre>
+⊢ ∀s i.
+    s division_of i ⇔
+    FINITE s ∧ (∀k. k ∈ s ⇒ k ⊆ i ∧ k ≠ ∅ ∧ ∃a b. k = interval [(a,b)]) ∧
+    (∀k1 k2. k1 ∈ s ∧ k2 ∈ s ∧ k1 ≠ k2 ⇒ (interior k1 ∩ interior k2 = ∅)) ∧
+    (BIGUNION s = i)
+</pre>
+
+<DT><span class="strong">division_points</span>
+<DD>
+<pre>
+⊢ ∀k d.
+    division_points k d =
+    {(j,x) |
+     1 ≤ j ∧ j ≤ 1 ∧ interval_lowerbound k < x ∧ x < interval_upperbound k ∧
+     ∃i. i ∈ d ∧ ((interval_lowerbound i = x) ∨ (interval_upperbound i = x))}
+</pre>
+
+<DT><span class="strong">equiintegrable_on</span>
+<DD>
+<pre>
+⊢ ∀fs i.
+    fs equiintegrable_on i ⇔
+    (∀f. f ∈ fs ⇒ f integrable_on i) ∧
+    ∀e. 0 < e ⇒
+        ∃d. gauge d ∧
+            ∀f p.
+              f ∈ fs ∧ p tagged_division_of i ∧ d FINE p ⇒
+              abs (sum p (λ(x,k). content k * f x) − ∫ i f) < e
+</pre>
+
+<DT><span class="strong">gauge_def</span>
+<DD>
+<pre>
+⊢ ∀d. gauge d ⇔ ∀x. x ∈ d x ∧ open (d x)
+</pre>
+
+<DT><span class="strong">has_bounded_setvariation_on</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_setvariation_on s ⇔
+    ∃B. ∀d t. d division_of t ∧ t ⊆ s ⇒ sum d (λk. abs (f k)) ≤ B
+</pre>
+
+<DT><span class="strong">has_bounded_variation_on</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_variation_on s ⇔
+    (λk. f (interval_upperbound k) − f (interval_lowerbound k)) has_bounded_setvariation_on
+    s
+</pre>
+
+<DT><span class="strong">has_integral_compact_interval</span>
+<DD>
+<pre>
+⊢ ∀f y i.
+    (f has_integral_compact_interval y) i ⇔
+    ∀e. 0 < e ⇒
+        ∃d. gauge d ∧
+            ∀p. p tagged_division_of i ∧ d FINE p ⇒
+                abs (sum p (λ(x,k). content k * f x) − y) < e
+</pre>
+
+<DT><span class="strong">has_integral_def</span>
+<DD>
+<pre>
+⊢ ∀f y i.
+    (f has_integral y) i ⇔
+    if ∃a b. i = interval [(a,b)] then (f has_integral_compact_interval y) i
+    else
+      ∀e. 0 < e ⇒
+          ∃B. 0 < B ∧
+              ∀a b.
+                ball (0,B) ⊆ interval [(a,b)] ⇒
+                ∃z. ((λx. if x ∈ i then f x else 0) has_integral_compact_interval
+                     z) (interval [(a,b)]) ∧ abs (z − y) < e
+</pre>
+
+<DT><span class="strong">indicator</span>
+<DD>
+<pre>
+⊢ ∀s. indicator s = (λx. if x ∈ s then 1 else 0)
+</pre>
+
+<DT><span class="strong">integrable_on</span>
+<DD>
+<pre>
+⊢ ∀f i. f integrable_on i ⇔ ∃y. (f has_integral y) i
+</pre>
+
+<DT><span class="strong">integral</span>
+<DD>
+<pre>
+⊢ ∀i f. ∫ i f = @y. (f has_integral y) i
+</pre>
+
+<DT><span class="strong">interval_lowerbound</span>
+<DD>
+<pre>
+⊢ ∀s. interval_lowerbound s = if s = ∅ then 0 else inf s
+</pre>
+
+<DT><span class="strong">interval_upperbound</span>
+<DD>
+<pre>
+⊢ ∀s. interval_upperbound s = if s = ∅ then 0 else sup s
+</pre>
+
+<DT><span class="strong">negligible</span>
+<DD>
+<pre>
+⊢ ∀s. negligible s ⇔ ∀a b. (indicator s has_integral 0) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">operative</span>
+<DD>
+<pre>
+⊢ ∀op f.
+    operative op f ⇔
+    (∀a b.
+       (content (interval [(a,b)]) = 0) ⇒ (f (interval [(a,b)]) = neutral op)) ∧
+    ∀a b c.
+      f (interval [(a,b)]) =
+      op (f (interval [(a,b)] ∩ {x | x ≤ c}))
+        (f (interval [(a,b)] ∩ {x | x ≥ c}))
+</pre>
+
+<DT><span class="strong">set_variation</span>
+<DD>
+<pre>
+⊢ ∀s f.
+    set_variation s f =
+    sup {sum d (λk. abs (f k)) | (∃t. d division_of t ∧ t ⊆ s)}
+</pre>
+
+<DT><span class="strong">tagged_division_of</span>
+<DD>
+<pre>
+⊢ ∀s i.
+    s tagged_division_of i ⇔
+    s tagged_partial_division_of i ∧ (BIGUNION {k | (∃x. (x,k) ∈ s)} = i)
+</pre>
+
+<DT><span class="strong">tagged_partial_division_of</span>
+<DD>
+<pre>
+⊢ ∀s i.
+    s tagged_partial_division_of i ⇔
+    FINITE s ∧
+    (∀x k. (x,k) ∈ s ⇒ x ∈ k ∧ k ⊆ i ∧ ∃a b. k = interval [(a,b)]) ∧
+    ∀x1 k1 x2 k2.
+      (x1,k1) ∈ s ∧ (x2,k2) ∈ s ∧ (x1,k1) ≠ (x2,k2) ⇒
+      (interior k1 ∩ interior k2 = ∅)
+</pre>
+
+<DT><span class="strong">vector_variation</span>
+<DD>
+<pre>
+⊢ ∀s f.
+    vector_variation s f =
+    set_variation s
+      (λk. f (interval_upperbound k) − f (interval_lowerbound k))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_0</span>
+<DD>
+<pre>
+⊢ ∀s. (λx. 0) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_ABS</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f absolutely_integrable_on s ⇒ (λx. abs (f x)) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_ABSOLUTELY_INTEGRABLE_BOUND</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x. x ∈ s ⇒ abs (f x) ≤ abs (g x)) ∧ f integrable_on s ∧
+    g absolutely_integrable_on s ⇒
+    f absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_ABSOLUTELY_INTEGRABLE_COMPONENT_LBOUND</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x i. x ∈ s ⇒ f x ≤ g x) ∧ f absolutely_integrable_on s ∧
+    g integrable_on s ⇒
+    g absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_ABSOLUTELY_INTEGRABLE_COMPONENT_UBOUND</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x i. x ∈ s ⇒ f x ≤ g x) ∧ f integrable_on s ∧
+    g absolutely_integrable_on s ⇒
+    f absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_ABSOLUTELY_INTEGRABLE_LBOUND</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x. x ∈ s ⇒ f x ≤ g x) ∧ f absolutely_integrable_on s ∧ g integrable_on s ⇒
+    g absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_ABSOLUTELY_INTEGRABLE_UBOUND</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x. x ∈ s ⇒ f x ≤ g x) ∧ f integrable_on s ∧ g absolutely_integrable_on s ⇒
+    f absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_ABS_EQ</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f absolutely_integrable_on s ⇔
+    f integrable_on s ∧ (λx. abs (f x)) integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f absolutely_integrable_on s ∧ g absolutely_integrable_on s ⇒
+    (λx. f x + g x) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_BOUNDED_SETVARIATION</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f absolutely_integrable_on s ⇒ (λk. ∫ k f) has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_BOUNDED_SETVARIATION_EQ</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f absolutely_integrable_on interval [(a,b)] ⇔
+    f integrable_on interval [(a,b)] ∧
+    (λk. ∫ k f) has_bounded_setvariation_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_BOUNDED_SETVARIATION_UNIV_EQ</span>
+<DD>
+<pre>
+⊢ ∀f. f absolutely_integrable_on 𝕌(:real) ⇔
+      f integrable_on 𝕌(:real) ∧
+      (λk. ∫ k f) has_bounded_setvariation_on 𝕌(:real)
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f s c.
+    f absolutely_integrable_on s ⇒ (λx. c * f x) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_COMPONENTWISE</span>
+<DD>
+<pre>
+⊢ ∀f s. f absolutely_integrable_on s ⇔ (λx. f x) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_CONST</span>
+<DD>
+<pre>
+⊢ ∀a b c. (λx. c) absolutely_integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_CONTINUOUS</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f continuous_on interval [(a,b)] ⇒
+    f absolutely_integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x. x ∈ s ⇒ (f x = g x)) ∧ f absolutely_integrable_on s ⇒
+    g absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_IMP_ABS_INTEGRABLE</span>
+<DD>
+<pre>
+⊢ ∀f s. f absolutely_integrable_on s ⇒ (λx. abs (f x)) integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_IMP_INTEGRABLE</span>
+<DD>
+<pre>
+⊢ ∀f s. f absolutely_integrable_on s ⇒ f integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_INF</span>
+<DD>
+<pre>
+⊢ ∀fs s k.
+    FINITE k ∧ k ≠ ∅ ∧ (∀i. i ∈ k ⇒ (λx. fs x i) absolutely_integrable_on s) ⇒
+    (λx. inf (IMAGE (fs x) k)) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_INTEGRABLE_BOUND</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x. x ∈ s ⇒ abs (f x) ≤ g x) ∧ f integrable_on s ∧ g integrable_on s ⇒
+    f absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_LE</span>
+<DD>
+<pre>
+⊢ ∀f s. f absolutely_integrable_on s ⇒ abs (∫ s f) ≤ ∫ s (λx. abs (f x))
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_LINEAR</span>
+<DD>
+<pre>
+⊢ ∀f h s.
+    f absolutely_integrable_on s ∧ linear h ⇒ h ∘ f absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_MAX</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f absolutely_integrable_on s ∧ g absolutely_integrable_on s ⇒
+    (λx. max (f x) (g x)) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_MIN</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f absolutely_integrable_on s ∧ g absolutely_integrable_on s ⇒
+    (λx. min (f x) (g x)) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_NEG</span>
+<DD>
+<pre>
+⊢ ∀f s. f absolutely_integrable_on s ⇒ (λx. -f x) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_ON_NULL</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (content (interval [(a,b)]) = 0) ⇒
+    f absolutely_integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_ON_SUBINTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f s a b.
+    f absolutely_integrable_on s ∧ interval [(a,b)] ⊆ s ⇒
+    f absolutely_integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_RESTRICT_INTER</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    (λx. if x ∈ s then f x else 0) absolutely_integrable_on t ⇔
+    f absolutely_integrable_on s ∩ t
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_RESTRICT_UNIV</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (λx. if x ∈ s then f x else 0) absolutely_integrable_on 𝕌(:real) ⇔
+    f absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_SET_VARIATION</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f absolutely_integrable_on interval [(a,b)] ⇒
+    (set_variation (interval [(a,b)]) (λk. ∫ k f) =
+     ∫ (interval [(a,b)]) (λx. abs (f x)))
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_SPIKE</span>
+<DD>
+<pre>
+⊢ ∀f g s t.
+    negligible s ∧ (∀x. x ∈ t DIFF s ⇒ (g x = f x)) ⇒
+    f absolutely_integrable_on t ⇒
+    g absolutely_integrable_on t
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_SUB</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f absolutely_integrable_on s ∧ g absolutely_integrable_on s ⇒
+    (λx. f x − g x) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_SUM</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE t ∧ (∀a. a ∈ t ⇒ f a absolutely_integrable_on s) ⇒
+    (λx. sum t (λa. f a x)) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABSOLUTELY_INTEGRABLE_SUP</span>
+<DD>
+<pre>
+⊢ ∀fs s k.
+    FINITE k ∧ k ≠ ∅ ∧ (∀i. i ∈ k ⇒ (λx. fs x i) absolutely_integrable_on s) ⇒
+    (λx. sup (IMAGE (fs x) k)) absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">ABS_LE_L1</span>
+<DD>
+<pre>
+⊢ ∀x. abs x ≤ sum (1 .. 1) (λi. abs x)
+</pre>
+
+<DT><span class="strong">ABS_TRIANGLE_LE</span>
+<DD>
+<pre>
+⊢ ∀x y. abs x + abs y ≤ e ⇒ abs (x + y) ≤ e
+</pre>
+
+<DT><span class="strong">ADDITIVE_CONTENT_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀d a b.
+    d division_of interval [(a,b)] ⇒
+    (sum d content = content (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">ADDITIVE_CONTENT_TAGGED_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀d a b.
+    d tagged_division_of interval [(a,b)] ⇒
+    (sum d (λ(x,l). content l) = content (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">ADDITIVE_TAGGED_DIVISION_1</span>
+<DD>
+<pre>
+⊢ ∀f p a b.
+    a ≤ b ∧ p tagged_division_of interval [(a,b)] ⇒
+    (sum p (λ(x,k). f (interval_upperbound k) − f (interval_lowerbound k)) =
+     f b − f a)
+</pre>
+
+<DT><span class="strong">ANTIDERIVATIVE_CONTINUOUS</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f continuous_on interval [(a,b)] ⇒
+    ∃g. ∀x.
+      x ∈ interval [(a,b)] ⇒
+      (g has_vector_derivative f x) (at x within interval [(a,b)])
+</pre>
+
+<DT><span class="strong">ANTIDERIVATIVE_INTEGRAL_CONTINUOUS</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f continuous_on interval [(a,b)] ⇒
+    ∃g. ∀u v.
+      u ∈ interval [(a,b)] ∧ v ∈ interval [(a,b)] ∧ u ≤ v ⇒
+      (f has_integral g v − g u) (interval [(u,v)])
+</pre>
+
+<DT><span class="strong">APPROXIMABLE_ON_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀f d a b e.
+    0 ≤ e ∧ d division_of interval [(a,b)] ∧
+    (∀i. i ∈ d ⇒ ∃g. (∀x. x ∈ i ⇒ abs (f x − g x) ≤ e) ∧ g integrable_on i) ⇒
+    ∃g. (∀x. x ∈ interval [(a,b)] ⇒ abs (f x − g x) ≤ e) ∧
+        g integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">BEPPO_LEVI_DECREASING</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀k. f k integrable_on s) ∧ (∀k x. x ∈ s ⇒ f (SUC k) x ≤ f k x) ∧
+    bounded {∫ s (f k) | k ∈ 𝕌(:num)} ⇒
+    ∃g k. negligible k ∧ ∀x. x ∈ s DIFF k ⇒ ((λk. f k x) ⟶ g x) sequentially
+</pre>
+
+<DT><span class="strong">BEPPO_LEVI_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀k. f k integrable_on s) ∧ (∀k x. x ∈ s ⇒ f k x ≤ f (SUC k) x) ∧
+    bounded {∫ s (f k) | k ∈ 𝕌(:num)} ⇒
+    ∃g k. negligible k ∧ ∀x. x ∈ s DIFF k ⇒ ((λk. f k x) ⟶ g x) sequentially
+</pre>
+
+<DT><span class="strong">BEPPO_LEVI_MONOTONE_CONVERGENCE_DECREASING</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀k. f k integrable_on s) ∧ (∀k x. x ∈ s ⇒ f (SUC k) x ≤ f k x) ∧
+    bounded {∫ s (f k) | k ∈ 𝕌(:num)} ⇒
+    ∃g k.
+      negligible k ∧ (∀x. x ∈ s DIFF k ⇒ ((λk. f k x) ⟶ g x) sequentially) ∧
+      g integrable_on s ∧ ((λk. ∫ s (f k)) ⟶ ∫ s g) sequentially
+</pre>
+
+<DT><span class="strong">BEPPO_LEVI_MONOTONE_CONVERGENCE_DECREASING_AE</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀k. f k integrable_on s) ∧
+    (∀k. ∃t. negligible t ∧ ∀x. x ∈ s DIFF t ⇒ f (SUC k) x ≤ f k x) ∧
+    bounded {∫ s (f k) | k ∈ 𝕌(:num)} ⇒
+    ∃g k.
+      negligible k ∧ (∀x. x ∈ s DIFF k ⇒ ((λk. f k x) ⟶ g x) sequentially) ∧
+      g integrable_on s ∧ ((λk. ∫ s (f k)) ⟶ ∫ s g) sequentially
+</pre>
+
+<DT><span class="strong">BEPPO_LEVI_MONOTONE_CONVERGENCE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀k. f k integrable_on s) ∧ (∀k x. x ∈ s ⇒ f k x ≤ f (SUC k) x) ∧
+    bounded {∫ s (f k) | k ∈ 𝕌(:num)} ⇒
+    ∃g k.
+      negligible k ∧ (∀x. x ∈ s DIFF k ⇒ ((λk. f k x) ⟶ g x) sequentially) ∧
+      g integrable_on s ∧ ((λk. ∫ s (f k)) ⟶ ∫ s g) sequentially
+</pre>
+
+<DT><span class="strong">BEPPO_LEVI_MONOTONE_CONVERGENCE_INCREASING_AE</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀k. f k integrable_on s) ∧
+    (∀k. ∃t. negligible t ∧ ∀x. x ∈ s DIFF t ⇒ f k x ≤ f (SUC k) x) ∧
+    bounded {∫ s (f k) | k ∈ 𝕌(:num)} ⇒
+    ∃g k.
+      negligible k ∧ (∀x. x ∈ s DIFF k ⇒ ((λk. f k x) ⟶ g x) sequentially) ∧
+      g integrable_on s ∧ ((λk. ∫ s (f k)) ⟶ ∫ s g) sequentially
+</pre>
+
+<DT><span class="strong">BOUNDED_EQUIINTEGRAL_OVER_THIN_TAGGED_PARTIAL_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀fs f a b e.
+    fs equiintegrable_on interval [(a,b)] ∧ f ∈ fs ∧
+    (∀h x. h ∈ fs ∧ x ∈ interval [(a,b)] ⇒ abs (h x) ≤ abs (f x)) ∧ 0 < e ⇒
+    ∃d. gauge d ∧
+        ∀c p h.
+          c ∈ interval [(a,b)] ∧
+          p tagged_partial_division_of interval [(a,b)] ∧ d FINE p ∧ h ∈ fs ∧
+          (∀x k. (x,k) ∈ p ⇒ k ∩ {x | x = c} ≠ ∅) ⇒
+          sum p (λ(x,k). abs (∫ k h)) < e
+</pre>
+
+<DT><span class="strong">BOUNDED_SETVARIATION_ABSOLUTELY_INTEGRABLE</span>
+<DD>
+<pre>
+⊢ ∀f. f integrable_on 𝕌(:real) ∧
+      (λk. ∫ k f) has_bounded_setvariation_on 𝕌(:real) ⇒
+      f absolutely_integrable_on 𝕌(:real)
+</pre>
+
+<DT><span class="strong">BOUNDED_SETVARIATION_ABSOLUTELY_INTEGRABLE_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f integrable_on interval [(a,b)] ∧
+    (λk. ∫ k f) has_bounded_setvariation_on interval [(a,b)] ⇒
+    f absolutely_integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">CONTENT_0_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s a b.
+    s ⊆ interval [(a,b)] ∧ (content (interval [(a,b)]) = 0) ⇒ (content s = 0)
+</pre>
+
+<DT><span class="strong">CONTENT_0_SUBSET_GEN</span>
+<DD>
+<pre>
+⊢ ∀s t. s ⊆ t ∧ bounded t ∧ (content t = 0) ⇒ (content s = 0)
+</pre>
+
+<DT><span class="strong">CONTENT_CLOSED_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ (content (interval [(a,b)]) = b − a)
+</pre>
+
+<DT><span class="strong">CONTENT_CLOSED_INTERVAL_CASES</span>
+<DD>
+<pre>
+⊢ ∀a b. content (interval [(a,b)]) = if a ≤ b then b − a else 0
+</pre>
+
+<DT><span class="strong">CONTENT_DOUBLESPLIT</span>
+<DD>
+<pre>
+⊢ ∀a b c e.
+    0 < e ⇒ ∃d. 0 < d ∧ content (interval [(a,b)] ∩ {x | abs (x − c) ≤ d}) < e
+</pre>
+
+<DT><span class="strong">CONTENT_EMPTY</span>
+<DD>
+<pre>
+⊢ content ∅ = 0
+</pre>
+
+<DT><span class="strong">CONTENT_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀a b. (content (interval [(a,b)]) = 0) ⇔ b ≤ a
+</pre>
+
+<DT><span class="strong">CONTENT_EQ_0_1</span>
+<DD>
+<pre>
+⊢ ∀a b. (content (interval [(a,b)]) = 0) ⇔ b ≤ a
+</pre>
+
+<DT><span class="strong">CONTENT_EQ_0_GEN</span>
+<DD>
+<pre>
+⊢ ∀s. bounded s ⇒ ((content s = 0) ⇔ ∃a. ∀x. x ∈ s ⇒ (x = a))
+</pre>
+
+<DT><span class="strong">CONTENT_EQ_0_INTERIOR</span>
+<DD>
+<pre>
+⊢ ∀a b. (content (interval [(a,b)]) = 0) ⇔ (interior (interval [(a,b)]) = ∅)
+</pre>
+
+<DT><span class="strong">CONTENT_IMAGE_AFFINITY_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀a b m c.
+    content (IMAGE (λx. m * x + c) (interval [(a,b)])) =
+    abs m pow 1 * content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">CONTENT_IMAGE_STRETCH_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀a b m.
+    content (IMAGE (λx. m 1 * x) (interval [(a,b)])) =
+    abs (product (1 .. 1) m) * content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">CONTENT_LT_NZ</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 < content (interval [(a,b)]) ⇔ content (interval [(a,b)]) ≠ 0
+</pre>
+
+<DT><span class="strong">CONTENT_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 ≤ content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">CONTENT_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀a b. a < b ⇒ 0 < content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">CONTENT_POS_LT_EQ</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 < content (interval [(a,b)]) ⇔ a < b
+</pre>
+
+<DT><span class="strong">CONTENT_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀a b k.
+    content (interval [(a,b)]) =
+    content (interval [(a,b)] ∩ {x | x ≤ c}) +
+    content (interval [(a,b)] ∩ {x | x ≥ c})
+</pre>
+
+<DT><span class="strong">CONTENT_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀a b c d.
+    interval [(a,b)] ⊆ interval [(c,d)] ⇒
+    content (interval [(a,b)]) ≤ content (interval [(c,d)])
+</pre>
+
+<DT><span class="strong">CONTENT_UNIT</span>
+<DD>
+<pre>
+⊢ content (interval [(0,1)]) = 1
+</pre>
+
+<DT><span class="strong">CONTINUOUS_ON_VECTOR_VARIATION</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f has_bounded_variation_on interval [(a,b)] ∧
+    f continuous_on interval [(a,b)] ⇒
+    (λx. vector_variation (interval [(a,x)]) f) continuous_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">CONVEX_CONTAINS_SEGMENT</span>
+<DD>
+<pre>
+⊢ ∀s. convex s ⇔ ∀a b. a ∈ s ∧ b ∈ s ⇒ segment [(a,b)] ⊆ s
+</pre>
+
+<DT><span class="strong">DECREASING_BOUNDED_VARIATION</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f y ≤ f x) ⇒
+    f has_bounded_variation_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">DECREASING_BOUNDED_VARIATION_GEN</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    bounded (IMAGE f s) ∧ (∀x y. x ∈ s ∧ y ∈ s ∧ x ≤ y ⇒ f y ≤ f x) ⇒
+    f has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">DECREASING_LEFT_LIMIT</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f y ≤ f x) ∧
+    c ∈ interval [(a,b)] ⇒
+    ∃l. (f ⟶ l) (at c within interval [(a,c)])
+</pre>
+
+<DT><span class="strong">DECREASING_RIGHT_LIMIT</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f y ≤ f x) ∧
+    c ∈ interval [(a,b)] ⇒
+    ∃l. (f ⟶ l) (at c within interval [(c,b)])
+</pre>
+
+<DT><span class="strong">DECREASING_VECTOR_VARIATION</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    interval [(a,b)] ≠ ∅ ∧
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f y ≤ f x) ⇒
+    (vector_variation (interval [(a,b)]) f = f a − f b)
+</pre>
+
+<DT><span class="strong">DIVISION_1_SORT</span>
+<DD>
+<pre>
+⊢ ∀d s.
+    d division_of s ∧ (∀k. k ∈ d ⇒ interior k ≠ ∅) ⇒
+    ∃n t.
+      (IMAGE t (1 .. n) = d) ∧
+      ∀i j.
+        i ∈ (1 .. n) ∧ j ∈ (1 .. n) ∧ i < j ⇒
+        t i ≠ t j ∧ ∀x y. x ∈ t i ∧ y ∈ t j ⇒ x ≤ y
+</pre>
+
+<DT><span class="strong">DIVISION_COMMON_POINT_BOUND</span>
+<DD>
+<pre>
+⊢ ∀d s x. d division_of s ⇒ CARD {k | k ∈ d ∧ content k ≠ 0 ∧ x ∈ k} ≤ 2 ** 1
+</pre>
+
+<DT><span class="strong">DIVISION_CONTAINS</span>
+<DD>
+<pre>
+⊢ ∀s i. s division_of i ⇒ ∀x. x ∈ i ⇒ ∃k. x ∈ k ∧ k ∈ s
+</pre>
+
+<DT><span class="strong">DIVISION_DISJOINT_UNION</span>
+<DD>
+<pre>
+⊢ ∀s1 s2 p1 p2.
+    p1 division_of s1 ∧ p2 division_of s2 ∧ (interior s1 ∩ interior s2 = ∅) ⇒
+    p1 ∪ p2 division_of s1 ∪ s2
+</pre>
+
+<DT><span class="strong">DIVISION_DOUBLESPLIT</span>
+<DD>
+<pre>
+⊢ ∀p a b c e.
+    p division_of interval [(a,b)] ⇒
+    {l ∩ {x | abs (x − c) ≤ e} | l | l ∈ p ∧ l ∩ {x | abs (x − c) ≤ e} ≠ ∅} division_of
+    interval [(a,b)] ∩ {x | abs (x − c) ≤ e}
+</pre>
+
+<DT><span class="strong">DIVISION_INTER</span>
+<DD>
+<pre>
+⊢ ∀s1 s2 p1 p2.
+    p1 division_of s1 ∧ p2 division_of s2 ⇒
+    {k1 ∩ k2 | k1 ∈ p1 ∧ k2 ∈ p2 ∧ k1 ∩ k2 ≠ ∅} division_of s1 ∩ s2
+</pre>
+
+<DT><span class="strong">DIVISION_INTER_1</span>
+<DD>
+<pre>
+⊢ ∀d i a b.
+    d division_of i ∧ interval [(a,b)] ⊆ i ⇒
+    {interval [(a,b)] ∩ k | k | k ∈ d ∧ interval [(a,b)] ∩ k ≠ ∅} division_of
+    interval [(a,b)]
+</pre>
+
+<DT><span class="strong">DIVISION_OF</span>
+<DD>
+<pre>
+⊢ ∀s i.
+    s division_of i ⇔
+    FINITE s ∧ (∀k. k ∈ s ⇒ k ≠ ∅ ∧ ∃a b. k = interval [(a,b)]) ∧
+    (∀k1 k2. k1 ∈ s ∧ k2 ∈ s ∧ k1 ≠ k2 ⇒ (interior k1 ∩ interior k2 = ∅)) ∧
+    (BIGUNION s = i)
+</pre>
+
+<DT><span class="strong">DIVISION_OF_AFFINITY</span>
+<DD>
+<pre>
+⊢ ∀d s m c.
+    IMAGE (IMAGE (λx. m * x + c)) d division_of IMAGE (λx. m * x + c) s ⇔
+    if m = 0 then if s = ∅ then d = ∅ else d ≠ ∅ ∧ ∀k. k ∈ d ⇒ k ≠ ∅
+    else d division_of s
+</pre>
+
+<DT><span class="strong">DIVISION_OF_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀f. FINITE f ∧ (∀p. p ∈ f ⇒ p division_of BIGUNION p) ∧
+      (∀k1 k2.
+         k1 ∈ BIGUNION f ∧ k2 ∈ BIGUNION f ∧ k1 ≠ k2 ⇒
+         (interior k1 ∩ interior k2 = ∅)) ⇒
+      BIGUNION f division_of BIGUNION (BIGUNION f)
+</pre>
+
+<DT><span class="strong">DIVISION_OF_CLOSED</span>
+<DD>
+<pre>
+⊢ ∀s i. s division_of i ⇒ closed i
+</pre>
+
+<DT><span class="strong">DIVISION_OF_CONTENT_0</span>
+<DD>
+<pre>
+⊢ ∀a b d.
+    (content (interval [(a,b)]) = 0) ∧ d division_of interval [(a,b)] ⇒
+    ∀k. k ∈ d ⇒ (content k = 0)
+</pre>
+
+<DT><span class="strong">DIVISION_OF_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s i. s division_of i ⇒ FINITE s
+</pre>
+
+<DT><span class="strong">DIVISION_OF_NONTRIVIAL</span>
+<DD>
+<pre>
+⊢ ∀s a b.
+    s division_of interval [(a,b)] ∧ content (interval [(a,b)]) ≠ 0 ⇒
+    {k | k ∈ s ∧ content k ≠ 0} division_of interval [(a,b)]
+</pre>
+
+<DT><span class="strong">DIVISION_OF_REFLECT</span>
+<DD>
+<pre>
+⊢ ∀d s.
+    IMAGE (IMAGE (λx. -x)) d division_of IMAGE (λx. -x) s ⇔ d division_of s
+</pre>
+
+<DT><span class="strong">DIVISION_OF_SELF</span>
+<DD>
+<pre>
+⊢ ∀a b. interval [(a,b)] ≠ ∅ ⇒ {interval [(a,b)]} division_of interval [(a,b)]
+</pre>
+
+<DT><span class="strong">DIVISION_OF_SING</span>
+<DD>
+<pre>
+⊢ ∀s a. s division_of interval [(a,a)] ⇔ (s = {interval [(a,a)]})
+</pre>
+
+<DT><span class="strong">DIVISION_OF_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀p q. p division_of BIGUNION p ∧ q ⊆ p ⇒ q division_of BIGUNION q
+</pre>
+
+<DT><span class="strong">DIVISION_OF_TAGGED_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀s i. s tagged_division_of i ⇒ IMAGE SND s division_of i
+</pre>
+
+<DT><span class="strong">DIVISION_OF_TRANSLATION</span>
+<DD>
+<pre>
+⊢ ∀d s.
+    IMAGE (IMAGE (λx. a + x)) d division_of IMAGE (λx. a + x) s ⇔
+    d division_of s
+</pre>
+
+<DT><span class="strong">DIVISION_OF_TRIVIAL</span>
+<DD>
+<pre>
+⊢ ∀s. s division_of ∅ ⇔ (s = ∅)
+</pre>
+
+<DT><span class="strong">DIVISION_OF_UNION_SELF</span>
+<DD>
+<pre>
+⊢ ∀p s. p division_of s ⇒ p division_of BIGUNION p
+</pre>
+
+<DT><span class="strong">DIVISION_POINTS_FINITE</span>
+<DD>
+<pre>
+⊢ ∀d i. d division_of i ⇒ FINITE (division_points i d)
+</pre>
+
+<DT><span class="strong">DIVISION_POINTS_PSUBSET</span>
+<DD>
+<pre>
+⊢ ∀a b c d.
+    d division_of interval [(a,b)] ∧ a < b ∧ a < c ∧ c < b ∧
+    (∃l. l ∈ d ∧ ((interval_lowerbound l = c) ∨ (interval_upperbound l = c))) ⇒
+    division_points (interval [(a,b)] ∩ {x | x ≤ c})
+      {l ∩ {x | x ≤ c} | l | l ∈ d ∧ l ∩ {x | x ≤ c} ≠ ∅} ⊂
+    division_points (interval [(a,b)]) d ∧
+    division_points (interval [(a,b)] ∩ {x | x ≥ c})
+      {l ∩ {x | x ≥ c} | l | l ∈ d ∧ l ∩ {x | x ≥ c} ≠ ∅} ⊂
+    division_points (interval [(a,b)]) d
+</pre>
+
+<DT><span class="strong">DIVISION_POINTS_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀a b c d k.
+    d division_of interval [(a,b)] ∧ a < b ∧ a < c ∧ c < b ⇒
+    division_points (interval [(a,b)] ∩ {x | x ≤ c})
+      {l ∩ {x | x ≤ c} | l | l ∈ d ∧ l ∩ {x | x ≤ c} ≠ ∅} ⊆
+    division_points (interval [(a,b)]) d ∧
+    division_points (interval [(a,b)] ∩ {x | x ≥ c})
+      {l ∩ {x | x ≥ c} | l | l ∈ d ∧ l ∩ {x | x ≥ c} ≠ ∅} ⊆
+    division_points (interval [(a,b)]) d
+</pre>
+
+<DT><span class="strong">DIVISION_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀p a b c.
+    p division_of interval [(a,b)] ⇒
+    {l ∩ {x | x ≤ c} | l | l ∈ p ∧ l ∩ {x | x ≤ c} ≠ ∅} division_of
+    interval [(a,b)] ∩ {x | x ≤ c} ∧
+    {l ∩ {x | x ≥ c} | l | l ∈ p ∧ l ∩ {x | x ≥ c} ≠ ∅} division_of
+    interval [(a,b)] ∩ {x | x ≥ c}
+</pre>
+
+<DT><span class="strong">DIVISION_SPLIT_LEFT_INJ</span>
+<DD>
+<pre>
+⊢ ∀d i k1 k2 k c.
+    d division_of i ∧ k1 ∈ d ∧ k2 ∈ d ∧ k1 ≠ k2 ∧
+    (k1 ∩ {x | x ≤ c} = k2 ∩ {x | x ≤ c}) ⇒
+    (content (k1 ∩ {x | x ≤ c}) = 0)
+</pre>
+
+<DT><span class="strong">DIVISION_SPLIT_LEFT_RIGHT_INJ</span>
+<DD>
+<pre>
+⊢ (∀d i k1 k2 k c.
+     d division_of i ∧ k1 ∈ d ∧ k2 ∈ d ∧ k1 ≠ k2 ∧
+     (k1 ∩ {x | x ≤ c} = k2 ∩ {x | x ≤ c}) ⇒
+     (content (k1 ∩ {x | x ≤ c}) = 0)) ∧
+  ∀d i k1 k2 k c.
+    d division_of i ∧ k1 ∈ d ∧ k2 ∈ d ∧ k1 ≠ k2 ∧
+    (k1 ∩ {x | x ≥ c} = k2 ∩ {x | x ≥ c}) ⇒
+    (content (k1 ∩ {x | x ≥ c}) = 0)
+</pre>
+
+<DT><span class="strong">DIVISION_SPLIT_RIGHT_INJ</span>
+<DD>
+<pre>
+⊢ ∀d i k1 k2 k c.
+    d division_of i ∧ k1 ∈ d ∧ k2 ∈ d ∧ k1 ≠ k2 ∧
+    (k1 ∩ {x | x ≥ c} = k2 ∩ {x | x ≥ c}) ⇒
+    (content (k1 ∩ {x | x ≥ c}) = 0)
+</pre>
+
+<DT><span class="strong">DIVISION_UNION_INTERVALS_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀a b c d.
+    interval [(a,b)] ≠ ∅ ⇒
+    ∃p. interval [(a,b)] INSERT p division_of
+        interval [(a,b)] ∪ interval [(c,d)]
+</pre>
+
+<DT><span class="strong">DOMINATED_CONVERGENCE</span>
+<DD>
+<pre>
+⊢ ∀f g h s.
+    (∀k. f k integrable_on s) ∧ h integrable_on s ∧
+    (∀k x. x ∈ s ⇒ abs (f k x) ≤ h x) ∧
+    (∀x. x ∈ s ⇒ ((λk. f k x) ⟶ g x) sequentially) ⇒
+    g integrable_on s ∧ ((λk. ∫ s (f k)) ⟶ ∫ s g) sequentially
+</pre>
+
+<DT><span class="strong">DOMINATED_CONVERGENCE_ABSOLUTELY_INTEGRABLE</span>
+<DD>
+<pre>
+⊢ ∀f g h s.
+    (∀k. f k absolutely_integrable_on s) ∧ h integrable_on s ∧
+    (∀k x. x ∈ s ⇒ abs (g x) ≤ h x) ∧
+    (∀x. x ∈ s ⇒ ((λk. f k x) ⟶ g x) sequentially) ⇒
+    g absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">DOMINATED_CONVERGENCE_AE</span>
+<DD>
+<pre>
+⊢ ∀f g h s t.
+    (∀k. f k integrable_on s) ∧ h integrable_on s ∧ negligible t ∧
+    (∀k x. x ∈ s DIFF t ⇒ abs (f k x) ≤ h x) ∧
+    (∀x. x ∈ s DIFF t ⇒ ((λk. f k x) ⟶ g x) sequentially) ⇒
+    g integrable_on s ∧ ((λk. ∫ s (f k)) ⟶ ∫ s g) sequentially
+</pre>
+
+<DT><span class="strong">DOMINATED_CONVERGENCE_INTEGRABLE</span>
+<DD>
+<pre>
+⊢ ∀f g h s.
+    (∀k. f k absolutely_integrable_on s) ∧ h integrable_on s ∧
+    (∀k x. x ∈ s ⇒ abs (g x) ≤ h x) ∧
+    (∀x. x ∈ s ⇒ ((λk. f k x) ⟶ g x) sequentially) ⇒
+    g integrable_on s
+</pre>
+
+<DT><span class="strong">DROP_INDICATOR</span>
+<DD>
+<pre>
+⊢ ∀s x. indicator s x = if x ∈ s then 1 else 0
+</pre>
+
+<DT><span class="strong">DROP_INDICATOR_ABS_LE_1</span>
+<DD>
+<pre>
+⊢ ∀s x. abs (indicator s x) ≤ 1
+</pre>
+
+<DT><span class="strong">DROP_INDICATOR_LE_1</span>
+<DD>
+<pre>
+⊢ ∀s x. indicator s x ≤ 1
+</pre>
+
+<DT><span class="strong">DROP_INDICATOR_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀s x. 0 ≤ indicator s x
+</pre>
+
+<DT><span class="strong">DSUM_BOUND</span>
+<DD>
+<pre>
+⊢ ∀p a b c e.
+    p division_of interval [(a,b)] ∧ abs c ≤ e ⇒
+    abs (sum p (λl. content l * c)) ≤ e * content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">ELEMENTARY_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀f. FINITE f ∧ f ≠ ∅ ∧ (∀s. s ∈ f ⇒ ∃p. p division_of s) ⇒
+      ∃p. p division_of BIGINTER f
+</pre>
+
+<DT><span class="strong">ELEMENTARY_BIGUNION_INTERVALS</span>
+<DD>
+<pre>
+⊢ ∀f. FINITE f ∧ (∀s. s ∈ f ⇒ ∃a b. s = interval [(a,b)]) ⇒
+      ∃p. p division_of BIGUNION f
+</pre>
+
+<DT><span class="strong">ELEMENTARY_BOUNDED</span>
+<DD>
+<pre>
+⊢ ∀s. (∃p. p division_of s) ⇒ bounded s
+</pre>
+
+<DT><span class="strong">ELEMENTARY_COMPACT</span>
+<DD>
+<pre>
+⊢ ∀s. (∃d. d division_of s) ⇒ compact s
+</pre>
+
+<DT><span class="strong">ELEMENTARY_EMPTY</span>
+<DD>
+<pre>
+⊢ ∃p. p division_of ∅
+</pre>
+
+<DT><span class="strong">ELEMENTARY_INTER</span>
+<DD>
+<pre>
+⊢ ∀s t.
+    (∃p. p division_of s) ∧ (∃p. p division_of t) ⇒ ∃p. p division_of s ∩ t
+</pre>
+
+<DT><span class="strong">ELEMENTARY_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀a b. ∃p. p division_of interval [(a,b)]
+</pre>
+
+<DT><span class="strong">ELEMENTARY_SUBSET_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀s. (∃p. p division_of s) ⇒ ∃a b. s ⊆ interval [(a,b)]
+</pre>
+
+<DT><span class="strong">ELEMENTARY_UNION</span>
+<DD>
+<pre>
+⊢ ∀s t.
+    (∃p. p division_of s) ∧ (∃p. p division_of t) ⇒ ∃p. p division_of s ∪ t
+</pre>
+
+<DT><span class="strong">ELEMENTARY_UNION_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀p a b.
+    p division_of BIGUNION p ⇒ ∃q. q division_of interval [(a,b)] ∪ BIGUNION p
+</pre>
+
+<DT><span class="strong">ELEMENTARY_UNION_INTERVAL_STRONG</span>
+<DD>
+<pre>
+⊢ ∀p a b.
+    p division_of BIGUNION p ⇒
+    ∃q. p ⊆ q ∧ q division_of interval [(a,b)] ∪ BIGUNION p
+</pre>
+
+<DT><span class="strong">EMPTY_DIVISION_OF</span>
+<DD>
+<pre>
+⊢ ∀s. ∅ division_of s ⇔ (s = ∅)
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_ADD</span>
+<DD>
+<pre>
+⊢ ∀fs gs s.
+    fs equiintegrable_on s ∧ gs equiintegrable_on s ⇒
+    {(λx. f x + g x) | f ∈ fs ∧ g ∈ gs} equiintegrable_on s
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_CLOSED_INTERVAL_RESTRICTIONS</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f integrable_on interval [(a,b)] ⇒
+    {(λx. if x ∈ interval [(c,d)] then f x else 0) |
+     c ∈ 𝕌(:real) ∧ d ∈ 𝕌(:real)} equiintegrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_CMUL</span>
+<DD>
+<pre>
+⊢ ∀fs s k.
+    fs equiintegrable_on s ⇒
+    {(λx. c * f x) | abs c ≤ k ∧ f ∈ fs} equiintegrable_on s
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀fs d a b.
+    d division_of interval [(a,b)] ⇒
+    (fs equiintegrable_on interval [(a,b)] ⇔
+     ∀i. i ∈ d ⇒ fs equiintegrable_on i)
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_EQ</span>
+<DD>
+<pre>
+⊢ ∀fs gs s.
+    fs equiintegrable_on s ∧
+    (∀g. g ∈ gs ⇒ ∃f. f ∈ fs ∧ ∀x. x ∈ s ⇒ (f x = g x)) ⇒
+    gs equiintegrable_on s
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_HALFSPACE_RESTRICTIONS_GE</span>
+<DD>
+<pre>
+⊢ ∀fs f a b.
+    fs equiintegrable_on interval [(a,b)] ∧ f ∈ fs ∧
+    (∀h x. h ∈ fs ∧ x ∈ interval [(a,b)] ⇒ abs (h x) ≤ abs (f x)) ⇒
+    {(λx. if x ≥ c then h x else 0) | c ∈ 𝕌(:real) ∧ h ∈ fs} equiintegrable_on
+    interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_HALFSPACE_RESTRICTIONS_GT</span>
+<DD>
+<pre>
+⊢ ∀fs f a b.
+    fs equiintegrable_on interval [(a,b)] ∧ f ∈ fs ∧
+    (∀h x. h ∈ fs ∧ x ∈ interval [(a,b)] ⇒ abs (h x) ≤ abs (f x)) ⇒
+    {(λx. if x > c then h x else 0) | c ∈ 𝕌(:real) ∧ h ∈ fs} equiintegrable_on
+    interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_HALFSPACE_RESTRICTIONS_LE</span>
+<DD>
+<pre>
+⊢ ∀fs f a b.
+    fs equiintegrable_on interval [(a,b)] ∧ f ∈ fs ∧
+    (∀h x. h ∈ fs ∧ x ∈ interval [(a,b)] ⇒ abs (h x) ≤ abs (f x)) ⇒
+    {(λx. if x ≤ c then h x else 0) | c ∈ 𝕌(:real) ∧ h ∈ fs} equiintegrable_on
+    interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_HALFSPACE_RESTRICTIONS_LT</span>
+<DD>
+<pre>
+⊢ ∀fs f a b.
+    fs equiintegrable_on interval [(a,b)] ∧ f ∈ fs ∧
+    (∀h x. h ∈ fs ∧ x ∈ interval [(a,b)] ⇒ abs (h x) ≤ abs (f x)) ⇒
+    {(λx. if x < c then h x else 0) | c ∈ 𝕌(:real) ∧ h ∈ fs} equiintegrable_on
+    interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_LIMIT</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    {f n | n ∈ 𝕌(:num)} equiintegrable_on interval [(a,b)] ∧
+    (∀x. x ∈ interval [(a,b)] ⇒ ((λn. f n x) ⟶ g x) sequentially) ⇒
+    g integrable_on interval [(a,b)] ∧
+    ((λn. ∫ (interval [(a,b)]) (f n)) ⟶ ∫ (interval [(a,b)]) g) sequentially
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_NEG</span>
+<DD>
+<pre>
+⊢ ∀fs s. fs equiintegrable_on s ⇒ {(λx. -f x) | f ∈ fs} equiintegrable_on s
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_ON_NULL</span>
+<DD>
+<pre>
+⊢ ∀fs a b.
+    (content (interval [(a,b)]) = 0) ⇒ fs equiintegrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_ON_SING</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    {f} equiintegrable_on interval [(a,b)] ⇔ f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_ON_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀fs k a b c.
+    fs equiintegrable_on interval [(a,b)] ∩ {x | x ≤ c} ∧
+    fs equiintegrable_on interval [(a,b)] ∩ {x | x ≥ c} ⇒
+    fs equiintegrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_OPEN_INTERVAL_RESTRICTIONS</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f integrable_on interval [(a,b)] ⇒
+    {(λx. if x ∈ interval (c,d) then f x else 0) | c ∈ 𝕌(:real) ∧ d ∈ 𝕌(:real)} equiintegrable_on
+    interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_REFLECT</span>
+<DD>
+<pre>
+⊢ ∀fs a b.
+    fs equiintegrable_on interval [(a,b)] ⇒
+    {(λx. f (-x)) | f ∈ fs} equiintegrable_on interval [(-b,-a)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_SUB</span>
+<DD>
+<pre>
+⊢ ∀fs gs s.
+    fs equiintegrable_on s ∧ gs equiintegrable_on s ⇒
+    {(λx. f x − g x) | f ∈ fs ∧ g ∈ gs} equiintegrable_on s
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀fs gs s. fs equiintegrable_on s ∧ gs ⊆ fs ⇒ gs equiintegrable_on s
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_SUM</span>
+<DD>
+<pre>
+⊢ ∀fs a b.
+    fs equiintegrable_on interval [(a,b)] ⇒
+    {(λx. sum t (λi. c i * f i x)) |
+     FINITE t ∧ (∀i. i ∈ t ⇒ 0 ≤ c i ∧ f i ∈ fs) ∧ (sum t c = 1)} equiintegrable_on
+    interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_UNIFORM_LIMIT</span>
+<DD>
+<pre>
+⊢ ∀fs a b.
+    fs equiintegrable_on interval [(a,b)] ⇒
+    {g |
+     ∀e. 0 < e ⇒ ∃f. f ∈ fs ∧ ∀x. x ∈ interval [(a,b)] ⇒ abs (g x − f x) < e} equiintegrable_on
+    interval [(a,b)]
+</pre>
+
+<DT><span class="strong">EQUIINTEGRABLE_UNION</span>
+<DD>
+<pre>
+⊢ ∀fs gs s.
+    fs equiintegrable_on s ∧ gs equiintegrable_on s ⇒
+    fs ∪ gs equiintegrable_on s
+</pre>
+
+<DT><span class="strong">FATOU</span>
+<DD>
+<pre>
+⊢ ∀f g s t B.
+    negligible t ∧ (∀n. f n integrable_on s) ∧
+    (∀n x. x ∈ s DIFF t ⇒ 0 ≤ f n x) ∧
+    (∀x. x ∈ s DIFF t ⇒ ((λn. f n x) ⟶ g x) sequentially) ∧
+    (∀n. ∫ s (f n) ≤ B) ⇒
+    g integrable_on s ∧ 0 ≤ ∫ s g ∧ ∫ s g ≤ B
+</pre>
+
+<DT><span class="strong">FINE_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀f s p. (λx. BIGINTER {f d x | d ∈ s}) FINE p ⇔ ∀d. d ∈ s ⇒ f d FINE p
+</pre>
+
+<DT><span class="strong">FINE_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀d ps. (∀p. p ∈ ps ⇒ d FINE p) ⇒ d FINE BIGUNION ps
+</pre>
+
+<DT><span class="strong">FINE_DIVISION_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀g a b. gauge g ⇒ ∃p. p tagged_division_of interval [(a,b)] ∧ g FINE p
+</pre>
+
+<DT><span class="strong">FINE_INTER</span>
+<DD>
+<pre>
+⊢ ∀p d1 d2. (λx. d1 x ∩ d2 x) FINE p ⇔ d1 FINE p ∧ d2 FINE p
+</pre>
+
+<DT><span class="strong">FINE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀d p q. p ⊆ q ∧ d FINE q ⇒ d FINE p
+</pre>
+
+<DT><span class="strong">FINE_UNION</span>
+<DD>
+<pre>
+⊢ ∀d p1 p2. d FINE p1 ∧ d FINE p2 ⇒ d FINE p1 ∪ p2
+</pre>
+
+<DT><span class="strong">FINITE_POWERSET</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ FINITE {t | t ⊆ s}
+</pre>
+
+<DT><span class="strong">FLOOR_POS</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ ∃n. flr x = n
+</pre>
+
+<DT><span class="strong">FORALL_IN_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀P d i.
+    d division_of i ⇒
+    ((∀x. x ∈ d ⇒ P x) ⇔ ∀a b. interval [(a,b)] ∈ d ⇒ P (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">FORALL_IN_DIVISION_NONEMPTY</span>
+<DD>
+<pre>
+⊢ ∀P d i.
+    d division_of i ⇒
+    ((∀x. x ∈ d ⇒ P x) ⇔
+     ∀a b. interval [(a,b)] ∈ d ∧ interval [(a,b)] ≠ ∅ ⇒ P (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">FUNDAMENTAL_THEOREM_OF_CALCULUS</span>
+<DD>
+<pre>
+⊢ ∀f f' a b.
+    a ≤ b ∧
+    (∀x. x ∈ interval [(a,b)] ⇒
+         (f has_vector_derivative f' x) (at x within interval [(a,b)])) ⇒
+    (f' has_integral f b − f a) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">FUNDAMENTAL_THEOREM_OF_CALCULUS_INTERIOR</span>
+<DD>
+<pre>
+⊢ ∀f f' a b.
+    a ≤ b ∧ f continuous_on interval [(a,b)] ∧
+    (∀x. x ∈ interval (a,b) ⇒ (f has_vector_derivative f' x) (at x)) ⇒
+    (f' has_integral f b − f a) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">FUNDAMENTAL_THEOREM_OF_CALCULUS_INTERIOR_STRONG</span>
+<DD>
+<pre>
+⊢ ∀f f' s a b.
+    COUNTABLE s ∧ a ≤ b ∧ f continuous_on interval [(a,b)] ∧
+    (∀x. x ∈ interval (a,b) DIFF s ⇒ (f has_vector_derivative f' x) (at x)) ⇒
+    (f' has_integral f b − f a) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">FUNDAMENTAL_THEOREM_OF_CALCULUS_STRONG</span>
+<DD>
+<pre>
+⊢ ∀f f' s a b.
+    COUNTABLE s ∧ a ≤ b ∧ f continuous_on interval [(a,b)] ∧
+    (∀x. x ∈ interval [(a,b)] DIFF s ⇒
+         (f has_vector_derivative f' x) (at x within interval [(a,b)])) ⇒
+    (f' has_integral f b − f a) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">GAUGE_BALL</span>
+<DD>
+<pre>
+⊢ ∀e. 0 < e ⇒ gauge (λx. ball (x,e))
+</pre>
+
+<DT><span class="strong">GAUGE_BALL_DEPENDENT</span>
+<DD>
+<pre>
+⊢ ∀e. (∀x. 0 < e x) ⇒ gauge (λx. ball (x,e x))
+</pre>
+
+<DT><span class="strong">GAUGE_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    FINITE s ∧ (∀d. d ∈ s ⇒ gauge (f d)) ⇒
+    gauge (λx. BIGINTER {f d x | d ∈ s})
+</pre>
+
+<DT><span class="strong">GAUGE_EXISTENCE_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀p q. (∀x. ∃d. p x ⇒ 0 < d ∧ q d x) ⇔ ∀x. ∃d. 0 < d ∧ (p x ⇒ q d x)
+</pre>
+
+<DT><span class="strong">GAUGE_INTER</span>
+<DD>
+<pre>
+⊢ ∀d1 d2. gauge d1 ∧ gauge d2 ⇒ gauge (λx. d1 x ∩ d2 x)
+</pre>
+
+<DT><span class="strong">GAUGE_MODIFY</span>
+<DD>
+<pre>
+⊢ ∀f. (∀s. open s ⇒ open {x | f x ∈ s}) ⇒
+      ∀d. gauge d ⇒ gauge (λx y. d (f x) (f y))
+</pre>
+
+<DT><span class="strong">GAUGE_TRIVIAL</span>
+<DD>
+<pre>
+⊢ gauge (λx. ball (x,1))
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_COMPARISON</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_setvariation_on s ∧
+    (∀a b.
+       interval [(a,b)] ≠ ∅ ∧ interval [(a,b)] ⊆ s ⇒
+       abs (g (interval [(a,b)])) ≤ abs (f (interval [(a,b)]))) ⇒
+    g has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_setvariation_on s ⇔
+    ∃B. 0 < B ∧ ∀d t. d division_of t ∧ t ⊆ s ⇒ sum d (λk. abs (f k)) ≤ B
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_0</span>
+<DD>
+<pre>
+⊢ ∀s. (λx. 0) has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_ABS</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (λx. abs (f x)) has_bounded_setvariation_on s ⇔
+    f has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_setvariation_on s ∧ g has_bounded_setvariation_on s ⇒
+    (λx. f x + g x) has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f c s.
+    f has_bounded_setvariation_on s ⇒
+    (λx. c * f x) has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_COMPONENTWISE</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_setvariation_on s ⇔ (λk. f k) has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_COMPOSE_LINEAR</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_setvariation_on s ∧ linear g ⇒
+    g ∘ f has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀f a b d.
+    operative $+ f ∧ d division_of interval [(a,b)] ⇒
+    ((∀k. k ∈ d ⇒ f has_bounded_setvariation_on k) ⇔
+     f has_bounded_setvariation_on interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_ELEMENTARY</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∃d. d division_of s) ⇒
+    (f has_bounded_setvariation_on s ⇔
+     ∃B. ∀d. d division_of s ⇒ sum d (λk. abs (f k)) ≤ B)
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀a b.
+       interval [(a,b)] ≠ ∅ ∧ interval [(a,b)] ⊆ s ⇒
+       (f (interval [(a,b)]) = g (interval [(a,b)]))) ∧
+    f has_bounded_setvariation_on s ⇒
+    g has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_IMP_BOUNDED_ON_SUBINTERVALS</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_setvariation_on s ⇒
+    bounded {f (interval [(c,d)]) | interval [(c,d)] ⊆ s}
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f has_bounded_setvariation_on interval [(a,b)] ⇔
+    ∃B. ∀d. d division_of interval [(a,b)] ⇒ sum d (λk. abs (f k)) ≤ B
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_NEG</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (λx. -f x) has_bounded_setvariation_on s ⇔ f has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_NULL</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀a b. (content (interval [(a,b)]) = 0) ⇒ (f (interval [(a,b)]) = 0)) ∧
+    (content s = 0) ∧ bounded s ⇒
+    f has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_SUB</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_setvariation_on s ∧ g has_bounded_setvariation_on s ⇒
+    (λx. f x − g x) has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    f has_bounded_setvariation_on s ∧ t ⊆ s ⇒ f has_bounded_setvariation_on t
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_SUM</span>
+<DD>
+<pre>
+⊢ ∀f s k.
+    FINITE k ∧ (∀i. i ∈ k ⇒ f i has_bounded_setvariation_on s) ⇒
+    (λx. sum k (λi. f i x)) has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_SUM_AND_SET_VARIATION_SUM_LE</span>
+<DD>
+<pre>
+⊢ (∀f s k.
+     FINITE k ∧ (∀i. i ∈ k ⇒ f i has_bounded_setvariation_on s) ⇒
+     (λx. sum k (λi. f i x)) has_bounded_setvariation_on s) ∧
+  ∀f s k.
+    FINITE k ∧ (∀i. i ∈ k ⇒ f i has_bounded_setvariation_on s) ⇒
+    set_variation s (λx. sum k (λi. f i x)) ≤
+    sum k (λi. set_variation s (f i))
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_ON_UNIV</span>
+<DD>
+<pre>
+⊢ ∀f. f has_bounded_setvariation_on 𝕌(:real) ⇔
+      ∃B. ∀d. d division_of BIGUNION d ⇒ sum d (λk. abs (f k)) ≤ B
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_REFLECT2_EQ</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (λk. f (IMAGE (λx. -x) k)) has_bounded_setvariation_on IMAGE (λx. -x) s ⇔
+    f has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_REFLECT2_EQ_AND_SET_VARIATION_REFLECT2</span>
+<DD>
+<pre>
+⊢ (∀f s.
+     (λk. f (IMAGE (λx. -x) k)) has_bounded_setvariation_on IMAGE (λx. -x) s ⇔
+     f has_bounded_setvariation_on s) ∧
+  ∀f s.
+    set_variation (IMAGE (λx. -x) s) (λk. f (IMAGE (λx. -x) k)) =
+    set_variation s f
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_TRANSLATION</span>
+<DD>
+<pre>
+⊢ ∀f s a.
+    f has_bounded_setvariation_on s ⇒
+    (λk. f (IMAGE (λx. a + x) k)) has_bounded_setvariation_on
+    IMAGE (λx. -a + x) s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_TRANSLATION2_EQ</span>
+<DD>
+<pre>
+⊢ ∀a f s.
+    (λk. f (IMAGE (λx. a + x) k)) has_bounded_setvariation_on
+    IMAGE (λx. -a + x) s ⇔ f has_bounded_setvariation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_TRANSLATION2_EQ_AND_SET_VARIATION_TRANSLATION2</span>
+<DD>
+<pre>
+⊢ (∀a f s.
+     (λk. f (IMAGE (λx. a + x) k)) has_bounded_setvariation_on
+     IMAGE (λx. -a + x) s ⇔ f has_bounded_setvariation_on s) ∧
+  ∀a f s.
+    set_variation (IMAGE (λx. -a + x) s) (λk. f (IMAGE (λx. a + x) k)) =
+    set_variation s f
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_WORKS</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_setvariation_on s ⇒
+    (∀d t. d division_of t ∧ t ⊆ s ⇒ sum d (λk. abs (f k)) ≤ set_variation s f) ∧
+    ∀B. (∀d t. d division_of t ∧ t ⊆ s ⇒ sum d (λk. abs (f k)) ≤ B) ⇒
+        set_variation s f ≤ B
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_WORKS_ON_ELEMENTARY</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_setvariation_on s ∧ (∃d. d division_of s) ⇒
+    (∀d. d division_of s ⇒ sum d (λk. abs (f k)) ≤ set_variation s f) ∧
+    ∀B. (∀d. d division_of s ⇒ sum d (λk. abs (f k)) ≤ B) ⇒
+        set_variation s f ≤ B
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_SETVARIATION_WORKS_ON_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f has_bounded_setvariation_on interval [(a,b)] ⇒
+    (∀d. d division_of interval [(a,b)] ⇒
+         sum d (λk. abs (f k)) ≤ set_variation (interval [(a,b)]) f) ∧
+    ∀B. (∀d. d division_of interval [(a,b)] ⇒ sum d (λk. abs (f k)) ≤ B) ⇒
+        set_variation (interval [(a,b)]) f ≤ B
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_AFFINITY2_EQ</span>
+<DD>
+<pre>
+⊢ ∀m c f s.
+    (λx. f (m * x + c)) has_bounded_variation_on
+    IMAGE (λx. m⁻¹ * x + -(m⁻¹ * c)) s ⇔
+    (m = 0) ∨ f has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_AFFINITY2_EQ_AND_VECTOR_VARIATION_AFFINITY2</span>
+<DD>
+<pre>
+⊢ (∀m c f s.
+     (λx. f (m * x + c)) has_bounded_variation_on
+     IMAGE (λx. m⁻¹ * x + -(m⁻¹ * c)) s ⇔
+     (m = 0) ∨ f has_bounded_variation_on s) ∧
+  ∀m c f s.
+    vector_variation (IMAGE (λx. m⁻¹ * x + -(m⁻¹ * c)) s) (λx. f (m * x + c)) =
+    if m = 0 then 0 else vector_variation s f
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_AFFINITY_EQ</span>
+<DD>
+<pre>
+⊢ ∀m c f s.
+    (λx. f (m * x + c)) has_bounded_variation_on s ⇔
+    (m = 0) ∨ f has_bounded_variation_on IMAGE (λx. m * x + c) s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_AFFINITY_EQ_AND_VECTOR_VARIATION_AFFINITY</span>
+<DD>
+<pre>
+⊢ (∀m c f s.
+     (λx. f (m * x + c)) has_bounded_variation_on s ⇔
+     (m = 0) ∨ f has_bounded_variation_on IMAGE (λx. m * x + c) s) ∧
+  ∀m c f s.
+    vector_variation s (λx. f (m * x + c)) =
+    if m = 0 then 0 else vector_variation (IMAGE (λx. m * x + c) s) f
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_COMPARISON</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_variation_on s ∧
+    (∀x y. x ∈ s ∧ y ∈ s ∧ x < y ⇒ dist (g x,g y) ≤ dist (f x,f y)) ⇒
+    g has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_COMPOSE_DECREASING</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f y ≤ f x) ∧
+    g has_bounded_variation_on interval [(f b,f a)] ⇒
+    g ∘ f has_bounded_variation_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_COMPOSE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f x ≤ f y) ∧
+    g has_bounded_variation_on interval [(f a,f b)] ⇒
+    g ∘ f has_bounded_variation_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_DARBOUX</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f has_bounded_variation_on interval [(a,b)] ⇔
+    ∃g h.
+      (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ g x ≤ g y) ∧
+      (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ h x ≤ h y) ∧
+      ∀x. f x = g x − h x
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_DARBOUX_STRICT</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f has_bounded_variation_on interval [(a,b)] ⇔
+    ∃g h.
+      (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x < y ⇒ g x < g y) ∧
+      (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x < y ⇒ h x < h y) ∧
+      ∀x. f x = g x − h x
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_DARBOUX_STRONG</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f has_bounded_variation_on interval [(a,b)] ⇒
+    ∃g h.
+      (∀x. f x = g x − h x) ∧
+      (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ g x ≤ g y) ∧
+      (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ h x ≤ h y) ∧
+      (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x < y ⇒ g x < g y) ∧
+      (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x < y ⇒ h x < h y) ∧
+      (∀x. x ∈ interval [(a,b)] ∧ f continuous (at x within interval [(a,x)]) ⇒
+           g continuous (at x within interval [(a,x)]) ∧
+           h continuous (at x within interval [(a,x)])) ∧
+      (∀x. x ∈ interval [(a,b)] ∧ f continuous (at x within interval [(x,b)]) ⇒
+           g continuous (at x within interval [(x,b)]) ∧
+           h continuous (at x within interval [(x,b)])) ∧
+      ∀x. x ∈ interval [(a,b)] ∧ f continuous (at x within interval [(a,b)]) ⇒
+          g continuous (at x within interval [(a,b)]) ∧
+          h continuous (at x within interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_NONTRIVIAL</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_variation_on s ⇔
+    ∃B. ∀d t.
+      d division_of t ∧ t ⊆ s ∧ (∀k. k ∈ d ⇒ interior k ≠ ∅) ⇒
+      sum d (λk. abs (f (interval_upperbound k) − f (interval_lowerbound k))) ≤
+      B
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_ABS</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_variation_on s ⇒ (λx. abs (f x)) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_variation_on s ∧ g has_bounded_variation_on s ⇒
+    (λx. f x + g x) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_CLOSURE</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    is_interval s ∧ f has_bounded_variation_on s ⇒
+    f has_bounded_variation_on closure s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f c s.
+    f has_bounded_variation_on s ⇒ (λx. c * f x) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_COMBINE</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    a ≤ c ∧ c ≤ b ⇒
+    (f has_bounded_variation_on interval [(a,b)] ⇔
+     f has_bounded_variation_on interval [(a,c)] ∧
+     f has_bounded_variation_on interval [(c,b)])
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_COMBINE_GEN</span>
+<DD>
+<pre>
+⊢ ∀f s a.
+    is_interval s ⇒
+    (f has_bounded_variation_on s ⇔
+     f has_bounded_variation_on {x | x ∈ s ∧ x ≤ a} ∧
+     f has_bounded_variation_on {x | x ∈ s ∧ x ≥ a})
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_COMPONENTWISE</span>
+<DD>
+<pre>
+⊢ ∀f s. f has_bounded_variation_on s ⇔ (λx. f x) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_COMPOSE_LINEAR</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_variation_on s ∧ linear g ⇒ g ∘ f has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_CONST</span>
+<DD>
+<pre>
+⊢ ∀s c. (λx. c) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀f a b d.
+    d division_of interval [(a,b)] ⇒
+    ((∀k. k ∈ d ⇒ f has_bounded_variation_on k) ⇔
+     f has_bounded_variation_on interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀f. f has_bounded_variation_on ∅
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x. x ∈ s ⇒ (f x = g x)) ∧ f has_bounded_variation_on s ⇒
+    g has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_ID</span>
+<DD>
+<pre>
+⊢ ∀a b. (λx. x) has_bounded_variation_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_IMP_BOUNDED</span>
+<DD>
+<pre>
+⊢ ∀f s. f has_bounded_variation_on s ∧ is_interval s ⇒ bounded (IMAGE f s)
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_IMP_BOUNDED_ON_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f has_bounded_variation_on interval [(a,b)] ⇒
+    bounded (IMAGE f (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_IMP_BOUNDED_ON_SUBINTERVALS</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_variation_on s ⇒
+    bounded {f d − f c | interval [(c,d)] ⊆ s ∧ interval [(c,d)] ≠ ∅}
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_INDEFINITE_INTEGRAL_LEFT</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f absolutely_integrable_on interval [(a,b)] ⇒
+    (λc. ∫ (interval [(c,b)]) f) has_bounded_variation_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_INDEFINITE_INTEGRAL_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f absolutely_integrable_on interval [(a,b)] ⇒
+    (λc. ∫ (interval [(a,c)]) f) has_bounded_variation_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_MAX</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_variation_on s ∧ g has_bounded_variation_on s ⇒
+    (λx. max (f x) (g x)) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_MIN</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_variation_on s ∧ g has_bounded_variation_on s ⇒
+    (λx. min (f x) (g x)) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_MUL</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    f has_bounded_variation_on interval [(a,b)] ∧
+    g has_bounded_variation_on interval [(a,b)] ⇒
+    (λx. f x * g x) has_bounded_variation_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_NEG</span>
+<DD>
+<pre>
+⊢ ∀f s. f has_bounded_variation_on s ⇒ (λx. -f x) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_NULL</span>
+<DD>
+<pre>
+⊢ ∀f s. (content s = 0) ∧ bounded s ⇒ f has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_REFLECT</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f has_bounded_variation_on IMAGE (λx. -x) s ⇒
+    (λx. f (-x)) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_REFLECT_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f has_bounded_variation_on interval [(-b,-a)] ⇒
+    (λx. f (-x)) has_bounded_variation_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_SING</span>
+<DD>
+<pre>
+⊢ ∀f a. f has_bounded_variation_on {a}
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_SUB</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_variation_on s ∧ g has_bounded_variation_on s ⇒
+    (λx. f x − g x) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀f s t. f has_bounded_variation_on s ∧ t ⊆ s ⇒ f has_bounded_variation_on t
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_SUM</span>
+<DD>
+<pre>
+⊢ ∀f s k.
+    FINITE k ∧ (∀i. i ∈ k ⇒ f i has_bounded_variation_on s) ⇒
+    (λx. sum k (λi. f i x)) has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_ON_SUM_AND_SUM_LE</span>
+<DD>
+<pre>
+⊢ (∀f s k.
+     FINITE k ∧ (∀i. i ∈ k ⇒ f i has_bounded_variation_on s) ⇒
+     (λx. sum k (λi. f i x)) has_bounded_variation_on s) ∧
+  ∀f s k.
+    FINITE k ∧ (∀i. i ∈ k ⇒ f i has_bounded_variation_on s) ⇒
+    vector_variation s (λx. sum k (λi. f i x)) ≤
+    sum k (λi. vector_variation s (f i))
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_REFLECT2_EQ</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (λx. f (-x)) has_bounded_variation_on IMAGE (λx. -x) s ⇔
+    f has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_REFLECT2_EQ_AND_VECTOR_VARIATION_REFLECT2</span>
+<DD>
+<pre>
+⊢ (∀f s.
+     (λx. f (-x)) has_bounded_variation_on IMAGE (λx. -x) s ⇔
+     f has_bounded_variation_on s) ∧
+  ∀f s.
+    vector_variation (IMAGE (λx. -x) s) (λx. f (-x)) = vector_variation s f
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_REFLECT_EQ</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (λx. f (-x)) has_bounded_variation_on s ⇔
+    f has_bounded_variation_on IMAGE (λx. -x) s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_REFLECT_EQ_AND_VECTOR_VARIATION_REFLECT</span>
+<DD>
+<pre>
+⊢ (∀f s.
+     (λx. f (-x)) has_bounded_variation_on s ⇔
+     f has_bounded_variation_on IMAGE (λx. -x) s) ∧
+  ∀f s.
+    vector_variation s (λx. f (-x)) = vector_variation (IMAGE (λx. -x) s) f
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_REFLECT_EQ_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f u v.
+    (λx. f (-x)) has_bounded_variation_on interval [(u,v)] ⇔
+    f has_bounded_variation_on interval [(-v,-u)]
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_REFLECT_EQ_INTERVAL_AND_VECTOR_VARIATION_REFLECT_INTERVAL</span>
+<DD>
+<pre>
+⊢ (∀f u v.
+     (λx. f (-x)) has_bounded_variation_on interval [(u,v)] ⇔
+     f has_bounded_variation_on interval [(-v,-u)]) ∧
+  ∀f u v.
+    vector_variation (interval [(u,v)]) (λx. f (-x)) =
+    vector_variation (interval [(-v,-u)]) f
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_SUM_LE</span>
+<DD>
+<pre>
+⊢ ∀f s k.
+    FINITE k ∧ (∀i. i ∈ k ⇒ f i has_bounded_variation_on s) ⇒
+    vector_variation s (λx. sum k (λi. f i x)) ≤
+    sum k (λi. vector_variation s (f i))
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_TRANSLATION</span>
+<DD>
+<pre>
+⊢ ∀f s a.
+    f has_bounded_variation_on s ⇒
+    (λx. f (a + x)) has_bounded_variation_on IMAGE (λx. -a + x) s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_TRANSLATION2_EQ</span>
+<DD>
+<pre>
+⊢ ∀a f s.
+    (λx. f (a + x)) has_bounded_variation_on IMAGE (λx. -a + x) s ⇔
+    f has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_TRANSLATION2_EQ_AND_VECTOR_VARIATION_TRANSLATION2</span>
+<DD>
+<pre>
+⊢ (∀a f s.
+     (λx. f (a + x)) has_bounded_variation_on IMAGE (λx. -a + x) s ⇔
+     f has_bounded_variation_on s) ∧
+  ∀a f s.
+    vector_variation (IMAGE (λx. -a + x) s) (λx. f (a + x)) =
+    vector_variation s f
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_TRANSLATION_EQ</span>
+<DD>
+<pre>
+⊢ ∀a f s.
+    (λx. f (a + x)) has_bounded_variation_on s ⇔
+    f has_bounded_variation_on IMAGE (λx. a + x) s
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_TRANSLATION_EQ_AND_VECTOR_VARIATION_TRANSLATION</span>
+<DD>
+<pre>
+⊢ (∀a f s.
+     (λx. f (a + x)) has_bounded_variation_on s ⇔
+     f has_bounded_variation_on IMAGE (λx. a + x) s) ∧
+  ∀a f s.
+    vector_variation s (λx. f (a + x)) =
+    vector_variation (IMAGE (λx. a + x) s) f
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_TRANSLATION_EQ_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀a f u v.
+    (λx. f (a + x)) has_bounded_variation_on interval [(u,v)] ⇔
+    f has_bounded_variation_on interval [(a + u,a + v)]
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VARIATION_TRANSLATION_EQ_INTERVAL_AND_VECTOR_VARIATION_TRANSLATION_INTERVAL</span>
+<DD>
+<pre>
+⊢ (∀a f u v.
+     (λx. f (a + x)) has_bounded_variation_on interval [(u,v)] ⇔
+     f has_bounded_variation_on interval [(a + u,a + v)]) ∧
+  ∀a f u v.
+    vector_variation (interval [(u,v)]) (λx. f (a + x)) =
+    vector_variation (interval [(a + u,a + v)]) f
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VECTOR_VARIATION_LEFT_LIMIT</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    f has_bounded_variation_on interval [(a,b)] ∧ c ∈ interval [(a,b)] ⇒
+    ∃l. (f ⟶ l) (at c within interval [(a,c)])
+</pre>
+
+<DT><span class="strong">HAS_BOUNDED_VECTOR_VARIATION_RIGHT_LIMIT</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    f has_bounded_variation_on interval [(a,b)] ∧ c ∈ interval [(a,b)] ⇒
+    ∃l. (f ⟶ l) (at c within interval [(c,b)])
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_ZERO_UNIQUE_STRONG_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b k y.
+    COUNTABLE k ∧ f continuous_on interval [(a,b)] ∧ (f a = y) ∧
+    (∀x. x ∈ interval [(a,b)] DIFF k ⇒
+         (f has_derivative (λh. 0)) (at x within interval [(a,b)])) ⇒
+    ∀x. x ∈ interval [(a,b)] ⇒ (f x = y)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL</span>
+<DD>
+<pre>
+⊢ ∀f i s.
+    (f has_integral i) s ⇔
+    ∀e. 0 < e ⇒
+        ∃B. 0 < B ∧
+            ∀a b.
+              ball (0,B) ⊆ interval [(a,b)] ⇒
+              ∃z. ((λx. if x ∈ s then f x else 0) has_integral z)
+                    (interval [(a,b)]) ∧ abs (z − i) < e
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_0</span>
+<DD>
+<pre>
+⊢ ∀s. ((λx. 0) has_integral 0) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_0_EQ</span>
+<DD>
+<pre>
+⊢ ∀i s. ((λx. 0) has_integral i) s ⇔ (i = 0)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_ABS_BOUND_INTEGRAL_COMPONENT</span>
+<DD>
+<pre>
+⊢ ∀f g s i j.
+    (f has_integral i) s ∧ (g has_integral j) s ∧
+    (∀x. x ∈ s ⇒ abs (f x) ≤ g x) ⇒
+    abs i ≤ j
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g s k.
+    (f has_integral k) s ∧ (g has_integral l) s ⇒
+    ((λx. f x + g x) has_integral k + l) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_AFFINITY</span>
+<DD>
+<pre>
+⊢ ∀f i a b m c.
+    (f has_integral i) (interval [(a,b)]) ∧ m ≠ 0 ⇒
+    ((λx. f (m * x + c)) has_integral (abs m pow 1)⁻¹ * i)
+      (IMAGE (λx. m⁻¹ * x + -(m⁻¹ * c)) (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_ALT</span>
+<DD>
+<pre>
+⊢ ∀f s i.
+    (f has_integral i) s ⇔
+    (∀a b. (λx. if x ∈ s then f x else 0) integrable_on interval [(a,b)]) ∧
+    ∀e. 0 < e ⇒
+        ∃B. 0 < B ∧
+            ∀a b.
+              ball (0,B) ⊆ interval [(a,b)] ⇒
+              abs (∫ (interval [(a,b)]) (λx. if x ∈ s then f x else 0) − i) <
+              e
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀f i t.
+    FINITE t ∧ (∀s. s ∈ t ⇒ (f has_integral i s) s) ∧
+    (∀s s'. s ∈ t ∧ s' ∈ t ∧ s ≠ s' ⇒ negligible (s ∩ s')) ⇒
+    (f has_integral sum t i) (BIGUNION t)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_BOUND</span>
+<DD>
+<pre>
+⊢ ∀f a b i B.
+    0 ≤ B ∧ (f has_integral i) (interval [(a,b)]) ∧
+    (∀x. x ∈ interval [(a,b)] ⇒ abs (f x) ≤ B) ⇒
+    abs i ≤ B * content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_CLOSURE</span>
+<DD>
+<pre>
+⊢ ∀f y s.
+    negligible (frontier s) ⇒
+    ((f has_integral y) (closure s) ⇔ (f has_integral y) s)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f k s c. (f has_integral k) s ⇒ ((λx. c * f x) has_integral c * k) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMBINE</span>
+<DD>
+<pre>
+⊢ ∀f i j a b c.
+    a ≤ c ∧ c ≤ b ∧ (f has_integral i) (interval [(a,c)]) ∧
+    (f has_integral j) (interval [(c,b)]) ⇒
+    (f has_integral i + j) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMBINE_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀f s d i.
+    d division_of s ∧ (∀k. k ∈ d ⇒ (f has_integral i k) k) ⇒
+    (f has_integral sum d i) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMBINE_DIVISION_TOPDOWN</span>
+<DD>
+<pre>
+⊢ ∀f s d k.
+    f integrable_on s ∧ d division_of k ∧ k ⊆ s ⇒
+    (f has_integral sum d (λi. ∫ i f)) k
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMBINE_TAGGED_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀f s p i.
+    p tagged_division_of s ∧ (∀x k. (x,k) ∈ p ⇒ (f has_integral i k) k) ⇒
+    (f has_integral sum p (λ(x,k). i k)) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMBINE_TAGGED_DIVISION_TOPDOWN</span>
+<DD>
+<pre>
+⊢ ∀f a b p.
+    f integrable_on interval [(a,b)] ∧ p tagged_division_of interval [(a,b)] ⇒
+    (f has_integral sum p (λ(x,k). ∫ k f)) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMPONENTWISE</span>
+<DD>
+<pre>
+⊢ ∀f s y. (f has_integral y) s ⇔ ((λx. f x) has_integral y) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMPONENT_LBOUND</span>
+<DD>
+<pre>
+⊢ ∀f a b i.
+    (f has_integral i) (interval [(a,b)]) ∧
+    (∀x. x ∈ interval [(a,b)] ⇒ B ≤ f x) ⇒
+    B * content (interval [(a,b)]) ≤ i
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMPONENT_LE</span>
+<DD>
+<pre>
+⊢ ∀f g s i j.
+    (f has_integral i) s ∧ (g has_integral j) s ∧ (∀x. x ∈ s ⇒ f x ≤ g x) ⇒
+    i ≤ j
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMPONENT_LE_AE</span>
+<DD>
+<pre>
+⊢ ∀f g s i j k t.
+    negligible t ∧ (f has_integral i) s ∧ (g has_integral j) s ∧
+    (∀x. x ∈ s DIFF t ⇒ f x ≤ g x) ⇒
+    i ≤ j
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMPONENT_NEG</span>
+<DD>
+<pre>
+⊢ ∀f s i. (f has_integral i) s ∧ (∀x. x ∈ s ⇒ f x ≤ 0) ⇒ i ≤ 0
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMPONENT_POS</span>
+<DD>
+<pre>
+⊢ ∀f s i. (f has_integral i) s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x) ⇒ 0 ≤ i
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_COMPONENT_UBOUND</span>
+<DD>
+<pre>
+⊢ ∀f a b i.
+    (f has_integral i) (interval [(a,b)]) ∧
+    (∀x. x ∈ interval [(a,b)] ⇒ f x ≤ B) ⇒
+    i ≤ B * content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_CONST</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    ((λx. c) has_integral content (interval [(a,b)]) * c) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_DIFF</span>
+<DD>
+<pre>
+⊢ ∀f i j s t.
+    (f has_integral i) s ∧ (f has_integral j) t ∧ negligible (t DIFF s) ⇒
+    (f has_integral i − j) (s DIFF t)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_DROP_LE</span>
+<DD>
+<pre>
+⊢ ∀f g s i j.
+    (f has_integral i) s ∧ (g has_integral j) s ∧ (∀x. x ∈ s ⇒ f x ≤ g x) ⇒
+    i ≤ j
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_DROP_NEG</span>
+<DD>
+<pre>
+⊢ ∀f s i. (f has_integral i) s ∧ (∀x. x ∈ s ⇒ f x ≤ 0) ⇒ i ≤ 0
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_DROP_POS</span>
+<DD>
+<pre>
+⊢ ∀f s i. (f has_integral i) s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x) ⇒ 0 ≤ i
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_DROP_POS_AE</span>
+<DD>
+<pre>
+⊢ ∀f s t i.
+    (f has_integral i) s ∧ negligible t ∧ (∀x. x ∈ s DIFF t ⇒ 0 ≤ f x) ⇒ 0 ≤ i
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀f. (f has_integral 0) ∅
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_EMPTY_EQ</span>
+<DD>
+<pre>
+⊢ ∀f i. (f has_integral i) ∅ ⇔ (i = 0)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g k s.
+    (∀x. x ∈ s ⇒ (f x = g x)) ∧ (f has_integral k) s ⇒ (g has_integral k) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_EQ_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g k s.
+    (∀x. x ∈ s ⇒ (f x = g x)) ⇒ ((f has_integral k) s ⇔ (g has_integral k) s)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_FACTOR_CONTENT</span>
+<DD>
+<pre>
+⊢ ∀f i a b.
+    (f has_integral i) (interval [(a,b)]) ⇔
+    ∀e. 0 < e ⇒
+        ∃d. gauge d ∧
+            ∀p. p tagged_division_of interval [(a,b)] ∧ d FINE p ⇒
+                abs (sum p (λ(x,k). content k * f x) − i) ≤
+                e * content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_INTEGRABLE</span>
+<DD>
+<pre>
+⊢ ∀f i s. (f has_integral i) s ⇒ f integrable_on s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_INTEGRABLE_INTEGRAL</span>
+<DD>
+<pre>
+⊢ ∀f i s. (f has_integral i) s ⇔ f integrable_on s ∧ (∫ s f = i)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_INTEGRAL</span>
+<DD>
+<pre>
+⊢ ∀f s. f integrable_on s ⇔ (f has_integral ∫ s f) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_INTERIOR</span>
+<DD>
+<pre>
+⊢ ∀f y s.
+    negligible (frontier s) ⇒
+    ((f has_integral y) (interior s) ⇔ (f has_integral y) s)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_IS_0</span>
+<DD>
+<pre>
+⊢ ∀f s. (∀x. x ∈ s ⇒ (f x = 0)) ⇒ (f has_integral 0) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_LE_AE</span>
+<DD>
+<pre>
+⊢ ∀f g s i j t.
+    (f has_integral i) s ∧ (g has_integral j) s ∧ negligible t ∧
+    (∀x. x ∈ s DIFF t ⇒ f x ≤ g x) ⇒
+    i ≤ j
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_LIM_AT_POSINFINITY</span>
+<DD>
+<pre>
+⊢ ∀f l.
+    (f has_integral l) {t | 0 ≤ t} ⇔
+    (∀a. f integrable_on interval [(0,a)]) ∧
+    ((λa. ∫ (interval [(0,a)]) f) ⟶ l) at_posinfinity
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_LIM_SEQUENTIALLY</span>
+<DD>
+<pre>
+⊢ ∀f l.
+    (f ⟶ 0) at_posinfinity ∧ (∀n. f integrable_on interval [(0,&n)]) ∧
+    ((λn. ∫ (interval [(0,&n)]) f) ⟶ l) sequentially ⇒
+    (f has_integral l) {t | 0 ≤ t}
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_LINEAR</span>
+<DD>
+<pre>
+⊢ ∀f y s h. (f has_integral y) s ∧ linear h ⇒ (h ∘ f has_integral h y) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_NEG</span>
+<DD>
+<pre>
+⊢ ∀f k s. (f has_integral k) s ⇒ ((λx. -f x) has_integral -k) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_NEGLIGIBLE</span>
+<DD>
+<pre>
+⊢ ∀f s t. negligible s ∧ (∀x. x ∈ t DIFF s ⇒ (f x = 0)) ⇒ (f has_integral 0) t
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_NEGLIGIBLE_EQ</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀x i. x ∈ s ⇒ 0 ≤ f x) ⇒
+    ((f has_integral 0) s ⇔ negligible {x | x ∈ s ∧ f x ≠ 0})
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_NULL</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (content (interval [(a,b)]) = 0) ⇒ (f has_integral 0) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_NULL_EQ</span>
+<DD>
+<pre>
+⊢ ∀f a b i.
+    (content (interval [(a,b)]) = 0) ⇒
+    ((f has_integral i) (interval [(a,b)]) ⇔ (i = 0))
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_ON_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀f s t i.
+    (∀x. x ∉ s ⇒ (f x = 0)) ∧ s ⊆ t ∧ (f has_integral i) s ⇒
+    (f has_integral i) t
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_REFL</span>
+<DD>
+<pre>
+⊢ ∀f a. (f has_integral 0) (interval [(a,a)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_REFLECT</span>
+<DD>
+<pre>
+⊢ ∀f i a b.
+    ((λx. f (-x)) has_integral i) (interval [(-b,-a)]) ⇔
+    (f has_integral i) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_REFLECT_GEN</span>
+<DD>
+<pre>
+⊢ ∀f i s.
+    ((λx. f (-x)) has_integral i) s ⇔ (f has_integral i) (IMAGE (λx. -x) s)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_REFLECT_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀f i a b.
+    (f has_integral i) (interval [(a,b)]) ⇒
+    ((λx. f (-x)) has_integral i) (interval [(-b,-a)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀f s t i.
+    s ⊆ t ⇒
+    (((λx. if x ∈ s then f x else 0) has_integral i) t ⇔ (f has_integral i) s)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_RESTRICT_CLOSED_SUBINTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b c d i.
+    (f has_integral i) (interval [(c,d)]) ∧
+    interval [(c,d)] ⊆ interval [(a,b)] ⇒
+    ((λx. if x ∈ interval [(c,d)] then f x else 0) has_integral i)
+      (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_RESTRICT_CLOSED_SUBINTERVALS_EQ</span>
+<DD>
+<pre>
+⊢ ∀f a b c d i.
+    interval [(c,d)] ⊆ interval [(a,b)] ⇒
+    (((λx. if x ∈ interval [(c,d)] then f x else 0) has_integral i)
+       (interval [(a,b)]) ⇔ (f has_integral i) (interval [(c,d)]))
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_RESTRICT_INTER</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    ((λx. if x ∈ s then f x else 0) has_integral i) t ⇔
+    (f has_integral i) (s ∩ t)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_RESTRICT_OPEN_SUBINTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b c d i.
+    (f has_integral i) (interval [(c,d)]) ∧
+    interval [(c,d)] ⊆ interval [(a,b)] ⇒
+    ((λx. if x ∈ interval (c,d) then f x else 0) has_integral i)
+      (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_RESTRICT_UNIV</span>
+<DD>
+<pre>
+⊢ ∀f s i.
+    ((λx. if x ∈ s then f x else 0) has_integral i) 𝕌(:real) ⇔
+    (f has_integral i) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SEPARATE_SIDES</span>
+<DD>
+<pre>
+⊢ ∀f i a b.
+    (f has_integral i) (interval [(a,b)]) ⇒
+    ∀e. 0 < e ⇒
+        ∃d. gauge d ∧
+            ∀p1 p2.
+              p1 tagged_division_of interval [(a,b)] ∩ {x | x ≤ c} ∧
+              d FINE p1 ∧
+              p2 tagged_division_of interval [(a,b)] ∩ {x | x ≥ c} ∧ d FINE p2 ⇒
+              abs
+                (sum p1 (λ(x,k). content k * f x) +
+                 sum p2 (λ(x,k). content k * f x) − i) < e
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SPIKE</span>
+<DD>
+<pre>
+⊢ ∀f g s t y.
+    negligible s ∧ (∀x. x ∈ t DIFF s ⇒ (g x = f x)) ∧ (f has_integral y) t ⇒
+    (g has_integral y) t
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SPIKE_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s t y.
+    negligible s ∧ (∀x. x ∈ t DIFF s ⇒ (g x = f x)) ⇒
+    ((f has_integral y) t ⇔ (g has_integral y) t)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SPIKE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀f g s t y.
+    FINITE s ∧ (∀x. x ∈ t DIFF s ⇒ (g x = f x)) ∧ (f has_integral y) t ⇒
+    (g has_integral y) t
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SPIKE_FINITE_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s t y.
+    FINITE s ∧ (∀x. x ∈ t DIFF s ⇒ (g x = f x)) ⇒
+    ((f has_integral y) t ⇔ (g has_integral y) t)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SPIKE_INTERIOR</span>
+<DD>
+<pre>
+⊢ ∀f g a b y.
+    (∀x. x ∈ interval (a,b) ⇒ (g x = f x)) ∧
+    (f has_integral y) (interval [(a,b)]) ⇒
+    (g has_integral y) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SPIKE_INTERIOR_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g a b y.
+    (∀x. x ∈ interval (a,b) ⇒ (g x = f x)) ⇒
+    ((f has_integral y) (interval [(a,b)]) ⇔
+     (g has_integral y) (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SPIKE_SET</span>
+<DD>
+<pre>
+⊢ ∀f s t y.
+    negligible (s DIFF t ∪ (t DIFF s)) ∧ (f has_integral y) s ⇒
+    (f has_integral y) t
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SPIKE_SET_EQ</span>
+<DD>
+<pre>
+⊢ ∀f s t y.
+    negligible (s DIFF t ∪ (t DIFF s)) ⇒
+    ((f has_integral y) s ⇔ (f has_integral y) t)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    (f has_integral i) (interval [(a,b)] ∩ {x | x ≤ c}) ∧
+    (f has_integral j) (interval [(a,b)] ∩ {x | x ≥ c}) ⇒
+    (f has_integral i + j) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_STRADDLE_NULL</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x. x ∈ s ⇒ 0 ≤ f x ∧ f x ≤ g x) ∧ (g has_integral 0) s ⇒
+    (f has_integral 0) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_STRETCH</span>
+<DD>
+<pre>
+⊢ ∀f i m a b.
+    (f has_integral i) (interval [(a,b)]) ∧ m 1 ≠ 0 ⇒
+    ((λx. f (m 1 * x)) has_integral (abs (product (1 .. 1) m))⁻¹ * i)
+      (IMAGE (λx. (m 1)⁻¹ * x) (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SUB</span>
+<DD>
+<pre>
+⊢ ∀f g s k l.
+    (f has_integral k) s ∧ (g has_integral l) s ⇒
+    ((λx. f x − g x) has_integral k − l) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SUBSET_COMPONENT_LE</span>
+<DD>
+<pre>
+⊢ ∀f s t i j.
+    s ⊆ t ∧ (f has_integral i) s ∧ (f has_integral j) t ∧
+    (∀x. x ∈ t ⇒ 0 ≤ f x) ⇒
+    i ≤ j
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SUBSET_DROP_LE</span>
+<DD>
+<pre>
+⊢ ∀f s t i j.
+    s ⊆ t ∧ (f has_integral i) s ∧ (f has_integral j) t ∧
+    (∀x. x ∈ t ⇒ 0 ≤ f x) ⇒
+    i ≤ j
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_SUM</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE t ∧ (∀a. a ∈ t ⇒ (f a has_integral i a) s) ⇒
+    ((λx. sum t (λa. f a x)) has_integral sum t i) s
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_TWIDDLE</span>
+<DD>
+<pre>
+⊢ ∀f g h r i a b.
+    0 < r ∧ (∀x. h (g x) = x) ∧ (∀x. g (h x) = x) ∧ (∀x. g continuous at x) ∧
+    (∀u v. ∃w z. IMAGE g (interval [(u,v)]) = interval [(w,z)]) ∧
+    (∀u v. ∃w z. IMAGE h (interval [(u,v)]) = interval [(w,z)]) ∧
+    (∀u v.
+       content (IMAGE g (interval [(u,v)])) = r * content (interval [(u,v)])) ∧
+    (f has_integral i) (interval [(a,b)]) ⇒
+    ((λx. f (g x)) has_integral r⁻¹ * i) (IMAGE h (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_UNION</span>
+<DD>
+<pre>
+⊢ ∀f i j s t.
+    (f has_integral i) s ∧ (f has_integral j) t ∧ negligible (s ∩ t) ⇒
+    (f has_integral i + j) (s ∪ t)
+</pre>
+
+<DT><span class="strong">HAS_INTEGRAL_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀f i k1 k2. (f has_integral k1) i ∧ (f has_integral k2) i ⇒ (k1 = k2)
+</pre>
+
+<DT><span class="strong">HENSTOCK_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f integrable_on interval [(a,b)] ⇒
+    ∀e. 0 < e ⇒
+        ∃d. gauge d ∧
+            ∀p. p tagged_partial_division_of interval [(a,b)] ∧ d FINE p ⇒
+                sum p (λ(x,k). abs (content k * f x − ∫ k f)) < e
+</pre>
+
+<DT><span class="strong">HENSTOCK_LEMMA_PART1</span>
+<DD>
+<pre>
+⊢ ∀f a b d e.
+    f integrable_on interval [(a,b)] ∧ 0 < e ∧ gauge d ∧
+    (∀p. p tagged_division_of interval [(a,b)] ∧ d FINE p ⇒
+         abs (sum p (λ(x,k). content k * f x) − ∫ (interval [(a,b)]) f) < e) ⇒
+    ∀p. p tagged_partial_division_of interval [(a,b)] ∧ d FINE p ⇒
+        abs (sum p (λ(x,k). content k * f x − ∫ k f)) ≤ e
+</pre>
+
+<DT><span class="strong">HENSTOCK_LEMMA_PART2</span>
+<DD>
+<pre>
+⊢ ∀f a b d e.
+    f integrable_on interval [(a,b)] ∧ 0 < e ∧ gauge d ∧
+    (∀p. p tagged_division_of interval [(a,b)] ∧ d FINE p ⇒
+         abs (sum p (λ(x,k). content k * f x) − ∫ (interval [(a,b)]) f) < e) ⇒
+    ∀p. p tagged_partial_division_of interval [(a,b)] ∧ d FINE p ⇒
+        sum p (λ(x,k). abs (content k * f x − ∫ k f)) ≤ 2 * 1 * e
+</pre>
+
+<DT><span class="strong">INCREASING_BOUNDED_VARIATION</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f x ≤ f y) ⇒
+    f has_bounded_variation_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INCREASING_BOUNDED_VARIATION_GEN</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    bounded (IMAGE f s) ∧ (∀x y. x ∈ s ∧ y ∈ s ∧ x ≤ y ⇒ f x ≤ f y) ⇒
+    f has_bounded_variation_on s
+</pre>
+
+<DT><span class="strong">INCREASING_LEFT_LIMIT</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f x ≤ f y) ∧
+    c ∈ interval [(a,b)] ⇒
+    ∃l. (f ⟶ l) (at c within interval [(a,c)])
+</pre>
+
+<DT><span class="strong">INCREASING_RIGHT_LIMIT</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f x ≤ f y) ∧
+    c ∈ interval [(a,b)] ⇒
+    ∃l. (f ⟶ l) (at c within interval [(c,b)])
+</pre>
+
+<DT><span class="strong">INCREASING_VECTOR_VARIATION</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    interval [(a,b)] ≠ ∅ ∧
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f x ≤ f y) ⇒
+    (vector_variation (interval [(a,b)]) f = f b − f a)
+</pre>
+
+<DT><span class="strong">INDEFINITE_INTEGRAL_CONTINUOUS</span>
+<DD>
+<pre>
+⊢ ∀f a b c d e.
+    f integrable_on interval [(a,b)] ∧ c ∈ interval [(a,b)] ∧
+    d ∈ interval [(a,b)] ∧ 0 < e ⇒
+    ∃k. 0 < k ∧
+        ∀c' d'.
+          c' ∈ interval [(a,b)] ∧ d' ∈ interval [(a,b)] ∧ abs (c' − c) ≤ k ∧
+          abs (d' − d) ≤ k ⇒
+          abs (∫ (interval [(c',d')]) f − ∫ (interval [(c,d)]) f) < e
+</pre>
+
+<DT><span class="strong">INDEFINITE_INTEGRAL_CONTINUOUS_LEFT</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f integrable_on interval [(a,b)] ⇒
+    (λx. ∫ (interval [(x,b)]) f) continuous_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INDEFINITE_INTEGRAL_CONTINUOUS_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f integrable_on interval [(a,b)] ⇒
+    (λx. ∫ (interval [(a,x)]) f) continuous_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INDICATOR_EMPTY</span>
+<DD>
+<pre>
+⊢ indicator ∅ = (λx. 0)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_0</span>
+<DD>
+<pre>
+⊢ ∀s. (λx. 0) integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f integrable_on s ∧ g integrable_on s ⇒ (λx. f x + g x) integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_AFFINITY</span>
+<DD>
+<pre>
+⊢ ∀f a b m c.
+    f integrable_on interval [(a,b)] ∧ m ≠ 0 ⇒
+    (λx. f (m * x + c)) integrable_on
+    IMAGE (λx. m⁻¹ * x + -(m⁻¹ * c)) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ALT</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f integrable_on s ⇔
+    (∀a b. (λx. if x ∈ s then f x else 0) integrable_on interval [(a,b)]) ∧
+    ∀e. 0 < e ⇒
+        ∃B. 0 < B ∧
+            ∀a b c d.
+              ball (0,B) ⊆ interval [(a,b)] ∧ ball (0,B) ⊆ interval [(c,d)] ⇒
+              abs
+                (∫ (interval [(a,b)]) (λx. if x ∈ s then f x else 0) −
+                 ∫ (interval [(c,d)]) (λx. if x ∈ s then f x else 0)) < e
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ALT_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f integrable_on s ⇔
+    (∀a b. (λx. if x ∈ s then f x else 0) integrable_on interval [(a,b)]) ∧
+    ∀e. 0 < e ⇒
+        ∃B. 0 < B ∧
+            ∀a b c d.
+              ball (0,B) ⊆ interval [(a,b)] ∧
+              interval [(a,b)] ⊆ interval [(c,d)] ⇒
+              abs
+                (∫ (interval [(a,b)]) (λx. if x ∈ s then f x else 0) −
+                 ∫ (interval [(c,d)]) (λx. if x ∈ s then f x else 0)) < e
+</pre>
+
+<DT><span class="strong">INTEGRABLE_BOUNDED_VARIATION</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f has_bounded_variation_on interval [(a,b)] ⇒
+    f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_BOUNDED_VARIATION_BILINEAR_LMUL</span>
+<DD>
+<pre>
+⊢ ∀op f g a b.
+    bilinear op ∧ f integrable_on interval [(a,b)] ∧
+    g has_bounded_variation_on interval [(a,b)] ⇒
+    (λx. op (g x) (f x)) integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_BOUNDED_VARIATION_BILINEAR_RMUL</span>
+<DD>
+<pre>
+⊢ ∀op f g a b.
+    bilinear op ∧ f integrable_on interval [(a,b)] ∧
+    g has_bounded_variation_on interval [(a,b)] ⇒
+    (λx. op (f x) (g x)) integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_BOUNDED_VARIATION_PRODUCT</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    f integrable_on interval [(a,b)] ∧
+    g has_bounded_variation_on interval [(a,b)] ⇒
+    (λx. g x * f x) integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_BOUNDED_VARIATION_PRODUCT_ALT</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    f integrable_on interval [(a,b)] ∧
+    g has_bounded_variation_on interval [(a,b)] ⇒
+    (λx. g x * f x) integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_BY_PARTS</span>
+<DD>
+<pre>
+⊢ ∀bop f g f' g' a b c.
+    bilinear bop ∧ COUNTABLE c ∧
+    (λx. bop (f x) (g x)) continuous_on interval [(a,b)] ∧
+    (∀x. x ∈ interval (a,b) DIFF c ⇒
+         (f has_vector_derivative f' x) (at x) ∧
+         (g has_vector_derivative g' x) (at x)) ∧
+    (λx. bop (f x) (g' x)) integrable_on interval [(a,b)] ⇒
+    (λx. bop (f' x) (g x)) integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_BY_PARTS_EQ</span>
+<DD>
+<pre>
+⊢ ∀bop f g f' g' a b c.
+    bilinear bop ∧ COUNTABLE c ∧
+    (λx. bop (f x) (g x)) continuous_on interval [(a,b)] ∧
+    (∀x. x ∈ interval (a,b) DIFF c ⇒
+         (f has_vector_derivative f' x) (at x) ∧
+         (g has_vector_derivative g' x) (at x)) ⇒
+    ((λx. bop (f x) (g' x)) integrable_on interval [(a,b)] ⇔
+     (λx. bop (f' x) (g x)) integrable_on interval [(a,b)])
+</pre>
+
+<DT><span class="strong">INTEGRABLE_CASES</span>
+<DD>
+<pre>
+⊢ ∀P f g s.
+    f integrable_on {x | x ∈ s ∧ P x} ∧ g integrable_on {x | x ∈ s ∧ ¬P x} ⇒
+    (λx. if P x then f x else g x) integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_CAUCHY</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f integrable_on interval [(a,b)] ⇔
+    ∀e. 0 < e ⇒
+        ∃d. gauge d ∧
+            ∀p1 p2.
+              p1 tagged_division_of interval [(a,b)] ∧ d FINE p1 ∧
+              p2 tagged_division_of interval [(a,b)] ∧ d FINE p2 ⇒
+              abs
+                (sum p1 (λ(x,k). content k * f x) −
+                 sum p2 (λ(x,k). content k * f x)) < e
+</pre>
+
+<DT><span class="strong">INTEGRABLE_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f c s. f integrable_on s ⇒ (λx. c * f x) integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_CMUL_EQ</span>
+<DD>
+<pre>
+⊢ ∀f s c. (λx. c * f x) integrable_on s ⇔ (c = 0) ∨ f integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_COMBINE</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    a ≤ c ∧ c ≤ b ∧ f integrable_on interval [(a,c)] ∧
+    f integrable_on interval [(c,b)] ⇒
+    f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_COMBINE_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀f d s.
+    d division_of s ∧ (∀i. i ∈ d ⇒ f integrable_on i) ⇒ f integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_COMPONENTWISE</span>
+<DD>
+<pre>
+⊢ ∀f s. f integrable_on s ⇔ (λx. f x) integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_CONST</span>
+<DD>
+<pre>
+⊢ ∀a b c. (λx. c) integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_CONTINUOUS</span>
+<DD>
+<pre>
+⊢ ∀f a b. f continuous_on interval [(a,b)] ⇒ f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_DECREASING</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (∀x y i. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f y ≤ f x) ⇒
+    f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_DECREASING_PRODUCT</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    f integrable_on interval [(a,b)] ∧
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ g y ≤ g x) ⇒
+    (λx. g x * f x) integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_DECREASING_PRODUCT_UNIV</span>
+<DD>
+<pre>
+⊢ ∀f g B.
+    f integrable_on 𝕌(:real) ∧ (∀x y. x ≤ y ⇒ g y ≤ g x) ∧ (∀x. abs (g x) ≤ B) ⇒
+    (λx. g x * f x) integrable_on 𝕌(:real)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ∧ f integrable_on s ⇒ g integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (∀x y i. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ f x ≤ f y) ⇒
+    f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_INCREASING_PRODUCT</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    f integrable_on interval [(a,b)] ∧
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ g x ≤ g y) ⇒
+    (λx. g x * f x) integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_INCREASING_PRODUCT_UNIV</span>
+<DD>
+<pre>
+⊢ ∀f g B.
+    f integrable_on 𝕌(:real) ∧ (∀x y. x ≤ y ⇒ g x ≤ g y) ∧ (∀x. abs (g x) ≤ B) ⇒
+    (λx. g x * f x) integrable_on 𝕌(:real)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_INTEGRAL</span>
+<DD>
+<pre>
+⊢ ∀f i. f integrable_on i ⇒ (f has_integral ∫ i f) i
+</pre>
+
+<DT><span class="strong">INTEGRABLE_LINEAR</span>
+<DD>
+<pre>
+⊢ ∀f h s. f integrable_on s ∧ linear h ⇒ h ∘ f integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_MIN_CONST</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    0 ≤ t ∧ (∀x. x ∈ s ⇒ 0 ≤ f x) ∧ (λx. f x) integrable_on s ⇒
+    (λx. min (f x) t) integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_NEG</span>
+<DD>
+<pre>
+⊢ ∀f s. f integrable_on s ⇒ (λx. -f x) integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ON_ALL_INTERVALS_INTEGRABLE_BOUND</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀a b. (λx. if x ∈ s then f x else 0) integrable_on interval [(a,b)]) ∧
+    (∀x. x ∈ s ⇒ abs (f x) ≤ g x) ∧ g integrable_on s ⇒
+    f integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ON_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀f. f integrable_on ∅
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ON_LITTLE_SUBINTERVALS</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (∀x. x ∈ interval [(a,b)] ⇒
+         ∃d. 0 < d ∧
+             ∀u v.
+               x ∈ interval [(u,v)] ∧ interval [(u,v)] ⊆ ball (x,d) ∧
+               interval [(u,v)] ⊆ interval [(a,b)] ⇒
+               f integrable_on interval [(u,v)]) ⇒
+    f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ON_NULL</span>
+<DD>
+<pre>
+⊢ ∀f a b. (content (interval [(a,b)]) = 0) ⇒ f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ON_REFL</span>
+<DD>
+<pre>
+⊢ ∀f a. f integrable_on interval [(a,a)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ON_SUBDIVISION</span>
+<DD>
+<pre>
+⊢ ∀f s d i. d division_of i ∧ f integrable_on s ∧ i ⊆ s ⇒ f integrable_on i
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ON_SUBINTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f s a b.
+    f integrable_on s ∧ interval [(a,b)] ⊆ s ⇒
+    f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_ON_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    (∀x. x ∉ s ⇒ (f x = 0)) ∧ s ⊆ t ∧ f integrable_on s ⇒ f integrable_on t
+</pre>
+
+<DT><span class="strong">INTEGRABLE_REFLECT</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (λx. f (-x)) integrable_on interval [(-b,-a)] ⇔
+    f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_REFLECT_GEN</span>
+<DD>
+<pre>
+⊢ ∀f s. (λx. f (-x)) integrable_on s ⇔ f integrable_on IMAGE (λx. -x) s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    s ⊆ t ⇒
+    ((λx. if x ∈ s then f x else 0) integrable_on t ⇔ f integrable_on s)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_RESTRICT_INTER</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    (λx. if x ∈ s then f x else 0) integrable_on t ⇔ f integrable_on s ∩ t
+</pre>
+
+<DT><span class="strong">INTEGRABLE_RESTRICT_UNIV</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (λx. if x ∈ s then f x else 0) integrable_on 𝕌(:real) ⇔ f integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SPIKE</span>
+<DD>
+<pre>
+⊢ ∀f g s t.
+    negligible s ∧ (∀x. x ∈ t DIFF s ⇒ (g x = f x)) ⇒
+    f integrable_on t ⇒
+    g integrable_on t
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SPIKE_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s t.
+    negligible s ∧ (∀x. x ∈ t DIFF s ⇒ (g x = f x)) ⇒
+    (f integrable_on t ⇔ g integrable_on t)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SPIKE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    FINITE s ∧ (∀x. x ∈ t DIFF s ⇒ (g x = f x)) ⇒
+    f integrable_on t ⇒
+    g integrable_on t
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SPIKE_INTERIOR</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    (∀x. x ∈ interval (a,b) ⇒ (g x = f x)) ⇒
+    f integrable_on interval [(a,b)] ⇒
+    g integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SPIKE_SET</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    negligible (s DIFF t ∪ (t DIFF s)) ⇒ f integrable_on s ⇒ f integrable_on t
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SPIKE_SET_EQ</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    negligible (s DIFF t ∪ (t DIFF s)) ⇒
+    (f integrable_on s ⇔ f integrable_on t)
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f integrable_on interval [(a,b)] ⇒
+    f integrable_on interval [(a,b)] ∩ {x | x ≤ c} ∧
+    f integrable_on interval [(a,b)] ∩ {x | x ≥ c}
+</pre>
+
+<DT><span class="strong">INTEGRABLE_STRADDLE</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀e. 0 < e ⇒
+         ∃g h i j.
+           (g has_integral i) s ∧ (h has_integral j) s ∧ abs (i − j) < e ∧
+           ∀x. x ∈ s ⇒ g x ≤ f x ∧ f x ≤ h x) ⇒
+    f integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_STRADDLE_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (∀e. 0 < e ⇒
+         ∃g h i j.
+           (g has_integral i) (interval [(a,b)]) ∧
+           (h has_integral j) (interval [(a,b)]) ∧ abs (i − j) < e ∧
+           ∀x. x ∈ interval [(a,b)] ⇒ g x ≤ f x ∧ f x ≤ h x) ⇒
+    f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_STRETCH</span>
+<DD>
+<pre>
+⊢ ∀f m a b.
+    f integrable_on interval [(a,b)] ∧ m 1 ≠ 0 ⇒
+    (λx. f (m 1 * x)) integrable_on IMAGE (λx. (m 1)⁻¹ * x) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SUB</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f integrable_on s ∧ g integrable_on s ⇒ (λx. f x − g x) integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SUBINTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b c d.
+    f integrable_on interval [(a,b)] ∧ interval [(c,d)] ⊆ interval [(a,b)] ⇒
+    f integrable_on interval [(c,d)]
+</pre>
+
+<DT><span class="strong">INTEGRABLE_SUM</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE t ∧ (∀a. a ∈ t ⇒ f a integrable_on s) ⇒
+    (λx. sum t (λa. f a x)) integrable_on s
+</pre>
+
+<DT><span class="strong">INTEGRABLE_UNIFORM_LIMIT</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    (∀e. 0 < e ⇒
+         ∃g. (∀x. x ∈ interval [(a,b)] ⇒ abs (f x − g x) ≤ e) ∧
+             g integrable_on interval [(a,b)]) ⇒
+    f integrable_on interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTEGRAL_0</span>
+<DD>
+<pre>
+⊢ ∀s. ∫ s (λx. 0) = 0
+</pre>
+
+<DT><span class="strong">INTEGRAL_ABS_BOUND_INTEGRAL</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f integrable_on s ∧ g integrable_on s ∧ (∀x. x ∈ s ⇒ abs (f x) ≤ g x) ⇒
+    abs (∫ s f) ≤ ∫ s g
+</pre>
+
+<DT><span class="strong">INTEGRAL_ABS_BOUND_INTEGRAL_AE</span>
+<DD>
+<pre>
+⊢ ∀f g s t.
+    f integrable_on s ∧ g integrable_on s ∧ negligible t ∧
+    (∀x. x ∈ s DIFF t ⇒ abs (f x) ≤ g x) ⇒
+    abs (∫ s f) ≤ ∫ s g
+</pre>
+
+<DT><span class="strong">INTEGRAL_ABS_BOUND_INTEGRAL_COMPONENT</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f integrable_on s ∧ g integrable_on s ∧ (∀x. x ∈ s ⇒ abs (f x) ≤ g x) ⇒
+    abs (∫ s f) ≤ ∫ s g
+</pre>
+
+<DT><span class="strong">INTEGRAL_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f integrable_on s ∧ g integrable_on s ⇒
+    (∫ s (λx. f x + g x) = ∫ s f + ∫ s g)
+</pre>
+
+<DT><span class="strong">INTEGRAL_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f c s. f integrable_on s ⇒ (∫ s (λx. c * f x) = c * ∫ s f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMBINE</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    a ≤ c ∧ c ≤ b ∧ f integrable_on interval [(a,b)] ⇒
+    (∫ (interval [(a,c)]) f + ∫ (interval [(c,b)]) f = ∫ (interval [(a,b)]) f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMBINE_DIVISION_BOTTOMUP</span>
+<DD>
+<pre>
+⊢ ∀f d s.
+    d division_of s ∧ (∀k. k ∈ d ⇒ f integrable_on k) ⇒
+    (∫ s f = sum d (λi. ∫ i f))
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMBINE_DIVISION_TOPDOWN</span>
+<DD>
+<pre>
+⊢ ∀f d s. f integrable_on s ∧ d division_of s ⇒ (∫ s f = sum d (λi. ∫ i f))
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMBINE_TAGGED_DIVISION_BOTTOMUP</span>
+<DD>
+<pre>
+⊢ ∀f p a b.
+    p tagged_division_of interval [(a,b)] ∧
+    (∀x k. (x,k) ∈ p ⇒ f integrable_on k) ⇒
+    (∫ (interval [(a,b)]) f = sum p (λ(x,k). ∫ k f))
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMBINE_TAGGED_DIVISION_TOPDOWN</span>
+<DD>
+<pre>
+⊢ ∀f a b p.
+    f integrable_on interval [(a,b)] ∧ p tagged_division_of interval [(a,b)] ⇒
+    (∫ (interval [(a,b)]) f = sum p (λ(x,k). ∫ k f))
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMPONENT</span>
+<DD>
+<pre>
+⊢ ∀f s. f integrable_on s ⇒ (∫ s f = ∫ s (λx. f x))
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMPONENT_LBOUND</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f integrable_on interval [(a,b)] ∧ (∀x. x ∈ interval [(a,b)] ⇒ B ≤ f x) ⇒
+    B * content (interval [(a,b)]) ≤ ∫ (interval [(a,b)]) f
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMPONENT_LE</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f integrable_on s ∧ g integrable_on s ∧ (∀x. x ∈ s ⇒ f x ≤ g x) ⇒
+    ∫ s f ≤ ∫ s g
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMPONENT_LE_AE</span>
+<DD>
+<pre>
+⊢ ∀f g s k t.
+    negligible t ∧ f integrable_on s ∧ g integrable_on s ∧
+    (∀x. x ∈ s DIFF t ⇒ f x ≤ g x) ⇒
+    ∫ s f ≤ ∫ s g
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMPONENT_POS</span>
+<DD>
+<pre>
+⊢ ∀f s. f integrable_on s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x) ⇒ 0 ≤ ∫ s f
+</pre>
+
+<DT><span class="strong">INTEGRAL_COMPONENT_UBOUND</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f integrable_on interval [(a,b)] ∧ (∀x. x ∈ interval [(a,b)] ⇒ f x ≤ B) ⇒
+    ∫ (interval [(a,b)]) f ≤ B * content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">INTEGRAL_CONST</span>
+<DD>
+<pre>
+⊢ ∀a b c. ∫ (interval [(a,b)]) (λx. c) = content (interval [(a,b)]) * c
+</pre>
+
+<DT><span class="strong">INTEGRAL_DIFF</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    f integrable_on s ∧ f integrable_on t ∧ negligible (t DIFF s) ⇒
+    (∫ (s DIFF t) f = ∫ s f − ∫ t f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_DROP_LE</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f integrable_on s ∧ g integrable_on s ∧ (∀x. x ∈ s ⇒ f x ≤ g x) ⇒
+    ∫ s f ≤ ∫ s g
+</pre>
+
+<DT><span class="strong">INTEGRAL_DROP_POS</span>
+<DD>
+<pre>
+⊢ ∀f s. f integrable_on s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x) ⇒ 0 ≤ ∫ s f
+</pre>
+
+<DT><span class="strong">INTEGRAL_DROP_POS_AE</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    f integrable_on s ∧ negligible t ∧ (∀x. x ∈ s DIFF t ⇒ 0 ≤ f x) ⇒
+    0 ≤ ∫ s f
+</pre>
+
+<DT><span class="strong">INTEGRAL_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀f. ∫ ∅ f = 0
+</pre>
+
+<DT><span class="strong">INTEGRAL_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (∫ s f = ∫ s g)
+</pre>
+
+<DT><span class="strong">INTEGRAL_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀f s. (∀x. x ∈ s ⇒ (f x = 0)) ⇒ (∫ s f = 0)
+</pre>
+
+<DT><span class="strong">INTEGRAL_EQ_HAS_INTEGRAL</span>
+<DD>
+<pre>
+⊢ ∀s f y. f integrable_on s ⇒ ((∫ s f = y) ⇔ (f has_integral y) s)
+</pre>
+
+<DT><span class="strong">INTEGRAL_HAS_VECTOR_DERIVATIVE</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    f continuous_on interval [(a,b)] ⇒
+    ∀x. x ∈ interval [(a,b)] ⇒
+        ((λu. ∫ (interval [(a,u)]) f) has_vector_derivative f x)
+          (at x within interval [(a,b)])
+</pre>
+
+<DT><span class="strong">INTEGRAL_HAS_VECTOR_DERIVATIVE_POINTWISE</span>
+<DD>
+<pre>
+⊢ ∀f a b x.
+    f integrable_on interval [(a,b)] ∧ x ∈ interval [(a,b)] ∧
+    f continuous (at x within interval [(a,b)]) ⇒
+    ((λu. ∫ (interval [(a,u)]) f) has_vector_derivative f x)
+      (at x within interval [(a,b)])
+</pre>
+
+<DT><span class="strong">INTEGRAL_LE_AE</span>
+<DD>
+<pre>
+⊢ ∀f g s t.
+    f integrable_on s ∧ g integrable_on s ∧ negligible t ∧
+    (∀x. x ∈ s DIFF t ⇒ f x ≤ g x) ⇒
+    ∫ s f ≤ ∫ s g
+</pre>
+
+<DT><span class="strong">INTEGRAL_LINEAR</span>
+<DD>
+<pre>
+⊢ ∀f s h. f integrable_on s ∧ linear h ⇒ (∫ s (h ∘ f) = h (∫ s f))
+</pre>
+
+<DT><span class="strong">INTEGRAL_NEG</span>
+<DD>
+<pre>
+⊢ ∀f s. f integrable_on s ⇒ (∫ s (λx. -f x) = -∫ s f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_NULL</span>
+<DD>
+<pre>
+⊢ ∀f a b. (content (interval [(a,b)]) = 0) ⇒ (∫ (interval [(a,b)]) f = 0)
+</pre>
+
+<DT><span class="strong">INTEGRAL_REFL</span>
+<DD>
+<pre>
+⊢ ∀f a. ∫ (interval [(a,a)]) f = 0
+</pre>
+
+<DT><span class="strong">INTEGRAL_REFLECT</span>
+<DD>
+<pre>
+⊢ ∀f a b. ∫ (interval [(-b,-a)]) (λx. f (-x)) = ∫ (interval [(a,b)]) f
+</pre>
+
+<DT><span class="strong">INTEGRAL_REFLECT_GEN</span>
+<DD>
+<pre>
+⊢ ∀f s. ∫ s (λx. f (-x)) = ∫ (IMAGE (λx. -x) s) f
+</pre>
+
+<DT><span class="strong">INTEGRAL_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀f s t. s ⊆ t ⇒ (∫ t (λx. if x ∈ s then f x else 0) = ∫ s f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_RESTRICT_INTER</span>
+<DD>
+<pre>
+⊢ ∀f s t. ∫ t (λx. if x ∈ s then f x else 0) = ∫ (s ∩ t) f
+</pre>
+
+<DT><span class="strong">INTEGRAL_RESTRICT_UNIV</span>
+<DD>
+<pre>
+⊢ ∀f s. ∫ 𝕌(:real) (λx. if x ∈ s then f x else 0) = ∫ s f
+</pre>
+
+<DT><span class="strong">INTEGRAL_SPIKE</span>
+<DD>
+<pre>
+⊢ ∀f g s t y.
+    negligible s ∧ (∀x. x ∈ t DIFF s ⇒ (g x = f x)) ⇒ (∫ t f = ∫ t g)
+</pre>
+
+<DT><span class="strong">INTEGRAL_SPIKE_SET</span>
+<DD>
+<pre>
+⊢ ∀f s t. negligible (s DIFF t ∪ (t DIFF s)) ⇒ (∫ s f = ∫ t f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀f a b t.
+    f integrable_on interval [(a,b)] ⇒
+    (∫ (interval [(a,b)]) f =
+     ∫ (interval [(a,@f. f = min b t)]) f +
+     ∫ (interval [((@f. f = max a t),b)]) f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_SPLIT_SIGNED</span>
+<DD>
+<pre>
+⊢ ∀f a b t.
+    a ≤ t ∧ a ≤ b ∧ f integrable_on interval [(a,@f. f = max b t)] ⇒
+    (∫ (interval [(a,b)]) f =
+     ∫ (interval [(a,@f. f = t)]) f +
+     (if b < t then -1 else 1) *
+     ∫ (interval [((@f. f = min b t),@f. f = max b t)]) f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_SUB</span>
+<DD>
+<pre>
+⊢ ∀f g k l s.
+    f integrable_on s ∧ g integrable_on s ⇒
+    (∫ s (λx. f x − g x) = ∫ s f − ∫ s g)
+</pre>
+
+<DT><span class="strong">INTEGRAL_SUBSET_COMPONENT_LE</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    s ⊆ t ∧ f integrable_on s ∧ f integrable_on t ∧ (∀x. x ∈ t ⇒ 0 ≤ f x) ⇒
+    ∫ s f ≤ ∫ t f
+</pre>
+
+<DT><span class="strong">INTEGRAL_SUBSET_DROP_LE</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    s ⊆ t ∧ f integrable_on s ∧ f integrable_on t ∧ (∀x. x ∈ t ⇒ 0 ≤ f x) ⇒
+    ∫ s f ≤ ∫ t f
+</pre>
+
+<DT><span class="strong">INTEGRAL_SUM</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE t ∧ (∀a. a ∈ t ⇒ f a integrable_on s) ⇒
+    (∫ s (λx. sum t (λa. f a x)) = sum t (λa. ∫ s (f a)))
+</pre>
+
+<DT><span class="strong">INTEGRAL_UNION</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    f integrable_on s ∧ f integrable_on t ∧ negligible (s ∩ t) ⇒
+    (∫ (s ∪ t) f = ∫ s f + ∫ t f)
+</pre>
+
+<DT><span class="strong">INTEGRAL_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀f y k. (f has_integral y) k ⇒ (∫ k f = y)
+</pre>
+
+<DT><span class="strong">INTEGRATION_BY_PARTS</span>
+<DD>
+<pre>
+⊢ ∀bop f g f' g' a b c y.
+    bilinear bop ∧ a ≤ b ∧ COUNTABLE c ∧
+    (λx. bop (f x) (g x)) continuous_on interval [(a,b)] ∧
+    (∀x. x ∈ interval (a,b) DIFF c ⇒
+         (f has_vector_derivative f' x) (at x) ∧
+         (g has_vector_derivative g' x) (at x)) ∧
+    ((λx. bop (f x) (g' x)) has_integral bop (f b) (g b) − bop (f a) (g a) − y)
+      (interval [(a,b)]) ⇒
+    ((λx. bop (f' x) (g x)) has_integral y) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">INTEGRATION_BY_PARTS_SIMPLE</span>
+<DD>
+<pre>
+⊢ ∀bop f g f' g' a b y.
+    bilinear bop ∧ a ≤ b ∧
+    (∀x. x ∈ interval [(a,b)] ⇒
+         (f has_vector_derivative f' x) (at x within interval [(a,b)]) ∧
+         (g has_vector_derivative g' x) (at x within interval [(a,b)])) ∧
+    ((λx. bop (f x) (g' x)) has_integral bop (f b) (g b) − bop (f a) (g a) − y)
+      (interval [(a,b)]) ⇒
+    ((λx. bop (f' x) (g x)) has_integral y) (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">INTERIOR_SUBSET_UNION_INTERVALS</span>
+<DD>
+<pre>
+⊢ ∀s i j.
+    (∃a b. i = interval [(a,b)]) ∧ (∃c d. j = interval [(c,d)]) ∧
+    interior j ≠ ∅ ∧ i ⊆ j ∪ s ∧ (interior i ∩ interior j = ∅) ⇒
+    interior i ⊆ interior s
+</pre>
+
+<DT><span class="strong">INTERVAL_BISECTION</span>
+<DD>
+<pre>
+⊢ ∀P. P ∅ ∧ (∀s t. P s ∧ P t ∧ (interior s ∩ interior t = ∅) ⇒ P (s ∪ t)) ⇒
+      ∀a b.
+        ¬P (interval [(a,b)]) ⇒
+        ∃x. x ∈ interval [(a,b)] ∧
+            ∀e. 0 < e ⇒
+                ∃c d.
+                  x ∈ interval [(c,d)] ∧ interval [(c,d)] ⊆ ball (x,e) ∧
+                  interval [(c,d)] ⊆ interval [(a,b)] ∧ ¬P (interval [(c,d)])
+</pre>
+
+<DT><span class="strong">INTERVAL_BISECTION_STEP</span>
+<DD>
+<pre>
+⊢ ∀P. P ∅ ∧ (∀s t. P s ∧ P t ∧ (interior s ∩ interior t = ∅) ⇒ P (s ∪ t)) ⇒
+      ∀a b.
+        ¬P (interval [(a,b)]) ⇒
+        ∃c d.
+          ¬P (interval [(c,d)]) ∧ a ≤ c ∧ c ≤ d ∧ d ≤ b ∧ 2 * (d − c) ≤ b − a
+</pre>
+
+<DT><span class="strong">INTERVAL_BOUNDS_EMPTY</span>
+<DD>
+<pre>
+⊢ interval_upperbound ∅ = interval_lowerbound ∅
+</pre>
+
+<DT><span class="strong">INTERVAL_BOUNDS_NULL</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    (content (interval [(a,b)]) = 0) ⇒
+    (interval_upperbound (interval [(a,b)]) =
+     interval_lowerbound (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">INTERVAL_DOUBLESPLIT</span>
+<DD>
+<pre>
+⊢ ∀e a b c.
+    interval [(a,b)] ∩ {x | abs (x − c) ≤ e} =
+    interval [(max a (c − e),min b (c + e))]
+</pre>
+
+<DT><span class="strong">INTERVAL_IMAGE_AFFINITY_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀a b m c. ∃u v. IMAGE (λx. m * x + c) (interval [(a,b)]) = interval [(u,v)]
+</pre>
+
+<DT><span class="strong">INTERVAL_LOWERBOUND</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ (interval_lowerbound (interval [(a,b)]) = a)
+</pre>
+
+<DT><span class="strong">INTERVAL_LOWERBOUND_NONEMPTY</span>
+<DD>
+<pre>
+⊢ ∀a b. interval [(a,b)] ≠ ∅ ⇒ (interval_lowerbound (interval [(a,b)]) = a)
+</pre>
+
+<DT><span class="strong">INTERVAL_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    (interval [(a,b)] ∩ {x | x ≤ c} = interval [(a,min b c)]) ∧
+    (interval [(a,b)] ∩ {x | x ≥ c} = interval [(max a c,b)])
+</pre>
+
+<DT><span class="strong">INTERVAL_SUBDIVISION</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    c ∈ interval [(a,b)] ⇒
+    IMAGE
+      (λs.
+           interval
+             [((@f. f = if 1 ∈ s then c else a),@f. f = if 1 ∈ s then b else c)])
+      {s | s ⊆ (1 .. 1)} division_of interval [(a,b)]
+</pre>
+
+<DT><span class="strong">INTERVAL_UPPERBOUND</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ (interval_upperbound (interval [(a,b)]) = b)
+</pre>
+
+<DT><span class="strong">INTERVAL_UPPERBOUND_NONEMPTY</span>
+<DD>
+<pre>
+⊢ ∀a b. interval [(a,b)] ≠ ∅ ⇒ (interval_upperbound (interval [(a,b)]) = b)
+</pre>
+
+<DT><span class="strong">INTER_INTERIOR_BIGUNION_INTERVALS</span>
+<DD>
+<pre>
+⊢ ∀s f.
+    FINITE f ∧ open s ∧ (∀t. t ∈ f ⇒ ∃a b. t = interval [(a,b)]) ∧
+    (∀t. t ∈ f ⇒ (s ∩ interior t = ∅)) ⇒
+    (s ∩ interior (BIGUNION f) = ∅)
+</pre>
+
+<DT><span class="strong">ITERATE_AND</span>
+<DD>
+<pre>
+⊢ ∀p s. FINITE s ⇒ (iterate $/\ s p ⇔ ∀x. x ∈ s ⇒ p x)
+</pre>
+
+<DT><span class="strong">ITERATE_NONZERO_IMAGE_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀op s f g a.
+    monoidal op ∧ FINITE s ∧ (g a = neutral op) ∧
+    (∀x y. x ∈ s ∧ y ∈ s ∧ (f x = f y) ∧ x ≠ y ⇒ (g (f x) = neutral op)) ⇒
+    (iterate op {f x | x | x ∈ s ∧ f x ≠ a} g = iterate op s (g ∘ f))
+</pre>
+
+<DT><span class="strong">ITERATE_SOME</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f s.
+      FINITE s ⇒
+      (iterate (lifted op) s (λx. SOME (f x)) = SOME (iterate op s f))
+</pre>
+
+<DT><span class="strong">MONOIDAL_AND</span>
+<DD>
+<pre>
+⊢ monoidal $/\
+</pre>
+
+<DT><span class="strong">MONOIDAL_LIFTED</span>
+<DD>
+<pre>
+⊢ ∀op. monoidal op ⇒ monoidal (lifted op)
+</pre>
+
+<DT><span class="strong">MONOTONE_CONVERGENCE_DECREASING</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀k. f k integrable_on s) ∧ (∀k x. x ∈ s ⇒ f (SUC k) x ≤ f k x) ∧
+    (∀x. x ∈ s ⇒ ((λk. f k x) ⟶ g x) sequentially) ∧
+    bounded {∫ s (f k) | k ∈ 𝕌(:num)} ⇒
+    g integrable_on s ∧ ((λk. ∫ s (f k)) ⟶ ∫ s g) sequentially
+</pre>
+
+<DT><span class="strong">MONOTONE_CONVERGENCE_DECREASING_AE</span>
+<DD>
+<pre>
+⊢ ∀f g s t.
+    (∀k. f k integrable_on s) ∧ negligible t ∧
+    (∀k x. x ∈ s DIFF t ⇒ f (SUC k) x ≤ f k x) ∧
+    (∀x. x ∈ s DIFF t ⇒ ((λk. f k x) ⟶ g x) sequentially) ∧
+    bounded {∫ s (f k) | k ∈ 𝕌(:num)} ⇒
+    g integrable_on s ∧ ((λk. ∫ s (f k)) ⟶ ∫ s g) sequentially
+</pre>
+
+<DT><span class="strong">MONOTONE_CONVERGENCE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀k. f k integrable_on s) ∧ (∀k x. x ∈ s ⇒ f k x ≤ f (SUC k) x) ∧
+    (∀x. x ∈ s ⇒ ((λk. f k x) ⟶ g x) sequentially) ∧
+    bounded {∫ s (f k) | k ∈ 𝕌(:num)} ⇒
+    g integrable_on s ∧ ((λk. ∫ s (f k)) ⟶ ∫ s g) sequentially
+</pre>
+
+<DT><span class="strong">MONOTONE_CONVERGENCE_INCREASING_AE</span>
+<DD>
+<pre>
+⊢ ∀f g s t.
+    (∀k. f k integrable_on s) ∧ negligible t ∧
+    (∀k x. x ∈ s DIFF t ⇒ f k x ≤ f (SUC k) x) ∧
+    (∀x. x ∈ s DIFF t ⇒ ((λk. f k x) ⟶ g x) sequentially) ∧
+    bounded {∫ s (f k) | k ∈ 𝕌(:num)} ⇒
+    g integrable_on s ∧ ((λk. ∫ s (f k)) ⟶ ∫ s g) sequentially
+</pre>
+
+<DT><span class="strong">MONOTONE_CONVERGENCE_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    (∀k. f k integrable_on interval [(a,b)]) ∧
+    (∀k x. x ∈ interval [(a,b)] ⇒ f k x ≤ f (SUC k) x) ∧
+    (∀x. x ∈ interval [(a,b)] ⇒ ((λk. f k x) ⟶ g x) sequentially) ∧
+    bounded {∫ (interval [(a,b)]) (f k) | k ∈ 𝕌(:num)} ⇒
+    g integrable_on interval [(a,b)] ∧
+    ((λk. ∫ (interval [(a,b)]) (f k)) ⟶ ∫ (interval [(a,b)]) g) sequentially
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE</span>
+<DD>
+<pre>
+⊢ ∀s. negligible s ⇔ ∀t. (indicator s has_integral 0) t
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ (∀t. t ∈ s ⇒ negligible t) ⇒ negligible (BIGUNION s)
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_BOUNDED_SUBSETS</span>
+<DD>
+<pre>
+⊢ ∀s. negligible s ⇔ ∀t. bounded t ∧ t ⊆ s ⇒ negligible t
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_COUNTABLE</span>
+<DD>
+<pre>
+⊢ ∀s. COUNTABLE s ⇒ negligible s
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_COUNTABLE_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀s. (∀n. negligible (s n)) ⇒ negligible (BIGUNION {s n | n ∈ 𝕌(:num)})
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_DIFF</span>
+<DD>
+<pre>
+⊢ ∀s t. negligible s ⇒ negligible (s DIFF t)
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_EMPTY</span>
+<DD>
+<pre>
+⊢ negligible ∅
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ negligible s
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_FRONTIER_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀a b. negligible (interval [(a,b)] DIFF interval (a,b))
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_INSERT</span>
+<DD>
+<pre>
+⊢ ∀a s. negligible (a INSERT s) ⇔ negligible s
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_INTER</span>
+<DD>
+<pre>
+⊢ ∀s t. negligible s ∨ negligible t ⇒ negligible (s ∩ t)
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_ON_COUNTABLE_INTERVALS</span>
+<DD>
+<pre>
+⊢ ∀s. negligible s ⇔ ∀n. negligible (s ∩ interval [(-n,n)])
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_ON_INTERVALS</span>
+<DD>
+<pre>
+⊢ ∀s. negligible s ⇔ ∀a b. negligible (s ∩ interval [(a,b)])
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_ON_UNIV</span>
+<DD>
+<pre>
+⊢ ∀s. negligible s ⇔ (indicator s has_integral 0) 𝕌(:real)
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_SING</span>
+<DD>
+<pre>
+⊢ ∀a. negligible {a}
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_STANDARD_HYPERPLANE</span>
+<DD>
+<pre>
+⊢ ∀c. negligible {x | x = c}
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s t. negligible s ∧ t ⊆ s ⇒ negligible t
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_UNION</span>
+<DD>
+<pre>
+⊢ ∀s t. negligible s ∧ negligible t ⇒ negligible (s ∪ t)
+</pre>
+
+<DT><span class="strong">NEGLIGIBLE_UNION_EQ</span>
+<DD>
+<pre>
+⊢ ∀s t. negligible (s ∪ t) ⇔ negligible s ∧ negligible t
+</pre>
+
+<DT><span class="strong">NEUTRAL_AND</span>
+<DD>
+<pre>
+⊢ neutral $/\ ⇔ T
+</pre>
+
+<DT><span class="strong">NEUTRAL_LIFTED</span>
+<DD>
+<pre>
+⊢ ∀op. monoidal op ⇒ (neutral (lifted op) = SOME (neutral op))
+</pre>
+
+<DT><span class="strong">NONNEGATIVE_ABSOLUTELY_INTEGRABLE</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀x i. x ∈ s ⇒ 0 ≤ f x) ∧ f integrable_on s ⇒ f absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">NONNEGATIVE_ABSOLUTELY_INTEGRABLE_AE</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    negligible t ∧ (∀x i. x ∈ s DIFF t ⇒ 0 ≤ f x) ∧ f integrable_on s ⇒
+    f absolutely_integrable_on s
+</pre>
+
+<DT><span class="strong">OPEN_INTERVAL_LOWERBOUND</span>
+<DD>
+<pre>
+⊢ ∀a b. a < b ⇒ (interval_lowerbound (interval (a,b)) = a)
+</pre>
+
+<DT><span class="strong">OPEN_INTERVAL_UPPERBOUND</span>
+<DD>
+<pre>
+⊢ ∀a b. a < b ⇒ (interval_upperbound (interval (a,b)) = b)
+</pre>
+
+<DT><span class="strong">OPERATIVE_1_LE</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f. operative op f ⇔
+        (∀a b. b ≤ a ⇒ (f (interval [(a,b)]) = neutral op)) ∧
+        ∀a b c.
+          a ≤ c ∧ c ≤ b ⇒
+          (op (f (interval [(a,c)])) (f (interval [(c,b)])) =
+           f (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">OPERATIVE_1_LT</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f. operative op f ⇔
+        (∀a b. b ≤ a ⇒ (f (interval [(a,b)]) = neutral op)) ∧
+        ∀a b c.
+          a < c ∧ c < b ⇒
+          (op (f (interval [(a,c)])) (f (interval [(c,b)])) =
+           f (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">OPERATIVE_APPROXIMABLE</span>
+<DD>
+<pre>
+⊢ ∀f e.
+    0 ≤ e ⇒
+    operative $/\
+      (λi. ∃g. (∀x. x ∈ i ⇒ abs (f x − g x) ≤ e) ∧ g integrable_on i)
+</pre>
+
+<DT><span class="strong">OPERATIVE_CONTENT</span>
+<DD>
+<pre>
+⊢ operative $+ content
+</pre>
+
+<DT><span class="strong">OPERATIVE_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀op d a b f.
+    monoidal op ∧ operative op f ∧ d division_of interval [(a,b)] ⇒
+    (iterate op d f = f (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">OPERATIVE_DIVISION_AND</span>
+<DD>
+<pre>
+⊢ ∀P d a b.
+    operative $/\ P ∧ d division_of interval [(a,b)] ⇒
+    ((∀i. i ∈ d ⇒ P i) ⇔ P (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">OPERATIVE_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀op f. operative op f ⇒ (f ∅ = neutral op)
+</pre>
+
+<DT><span class="strong">OPERATIVE_FUNCTION_ENDPOINT_DIFF</span>
+<DD>
+<pre>
+⊢ ∀f. operative $+ (λk. f (interval_upperbound k) − f (interval_lowerbound k))
+</pre>
+
+<DT><span class="strong">OPERATIVE_INTEGRABLE</span>
+<DD>
+<pre>
+⊢ ∀f. operative $/\ (λi. f integrable_on i)
+</pre>
+
+<DT><span class="strong">OPERATIVE_INTEGRAL</span>
+<DD>
+<pre>
+⊢ ∀f. operative (lifted $+)
+        (λi. if f integrable_on i then SOME (∫ i f) else NONE)
+</pre>
+
+<DT><span class="strong">OPERATIVE_LIFTED_SETVARIATION</span>
+<DD>
+<pre>
+⊢ ∀f. operative $+ f ⇒
+      operative (lifted $+)
+        (λi.
+             if f has_bounded_setvariation_on i then SOME (set_variation i f)
+             else NONE)
+</pre>
+
+<DT><span class="strong">OPERATIVE_LIFTED_VECTOR_VARIATION</span>
+<DD>
+<pre>
+⊢ ∀f. operative (lifted $+)
+        (λi.
+             if f has_bounded_variation_on i then SOME (vector_variation i f)
+             else NONE)
+</pre>
+
+<DT><span class="strong">OPERATIVE_REAL_FUNCTION_ENDPOINT_DIFF</span>
+<DD>
+<pre>
+⊢ ∀f. operative $+ (λk. f (interval_upperbound k) − f (interval_lowerbound k))
+</pre>
+
+<DT><span class="strong">OPERATIVE_TAGGED_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀op d a b f.
+    monoidal op ∧ operative op f ∧ d tagged_division_of interval [(a,b)] ⇒
+    (iterate op d (λ(x,l). f l) = f (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">OPERATIVE_TRIVIAL</span>
+<DD>
+<pre>
+⊢ ∀op f a b.
+    operative op f ∧ (content (interval [(a,b)]) = 0) ⇒
+    (f (interval [(a,b)]) = neutral op)
+</pre>
+
+<DT><span class="strong">PARTIAL_DIVISION_EXTEND</span>
+<DD>
+<pre>
+⊢ ∀p q s t.
+    p division_of s ∧ q division_of t ∧ s ⊆ t ⇒ ∃r. p ⊆ r ∧ r division_of t
+</pre>
+
+<DT><span class="strong">PARTIAL_DIVISION_EXTEND_1</span>
+<DD>
+<pre>
+⊢ ∀a b c d.
+    interval [(c,d)] ⊆ interval [(a,b)] ∧ interval [(c,d)] ≠ ∅ ⇒
+    ∃p. p division_of interval [(a,b)] ∧ interval [(c,d)] ∈ p
+</pre>
+
+<DT><span class="strong">PARTIAL_DIVISION_EXTEND_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀p a b.
+    p division_of BIGUNION p ∧ BIGUNION p ⊆ interval [(a,b)] ⇒
+    ∃q. p ⊆ q ∧ q division_of interval [(a,b)]
+</pre>
+
+<DT><span class="strong">PARTIAL_DIVISION_OF_TAGGED_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀s i.
+    s tagged_partial_division_of i ⇒
+    IMAGE SND s division_of BIGUNION (IMAGE SND s)
+</pre>
+
+<DT><span class="strong">PROPERTY_EMPTY_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a b. (content (interval [(a,b)]) = 0) ⇒ P (interval [(a,b)])) ⇒ P ∅
+</pre>
+
+<DT><span class="strong">REAL_MUL_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x * y ⇔ 0 < x ∧ 0 < y ∨ x < 0 ∧ y < 0
+</pre>
+
+<DT><span class="strong">REAL_SUP_LE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ (sup s ≤ a ⇔ ∀x. x ∈ s ⇒ x ≤ a)
+</pre>
+
+<DT><span class="strong">RSUM_BOUND</span>
+<DD>
+<pre>
+⊢ ∀p a b f e.
+    p tagged_division_of interval [(a,b)] ∧
+    (∀x. x ∈ interval [(a,b)] ⇒ abs (f x) ≤ e) ⇒
+    abs (sum p (λ(x,k). content k * f x)) ≤ e * content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">RSUM_COMPONENT_LE</span>
+<DD>
+<pre>
+⊢ ∀p a b f g.
+    p tagged_division_of interval [(a,b)] ∧
+    (∀x. x ∈ interval [(a,b)] ⇒ f x ≤ g x) ⇒
+    sum p (λ(x,k). content k * f x) ≤ sum p (λ(x,k). content k * g x)
+</pre>
+
+<DT><span class="strong">RSUM_DIFF_BOUND</span>
+<DD>
+<pre>
+⊢ ∀e p a b f g.
+    p tagged_division_of interval [(a,b)] ∧
+    (∀x. x ∈ interval [(a,b)] ⇒ abs (f x − g x) ≤ e) ⇒
+    abs (sum p (λ(x,k). content k * f x) − sum p (λ(x,k). content k * g x)) ≤
+    e * content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">SECOND_MEAN_VALUE_THEOREM</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    interval [(a,b)] ≠ ∅ ∧ f integrable_on interval [(a,b)] ∧
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ g x ≤ g y) ⇒
+    ∃c. c ∈ interval [(a,b)] ∧
+        (∫ (interval [(a,b)]) (λx. g x * f x) =
+         g a * ∫ (interval [(a,c)]) f + g b * ∫ (interval [(c,b)]) f)
+</pre>
+
+<DT><span class="strong">SECOND_MEAN_VALUE_THEOREM_BONNET</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    interval [(a,b)] ≠ ∅ ∧ f integrable_on interval [(a,b)] ∧
+    (∀x. x ∈ interval [(a,b)] ⇒ 0 ≤ g x) ∧
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ g x ≤ g y) ⇒
+    ∃c. c ∈ interval [(a,b)] ∧
+        (∫ (interval [(a,b)]) (λx. g x * f x) = g b * ∫ (interval [(c,b)]) f)
+</pre>
+
+<DT><span class="strong">SECOND_MEAN_VALUE_THEOREM_BONNET_FULL</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    interval [(a,b)] ≠ ∅ ∧ f integrable_on interval [(a,b)] ∧
+    (∀x. x ∈ interval [(a,b)] ⇒ 0 ≤ g x) ∧
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ g x ≤ g y) ⇒
+    ∃c. c ∈ interval [(a,b)] ∧
+        ((λx. g x * f x) has_integral g b * ∫ (interval [(c,b)]) f)
+          (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">SECOND_MEAN_VALUE_THEOREM_FULL</span>
+<DD>
+<pre>
+⊢ ∀f g a b.
+    interval [(a,b)] ≠ ∅ ∧ f integrable_on interval [(a,b)] ∧
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ g x ≤ g y) ⇒
+    ∃c. c ∈ interval [(a,b)] ∧
+        ((λx. g x * f x) has_integral
+         g a * ∫ (interval [(a,c)]) f + g b * ∫ (interval [(c,b)]) f)
+          (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">SECOND_MEAN_VALUE_THEOREM_GEN</span>
+<DD>
+<pre>
+⊢ ∀f g a b u v.
+    interval [(a,b)] ≠ ∅ ∧ f integrable_on interval [(a,b)] ∧
+    (∀x. x ∈ interval (a,b) ⇒ u ≤ g x ∧ g x ≤ v) ∧
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ g x ≤ g y) ⇒
+    ∃c. c ∈ interval [(a,b)] ∧
+        (∫ (interval [(a,b)]) (λx. g x * f x) =
+         u * ∫ (interval [(a,c)]) f + v * ∫ (interval [(c,b)]) f)
+</pre>
+
+<DT><span class="strong">SECOND_MEAN_VALUE_THEOREM_GEN_FULL</span>
+<DD>
+<pre>
+⊢ ∀f g a b u v.
+    interval [(a,b)] ≠ ∅ ∧ f integrable_on interval [(a,b)] ∧
+    (∀x. x ∈ interval (a,b) ⇒ u ≤ g x ∧ g x ≤ v) ∧
+    (∀x y. x ∈ interval [(a,b)] ∧ y ∈ interval [(a,b)] ∧ x ≤ y ⇒ g x ≤ g y) ⇒
+    ∃c. c ∈ interval [(a,b)] ∧
+        ((λx. g x * f x) has_integral
+         u * ∫ (interval [(a,c)]) f + v * ∫ (interval [(c,b)]) f)
+          (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">SETVARIATION_EQUAL_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀mf ms ms'.
+    (∀s. (ms' (ms s) = s) ∧ (ms (ms' s) = s)) ∧
+    (∀f a b.
+       interval [(a,b)] ≠ ∅ ⇒
+       (mf f (ms (interval [(a,b)])) = f (interval [(a,b)])) ∧
+       ∃a' b'.
+         interval [(a',b')] ≠ ∅ ∧
+         (ms' (interval [(a,b)]) = interval [(a',b')])) ∧
+    (∀t u. t ⊆ u ⇒ ms t ⊆ ms u ∧ ms' t ⊆ ms' u) ∧
+    (∀d t.
+       d division_of t ⇒
+       IMAGE ms d division_of ms t ∧ IMAGE ms' d division_of ms' t) ⇒
+    (∀f s.
+       mf f has_bounded_setvariation_on ms s ⇔ f has_bounded_setvariation_on s) ∧
+    ∀f s. set_variation (ms s) (mf f) = set_variation s f
+</pre>
+
+<DT><span class="strong">SET_VARIATION</span>
+<DD>
+<pre>
+⊢ ∀f s d t.
+    f has_bounded_setvariation_on s ∧ d division_of t ∧ t ⊆ s ⇒
+    sum d (λk. abs (f k)) ≤ set_variation s f
+</pre>
+
+<DT><span class="strong">SET_VARIATION_0</span>
+<DD>
+<pre>
+⊢ ∀s. set_variation s (λx. 0) = 0
+</pre>
+
+<DT><span class="strong">SET_VARIATION_COMPARISON</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_setvariation_on s ∧
+    (∀a b.
+       interval [(a,b)] ≠ ∅ ∧ interval [(a,b)] ⊆ s ⇒
+       abs (g (interval [(a,b)])) ≤ abs (f (interval [(a,b)]))) ⇒
+    set_variation s g ≤ set_variation s f
+</pre>
+
+<DT><span class="strong">SET_VARIATION_ELEMENTARY_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀f s b.
+    (∃d. d division_of s) ⇒
+    ((∀d t. d division_of t ∧ t ⊆ s ⇒ sum d (λk. abs (f k)) ≤ b) ⇔
+     ∀d. d division_of s ⇒ sum d (λk. abs (f k)) ≤ b)
+</pre>
+
+<DT><span class="strong">SET_VARIATION_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀a b.
+       interval [(a,b)] ≠ ∅ ∧ interval [(a,b)] ⊆ s ⇒
+       (f (interval [(a,b)]) = g (interval [(a,b)]))) ⇒
+    (set_variation s f = set_variation s g)
+</pre>
+
+<DT><span class="strong">SET_VARIATION_GE_FUNCTION</span>
+<DD>
+<pre>
+⊢ ∀f s a b.
+    f has_bounded_setvariation_on s ∧ interval [(a,b)] ⊆ s ∧
+    interval [(a,b)] ≠ ∅ ⇒
+    abs (f (interval [(a,b)])) ≤ set_variation s f
+</pre>
+
+<DT><span class="strong">SET_VARIATION_LBOUND</span>
+<DD>
+<pre>
+⊢ ∀f s B.
+    f has_bounded_setvariation_on s ∧
+    (∃d t. d division_of t ∧ t ⊆ s ∧ B ≤ sum d (λk. abs (f k))) ⇒
+    B ≤ set_variation s f
+</pre>
+
+<DT><span class="strong">SET_VARIATION_LBOUND_ON_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b B.
+    f has_bounded_setvariation_on interval [(a,b)] ∧
+    (∃d. d division_of interval [(a,b)] ∧ B ≤ sum d (λk. abs (f k))) ⇒
+    B ≤ set_variation (interval [(a,b)]) f
+</pre>
+
+<DT><span class="strong">SET_VARIATION_MONOTONE</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    f has_bounded_setvariation_on s ∧ t ⊆ s ⇒
+    set_variation t f ≤ set_variation s f
+</pre>
+
+<DT><span class="strong">SET_VARIATION_ON_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀f a b d.
+    operative $+ f ∧ d division_of interval [(a,b)] ∧
+    f has_bounded_setvariation_on interval [(a,b)] ⇒
+    (sum d (λk. set_variation k f) = set_variation (interval [(a,b)]) f)
+</pre>
+
+<DT><span class="strong">SET_VARIATION_ON_ELEMENTARY</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∃d. d division_of s) ⇒
+    (set_variation s f = sup {sum d (λk. abs (f k)) | d division_of s})
+</pre>
+
+<DT><span class="strong">SET_VARIATION_ON_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    set_variation (interval [(a,b)]) f =
+    sup {sum d (λk. abs (f k)) | d division_of interval [(a,b)]}
+</pre>
+
+<DT><span class="strong">SET_VARIATION_ON_NULL</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀a b. (content (interval [(a,b)]) = 0) ⇒ (f (interval [(a,b)]) = 0)) ∧
+    (content s = 0) ∧ bounded s ⇒
+    (set_variation s f = 0)
+</pre>
+
+<DT><span class="strong">SET_VARIATION_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀f s. f has_bounded_setvariation_on s ⇒ 0 ≤ set_variation s f
+</pre>
+
+<DT><span class="strong">SET_VARIATION_REFLECT2</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    set_variation (IMAGE (λx. -x) s) (λk. f (IMAGE (λx. -x) k)) =
+    set_variation s f
+</pre>
+
+<DT><span class="strong">SET_VARIATION_SUM_LE</span>
+<DD>
+<pre>
+⊢ ∀f s k.
+    FINITE k ∧ (∀i. i ∈ k ⇒ f i has_bounded_setvariation_on s) ⇒
+    set_variation s (λx. sum k (λi. f i x)) ≤
+    sum k (λi. set_variation s (f i))
+</pre>
+
+<DT><span class="strong">SET_VARIATION_TRANSLATION2</span>
+<DD>
+<pre>
+⊢ ∀a f s.
+    set_variation (IMAGE (λx. -a + x) s) (λk. f (IMAGE (λx. a + x) k)) =
+    set_variation s f
+</pre>
+
+<DT><span class="strong">SET_VARIATION_TRIANGLE</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_setvariation_on s ∧ g has_bounded_setvariation_on s ⇒
+    set_variation s (λx. f x + g x) ≤ set_variation s f + set_variation s g
+</pre>
+
+<DT><span class="strong">SET_VARIATION_UBOUND</span>
+<DD>
+<pre>
+⊢ ∀f s B.
+    f has_bounded_setvariation_on s ∧
+    (∀d t. d division_of t ∧ t ⊆ s ⇒ sum d (λk. abs (f k)) ≤ B) ⇒
+    set_variation s f ≤ B
+</pre>
+
+<DT><span class="strong">SET_VARIATION_UBOUND_ON_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b B.
+    f has_bounded_setvariation_on interval [(a,b)] ∧
+    (∀d. d division_of interval [(a,b)] ⇒ sum d (λk. abs (f k)) ≤ B) ⇒
+    set_variation (interval [(a,b)]) f ≤ B
+</pre>
+
+<DT><span class="strong">SET_VARIATION_WORKS_ON_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b d.
+    f has_bounded_setvariation_on interval [(a,b)] ∧
+    d division_of interval [(a,b)] ⇒
+    sum d (λk. abs (f k)) ≤ set_variation (interval [(a,b)]) f
+</pre>
+
+<DT><span class="strong">SUBADDITIVE_CONTENT_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀d s a b.
+    d division_of s ∧ s ⊆ interval [(a,b)] ⇒
+    sum d content ≤ content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">SUM_ABS_ALLSUBSETS_BOUND</span>
+<DD>
+<pre>
+⊢ ∀f p e.
+    FINITE p ∧ (∀q. q ⊆ p ⇒ abs (sum q f) ≤ e) ⇒
+    sum p (λx. abs (f x)) ≤ 2 * 1 * e
+</pre>
+
+<DT><span class="strong">SUM_CONTENT_AREA_OVER_THIN_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀d a b s c.
+    d division_of s ∧ s ⊆ interval [(a,b)] ∧ a ≤ c ∧ c ≤ b ∧
+    (∀k. k ∈ d ⇒ k ∩ {x | x = c} ≠ ∅) ⇒
+    (b − a) *
+    sum d (λk. content k / (interval_upperbound k − interval_lowerbound k)) ≤
+    2 * content (interval [(a,b)])
+</pre>
+
+<DT><span class="strong">SUM_CONTENT_NULL</span>
+<DD>
+<pre>
+⊢ ∀f a b p.
+    (content (interval [(a,b)]) = 0) ∧ p tagged_division_of interval [(a,b)] ⇒
+    (sum p (λ(x,k). content k * f x) = 0)
+</pre>
+
+<DT><span class="strong">SUM_NONZERO_IMAGE_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀s f g a.
+    FINITE s ∧ (g a = 0) ∧
+    (∀x y. x ∈ s ∧ y ∈ s ∧ (f x = f y) ∧ x ≠ y ⇒ (g (f x) = 0)) ⇒
+    (sum {f x | x | x ∈ s ∧ f x ≠ a} g = sum s (g ∘ f))
+</pre>
+
+<DT><span class="strong">SUM_OVER_TAGGED_DIVISION_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀d p i.
+    p tagged_division_of i ∧
+    (∀u v.
+       interval [(u,v)] ≠ ∅ ∧ (content (interval [(u,v)]) = 0) ⇒
+       (d (interval [(u,v)]) = 0)) ⇒
+    (sum p (λ(x,k). d k) = sum (IMAGE SND p) d)
+</pre>
+
+<DT><span class="strong">SUM_OVER_TAGGED_PARTIAL_DIVISION_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀d p i.
+    p tagged_partial_division_of i ∧
+    (∀u v.
+       interval [(u,v)] ≠ ∅ ∧ (content (interval [(u,v)]) = 0) ⇒
+       (d (interval [(u,v)]) = 0)) ⇒
+    (sum p (λ(x,k). d k) = sum (IMAGE SND p) d)
+</pre>
+
+<DT><span class="strong">SUP_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ⇒ sup s ∈ s ∧ ∀x. x ∈ s ⇒ x ≤ sup s
+</pre>
+
+<DT><span class="strong">SUP_FINITE_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ⇒ ∃b. b ∈ s ∧ ∀x. x ∈ s ⇒ x ≤ b
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀iset pfn.
+    FINITE iset ∧ (∀i. i ∈ iset ⇒ pfn i tagged_division_of i) ∧
+    (∀i1 i2. i1 ∈ iset ∧ i2 ∈ iset ∧ i1 ≠ i2 ⇒ (interior i1 ∩ interior i2 = ∅)) ⇒
+    BIGUNION (IMAGE pfn iset) tagged_division_of BIGUNION iset
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_BIGUNION_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀d iset i.
+    FINITE iset ∧ (∀i. i ∈ iset ⇒ ∃p. p tagged_division_of i ∧ d FINE p) ∧
+    (∀i1 i2. i1 ∈ iset ∧ i2 ∈ iset ∧ i1 ≠ i2 ⇒ (interior i1 ∩ interior i2 = ∅)) ∧
+    (BIGUNION iset = i) ⇒
+    ∃p. p tagged_division_of i ∧ d FINE p
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_FINER</span>
+<DD>
+<pre>
+⊢ ∀p a b d.
+    p tagged_division_of interval [(a,b)] ∧ gauge d ⇒
+    ∃q. q tagged_division_of interval [(a,b)] ∧ d FINE q ∧
+        ∀x k. (x,k) ∈ p ∧ k ⊆ d x ⇒ (x,k) ∈ q
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_OF</span>
+<DD>
+<pre>
+⊢ ∀s i.
+    s tagged_division_of i ⇔
+    FINITE s ∧
+    (∀x k. (x,k) ∈ s ⇒ x ∈ k ∧ k ⊆ i ∧ ∃a b. k = interval [(a,b)]) ∧
+    (∀x1 k1 x2 k2.
+       (x1,k1) ∈ s ∧ (x2,k2) ∈ s ∧ (x1,k1) ≠ (x2,k2) ⇒
+       (interior k1 ∩ interior k2 = ∅)) ∧ (BIGUNION {k | (∃x. (x,k) ∈ s)} = i)
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_OF_ALT</span>
+<DD>
+<pre>
+⊢ ∀p s.
+    p tagged_division_of s ⇔
+    p tagged_partial_division_of s ∧ ∀x. x ∈ s ⇒ ∃t k. (t,k) ∈ p ∧ x ∈ k
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_OF_ANOTHER</span>
+<DD>
+<pre>
+⊢ ∀p s s'.
+    p tagged_partial_division_of s' ∧ (∀t k. (t,k) ∈ p ⇒ k ⊆ s) ∧
+    (∀x. x ∈ s ⇒ ∃t k. (t,k) ∈ p ∧ x ∈ k) ⇒
+    p tagged_division_of s
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ ∅ tagged_division_of ∅
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_OF_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s i. s tagged_division_of i ⇒ FINITE s
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_OF_NONTRIVIAL</span>
+<DD>
+<pre>
+⊢ ∀s a b.
+    s tagged_division_of interval [(a,b)] ∧ content (interval [(a,b)]) ≠ 0 ⇒
+    {(x,k) | (x,k) ∈ s ∧ content k ≠ 0} tagged_division_of interval [(a,b)]
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_OF_SELF</span>
+<DD>
+<pre>
+⊢ ∀x a b.
+    x ∈ interval [(a,b)] ⇒
+    {(x,interval [(a,b)])} tagged_division_of interval [(a,b)]
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_OF_TRIVIAL</span>
+<DD>
+<pre>
+⊢ ∀p. p tagged_division_of ∅ ⇔ (p = ∅)
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_OF_UNION_SELF</span>
+<DD>
+<pre>
+⊢ ∀p s. p tagged_division_of s ⇒ p tagged_division_of BIGUNION (IMAGE SND p)
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_SPLIT_LEFT_INJ</span>
+<DD>
+<pre>
+⊢ ∀d i x1 k1 x2 k2 c.
+    d tagged_division_of i ∧ (x1,k1) ∈ d ∧ (x2,k2) ∈ d ∧ k1 ≠ k2 ∧
+    (k1 ∩ {x | x ≤ c} = k2 ∩ {x | x ≤ c}) ⇒
+    (content (k1 ∩ {x | x ≤ c}) = 0)
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_SPLIT_RIGHT_INJ</span>
+<DD>
+<pre>
+⊢ ∀d i x1 k1 x2 k2 c.
+    d tagged_division_of i ∧ (x1,k1) ∈ d ∧ (x2,k2) ∈ d ∧ k1 ≠ k2 ∧
+    (k1 ∩ {x | x ≥ c} = k2 ∩ {x | x ≥ c}) ⇒
+    (content (k1 ∩ {x | x ≥ c}) = 0)
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_UNION</span>
+<DD>
+<pre>
+⊢ ∀s1 s2 p1 p2.
+    p1 tagged_division_of s1 ∧ p2 tagged_division_of s2 ∧
+    (interior s1 ∩ interior s2 = ∅) ⇒
+    p1 ∪ p2 tagged_division_of s1 ∪ s2
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_UNION_IMAGE_SND</span>
+<DD>
+<pre>
+⊢ ∀p s. p tagged_division_of s ⇒ (s = BIGUNION (IMAGE SND p))
+</pre>
+
+<DT><span class="strong">TAGGED_DIVISION_UNION_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀a b p1 p2 c.
+    p1 tagged_division_of interval [(a,b)] ∩ {x | x ≤ c} ∧
+    p2 tagged_division_of interval [(a,b)] ∩ {x | x ≥ c} ⇒
+    p1 ∪ p2 tagged_division_of interval [(a,b)]
+</pre>
+
+<DT><span class="strong">TAGGED_PARTIAL_DIVISION_COMMON_POINT_BOUND</span>
+<DD>
+<pre>
+⊢ ∀p s y.
+    p tagged_partial_division_of s ⇒
+    CARD {(x,k) | (x,k) ∈ p ∧ y ∈ k ∧ content k ≠ 0} ≤ 2 ** 1
+</pre>
+
+<DT><span class="strong">TAGGED_PARTIAL_DIVISION_COMMON_TAGS</span>
+<DD>
+<pre>
+⊢ ∀p s x.
+    p tagged_partial_division_of s ⇒
+    CARD {(x,k) | k | (x,k) ∈ p ∧ content k ≠ 0} ≤ 2 ** 1
+</pre>
+
+<DT><span class="strong">TAGGED_PARTIAL_DIVISION_OF_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀p s t.
+    p tagged_partial_division_of s ∧ s ⊆ t ⇒ p tagged_partial_division_of t
+</pre>
+
+<DT><span class="strong">TAGGED_PARTIAL_DIVISION_OF_TRIVIAL</span>
+<DD>
+<pre>
+⊢ ∀p. p tagged_partial_division_of ∅ ⇔ (p = ∅)
+</pre>
+
+<DT><span class="strong">TAGGED_PARTIAL_DIVISION_OF_UNION_SELF</span>
+<DD>
+<pre>
+⊢ ∀p s.
+    p tagged_partial_division_of s ⇒
+    p tagged_division_of BIGUNION (IMAGE SND p)
+</pre>
+
+<DT><span class="strong">TAGGED_PARTIAL_DIVISION_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s t i.
+    s tagged_partial_division_of i ∧ t ⊆ s ⇒ t tagged_partial_division_of i
+</pre>
+
+<DT><span class="strong">TAG_IN_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀p i k. p tagged_division_of i ∧ (x,k) ∈ p ⇒ x ∈ i
+</pre>
+
+<DT><span class="strong">VARIATION_EQUAL_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀ms ms'.
+    (∀s. (ms' (ms s) = s) ∧ (ms (ms' s) = s)) ∧
+    (∀d t.
+       d division_of t ⇒
+       IMAGE (IMAGE ms) d division_of IMAGE ms t ∧
+       IMAGE (IMAGE ms') d division_of IMAGE ms' t) ∧
+    (∀a b.
+       interval [(a,b)] ≠ ∅ ⇒
+       (IMAGE ms' (interval [(a,b)]) = interval [(ms' a,ms' b)]) ∨
+       (IMAGE ms' (interval [(a,b)]) = interval [(ms' b,ms' a)])) ⇒
+    (∀f s.
+       (λx. f (ms' x)) has_bounded_variation_on IMAGE ms s ⇔
+       f has_bounded_variation_on s) ∧
+    ∀f s. vector_variation (IMAGE ms s) (λx. f (ms' x)) = vector_variation s f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_ABS</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (λx. f x) has_bounded_variation_on s ⇒
+    vector_variation s (λx. abs (f x)) ≤ vector_variation s (λx. f x)
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_AFFINITY</span>
+<DD>
+<pre>
+⊢ ∀m c f s.
+    vector_variation s (λx. f (m * x + c)) =
+    if m = 0 then 0 else vector_variation (IMAGE (λx. m * x + c) s) f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_AFFINITY2</span>
+<DD>
+<pre>
+⊢ ∀m c f s.
+    vector_variation (IMAGE (λx. m⁻¹ * x + -(m⁻¹ * c)) s) (λx. f (m * x + c)) =
+    if m = 0 then 0 else vector_variation s f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_COMBINE</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    a ≤ c ∧ c ≤ b ∧ f has_bounded_variation_on interval [(a,b)] ⇒
+    (vector_variation (interval [(a,c)]) f +
+     vector_variation (interval [(c,b)]) f =
+     vector_variation (interval [(a,b)]) f)
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_COMPARISON</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_variation_on s ∧
+    (∀x y. x ∈ s ∧ y ∈ s ∧ x < y ⇒ dist (g x,g y) ≤ dist (f x,f y)) ⇒
+    vector_variation s g ≤ vector_variation s f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_CONST</span>
+<DD>
+<pre>
+⊢ ∀s c. vector_variation s (λx. c) = 0
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_CONST_EQ</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    is_interval s ∧ f has_bounded_variation_on s ⇒
+    ((vector_variation s f = 0) ⇔ ∃c. ∀x. x ∈ s ⇒ (f x = c))
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_CONTINUOUS</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    f has_bounded_variation_on interval [(a,b)] ∧ c ∈ interval [(a,b)] ⇒
+    ((λx. vector_variation (interval [(a,x)]) f) continuous
+     (at c within interval [(a,b)]) ⇔
+     f continuous (at c within interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_CONTINUOUS_LEFT</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    f has_bounded_variation_on interval [(a,b)] ∧ c ∈ interval [(a,b)] ⇒
+    ((λx. vector_variation (interval [(a,x)]) f) continuous
+     (at c within interval [(a,c)]) ⇔
+     f continuous (at c within interval [(a,c)]))
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_CONTINUOUS_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀f a b c.
+    f has_bounded_variation_on interval [(a,b)] ∧ c ∈ interval [(a,b)] ⇒
+    ((λx. vector_variation (interval [(a,x)]) f) continuous
+     (at c within interval [(c,b)]) ⇔
+     f continuous (at c within interval [(c,b)]))
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (vector_variation s f = vector_variation s g)
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_GE_ABS_FUNCTION</span>
+<DD>
+<pre>
+⊢ ∀f s a b.
+    f has_bounded_variation_on s ∧ segment [(a,b)] ⊆ s ⇒
+    abs (f b − f a) ≤ vector_variation s f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_GE_FUNCTION</span>
+<DD>
+<pre>
+⊢ ∀f s a b.
+    f has_bounded_variation_on s ∧ segment [(a,b)] ⊆ s ⇒
+    f b − f a ≤ vector_variation s f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_MINUS_FUNCTION_MONOTONE</span>
+<DD>
+<pre>
+⊢ ∀f a b c d.
+    f has_bounded_variation_on interval [(a,b)] ∧
+    interval [(c,d)] ⊆ interval [(a,b)] ∧ interval [(c,d)] ≠ ∅ ⇒
+    vector_variation (interval [(c,d)]) f − (f d − f c) ≤
+    vector_variation (interval [(a,b)]) f − (f b − f a)
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_MONOTONE</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    f has_bounded_variation_on s ∧ t ⊆ s ⇒
+    vector_variation t f ≤ vector_variation s f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_NEG</span>
+<DD>
+<pre>
+⊢ ∀f s. vector_variation s (λx. -f x) = vector_variation s f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_ON_DIVISION</span>
+<DD>
+<pre>
+⊢ ∀f a b d.
+    d division_of interval [(a,b)] ∧
+    f has_bounded_variation_on interval [(a,b)] ⇒
+    (sum d (λk. vector_variation k f) = vector_variation (interval [(a,b)]) f)
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_ON_NULL</span>
+<DD>
+<pre>
+⊢ ∀f s. (content s = 0) ∧ bounded s ⇒ (vector_variation s f = 0)
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀f s. f has_bounded_variation_on s ⇒ 0 ≤ vector_variation s f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_REFLECT</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    vector_variation s (λx. f (-x)) = vector_variation (IMAGE (λx. -x) s) f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_REFLECT2</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    vector_variation (IMAGE (λx. -x) s) (λx. f (-x)) = vector_variation s f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_REFLECT_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    vector_variation (interval [(a,b)]) (λx. f (-x)) =
+    vector_variation (interval [(-b,-a)]) f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_TRANSLATION</span>
+<DD>
+<pre>
+⊢ ∀a f s.
+    vector_variation s (λx. f (a + x)) =
+    vector_variation (IMAGE (λx. a + x) s) f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_TRANSLATION2</span>
+<DD>
+<pre>
+⊢ ∀a f s.
+    vector_variation (IMAGE (λx. -a + x) s) (λx. f (a + x)) =
+    vector_variation s f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_TRANSLATION_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀a f u v.
+    vector_variation (interval [(u,v)]) (λx. f (a + x)) =
+    vector_variation (interval [(a + u,a + v)]) f
+</pre>
+
+<DT><span class="strong">VECTOR_VARIATION_TRIANGLE</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    f has_bounded_variation_on s ∧ g has_bounded_variation_on s ⇒
+    vector_variation s (λx. f x + g x) ≤
+    vector_variation s f + vector_variation s g
+</pre>
+
+<DT><span class="strong">has_integral</span>
+<DD>
+<pre>
+⊢ (f has_integral y) (interval [(a,b)]) ⇔
+  ∀e. 0 < e ⇒
+      ∃d. gauge d ∧
+          ∀p. p tagged_division_of interval [(a,b)] ∧ d FINE p ⇒
+              abs (sum p (λ(x,k). content k * f x) − y) < e
+</pre>
+
+<DT><span class="strong">has_integral_alt</span>
+<DD>
+<pre>
+⊢ (f has_integral y) i ⇔
+  if ∃a b. i = interval [(a,b)] then (f has_integral y) i
+  else
+    ∀e. 0 < e ⇒
+        ∃B. 0 < B ∧
+            ∀a b.
+              ball (0,B) ⊆ interval [(a,b)] ⇒
+              ∃z. ((λx. if x ∈ i then f x else 0) has_integral z)
+                    (interval [(a,b)]) ∧ abs (z − y) < e
+</pre>
+
+<DT><span class="strong">lifted_def</span>
+<DD>
+<pre>
+⊢ (lifted op NONE v0 = NONE) ∧ (lifted op (SOME v5) NONE = NONE) ∧
+  (lifted op (SOME x) (SOME y) = SOME (op x y))
+</pre>
+
+<DT><span class="strong">lifted_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀op v0. P op NONE v0) ∧ (∀op v5. P op (SOME v5) NONE) ∧
+      (∀op x y. P op (SOME x) (SOME y)) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

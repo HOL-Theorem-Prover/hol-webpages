@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: logroot</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "logroot"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "basicSizeTheory.html"><span class="strong">basicSize</span></a>&nbsp;&nbsp;
+    <a href = "whileTheory.html"><span class="strong">while</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">LOG</span>
+    <td>
+    :num -> num -> num
+    <tr><td> <span class="strong">ROOT</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">SQRTd</span> <td> :num -> num # num
+    <tr><td> <span class="strong">iSQRT0</span> <td> :num -> num # num
+    <tr><td> <span class="strong">iSQRT1</span> <td> :num -> num # num
+    <tr><td> <span class="strong">iSQRT2</span> <td> :num -> num # num
+    <tr><td> <span class="strong">iSQRT3</span> <td> :num -> num # num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">LOG</span>
+<DD>
+<pre>
+⊢ ∀a n. 1 < a ∧ 0 < n ⇒ a ** LOG a n ≤ n ∧ n < a ** SUC (LOG a n)
+</pre>
+
+<DT><span class="strong">ROOT</span>
+<DD>
+<pre>
+⊢ ∀r n. 0 < r ⇒ ROOT r n ** r ≤ n ∧ n < SUC (ROOT r n) ** r
+</pre>
+
+<DT><span class="strong">SQRTd_def</span>
+<DD>
+<pre>
+⊢ ∀n. SQRTd n = (ROOT 2 n,n − ROOT 2 n * ROOT 2 n)
+</pre>
+
+<DT><span class="strong">iSQRT0_def</span>
+<DD>
+<pre>
+⊢ ∀n. iSQRT0 n =
+      (let
+         p = SQRTd n;
+         d = SND p − FST p
+       in
+         if d = 0 then (2 * FST p,4 * SND p) else (SUC (2 * FST p),4 * d − 1))
+</pre>
+
+<DT><span class="strong">iSQRT1_def</span>
+<DD>
+<pre>
+⊢ ∀n. iSQRT1 n =
+      (let
+         p = SQRTd n;
+         d = SUC (SND p) − FST p
+       in
+         if d = 0 then (2 * FST p,SUC (4 * SND p))
+         else (SUC (2 * FST p),4 * (d − 1)))
+</pre>
+
+<DT><span class="strong">iSQRT2_def</span>
+<DD>
+<pre>
+⊢ ∀n. iSQRT2 n =
+      (let
+         p = SQRTd n;
+         d = 2 * FST p;
+         c = SUC (2 * SND p);
+         e = c − d
+       in
+         if e = 0 then (d,2 * c) else (SUC d,2 * e − 1))
+</pre>
+
+<DT><span class="strong">iSQRT3_def</span>
+<DD>
+<pre>
+⊢ ∀n. iSQRT3 n =
+      (let
+         p = SQRTd n;
+         d = 2 * FST p;
+         c = SUC (2 * SND p);
+         e = SUC c − d
+       in
+         if e = 0 then (d,SUC (2 * c)) else (SUC d,2 * (e − 1)))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">EXP_LE_ISO</span>
+<DD>
+<pre>
+⊢ ∀a b r. 0 < r ⇒ (a ≤ b ⇔ a ** r ≤ b ** r)
+</pre>
+
+<DT><span class="strong">EXP_LT_ISO</span>
+<DD>
+<pre>
+⊢ ∀a b r. 0 < r ⇒ (a < b ⇔ a ** r < b ** r)
+</pre>
+
+<DT><span class="strong">EXP_MUL</span>
+<DD>
+<pre>
+⊢ ∀a b c. (a ** b) ** c = a ** (b * c)
+</pre>
+
+<DT><span class="strong">LE_EXP_ISO</span>
+<DD>
+<pre>
+⊢ ∀e a b. 1 < e ⇒ (a ≤ b ⇔ e ** a ≤ e ** b)
+</pre>
+
+<DT><span class="strong">LOG_1</span>
+<DD>
+<pre>
+⊢ ∀a. 1 < a ⇒ (LOG a 1 = 0)
+</pre>
+
+<DT><span class="strong">LOG_ADD</span>
+<DD>
+<pre>
+⊢ ∀a b c. 1 < a ∧ b < a ** c ⇒ (LOG a (b + a ** c) = c)
+</pre>
+
+<DT><span class="strong">LOG_ADD1</span>
+<DD>
+<pre>
+⊢ ∀n a b.
+    0 < n ∧ 1 < a ∧ 0 < b ⇒
+    (LOG a (a ** SUC n * b) = SUC (LOG a (a ** n * b)))
+</pre>
+
+<DT><span class="strong">LOG_BASE</span>
+<DD>
+<pre>
+⊢ ∀a. 1 < a ⇒ (LOG a a = 1)
+</pre>
+
+<DT><span class="strong">LOG_DIV</span>
+<DD>
+<pre>
+⊢ ∀a x. 1 < a ∧ a ≤ x ⇒ (LOG a x = 1 + LOG a (x DIV a))
+</pre>
+
+<DT><span class="strong">LOG_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀a b. 1 < a ∧ 0 < b ⇒ ((LOG a b = 0) ⇔ b < a)
+</pre>
+
+<DT><span class="strong">LOG_EXP</span>
+<DD>
+<pre>
+⊢ ∀n a b. 1 < a ∧ 0 < b ⇒ (LOG a (a ** n * b) = n + LOG a b)
+</pre>
+
+<DT><span class="strong">LOG_LE_MONO</span>
+<DD>
+<pre>
+⊢ ∀a x y. 1 < a ∧ 0 < x ⇒ x ≤ y ⇒ LOG a x ≤ LOG a y
+</pre>
+
+<DT><span class="strong">LOG_MOD</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ (n = 2 ** LOG 2 n + n MOD 2 ** LOG 2 n)
+</pre>
+
+<DT><span class="strong">LOG_MULT</span>
+<DD>
+<pre>
+⊢ ∀b x. 1 < b ∧ 0 < x ⇒ (LOG b (b * x) = SUC (LOG b x))
+</pre>
+
+<DT><span class="strong">LOG_ROOT</span>
+<DD>
+<pre>
+⊢ ∀a x r. 1 < a ∧ 0 < x ∧ 0 < r ⇒ (LOG a (ROOT r x) = LOG a x DIV r)
+</pre>
+
+<DT><span class="strong">LOG_RWT</span>
+<DD>
+<pre>
+⊢ ∀m n. 1 < m ∧ 0 < n ⇒ (LOG m n = if n < m then 0 else SUC (LOG m (n DIV m)))
+</pre>
+
+<DT><span class="strong">LOG_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀a n p. a ** p ≤ n ∧ n < a ** SUC p ⇒ (LOG a n = p)
+</pre>
+
+<DT><span class="strong">LOG_add_digit</span>
+<DD>
+<pre>
+⊢ ∀b x y. 1 < b ∧ 0 < y ∧ x < b ⇒ (LOG b (b * y + x) = SUC (LOG b y))
+</pre>
+
+<DT><span class="strong">LOG_exists</span>
+<DD>
+<pre>
+⊢ ∃f. ∀a n. 1 < a ∧ 0 < n ⇒ a ** f a n ≤ n ∧ n < a ** SUC (f a n)
+</pre>
+
+<DT><span class="strong">LT_EXP_ISO</span>
+<DD>
+<pre>
+⊢ ∀e a b. 1 < e ⇒ (a < b ⇔ e ** a < e ** b)
+</pre>
+
+<DT><span class="strong">ROOT_COMPUTE</span>
+<DD>
+<pre>
+⊢ ∀r n.
+    0 < r ⇒
+    (ROOT r 0 = 0) ∧
+    (ROOT r n =
+     (let
+        x = 2 * ROOT r (n DIV 2 ** r)
+      in
+        if n < SUC x ** r then x else SUC x))
+</pre>
+
+<DT><span class="strong">ROOT_DIV</span>
+<DD>
+<pre>
+⊢ ∀r x y. 0 < r ∧ 0 < y ⇒ (ROOT r x DIV y = ROOT r (x DIV y ** r))
+</pre>
+
+<DT><span class="strong">ROOT_EVAL</span>
+<DD>
+<pre>
+⊢ ∀r n.
+    ROOT r n =
+    if r = 0 then ROOT 0 n
+    else if n = 0 then 0
+    else
+      (let
+         m = 2 * ROOT r (n DIV 2 ** r)
+       in
+         m + if SUC m ** r ≤ n then 1 else 0)
+</pre>
+
+<DT><span class="strong">ROOT_EXP</span>
+<DD>
+<pre>
+⊢ ∀n r. 0 < r ⇒ (ROOT r (n ** r) = n)
+</pre>
+
+<DT><span class="strong">ROOT_LE_MONO</span>
+<DD>
+<pre>
+⊢ ∀r x y. 0 < r ⇒ x ≤ y ⇒ ROOT r x ≤ ROOT r y
+</pre>
+
+<DT><span class="strong">ROOT_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀r n p. p ** r ≤ n ∧ n < SUC p ** r ⇒ (ROOT r n = p)
+</pre>
+
+<DT><span class="strong">ROOT_exists</span>
+<DD>
+<pre>
+⊢ ∀r n. 0 < r ⇒ ∃rt. rt ** r ≤ n ∧ n < SUC rt ** r
+</pre>
+
+<DT><span class="strong">numeral_root2</span>
+<DD>
+<pre>
+⊢ ROOT 2 (NUMERAL n) = FST (SQRTd n)
+</pre>
+
+<DT><span class="strong">numeral_sqrt</span>
+<DD>
+<pre>
+⊢ (SQRTd ZERO = (0,0)) ∧ (SQRTd (BIT1 ZERO) = (1,0)) ∧
+  (SQRTd (BIT2 ZERO) = (1,1)) ∧ (SQRTd (BIT1 (BIT1 n)) = iSQRT3 n) ∧
+  (SQRTd (BIT2 (BIT1 n)) = iSQRT0 (SUC n)) ∧
+  (SQRTd (BIT1 (BIT2 n)) = iSQRT1 (SUC n)) ∧
+  (SQRTd (BIT2 (BIT2 n)) = iSQRT2 (SUC n)) ∧
+  (SQRTd (SUC (BIT1 (BIT1 n))) = iSQRT0 (SUC n)) ∧
+  (SQRTd (SUC (BIT2 (BIT1 n))) = iSQRT1 (SUC n)) ∧
+  (SQRTd (SUC (BIT1 (BIT2 n))) = iSQRT2 (SUC n)) ∧
+  (SQRTd (SUC (BIT2 (BIT2 n))) = iSQRT3 (SUC n))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

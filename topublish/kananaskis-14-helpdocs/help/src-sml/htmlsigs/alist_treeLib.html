@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure alist_treeLib</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure alist_treeLib</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/finite_maps/alist_treeLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* Code to recall that some partial functions (of type 'a -&gt; 'b option)
+<a name="line2"></a>can be represented as sorted alists, and derive a fast conversion on
+<a name="line3"></a>applications of those functions. *)
+<a name="line4"></a>
+<a name="line5"></a>signature alist_treeLib = sig
+<a name="line6"></a>
+<a name="line7"></a>include Abbrev
+<a name="line8"></a>
+<a name="line9"></a>(* Syntax *)
+<a name="line10"></a>val alookup_tm : term;
+<a name="line11"></a>val option_choice_tm : term;
+<a name="line12"></a>val repr_tm : term;
+<a name="line13"></a>
+<a name="line14"></a>(* The repr set type *)
+<a name="line15"></a>type 'a alist_reprs
+<a name="line16"></a>
+<a name="line17"></a>(*
+<a name="line18"></a>   Representations of partial functions using sorted trees.
+<a name="line19"></a>   Requires a relation R and a theorem that shows
+<a name="line20"></a>   it is irreflexive and transitive. The destructor maps terms
+<a name="line21"></a>   of the domain type to some type that can be sorted in ML.
+<a name="line22"></a>   The conversion must prove R x y for any x, y where x is
+<a name="line23"></a>   sorted before y by the destructor and comparison.
+<a name="line24"></a>*)
+<a name="line25"></a>val mk_alist_reprs : thm -&gt; conv -&gt; (term -&gt; 'a)
+<a name="line26"></a>    -&gt; (('a * 'a) -&gt; order) -&gt; 'a alist_reprs
+<a name="line27"></a>
+<a name="line28"></a>(*
+<a name="line29"></a>   The representation set contains representations of various
+<a name="line30"></a>   partial functions, initially none.
+<a name="line31"></a>*)
+<a name="line32"></a>val peek_functions_in_rs : 'a alist_reprs -&gt; term list
+<a name="line33"></a>
+<a name="line34"></a>(*
+<a name="line35"></a>   Adds a function's representation.
+<a name="line36"></a>
+<a name="line37"></a>   Requires a theorem f = rhs with a valid rhs.
+<a name="line38"></a>   A valid rhs is:
+<a name="line39"></a>     - ALOOKUP xs
+<a name="line40"></a>     - a function g in the repr set.
+<a name="line41"></a>     - option_choice_f of two valid rhs values
+<a name="line42"></a>*)
+<a name="line43"></a>val add_alist_repr : 'a alist_reprs -&gt; thm -&gt; unit
+<a name="line44"></a>
+<a name="line45"></a>(*
+<a name="line46"></a>   Converts f x to a concrete value (SOME y/NONE)
+<a name="line47"></a>   for functions f in the repr set.
+<a name="line48"></a>*)
+<a name="line49"></a>val reprs_conv : 'a alist_reprs -&gt; conv
+<a name="line50"></a>
+<a name="line51"></a>end
+<a name="line52"></a>
+<a name="line53"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/finite_maps/alist_treeLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Kananaskis-14</a></em></p></body></html>

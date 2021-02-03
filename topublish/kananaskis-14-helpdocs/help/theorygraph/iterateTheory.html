@@ -1,0 +1,2882 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: iterate</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "iterate"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "cardinalTheory.html"><span class="strong">cardinal</span></a>&nbsp;&nbsp;
+    <a href = "logrootTheory.html"><span class="strong">logroot</span></a>&nbsp;&nbsp;
+    <a href = "sortingTheory.html"><span class="strong">sorting</span></a>&nbsp;&nbsp;
+    <a href = "real_sigmaTheory.html"><span class="strong">real_sigma</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">..</span>
+    <td>
+    :num -> num -> num -> bool
+    <tr><td>
+    <span class="strong">FINREC</span>
+    <td>
+    :(α -> β -> β) -> β -> (α -> bool) -> β -> num -> bool
+    <tr><td>
+    <span class="strong">ITSET'</span>
+    <td>
+    :(β -> α -> α) -> (β -> bool) -> α -> α
+    <tr><td>
+    <span class="strong">Sum</span>
+    <td>
+    :(α -> bool) -> (α -> real) -> real
+    <tr><td>
+    <span class="strong">iterate</span>
+    <td>
+    :(β -> β -> β) -> (α -> bool) -> (α -> β) -> β
+    <tr><td> <span class="strong">monoidal</span> <td> :(α -> α -> α) -> bool
+    <tr><td> <span class="strong">neutral</span> <td> :(α -> α -> α) -> α
+    <tr><td>
+    <span class="strong">nsum</span>
+    <td>
+    :(α -> bool) -> (α -> num) -> num
+    <tr><td>
+    <span class="strong">polynomial_function</span>
+    <td>
+    :(real -> real) -> bool
+    <tr><td>
+    <span class="strong">support</span>
+    <td>
+    :(β -> β -> β) -> (α -> β) -> (α -> bool) -> α -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">FINREC_def</span>
+<DD>
+<pre>
+⊢ (∀f b s a. FINREC f b s a 0 ⇔ (s = ∅) ∧ (a = b)) ∧
+  ∀f b s a n.
+    FINREC f b s a (SUC n) ⇔
+    ∃x c. x ∈ s ∧ FINREC f b (s DELETE x) c n ∧ (a = f x c)
+</pre>
+
+<DT><span class="strong">ITSET'</span>
+<DD>
+<pre>
+⊢ ∀f s b.
+    ITSET' f s b =
+    (@g. (g ∅ = b) ∧
+         ∀x s. FINITE s ⇒ (g (x INSERT s) = if x ∈ s then g s else f x (g s)))
+      s
+</pre>
+
+<DT><span class="strong">iterate</span>
+<DD>
+<pre>
+⊢ ∀op s f.
+    iterate op s f =
+    if FINITE (support op f s) then
+      ITSET' (λx a. op (f x) a) (support op f s) (neutral op)
+    else neutral op
+</pre>
+
+<DT><span class="strong">monoidal</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇔
+    (∀x y. op x y = op y x) ∧ (∀x y z. op x (op y z) = op (op x y) z) ∧
+    ∀x. op (neutral op) x = x
+</pre>
+
+<DT><span class="strong">neutral</span>
+<DD>
+<pre>
+⊢ ∀op. neutral op = @x. ∀y. (op x y = y) ∧ (op y x = y)
+</pre>
+
+<DT><span class="strong">nsum_def</span>
+<DD>
+<pre>
+⊢ nsum = iterate $+
+</pre>
+
+<DT><span class="strong">numseg</span>
+<DD>
+<pre>
+⊢ ∀m n. m .. n = {x | m ≤ x ∧ x ≤ n}
+</pre>
+
+<DT><span class="strong">polynomial_function</span>
+<DD>
+<pre>
+⊢ ∀p. polynomial_function p ⇔ ∃m c. ∀x. p x = sum (0 .. m) (λi. c i * x pow i)
+</pre>
+
+<DT><span class="strong">sum_def</span>
+<DD>
+<pre>
+⊢ sum = iterate $+
+</pre>
+
+<DT><span class="strong">support</span>
+<DD>
+<pre>
+⊢ ∀op f s. support op f s = {x | x ∈ s ∧ f x ≠ neutral op}
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ABS_LE_0</span>
+<DD>
+<pre>
+⊢ ∀x. abs x ≤ 0 ⇔ (x = 0)
+</pre>
+
+<DT><span class="strong">ADD_SUB2</span>
+<DD>
+<pre>
+⊢ ∀m n. m + n − m = n
+</pre>
+
+<DT><span class="strong">ADD_SUBR</span>
+<DD>
+<pre>
+⊢ ∀m n. n − (m + n) = 0
+</pre>
+
+<DT><span class="strong">ADD_SUBR2</span>
+<DD>
+<pre>
+⊢ ∀m n. m − (m + n) = 0
+</pre>
+
+<DT><span class="strong">BIGINTER_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀s. BIGINTER s = 𝕌(:α) DIFF BIGUNION {𝕌(:α) DIFF t | t ∈ s}
+</pre>
+
+<DT><span class="strong">BIGINTER_GSPEC</span>
+<DD>
+<pre>
+⊢ (∀P f. BIGINTER {f x | P x} = {a | ∀x. P x ⇒ a ∈ f x}) ∧
+  (∀P f. BIGINTER {f x y | P x y} = {a | ∀x y. P x y ⇒ a ∈ f x y}) ∧
+  ∀P f. BIGINTER {f x y z | P x y z} = {a | ∀x y z. P x y z ⇒ a ∈ f x y z}
+</pre>
+
+<DT><span class="strong">BIGINTER_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f s. BIGINTER (IMAGE f s) = {y | ∀x. x ∈ s ⇒ y ∈ f x}
+</pre>
+
+<DT><span class="strong">BIGUNION_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀s. BIGUNION s = 𝕌(:α) DIFF BIGINTER {𝕌(:α) DIFF t | t ∈ s}
+</pre>
+
+<DT><span class="strong">BIGUNION_GSPEC</span>
+<DD>
+<pre>
+⊢ (∀P f. BIGUNION {f x | P x} = {a | ∃x. P x ∧ a ∈ f x}) ∧
+  (∀P f. BIGUNION {f x y | P x y} = {a | ∃x y. P x y ∧ a ∈ f x y}) ∧
+  ∀P f. BIGUNION {f x y z | P x y z} = {a | ∃x y z. P x y z ∧ a ∈ f x y z}
+</pre>
+
+<DT><span class="strong">BIGUNION_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f s. BIGUNION (IMAGE f s) = {y | ∃x. x ∈ s ∧ y ∈ f x}
+</pre>
+
+<DT><span class="strong">BOUNDS_LINEAR</span>
+<DD>
+<pre>
+⊢ ∀A B C. (∀n. A * n ≤ B * n + C) ⇔ A ≤ B
+</pre>
+
+<DT><span class="strong">BOUNDS_LINEAR_0</span>
+<DD>
+<pre>
+⊢ ∀A B. (∀n. A * n ≤ B) ⇔ (A = 0)
+</pre>
+
+<DT><span class="strong">CARD_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ (∀t. t ∈ s ⇒ FINITE t) ∧
+      (∀t u. t ∈ s ∧ u ∈ s ∧ t ≠ u ⇒ (t ∩ u = ∅)) ⇒
+      (CARD (BIGUNION s) = nsum s CARD)
+</pre>
+
+<DT><span class="strong">CARD_EQ_NSUM</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ (CARD s = nsum s (λx. 1))
+</pre>
+
+<DT><span class="strong">CARD_EQ_SUM</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ (&CARD s = sum s (λx. 1))
+</pre>
+
+<DT><span class="strong">CARD_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀m n. CARD (m .. n) = n + 1 − m
+</pre>
+
+<DT><span class="strong">CARD_NUMSEG_1</span>
+<DD>
+<pre>
+⊢ ∀n. CARD (1 .. n) = n
+</pre>
+
+<DT><span class="strong">CARD_NUMSEG_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀m d. CARD (m .. m + d) = d + 1
+</pre>
+
+<DT><span class="strong">CARD_UNION_EQ</span>
+<DD>
+<pre>
+⊢ ∀s t u. FINITE u ∧ (s ∩ t = ∅) ∧ (s ∪ t = u) ⇒ (CARD s + CARD t = CARD u)
+</pre>
+
+<DT><span class="strong">CHOOSE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀n. n ≤ CARD s ⇒ ∃t. t ⊆ s ∧ t HAS_SIZE n
+</pre>
+
+<DT><span class="strong">CHOOSE_SUBSET_STRONG</span>
+<DD>
+<pre>
+⊢ ∀n s. (FINITE s ⇒ n ≤ CARD s) ⇒ ∃t. t ⊆ s ∧ t HAS_SIZE n
+</pre>
+
+<DT><span class="strong">DIFF_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀u s. u DIFF BIGINTER s = BIGUNION {u DIFF t | t ∈ s}
+</pre>
+
+<DT><span class="strong">DISJOINT_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀m n p q. DISJOINT (m .. n) (p .. q) ⇔ n < p ∨ q < m ∨ n < m ∨ q < p
+</pre>
+
+<DT><span class="strong">EMPTY_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀s. (BIGUNION s = ∅) ⇔ ∀t. t ∈ s ⇒ (t = ∅)
+</pre>
+
+<DT><span class="strong">EXISTS_FINITE_SUBSET_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀P f s.
+    (∃t. FINITE t ∧ t ⊆ IMAGE f s ∧ P t) ⇔
+    ∃t. FINITE t ∧ t ⊆ s ∧ P (IMAGE f t)
+</pre>
+
+<DT><span class="strong">EXISTS_IN_GSPEC</span>
+<DD>
+<pre>
+⊢ (∀P f. (∃z. z ∈ {f x | P x} ∧ Q z) ⇔ ∃x. P x ∧ Q (f x)) ∧
+  (∀P f. (∃z. z ∈ {f x y | P x y} ∧ Q z) ⇔ ∃x y. P x y ∧ Q (f x y)) ∧
+  ∀P f. (∃z. z ∈ {f w x y | P w x y} ∧ Q z) ⇔ ∃w x y. P w x y ∧ Q (f w x y)
+</pre>
+
+<DT><span class="strong">FINITE_INDEX_NUMBERS</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇔
+      ∃k f.
+        (∀i j. i ∈ k ∧ j ∈ k ∧ (f i = f j) ⇒ (i = j)) ∧ FINITE k ∧
+        (s = IMAGE f k)
+</pre>
+
+<DT><span class="strong">FINITE_INDEX_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇔
+      ∃f. (∀i j. i ∈ (1 .. CARD s) ∧ j ∈ (1 .. CARD s) ∧ (f i = f j) ⇒ (i = j)) ∧
+          (s = IMAGE f (1 .. CARD s))
+</pre>
+
+<DT><span class="strong">FINITE_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀m n. FINITE (m .. n)
+</pre>
+
+<DT><span class="strong">FINITE_POWERSET</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ FINITE {t | t ⊆ s}
+</pre>
+
+<DT><span class="strong">FINITE_REAL_INTERVAL</span>
+<DD>
+<pre>
+⊢ (∀a. INFINITE {x | a < x}) ∧ (∀a. INFINITE {x | a ≤ x}) ∧
+  (∀b. INFINITE {x | x < b}) ∧ (∀b. INFINITE {x | x ≤ b}) ∧
+  (∀a b. FINITE {x | a < x ∧ x < b} ⇔ b ≤ a) ∧
+  (∀a b. FINITE {x | a ≤ x ∧ x < b} ⇔ b ≤ a) ∧
+  (∀a b. FINITE {x | a < x ∧ x ≤ b} ⇔ b ≤ a) ∧
+  ∀a b. FINITE {x | a ≤ x ∧ x ≤ b} ⇔ b ≤ a
+</pre>
+
+<DT><span class="strong">FINITE_RECURSION</span>
+<DD>
+<pre>
+⊢ ∀f b.
+    (∀x y s. x ≠ y ⇒ (f x (f y s) = f y (f x s))) ⇒
+    (ITSET f ∅ b = b) ∧
+    ∀x s.
+      FINITE s ⇒
+      (ITSET f (x INSERT s) b =
+       if x ∈ s then ITSET f s b else f x (ITSET f s b))
+</pre>
+
+<DT><span class="strong">FINITE_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀s P. FINITE s ⇒ FINITE {x | x ∈ s ∧ P x}
+</pre>
+
+<DT><span class="strong">FINITE_SUBSET_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE t ∧ t ⊆ IMAGE f s ⇔ ∃s'. FINITE s' ∧ s' ⊆ s ∧ (t = IMAGE f s')
+</pre>
+
+<DT><span class="strong">FINITE_SUPPORT</span>
+<DD>
+<pre>
+⊢ ∀op f s. FINITE s ⇒ FINITE (support op f s)
+</pre>
+
+<DT><span class="strong">FINITE_SUPPORT_DELTA</span>
+<DD>
+<pre>
+⊢ ∀op f a. FINITE (support op (λx. if x = a then f x else neutral op) s)
+</pre>
+
+<DT><span class="strong">FINREC_1_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀f b s a. FINREC f b s a (SUC 0) ⇔ ∃x. (s = {x}) ∧ (a = f x b)
+</pre>
+
+<DT><span class="strong">FINREC_EXISTS_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀f b s. FINITE s ⇒ ∃a n. FINREC f b s a n
+</pre>
+
+<DT><span class="strong">FINREC_FUN</span>
+<DD>
+<pre>
+⊢ ∀f b.
+    (∀x y s. x ≠ y ⇒ (f x (f y s) = f y (f x s))) ⇒
+    ∃g. (g ∅ = b) ∧ ∀s x. FINITE s ∧ x ∈ s ⇒ (g s = f x (g (s DELETE x)))
+</pre>
+
+<DT><span class="strong">FINREC_FUN_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀P R.
+    (∀s. P s ⇒ ∃a n. R s a n) ∧
+    (∀n1 n2 s a1 a2. R s a1 n1 ∧ R s a2 n2 ⇒ (a1 = a2) ∧ (n1 = n2)) ⇒
+    ∃f. ∀s a. P s ⇒ ((∃n. R s a n) ⇔ (f s = a))
+</pre>
+
+<DT><span class="strong">FINREC_SUC_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀f b.
+    (∀x y s. x ≠ y ⇒ (f x (f y s) = f y (f x s))) ⇒
+    ∀n s z.
+      FINREC f b s z (SUC n) ⇒
+      ∀x. x ∈ s ⇒ ∃w. FINREC f b (s DELETE x) w n ∧ (z = f x w)
+</pre>
+
+<DT><span class="strong">FINREC_UNIQUE_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀f b.
+    (∀x y s. x ≠ y ⇒ (f x (f y s) = f y (f x s))) ⇒
+    ∀n1 n2 s a1 a2.
+      FINREC f b s a1 n1 ∧ FINREC f b s a2 n2 ⇒ (a1 = a2) ∧ (n1 = n2)
+</pre>
+
+<DT><span class="strong">FINREC_compute</span>
+<DD>
+<pre>
+⊢ (∀f b s a. FINREC f b s a 0 ⇔ (s = ∅) ∧ (a = b)) ∧
+  (∀f b s a n.
+     FINREC f b s a (NUMERAL (BIT1 n)) ⇔
+     ∃x c.
+       x ∈ s ∧ FINREC f b (s DELETE x) c (NUMERAL (BIT1 n) − 1) ∧ (a = f x c)) ∧
+  ∀f b s a n.
+    FINREC f b s a (NUMERAL (BIT2 n)) ⇔
+    ∃x c. x ∈ s ∧ FINREC f b (s DELETE x) c (NUMERAL (BIT1 n)) ∧ (a = f x c)
+</pre>
+
+<DT><span class="strong">FORALL_FINITE_SUBSET_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀P f s.
+    (∀t. FINITE t ∧ t ⊆ IMAGE f s ⇒ P t) ⇔
+    ∀t. FINITE t ∧ t ⊆ s ⇒ P (IMAGE f t)
+</pre>
+
+<DT><span class="strong">FORALL_IN_GSPEC</span>
+<DD>
+<pre>
+⊢ (∀P f. (∀z. z ∈ {f x | P x} ⇒ Q z) ⇔ ∀x. P x ⇒ Q (f x)) ∧
+  (∀P f. (∀z. z ∈ {f x y | P x y} ⇒ Q z) ⇔ ∀x y. P x y ⇒ Q (f x y)) ∧
+  ∀P f. (∀z. z ∈ {f w x y | P w x y} ⇒ Q z) ⇔ ∀w x y. P w x y ⇒ Q (f w x y)
+</pre>
+
+<DT><span class="strong">FUN_IN_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f s x. x ∈ s ⇒ f x ∈ IMAGE f s
+</pre>
+
+<DT><span class="strong">HAS_SIZE_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀m n. (m .. n) HAS_SIZE n + 1 − m
+</pre>
+
+<DT><span class="strong">HAS_SIZE_NUMSEG_1</span>
+<DD>
+<pre>
+⊢ ∀n. (1 .. n) HAS_SIZE n
+</pre>
+
+<DT><span class="strong">INF</span>
+<DD>
+<pre>
+⊢ ∀s. s ≠ ∅ ∧ (∃b. ∀x. x ∈ s ⇒ b ≤ x) ⇒
+      (∀x. x ∈ s ⇒ inf s ≤ x) ∧ ∀b. (∀x. x ∈ s ⇒ b ≤ x) ⇒ b ≤ inf s
+</pre>
+
+<DT><span class="strong">INF_EQ</span>
+<DD>
+<pre>
+⊢ ∀s t.
+    s ≠ ∅ ∧ (∃b. ∀x. x ∈ s ⇒ b ≤ x) ∧ t ≠ ∅ ∧ (∃b. ∀x. x ∈ t ⇒ b ≤ x) ∧
+    (∀a. (∀x. x ∈ s ⇒ a ≤ x) ⇔ ∀x. x ∈ t ⇒ a ≤ x) ⇒
+    (inf s = inf t)
+</pre>
+
+<DT><span class="strong">INF_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ⇒ inf s ∈ s ∧ ∀x. x ∈ s ⇒ inf s ≤ x
+</pre>
+
+<DT><span class="strong">INF_FINITE_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ⇒ ∃b. b ∈ s ∧ ∀x. x ∈ s ⇒ b ≤ x
+</pre>
+
+<DT><span class="strong">INF_INSERT_FINITE</span>
+<DD>
+<pre>
+⊢ ∀x s. FINITE s ⇒ (inf (x INSERT s) = if s = ∅ then x else min x (inf s))
+</pre>
+
+<DT><span class="strong">INF_SING</span>
+<DD>
+<pre>
+⊢ ∀a. inf {a} = a
+</pre>
+
+<DT><span class="strong">INF_UNIQUE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ ((inf s = a) ⇔ a ∈ s ∧ ∀y. y ∈ s ⇒ a ≤ y)
+</pre>
+
+<DT><span class="strong">IN_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀m n p. p ∈ (m .. n) ⇔ m ≤ p ∧ p ≤ n
+</pre>
+
+<DT><span class="strong">IN_NUMSEG_0</span>
+<DD>
+<pre>
+⊢ ∀m n. m ∈ (0 .. n) ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">IN_SUPPORT</span>
+<DD>
+<pre>
+⊢ ∀op f x s. x ∈ support op f s ⇔ x ∈ s ∧ f x ≠ neutral op
+</pre>
+
+<DT><span class="strong">ITERATE_BIJECTION</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f p s.
+      (∀x. x ∈ s ⇒ p x ∈ s) ∧ (∀y. y ∈ s ⇒ ∃!x. x ∈ s ∧ (p x = y)) ⇒
+      (iterate op s f = iterate op s (f ∘ p))
+</pre>
+
+<DT><span class="strong">ITERATE_CASES</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀s P f g.
+      FINITE s ⇒
+      (iterate op s (λx. if P x then f x else g x) =
+       op (iterate op {x | x ∈ s ∧ P x} f) (iterate op {x | x ∈ s ∧ ¬P x} g))
+</pre>
+
+<DT><span class="strong">ITERATE_CLAUSES</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    (∀f. iterate op ∅ f = neutral op) ∧
+    ∀f x s.
+      FINITE s ⇒
+      (iterate op (x INSERT s) f =
+       if x ∈ s then iterate op s f else op (f x) (iterate op s f))
+</pre>
+
+<DT><span class="strong">ITERATE_CLAUSES_GEN</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    (∀f. iterate op ∅ f = neutral op) ∧
+    ∀f x s.
+      monoidal op ∧ FINITE (support op f s) ⇒
+      (iterate op (x INSERT s) f =
+       if x ∈ s then iterate op s f else op (f x) (iterate op s f))
+</pre>
+
+<DT><span class="strong">ITERATE_CLAUSES_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    (∀m. iterate op (m .. 0) f = if m = 0 then f 0 else neutral op) ∧
+    ∀m n.
+      iterate op (m .. SUC n) f =
+      if m ≤ SUC n then op (iterate op (m .. n) f) (f (SUC n))
+      else iterate op (m .. n) f
+</pre>
+
+<DT><span class="strong">ITERATE_CLOSED</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀P. P (neutral op) ∧ (∀x y. P x ∧ P y ⇒ P (op x y)) ⇒
+        ∀f s. (∀x. x ∈ s ∧ f x ≠ neutral op ⇒ P (f x)) ⇒ P (iterate op s f)
+</pre>
+
+<DT><span class="strong">ITERATE_DELETE</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f s a.
+      FINITE s ∧ a ∈ s ⇒
+      (op (f a) (iterate op (s DELETE a) f) = iterate op s f)
+</pre>
+
+<DT><span class="strong">ITERATE_DELTA</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f a s.
+      iterate op s (λx. if x = a then f x else neutral op) =
+      if a ∈ s then f a else neutral op
+</pre>
+
+<DT><span class="strong">ITERATE_DIFF</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f s t.
+      FINITE s ∧ t ⊆ s ⇒
+      (op (iterate op (s DIFF t) f) (iterate op t f) = iterate op s f)
+</pre>
+
+<DT><span class="strong">ITERATE_DIFF_GEN</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f s t.
+      FINITE (support op f s) ∧ support op f t ⊆ support op f s ⇒
+      (op (iterate op (s DIFF t) f) (iterate op t f) = iterate op s f)
+</pre>
+
+<DT><span class="strong">ITERATE_EQ</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (iterate op s f = iterate op s g)
+</pre>
+
+<DT><span class="strong">ITERATE_EQ_GENERAL</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀s t f g h.
+      (∀y. y ∈ t ⇒ ∃!x. x ∈ s ∧ (h x = y)) ∧
+      (∀x. x ∈ s ⇒ h x ∈ t ∧ (g (h x) = f x)) ⇒
+      (iterate op s f = iterate op t g)
+</pre>
+
+<DT><span class="strong">ITERATE_EQ_GENERAL_INVERSES</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀s t f g h k.
+      (∀y. y ∈ t ⇒ k y ∈ s ∧ (h (k y) = y)) ∧
+      (∀x. x ∈ s ⇒ h x ∈ t ∧ (k (h x) = x) ∧ (g (h x) = f x)) ⇒
+      (iterate op s f = iterate op t g)
+</pre>
+
+<DT><span class="strong">ITERATE_EQ_NEUTRAL</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f s. (∀x. x ∈ s ⇒ (f x = neutral op)) ⇒ (iterate op s f = neutral op)
+</pre>
+
+<DT><span class="strong">ITERATE_EXPAND_CASES</span>
+<DD>
+<pre>
+⊢ ∀op f s.
+    iterate op s f =
+    if FINITE (support op f s) then iterate op (support op f s) f
+    else neutral op
+</pre>
+
+<DT><span class="strong">ITERATE_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f g s.
+      (∀x y. x ∈ s ∧ y ∈ s ∧ (f x = f y) ⇒ (x = y)) ⇒
+      (iterate op (IMAGE f s) g = iterate op s (g ∘ f))
+</pre>
+
+<DT><span class="strong">ITERATE_IMAGE_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀g f s.
+      FINITE s ∧
+      (∀x y. x ∈ s ∧ y ∈ s ∧ x ≠ y ∧ (f x = f y) ⇒ (g (f x) = neutral op)) ⇒
+      (iterate op (IMAGE f s) g = iterate op s (g ∘ f))
+</pre>
+
+<DT><span class="strong">ITERATE_INCL_EXCL</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀s t f.
+      FINITE s ∧ FINITE t ⇒
+      (op (iterate op s f) (iterate op t f) =
+       op (iterate op (s ∪ t) f) (iterate op (s ∩ t) f))
+</pre>
+
+<DT><span class="strong">ITERATE_INJECTION</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f p s.
+      FINITE s ∧ (∀x. x ∈ s ⇒ p x ∈ s) ∧
+      (∀x y. x ∈ s ∧ y ∈ s ∧ (p x = p y) ⇒ (x = y)) ⇒
+      (iterate op s (f ∘ p) = iterate op s f)
+</pre>
+
+<DT><span class="strong">ITERATE_ITERATE_PRODUCT</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀s t x.
+      FINITE s ∧ (∀i. i ∈ s ⇒ FINITE (t i)) ⇒
+      (iterate op s (λi. iterate op (t i) (x i)) =
+       iterate op {(i,j) | i ∈ s ∧ j ∈ t i} (λ(i,j). x i j))
+</pre>
+
+<DT><span class="strong">ITERATE_OP</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f g s.
+      FINITE s ⇒
+      (iterate op s (λx. op (f x) (g x)) =
+       op (iterate op s f) (iterate op s g))
+</pre>
+
+<DT><span class="strong">ITERATE_OP_GEN</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f g s.
+      FINITE (support op f s) ∧ FINITE (support op g s) ⇒
+      (iterate op s (λx. op (f x) (g x)) =
+       op (iterate op s f) (iterate op s g))
+</pre>
+
+<DT><span class="strong">ITERATE_PAIR</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f m n.
+      iterate op (2 * m .. 2 * n + 1) f =
+      iterate op (m .. n) (λi. op (f (2 * i)) (f (2 * i + 1)))
+</pre>
+
+<DT><span class="strong">ITERATE_RELATED</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀R. R (neutral op) (neutral op) ∧
+        (∀x1 y1 x2 y2. R x1 x2 ∧ R y1 y2 ⇒ R (op x1 y1) (op x2 y2)) ⇒
+        ∀f g s.
+          FINITE s ∧ (∀x. x ∈ s ⇒ R (f x) (g x)) ⇒
+          R (iterate op s f) (iterate op s g)
+</pre>
+
+<DT><span class="strong">ITERATE_SING</span>
+<DD>
+<pre>
+⊢ ∀op. monoidal op ⇒ ∀f x. iterate op {x} f = f x
+</pre>
+
+<DT><span class="strong">ITERATE_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f u v.
+      u ⊆ v ∧ (∀x. x ∈ v ∧ x ∉ u ⇒ (f x = neutral op)) ⇒
+      (iterate op v f = iterate op u f)
+</pre>
+
+<DT><span class="strong">ITERATE_SUPPORT</span>
+<DD>
+<pre>
+⊢ ∀op f s. iterate op (support op f s) f = iterate op s f
+</pre>
+
+<DT><span class="strong">ITERATE_UNION</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f s t.
+      FINITE s ∧ FINITE t ∧ DISJOINT s t ⇒
+      (iterate op (s ∪ t) f = op (iterate op s f) (iterate op t f))
+</pre>
+
+<DT><span class="strong">ITERATE_UNION_GEN</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f s t.
+      FINITE (support op f s) ∧ FINITE (support op f t) ∧
+      DISJOINT (support op f s) (support op f t) ⇒
+      (iterate op (s ∪ t) f = op (iterate op s f) (iterate op t f))
+</pre>
+
+<DT><span class="strong">ITERATE_UNION_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    ∀f s t.
+      FINITE s ∧ FINITE t ∧ (∀x. x ∈ s ∩ t ⇒ (f x = neutral op)) ⇒
+      (iterate op (s ∪ t) f = op (iterate op s f) (iterate op t f))
+</pre>
+
+<DT><span class="strong">LAMBDA_PAIR</span>
+<DD>
+<pre>
+⊢ (λ(x,y). P x y) = (λp. P (FST p) (SND p))
+</pre>
+
+<DT><span class="strong">LE_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ m + n
+</pre>
+
+<DT><span class="strong">LE_ADDR</span>
+<DD>
+<pre>
+⊢ ∀m n. n ≤ m + n
+</pre>
+
+<DT><span class="strong">LE_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇔ ∃d. n = m + d
+</pre>
+
+<DT><span class="strong">LOWER_BOUND_FINITE_SET_REAL</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ ∃a. ∀x. x ∈ s ⇒ a ≤ f x
+</pre>
+
+<DT><span class="strong">LT_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ⇔ ∃d. n = m + SUC d
+</pre>
+
+<DT><span class="strong">MOD_NSUM_MOD</span>
+<DD>
+<pre>
+⊢ ∀f n s. FINITE s ∧ n ≠ 0 ⇒ (nsum s f MOD n = nsum s (λi. f i MOD n) MOD n)
+</pre>
+
+<DT><span class="strong">MOD_NSUM_MOD_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f a b n.
+    n ≠ 0 ⇒ (nsum (a .. b) f MOD n = nsum (a .. b) (λi. f i MOD n) MOD n)
+</pre>
+
+<DT><span class="strong">MONOIDAL_AC</span>
+<DD>
+<pre>
+⊢ ∀op.
+    monoidal op ⇒
+    (∀a. op (neutral op) a = a) ∧ (∀a. op a (neutral op) = a) ∧
+    (∀a b. op a b = op b a) ∧ (∀a b c. op (op a b) c = op a (op b c)) ∧
+    ∀a b c. op a (op b c) = op b (op a c)
+</pre>
+
+<DT><span class="strong">MONOIDAL_ADD</span>
+<DD>
+<pre>
+⊢ monoidal $+
+</pre>
+
+<DT><span class="strong">MONOIDAL_MUL</span>
+<DD>
+<pre>
+⊢ monoidal $*
+</pre>
+
+<DT><span class="strong">MONOIDAL_REAL_ADD</span>
+<DD>
+<pre>
+⊢ monoidal $+
+</pre>
+
+<DT><span class="strong">MONOIDAL_REAL_MUL</span>
+<DD>
+<pre>
+⊢ monoidal $*
+</pre>
+
+<DT><span class="strong">NEUTRAL_ADD</span>
+<DD>
+<pre>
+⊢ neutral $+ = 0
+</pre>
+
+<DT><span class="strong">NEUTRAL_MUL</span>
+<DD>
+<pre>
+⊢ neutral $* = 1
+</pre>
+
+<DT><span class="strong">NEUTRAL_REAL_ADD</span>
+<DD>
+<pre>
+⊢ neutral $+ = 0
+</pre>
+
+<DT><span class="strong">NEUTRAL_REAL_MUL</span>
+<DD>
+<pre>
+⊢ neutral $* = 1
+</pre>
+
+<DT><span class="strong">NOT_EQ</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≠ b ⇔ a ≠ b
+</pre>
+
+<DT><span class="strong">NSUM_0</span>
+<DD>
+<pre>
+⊢ ∀s. nsum s (λn. 0) = 0
+</pre>
+
+<DT><span class="strong">NSUM_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g s. FINITE s ⇒ (nsum s (λx. f x + g x) = nsum s f + nsum s g)
+</pre>
+
+<DT><span class="strong">NSUM_ADD_GEN</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    FINITE {x | x ∈ s ∧ f x ≠ 0} ∧ FINITE {x | x ∈ s ∧ g x ≠ 0} ⇒
+    (nsum s (λx. f x + g x) = nsum s f + nsum s g)
+</pre>
+
+<DT><span class="strong">NSUM_ADD_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n. nsum (m .. n) (λi. f i + g i) = nsum (m .. n) f + nsum (m .. n) g
+</pre>
+
+<DT><span class="strong">NSUM_ADD_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀f m n p.
+    m ≤ n + 1 ⇒
+    (nsum (m .. n + p) f = nsum (m .. n) f + nsum (n + 1 .. n + p) f)
+</pre>
+
+<DT><span class="strong">NSUM_BIGUNION_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    FINITE s ∧ (∀t. t ∈ s ⇒ FINITE t) ∧
+    (∀t1 t2 x. t1 ∈ s ∧ t2 ∈ s ∧ t1 ≠ t2 ∧ x ∈ t1 ∧ x ∈ t2 ⇒ (f x = 0)) ⇒
+    (nsum (BIGUNION s) f = nsum s (λt. nsum t f))
+</pre>
+
+<DT><span class="strong">NSUM_BIJECTION</span>
+<DD>
+<pre>
+⊢ ∀f p s.
+    (∀x. x ∈ s ⇒ p x ∈ s) ∧ (∀y. y ∈ s ⇒ ∃!x. x ∈ s ∧ (p x = y)) ⇒
+    (nsum s f = nsum s (f ∘ p))
+</pre>
+
+<DT><span class="strong">NSUM_BOUND</span>
+<DD>
+<pre>
+⊢ ∀s f b. FINITE s ∧ (∀x. x ∈ s ⇒ f x ≤ b) ⇒ nsum s f ≤ CARD s * b
+</pre>
+
+<DT><span class="strong">NSUM_BOUND_GEN</span>
+<DD>
+<pre>
+⊢ ∀s f b. FINITE s ∧ s ≠ ∅ ∧ (∀x. x ∈ s ⇒ f x ≤ b DIV CARD s) ⇒ nsum s f ≤ b
+</pre>
+
+<DT><span class="strong">NSUM_BOUND_LT</span>
+<DD>
+<pre>
+⊢ ∀s f b.
+    FINITE s ∧ (∀x. x ∈ s ⇒ f x ≤ b) ∧ (∃x. x ∈ s ∧ f x < b) ⇒
+    nsum s f < CARD s * b
+</pre>
+
+<DT><span class="strong">NSUM_BOUND_LT_ALL</span>
+<DD>
+<pre>
+⊢ ∀s f b. FINITE s ∧ s ≠ ∅ ∧ (∀x. x ∈ s ⇒ f x < b) ⇒ nsum s f < CARD s * b
+</pre>
+
+<DT><span class="strong">NSUM_BOUND_LT_GEN</span>
+<DD>
+<pre>
+⊢ ∀s f b. FINITE s ∧ s ≠ ∅ ∧ (∀x. x ∈ s ⇒ f x < b DIV CARD s) ⇒ nsum s f < b
+</pre>
+
+<DT><span class="strong">NSUM_CASES</span>
+<DD>
+<pre>
+⊢ ∀s P f g.
+    FINITE s ⇒
+    (nsum s (λx. if P x then f x else g x) =
+     nsum {x | x ∈ s ∧ P x} f + nsum {x | x ∈ s ∧ ¬P x} g)
+</pre>
+
+<DT><span class="strong">NSUM_CLAUSES</span>
+<DD>
+<pre>
+⊢ (∀f. nsum ∅ f = 0) ∧
+  ∀x f s.
+    FINITE s ⇒
+    (nsum (x INSERT s) f = if x ∈ s then nsum s f else f x + nsum s f)
+</pre>
+
+<DT><span class="strong">NSUM_CLAUSES_LEFT</span>
+<DD>
+<pre>
+⊢ ∀f m n. m ≤ n ⇒ (nsum (m .. n) f = f m + nsum (m + 1 .. n) f)
+</pre>
+
+<DT><span class="strong">NSUM_CLAUSES_NUMSEG</span>
+<DD>
+<pre>
+⊢ (∀m. nsum (m .. 0) f = if m = 0 then f 0 else 0) ∧
+  ∀m n.
+    nsum (m .. SUC n) f =
+    if m ≤ SUC n then nsum (m .. n) f + f (SUC n) else nsum (m .. n) f
+</pre>
+
+<DT><span class="strong">NSUM_CLAUSES_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀f m n. 0 < n ∧ m ≤ n ⇒ (nsum (m .. n) f = nsum (m .. n − 1) f + f n)
+</pre>
+
+<DT><span class="strong">NSUM_CLOSED</span>
+<DD>
+<pre>
+⊢ ∀P f s.
+    P 0 ∧ (∀x y. P x ∧ P y ⇒ P (x + y)) ∧ (∀a. a ∈ s ⇒ P (f a)) ⇒ P (nsum s f)
+</pre>
+
+<DT><span class="strong">NSUM_CONG</span>
+<DD>
+<pre>
+⊢ (∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (nsum s (λi. f i) = nsum s g)) ∧
+  (∀f g a b.
+     (∀i. a ≤ i ∧ i ≤ b ⇒ (f i = g i)) ⇒
+     (nsum (a .. b) (λi. f i) = nsum (a .. b) g)) ∧
+  ∀f g p.
+    (∀x. p x ⇒ (f x = g x)) ⇒ (nsum {y | p y} (λi. f i) = nsum {y | p y} g)
+</pre>
+
+<DT><span class="strong">NSUM_CONST</span>
+<DD>
+<pre>
+⊢ ∀c s. FINITE s ⇒ (nsum s (λn. c) = CARD s * c)
+</pre>
+
+<DT><span class="strong">NSUM_CONST_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀c m n. nsum (m .. n) (λn. c) = (n + 1 − m) * c
+</pre>
+
+<DT><span class="strong">NSUM_DEGENERATE</span>
+<DD>
+<pre>
+⊢ ∀f s. INFINITE {x | x ∈ s ∧ f x ≠ 0} ⇒ (nsum s f = 0)
+</pre>
+
+<DT><span class="strong">NSUM_DELETE</span>
+<DD>
+<pre>
+⊢ ∀f s a. FINITE s ∧ a ∈ s ⇒ (f a + nsum (s DELETE a) f = nsum s f)
+</pre>
+
+<DT><span class="strong">NSUM_DELTA</span>
+<DD>
+<pre>
+⊢ ∀s a. nsum s (λx. if x = a then b else 0) = if a ∈ s then b else 0
+</pre>
+
+<DT><span class="strong">NSUM_DIFF</span>
+<DD>
+<pre>
+⊢ ∀f s t. FINITE s ∧ t ⊆ s ⇒ (nsum (s DIFF t) f = nsum s f − nsum t f)
+</pre>
+
+<DT><span class="strong">NSUM_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (nsum s f = nsum s g)
+</pre>
+
+<DT><span class="strong">NSUM_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀f s. (∀x. x ∈ s ⇒ (f x = 0)) ⇒ (nsum s f = 0)
+</pre>
+
+<DT><span class="strong">NSUM_EQ_0_IFF</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ((nsum s f = 0) ⇔ ∀x. x ∈ s ⇒ (f x = 0))
+</pre>
+
+<DT><span class="strong">NSUM_EQ_0_IFF_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. (nsum (m .. n) f = 0) ⇔ ∀i. m ≤ i ∧ i ≤ n ⇒ (f i = 0)
+</pre>
+
+<DT><span class="strong">NSUM_EQ_0_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. (∀i. m ≤ i ∧ i ≤ n ⇒ (f i = 0)) ⇒ (nsum (m .. n) f = 0)
+</pre>
+
+<DT><span class="strong">NSUM_EQ_GENERAL</span>
+<DD>
+<pre>
+⊢ ∀s t f g h.
+    (∀y. y ∈ t ⇒ ∃!x. x ∈ s ∧ (h x = y)) ∧
+    (∀x. x ∈ s ⇒ h x ∈ t ∧ (g (h x) = f x)) ⇒
+    (nsum s f = nsum t g)
+</pre>
+
+<DT><span class="strong">NSUM_EQ_GENERAL_INVERSES</span>
+<DD>
+<pre>
+⊢ ∀s t f g h k.
+    (∀y. y ∈ t ⇒ k y ∈ s ∧ (h (k y) = y)) ∧
+    (∀x. x ∈ s ⇒ h x ∈ t ∧ (k (h x) = x) ∧ (g (h x) = f x)) ⇒
+    (nsum s f = nsum t g)
+</pre>
+
+<DT><span class="strong">NSUM_EQ_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+    (∀i. m ≤ i ∧ i ≤ n ⇒ (f i = g i)) ⇒ (nsum (m .. n) f = nsum (m .. n) g)
+</pre>
+
+<DT><span class="strong">NSUM_EQ_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE t ∧ t ⊆ s ∧ (∀x. x ∈ t ⇒ (f x = g x)) ∧
+    (∀x. x ∈ s ∧ x ∉ t ⇒ (f x = 0)) ⇒
+    (nsum s f = nsum t g)
+</pre>
+
+<DT><span class="strong">NSUM_GROUP</span>
+<DD>
+<pre>
+⊢ ∀f g s t.
+    FINITE s ∧ IMAGE f s ⊆ t ⇒
+    (nsum t (λy. nsum {x | x ∈ s ∧ (f x = y)} g) = nsum s g)
+</pre>
+
+<DT><span class="strong">NSUM_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x y. x ∈ s ∧ y ∈ s ∧ (f x = f y) ⇒ (x = y)) ⇒
+    (nsum (IMAGE f s) g = nsum s (g ∘ f))
+</pre>
+
+<DT><span class="strong">NSUM_IMAGE_GEN</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    FINITE s ⇒
+    (nsum s g = nsum (IMAGE f s) (λy. nsum {x | x ∈ s ∧ (f x = y)} g))
+</pre>
+
+<DT><span class="strong">NSUM_IMAGE_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀d i s.
+    FINITE s ∧ (∀x y. x ∈ s ∧ y ∈ s ∧ x ≠ y ∧ (i x = i y) ⇒ (d (i x) = 0)) ⇒
+    (nsum (IMAGE i s) d = nsum s (d ∘ i))
+</pre>
+
+<DT><span class="strong">NSUM_INCL_EXCL</span>
+<DD>
+<pre>
+⊢ ∀s t f.
+    FINITE s ∧ FINITE t ⇒
+    (nsum s f + nsum t f = nsum (s ∪ t) f + nsum (s ∩ t) f)
+</pre>
+
+<DT><span class="strong">NSUM_INJECTION</span>
+<DD>
+<pre>
+⊢ ∀f p s.
+    FINITE s ∧ (∀x. x ∈ s ⇒ p x ∈ s) ∧
+    (∀x y. x ∈ s ∧ y ∈ s ∧ (p x = p y) ⇒ (x = y)) ⇒
+    (nsum s (f ∘ p) = nsum s f)
+</pre>
+
+<DT><span class="strong">NSUM_LE</span>
+<DD>
+<pre>
+⊢ ∀f g s. FINITE s ∧ (∀x. x ∈ s ⇒ f x ≤ g x) ⇒ nsum s f ≤ nsum s g
+</pre>
+
+<DT><span class="strong">NSUM_LE_GEN</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x. x ∈ s ⇒ f x ≤ g x) ∧ FINITE {x | x ∈ s ∧ g x ≠ 0} ⇒
+    nsum s f ≤ nsum s g
+</pre>
+
+<DT><span class="strong">NSUM_LE_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+    (∀i. m ≤ i ∧ i ≤ n ⇒ f i ≤ g i) ⇒ nsum (m .. n) f ≤ nsum (m .. n) g
+</pre>
+
+<DT><span class="strong">NSUM_LMUL</span>
+<DD>
+<pre>
+⊢ ∀f c s. nsum s (λx. c * f x) = c * nsum s f
+</pre>
+
+<DT><span class="strong">NSUM_LT</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    FINITE s ∧ (∀x. x ∈ s ⇒ f x ≤ g x) ∧ (∃x. x ∈ s ∧ f x < g x) ⇒
+    nsum s f < nsum s g
+</pre>
+
+<DT><span class="strong">NSUM_LT_ALL</span>
+<DD>
+<pre>
+⊢ ∀f g s. FINITE s ∧ s ≠ ∅ ∧ (∀x. x ∈ s ⇒ f x < g x) ⇒ nsum s f < nsum s g
+</pre>
+
+<DT><span class="strong">NSUM_MULTICOUNT</span>
+<DD>
+<pre>
+⊢ ∀R s t k.
+    FINITE s ∧ FINITE t ∧ (∀j. j ∈ t ⇒ (CARD {i | i ∈ s ∧ R i j} = k)) ⇒
+    (nsum s (λi. CARD {j | j ∈ t ∧ R i j}) = k * CARD t)
+</pre>
+
+<DT><span class="strong">NSUM_MULTICOUNT_GEN</span>
+<DD>
+<pre>
+⊢ ∀R s t k.
+    FINITE s ∧ FINITE t ∧ (∀j. j ∈ t ⇒ (CARD {i | i ∈ s ∧ R i j} = k j)) ⇒
+    (nsum s (λi. CARD {j | j ∈ t ∧ R i j}) = nsum t (λi. k i))
+</pre>
+
+<DT><span class="strong">NSUM_NSUM_PRODUCT</span>
+<DD>
+<pre>
+⊢ ∀s t x.
+    FINITE s ∧ (∀i. i ∈ s ⇒ FINITE (t i)) ⇒
+    (nsum s (λi. nsum (t i) (x i)) =
+     nsum {(i,j) | i ∈ s ∧ j ∈ t i} (λ(i,j). x i j))
+</pre>
+
+<DT><span class="strong">NSUM_NSUM_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀R f s t.
+    FINITE s ∧ FINITE t ⇒
+    (nsum s (λx. nsum {y | y ∈ t ∧ R x y} (λy. f x y)) =
+     nsum t (λy. nsum {x | x ∈ s ∧ R x y} (λx. f x y)))
+</pre>
+
+<DT><span class="strong">NSUM_OFFSET</span>
+<DD>
+<pre>
+⊢ ∀p f m n. nsum (m + p .. n + p) f = nsum (m .. n) (λi. f (i + p))
+</pre>
+
+<DT><span class="strong">NSUM_OFFSET_0</span>
+<DD>
+<pre>
+⊢ ∀f m n. m ≤ n ⇒ (nsum (m .. n) f = nsum (0 .. n − m) (λi. f (i + m)))
+</pre>
+
+<DT><span class="strong">NSUM_PAIR</span>
+<DD>
+<pre>
+⊢ ∀f m n.
+    nsum (2 * m .. 2 * n + 1) f =
+    nsum (m .. n) (λi. f (2 * i) + f (2 * i + 1))
+</pre>
+
+<DT><span class="strong">NSUM_POS_BOUND</span>
+<DD>
+<pre>
+⊢ ∀f b s. FINITE s ∧ nsum s f ≤ b ⇒ ∀x. x ∈ s ⇒ f x ≤ b
+</pre>
+
+<DT><span class="strong">NSUM_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ∧ (∃x. x ∈ s ∧ 0 < f x) ⇒ 0 < nsum s f
+</pre>
+
+<DT><span class="strong">NSUM_POS_LT_ALL</span>
+<DD>
+<pre>
+⊢ ∀s f. FINITE s ∧ s ≠ ∅ ∧ (∀i. i ∈ s ⇒ 0 < f i) ⇒ 0 < nsum s f
+</pre>
+
+<DT><span class="strong">NSUM_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ (nsum s (λx. if x ∈ s then f x else 0) = nsum s f)
+</pre>
+
+<DT><span class="strong">NSUM_RESTRICT_SET</span>
+<DD>
+<pre>
+⊢ ∀P s f. nsum {x | x ∈ s ∧ P x} f = nsum s (λx. if P x then f x else 0)
+</pre>
+
+<DT><span class="strong">NSUM_RMUL</span>
+<DD>
+<pre>
+⊢ ∀f c s. nsum s (λx. f x * c) = nsum s f * c
+</pre>
+
+<DT><span class="strong">NSUM_SING</span>
+<DD>
+<pre>
+⊢ ∀f x. nsum {x} f = f x
+</pre>
+
+<DT><span class="strong">NSUM_SING_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f n. nsum (n .. n) f = f n
+</pre>
+
+<DT><span class="strong">NSUM_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀u v f.
+    FINITE u ∧ FINITE v ∧ (∀x. x ∈ u DIFF v ⇒ (f x = 0)) ⇒ nsum u f ≤ nsum v f
+</pre>
+
+<DT><span class="strong">NSUM_SUBSET_SIMPLE</span>
+<DD>
+<pre>
+⊢ ∀u v f. FINITE v ∧ u ⊆ v ⇒ nsum u f ≤ nsum v f
+</pre>
+
+<DT><span class="strong">NSUM_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀f u v. u ⊆ v ∧ (∀x. x ∈ v ∧ x ∉ u ⇒ (f x = 0)) ⇒ (nsum v f = nsum u f)
+</pre>
+
+<DT><span class="strong">NSUM_SUPPORT</span>
+<DD>
+<pre>
+⊢ ∀f s. nsum (support $+ f s) f = nsum s f
+</pre>
+
+<DT><span class="strong">NSUM_SWAP</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE s ∧ FINITE t ⇒
+    (nsum s (λi. nsum t (f i)) = nsum t (λj. nsum s (λi. f i j)))
+</pre>
+
+<DT><span class="strong">NSUM_SWAP_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀a b c d f.
+    nsum (a .. b) (λi. nsum (c .. d) (f i)) =
+    nsum (c .. d) (λj. nsum (a .. b) (λi. f i j))
+</pre>
+
+<DT><span class="strong">NSUM_TRIV_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. n < m ⇒ (nsum (m .. n) f = 0)
+</pre>
+
+<DT><span class="strong">NSUM_UNION</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE s ∧ FINITE t ∧ DISJOINT s t ⇒
+    (nsum (s ∪ t) f = nsum s f + nsum t f)
+</pre>
+
+<DT><span class="strong">NSUM_UNION_EQ</span>
+<DD>
+<pre>
+⊢ ∀s t u.
+    FINITE u ∧ (s ∩ t = ∅) ∧ (s ∪ t = u) ⇒ (nsum s f + nsum t f = nsum u f)
+</pre>
+
+<DT><span class="strong">NSUM_UNION_LZERO</span>
+<DD>
+<pre>
+⊢ ∀f u v.
+    FINITE v ∧ (∀x. x ∈ u ∧ x ∉ v ⇒ (f x = 0)) ⇒ (nsum (u ∪ v) f = nsum v f)
+</pre>
+
+<DT><span class="strong">NSUM_UNION_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE s ∧ FINITE t ∧ (∀x. x ∈ s ∩ t ⇒ (f x = 0)) ⇒
+    (nsum (s ∪ t) f = nsum s f + nsum t f)
+</pre>
+
+<DT><span class="strong">NSUM_UNION_RZERO</span>
+<DD>
+<pre>
+⊢ ∀f u v.
+    FINITE u ∧ (∀x. x ∈ v ∧ x ∉ u ⇒ (f x = 0)) ⇒ (nsum (u ∪ v) f = nsum u f)
+</pre>
+
+<DT><span class="strong">NUMSEG_ADD_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀m n p. m ≤ n + 1 ⇒ (m .. n + p = (m .. n) ∪ (n + 1 .. n + p))
+</pre>
+
+<DT><span class="strong">NUMSEG_CLAUSES</span>
+<DD>
+<pre>
+⊢ (∀m. m .. 0 = if m = 0 then {0} else ∅) ∧
+  ∀m n. m .. SUC n = if m ≤ SUC n then SUC n INSERT (m .. n) else m .. n
+</pre>
+
+<DT><span class="strong">NUMSEG_COMBINE_L</span>
+<DD>
+<pre>
+⊢ ∀m p n. m ≤ p ∧ p ≤ n + 1 ⇒ ((m .. p − 1) ∪ (p .. n) = m .. n)
+</pre>
+
+<DT><span class="strong">NUMSEG_COMBINE_R</span>
+<DD>
+<pre>
+⊢ ∀m p n. m ≤ p + 1 ∧ p ≤ n ⇒ ((m .. p) ∪ (p + 1 .. n) = m .. n)
+</pre>
+
+<DT><span class="strong">NUMSEG_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀m n. (m .. n = ∅) ⇔ n < m
+</pre>
+
+<DT><span class="strong">NUMSEG_LE</span>
+<DD>
+<pre>
+⊢ ∀n. {x | x ≤ n} = 0 .. n
+</pre>
+
+<DT><span class="strong">NUMSEG_LREC</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ (m INSERT (m + 1 .. n) = m .. n)
+</pre>
+
+<DT><span class="strong">NUMSEG_LT</span>
+<DD>
+<pre>
+⊢ ∀n. {x | x < n} = if n = 0 then ∅ else 0 .. n − 1
+</pre>
+
+<DT><span class="strong">NUMSEG_OFFSET_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀m n p. m + p .. n + p = IMAGE (λi. i + p) (m .. n)
+</pre>
+
+<DT><span class="strong">NUMSEG_REC</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ SUC n ⇒ (m .. SUC n = SUC n INSERT (m .. n))
+</pre>
+
+<DT><span class="strong">NUMSEG_RREC</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ (n INSERT (m .. n − 1) = m .. n)
+</pre>
+
+<DT><span class="strong">NUMSEG_SING</span>
+<DD>
+<pre>
+⊢ ∀n. n .. n = {n}
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_ADD</span>
+<DD>
+<pre>
+⊢ ∀p q.
+    polynomial_function p ∧ polynomial_function q ⇒
+    polynomial_function (λx. p x + q x)
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_CONST</span>
+<DD>
+<pre>
+⊢ ∀c. polynomial_function (λx. c)
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_FINITE_ROOTS</span>
+<DD>
+<pre>
+⊢ ∀p a. polynomial_function p ⇒ (FINITE {x | p x = a} ⇔ ¬∀x. p x = a)
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_ID</span>
+<DD>
+<pre>
+⊢ polynomial_function (λx. x)
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_INDUCT</span>
+<DD>
+<pre>
+⊢ ∀P. P (λx. x) ∧ (∀c. P (λx. c)) ∧ (∀p q. P p ∧ P q ⇒ P (λx. p x + q x)) ∧
+      (∀p q. P p ∧ P q ⇒ P (λx. p x * q x)) ⇒
+      ∀p. polynomial_function p ⇒ P p
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_LMUL</span>
+<DD>
+<pre>
+⊢ ∀p c. polynomial_function p ⇒ polynomial_function (λx. c * p x)
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_MUL</span>
+<DD>
+<pre>
+⊢ ∀p q.
+    polynomial_function p ∧ polynomial_function q ⇒
+    polynomial_function (λx. p x * q x)
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_NEG</span>
+<DD>
+<pre>
+⊢ ∀p. polynomial_function (λx. -p x) ⇔ polynomial_function p
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_POW</span>
+<DD>
+<pre>
+⊢ ∀p n. polynomial_function p ⇒ polynomial_function (λx. p x pow n)
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_RMUL</span>
+<DD>
+<pre>
+⊢ ∀p c. polynomial_function p ⇒ polynomial_function (λx. p x * c)
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_SUB</span>
+<DD>
+<pre>
+⊢ ∀p q.
+    polynomial_function p ∧ polynomial_function q ⇒
+    polynomial_function (λx. p x − q x)
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_SUM</span>
+<DD>
+<pre>
+⊢ ∀s p.
+    FINITE s ∧ (∀i. i ∈ s ⇒ polynomial_function (λx. p x i)) ⇒
+    polynomial_function (λx. sum s (p x))
+</pre>
+
+<DT><span class="strong">POLYNOMIAL_FUNCTION_o</span>
+<DD>
+<pre>
+⊢ ∀p q.
+    polynomial_function p ∧ polynomial_function q ⇒
+    polynomial_function (p ∘ q)
+</pre>
+
+<DT><span class="strong">POWERSET_CLAUSES</span>
+<DD>
+<pre>
+⊢ ({s | s ⊆ ∅} = {∅}) ∧
+  ∀a t.
+    {s | s ⊆ a INSERT t} = {s | s ⊆ t} ∪ IMAGE (λs. a INSERT s) {s | s ⊆ t}
+</pre>
+
+<DT><span class="strong">REAL_ABS_INF_LE</span>
+<DD>
+<pre>
+⊢ ∀s a. s ≠ ∅ ∧ (∀x. x ∈ s ⇒ abs x ≤ a) ⇒ abs (inf s) ≤ a
+</pre>
+
+<DT><span class="strong">REAL_ABS_SUP_LE</span>
+<DD>
+<pre>
+⊢ ∀s a. s ≠ ∅ ∧ (∀x. x ∈ s ⇒ abs x ≤ a) ⇒ abs (sup s) ≤ a
+</pre>
+
+<DT><span class="strong">REAL_BOUNDS_LT</span>
+<DD>
+<pre>
+⊢ ∀x k. -k < x ∧ x < k ⇔ abs x < k
+</pre>
+
+<DT><span class="strong">REAL_COMPLETE</span>
+<DD>
+<pre>
+⊢ ∀P. (∃x. P x) ∧ (∃M. ∀x. P x ⇒ x ≤ M) ⇒
+      ∃M. (∀x. P x ⇒ x ≤ M) ∧ ∀M'. (∀x. P x ⇒ x ≤ M') ⇒ M ≤ M'
+</pre>
+
+<DT><span class="strong">REAL_EQ_SQUARE_ABS</span>
+<DD>
+<pre>
+⊢ ∀x y. (abs x = abs y) ⇔ (x² = y²)
+</pre>
+
+<DT><span class="strong">REAL_HALF</span>
+<DD>
+<pre>
+⊢ (∀e. 0 < e / 2 ⇔ 0 < e) ∧ (∀e. e / 2 + e / 2 = e) ∧ ∀e. 2 * (e / 2) = e
+</pre>
+
+<DT><span class="strong">REAL_INF_ASCLOSE</span>
+<DD>
+<pre>
+⊢ ∀s l e. s ≠ ∅ ∧ (∀x. x ∈ s ⇒ abs (x − l) ≤ e) ⇒ abs (inf s − l) ≤ e
+</pre>
+
+<DT><span class="strong">REAL_INF_BOUNDS</span>
+<DD>
+<pre>
+⊢ ∀s a b. s ≠ ∅ ∧ (∀x. x ∈ s ⇒ a ≤ x ∧ x ≤ b) ⇒ a ≤ inf s ∧ inf s ≤ b
+</pre>
+
+<DT><span class="strong">REAL_INF_LE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ (inf s ≤ a ⇔ ∃x. x ∈ s ∧ x ≤ a)
+</pre>
+
+<DT><span class="strong">REAL_INF_LT_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ (inf s < a ⇔ ∃x. x ∈ s ∧ x < a)
+</pre>
+
+<DT><span class="strong">REAL_INF_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀s b. (∀x. x ∈ s ⇒ b ≤ x) ∧ (∀b'. b < b' ⇒ ∃x. x ∈ s ∧ x < b') ⇒ (inf s = b)
+</pre>
+
+<DT><span class="strong">REAL_INV_1_LE</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ∧ x ≤ 1 ⇒ 1 ≤ x⁻¹
+</pre>
+
+<DT><span class="strong">REAL_LE_BETWEEN</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇔ ∃x. a ≤ x ∧ x ≤ b
+</pre>
+
+<DT><span class="strong">REAL_LE_INF</span>
+<DD>
+<pre>
+⊢ ∀s b. s ≠ ∅ ∧ (∀x. x ∈ s ⇒ b ≤ x) ⇒ b ≤ inf s
+</pre>
+
+<DT><span class="strong">REAL_LE_INF_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ (a ≤ inf s ⇔ ∀x. x ∈ s ⇒ a ≤ x)
+</pre>
+
+<DT><span class="strong">REAL_LE_INF_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s t. t ≠ ∅ ∧ t ⊆ s ∧ (∃b. ∀x. x ∈ s ⇒ b ≤ x) ⇒ inf s ≤ inf t
+</pre>
+
+<DT><span class="strong">REAL_LE_INV2</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ x ≤ y ⇒ y⁻¹ ≤ x⁻¹
+</pre>
+
+<DT><span class="strong">REAL_LE_LMUL1</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 ≤ x ∧ y ≤ z ⇒ x * y ≤ x * z
+</pre>
+
+<DT><span class="strong">REAL_LE_SQUARE_ABS</span>
+<DD>
+<pre>
+⊢ ∀x y. abs x ≤ abs y ⇔ x² ≤ y²
+</pre>
+
+<DT><span class="strong">REAL_LE_SUP</span>
+<DD>
+<pre>
+⊢ ∀s a b y. y ∈ s ∧ a ≤ y ∧ (∀x. x ∈ s ⇒ x ≤ b) ⇒ a ≤ sup s
+</pre>
+
+<DT><span class="strong">REAL_LE_SUP_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ (a ≤ sup s ⇔ ∃x. x ∈ s ∧ a ≤ x)
+</pre>
+
+<DT><span class="strong">REAL_LT_BETWEEN</span>
+<DD>
+<pre>
+⊢ ∀a b. a < b ⇔ ∃x. a < x ∧ x < b
+</pre>
+
+<DT><span class="strong">REAL_LT_INF_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ (a < inf s ⇔ ∀x. x ∈ s ⇒ a < x)
+</pre>
+
+<DT><span class="strong">REAL_LT_INV2</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ x < y ⇒ y⁻¹ < x⁻¹
+</pre>
+
+<DT><span class="strong">REAL_LT_LCANCEL_IMP</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < x ∧ x * y < x * z ⇒ y < z
+</pre>
+
+<DT><span class="strong">REAL_LT_POW2</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < 2 pow n
+</pre>
+
+<DT><span class="strong">REAL_LT_SUP_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ (a < sup s ⇔ ∃x. x ∈ s ∧ a < x)
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_GE</span>
+<DD>
+<pre>
+⊢ ∀m n. &m ≥ &n ⇔ m ≥ n
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_SUM</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ (&nsum s f = sum s (λx. &f x))
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_SUM_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. &nsum (m .. n) f = sum (m .. n) (λi. &f i)
+</pre>
+
+<DT><span class="strong">REAL_POLYFUN_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n c.
+    (∀x. sum (0 .. n) (λi. c i * x pow i) = 0) ⇔ ∀i. i ∈ (0 .. n) ⇒ (c i = 0)
+</pre>
+
+<DT><span class="strong">REAL_POLYFUN_EQ_CONST</span>
+<DD>
+<pre>
+⊢ ∀n c k.
+    (∀x. sum (0 .. n) (λi. c i * x pow i) = k) ⇔
+    (c 0 = k) ∧ ∀i. i ∈ (1 .. n) ⇒ (c i = 0)
+</pre>
+
+<DT><span class="strong">REAL_POLYFUN_FINITE_ROOTS</span>
+<DD>
+<pre>
+⊢ ∀n c.
+    FINITE {x | sum (0 .. n) (λi. c i * x pow i) = 0} ⇔
+    ∃i. i ∈ (0 .. n) ∧ c i ≠ 0
+</pre>
+
+<DT><span class="strong">REAL_POLYFUN_ROOTBOUND</span>
+<DD>
+<pre>
+⊢ ∀n c.
+    ¬(∀i. i ∈ (0 .. n) ⇒ (c i = 0)) ⇒
+    FINITE {x | sum (0 .. n) (λi. c i * x pow i) = 0} ∧
+    CARD {x | sum (0 .. n) (λi. c i * x pow i) = 0} ≤ n
+</pre>
+
+<DT><span class="strong">REAL_POW_1_LE</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 ≤ x ∧ x ≤ 1 ⇒ x pow n ≤ 1
+</pre>
+
+<DT><span class="strong">REAL_POW_LE_1</span>
+<DD>
+<pre>
+⊢ ∀n x. 1 ≤ x ⇒ 1 ≤ x pow n
+</pre>
+
+<DT><span class="strong">REAL_SUB_POLYFUN</span>
+<DD>
+<pre>
+⊢ ∀a x y n.
+    1 ≤ n ⇒
+    (sum (0 .. n) (λi. a i * x pow i) − sum (0 .. n) (λi. a i * y pow i) =
+     (x − y) *
+     sum (0 .. n − 1)
+       (λj. sum (j + 1 .. n) (λi. a i * y pow (i − j − 1)) * x pow j))
+</pre>
+
+<DT><span class="strong">REAL_SUB_POLYFUN_ALT</span>
+<DD>
+<pre>
+⊢ ∀a x y n.
+    1 ≤ n ⇒
+    (sum (0 .. n) (λi. a i * x pow i) − sum (0 .. n) (λi. a i * y pow i) =
+     (x − y) *
+     sum (0 .. n − 1)
+       (λj. sum (0 .. n − j − 1) (λk. a (j + k + 1) * y pow k) * x pow j))
+</pre>
+
+<DT><span class="strong">REAL_SUB_POW</span>
+<DD>
+<pre>
+⊢ ∀x y n.
+    1 ≤ n ⇒
+    (x pow n − y pow n =
+     (x − y) * sum (0 .. n − 1) (λi. x pow i * y pow (n − 1 − i)))
+</pre>
+
+<DT><span class="strong">REAL_SUB_POW_L1</span>
+<DD>
+<pre>
+⊢ ∀x n. 1 ≤ n ⇒ (1 − x pow n = (1 − x) * sum (0 .. n − 1) (λi. x pow i))
+</pre>
+
+<DT><span class="strong">REAL_SUB_POW_R1</span>
+<DD>
+<pre>
+⊢ ∀x n. 1 ≤ n ⇒ (x pow n − 1 = (x − 1) * sum (0 .. n − 1) (λi. x pow i))
+</pre>
+
+<DT><span class="strong">REAL_SUP_ASCLOSE</span>
+<DD>
+<pre>
+⊢ ∀s l e. s ≠ ∅ ∧ (∀x. x ∈ s ⇒ abs (x − l) ≤ e) ⇒ abs (sup s − l) ≤ e
+</pre>
+
+<DT><span class="strong">REAL_SUP_BOUNDS</span>
+<DD>
+<pre>
+⊢ ∀s a b. s ≠ ∅ ∧ (∀x. x ∈ s ⇒ a ≤ x ∧ x ≤ b) ⇒ a ≤ sup s ∧ sup s ≤ b
+</pre>
+
+<DT><span class="strong">REAL_SUP_EQ_INF</span>
+<DD>
+<pre>
+⊢ ∀s. s ≠ ∅ ∧ (∃B. ∀x. x ∈ s ⇒ abs x ≤ B) ⇒ ((sup s = inf s) ⇔ ∃a. s = {a})
+</pre>
+
+<DT><span class="strong">REAL_SUP_LE'</span>
+<DD>
+<pre>
+⊢ ∀s b. s ≠ ∅ ∧ (∀x. x ∈ s ⇒ x ≤ b) ⇒ sup s ≤ b
+</pre>
+
+<DT><span class="strong">REAL_SUP_LE_EQ</span>
+<DD>
+<pre>
+⊢ ∀s y. s ≠ ∅ ∧ (∃b. ∀x. x ∈ s ⇒ x ≤ b) ⇒ (sup s ≤ y ⇔ ∀x. x ∈ s ⇒ x ≤ y)
+</pre>
+
+<DT><span class="strong">REAL_SUP_LE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ (sup s ≤ a ⇔ ∀x. x ∈ s ⇒ x ≤ a)
+</pre>
+
+<DT><span class="strong">REAL_SUP_LE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s t. s ≠ ∅ ∧ s ⊆ t ∧ (∃b. ∀x. x ∈ t ⇒ x ≤ b) ⇒ sup s ≤ sup t
+</pre>
+
+<DT><span class="strong">REAL_SUP_LT_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ (sup s < a ⇔ ∀x. x ∈ s ⇒ x < a)
+</pre>
+
+<DT><span class="strong">REAL_SUP_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀s b. (∀x. x ∈ s ⇒ x ≤ b) ∧ (∀b'. b' < b ⇒ ∃x. x ∈ s ∧ b' < x) ⇒ (sup s = b)
+</pre>
+
+<DT><span class="strong">REAL_WLOG_LE</span>
+<DD>
+<pre>
+⊢ (∀x y. P x y ⇔ P y x) ∧ (∀x y. x ≤ y ⇒ P x y) ⇒ ∀x y. P x y
+</pre>
+
+<DT><span class="strong">REAL_WLOG_LT</span>
+<DD>
+<pre>
+⊢ (∀x. P x x) ∧ (∀x y. P x y ⇔ P y x) ∧ (∀x y. x < y ⇒ P x y) ⇒ ∀x y. P x y
+</pre>
+
+<DT><span class="strong">SET_PROVE_CASES</span>
+<DD>
+<pre>
+⊢ ∀P. P ∅ ∧ (∀a s. a ∉ s ⇒ P (a INSERT s)) ⇒ ∀s. P s
+</pre>
+
+<DT><span class="strong">SET_RECURSION_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀f b.
+    (∀x y s. x ≠ y ⇒ (f x (f y s) = f y (f x s))) ⇒
+    ∃g. (g ∅ = b) ∧
+        ∀x s. FINITE s ⇒ (g (x INSERT s) = if x ∈ s then g s else f x (g s))
+</pre>
+
+<DT><span class="strong">SIMPLE_IMAGE_GEN</span>
+<DD>
+<pre>
+⊢ ∀f P. {f x | P x} = IMAGE f {x | P x}
+</pre>
+
+<DT><span class="strong">SUBSET_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀m n p q. (m .. n) ⊆ (p .. q) ⇔ n < m ∨ p ≤ m ∧ n ≤ q
+</pre>
+
+<DT><span class="strong">SUBSET_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀s P. {x | x ∈ s ∧ P x} ⊆ s
+</pre>
+
+<DT><span class="strong">SUMS_SYM</span>
+<DD>
+<pre>
+⊢ ∀s t. {x + y | x ∈ s ∧ y ∈ t} = {y + x | y ∈ t ∧ x ∈ s}
+</pre>
+
+<DT><span class="strong">SUM_0</span>
+<DD>
+<pre>
+⊢ ∀s. sum s (λn. 0) = 0
+</pre>
+
+<DT><span class="strong">SUM_ABS</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ abs (sum s f) ≤ sum s (λx. abs (f x))
+</pre>
+
+<DT><span class="strong">SUM_ABS_BOUND</span>
+<DD>
+<pre>
+⊢ ∀s f b. FINITE s ∧ (∀x. x ∈ s ⇒ abs (f x) ≤ b) ⇒ abs (sum s f) ≤ &CARD s * b
+</pre>
+
+<DT><span class="strong">SUM_ABS_LE</span>
+<DD>
+<pre>
+⊢ ∀f g s. FINITE s ∧ (∀x. x ∈ s ⇒ abs (f x) ≤ g x) ⇒ abs (sum s f) ≤ sum s g
+</pre>
+
+<DT><span class="strong">SUM_ABS_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. abs (sum (m .. n) f) ≤ sum (m .. n) (λi. abs (f i))
+</pre>
+
+<DT><span class="strong">SUM_ABS_TRIANGLE</span>
+<DD>
+<pre>
+⊢ ∀s f b. FINITE s ∧ sum s (λa. abs (f a)) ≤ b ⇒ abs (sum s f) ≤ b
+</pre>
+
+<DT><span class="strong">SUM_ADD</span>
+<DD>
+<pre>
+⊢ ∀f g s. FINITE s ⇒ (sum s (λx. f x + g x) = sum s f + sum s g)
+</pre>
+
+<DT><span class="strong">SUM_ADD_GEN</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    FINITE {x | x ∈ s ∧ f x ≠ 0} ∧ FINITE {x | x ∈ s ∧ g x ≠ 0} ⇒
+    (sum s (λx. f x + g x) = sum s f + sum s g)
+</pre>
+
+<DT><span class="strong">SUM_ADD_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n. sum (m .. n) (λi. f i + g i) = sum (m .. n) f + sum (m .. n) g
+</pre>
+
+<DT><span class="strong">SUM_ADD_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀f m n p.
+    m ≤ n + 1 ⇒ (sum (m .. n + p) f = sum (m .. n) f + sum (n + 1 .. n + p) f)
+</pre>
+
+<DT><span class="strong">SUM_BIGUNION_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    FINITE s ∧ (∀t. t ∈ s ⇒ FINITE t) ∧
+    (∀t1 t2 x. t1 ∈ s ∧ t2 ∈ s ∧ t1 ≠ t2 ∧ x ∈ t1 ∧ x ∈ t2 ⇒ (f x = 0)) ⇒
+    (sum (BIGUNION s) f = sum s (λt. sum t f))
+</pre>
+
+<DT><span class="strong">SUM_BIJECTION</span>
+<DD>
+<pre>
+⊢ ∀f p s.
+    (∀x. x ∈ s ⇒ p x ∈ s) ∧ (∀y. y ∈ s ⇒ ∃!x. x ∈ s ∧ (p x = y)) ⇒
+    (sum s f = sum s (f ∘ p))
+</pre>
+
+<DT><span class="strong">SUM_BOUND</span>
+<DD>
+<pre>
+⊢ ∀s f b. FINITE s ∧ (∀x. x ∈ s ⇒ f x ≤ b) ⇒ sum s f ≤ &CARD s * b
+</pre>
+
+<DT><span class="strong">SUM_BOUND_GEN</span>
+<DD>
+<pre>
+⊢ ∀s f b. FINITE s ∧ s ≠ ∅ ∧ (∀x. x ∈ s ⇒ f x ≤ b / &CARD s) ⇒ sum s f ≤ b
+</pre>
+
+<DT><span class="strong">SUM_BOUND_LT</span>
+<DD>
+<pre>
+⊢ ∀s f b.
+    FINITE s ∧ (∀x. x ∈ s ⇒ f x ≤ b) ∧ (∃x. x ∈ s ∧ f x < b) ⇒
+    sum s f < &CARD s * b
+</pre>
+
+<DT><span class="strong">SUM_BOUND_LT_ALL</span>
+<DD>
+<pre>
+⊢ ∀s f b. FINITE s ∧ s ≠ ∅ ∧ (∀x. x ∈ s ⇒ f x < b) ⇒ sum s f < &CARD s * b
+</pre>
+
+<DT><span class="strong">SUM_BOUND_LT_GEN</span>
+<DD>
+<pre>
+⊢ ∀s f b. FINITE s ∧ s ≠ ∅ ∧ (∀x. x ∈ s ⇒ f x < b / &CARD s) ⇒ sum s f < b
+</pre>
+
+<DT><span class="strong">SUM_CASES</span>
+<DD>
+<pre>
+⊢ ∀s P f g.
+    FINITE s ⇒
+    (sum s (λx. if P x then f x else g x) =
+     sum {x | x ∈ s ∧ P x} f + sum {x | x ∈ s ∧ ¬P x} g)
+</pre>
+
+<DT><span class="strong">SUM_CASES_1</span>
+<DD>
+<pre>
+⊢ ∀s a.
+    FINITE s ∧ a ∈ s ⇒
+    (sum s (λx. if x = a then y else f x) = sum s f + (y − f a))
+</pre>
+
+<DT><span class="strong">SUM_CLAUSES</span>
+<DD>
+<pre>
+⊢ (∀f. sum ∅ f = 0) ∧
+  ∀x f s.
+    FINITE s ⇒ (sum (x INSERT s) f = if x ∈ s then sum s f else f x + sum s f)
+</pre>
+
+<DT><span class="strong">SUM_CLAUSES_LEFT</span>
+<DD>
+<pre>
+⊢ ∀f m n. m ≤ n ⇒ (sum (m .. n) f = f m + sum (m + 1 .. n) f)
+</pre>
+
+<DT><span class="strong">SUM_CLAUSES_NUMSEG</span>
+<DD>
+<pre>
+⊢ (∀m. sum (m .. 0) f = if m = 0 then f 0 else 0) ∧
+  ∀m n.
+    sum (m .. SUC n) f =
+    if m ≤ SUC n then sum (m .. n) f + f (SUC n) else sum (m .. n) f
+</pre>
+
+<DT><span class="strong">SUM_CLAUSES_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀f m n. 0 < n ∧ m ≤ n ⇒ (sum (m .. n) f = sum (m .. n − 1) f + f n)
+</pre>
+
+<DT><span class="strong">SUM_CLOSED</span>
+<DD>
+<pre>
+⊢ ∀P f s.
+    P 0 ∧ (∀x y. P x ∧ P y ⇒ P (x + y)) ∧ (∀a. a ∈ s ⇒ P (f a)) ⇒ P (sum s f)
+</pre>
+
+<DT><span class="strong">SUM_COMBINE_L</span>
+<DD>
+<pre>
+⊢ ∀f m n p.
+    0 < n ∧ m ≤ n ∧ n ≤ p + 1 ⇒
+    (sum (m .. n − 1) f + sum (n .. p) f = sum (m .. p) f)
+</pre>
+
+<DT><span class="strong">SUM_COMBINE_R</span>
+<DD>
+<pre>
+⊢ ∀f m n p.
+    m ≤ n + 1 ∧ n ≤ p ⇒ (sum (m .. n) f + sum (n + 1 .. p) f = sum (m .. p) f)
+</pre>
+
+<DT><span class="strong">SUM_CONG</span>
+<DD>
+<pre>
+⊢ (∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (sum s (λi. f i) = sum s g)) ∧
+  (∀f g a b.
+     (∀i. a ≤ i ∧ i ≤ b ⇒ (f i = g i)) ⇒
+     (sum (a .. b) (λi. f i) = sum (a .. b) g)) ∧
+  ∀f g p.
+    (∀x. p x ⇒ (f x = g x)) ⇒ (sum {y | p y} (λi. f i) = sum {y | p y} g)
+</pre>
+
+<DT><span class="strong">SUM_CONST</span>
+<DD>
+<pre>
+⊢ ∀c s. FINITE s ⇒ (sum s (λn. c) = &CARD s * c)
+</pre>
+
+<DT><span class="strong">SUM_CONST_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀c m n. sum (m .. n) (λn. c) = &(n + 1 − m) * c
+</pre>
+
+<DT><span class="strong">SUM_DEGENERATE</span>
+<DD>
+<pre>
+⊢ ∀f s. INFINITE {x | x ∈ s ∧ f x ≠ 0} ⇒ (sum s f = 0)
+</pre>
+
+<DT><span class="strong">SUM_DELETE</span>
+<DD>
+<pre>
+⊢ ∀f s a. FINITE s ∧ a ∈ s ⇒ (sum (s DELETE a) f = sum s f − f a)
+</pre>
+
+<DT><span class="strong">SUM_DELETE_CASES</span>
+<DD>
+<pre>
+⊢ ∀f s a.
+    FINITE s ⇒ (sum (s DELETE a) f = if a ∈ s then sum s f − f a else sum s f)
+</pre>
+
+<DT><span class="strong">SUM_DELTA</span>
+<DD>
+<pre>
+⊢ ∀s a. sum s (λx. if x = a then b else 0) = if a ∈ s then b else 0
+</pre>
+
+<DT><span class="strong">SUM_DIFF</span>
+<DD>
+<pre>
+⊢ ∀f s t. FINITE s ∧ t ⊆ s ⇒ (sum (s DIFF t) f = sum s f − sum t f)
+</pre>
+
+<DT><span class="strong">SUM_DIFFS</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    sum (m .. n) (λk. f k − f (k + 1)) = if m ≤ n then f m − f (n + 1) else 0
+</pre>
+
+<DT><span class="strong">SUM_DIFFS_ALT</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    sum (m .. n) (λk. f (k + 1) − f k) = if m ≤ n then f (n + 1) − f m else 0
+</pre>
+
+<DT><span class="strong">SUM_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g s. (∀x. x ∈ s ⇒ (f x = g x)) ⇒ (sum s f = sum s g)
+</pre>
+
+<DT><span class="strong">SUM_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀f s. (∀x. x ∈ s ⇒ (f x = 0)) ⇒ (sum s f = 0)
+</pre>
+
+<DT><span class="strong">SUM_EQ_0_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. (∀i. m ≤ i ∧ i ≤ n ⇒ (f i = 0)) ⇒ (sum (m .. n) f = 0)
+</pre>
+
+<DT><span class="strong">SUM_EQ_GENERAL</span>
+<DD>
+<pre>
+⊢ ∀s t f g h.
+    (∀y. y ∈ t ⇒ ∃!x. x ∈ s ∧ (h x = y)) ∧
+    (∀x. x ∈ s ⇒ h x ∈ t ∧ (g (h x) = f x)) ⇒
+    (sum s f = sum t g)
+</pre>
+
+<DT><span class="strong">SUM_EQ_GENERAL_INVERSES</span>
+<DD>
+<pre>
+⊢ ∀s t f g h k.
+    (∀y. y ∈ t ⇒ k y ∈ s ∧ (h (k y) = y)) ∧
+    (∀x. x ∈ s ⇒ h x ∈ t ∧ (k (h x) = x) ∧ (g (h x) = f x)) ⇒
+    (sum s f = sum t g)
+</pre>
+
+<DT><span class="strong">SUM_EQ_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+    (∀i. m ≤ i ∧ i ≤ n ⇒ (f i = g i)) ⇒ (sum (m .. n) f = sum (m .. n) g)
+</pre>
+
+<DT><span class="strong">SUM_EQ_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE t ∧ t ⊆ s ∧ (∀x. x ∈ t ⇒ (f x = g x)) ∧
+    (∀x. x ∈ s ∧ x ∉ t ⇒ (f x = 0)) ⇒
+    (sum s f = sum t g)
+</pre>
+
+<DT><span class="strong">SUM_GP</span>
+<DD>
+<pre>
+⊢ ∀x m n.
+    sum (m .. n) (λi. x pow i) =
+    if n < m then 0
+    else if x = 1 then &(n + 1 − m)
+    else (x pow m − x pow SUC n) / (1 − x)
+</pre>
+
+<DT><span class="strong">SUM_GP_BASIC</span>
+<DD>
+<pre>
+⊢ ∀x n. (1 − x) * sum (0 .. n) (λi. x pow i) = 1 − x pow SUC n
+</pre>
+
+<DT><span class="strong">SUM_GP_MULTIPLIED</span>
+<DD>
+<pre>
+⊢ ∀x m n.
+    m ≤ n ⇒ ((1 − x) * sum (m .. n) (λi. x pow i) = x pow m − x pow SUC n)
+</pre>
+
+<DT><span class="strong">SUM_GROUP</span>
+<DD>
+<pre>
+⊢ ∀f g s t.
+    FINITE s ∧ IMAGE f s ⊆ t ⇒
+    (sum t (λy. sum {x | x ∈ s ∧ (f x = y)} g) = sum s g)
+</pre>
+
+<DT><span class="strong">SUM_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    (∀x y. x ∈ s ∧ y ∈ s ∧ (f x = f y) ⇒ (x = y)) ⇒
+    (sum (IMAGE f s) g = sum s (g ∘ f))
+</pre>
+
+<DT><span class="strong">SUM_IMAGE_GEN</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    FINITE s ⇒ (sum s g = sum (IMAGE f s) (λy. sum {x | x ∈ s ∧ (f x = y)} g))
+</pre>
+
+<DT><span class="strong">SUM_IMAGE_LE</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    FINITE s ∧ (∀x. x ∈ s ⇒ 0 ≤ g (f x)) ⇒ sum (IMAGE f s) g ≤ sum s (g ∘ f)
+</pre>
+
+<DT><span class="strong">SUM_IMAGE_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀d i s.
+    FINITE s ∧ (∀x y. x ∈ s ∧ y ∈ s ∧ x ≠ y ∧ (i x = i y) ⇒ (d (i x) = 0)) ⇒
+    (sum (IMAGE i s) d = sum s (d ∘ i))
+</pre>
+
+<DT><span class="strong">SUM_INCL_EXCL</span>
+<DD>
+<pre>
+⊢ ∀s t f.
+    FINITE s ∧ FINITE t ⇒ (sum s f + sum t f = sum (s ∪ t) f + sum (s ∩ t) f)
+</pre>
+
+<DT><span class="strong">SUM_INJECTION</span>
+<DD>
+<pre>
+⊢ ∀f p s.
+    FINITE s ∧ (∀x. x ∈ s ⇒ p x ∈ s) ∧
+    (∀x y. x ∈ s ∧ y ∈ s ∧ (p x = p y) ⇒ (x = y)) ⇒
+    (sum s (f ∘ p) = sum s f)
+</pre>
+
+<DT><span class="strong">SUM_LE</span>
+<DD>
+<pre>
+⊢ ∀f g s. FINITE s ∧ (∀x. x ∈ s ⇒ f x ≤ g x) ⇒ sum s f ≤ sum s g
+</pre>
+
+<DT><span class="strong">SUM_LE_INCLUDED</span>
+<DD>
+<pre>
+⊢ ∀f g s t i.
+    FINITE s ∧ FINITE t ∧ (∀y. y ∈ t ⇒ 0 ≤ g y) ∧
+    (∀x. x ∈ s ⇒ ∃y. y ∈ t ∧ (i y = x) ∧ f x ≤ g y) ⇒
+    sum s f ≤ sum t g
+</pre>
+
+<DT><span class="strong">SUM_LE_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n. (∀i. m ≤ i ∧ i ≤ n ⇒ f i ≤ g i) ⇒ sum (m .. n) f ≤ sum (m .. n) g
+</pre>
+
+<DT><span class="strong">SUM_LMUL</span>
+<DD>
+<pre>
+⊢ ∀f c s. sum s (λx. c * f x) = c * sum s f
+</pre>
+
+<DT><span class="strong">SUM_LT</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    FINITE s ∧ (∀x. x ∈ s ⇒ f x ≤ g x) ∧ (∃x. x ∈ s ∧ f x < g x) ⇒
+    sum s f < sum s g
+</pre>
+
+<DT><span class="strong">SUM_LT_ALL</span>
+<DD>
+<pre>
+⊢ ∀f g s. FINITE s ∧ s ≠ ∅ ∧ (∀x. x ∈ s ⇒ f x < g x) ⇒ sum s f < sum s g
+</pre>
+
+<DT><span class="strong">SUM_MULTICOUNT</span>
+<DD>
+<pre>
+⊢ ∀R s t k.
+    FINITE s ∧ FINITE t ∧ (∀j. j ∈ t ⇒ (CARD {i | i ∈ s ∧ R i j} = k)) ⇒
+    (sum s (λi. &CARD {j | j ∈ t ∧ R i j}) = &(k * CARD t))
+</pre>
+
+<DT><span class="strong">SUM_MULTICOUNT_GEN</span>
+<DD>
+<pre>
+⊢ ∀R s t k.
+    FINITE s ∧ FINITE t ∧ (∀j. j ∈ t ⇒ (CARD {i | i ∈ s ∧ R i j} = k j)) ⇒
+    (sum s (λi. &CARD {j | j ∈ t ∧ R i j}) = sum t (λi. &k i))
+</pre>
+
+<DT><span class="strong">SUM_NEG</span>
+<DD>
+<pre>
+⊢ ∀f s. sum s (λx. -f x) = -sum s f
+</pre>
+
+<DT><span class="strong">SUM_OFFSET</span>
+<DD>
+<pre>
+⊢ ∀p f m n. sum (m + p .. n + p) f = sum (m .. n) (λi. f (i + p))
+</pre>
+
+<DT><span class="strong">SUM_OFFSET_0</span>
+<DD>
+<pre>
+⊢ ∀f m n. m ≤ n ⇒ (sum (m .. n) f = sum (0 .. n − m) (λi. f (i + m)))
+</pre>
+
+<DT><span class="strong">SUM_PAIR</span>
+<DD>
+<pre>
+⊢ ∀f m n.
+    sum (2 * m .. 2 * n + 1) f = sum (m .. n) (λi. f (2 * i) + f (2 * i + 1))
+</pre>
+
+<DT><span class="strong">SUM_PARTIAL_PRE</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+    sum (m .. n) (λk. f k * (g k − g (k − 1))) =
+    if m ≤ n then
+      f (n + 1) * g n − f m * g (m − 1) −
+      sum (m .. n) (λk. g k * (f (k + 1) − f k))
+    else 0
+</pre>
+
+<DT><span class="strong">SUM_PARTIAL_SUC</span>
+<DD>
+<pre>
+⊢ ∀f g m n.
+    sum (m .. n) (λk. f k * (g (k + 1) − g k)) =
+    if m ≤ n then
+      f (n + 1) * g (n + 1) − f m * g m −
+      sum (m .. n) (λk. g (k + 1) * (f (k + 1) − f k))
+    else 0
+</pre>
+
+<DT><span class="strong">SUM_POS_BOUND</span>
+<DD>
+<pre>
+⊢ ∀f b s. FINITE s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x) ∧ sum s f ≤ b ⇒ ∀x. x ∈ s ⇒ f x ≤ b
+</pre>
+
+<DT><span class="strong">SUM_POS_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    FINITE s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x) ∧ (sum s f = 0) ⇒ ∀x. x ∈ s ⇒ (f x = 0)
+</pre>
+
+<DT><span class="strong">SUM_POS_EQ_0_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n.
+    (∀p. m ≤ p ∧ p ≤ n ⇒ 0 ≤ f p) ∧ (sum (m .. n) f = 0) ⇒
+    ∀p. m ≤ p ∧ p ≤ n ⇒ (f p = 0)
+</pre>
+
+<DT><span class="strong">SUM_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀s. (∀x. x ∈ s ⇒ 0 ≤ f x) ⇒ 0 ≤ sum s f
+</pre>
+
+<DT><span class="strong">SUM_POS_LE_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀m n f. (∀p. m ≤ p ∧ p ≤ n ⇒ 0 ≤ f p) ⇒ 0 ≤ sum (m .. n) f
+</pre>
+
+<DT><span class="strong">SUM_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ∧ (∀x. x ∈ s ⇒ 0 ≤ f x) ∧ (∃x. x ∈ s ∧ 0 < f x) ⇒ 0 < sum s f
+</pre>
+
+<DT><span class="strong">SUM_POS_LT_ALL</span>
+<DD>
+<pre>
+⊢ ∀s f. FINITE s ∧ s ≠ ∅ ∧ (∀i. i ∈ s ⇒ 0 < f i) ⇒ 0 < sum s f
+</pre>
+
+<DT><span class="strong">SUM_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ (sum s (λx. if x ∈ s then f x else 0) = sum s f)
+</pre>
+
+<DT><span class="strong">SUM_RESTRICT_SET</span>
+<DD>
+<pre>
+⊢ ∀P s f. sum {x | x ∈ s ∧ P x} f = sum s (λx. if P x then f x else 0)
+</pre>
+
+<DT><span class="strong">SUM_RMUL</span>
+<DD>
+<pre>
+⊢ ∀f c s. sum s (λx. f x * c) = sum s f * c
+</pre>
+
+<DT><span class="strong">SUM_SING</span>
+<DD>
+<pre>
+⊢ ∀f x. sum {x} f = f x
+</pre>
+
+<DT><span class="strong">SUM_SING_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f n. sum (n .. n) f = f n
+</pre>
+
+<DT><span class="strong">SUM_SUB</span>
+<DD>
+<pre>
+⊢ ∀f g s. FINITE s ⇒ (sum s (λx. f x − g x) = sum s f − sum s g)
+</pre>
+
+<DT><span class="strong">SUM_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀u v f.
+    FINITE u ∧ FINITE v ∧ (∀x. x ∈ u DIFF v ⇒ f x ≤ 0) ∧
+    (∀x. x ∈ v DIFF u ⇒ 0 ≤ f x) ⇒
+    sum u f ≤ sum v f
+</pre>
+
+<DT><span class="strong">SUM_SUBSET_SIMPLE</span>
+<DD>
+<pre>
+⊢ ∀u v f. FINITE v ∧ u ⊆ v ∧ (∀x. x ∈ v DIFF u ⇒ 0 ≤ f x) ⇒ sum u f ≤ sum v f
+</pre>
+
+<DT><span class="strong">SUM_SUB_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f g m n. sum (m .. n) (λi. f i − g i) = sum (m .. n) f − sum (m .. n) g
+</pre>
+
+<DT><span class="strong">SUM_SUM_PRODUCT</span>
+<DD>
+<pre>
+⊢ ∀s t x.
+    FINITE s ∧ (∀i. i ∈ s ⇒ FINITE (t i)) ⇒
+    (sum s (λi. sum (t i) (x i)) =
+     sum {(i,j) | i ∈ s ∧ j ∈ t i} (λ(i,j). x i j))
+</pre>
+
+<DT><span class="strong">SUM_SUM_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀R f s t.
+    FINITE s ∧ FINITE t ⇒
+    (sum s (λx. sum {y | y ∈ t ∧ R x y} (λy. f x y)) =
+     sum t (λy. sum {x | x ∈ s ∧ R x y} (λx. f x y)))
+</pre>
+
+<DT><span class="strong">SUM_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀f u v. u ⊆ v ∧ (∀x. x ∈ v ∧ x ∉ u ⇒ (f x = 0)) ⇒ (sum v f = sum u f)
+</pre>
+
+<DT><span class="strong">SUM_SUPPORT</span>
+<DD>
+<pre>
+⊢ ∀f s. sum (support $+ f s) f = sum s f
+</pre>
+
+<DT><span class="strong">SUM_SWAP</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE s ∧ FINITE t ⇒
+    (sum s (λi. sum t (f i)) = sum t (λj. sum s (λi. f i j)))
+</pre>
+
+<DT><span class="strong">SUM_SWAP_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀a b c d f.
+    sum (a .. b) (λi. sum (c .. d) (f i)) =
+    sum (c .. d) (λj. sum (a .. b) (λi. f i j))
+</pre>
+
+<DT><span class="strong">SUM_TRIV_NUMSEG</span>
+<DD>
+<pre>
+⊢ ∀f m n. n < m ⇒ (sum (m .. n) f = 0)
+</pre>
+
+<DT><span class="strong">SUM_UNION</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE s ∧ FINITE t ∧ DISJOINT s t ⇒ (sum (s ∪ t) f = sum s f + sum t f)
+</pre>
+
+<DT><span class="strong">SUM_UNION_EQ</span>
+<DD>
+<pre>
+⊢ ∀s t u. FINITE u ∧ (s ∩ t = ∅) ∧ (s ∪ t = u) ⇒ (sum s f + sum t f = sum u f)
+</pre>
+
+<DT><span class="strong">SUM_UNION_LZERO</span>
+<DD>
+<pre>
+⊢ ∀f u v.
+    FINITE v ∧ (∀x. x ∈ u ∧ x ∉ v ⇒ (f x = 0)) ⇒ (sum (u ∪ v) f = sum v f)
+</pre>
+
+<DT><span class="strong">SUM_UNION_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    FINITE s ∧ FINITE t ∧ (∀x. x ∈ s ∩ t ⇒ (f x = 0)) ⇒
+    (sum (s ∪ t) f = sum s f + sum t f)
+</pre>
+
+<DT><span class="strong">SUM_UNION_RZERO</span>
+<DD>
+<pre>
+⊢ ∀f u v.
+    FINITE u ∧ (∀x. x ∈ v ∧ x ∉ u ⇒ (f x = 0)) ⇒ (sum (u ∪ v) f = sum u f)
+</pre>
+
+<DT><span class="strong">SUM_ZERO_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀u s.
+    FINITE s ∧ (sum s u = 0) ⇒
+    (∀i. i ∈ s ⇒ (u i = 0)) ∨ ∃j k. j ∈ s ∧ u j < 0 ∧ k ∈ s ∧ u k > 0
+</pre>
+
+<DT><span class="strong">SUP</span>
+<DD>
+<pre>
+⊢ ∀s. s ≠ ∅ ∧ (∃b. ∀x. x ∈ s ⇒ x ≤ b) ⇒
+      (∀x. x ∈ s ⇒ x ≤ sup s) ∧ ∀b. (∀x. x ∈ s ⇒ x ≤ b) ⇒ sup s ≤ b
+</pre>
+
+<DT><span class="strong">SUPPORT_CLAUSES</span>
+<DD>
+<pre>
+⊢ (∀f. support op f ∅ = ∅) ∧
+  (∀f x s.
+     support op f (x INSERT s) =
+     if f x = neutral op then support op f s else x INSERT support op f s) ∧
+  (∀f x s. support op f (s DELETE x) = support op f s DELETE x) ∧
+  (∀f s t. support op f (s ∪ t) = support op f s ∪ support op f t) ∧
+  (∀f s t. support op f (s ∩ t) = support op f s ∩ support op f t) ∧
+  (∀f s t. support op f (s DIFF t) = support op f s DIFF support op f t) ∧
+  ∀f g s. support op g (IMAGE f s) = IMAGE f (support op (g ∘ f) s)
+</pre>
+
+<DT><span class="strong">SUPPORT_DELTA</span>
+<DD>
+<pre>
+⊢ ∀op s f a.
+    support op (λx. if x = a then f x else neutral op) s =
+    if a ∈ s then support op f {a} else ∅
+</pre>
+
+<DT><span class="strong">SUPPORT_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀op f s. (∀x. x ∈ s ⇒ (f x = neutral op)) ⇔ (support op f s = ∅)
+</pre>
+
+<DT><span class="strong">SUPPORT_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀op f s. support op f s ⊆ s
+</pre>
+
+<DT><span class="strong">SUPPORT_SUPPORT</span>
+<DD>
+<pre>
+⊢ ∀op f s. support op f (support op f s) = support op f s
+</pre>
+
+<DT><span class="strong">SUP_EQ</span>
+<DD>
+<pre>
+⊢ ∀s t. (∀b. (∀x. x ∈ s ⇒ x ≤ b) ⇔ ∀x. x ∈ t ⇒ x ≤ b) ⇒ (sup s = sup t)
+</pre>
+
+<DT><span class="strong">SUP_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ⇒ sup s ∈ s ∧ ∀x. x ∈ s ⇒ x ≤ sup s
+</pre>
+
+<DT><span class="strong">SUP_FINITE_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ⇒ ∃b. b ∈ s ∧ ∀x. x ∈ s ⇒ x ≤ b
+</pre>
+
+<DT><span class="strong">SUP_INSERT_FINITE</span>
+<DD>
+<pre>
+⊢ ∀x s. FINITE s ⇒ (sup (x INSERT s) = if s = ∅ then x else max x (sup s))
+</pre>
+
+<DT><span class="strong">SUP_SING</span>
+<DD>
+<pre>
+⊢ ∀a. sup {a} = a
+</pre>
+
+<DT><span class="strong">SUP_UNION</span>
+<DD>
+<pre>
+⊢ ∀s t.
+    s ≠ ∅ ∧ t ≠ ∅ ∧ (∃b. ∀x. x ∈ s ⇒ x ≤ b) ∧ (∃c. ∀x. x ∈ t ⇒ x ≤ c) ⇒
+    (sup (s ∪ t) = max (sup s) (sup t))
+</pre>
+
+<DT><span class="strong">SUP_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀s b. (∀c. (∀x. x ∈ s ⇒ x ≤ c) ⇔ b ≤ c) ⇒ (sup s = b)
+</pre>
+
+<DT><span class="strong">SUP_UNIQUE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s a. FINITE s ∧ s ≠ ∅ ⇒ ((sup s = a) ⇔ a ∈ s ∧ ∀y. y ∈ s ⇒ y ≤ a)
+</pre>
+
+<DT><span class="strong">TOPOLOGICAL_SORT</span>
+<DD>
+<pre>
+⊢ ∀ $<<.
+    (∀x y. x ≪ y ∧ y ≪ x ⇒ (x = y)) ∧ (∀x y z. x ≪ y ∧ y ≪ z ⇒ x ≪ z) ⇒
+    ∀n s.
+      s HAS_SIZE n ⇒
+      ∃f. (s = IMAGE f (1 .. n)) ∧
+          ∀j k. j ∈ (1 .. n) ∧ k ∈ (1 .. n) ∧ j < k ⇒ ¬(f k ≪ f j)
+</pre>
+
+<DT><span class="strong">TRANSITIVE_STEPWISE_LE</span>
+<DD>
+<pre>
+⊢ ∀R. (∀x. R x x) ∧ (∀x y z. R x y ∧ R y z ⇒ R x z) ∧ (∀n. R n (SUC n)) ⇒
+      ∀m n. m ≤ n ⇒ R m n
+</pre>
+
+<DT><span class="strong">TRANSITIVE_STEPWISE_LE_EQ</span>
+<DD>
+<pre>
+⊢ ∀R. (∀x. R x x) ∧ (∀x y z. R x y ∧ R y z ⇒ R x z) ⇒
+      ((∀m n. m ≤ n ⇒ R m n) ⇔ ∀n. R n (SUC n))
+</pre>
+
+<DT><span class="strong">UPPER_BOUND_FINITE_SET</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ ∃a. ∀x. x ∈ s ⇒ f x ≤ a
+</pre>
+
+<DT><span class="strong">UPPER_BOUND_FINITE_SET_REAL</span>
+<DD>
+<pre>
+⊢ ∀f s. FINITE s ⇒ ∃a. ∀x. x ∈ s ⇒ f x ≤ a
+</pre>
+
+<DT><span class="strong">WLOG_LE</span>
+<DD>
+<pre>
+⊢ (∀m n. P m n ⇔ P n m) ∧ (∀m n. m ≤ n ⇒ P m n) ⇒ ∀m n. P m n
+</pre>
+
+<DT><span class="strong">inf_alt</span>
+<DD>
+<pre>
+⊢ ∀s. s ≠ ∅ ∧ (∃b. ∀x. x ∈ s ⇒ b ≤ x) ⇒
+      (inf s = @a. (∀x. x ∈ s ⇒ a ≤ x) ∧ ∀b. (∀x. x ∈ s ⇒ b ≤ x) ⇒ b ≤ a)
+</pre>
+
+<DT><span class="strong">real_INFINITE</span>
+<DD>
+<pre>
+⊢ INFINITE 𝕌(:real)
+</pre>
+
+<DT><span class="strong">sum_real</span>
+<DD>
+<pre>
+⊢ ∀f n. sum (0 .. n) f = sum (0,SUC n) f
+</pre>
+
+<DT><span class="strong">sup_alt</span>
+<DD>
+<pre>
+⊢ sup s = @a. (∀x. x ∈ s ⇒ x ≤ a) ∧ ∀b. (∀x. x ∈ s ⇒ x ≤ b) ⇒ a ≤ b
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>
