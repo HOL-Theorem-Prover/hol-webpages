@@ -138,11 +138,11 @@ end;</code></pre>
 <dt><code>GSYM <i>theorem</i></code></dt>
 <dd>Flips equalities in the conclusion of the theorem. This works even when the equality is nested below implications and/or <code>∀</code>-quantification.
 </dd>
-<dt><code>iff{L,R} <i>theorem</i></code></dt>
+<dt><code>iff{LR,RL} <i>theorem</i></code></dt>
 <dd>Turns a bi-implication into an implication, going left-to-right or right-to-left respectively.
 </dd>
 </dl>
-<p><br> Note that <code>GSYM</code> and <code>iff{L,R}</code> are termed <em>rules</em> - these transform theorems to other theorems, allowing the above to be combined (e.g. <code>simp[Once $ GSYM thm]</code>). There are many other useful rules - see the HOL4 documentation for more details.</p>
+<p><br> Note that <code>GSYM</code> and <code>iff{LR,RL}</code> are termed <em>rules</em> - these transform theorems to other theorems, allowing the above to be combined (e.g. <code>simp[Once $ GSYM thm]</code>). There are many other useful rules - see the HOL4 documentation for more details.</p>
 <p>In some cases we may wish to use a set of rewrites for simplification. One way to do this is to use the <code>SF</code> modifier in our list of rewrites, e.g. <code>simp[SF CONJ_ss]</code>.</p>
 <dl>
 <dt><code>SF <i>&lt;simpset fragment&gt;</i></code></dt>
@@ -456,7 +456,7 @@ end;</code></pre>
 <ul>
 <li>We can select single assumptions to use as rewrites too: <code>qpat_x_assum `...` $ rw o single</code>, leveraging the ML-level <code>single</code> function which creates a singleton list.</li>
 </ul></li>
-<li><strong>Rewrites which don't seem to do anything.</strong> Sometimes it may seem that you have an assumption which should trigger simplification in the goal on rewriting - however, it doesn't seem to be doing anything. Often this is due to a type mismatch - i.e. your assumption involves more general types than your goal. If this is the case, you cannot instantiate type variables once introduced into your goal-state for soundness reasons, so you must instead type-instantiate the assumption when it is introduced. You can use <code>INST_TYPE</code> for this, for example:<br> <code>assume_tac $ INST_TYPE [``:'a`` |-&gt; ``:num``] listTheory.MAP</code></li>
+<li><strong>Rewrites which don't seem to do anything.</strong> Sometimes it may seem that you have an assumption which should trigger simplification in the goal on rewriting - however, it doesn't seem to be doing anything. Often this is due to a type mismatch - i.e. your assumption involves more general types than your goal. To diagnose it you can turn types annotations on using for instance <code>show_types:= true</code>. If this is the case, you cannot instantiate type variables once introduced into your goal-state for soundness reasons, so you must instead type-instantiate the assumption when it is introduced. You can use <code>INST_TYPE</code> for this, for example:<br> <code>assume_tac $ INST_TYPE [``:'a`` |-&gt; ``:num``] listTheory.MAP</code></li>
 </ul>
 </body>
 </html>
