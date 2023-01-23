@@ -126,8 +126,8 @@ end;</code></pre>
 <dt><code>Ntimes <i>theorem int</i></code></dt>
 <dd>Uses the supplied theorem at most the given number of times when rewriting.
 </dd>
-<dt><code>Excl <i>theorem</i></code></dt>
-<dd>Do not use the supplied theorem when rewriting. This allows temporary exclusion of a theorem from the stateful simpset.
+<dt><code>Excl <i>&quot;theorem_name&quot;</i></code><br><code>Excl <i>&quot;conversion_name&quot;</i></code></dt>
+<dd>Do not use the supplied theorem/conversion when rewriting. This allows temporary exclusion of theorems/conversions from the stateful simpset.
 </dd>
 <dt><code>Simp{L,R}HS <i>theorem</i></code></dt>
 <dd>Uses the supplied theorem to simplify on the left-/right-hand side of equalities.
@@ -143,6 +143,9 @@ end;</code></pre>
 </dd>
 <dt><code>iff{LR,RL} <i>theorem</i></code></dt>
 <dd>Turns a bi-implication into an implication, going left-to-right or right-to-left respectively.
+</dd>
+<dt><code>cj <i>n</i> <i>theorem</i></code></dt>
+<dd>Returns the <code><i>n</i></code>th conjunct of the theorem, handling universal quantifiers and implications. For example, for <code>thm = ⊢ ∀ P Q R . P ==&gt; Q /\ R</code>, <code>cj 2 thm</code> gives <code>⊢ ∀ P R . P ==&gt; R)</code>. <strong>NB</strong> indexing begins at <code>1</code>.
 </dd>
 <dt><code>SRULE [<i>rewrites</i>] <i>theorem</i></code></dt>
 <dd>Uses the stateful simpset and supplied rewrites to rewrite the theorem.
@@ -198,7 +201,7 @@ end;</code></pre>
 <dt><code>Induct_on `<i>term</i>`</code></dt>
 <dd>Inducts over the given term, based on its type. This can be used similarly to <code>Induct</code> - e.g. to prove <code>P (n : num)</code> we can use <code>Induct_on `n`</code>. However, we can also induct over an inductive relation - given a relation <code>is_even</code> and a goal <code>is_even n</code>, we can use <code>Induct_on `is_even`</code>.
 </dd>
-<dt><code>_ using <i>theorem</i></code></dt>
+<dt><code>... using <i>theorem</i></code></dt>
 <dd>Used as as suffix to <code>Induct</code> or <code>Induct_on `<i>term</i>`</code> to specify a particular induction theorem for use. For example, <code>Induct_on `l` using SNOC_INDUCT</code> begins induction over list <code>l</code> from the tail, rather than the head (<code>SNOC</code> is the reverse of <code>CONS</code>).
 </dd>
 <dt><code>completeInduct_on `<i>term</i>`</code></dt>
@@ -312,13 +315,13 @@ end;</code></pre>
 <dt><code>qexists `<i>term</i>`</code></dt>
 <dd>Instantiates a top-level <code>∃</code> quantifier with the supplied term.
 </dd>
-<dt><code>qexistsl `<i>terms</i>`</code></dt>
+<dt><code>qexistsl [`<i>term</i>`s]</code></dt>
 <dd>Like <code>qexists</code>, but accepts a list of terms to instantiate multiple <code>∃</code> quantifiers.
 </dd>
 <dt><code>qrefine `<i>term</i>`</code></dt>
 <dd>Refines a top-level <code>∃</code> quantifier using the supplied term - any free variables in the term become<code>∃</code>-quantified. For example, for a goal <code>∃ n : num. if n = 0 then P n else Q n</code>, applying <code>qrefine `SUC k` &gt;&gt; simp[]</code> produces the goal <code>∃ k : num. Q (SUC k)</code> (where <code>SUC</code> is the successor function).
 </dd>
-<dt><code>qrefinel `<i>terms</i>`</code></dt>
+<dt><code>qrefinel [`<i>term</i>`s]</code></dt>
 <dd>Like <code>qrefine</code>, but accepts a list of terms to instantiate multiple <code>∃</code> quantifiers. Also can be passed underscores, to avoid refining selected <code>∃</code> quantifiers. For example, for a goal <code>n = 2 /\ c = 5 ==&gt; ∃ a b c d. a + b = c + d</code>, the tactic <code>strip_tac &gt;&gt; qrefinel [`<em>`,`SUC c`,`</em>`,`n + m`]</code> produces the new goal <code>∃ a c' m. a + SUC c = c' + (n + m)</code> .
 </dd>
 <dt><code>goal_assum $ drule_at Any</code></dt>
@@ -367,6 +370,9 @@ end;</code></pre>
 </dd>
 <dt><code>L &quot;<i>label</i>&quot;</code></dt>
 <dd>Found in <code>markerLib</code>. When used in a stateful simplifier, produces the theorem <code>assumption</code> from labelled assumption <code>label :- assumption</code>.
+</dd>
+<dt><code>kall_tac</code></dt>
+<dd>Equivalent to <code>K ALL_TAC</code>, i.e. accepts any input and leaves the goal unchanged. Most useful to delete assumptions, e.g. <code>pop_assum kall_tac</code> removes the most recent assumption.
 </dd>
 </dl>
 <h2 id="instantiations-and-generalisations">Instantiations and generalisations</h2>
@@ -488,7 +494,7 @@ end;</code></pre>
 <li><strong><a href="#case-splits">Case splits</a> followed by <a href="#rewriting">simplification</a> and <a href="#renaming-and-abbreviating">renaming</a>.</strong> Case splits introduce fresh variable names and equalities. Simplification can use the equalities, and renaming cleans up the fresh names.
 <ul>
 <li><code>TOP_CASE_TAC &gt;&gt; gvs[] &gt;&gt; rename1 `...`</code></li>
-<li><code>Cases_on _ &gt;&gt; simp[] &gt;&gt; qmatch_goalsub_abbrev_tac `...`</code></li>
+<li><code>Cases_on ... &gt;&gt; simp[] &gt;&gt; qmatch_goalsub_abbrev_tac `...`</code></li>
 <li><em>and so on</em></li>
 </ul></li>
 <li><strong>Simpler targeted <a href="#rewriting">simplification</a>.</strong> Sometimes when <code>fs</code>, <code>gvs</code>, and so on do too much, it can be useful to select an assumption, move it to the goal as an implication, and then use <code>simp</code> instead. This can prevent looping rewrites between assumptions. E.g. <code>qpat_x_assum `...` mp_tac &gt;&gt; simp[]</code>
