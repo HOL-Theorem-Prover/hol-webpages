@@ -40,6 +40,71 @@
 <h2 id = "Build"> Build Failures and Warnings</h2>
 
 <dl>
+<dt> <strong>Poly/ML and HOL fail to build with recent Xcode on Apple Macs.</strong>
+<dd>
+
+<p> To build HOL on polyml 5.9.1 on MacOS M1, when the standard invocation
+fails with
+<pre>
+  poly < tools/smart-configure.sml
+  ...
+  Making mllex
+  ld: LINKEDIT overlap of start of LINKEDIT and symbol table in '/private/var/folders/k5/_29n92td6yqcvzm2pf69n1n40000gn/T/polyobj.8335.o' in '/private/var/folders/k5/_29n92td6yqcvzm2pf69n1n40000gn/T/polyobj.8335.o'
+  clang: error: linker command failed with exit code 1 (use -v to see invocation)
+  Failed to make mllex (Fail "Command failed")
+</pre>
+
+The problem is in <code>polyc</code>. What to do:
+<ol>
+<li><p>  Build poly, except in the <code>./configure</code> invocation, do
+<pre>
+       $ LDFLAGS=-ld_classic ./configure
+</pre>
+
+     After that, invoke <code>make</code> in <code>polyml/</code>. This creates file <code>polyc</code>
+
+<li>
+<p> Edit <code>EXTRALDFLAGS</code> in polyc
+<pre>
+
+        LINK="g++"  # line 5
+        LINKOPT="-std=gnu++11"  # new line 6
+
+        EXTRALDFLAGS=-ld_classic # line 16
+</pre>
+
+<p>     Edit line 44 and 46  to look like
+<pre>
+        "${LINK}" ${LINKOPT}
+</pre>
+<p>
+     Invoke
+<pre>
+        make install
+</pre>
+     as per usual.
+
+<li><p> Add the line
+<pre>
+        val EXTRA_POLY_LDFLAGS = ["-ld_classic"];
+</pre>
+<p>
+     to file
+<pre>
+        tools-poly/poly-includes.ML
+</pre>
+
+<li> <p> Now you can build HOL via the usual invocation
+<pre>
+
+       $ poly < tools/smart-configure.sml
+       $ bin/build
+</pre>
+
+</ol>
+</dd>
+
+
 <dt>
 <strong>I can&rsquo;t build on Ubuntu (or some other recent Linux),
   where I have Moscow&nbsp;ML executables in <code>/usr/bin/</code>, and
