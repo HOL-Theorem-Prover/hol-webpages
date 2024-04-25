@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Cond_rewrite.search_top_down</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>search_top_down
+ : (term -&gt; term -&gt; ((term # term) list # (type # type) list) list)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Cond_rewrite.html">Cond_rewrite</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Search a term in a top-down fashion to find matches to another term.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">search_top_down&nbsp;tm1&nbsp;tm2</SPAN><SPAN class = "TEXT"> returns a list of instantiations which make
+the whole  or part of </SPAN><SPAN class = "BRKT">tm2</SPAN><SPAN class = "TEXT"> match </SPAN><SPAN class = "BRKT">tm1</SPAN><SPAN class = "TEXT">. The first term should not have
+a quantifier at the outer most level. </SPAN><SPAN class = "BRKT">search_top_down</SPAN><SPAN class = "TEXT"> first
+attempts to match the whole second term to </SPAN><SPAN class = "BRKT">tm1</SPAN><SPAN class = "TEXT">. If this fails, it
+recursively descend into the subterms of </SPAN><SPAN class = "BRKT">tm2</SPAN><SPAN class = "TEXT"> to find all matches.</SPAN>
+<P>
+<SPAN class = "TEXT">The length of the returned list indicates the number of matches found.
+An empty list means no match can be found between </SPAN><SPAN class = "BRKT">tm1</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">tm2</SPAN><SPAN class = "TEXT"> or
+any subterms of </SPAN><SPAN class = "BRKT">tm2</SPAN><SPAN class = "TEXT">.
+The instantiations returned in the list are in the same format as for  the
+function </SPAN><SPAN class = "BRKT">match</SPAN><SPAN class = "TEXT">. Each instantiation is a pair of lists: the first is
+a list of term pairs and the second is a list of type pairs. Either of
+these lists may be empty. The situation in which both lists are empty
+indicates that there is an exact match between the two terms, i.e., no
+instantiation is required to make the entire </SPAN><SPAN class = "BRKT">tm2</SPAN><SPAN class = "TEXT"> or a part of </SPAN><SPAN class = "BRKT">tm2</SPAN><SPAN class = "TEXT">
+the same as </SPAN><SPAN class = "BRKT">tm1</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+   #search_top_down "x = y:*" "3 = 5";;
+   [([("5", "y"); ("3", "x")], [(":num", ":*")])]
+   : ((term # term) list # (type # type) list) list
+
+   #search_top_down "x = y:*" "x =y:*";;
+   [([], [])] : ((term # term) list # (type # type) list) list
+
+   #search_top_down "x = y:*" "0 &lt; p ==&gt; (x &lt;= p = y &lt;= p)";;
+   [([("y &lt;= p", "y"); ("x &lt;= p", "x")], [(":bool", ":*")])]
+   : ((term # term) list # (type # type) list) list
+</pre></DIV>
+<SPAN class = "TEXT">
+The first example above shows the entire </SPAN><SPAN class = "BRKT">tm2</SPAN><SPAN class = "TEXT"> matching </SPAN><SPAN class = "BRKT">tm1</SPAN><SPAN class = "TEXT">.
+The second example shows the two terms match exactly. No
+instantiation is required. The last example shows that a subterm of
+</SPAN><SPAN class = "BRKT">tm2</SPAN><SPAN class = "TEXT"> can be instantiated to match </SPAN><SPAN class = "BRKT">tm1</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Db.match.html">match</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

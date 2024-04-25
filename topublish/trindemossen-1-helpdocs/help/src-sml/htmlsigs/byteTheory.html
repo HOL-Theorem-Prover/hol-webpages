@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure byteTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure byteTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/n-bit/byteScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature byteTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#byte_index_def-val">byte_index_def</a> : thm
+<a name="line7"></a>    val <a href="#bytes_in_word_def-val">bytes_in_word_def</a> : thm
+<a name="line8"></a>    val <a href="#get_byte_def-val">get_byte_def</a> : thm
+<a name="line9"></a>    val <a href="#set_byte_def-val">set_byte_def</a> : thm
+<a name="line10"></a>    val <a href="#word_of_bytes_def-val">word_of_bytes_def</a> : thm
+<a name="line11"></a>    val <a href="#word_slice_alt_def-val">word_slice_alt_def</a> : thm
+<a name="line12"></a>    val <a href="#word_to_bytes_aux_def-val">word_to_bytes_aux_def</a> : thm
+<a name="line13"></a>    val <a href="#word_to_bytes_def-val">word_to_bytes_def</a> : thm
+<a name="line14"></a>  
+<a name="line15"></a>  (*  Theorems  *)
+<a name="line16"></a>    val <a href="#DIV_not_0-val">DIV_not_0</a> : thm
+<a name="line17"></a>    val <a href="#LENGTH_words_of_bytes-val">LENGTH_words_of_bytes</a> : thm
+<a name="line18"></a>    val <a href="#byte_index_cycle-val">byte_index_cycle</a> : thm
+<a name="line19"></a>    val <a href="#byte_index_offset-val">byte_index_offset</a> : thm
+<a name="line20"></a>    val <a href="#bytes_to_word_def-val">bytes_to_word_def</a> : thm
+<a name="line21"></a>    val <a href="#bytes_to_word_eq-val">bytes_to_word_eq</a> : thm
+<a name="line22"></a>    val <a href="#bytes_to_word_ind-val">bytes_to_word_ind</a> : thm
+<a name="line23"></a>    val <a href="#bytes_to_word_same-val">bytes_to_word_same</a> : thm
+<a name="line24"></a>    val <a href="#get_byte_cycle-val">get_byte_cycle</a> : thm
+<a name="line25"></a>    val <a href="#get_byte_set_byte-val">get_byte_set_byte</a> : thm
+<a name="line26"></a>    val <a href="#get_byte_set_byte_irrelevant-val">get_byte_set_byte_irrelevant</a> : thm
+<a name="line27"></a>    val <a href="#set_byte_32-val">set_byte_32</a> : thm
+<a name="line28"></a>    val <a href="#set_byte_64-val">set_byte_64</a> : thm
+<a name="line29"></a>    val <a href="#set_byte_change_a-val">set_byte_change_a</a> : thm
+<a name="line30"></a>    val <a href="#set_byte_cycle-val">set_byte_cycle</a> : thm
+<a name="line31"></a>    val <a href="#set_byte_get_byte-val">set_byte_get_byte</a> : thm
+<a name="line32"></a>    val <a href="#set_byte_get_byte'-val">set_byte_get_byte'</a> : thm
+<a name="line33"></a>    val <a href="#set_byte_get_byte_copy-val">set_byte_get_byte_copy</a> : thm
+<a name="line34"></a>    val <a href="#word_of_bytes_bytes_to_word-val">word_of_bytes_bytes_to_word</a> : thm
+<a name="line35"></a>    val <a href="#word_slice_alt_shift-val">word_slice_alt_shift</a> : thm
+<a name="line36"></a>    val <a href="#word_slice_alt_word_slice-val">word_slice_alt_word_slice</a> : thm
+<a name="line37"></a>    val <a href="#word_slice_alt_zero-val">word_slice_alt_zero</a> : thm
+<a name="line38"></a>    val <a href="#word_slice_shift-val">word_slice_shift</a> : thm
+<a name="line39"></a>    val <a href="#word_to_bytes_aux_compute-val">word_to_bytes_aux_compute</a> : thm
+<a name="line40"></a>    val <a href="#word_to_bytes_word_of_bytes_32-val">word_to_bytes_word_of_bytes_32</a> : thm
+<a name="line41"></a>    val <a href="#word_to_bytes_word_of_bytes_64-val">word_to_bytes_word_of_bytes_64</a> : thm
+<a name="line42"></a>    val <a href="#words_of_bytes_append-val">words_of_bytes_append</a> : thm
+<a name="line43"></a>    val <a href="#words_of_bytes_append_word-val">words_of_bytes_append_word</a> : thm
+<a name="line44"></a>    val <a href="#words_of_bytes_def-val">words_of_bytes_def</a> : thm
+<a name="line45"></a>    val <a href="#words_of_bytes_ind-val">words_of_bytes_ind</a> : thm
+<a name="line46"></a>  
+<a name="line47"></a>  val byte_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line48"></a>(*
+   [bitstring] Parent theory of "byte"
+   
+   [blast] Parent theory of "byte"
+   
+   [<a name="byte_index_def-val"><b>byte_index_def</b></a>]  Definition
+      
+      ⊢ ∀a is_bigendian.
+          byte_index a is_bigendian =
+          (let
+             d = dimindex (:α) DIV 8
+           in
+             if is_bigendian then 8 * (d − 1 − w2n a MOD d)
+             else 8 * w2n a MOD d)
+   
+   [<a name="bytes_in_word_def-val"><b>bytes_in_word_def</b></a>]  Definition
+      
+      ⊢ bytes_in_word = n2w (dimindex (:α) DIV 8)
+   
+   [<a name="get_byte_def-val"><b>get_byte_def</b></a>]  Definition
+      
+      ⊢ ∀a w is_bigendian.
+          get_byte a w is_bigendian = w2w (w ⋙ byte_index a is_bigendian)
+   
+   [<a name="set_byte_def-val"><b>set_byte_def</b></a>]  Definition
+      
+      ⊢ ∀a b w is_bigendian.
+          set_byte a b w is_bigendian =
+          (let
+             i = byte_index a is_bigendian
+           in
+             word_slice_alt (dimindex (:α)) (i + 8) w ‖ w2w b ≪ i ‖
+             word_slice_alt i 0 w)
+   
+   [<a name="word_of_bytes_def-val"><b>word_of_bytes_def</b></a>]  Definition
+      
+      ⊢ (∀be a. word_of_bytes be a [] = 0w) ∧
+        ∀be a b bs.
+          word_of_bytes be a (b::bs) =
+          set_byte a b (word_of_bytes be (a + 1w) bs) be
+   
+   [<a name="word_slice_alt_def-val"><b>word_slice_alt_def</b></a>]  Definition
+      
+      ⊢ ∀h l w. word_slice_alt h l w = FCP i. l ≤ i ∧ i &lt; h ∧ w ' i
+   
+   [<a name="word_to_bytes_aux_def-val"><b>word_to_bytes_aux_def</b></a>]  Definition
+      
+      ⊢ (∀w be. word_to_bytes_aux 0 w be = []) ∧
+        ∀n w be.
+          word_to_bytes_aux (SUC n) w be =
+          word_to_bytes_aux n w be ⧺ [get_byte (n2w n) w be]
+   
+   [<a name="word_to_bytes_def-val"><b>word_to_bytes_def</b></a>]  Definition
+      
+      ⊢ ∀w be.
+          word_to_bytes w be = word_to_bytes_aux (dimindex (:α) DIV 8) w be
+   
+   [<a name="DIV_not_0-val"><b>DIV_not_0</b></a>]  Theorem
+      
+      ⊢ 1 &lt; d ⇒ (d ≤ n ⇔ 0 &lt; n DIV d)
+   
+   [<a name="LENGTH_words_of_bytes-val"><b>LENGTH_words_of_bytes</b></a>]  Theorem
+      
+      ⊢ 8 ≤ dimindex (:α) ⇒
+        ∀be ls.
+          LENGTH (words_of_bytes be ls) =
+          LENGTH ls DIV w2n bytes_in_word +
+          MIN 1 (LENGTH ls MOD w2n bytes_in_word)
+   
+   [<a name="byte_index_cycle-val"><b>byte_index_cycle</b></a>]  Theorem
+      
+      ⊢ 8 ≤ dimindex (:α) ⇒
+        byte_index (n2w (w2n a MOD (dimindex (:α) DIV 8))) be =
+        byte_index a be
+   
+   [<a name="byte_index_offset-val"><b>byte_index_offset</b></a>]  Theorem
+      
+      ⊢ 8 ≤ dimindex (:α) ⇒ byte_index a be + 8 ≤ dimindex (:α)
+   
+   [<a name="bytes_to_word_def-val"><b>bytes_to_word_def</b></a>]  Theorem
+      
+      ⊢ ∀w k bs be a.
+          bytes_to_word k a bs w be =
+          if k = 0 then w
+          else
+            case bs of
+              [] =&gt; w
+            | b::bs' =&gt;
+              set_byte a b (bytes_to_word (k − 1) (a + 1w) bs' w be) be
+   
+   [<a name="bytes_to_word_eq-val"><b>bytes_to_word_eq</b></a>]  Theorem
+      
+      ⊢ bytes_to_word 0 a bs w be = w ∧ bytes_to_word k a [] w be = w ∧
+        bytes_to_word (SUC k) a (b::bs) w be =
+        set_byte a b (bytes_to_word k (a + 1w) bs w be) be
+   
+   [<a name="bytes_to_word_ind-val"><b>bytes_to_word_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀k a bs w be.
+               (∀b bs'. k ≠ 0 ∧ bs = b::bs' ⇒ P (k − 1) (a + 1w) bs' w be) ⇒
+               P k a bs w be) ⇒
+            ∀v v1 v2 v3 v4. P v v1 v2 v3 v4
+   
+   [<a name="bytes_to_word_same-val"><b>bytes_to_word_same</b></a>]  Theorem
+      
+      ⊢ ∀bw k b1 w be b2.
+          (∀n. n &lt; bw ⇒ n &lt; LENGTH b1 ∧ n &lt; LENGTH b2 ∧ EL n b1 = EL n b2) ⇒
+          bytes_to_word bw k b1 w be = bytes_to_word bw k b2 w be
+   
+   [<a name="get_byte_cycle-val"><b>get_byte_cycle</b></a>]  Theorem
+      
+      ⊢ 8 ≤ dimindex (:α) ⇒
+        get_byte (n2w (w2n a MOD (dimindex (:α) DIV 8))) w be =
+        get_byte a w be
+   
+   [<a name="get_byte_set_byte-val"><b>get_byte_set_byte</b></a>]  Theorem
+      
+      ⊢ 8 ≤ dimindex (:α) ⇒ get_byte a (set_byte a b w be) be = b
+   
+   [<a name="get_byte_set_byte_irrelevant-val"><b>get_byte_set_byte_irrelevant</b></a>]  Theorem
+      
+      ⊢ 16 ≤ dimindex (:α) ∧
+        w2n a MOD (dimindex (:α) DIV 8) ≠ w2n a' MOD (dimindex (:α) DIV 8) ⇒
+        get_byte a' (set_byte a b w be) be = get_byte a' w be
+   
+   [<a name="set_byte_32-val"><b>set_byte_32</b></a>]  Theorem
+      
+      ⊢ set_byte a b w be =
+        (let
+           i = byte_index a be
+         in
+           if i = 0 then w2w b ‖ w && 0xFFFFFF00w
+           else if i = 8 then w2w b ≪ 8 ‖ w && 0xFFFF00FFw
+           else if i = 16 then w2w b ≪ 16 ‖ w && 0xFF00FFFFw
+           else w2w b ≪ 24 ‖ w && 0xFFFFFFw)
+   
+   [<a name="set_byte_64-val"><b>set_byte_64</b></a>]  Theorem
+      
+      ⊢ set_byte a b w be =
+        (let
+           i = byte_index a be
+         in
+           if i = 0 then w2w b ‖ w && 0xFFFFFFFFFFFFFF00w
+           else if i = 8 then w2w b ≪ 8 ‖ w && 0xFFFFFFFFFFFF00FFw
+           else if i = 16 then w2w b ≪ 16 ‖ w && 0xFFFFFFFFFF00FFFFw
+           else if i = 24 then w2w b ≪ 24 ‖ w && 0xFFFFFFFF00FFFFFFw
+           else if i = 32 then w2w b ≪ 32 ‖ w && 0xFFFFFF00FFFFFFFFw
+           else if i = 40 then w2w b ≪ 40 ‖ w && 0xFFFF00FFFFFFFFFFw
+           else if i = 48 then w2w b ≪ 48 ‖ w && 0xFF00FFFFFFFFFFFFw
+           else w2w b ≪ 56 ‖ w && 0xFFFFFFFFFFFFFFw)
+   
+   [<a name="set_byte_change_a-val"><b>set_byte_change_a</b></a>]  Theorem
+      
+      ⊢ w2n a MOD (dimindex (:α) DIV 8) = w2n a' MOD (dimindex (:α) DIV 8) ⇒
+        set_byte a b w be = set_byte a' b w be
+   
+   [<a name="set_byte_cycle-val"><b>set_byte_cycle</b></a>]  Theorem
+      
+      ⊢ 8 ≤ dimindex (:α) ⇒
+        set_byte (n2w (w2n a MOD (dimindex (:α) DIV 8))) b w be =
+        set_byte a b w be
+   
+   [<a name="set_byte_get_byte-val"><b>set_byte_get_byte</b></a>]  Theorem
+      
+      ⊢ 8 ≤ dimindex (:α) ⇒ set_byte a (get_byte a w be) w be = w
+   
+   [<a name="set_byte_get_byte'-val"><b>set_byte_get_byte'</b></a>]  Theorem
+      
+      ⊢ 8 ≤ dimindex (:α) ⇒ set_byte a (get_byte a w be) w be = w
+   
+   [<a name="set_byte_get_byte_copy-val"><b>set_byte_get_byte_copy</b></a>]  Theorem
+      
+      ⊢ 8 ≤ dimindex (:α) ⇒
+        set_byte a (get_byte a w be) w' be =
+        (byte_index a be + 7 '' byte_index a be) w ‖
+        (if byte_index a be + 8 = dimindex (:α) then 0w
+         else (dimindex (:α) − 1 '' byte_index a be + 8) w') ‖
+        if byte_index a be = 0 then 0w else (byte_index a be − 1 '' 0) w'
+   
+   [<a name="word_of_bytes_bytes_to_word-val"><b>word_of_bytes_bytes_to_word</b></a>]  Theorem
+      
+      ⊢ ∀be a bs k.
+          LENGTH bs ≤ k ⇒
+          word_of_bytes be a bs = bytes_to_word k a bs 0w be
+   
+   [<a name="word_slice_alt_shift-val"><b>word_slice_alt_shift</b></a>]  Theorem
+      
+      ⊢ h ≤ dimindex (:α) ⇒
+        word_slice_alt h l w =
+        w ⋙ l ≪ l ≪ (dimindex (:α) − h) ⋙ (dimindex (:α) − h)
+   
+   [<a name="word_slice_alt_word_slice-val"><b>word_slice_alt_word_slice</b></a>]  Theorem
+      
+      ⊢ h ≤ dimindex (:α) ⇒ word_slice_alt (SUC h) l w = (h '' l) w
+   
+   [<a name="word_slice_alt_zero-val"><b>word_slice_alt_zero</b></a>]  Theorem
+      
+      ⊢ word_slice_alt h l 0w = 0w
+   
+   [<a name="word_slice_shift-val"><b>word_slice_shift</b></a>]  Theorem
+      
+      ⊢ h &lt; dimindex (:α) ⇒
+        (h '' l) w =
+        w ⋙ l ≪ l ≪ (dimindex (:α) − SUC h) ⋙ (dimindex (:α) − SUC h)
+   
+   [<a name="word_to_bytes_aux_compute-val"><b>word_to_bytes_aux_compute</b></a>]  Theorem
+      
+      ⊢ (∀w be. word_to_bytes_aux 0 w be = []) ∧
+        (∀n w be.
+           word_to_bytes_aux (NUMERAL (BIT1 n)) w be =
+           word_to_bytes_aux (NUMERAL (BIT1 n) − 1) w be ⧺
+           [get_byte (n2w (NUMERAL (BIT1 n) − 1)) w be]) ∧
+        ∀n w be.
+          word_to_bytes_aux (NUMERAL (BIT2 n)) w be =
+          word_to_bytes_aux (NUMERAL (BIT1 n)) w be ⧺
+          [get_byte (n2w (NUMERAL (BIT1 n))) w be]
+   
+   [<a name="word_to_bytes_word_of_bytes_32-val"><b>word_to_bytes_word_of_bytes_32</b></a>]  Theorem
+      
+      ⊢ word_of_bytes be 0w (word_to_bytes w be) = w
+   
+   [<a name="word_to_bytes_word_of_bytes_64-val"><b>word_to_bytes_word_of_bytes_64</b></a>]  Theorem
+      
+      ⊢ word_of_bytes be 0w (word_to_bytes w be) = w
+   
+   [<a name="words_of_bytes_append-val"><b>words_of_bytes_append</b></a>]  Theorem
+      
+      ⊢ 0 &lt; w2n bytes_in_word ⇒
+        ∀l1 l2.
+          LENGTH l1 MOD w2n bytes_in_word = 0 ⇒
+          words_of_bytes be (l1 ⧺ l2) =
+          words_of_bytes be l1 ⧺ words_of_bytes be l2
+   
+   [<a name="words_of_bytes_append_word-val"><b>words_of_bytes_append_word</b></a>]  Theorem
+      
+      ⊢ 0 &lt; LENGTH l1 ∧ LENGTH l1 = w2n bytes_in_word ⇒
+        words_of_bytes be (l1 ⧺ l2) =
+        word_of_bytes be 0w l1::words_of_bytes be l2
+   
+   [<a name="words_of_bytes_def-val"><b>words_of_bytes_def</b></a>]  Theorem
+      
+      ⊢ (∀be. words_of_bytes be [] = []) ∧
+        ∀v3 v2 be.
+          words_of_bytes be (v2::v3) =
+          (let
+             xs = TAKE (MAX 1 (w2n bytes_in_word)) (v2::v3);
+             ys = DROP (MAX 1 (w2n bytes_in_word)) (v2::v3)
+           in
+             word_of_bytes be 0w xs::words_of_bytes be ys)
+   
+   [<a name="words_of_bytes_ind-val"><b>words_of_bytes_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀be. P be []) ∧
+            (∀be v2 v3.
+               (∀xs ys.
+                  xs = TAKE (MAX 1 (w2n bytes_in_word)) (v2::v3) ∧
+                  ys = DROP (MAX 1 (w2n bytes_in_word)) (v2::v3) ⇒
+                  P be ys) ⇒
+               P be (v2::v3)) ⇒
+            ∀v v1. P v v1
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/n-bit/byteScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

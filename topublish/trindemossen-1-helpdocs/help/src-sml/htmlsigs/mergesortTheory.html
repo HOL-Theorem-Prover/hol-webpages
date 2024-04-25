@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure mergesortTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure mergesortTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/sort/mergesortScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature mergesortTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#mergesort_def-val">mergesort_def</a> : thm
+<a name="line7"></a>    val <a href="#mergesort_tail_def-val">mergesort_tail_def</a> : thm
+<a name="line8"></a>    val <a href="#sort2_def-val">sort2_def</a> : thm
+<a name="line9"></a>    val <a href="#sort2_tail_def-val">sort2_tail_def</a> : thm
+<a name="line10"></a>    val <a href="#sort3_def-val">sort3_def</a> : thm
+<a name="line11"></a>    val <a href="#sort3_tail_def-val">sort3_tail_def</a> : thm
+<a name="line12"></a>    val <a href="#stable_def-val">stable_def</a> : thm
+<a name="line13"></a>  
+<a name="line14"></a>  (*  Theorems  *)
+<a name="line15"></a>    val <a href="#filter_merge-val">filter_merge</a> : thm
+<a name="line16"></a>    val <a href="#merge_def-val">merge_def</a> : thm
+<a name="line17"></a>    val <a href="#merge_empty-val">merge_empty</a> : thm
+<a name="line18"></a>    val <a href="#merge_ind-val">merge_ind</a> : thm
+<a name="line19"></a>    val <a href="#merge_perm-val">merge_perm</a> : thm
+<a name="line20"></a>    val <a href="#merge_sorted-val">merge_sorted</a> : thm
+<a name="line21"></a>    val <a href="#merge_stable-val">merge_stable</a> : thm
+<a name="line22"></a>    val <a href="#merge_tail_correct1-val">merge_tail_correct1</a> : thm
+<a name="line23"></a>    val <a href="#merge_tail_correct2-val">merge_tail_correct2</a> : thm
+<a name="line24"></a>    val <a href="#merge_tail_def-val">merge_tail_def</a> : thm
+<a name="line25"></a>    val <a href="#merge_tail_ind-val">merge_tail_ind</a> : thm
+<a name="line26"></a>    val <a href="#mergesortN_correct-val">mergesortN_correct</a> : thm
+<a name="line27"></a>    val <a href="#mergesortN_def-val">mergesortN_def</a> : thm
+<a name="line28"></a>    val <a href="#mergesortN_ind-val">mergesortN_ind</a> : thm
+<a name="line29"></a>    val <a href="#mergesortN_perm-val">mergesortN_perm</a> : thm
+<a name="line30"></a>    val <a href="#mergesortN_sorted-val">mergesortN_sorted</a> : thm
+<a name="line31"></a>    val <a href="#mergesortN_stable-val">mergesortN_stable</a> : thm
+<a name="line32"></a>    val <a href="#mergesortN_tail_def-val">mergesortN_tail_def</a> : thm
+<a name="line33"></a>    val <a href="#mergesortN_tail_ind-val">mergesortN_tail_ind</a> : thm
+<a name="line34"></a>    val <a href="#mergesort_STABLE_SORT-val">mergesort_STABLE_SORT</a> : thm
+<a name="line35"></a>    val <a href="#mergesort_mem-val">mergesort_mem</a> : thm
+<a name="line36"></a>    val <a href="#mergesort_perm-val">mergesort_perm</a> : thm
+<a name="line37"></a>    val <a href="#mergesort_sorted-val">mergesort_sorted</a> : thm
+<a name="line38"></a>    val <a href="#mergesort_stable-val">mergesort_stable</a> : thm
+<a name="line39"></a>    val <a href="#mergesort_tail_correct-val">mergesort_tail_correct</a> : thm
+<a name="line40"></a>    val <a href="#sort2_perm-val">sort2_perm</a> : thm
+<a name="line41"></a>    val <a href="#sort2_sorted-val">sort2_sorted</a> : thm
+<a name="line42"></a>    val <a href="#sort2_stable-val">sort2_stable</a> : thm
+<a name="line43"></a>    val <a href="#sort2_tail_correct-val">sort2_tail_correct</a> : thm
+<a name="line44"></a>    val <a href="#sort3_perm-val">sort3_perm</a> : thm
+<a name="line45"></a>    val <a href="#sort3_sorted-val">sort3_sorted</a> : thm
+<a name="line46"></a>    val <a href="#sort3_stable-val">sort3_stable</a> : thm
+<a name="line47"></a>    val <a href="#sort3_tail_correct-val">sort3_tail_correct</a> : thm
+<a name="line48"></a>    val <a href="#stable_cong-val">stable_cong</a> : thm
+<a name="line49"></a>    val <a href="#stable_trans-val">stable_trans</a> : thm
+<a name="line50"></a>  
+<a name="line51"></a>  val mergesort_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line52"></a>(*
+   [sorting] Parent theory of "mergesort"
+   
+   [<a name="mergesort_def-val"><b>mergesort_def</b></a>]  Definition
+      
+      ⊢ ∀R l. mergesort R l = mergesortN R (LENGTH l) l
+   
+   [<a name="mergesort_tail_def-val"><b>mergesort_tail_def</b></a>]  Definition
+      
+      ⊢ ∀R l. mergesort_tail R l = mergesortN_tail F R (LENGTH l) l
+   
+   [<a name="sort2_def-val"><b>sort2_def</b></a>]  Definition
+      
+      ⊢ ∀R x y. sort2 R x y = if R x y then [x; y] else [y; x]
+   
+   [<a name="sort2_tail_def-val"><b>sort2_tail_def</b></a>]  Definition
+      
+      ⊢ ∀neg R x y.
+          sort2_tail neg R x y = if R x y ⇎ neg then [x; y] else [y; x]
+   
+   [<a name="sort3_def-val"><b>sort3_def</b></a>]  Definition
+      
+      ⊢ ∀R x y z.
+          sort3 R x y z =
+          if R x y then
+            if R y z then [x; y; z]
+            else if R x z then [x; z; y]
+            else [z; x; y]
+          else if R y z then if R x z then [y; x; z] else [y; z; x]
+          else [z; y; x]
+   
+   [<a name="sort3_tail_def-val"><b>sort3_tail_def</b></a>]  Definition
+      
+      ⊢ ∀neg R x y z.
+          sort3_tail neg R x y z =
+          if R x y ⇎ neg then
+            if R y z ⇎ neg then [x; y; z]
+            else if R x z ⇎ neg then [x; z; y]
+            else [z; x; y]
+          else if R y z ⇎ neg then
+            if R x z ⇎ neg then [y; x; z] else [y; z; x]
+          else [z; y; x]
+   
+   [<a name="stable_def-val"><b>stable_def</b></a>]  Definition
+      
+      ⊢ ∀R l1 l2.
+          stable R l1 l2 ⇔
+          ∀p. (∀x y. p x ∧ p y ⇒ R x y) ⇒ FILTER p l1 = FILTER p l2
+   
+   [<a name="filter_merge-val"><b>filter_merge</b></a>]  Theorem
+      
+      ⊢ ∀P R l1 l2.
+          transitive R ∧ (∀x y. P x ∧ P y ⇒ R x y) ∧ SORTED R l1 ⇒
+          FILTER P (merge R l1 l2) = FILTER P (l1 ⧺ l2)
+   
+   [<a name="merge_def-val"><b>merge_def</b></a>]  Theorem
+      
+      ⊢ (∀R. merge R [] [] = []) ∧
+        (∀v9 v8 R. merge R (v8::v9) [] = v8::v9) ∧
+        (∀v5 v4 R. merge R [] (v4::v5) = v4::v5) ∧
+        ∀y x l2 l1 R.
+          merge R (x::l1) (y::l2) =
+          if R x y then x::merge R l1 (y::l2) else y::merge R (x::l1) l2
+   
+   [<a name="merge_empty-val"><b>merge_empty</b></a>]  Theorem
+      
+      ⊢ ∀R l acc. merge R l [] = l ∧ merge R [] l = l
+   
+   [<a name="merge_ind-val"><b>merge_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀R. P R [] []) ∧ (∀R v8 v9. P R (v8::v9) []) ∧
+            (∀R v4 v5. P R [] (v4::v5)) ∧
+            (∀R x l1 y l2.
+               (¬R x y ⇒ P R (x::l1) l2) ∧ (R x y ⇒ P R l1 (y::l2)) ⇒
+               P R (x::l1) (y::l2)) ⇒
+            ∀v v1 v2. P v v1 v2
+   
+   [<a name="merge_perm-val"><b>merge_perm</b></a>]  Theorem
+      
+      ⊢ ∀R l1 l2. PERM (l1 ⧺ l2) (merge R l1 l2)
+   
+   [<a name="merge_sorted-val"><b>merge_sorted</b></a>]  Theorem
+      
+      ⊢ ∀R l1 l2.
+          transitive R ∧ total R ∧ SORTED R l1 ∧ SORTED R l2 ⇒
+          SORTED R (merge R l1 l2)
+   
+   [<a name="merge_stable-val"><b>merge_stable</b></a>]  Theorem
+      
+      ⊢ ∀R l1 l2.
+          transitive R ∧ SORTED R l1 ⇒ stable R (l1 ⧺ l2) (merge R l1 l2)
+   
+   [<a name="merge_tail_correct1-val"><b>merge_tail_correct1</b></a>]  Theorem
+      
+      ⊢ ∀neg R l1 l2 acc.
+          (neg ⇔ F) ⇒
+          merge_tail neg R l1 l2 acc = REVERSE (merge R l1 l2) ⧺ acc
+   
+   [<a name="merge_tail_correct2-val"><b>merge_tail_correct2</b></a>]  Theorem
+      
+      ⊢ ∀neg R l1 l2 acc.
+          (neg ⇔ T) ∧ transitive R ∧ SORTED R (REVERSE l1) ∧
+          SORTED R (REVERSE l2) ⇒
+          merge_tail neg R l1 l2 acc =
+          merge R (REVERSE l1) (REVERSE l2) ⧺ acc
+   
+   [<a name="merge_tail_def-val"><b>merge_tail_def</b></a>]  Theorem
+      
+      ⊢ (∀negate acc R. merge_tail negate R [] [] acc = acc) ∧
+        (∀v13 v12 negate acc R.
+           merge_tail negate R (v12::v13) [] acc = REV (v12::v13) acc) ∧
+        (∀v9 v8 negate acc R.
+           merge_tail negate R [] (v8::v9) acc = REV (v8::v9) acc) ∧
+        ∀y x negate l2 l1 acc R.
+          merge_tail negate R (x::l1) (y::l2) acc =
+          if R x y ⇎ negate then merge_tail negate R l1 (y::l2) (x::acc)
+          else merge_tail negate R (x::l1) l2 (y::acc)
+   
+   [<a name="merge_tail_ind-val"><b>merge_tail_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀negate R acc. P negate R [] [] acc) ∧
+            (∀negate R v12 v13 acc. P negate R (v12::v13) [] acc) ∧
+            (∀negate R v8 v9 acc. P negate R [] (v8::v9) acc) ∧
+            (∀negate R x l1 y l2 acc.
+               (¬(R x y ⇎ negate) ⇒ P negate R (x::l1) l2 (y::acc)) ∧
+               ((R x y ⇎ negate) ⇒ P negate R l1 (y::l2) (x::acc)) ⇒
+               P negate R (x::l1) (y::l2) acc) ⇒
+            ∀v v1 v2 v3 v4. P v v1 v2 v3 v4
+   
+   [<a name="mergesortN_correct-val"><b>mergesortN_correct</b></a>]  Theorem
+      
+      ⊢ ∀negate R n l.
+          total R ∧ transitive R ⇒
+          mergesortN_tail negate R n l =
+          if negate then REVERSE (mergesortN R n l) else mergesortN R n l
+   
+   [<a name="mergesortN_def-val"><b>mergesortN_def</b></a>]  Theorem
+      
+      ⊢ (∀l R. mergesortN R 0 l = []) ∧
+        (∀x l R. mergesortN R 1 (x::l) = [x]) ∧
+        (∀R. mergesortN R 1 [] = []) ∧
+        (∀y x l R. mergesortN R 2 (x::y::l) = sort2 R x y) ∧
+        (∀x R. mergesortN R 2 [x] = [x]) ∧ (∀R. mergesortN R 2 [] = []) ∧
+        (∀z y x l R. mergesortN R 3 (x::y::z::l) = sort3 R x y z) ∧
+        (∀y x R. mergesortN R 3 [x; y] = sort2 R x y) ∧
+        (∀x R. mergesortN R 3 [x] = [x]) ∧ (∀R. mergesortN R 3 [] = []) ∧
+        ∀v4 l R.
+          mergesortN R v4 l =
+          if v4 = 0 then []
+          else if v4 = 1 then case l of [] =&gt; [] | x::l' =&gt; [x]
+          else if v4 = 2 then
+            case l of [] =&gt; [] | [x'] =&gt; [x'] | x'::y::l'' =&gt; sort2 R x' y
+          else if v4 = 3 then
+            case l of
+              [] =&gt; []
+            | [x''] =&gt; [x'']
+            | [x''; y'] =&gt; sort2 R x'' y'
+            | x''::y'::z::l'³' =&gt; sort3 R x'' y' z
+          else
+            (let
+               len1 = DIV2 v4
+             in
+               merge R (mergesortN R (DIV2 v4) l)
+                 (mergesortN R (v4 − len1) (DROP len1 l)))
+   
+   [<a name="mergesortN_ind-val"><b>mergesortN_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀R l. P R 0 l) ∧ (∀R x l. P R 1 (x::l)) ∧ (∀R. P R 1 []) ∧
+            (∀R x y l. P R 2 (x::y::l)) ∧ (∀R x. P R 2 [x]) ∧
+            (∀R. P R 2 []) ∧ (∀R x y z l. P R 3 (x::y::z::l)) ∧
+            (∀R x y. P R 3 [x; y]) ∧ (∀R x. P R 3 [x]) ∧ (∀R. P R 3 []) ∧
+            (∀R v4 l.
+               (∀len1.
+                  v4 ≠ 0 ∧ v4 ≠ 1 ∧ v4 ≠ 2 ∧ v4 ≠ 3 ∧ len1 = DIV2 v4 ⇒
+                  P R (DIV2 v4) l) ∧
+               (∀len1.
+                  v4 ≠ 0 ∧ v4 ≠ 1 ∧ v4 ≠ 2 ∧ v4 ≠ 3 ∧ len1 = DIV2 v4 ⇒
+                  P R (v4 − len1) (DROP len1 l)) ⇒
+               P R v4 l) ⇒
+            ∀v v1 v2. P v v1 v2
+   
+   [<a name="mergesortN_perm-val"><b>mergesortN_perm</b></a>]  Theorem
+      
+      ⊢ ∀R n l. PERM (TAKE n l) (mergesortN R n l)
+   
+   [<a name="mergesortN_sorted-val"><b>mergesortN_sorted</b></a>]  Theorem
+      
+      ⊢ ∀R n l. total R ∧ transitive R ⇒ SORTED R (mergesortN R n l)
+   
+   [<a name="mergesortN_stable-val"><b>mergesortN_stable</b></a>]  Theorem
+      
+      ⊢ ∀R n l.
+          total R ∧ transitive R ⇒ stable R (TAKE n l) (mergesortN R n l)
+   
+   [<a name="mergesortN_tail_def-val"><b>mergesortN_tail_def</b></a>]  Theorem
+      
+      ⊢ (∀negate l R. mergesortN_tail negate R 0 l = []) ∧
+        (∀x negate l R. mergesortN_tail negate R 1 (x::l) = [x]) ∧
+        (∀negate R. mergesortN_tail negate R 1 [] = []) ∧
+        (∀y x negate l R.
+           mergesortN_tail negate R 2 (x::y::l) = sort2_tail negate R x y) ∧
+        (∀x negate R. mergesortN_tail negate R 2 [x] = [x]) ∧
+        (∀negate R. mergesortN_tail negate R 2 [] = []) ∧
+        (∀z y x negate l R.
+           mergesortN_tail negate R 3 (x::y::z::l) =
+           sort3_tail negate R x y z) ∧
+        (∀y x negate R.
+           mergesortN_tail negate R 3 [x; y] = sort2_tail negate R x y) ∧
+        (∀x negate R. mergesortN_tail negate R 3 [x] = [x]) ∧
+        (∀negate R. mergesortN_tail negate R 3 [] = []) ∧
+        ∀v6 negate l R.
+          mergesortN_tail negate R v6 l =
+          if v6 = 0 then []
+          else if v6 = 1 then case l of [] =&gt; [] | x::l' =&gt; [x]
+          else if v6 = 2 then
+            case l of
+              [] =&gt; []
+            | [x'] =&gt; [x']
+            | x'::y::l'' =&gt; sort2_tail negate R x' y
+          else if v6 = 3 then
+            case l of
+              [] =&gt; []
+            | [x''] =&gt; [x'']
+            | [x''; y'] =&gt; sort2_tail negate R x'' y'
+            | x''::y'::z::l'³' =&gt; sort3_tail negate R x'' y' z
+          else
+            (let
+               len1 = DIV2 v6;
+               neg = ¬negate
+             in
+               merge_tail neg R (mergesortN_tail neg R (DIV2 v6) l)
+                 (mergesortN_tail neg R (v6 − len1) (DROP len1 l)) [])
+   
+   [<a name="mergesortN_tail_ind-val"><b>mergesortN_tail_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀negate R l. P negate R 0 l) ∧
+            (∀negate R x l. P negate R 1 (x::l)) ∧
+            (∀negate R. P negate R 1 []) ∧
+            (∀negate R x y l. P negate R 2 (x::y::l)) ∧
+            (∀negate R x. P negate R 2 [x]) ∧
+            (∀negate R. P negate R 2 []) ∧
+            (∀negate R x y z l. P negate R 3 (x::y::z::l)) ∧
+            (∀negate R x y. P negate R 3 [x; y]) ∧
+            (∀negate R x. P negate R 3 [x]) ∧
+            (∀negate R. P negate R 3 []) ∧
+            (∀negate R v6 l.
+               (∀len1 neg.
+                  v6 ≠ 0 ∧ v6 ≠ 1 ∧ v6 ≠ 2 ∧ v6 ≠ 3 ∧ len1 = DIV2 v6 ∧
+                  (neg ⇔ ¬negate) ⇒
+                  P neg R (DIV2 v6) l) ∧
+               (∀len1 neg.
+                  v6 ≠ 0 ∧ v6 ≠ 1 ∧ v6 ≠ 2 ∧ v6 ≠ 3 ∧ len1 = DIV2 v6 ∧
+                  (neg ⇔ ¬negate) ⇒
+                  P neg R (v6 − len1) (DROP len1 l)) ⇒
+               P negate R v6 l) ⇒
+            ∀v v1 v2 v3. P v v1 v2 v3
+   
+   [<a name="mergesort_STABLE_SORT-val"><b>mergesort_STABLE_SORT</b></a>]  Theorem
+      
+      ⊢ ∀R. transitive R ∧ total R ⇒ STABLE mergesort R
+   
+   [<a name="mergesort_mem-val"><b>mergesort_mem</b></a>]  Theorem
+      
+      ⊢ ∀R L x. MEM x (mergesort R L) ⇔ MEM x L
+   
+   [<a name="mergesort_perm-val"><b>mergesort_perm</b></a>]  Theorem
+      
+      ⊢ ∀R l. PERM l (mergesort R l)
+   
+   [<a name="mergesort_sorted-val"><b>mergesort_sorted</b></a>]  Theorem
+      
+      ⊢ ∀R l. transitive R ∧ total R ⇒ SORTED R (mergesort R l)
+   
+   [<a name="mergesort_stable-val"><b>mergesort_stable</b></a>]  Theorem
+      
+      ⊢ ∀R l. transitive R ∧ total R ⇒ stable R l (mergesort R l)
+   
+   [<a name="mergesort_tail_correct-val"><b>mergesort_tail_correct</b></a>]  Theorem
+      
+      ⊢ ∀R l. total R ∧ transitive R ⇒ mergesort_tail R l = mergesort R l
+   
+   [<a name="sort2_perm-val"><b>sort2_perm</b></a>]  Theorem
+      
+      ⊢ ∀R x y. PERM [x; y] (sort2 R x y)
+   
+   [<a name="sort2_sorted-val"><b>sort2_sorted</b></a>]  Theorem
+      
+      ⊢ ∀R x y. total R ⇒ SORTED R (sort2 R x y)
+   
+   [<a name="sort2_stable-val"><b>sort2_stable</b></a>]  Theorem
+      
+      ⊢ ∀R x y. stable R [x; y] (sort2 R x y)
+   
+   [<a name="sort2_tail_correct-val"><b>sort2_tail_correct</b></a>]  Theorem
+      
+      ⊢ ∀neg R x y.
+          sort2_tail neg R x y =
+          if neg then REVERSE (sort2 R x y) else sort2 R x y
+   
+   [<a name="sort3_perm-val"><b>sort3_perm</b></a>]  Theorem
+      
+      ⊢ ∀R x y z. PERM [x; y; z] (sort3 R x y z)
+   
+   [<a name="sort3_sorted-val"><b>sort3_sorted</b></a>]  Theorem
+      
+      ⊢ ∀R x y z. total R ⇒ SORTED R (sort3 R x y z)
+   
+   [<a name="sort3_stable-val"><b>sort3_stable</b></a>]  Theorem
+      
+      ⊢ ∀R x y z.
+          total R ∧ transitive R ⇒ stable R [x; y; z] (sort3 R x y z)
+   
+   [<a name="sort3_tail_correct-val"><b>sort3_tail_correct</b></a>]  Theorem
+      
+      ⊢ ∀neg R x y z.
+          sort3_tail neg R x y z =
+          if neg then REVERSE (sort3 R x y z) else sort3 R x y z
+   
+   [<a name="stable_cong-val"><b>stable_cong</b></a>]  Theorem
+      
+      ⊢ ∀R l1 l2 l3 l4.
+          stable R l1 l2 ∧ stable R l3 l4 ⇒ stable R (l1 ⧺ l3) (l2 ⧺ l4)
+   
+   [<a name="stable_trans-val"><b>stable_trans</b></a>]  Theorem
+      
+      ⊢ ∀R l1 l2 l3. stable R l1 l2 ∧ stable R l2 l3 ⇒ stable R l1 l3
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/sort/mergesortScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

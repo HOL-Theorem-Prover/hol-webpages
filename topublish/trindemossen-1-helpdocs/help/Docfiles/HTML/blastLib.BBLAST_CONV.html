@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>blastLib.BBLAST_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>BBLAST_CONV : conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/blastLib.html">blastLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Bit-blasting conversion for words.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This conversion expands bit-vector terms into Boolean propositions. It goes
+beyond the functionality of </SPAN><SPAN class = "BRKT">wordsLib.WORD_BIT_EQ_CONV</SPAN><SPAN class = "TEXT"> by handling addition,
+subtraction and orderings.  Consequently, this conversion can automatically
+handle small, but tricky, bit-vector goals that </SPAN><SPAN class = "BRKT">wordsLib.WORD_DECIDE</SPAN><SPAN class = "TEXT"> cannot
+handle.  Obviously bit-blasting is a brute force approach, so this conversion
+should be used with care.  It will only work well for smallish word sizes and
+when there is only and handful of additions around.  It is also "eager" --
+additions are expanded out even when not strictly necessary.  For example, in
+</SPAN><DIV class = "XMPL"><pre>
+(a + b) &lt;+ c /\ c &lt;+ d ==&gt; (a + b) &lt;+ d:word32
+</pre></DIV>
+<SPAN class = "TEXT">
+the sum </SPAN><SPAN class = "BRKT">a&nbsp;+&nbsp;b</SPAN><SPAN class = "TEXT"> is expanded.  Users may be able to achieve speed-ups by first
+introducing abbreviations and then proving general forms, e.g.
+</SPAN><DIV class = "XMPL"><pre>
+x &lt;+ c /\ c &lt;+ d ==&gt; x &lt;+ d:word32
+</pre></DIV>
+<SPAN class = "TEXT">
+The conversion handles most operators, however, the following are not covered /
+interpreted:</SPAN>
+<P>
+<SPAN class = "TEXT">-- Type variables for word lengths, i.e. terms of type </SPAN><SPAN class = "BRKT">:'a&nbsp;word</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">-- General multiplication, i.e. </SPAN><SPAN class = "BRKT">w1&nbsp;*&nbsp;w2</SPAN><SPAN class = "TEXT">.  Multiplication by a literal is
+    okay, although this may introduce many additions.</SPAN>
+<P>
+<SPAN class = "TEXT">-- Bit-field selections with non-literal bounds, e.g. </SPAN><SPAN class = "BRKT">(expr1&nbsp;--&nbsp;expr2)&nbsp;w</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">-- Shifting by non-literal amounts, e.g. </SPAN><SPAN class = "BRKT">w&nbsp;&lt;&lt;&nbsp;expr</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">-- </SPAN><SPAN class = "BRKT">n2w&nbsp;expr</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">w2n&nbsp;w</SPAN><SPAN class = "TEXT">.  Also </SPAN><SPAN class = "BRKT">w2s</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">s2w</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">w2l</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">l2w</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">-- </SPAN><SPAN class = "BRKT">word_div</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">word_sdiv</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">word_mod</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">word_log2</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Word orderings are handled:
+</SPAN><DIV class = "XMPL"><pre>
+- blastLib.BBLAST_CONV ``!a b. ~word_msb a /\ ~word_msb b ==&gt; (a &lt;+ b = a &lt; b:word32)``;
+val it =
+   |- (!a b. ~word_msb a /\ ~word_msb b ==&gt; (a &lt;+ b &lt;=&gt; a &lt; b)) &lt;=&gt; T
+   : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+In some cases the result will be a proposition over bit values:
+</SPAN><DIV class = "XMPL"><pre>
+- blastLib.BBLAST_CONV ``!a. (a + 1w:word8) ' 1``;
+val it =
+   |- (!a. (a + 1w) ' 1) &lt;=&gt; !a. a ' 1 &lt;=&gt; ~a ' 0
+   : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+This conversion is especially useful where "logical" and "arithmetic" bit-vector operations are combined:
+</SPAN><DIV class = "XMPL"><pre>
+- blastLib.BBLAST_CONV ``!a. ((((((a:word8) * 16w) + 0x10w)) &amp;&amp; 0xF0w) &gt;&gt;&gt; 4) = (3 -- 0) (a + 1w)``;
+val it =
+   |- (!a. (a * 16w + 16w &amp;&amp; 240w) &gt;&gt;&gt; 4 = (3 -- 0) (a + 1w)) &lt;=&gt; T
+   : thm
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "wordsLib.WORD_ss.html">WORD_ss</A>,
+<A HREF = "wordsLib.WORD_ARITH_CONV.html">WORD_ARITH_CONV</A>,
+<A HREF = "wordsLib.WORD_LOGIC_CONV.html">WORD_LOGIC_CONV</A>,
+<A HREF = "wordsLib.WORD_MUL_LSL_CONV.html">WORD_MUL_LSL_CONV</A>,
+<A HREF = "wordsLib.WORD_BIT_EQ_CONV.html">WORD_BIT_EQ_CONV</A>,
+<A HREF = "wordsLib.WORD_EVAL_CONV.html">WORD_EVAL_CONV</A>,
+<A HREF = "wordsLib.WORD_CONV.html">WORD_CONV</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

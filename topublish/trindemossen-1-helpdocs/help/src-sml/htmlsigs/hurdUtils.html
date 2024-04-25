@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure hurdUtils</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure hurdUtils</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/res_quan/src/hurdUtils.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature hurdUtils =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  (* GENERAL *)
+<a name="line5"></a>  type 'a thunk = unit -&gt; 'a
+<a name="line6"></a>  type 'a susp = 'a Susp.susp
+<a name="line7"></a>  type ('a, 'b) maplet = {redex : 'a, residue : 'b}
+<a name="line8"></a>  type ('a, 'b) subst = ('a, 'b) Lib.subst
+<a name="line9"></a>
+<a name="line10"></a>  (* Error handling *)
+<a name="line11"></a>  val ERR : string -&gt; string -&gt; exn
+<a name="line12"></a>  val BUG : string -&gt; string -&gt; exn
+<a name="line13"></a>  val BUG_to_string : exn -&gt; string
+<a name="line14"></a>  val err_BUG : string -&gt; exn -&gt; exn
+<a name="line15"></a>
+<a name="line16"></a>  (* Success and failure *)
+<a name="line17"></a>  val assert : bool -&gt; exn -&gt; unit
+<a name="line18"></a>  val try : ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line19"></a>  val total : ('a -&gt; 'b) -&gt; 'a -&gt; 'b option
+<a name="line20"></a>  val can : ('a -&gt; 'b) -&gt; 'a -&gt; bool
+<a name="line21"></a>  val partial : exn -&gt; ('a -&gt; 'b option) -&gt; 'a -&gt; 'b
+<a name="line22"></a>
+<a name="line23"></a>  (* Exception combinators *)
+<a name="line24"></a>  val nof : 'a -&gt; 'b
+<a name="line25"></a>  val allf : 'a -&gt; 'a
+<a name="line26"></a>  val thenf : ('a -&gt; 'b) * ('b -&gt; 'c) -&gt; 'a -&gt; 'c
+<a name="line27"></a>  val orelsef : ('a -&gt; 'b) * ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line28"></a>  val tryf : ('a -&gt; 'a) -&gt; 'a -&gt; 'a
+<a name="line29"></a>  val repeatf : ('a -&gt; 'a) -&gt; 'a -&gt; 'a
+<a name="line30"></a>  val repeatplusf : ('a -&gt; 'a) -&gt; 'a -&gt; 'a
+<a name="line31"></a>  val firstf : ('a -&gt; 'b) list -&gt; 'a -&gt; 'b
+<a name="line32"></a>
+<a name="line33"></a>  (* Combinators *)
+<a name="line34"></a>  val A : ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line35"></a>  val C : ('a -&gt; 'b -&gt; 'c) -&gt; 'b -&gt; 'a -&gt; 'c
+<a name="line36"></a>  val I : 'a -&gt; 'a
+<a name="line37"></a>  val K : 'a -&gt; 'b -&gt; 'a
+<a name="line38"></a>  val N : int -&gt; ('a -&gt; 'a) -&gt; 'a -&gt; 'a
+<a name="line39"></a>  val S : ('a -&gt; 'b -&gt; 'c) -&gt; ('a -&gt; 'b) -&gt; 'a -&gt; 'c
+<a name="line40"></a>  val W : ('a -&gt; 'a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line41"></a>  val oo : ('a -&gt; 'b) * ('c -&gt; 'd -&gt; 'a) -&gt; 'c -&gt; 'd -&gt; 'b
+<a name="line42"></a>
+<a name="line43"></a>  (* Pairs *)
+<a name="line44"></a>  val ## : ('a -&gt; 'b) * ('c -&gt; 'd) -&gt; 'a * 'c -&gt; 'b * 'd
+<a name="line45"></a>  val D : 'a -&gt; 'a * 'a
+<a name="line46"></a>  val Df : ('a -&gt; 'b) -&gt; ('a * 'a -&gt; 'b * 'b)
+<a name="line47"></a>  val fst : 'a * 'b -&gt; 'a
+<a name="line48"></a>  val snd : 'a * 'b -&gt; 'b
+<a name="line49"></a>  val add_fst : 'a -&gt; 'b -&gt; 'a * 'b
+<a name="line50"></a>  val add_snd : 'a -&gt; 'b -&gt; 'b * 'a
+<a name="line51"></a>  val curry : ('a * 'b -&gt; 'c) -&gt; 'a -&gt; 'b -&gt; 'c
+<a name="line52"></a>  val uncurry : ('a -&gt; 'b -&gt; 'c) -&gt; 'a * 'b -&gt; 'c
+<a name="line53"></a>  val equal : ''a -&gt; ''a -&gt; bool
+<a name="line54"></a>  val pair_to_string : ('a -&gt; string) -&gt; ('b -&gt; string) -&gt; 'a * 'b -&gt; string
+<a name="line55"></a>
+<a name="line56"></a>  (* Integers *)
+<a name="line57"></a>  val plus : int -&gt; int -&gt; int
+<a name="line58"></a>  val multiply : int -&gt; int -&gt; int
+<a name="line59"></a>  val succ : int -&gt; int
+<a name="line60"></a>
+<a name="line61"></a>  (* Strings *)
+<a name="line62"></a>  val concat : string -&gt; string -&gt; string
+<a name="line63"></a>  val int_to_string : int -&gt; string
+<a name="line64"></a>  val string_to_int : string -&gt; int
+<a name="line65"></a>  val mk_string_fn : string -&gt; string list -&gt; string
+<a name="line66"></a>  val dest_string_fn : string -&gt; string -&gt; string list
+<a name="line67"></a>  val is_string_fn : string -&gt; string -&gt; bool
+<a name="line68"></a>
+<a name="line69"></a>  (* Debugging *)
+<a name="line70"></a>  val time_n : int -&gt; ('a -&gt; 'b) -&gt; 'a -&gt; unit
+<a name="line71"></a>  val tt : ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line72"></a>  val tt2 : ('a -&gt; 'b -&gt; 'c) -&gt; 'a -&gt; 'b -&gt; 'c
+<a name="line73"></a>  val tt3 : ('a -&gt; 'b -&gt; 'c -&gt; 'd) -&gt; 'a -&gt; 'b -&gt; 'c -&gt; 'd
+<a name="line74"></a>  val tt4 : ('a -&gt; 'b -&gt; 'c -&gt; 'd -&gt; 'e) -&gt; 'a -&gt; 'b -&gt; 'c -&gt; 'd -&gt; 'e
+<a name="line75"></a>  val ff : ('a -&gt; 'b) -&gt; 'a -&gt; unit
+<a name="line76"></a>  val ff2 : ('a -&gt; 'b -&gt; 'c) -&gt; 'a -&gt; 'b -&gt; unit
+<a name="line77"></a>  val ff3 : ('a -&gt; 'b -&gt; 'c -&gt; 'd) -&gt; 'a -&gt; 'b -&gt; 'c -&gt; unit
+<a name="line78"></a>  val ff4 : ('a -&gt; 'b -&gt; 'c -&gt; 'd -&gt; 'e) -&gt; 'a -&gt; 'b -&gt; 'c -&gt; 'd -&gt; unit
+<a name="line79"></a>
+<a name="line80"></a>  (* Useful imperative features *)
+<a name="line81"></a>  val new_int : unit -&gt; int
+<a name="line82"></a>  val random_generator : Random.generator
+<a name="line83"></a>  val random_integer : int -&gt; int
+<a name="line84"></a>  val random_real : unit -&gt; real
+<a name="line85"></a>  val pair_susp : 'a susp -&gt; 'b susp -&gt; ('a * 'b) susp
+<a name="line86"></a>  val susp_map : ('a -&gt; 'b) -&gt; 'a susp -&gt; 'b susp
+<a name="line87"></a>
+<a name="line88"></a>  (* Options *)
+<a name="line89"></a>  val is_some : 'a option -&gt; bool
+<a name="line90"></a>  val grab : 'a option -&gt; 'a
+<a name="line91"></a>  val o_pair : 'a option * 'b -&gt; ('a * 'b) option
+<a name="line92"></a>  val pair_o : 'a * 'b option -&gt; ('a * 'b) option
+<a name="line93"></a>  val o_pair_o : 'a option * 'b option -&gt; ('a * 'b) option
+<a name="line94"></a>  val app_o : ('a -&gt; 'b) -&gt; 'a option -&gt; 'b option
+<a name="line95"></a>  val o_app : ('a -&gt; 'b) option -&gt; 'a -&gt; 'b option
+<a name="line96"></a>  val o_app_o : ('a -&gt; 'b) option -&gt; 'a option -&gt; 'b option
+<a name="line97"></a>  val partial_app_o : ('a -&gt; 'b option) -&gt; 'a option -&gt; 'b option
+<a name="line98"></a>  val partial_o_app : ('a -&gt; 'b option) option -&gt; 'a -&gt; 'b option
+<a name="line99"></a>  val partial_o_app_o : ('a -&gt; 'b option) option -&gt; 'a option -&gt; 'b option
+<a name="line100"></a>  val option_to_list : 'a option -&gt; 'a list
+<a name="line101"></a>
+<a name="line102"></a>  (* Lists *)
+<a name="line103"></a>  val cons : 'a -&gt; 'a list -&gt; 'a list
+<a name="line104"></a>  val append : 'a list -&gt; 'a list -&gt; 'a list
+<a name="line105"></a>  val wrap : 'a -&gt; 'a list
+<a name="line106"></a>  val unwrap : 'a list -&gt; 'a
+<a name="line107"></a>  val fold : ('a -&gt; 'b -&gt; 'b) -&gt; 'b -&gt; 'a list -&gt; 'b
+<a name="line108"></a>  val trans : ('a -&gt; 'b -&gt; 'b) -&gt; 'b -&gt; 'a list -&gt; 'b
+<a name="line109"></a>  val partial_trans : ('a -&gt; 'b -&gt; 'b option) -&gt; 'b -&gt; 'a list -&gt; 'b option
+<a name="line110"></a>  val first : ('a -&gt; bool) -&gt; 'a list -&gt; 'a
+<a name="line111"></a>  val partial_first : ('a -&gt; 'b option) -&gt; 'a list -&gt; 'b option
+<a name="line112"></a>  val forall : ('a -&gt; bool) -&gt; 'a list -&gt; bool
+<a name="line113"></a>  val exists : ('a -&gt; bool) -&gt; 'a list -&gt; bool
+<a name="line114"></a>  val index : ('a -&gt; bool) -&gt; 'a list -&gt; int
+<a name="line115"></a>  val nth : int -&gt; 'a list -&gt; 'a
+<a name="line116"></a>  val split_after : int -&gt; 'a list -&gt; 'a list * 'a list
+<a name="line117"></a>  val assoc : ''a -&gt; (''a * 'b) list -&gt; 'b
+<a name="line118"></a>  val rev_assoc : ''a -&gt; ('b * ''a) list -&gt; 'b
+<a name="line119"></a>  val map : ('a -&gt; 'b) -&gt; 'a list -&gt; 'b list
+<a name="line120"></a>  val partial_map : ('a -&gt; 'b option) -&gt; 'a list -&gt; 'b list
+<a name="line121"></a>  val zip : 'a list -&gt; 'b list -&gt; ('a * 'b) list
+<a name="line122"></a>  val zipwith : ('a -&gt; 'b -&gt; 'c) -&gt; 'a list -&gt; 'b list -&gt; 'c list
+<a name="line123"></a>  val partial_zipwith : ('a -&gt; 'b -&gt; 'c option) -&gt; 'a list -&gt; 'b list -&gt; 'c list
+<a name="line124"></a>  val cart : 'a list -&gt; 'b list -&gt; ('a * 'b) list
+<a name="line125"></a>  val cartwith : ('a -&gt; 'b -&gt; 'c) -&gt; 'a list -&gt; 'b list -&gt; 'c list
+<a name="line126"></a>  val partial_cartwith :
+<a name="line127"></a>    ('a -&gt; 'b -&gt; 'c option) -&gt; 'a list -&gt; 'b list -&gt; 'c list
+<a name="line128"></a>  val list_to_string : ('a -&gt; string) -&gt; 'a list -&gt; string
+<a name="line129"></a>
+<a name="line130"></a>  (* Lists as sets *)
+<a name="line131"></a>  val subset : ''a list -&gt; ''a list -&gt; bool
+<a name="line132"></a>  val distinct : ''a list -&gt; bool
+<a name="line133"></a>  val union2 : ''a list * ''b list -&gt; ''a list * ''b list -&gt; ''a list * ''b list
+<a name="line134"></a>
+<a name="line135"></a>  (* Permutations and sorting (order functions should always be &lt;=) *)
+<a name="line136"></a>  val rotations : 'a list -&gt; ('a * 'a list) list
+<a name="line137"></a>  val rotate : int -&gt; ('a list -&gt; 'a * 'a list)
+<a name="line138"></a>  val rotate_random : 'a list -&gt; 'a * 'a list
+<a name="line139"></a>  val permutations : 'a list -&gt; 'a list list
+<a name="line140"></a>  val permute : int list -&gt; 'a list -&gt; 'a list
+<a name="line141"></a>  val permute_random : 'a list -&gt; 'a list
+<a name="line142"></a>  val min : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a
+<a name="line143"></a>  val merge : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a list -&gt; 'a list
+<a name="line144"></a>  val sort : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a list
+<a name="line145"></a>  val top_min : ('a -&gt; 'a -&gt; bool option) -&gt; 'a list -&gt; 'a * 'a list
+<a name="line146"></a>  val top_sort : ('a -&gt; 'a -&gt; bool option) -&gt; 'a list -&gt; 'a list
+<a name="line147"></a>
+<a name="line148"></a>  (* Sums *)
+<a name="line149"></a>  datatype ('a, 'b) sum = LEFT of 'a | RIGHT of 'b
+<a name="line150"></a>
+<a name="line151"></a>  (* Streams *)
+<a name="line152"></a>  datatype ('a) stream = STREAM_NIL | STREAM_CONS of ('a * 'a stream thunk)
+<a name="line153"></a>  val stream_null : 'a stream -&gt; bool
+<a name="line154"></a>  val dest_stream_cons : 'a stream -&gt; 'a * 'a stream thunk
+<a name="line155"></a>  val stream_hd : 'a stream -&gt; 'a
+<a name="line156"></a>  val stream_tl : 'a stream -&gt; 'a stream thunk
+<a name="line157"></a>  val stream_to_list : 'a stream -&gt; 'a list
+<a name="line158"></a>  val stream_append : 'a stream thunk -&gt; 'a stream thunk -&gt; 'a stream thunk
+<a name="line159"></a>  val stream_concat : 'a stream thunk list -&gt; 'a stream thunk
+<a name="line160"></a>
+<a name="line161"></a>  (* Trees *)
+<a name="line162"></a>  datatype ('a, 'b) tree = BRANCH of 'a * ('a, 'b) tree list | LEAF of 'b
+<a name="line163"></a>  val tree_size : ('a, 'b) tree -&gt; int
+<a name="line164"></a>  val tree_fold : ('a -&gt; 'b list -&gt; 'b) -&gt; ('c -&gt; 'b) -&gt; ('a, 'c) tree -&gt; 'b
+<a name="line165"></a>  val tree_trans :
+<a name="line166"></a>    ('a -&gt; 'b -&gt; 'b) -&gt; ('c -&gt; 'b -&gt; 'd) -&gt; 'b -&gt; ('a, 'c) tree -&gt; 'd list
+<a name="line167"></a>  val tree_partial_trans :
+<a name="line168"></a>    ('a -&gt; 'b -&gt; 'b option) -&gt; ('c -&gt; 'b -&gt; 'd option) -&gt; 'b -&gt;
+<a name="line169"></a>    ('a, 'c) tree -&gt; 'd list
+<a name="line170"></a>
+<a name="line171"></a>  (* Pretty-printing *)
+<a name="line172"></a>  val pp_map : ('a -&gt; 'b) -&gt; 'b PP.pprinter -&gt; 'a PP.pprinter
+<a name="line173"></a>  val pp_string : string PP.pprinter
+<a name="line174"></a>  val pp_unknown : 'a PP.pprinter
+<a name="line175"></a>  val pp_int : int PP.pprinter
+<a name="line176"></a>  val pp_pair : 'a PP.pprinter -&gt; 'b PP.pprinter -&gt; ('a * 'b) PP.pprinter
+<a name="line177"></a>  val pp_list : 'a PP.pprinter -&gt; 'a list PP.pprinter
+<a name="line178"></a>
+<a name="line179"></a>  (* Substitutions *)
+<a name="line180"></a>  val redex : ('a, 'b) maplet -&gt; 'a
+<a name="line181"></a>  val residue : ('a, 'b) maplet -&gt; 'b
+<a name="line182"></a>  val maplet_map : ('a -&gt; 'c) * ('b -&gt; 'd) -&gt; ('a, 'b) maplet -&gt; ('c, 'd) maplet
+<a name="line183"></a>  val find_redex : ''a -&gt; (''a, 'b) subst -&gt; (''a, 'b) maplet
+<a name="line184"></a>  val clean_subst : (''a, ''a) subst -&gt; (''a, ''a) subst
+<a name="line185"></a>  val subst_vars : ('a, 'b) subst -&gt; 'a list
+<a name="line186"></a>  val subst_map : ('a -&gt; 'c) * ('b -&gt; 'd) -&gt; ('a, 'b) subst -&gt; ('c, 'd) subst
+<a name="line187"></a>  val redex_map : ('a -&gt; 'c) -&gt; ('a, 'b) subst -&gt; ('c, 'b) subst
+<a name="line188"></a>  val residue_map : ('b -&gt; 'c) -&gt; ('a, 'b) subst -&gt; ('a, 'c) subst
+<a name="line189"></a>  val is_renaming_subst : ''b list -&gt; ('a, ''b) subst -&gt; bool
+<a name="line190"></a>  val invert_renaming_subst : ''b list -&gt; ('a, ''b) subst -&gt; (''b, 'a) subst
+<a name="line191"></a>
+<a name="line192"></a>  (* HOL Types *)
+<a name="line193"></a>  type 'a set = 'a HOLset.set
+<a name="line194"></a>  type hol_type = Type.hol_type
+<a name="line195"></a>  type term = Term.term
+<a name="line196"></a>  type thm = Thm.thm
+<a name="line197"></a>  type goal = term list * term
+<a name="line198"></a>  type conv = term -&gt; thm
+<a name="line199"></a>  type rule = thm -&gt; thm
+<a name="line200"></a>  type validation = thm list -&gt; thm
+<a name="line201"></a>  type tactic = goal -&gt; goal list * validation
+<a name="line202"></a>  type thm_tactic = thm -&gt; tactic
+<a name="line203"></a>  type thm_tactical = thm_tactic -&gt; thm_tactic
+<a name="line204"></a>  type vars = term list * hol_type list
+<a name="line205"></a>  type vterm = vars * term
+<a name="line206"></a>  type vthm = vars * thm
+<a name="line207"></a>  type type_subst = (hol_type, hol_type) subst
+<a name="line208"></a>  type term_subst = (term, term) subst
+<a name="line209"></a>  type substitution = term_subst * type_subst
+<a name="line210"></a>  type ho_substitution = substitution * thm thunk
+<a name="line211"></a>  type raw_substitution = (term_subst * term set) * (type_subst * hol_type list)
+<a name="line212"></a>  type ho_raw_substitution = raw_substitution * thm thunk
+<a name="line213"></a>
+<a name="line214"></a>  (* General *)
+<a name="line215"></a>  val profile : ('a -&gt; 'b) -&gt; 'a -&gt; 'b
+<a name="line216"></a>  val parse_with_goal : term frag list -&gt; goal -&gt; term
+<a name="line217"></a>  val PARSE_TAC : (term -&gt; tactic) -&gt; term frag list -&gt; tactic
+<a name="line218"></a>
+<a name="line219"></a>  (* Term/type substitutions *)
+<a name="line220"></a>  val empty_subst : substitution
+<a name="line221"></a>  val type_inst : type_subst -&gt; hol_type -&gt; hol_type
+<a name="line222"></a>  val inst_ty : type_subst -&gt; term -&gt; term
+<a name="line223"></a>  val pinst : substitution -&gt; term -&gt; term
+<a name="line224"></a>  val type_subst_vars_in_set : type_subst -&gt; hol_type list -&gt; bool
+<a name="line225"></a>  val subst_vars_in_set : substitution -&gt; vars -&gt; bool
+<a name="line226"></a>  val type_refine_subst : type_subst -&gt; type_subst -&gt; type_subst
+<a name="line227"></a>  val refine_subst : substitution -&gt; substitution -&gt; substitution
+<a name="line228"></a>  val type_vars_after_subst : hol_type list -&gt; type_subst -&gt; hol_type list
+<a name="line229"></a>  val vars_after_subst : vars -&gt; substitution -&gt; vars
+<a name="line230"></a>  val type_invert_subst : hol_type list -&gt; type_subst -&gt; type_subst
+<a name="line231"></a>  val invert_subst : vars -&gt; substitution -&gt; substitution
+<a name="line232"></a>  val clean_tsubst : term_subst -&gt; term_subst
+<a name="line233"></a>  val tfind_redex : term -&gt; (term, 'b) subst -&gt; (term, 'b) maplet
+<a name="line234"></a>
+<a name="line235"></a>  (* Logic variables *)
+<a name="line236"></a>  val empty_vars : vars
+<a name="line237"></a>  val is_tyvar : vars -&gt; hol_type -&gt; bool
+<a name="line238"></a>  val is_tmvar : vars -&gt; term -&gt; bool
+<a name="line239"></a>  val type_new_vars : hol_type list -&gt; hol_type list * (type_subst * type_subst)
+<a name="line240"></a>  val term_new_vars : term list -&gt; term list * (term_subst * term_subst)
+<a name="line241"></a>  val new_vars : vars -&gt; vars * (substitution * substitution)
+<a name="line242"></a>  val vars_eq : vars -&gt; vars -&gt; bool
+<a name="line243"></a>  val vars_union : vars -&gt; vars -&gt; vars
+<a name="line244"></a>
+<a name="line245"></a>  (* Bound variables *)
+<a name="line246"></a>  val dest_bv : term list -&gt; term -&gt; int
+<a name="line247"></a>  val is_bv : term list -&gt; term -&gt; bool
+<a name="line248"></a>  val mk_bv : term list -&gt; int -&gt; term
+<a name="line249"></a>
+<a name="line250"></a>  (* Terms *)
+<a name="line251"></a>  val type_vars_in_terms : term list -&gt; hol_type list
+<a name="line252"></a>  val list_dest_comb : term -&gt; term * term list
+<a name="line253"></a>  val conjuncts : term -&gt; term list
+<a name="line254"></a>  val dest_unaryop : string -&gt; term -&gt; term
+<a name="line255"></a>  val is_unaryop : string -&gt; (term -&gt; bool)
+<a name="line256"></a>  val dest_binop : string -&gt; term -&gt; term * term
+<a name="line257"></a>  val is_binop : string -&gt; (term -&gt; bool)
+<a name="line258"></a>  val dest_imp : term -&gt; term * term
+<a name="line259"></a>  val is_imp : term -&gt; bool
+<a name="line260"></a>  val dest_foralls : term -&gt; term list * term
+<a name="line261"></a>  val mk_foralls : term list * term -&gt; term
+<a name="line262"></a>  val spec : term -&gt; term -&gt; term
+<a name="line263"></a>  val specl : term list -&gt; term -&gt; term
+<a name="line264"></a>  val var_match : vars -&gt; term -&gt; term -&gt; substitution
+<a name="line265"></a>
+<a name="line266"></a>  (* Theorems *)
+<a name="line267"></a>  val FUN_EQ : thm
+<a name="line268"></a>  val SET_EQ : thm
+<a name="line269"></a>  val hyps : thm list -&gt; term list
+<a name="line270"></a>  val LHS : thm -&gt; term
+<a name="line271"></a>  val RHS : thm -&gt; term
+<a name="line272"></a>  val INST_TY : type_subst -&gt; thm -&gt; thm
+<a name="line273"></a>  val PINST : substitution -&gt; thm -&gt; thm
+<a name="line274"></a>
+<a name="line275"></a>  (* Conversions *)
+<a name="line276"></a>  val FIRSTC : conv list -&gt; conv
+<a name="line277"></a>  val TRYC : conv -&gt; conv
+<a name="line278"></a>  val REPEATPLUSC : conv -&gt; conv
+<a name="line279"></a>  val REPEATC_CUTOFF : int -&gt; conv -&gt; conv
+<a name="line280"></a>  val DEPTH_ONCE_CONV : conv -&gt; conv
+<a name="line281"></a>  val FORALLS_CONV : conv -&gt; conv
+<a name="line282"></a>  val CONJUNCT_CONV : conv -&gt; conv
+<a name="line283"></a>  val EXACT_CONV : term -&gt; conv
+<a name="line284"></a>  val NEGNEG_CONV : conv
+<a name="line285"></a>  val FUN_EQ_CONV : conv
+<a name="line286"></a>  val SET_EQ_CONV : conv
+<a name="line287"></a>  val N_BETA_CONV : int -&gt; conv
+<a name="line288"></a>  val EQ_NEG_BOOL_CONV : conv
+<a name="line289"></a>  val GENVAR_ALPHA_CONV : conv
+<a name="line290"></a>  val GENVAR_BVARS_CONV : conv
+<a name="line291"></a>  val ETA_EXPAND_CONV : term -&gt; conv
+<a name="line292"></a>  val GENVAR_ETA_EXPAND_CONV : conv
+<a name="line293"></a>
+<a name="line294"></a>  (* Rules *)
+<a name="line295"></a>  val THENR : rule * rule -&gt; rule
+<a name="line296"></a>  val REPEATR : rule -&gt; rule
+<a name="line297"></a>  val ORELSER : rule * rule -&gt; rule
+<a name="line298"></a>  val TRYR : rule -&gt; rule
+<a name="line299"></a>  val ALL_RULE : rule
+<a name="line300"></a>  val EVERYR : rule list -&gt; rule
+<a name="line301"></a>  val FORALL_IMP : rule
+<a name="line302"></a>  val EQ_BOOL_INTRO : rule
+<a name="line303"></a>  val GENVAR_BVARS : rule
+<a name="line304"></a>  val GENVAR_SPEC : rule
+<a name="line305"></a>  val GENVAR_SPEC_ALL : rule
+<a name="line306"></a>  val REV_CONJUNCTS : thm list -&gt; thm
+<a name="line307"></a>  val REORDER_ASMS : term list -&gt; rule
+<a name="line308"></a>  val NEW_CONST_RULE : term -&gt; rule
+<a name="line309"></a>  val GENVAR_CONST_RULE : rule
+<a name="line310"></a>  val ZAP_CONSTS_RULE : rule
+<a name="line311"></a>
+<a name="line312"></a>  (* Variable theorem (vthm) operations *)
+<a name="line313"></a>  val thm_to_vthm : thm -&gt; vthm
+<a name="line314"></a>  val vthm_to_thm : vthm -&gt; thm
+<a name="line315"></a>  val clean_vthm : vthm -&gt; vthm
+<a name="line316"></a>  val var_GENVAR_SPEC : vthm -&gt; vthm
+<a name="line317"></a>  val var_CONJUNCTS : vthm -&gt; vthm list
+<a name="line318"></a>  val var_MATCH_MP : thm -&gt; vthm -&gt; vthm
+<a name="line319"></a>
+<a name="line320"></a>  (* Discharging assumptions onto the lhs of an implication *)
+<a name="line321"></a>  val DISCH_CONJ_CONV : conv
+<a name="line322"></a>  val DISCH_CONJ : term -&gt; rule
+<a name="line323"></a>  val DISCH_CONJUNCTS : term list -&gt; rule
+<a name="line324"></a>  val DISCH_CONJUNCTS_ALL : rule
+<a name="line325"></a>  val DISCH_CONJUNCTS_FILTER : (term -&gt; bool) -&gt; rule
+<a name="line326"></a>  val DISCH_CONJ_TAC : tactic
+<a name="line327"></a>  val DISCH_CONJUNCTS_TAC : tactic
+<a name="line328"></a>  val UNDISCH_CONJ_CONV : conv
+<a name="line329"></a>  val UNDISCH_CONJ : rule
+<a name="line330"></a>  val UNDISCH_CONJUNCTS : rule
+<a name="line331"></a>  val UNDISCH_CONJ_TAC : term -&gt; tactic
+<a name="line332"></a>  val UNDISCH_CONJUNCTS_TAC : tactic
+<a name="line333"></a>
+<a name="line334"></a>  (* Tactics *)
+<a name="line335"></a>  val PURE_CONV_TAC : conv -&gt; tactic
+<a name="line336"></a>  val ASMLIST_CASES : tactic -&gt; (term -&gt; tactic) -&gt; tactic
+<a name="line337"></a>  val POP_ASSUM_TAC : tactic -&gt; tactic
+<a name="line338"></a>  val TRUTH_TAC : tactic
+<a name="line339"></a>  val S_TAC : tactic
+<a name="line340"></a>  val Strip : tactic
+<a name="line341"></a>  val K_TAC : 'a -&gt; tactic
+<a name="line342"></a>  val KILL_TAC : tactic
+<a name="line343"></a>  val CONJUNCTS_TAC : tactic
+<a name="line344"></a>  val FUN_EQ_TAC : tactic
+<a name="line345"></a>  val SET_EQ_TAC : tactic
+<a name="line346"></a>  val CHECK_ASMS_TAC : tactic
+<a name="line347"></a>  val EXACT_MP_TAC : thm_tactic
+<a name="line348"></a>  val STRONG_CONJ_TAC : tactic
+<a name="line349"></a>  val STRONG_DISJ_TAC : tactic
+<a name="line350"></a>  val FORWARD_TAC : (thm list -&gt; thm list) -&gt; tactic
+<a name="line351"></a>  val Know : term quotation -&gt; tactic
+<a name="line352"></a>  val Suff : term quotation -&gt; tactic
+<a name="line353"></a>  val POP_ORW : tactic
+<a name="line354"></a>  val Cond : tactic
+<a name="line355"></a>  val Rewr  : tactic
+<a name="line356"></a>  val Rewr' : tactic
+<a name="line357"></a>  val art : thm list -&gt; tactic (* ASM_REWRITE_TAC *)
+<a name="line358"></a>
+<a name="line359"></a>  (* Simple CNF conversion *)
+<a name="line360"></a>  val CNF_CONV : conv
+<a name="line361"></a>  val CNF_RULE : rule
+<a name="line362"></a>  val CNF_EXPAND : thm -&gt; thm list
+<a name="line363"></a>  val CNF_TAC : tactic
+<a name="line364"></a>
+<a name="line365"></a>  (* ASM_MATCH_MP_TAC *)
+<a name="line366"></a>  val MATCH_MP_DEPTH : int -&gt; thm list -&gt; thm list -&gt; thm list
+<a name="line367"></a>  val ASM_MATCH_MP_TAC_N : int -&gt; thm list -&gt; tactic
+<a name="line368"></a>  val ASM_MATCH_MP_TAC : thm list -&gt; tactic
+<a name="line369"></a>
+<a name="line370"></a>end
+<a name="line371"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/res_quan/src/hurdUtils.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

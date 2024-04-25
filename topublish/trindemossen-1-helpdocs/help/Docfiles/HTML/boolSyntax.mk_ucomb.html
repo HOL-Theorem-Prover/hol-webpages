@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>boolSyntax.mk_ucomb</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>mk_ucomb : term * term -&gt; term</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/boolSyntax.html">boolSyntax</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Forms an application term, possibly instantiating both the
+function and the argument types.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">mk_ucomb(f,x)</SPAN><SPAN class = "TEXT"> checks to see if the term </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> (which must
+have a function type) can have its type variables instantiated to
+make the domain of the function match some instantiation of the
+type of </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT">.  If so, then the call returns the application of the
+instantiated </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to the instantiated </SPAN><SPAN class = "BRKT">x</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if there is no way to instantiate the types to make the function domain
+match the argument type.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Note how both the FOLDR combinator and the argument (the K combinator)
+have type variables invented for them when the two quotations are parsed.
+</SPAN><DIV class = "XMPL"><pre>
+   - val t = mk_ucomb(``FOLDR``, ``K``);
+  &lt;&lt;HOL message: inventing new type variable names: 'a, 'b&gt;&gt;
+  &lt;&lt;HOL message: inventing new type variable names: 'a, 'b&gt;&gt;
+   &gt; val t = ``FOLDR K`` : term
+</pre></DIV>
+<SPAN class = "TEXT">
+The resulting term </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> has only the type variable </SPAN><SPAN class = "BRKT">:'a</SPAN><SPAN class = "TEXT"> left after
+instantiation.
+</SPAN><DIV class = "XMPL"><pre>
+   - type_of t;
+   &gt; val it = ``:'a -&gt; 'a list -&gt; 'a`` : hol_type
+</pre></DIV>
+<SPAN class = "TEXT">
+This term can now be combined with an argument and the final type
+variable instantiated:
+</SPAN><DIV class = "XMPL"><pre>
+   - mk_ucomb(t, ``T``);
+   &gt; val it = ``FOLDR K T`` : term
+
+   - type_of it;
+   &gt; val it = ``:bool list -&gt; bool``;
+</pre></DIV>
+<SPAN class = "TEXT">
+Attempting to use </SPAN><SPAN class = "BRKT">mk_icomb</SPAN><SPAN class = "TEXT"> in the first example above results in immediate
+error because it can only instantiate the function type:
+</SPAN><DIV class = "XMPL"><pre>
+   - mk_icomb(``FOLDR``, ``K``) handle e =&gt; Raise e;
+   &lt;&lt;HOL message: inventing new type variable names: 'a, 'b&gt;&gt;
+   &lt;&lt;HOL message: inventing new type variable names: 'a, 'b&gt;&gt;
+
+   Exception raised at HolKernel.list_mk_icomb:
+   double bind on type variable 'b
+   Exception-
+      HOL_ERR
+        {message = "double bind on type variable 'b", origin_function =
+         "list_mk_icomb", origin_structure = "HolKernel"} raised
+</pre></DIV>
+<SPAN class = "TEXT">
+However it can be used in the second example, as only the function type
+requires instantiation:
+</SPAN><DIV class = "XMPL"><pre>
+   - mk_icomb(t, ``T``);
+   &gt; val it = ``FOLDR K T`` : term
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">mk_ucomb</SPAN><SPAN class = "TEXT"> makes use of </SPAN><SPAN class = "BRKT">sep_type_unify</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "boolSyntax.list_mk_ucomb.html">list_mk_ucomb</A>,
+<A HREF = "boolSyntax.sep_type_unify.html">sep_type_unify</A>,
+<A HREF = "Term.mk_icomb.html">mk_icomb</A>,
+<A HREF = "Term.mk_comb.html">mk_comb</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

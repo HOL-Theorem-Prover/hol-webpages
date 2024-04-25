@@ -1,0 +1,2151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: bag</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "bag"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "indexedListsTheory.html"><span class="strong">indexedLists</span></a>&nbsp;&nbsp;
+    <a href = "patternMatchesTheory.html"><span class="strong">patternMatches</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">BAG_ALL_DISTINCT</span>
+    <td>
+    :(α -> num) -> bool
+    <tr><td> <span class="strong">BAG_CARD</span> <td> :(α -> num) -> num
+    <tr><td>
+    <span class="strong">BAG_CARD_RELn</span>
+    <td>
+    :(α -> num) -> num -> bool
+    <tr><td> <span class="strong">BAG_CHOICE</span> <td> :(α -> num) -> α
+    <tr><td>
+    <span class="strong">BAG_DELETE</span>
+    <td>
+    :(α -> num) -> α -> (α -> num) -> bool
+    <tr><td>
+    <span class="strong">BAG_DIFF</span>
+    <td>
+    :(α -> num) -> (α -> num) -> α -> num
+    <tr><td>
+    <span class="strong">BAG_DISJOINT</span>
+    <td>
+    :(α -> num) -> (α -> num) -> bool
+    <tr><td>
+    <span class="strong">BAG_EVERY</span>
+    <td>
+    :(α -> bool) -> (α -> num) -> bool
+    <tr><td>
+    <span class="strong">BAG_FILTER</span>
+    <td>
+    :(α -> bool) -> (α -> num) -> α -> num
+    <tr><td>
+    <span class="strong">BAG_GEN_PROD</span>
+    <td>
+    :(num -> num) -> num -> num
+    <tr><td>
+    <span class="strong">BAG_GEN_SUM</span>
+    <td>
+    :(num -> num) -> num -> num
+    <tr><td>
+    <span class="strong">BAG_IMAGE</span>
+    <td>
+    :(β -> α) -> (β -> num) -> α -> num
+    <tr><td> <span class="strong">BAG_IN</span> <td> :α -> (α -> num) -> bool
+    <tr><td>
+    <span class="strong">BAG_INN</span>
+    <td>
+    :α -> num -> (α -> num) -> bool
+    <tr><td>
+    <span class="strong">BAG_INSERT</span>
+    <td>
+    :α -> (α -> num) -> α -> num
+    <tr><td>
+    <span class="strong">BAG_INTER</span>
+    <td>
+    :(α -> num) -> (α -> num) -> α -> num
+    <tr><td>
+    <span class="strong">BAG_MERGE</span>
+    <td>
+    :(α -> num) -> (α -> num) -> α -> num
+    <tr><td>
+    <span class="strong">BAG_OF_SET</span>
+    <td>
+    :(α -> bool) -> α -> num
+    <tr><td> <span class="strong">BAG_REST</span> <td> :(α -> num) -> α -> num
+    <tr><td>
+    <span class="strong">BAG_UNION</span>
+    <td>
+    :(α -> num) -> (α -> num) -> α -> num
+    <tr><td>
+    <span class="strong">BIG_BAG_UNION</span>
+    <td>
+    :((α -> num) -> bool) -> α -> num
+    <tr><td> <span class="strong">EL_BAG</span> <td> :α -> α -> num
+    <tr><td> <span class="strong">EMPTY_BAG</span> <td> :α -> num
+    <tr><td> <span class="strong">FINITE_BAG</span> <td> :(α -> num) -> bool
+    <tr><td>
+    <span class="strong">ITBAG</span>
+    <td>
+    :(α -> β -> β) -> (α -> num) -> β -> β
+    <tr><td>
+    <span class="strong">PSUB_BAG</span>
+    <td>
+    :(α -> num) -> (α -> num) -> bool
+    <tr><td>
+    <span class="strong">SET_OF_BAG</span>
+    <td>
+    :(α -> num) -> α -> bool
+    <tr><td> <span class="strong">SING_BAG</span> <td> :(α -> num) -> bool
+    <tr><td>
+    <span class="strong">SUB_BAG</span>
+    <td>
+    :(α -> num) -> (α -> num) -> bool
+    <tr><td>
+    <span class="strong">bag_size</span>
+    <td>
+    :(α -> num) -> (α -> num) -> num
+    <tr><td>
+    <span class="strong">dominates</span>
+    <td>
+    :(α -> β -> bool) -> (α -> bool) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">mlt1</span>
+    <td>
+    :(α -> α -> bool) -> (α -> num) -> (α -> num) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">BAG_ALL_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀b. BAG_ALL_DISTINCT b ⇔ ∀e. b e ≤ 1
+</pre>
+
+<DT><span class="strong">BAG_CARD</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ BAG_CARD_RELn b (BAG_CARD b)
+</pre>
+
+<DT><span class="strong">BAG_CARD_RELn</span>
+<DD>
+<pre>
+⊢ ∀b n.
+    BAG_CARD_RELn b n ⇔
+    ∀P. P {||} 0 ∧ (∀b n. P b n ⇒ ∀e. P (BAG_INSERT e b) (SUC n)) ⇒ P b n
+</pre>
+
+<DT><span class="strong">BAG_CHOICE_DEF</span>
+<DD>
+<pre>
+⊢ ∀b. b ≠ {||} ⇒ BAG_CHOICE b ⋲ b
+</pre>
+
+<DT><span class="strong">BAG_DELETE</span>
+<DD>
+<pre>
+⊢ ∀b0 e b. BAG_DELETE b0 e b ⇔ (b0 = BAG_INSERT e b)
+</pre>
+
+<DT><span class="strong">BAG_DIFF</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. b1 − b2 = (λx. b1 x − b2 x)
+</pre>
+
+<DT><span class="strong">BAG_DISJOINT</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. BAG_DISJOINT b1 b2 ⇔ DISJOINT (SET_OF_BAG b1) (SET_OF_BAG b2)
+</pre>
+
+<DT><span class="strong">BAG_EVERY</span>
+<DD>
+<pre>
+⊢ ∀P b. BAG_EVERY P b ⇔ ∀e. e ⋲ b ⇒ P e
+</pre>
+
+<DT><span class="strong">BAG_FILTER_DEF</span>
+<DD>
+<pre>
+⊢ ∀P b. BAG_FILTER P b = (λe. if P e then b e else 0)
+</pre>
+
+<DT><span class="strong">BAG_GEN_PROD_def</span>
+<DD>
+<pre>
+⊢ ∀bag n. BAG_GEN_PROD bag n = ITBAG $* bag n
+</pre>
+
+<DT><span class="strong">BAG_GEN_SUM_def</span>
+<DD>
+<pre>
+⊢ ∀bag n. BAG_GEN_SUM bag n = ITBAG $+ bag n
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_DEF</span>
+<DD>
+<pre>
+⊢ ∀f b.
+    BAG_IMAGE f b =
+    (λe.
+         (let
+            sb = BAG_FILTER (λe0. f e0 = e) b
+          in
+            if FINITE_BAG sb then BAG_CARD sb else 1))
+</pre>
+
+<DT><span class="strong">BAG_IN</span>
+<DD>
+<pre>
+⊢ ∀e b. e ⋲ b ⇔ BAG_INN e 1 b
+</pre>
+
+<DT><span class="strong">BAG_INN</span>
+<DD>
+<pre>
+⊢ ∀e n b. BAG_INN e n b ⇔ b e ≥ n
+</pre>
+
+<DT><span class="strong">BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀e b. BAG_INSERT e b = (λx. if x = e then b e + 1 else b x)
+</pre>
+
+<DT><span class="strong">BAG_INTER</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. BAG_INTER b1 b2 = (λx. if b1 x < b2 x then b1 x else b2 x)
+</pre>
+
+<DT><span class="strong">BAG_MERGE</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. BAG_MERGE b1 b2 = (λx. if b1 x < b2 x then b2 x else b1 x)
+</pre>
+
+<DT><span class="strong">BAG_OF_SET</span>
+<DD>
+<pre>
+⊢ ∀P. BAG_OF_SET P = (λx. if x ∈ P then 1 else 0)
+</pre>
+
+<DT><span class="strong">BAG_REST_DEF</span>
+<DD>
+<pre>
+⊢ ∀b. BAG_REST b = b − EL_BAG (BAG_CHOICE b)
+</pre>
+
+<DT><span class="strong">BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀b c. b ⊎ c = (λx. b x + c x)
+</pre>
+
+<DT><span class="strong">BIG_BAG_UNION_def</span>
+<DD>
+<pre>
+⊢ ∀sob. BIG_BAG_UNION sob = (λx. ∑ (λb. b x) sob)
+</pre>
+
+<DT><span class="strong">EL_BAG</span>
+<DD>
+<pre>
+⊢ ∀e. EL_BAG e = {|e|}
+</pre>
+
+<DT><span class="strong">EMPTY_BAG</span>
+<DD>
+<pre>
+⊢ {||} = K 0
+</pre>
+
+<DT><span class="strong">FINITE_BAG</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇔ ∀P. P {||} ∧ (∀b. P b ⇒ ∀e. P (BAG_INSERT e b)) ⇒ P b
+</pre>
+
+<DT><span class="strong">PSUB_BAG</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. b1 < b2 ⇔ b1 ≤ b2 ∧ b1 ≠ b2
+</pre>
+
+<DT><span class="strong">SET_OF_BAG</span>
+<DD>
+<pre>
+⊢ ∀b. SET_OF_BAG b = (λx. x ⋲ b)
+</pre>
+
+<DT><span class="strong">SING_BAG</span>
+<DD>
+<pre>
+⊢ ∀b. SING_BAG b ⇔ ∃x. b = {|x|}
+</pre>
+
+<DT><span class="strong">SUB_BAG</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. b1 ≤ b2 ⇔ ∀x n. BAG_INN x n b1 ⇒ BAG_INN x n b2
+</pre>
+
+<DT><span class="strong">bag_size_def</span>
+<DD>
+<pre>
+⊢ ∀eltsize b. bag_size eltsize b = ITBAG (λe acc. 1 + eltsize e + acc) b 0
+</pre>
+
+<DT><span class="strong">dominates_def</span>
+<DD>
+<pre>
+⊢ ∀R s1 s2. dominates R s1 s2 ⇔ ∀x. x ∈ s1 ⇒ ∃y. y ∈ s2 ∧ R x y
+</pre>
+
+<DT><span class="strong">mlt1_def</span>
+<DD>
+<pre>
+⊢ ∀r b1 b2.
+    mlt1 r b1 b2 ⇔
+    FINITE_BAG b1 ∧ FINITE_BAG b2 ∧
+    ∃e rep res. (b1 = rep ⊎ res) ∧ (b2 = res ⊎ {|e|}) ∧ ∀e'. e' ⋲ rep ⇒ r e' e
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ASSOC_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 b3. b1 ⊎ (b2 ⊎ b3) = b1 ⊎ b2 ⊎ b3
+</pre>
+
+<DT><span class="strong">BAG_ALL_DISTINCT_BAG_INN</span>
+<DD>
+<pre>
+⊢ ∀b n e. BAG_ALL_DISTINCT b ⇒ (BAG_INN e n b ⇔ (n = 0) ∨ (n = 1) ∧ e ⋲ b)
+</pre>
+
+<DT><span class="strong">BAG_ALL_DISTINCT_BAG_MERGE</span>
+<DD>
+<pre>
+⊢ ∀b1 b2.
+    BAG_ALL_DISTINCT (BAG_MERGE b1 b2) ⇔
+    BAG_ALL_DISTINCT b1 ∧ BAG_ALL_DISTINCT b2
+</pre>
+
+<DT><span class="strong">BAG_ALL_DISTINCT_BAG_OF_SET</span>
+<DD>
+<pre>
+⊢ BAG_ALL_DISTINCT (BAG_OF_SET s)
+</pre>
+
+<DT><span class="strong">BAG_ALL_DISTINCT_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2.
+    BAG_ALL_DISTINCT (b1 ⊎ b2) ⇔
+    BAG_ALL_DISTINCT b1 ∧ BAG_ALL_DISTINCT b2 ∧ BAG_DISJOINT b1 b2
+</pre>
+
+<DT><span class="strong">BAG_ALL_DISTINCT_DELETE</span>
+<DD>
+<pre>
+⊢ BAG_ALL_DISTINCT b ⇔ ∀e. e ⋲ b ⇒ ¬(e ⋲ b − {|e|})
+</pre>
+
+<DT><span class="strong">BAG_ALL_DISTINCT_DIFF</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. BAG_ALL_DISTINCT b1 ⇒ BAG_ALL_DISTINCT (b1 − b2)
+</pre>
+
+<DT><span class="strong">BAG_ALL_DISTINCT_EXTENSION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2.
+    BAG_ALL_DISTINCT b1 ∧ BAG_ALL_DISTINCT b2 ⇒
+    ((b1 = b2) ⇔ ∀x. x ⋲ b1 ⇔ x ⋲ b2)
+</pre>
+
+<DT><span class="strong">BAG_ALL_DISTINCT_SET</span>
+<DD>
+<pre>
+⊢ BAG_ALL_DISTINCT b ⇔ (unibag b = b)
+</pre>
+
+<DT><span class="strong">BAG_ALL_DISTINCT_SUB_BAG</span>
+<DD>
+<pre>
+⊢ ∀s t. s ≤ t ∧ BAG_ALL_DISTINCT t ⇒ BAG_ALL_DISTINCT s
+</pre>
+
+<DT><span class="strong">BAG_ALL_DISTINCT_THM</span>
+<DD>
+<pre>
+⊢ BAG_ALL_DISTINCT {||} ∧
+  ∀e b. BAG_ALL_DISTINCT (BAG_INSERT e b) ⇔ ¬(e ⋲ b) ∧ BAG_ALL_DISTINCT b
+</pre>
+
+<DT><span class="strong">BAG_CARD_BAG_INN</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ ∀n e. BAG_INN e n b ⇒ n ≤ BAG_CARD b
+</pre>
+
+<DT><span class="strong">BAG_CARD_BAG_OF_SET</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ (BAG_CARD (BAG_OF_SET s) = CARD s)
+</pre>
+
+<DT><span class="strong">BAG_CARD_DIFF</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ ∀c. c ≤ b ⇒ (BAG_CARD (b − c) = BAG_CARD b − BAG_CARD c)
+</pre>
+
+<DT><span class="strong">BAG_CARD_EMPTY</span>
+<DD>
+<pre>
+⊢ BAG_CARD {||} = 0
+</pre>
+
+<DT><span class="strong">BAG_CARD_THM</span>
+<DD>
+<pre>
+⊢ (BAG_CARD {||} = 0) ∧
+  ∀b. FINITE_BAG b ⇒ ∀e. BAG_CARD (BAG_INSERT e b) = BAG_CARD b + 1
+</pre>
+
+<DT><span class="strong">BAG_CARD_UNION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2.
+    FINITE_BAG b1 ∧ FINITE_BAG b2 ⇒
+    (BAG_CARD (b1 ⊎ b2) = BAG_CARD b1 + BAG_CARD b2)
+</pre>
+
+<DT><span class="strong">BAG_CHOICE_SING</span>
+<DD>
+<pre>
+⊢ BAG_CHOICE {|x|} = x
+</pre>
+
+<DT><span class="strong">BAG_DECOMPOSE</span>
+<DD>
+<pre>
+⊢ ∀e b. e ⋲ b ⇒ ∃b'. b = BAG_INSERT e b'
+</pre>
+
+<DT><span class="strong">BAG_DELETE_11</span>
+<DD>
+<pre>
+⊢ ∀b0 e1 e2 b1 b2.
+    BAG_DELETE b0 e1 b1 ∧ BAG_DELETE b0 e2 b2 ⇒ ((e1 = e2) ⇔ (b1 = b2))
+</pre>
+
+<DT><span class="strong">BAG_DELETE_BAG_IN</span>
+<DD>
+<pre>
+⊢ ∀b0 b e. BAG_DELETE b0 e b ⇒ e ⋲ b0
+</pre>
+
+<DT><span class="strong">BAG_DELETE_BAG_IN_down</span>
+<DD>
+<pre>
+⊢ ∀b0 b e1 e2. BAG_DELETE b0 e1 b ∧ e1 ≠ e2 ∧ e2 ⋲ b0 ⇒ e2 ⋲ b
+</pre>
+
+<DT><span class="strong">BAG_DELETE_BAG_IN_up</span>
+<DD>
+<pre>
+⊢ ∀b0 b e. BAG_DELETE b0 e b ⇒ ∀e'. e' ⋲ b ⇒ e' ⋲ b0
+</pre>
+
+<DT><span class="strong">BAG_DELETE_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀e b. ¬BAG_DELETE {||} e b
+</pre>
+
+<DT><span class="strong">BAG_DELETE_INSERT</span>
+<DD>
+<pre>
+⊢ ∀x y b1 b2.
+    BAG_DELETE (BAG_INSERT x b1) y b2 ⇒
+    (x = y) ∧ (b1 = b2) ∨ (∃b3. BAG_DELETE b1 y b3) ∧ x ≠ y
+</pre>
+
+<DT><span class="strong">BAG_DELETE_PSUB_BAG</span>
+<DD>
+<pre>
+⊢ ∀b0 e b. BAG_DELETE b0 e b ⇒ b < b0
+</pre>
+
+<DT><span class="strong">BAG_DELETE_SING</span>
+<DD>
+<pre>
+⊢ ∀b e. BAG_DELETE b e {||} ⇒ SING_BAG b
+</pre>
+
+<DT><span class="strong">BAG_DELETE_TWICE</span>
+<DD>
+<pre>
+⊢ ∀b0 e1 e2 b1 b2.
+    BAG_DELETE b0 e1 b1 ∧ BAG_DELETE b0 e2 b2 ∧ b1 ≠ b2 ⇒
+    ∃b. BAG_DELETE b1 e2 b ∧ BAG_DELETE b2 e1 b
+</pre>
+
+<DT><span class="strong">BAG_DELETE_commutes</span>
+<DD>
+<pre>
+⊢ ∀b0 b1 b2 e1 e2.
+    BAG_DELETE b0 e1 b1 ∧ BAG_DELETE b1 e2 b2 ⇒
+    ∃b'. BAG_DELETE b0 e2 b' ∧ BAG_DELETE b' e1 b2
+</pre>
+
+<DT><span class="strong">BAG_DELETE_concrete</span>
+<DD>
+<pre>
+⊢ ∀b0 b e.
+    BAG_DELETE b0 e b ⇔
+    b0 e > 0 ∧ (b = (λx. if x = e then b0 e − 1 else b0 x))
+</pre>
+
+<DT><span class="strong">BAG_DIFF_2L</span>
+<DD>
+<pre>
+⊢ ∀X Y Z. X − Y − Z = X − (Y ⊎ Z)
+</pre>
+
+<DT><span class="strong">BAG_DIFF_2R</span>
+<DD>
+<pre>
+⊢ ∀A B C. C ≤ B ⇒ (A − (B − C) = A ⊎ C − B)
+</pre>
+
+<DT><span class="strong">BAG_DIFF_EMPTY</span>
+<DD>
+<pre>
+⊢ (∀b. b − b = {||}) ∧ (∀b. b − {||} = b) ∧ (∀b. {||} − b = {||}) ∧
+  ∀b1 b2. b1 ≤ b2 ⇒ (b1 − b2 = {||})
+</pre>
+
+<DT><span class="strong">BAG_DIFF_EMPTY_simple</span>
+<DD>
+<pre>
+⊢ (∀b. b − b = {||}) ∧ (∀b. b − {||} = b) ∧ ∀b. {||} − b = {||}
+</pre>
+
+<DT><span class="strong">BAG_DIFF_EQ_EMPTY</span>
+<DD>
+<pre>
+⊢ (b − c = {||}) ⇔ b ≤ c
+</pre>
+
+<DT><span class="strong">BAG_DIFF_INSERT</span>
+<DD>
+<pre>
+⊢ ∀x b1 b2. ¬(x ⋲ b1) ⇒ (BAG_INSERT x b2 − b1 = BAG_INSERT x (b2 − b1))
+</pre>
+
+<DT><span class="strong">BAG_DIFF_INSERT_SUB_BAG</span>
+<DD>
+<pre>
+⊢ c ≤ b ⇒ (BAG_INSERT e b − c = BAG_INSERT e (b − c))
+</pre>
+
+<DT><span class="strong">BAG_DIFF_INSERT_same</span>
+<DD>
+<pre>
+⊢ ∀x b1 b2. BAG_INSERT x b1 − BAG_INSERT x b2 = b1 − b2
+</pre>
+
+<DT><span class="strong">BAG_DIFF_UNION_eliminate</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 b3.
+    (b1 ⊎ b2 − (b1 ⊎ b3) = b2 − b3) ∧ (b1 ⊎ b2 − (b3 ⊎ b1) = b2 − b3) ∧
+    (b2 ⊎ b1 − (b1 ⊎ b3) = b2 − b3) ∧ (b2 ⊎ b1 − (b3 ⊎ b1) = b2 − b3)
+</pre>
+
+<DT><span class="strong">BAG_DISJOINT_BAG_IN</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. BAG_DISJOINT b1 b2 ⇔ ∀e. ¬(e ⋲ b1) ∨ ¬(e ⋲ b2)
+</pre>
+
+<DT><span class="strong">BAG_DISJOINT_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ (∀b1 b2 e1.
+     BAG_DISJOINT (BAG_INSERT e1 b1) b2 ⇔ ¬(e1 ⋲ b2) ∧ BAG_DISJOINT b1 b2) ∧
+  ∀b1 b2 e2.
+    BAG_DISJOINT b1 (BAG_INSERT e2 b2) ⇔ ¬(e2 ⋲ b1) ∧ BAG_DISJOINT b1 b2
+</pre>
+
+<DT><span class="strong">BAG_DISJOINT_BAG_UNION</span>
+<DD>
+<pre>
+⊢ (BAG_DISJOINT b1 (b2 ⊎ b3) ⇔ BAG_DISJOINT b1 b2 ∧ BAG_DISJOINT b1 b3) ∧
+  (BAG_DISJOINT (b1 ⊎ b2) b3 ⇔ BAG_DISJOINT b1 b3 ∧ BAG_DISJOINT b2 b3)
+</pre>
+
+<DT><span class="strong">BAG_DISJOINT_DIFF</span>
+<DD>
+<pre>
+⊢ ∀B1 B2. BAG_DISJOINT (B1 − B2) (B2 − B1)
+</pre>
+
+<DT><span class="strong">BAG_DISJOINT_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀b. BAG_DISJOINT b {||} ∧ BAG_DISJOINT {||} b
+</pre>
+
+<DT><span class="strong">BAG_DISJOINT_FOLDR_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀ls b0 b1.
+    BAG_DISJOINT b1 (FOLDR $⊎ b0 ls) ⇔ EVERY (BAG_DISJOINT b1) (b0::ls)
+</pre>
+
+<DT><span class="strong">BAG_DISJOINT_SUB_BAG</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 b3. b1 ≤ b2 ∧ BAG_DISJOINT b2 b3 ⇒ BAG_DISJOINT b1 b3
+</pre>
+
+<DT><span class="strong">BAG_DISJOINT_SYM</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. BAG_DISJOINT b1 b2 ⇔ BAG_DISJOINT b2 b1
+</pre>
+
+<DT><span class="strong">BAG_EVERY_MERGE</span>
+<DD>
+<pre>
+⊢ BAG_EVERY P (BAG_MERGE b1 b2) ⇔ BAG_EVERY P b1 ∧ BAG_EVERY P b2
+</pre>
+
+<DT><span class="strong">BAG_EVERY_SET</span>
+<DD>
+<pre>
+⊢ BAG_EVERY P b ⇔ SET_OF_BAG b ⊆ {x | P x}
+</pre>
+
+<DT><span class="strong">BAG_EVERY_THM</span>
+<DD>
+<pre>
+⊢ (∀P. BAG_EVERY P {||}) ∧
+  ∀P e b. BAG_EVERY P (BAG_INSERT e b) ⇔ P e ∧ BAG_EVERY P b
+</pre>
+
+<DT><span class="strong">BAG_EVERY_UNION</span>
+<DD>
+<pre>
+⊢ BAG_EVERY P (b1 ⊎ b2) ⇔ BAG_EVERY P b1 ∧ BAG_EVERY P b2
+</pre>
+
+<DT><span class="strong">BAG_EXTENSION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. (b1 = b2) ⇔ ∀n e. BAG_INN e n b1 ⇔ BAG_INN e n b2
+</pre>
+
+<DT><span class="strong">BAG_FILTER_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ BAG_FILTER P (BAG_INSERT e b) =
+  if P e then BAG_INSERT e (BAG_FILTER P b) else BAG_FILTER P b
+</pre>
+
+<DT><span class="strong">BAG_FILTER_BAG_OF_SET</span>
+<DD>
+<pre>
+⊢ ∀P s. BAG_FILTER P (BAG_OF_SET s) = BAG_OF_SET (s ∩ {x | P x})
+</pre>
+
+<DT><span class="strong">BAG_FILTER_BAG_UNION</span>
+<DD>
+<pre>
+⊢ BAG_FILTER P (b1 ⊎ b2) = BAG_FILTER P b1 ⊎ BAG_FILTER P b2
+</pre>
+
+<DT><span class="strong">BAG_FILTER_EMPTY</span>
+<DD>
+<pre>
+⊢ BAG_FILTER P {||} = {||}
+</pre>
+
+<DT><span class="strong">BAG_FILTER_EQ_EMPTY</span>
+<DD>
+<pre>
+⊢ (BAG_FILTER P b = {||}) ⇔ BAG_EVERY ($¬ ∘ P) b
+</pre>
+
+<DT><span class="strong">BAG_FILTER_FILTER</span>
+<DD>
+<pre>
+⊢ BAG_FILTER P (BAG_FILTER Q b) = BAG_FILTER (λa. P a ∧ Q a) b
+</pre>
+
+<DT><span class="strong">BAG_FILTER_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀s b. BAG_FILTER s b ⊎ BAG_FILTER (COMPL s) b = b
+</pre>
+
+<DT><span class="strong">BAG_FILTER_SUB_BAG</span>
+<DD>
+<pre>
+⊢ ∀P b. BAG_FILTER P b ≤ b
+</pre>
+
+<DT><span class="strong">BAG_GEN_PROD_ALL_ONES</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ (BAG_GEN_PROD b 1 = 1) ⇒ ∀x. x ⋲ b ⇒ (x = 1)
+</pre>
+
+<DT><span class="strong">BAG_GEN_PROD_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀n. BAG_GEN_PROD {||} n = n
+</pre>
+
+<DT><span class="strong">BAG_GEN_PROD_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ ∀e. (BAG_GEN_PROD b e = 0) ⇔ 0 ⋲ b ∨ (e = 0)
+</pre>
+
+<DT><span class="strong">BAG_GEN_PROD_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ ∀e. (BAG_GEN_PROD b e = 1) ⇒ (e = 1)
+</pre>
+
+<DT><span class="strong">BAG_GEN_PROD_POSITIVE</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ (∀x. x ⋲ b ⇒ 0 < x) ⇒ 0 < BAG_GEN_PROD b 1
+</pre>
+
+<DT><span class="strong">BAG_GEN_PROD_REC</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒
+      ∀x a. BAG_GEN_PROD (BAG_INSERT x b) a = x * BAG_GEN_PROD b a
+</pre>
+
+<DT><span class="strong">BAG_GEN_PROD_TAILREC</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒
+      ∀x a. BAG_GEN_PROD (BAG_INSERT x b) a = BAG_GEN_PROD b (x * a)
+</pre>
+
+<DT><span class="strong">BAG_GEN_PROD_UNION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2.
+    FINITE_BAG b1 ∧ FINITE_BAG b2 ⇒
+    (BAG_GEN_PROD (b1 ⊎ b2) 1 = BAG_GEN_PROD b1 1 * BAG_GEN_PROD b2 1)
+</pre>
+
+<DT><span class="strong">BAG_GEN_PROD_UNION_LEM</span>
+<DD>
+<pre>
+⊢ ∀b1.
+    FINITE_BAG b1 ⇒
+    ∀b2 a b.
+      FINITE_BAG b2 ⇒
+      (BAG_GEN_PROD (b1 ⊎ b2) (a * b) = BAG_GEN_PROD b1 a * BAG_GEN_PROD b2 b)
+</pre>
+
+<DT><span class="strong">BAG_GEN_SUM_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀n. BAG_GEN_SUM {||} n = n
+</pre>
+
+<DT><span class="strong">BAG_GEN_SUM_REC</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒
+      ∀x a. BAG_GEN_SUM (BAG_INSERT x b) a = x + BAG_GEN_SUM b a
+</pre>
+
+<DT><span class="strong">BAG_GEN_SUM_TAILREC</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒
+      ∀x a. BAG_GEN_SUM (BAG_INSERT x b) a = BAG_GEN_SUM b (x + a)
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_BAG_OF_SET_ITSET_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    FINITE s ⇒
+    (BAG_IMAGE f (BAG_OF_SET s) = ITSET (λx b. BAG_INSERT (f x) b) s {||})
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_COMPOSE</span>
+<DD>
+<pre>
+⊢ ∀f g b. FINITE_BAG b ⇒ (BAG_IMAGE (f ∘ g) b = BAG_IMAGE f (BAG_IMAGE g b))
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_CONG</span>
+<DD>
+<pre>
+⊢ ∀f1 b1 f2 b2.
+    (b1 = b2) ∧ (∀x. x ⋲ b1 ⇒ (f1 x = f2 x)) ⇒
+    (BAG_IMAGE f1 b1 = BAG_IMAGE f2 b2)
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀f. BAG_IMAGE f {||} = {||}
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_EQ_EMPTY</span>
+<DD>
+<pre>
+⊢ FINITE_BAG b ⇒ ((BAG_IMAGE f b = {||}) ⇔ (b = {||}))
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ FINITE_BAG (BAG_IMAGE f b)
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_FINITE_I</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ (BAG_IMAGE I b = b)
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_FINITE_INSERT</span>
+<DD>
+<pre>
+⊢ ∀b f e.
+    FINITE_BAG b ⇒
+    (BAG_IMAGE f (BAG_INSERT e b) = BAG_INSERT (f e) (BAG_IMAGE f b))
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_FINITE_RESTRICTED_I</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ∧ BAG_EVERY (λe. f e = e) b ⇒ (BAG_IMAGE f b = b)
+</pre>
+
+<DT><span class="strong">BAG_IMAGE_FINITE_UNION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 f.
+    FINITE_BAG b1 ∧ FINITE_BAG b2 ⇒
+    (BAG_IMAGE f (b1 ⊎ b2) = BAG_IMAGE f b1 ⊎ BAG_IMAGE f b2)
+</pre>
+
+<DT><span class="strong">BAG_INN_0</span>
+<DD>
+<pre>
+⊢ ∀b e. BAG_INN e 0 b
+</pre>
+
+<DT><span class="strong">BAG_INN_BAG_DELETE</span>
+<DD>
+<pre>
+⊢ ∀b n e. BAG_INN e n b ∧ n > 0 ⇒ ∃b'. BAG_DELETE b e b'
+</pre>
+
+<DT><span class="strong">BAG_INN_BAG_FILTER</span>
+<DD>
+<pre>
+⊢ BAG_INN e n (BAG_FILTER P b) ⇔ (n = 0) ∨ P e ∧ BAG_INN e n b
+</pre>
+
+<DT><span class="strong">BAG_INN_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀b e1 e2.
+    BAG_INN e1 n (BAG_INSERT e2 b) ⇔
+    BAG_INN e1 (n − 1) b ∧ (e1 = e2) ∨ BAG_INN e1 n b
+</pre>
+
+<DT><span class="strong">BAG_INN_BAG_INSERT_STRONG</span>
+<DD>
+<pre>
+⊢ ∀b n e1 e2.
+    BAG_INN e1 n (BAG_INSERT e2 b) ⇔
+    BAG_INN e1 (n − 1) b ∧ (e1 = e2) ∨ BAG_INN e1 n b ∧ e1 ≠ e2
+</pre>
+
+<DT><span class="strong">BAG_INN_BAG_MERGE</span>
+<DD>
+<pre>
+⊢ ∀n e b1 b2. BAG_INN e n (BAG_MERGE b1 b2) ⇔ BAG_INN e n b1 ∨ BAG_INN e n b2
+</pre>
+
+<DT><span class="strong">BAG_INN_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀n e b1 b2.
+    BAG_INN e n (b1 ⊎ b2) ⇔
+    ∃m1 m2. (n = m1 + m2) ∧ BAG_INN e m1 b1 ∧ BAG_INN e m2 b2
+</pre>
+
+<DT><span class="strong">BAG_INN_EMPTY_BAG</span>
+<DD>
+<pre>
+⊢ ∀e n. BAG_INN e n {||} ⇔ (n = 0)
+</pre>
+
+<DT><span class="strong">BAG_INN_LESS</span>
+<DD>
+<pre>
+⊢ ∀b e n m. BAG_INN e n b ∧ m < n ⇒ BAG_INN e m b
+</pre>
+
+<DT><span class="strong">BAG_INSERT_CHOICE_REST</span>
+<DD>
+<pre>
+⊢ ∀b. b ≠ {||} ⇒ (b = BAG_INSERT (BAG_CHOICE b) (BAG_REST b))
+</pre>
+
+<DT><span class="strong">BAG_INSERT_DIFF</span>
+<DD>
+<pre>
+⊢ ∀x b. BAG_INSERT x b ≠ b
+</pre>
+
+<DT><span class="strong">BAG_INSERT_EQUAL</span>
+<DD>
+<pre>
+⊢ (BAG_INSERT a M = BAG_INSERT b N) ⇔
+  (M = N) ∧ (a = b) ∨ ∃k. (M = BAG_INSERT b k) ∧ (N = BAG_INSERT a k)
+</pre>
+
+<DT><span class="strong">BAG_INSERT_EQ_MERGE_DIFF</span>
+<DD>
+<pre>
+⊢ ∀a b c e.
+    (BAG_INSERT e a = BAG_MERGE b c) ⇒
+    (BAG_MERGE b c = BAG_INSERT e (BAG_MERGE (b − {|e|}) (c − {|e|})))
+</pre>
+
+<DT><span class="strong">BAG_INSERT_EQ_UNION</span>
+<DD>
+<pre>
+⊢ ∀e b1 b2 b. (BAG_INSERT e b = b1 ⊎ b2) ⇒ e ⋲ b1 ∨ e ⋲ b2
+</pre>
+
+<DT><span class="strong">BAG_INSERT_NOT_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀x b. BAG_INSERT x b ≠ {||}
+</pre>
+
+<DT><span class="strong">BAG_INSERT_ONE_ONE</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 x. (BAG_INSERT x b1 = BAG_INSERT x b2) ⇔ (b1 = b2)
+</pre>
+
+<DT><span class="strong">BAG_INSERT_SUB_BAG_E</span>
+<DD>
+<pre>
+⊢ BAG_INSERT e b ≤ c ⇒ e ⋲ c ∧ b ≤ c
+</pre>
+
+<DT><span class="strong">BAG_INSERT_UNION</span>
+<DD>
+<pre>
+⊢ ∀b e. BAG_INSERT e b = EL_BAG e ⊎ b
+</pre>
+
+<DT><span class="strong">BAG_INSERT_commutes</span>
+<DD>
+<pre>
+⊢ ∀b e1 e2. BAG_INSERT e1 (BAG_INSERT e2 b) = BAG_INSERT e2 (BAG_INSERT e1 b)
+</pre>
+
+<DT><span class="strong">BAG_INTER_FINITE</span>
+<DD>
+<pre>
+⊢ FINITE_BAG b1 ∨ FINITE_BAG b2 ⇒ FINITE_BAG (BAG_INTER b1 b2)
+</pre>
+
+<DT><span class="strong">BAG_INTER_SUB_BAG</span>
+<DD>
+<pre>
+⊢ BAG_INTER b1 b2 ≤ b1 ∧ BAG_INTER b1 b2 ≤ b2
+</pre>
+
+<DT><span class="strong">BAG_IN_BAG_DELETE</span>
+<DD>
+<pre>
+⊢ ∀b e. e ⋲ b ⇒ ∃b'. BAG_DELETE b e b'
+</pre>
+
+<DT><span class="strong">BAG_IN_BAG_DIFF_ALL_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 e. BAG_ALL_DISTINCT b1 ⇒ (e ⋲ b1 − b2 ⇔ e ⋲ b1 ∧ ¬(e ⋲ b2))
+</pre>
+
+<DT><span class="strong">BAG_IN_BAG_FILTER</span>
+<DD>
+<pre>
+⊢ e ⋲ BAG_FILTER P b ⇔ P e ∧ e ⋲ b
+</pre>
+
+<DT><span class="strong">BAG_IN_BAG_IMAGE_IMP</span>
+<DD>
+<pre>
+⊢ ∀x f b. x ⋲ BAG_IMAGE f b ⇒ ∃y. y ⋲ b ∧ (f y = x)
+</pre>
+
+<DT><span class="strong">BAG_IN_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀b e1 e2. e1 ⋲ BAG_INSERT e2 b ⇔ (e1 = e2) ∨ e1 ⋲ b
+</pre>
+
+<DT><span class="strong">BAG_IN_BAG_MERGE</span>
+<DD>
+<pre>
+⊢ ∀e b1 b2. e ⋲ BAG_MERGE b1 b2 ⇔ e ⋲ b1 ∨ e ⋲ b2
+</pre>
+
+<DT><span class="strong">BAG_IN_BAG_OF_SET</span>
+<DD>
+<pre>
+⊢ ∀P p. p ⋲ BAG_OF_SET P ⇔ p ∈ P
+</pre>
+
+<DT><span class="strong">BAG_IN_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 e. e ⋲ b1 ⊎ b2 ⇔ e ⋲ b1 ∨ e ⋲ b2
+</pre>
+
+<DT><span class="strong">BAG_IN_BIG_BAG_UNION</span>
+<DD>
+<pre>
+⊢ FINITE P ⇒ (e ⋲ BIG_BAG_UNION P ⇔ ∃b. e ⋲ b ∧ b ∈ P)
+</pre>
+
+<DT><span class="strong">BAG_IN_DIFF_E</span>
+<DD>
+<pre>
+⊢ e ⋲ b1 − b2 ⇒ e ⋲ b1
+</pre>
+
+<DT><span class="strong">BAG_IN_DIFF_I</span>
+<DD>
+<pre>
+⊢ e ⋲ b1 ∧ ¬(e ⋲ b2) ⇒ e ⋲ b1 − b2
+</pre>
+
+<DT><span class="strong">BAG_IN_DIVIDES</span>
+<DD>
+<pre>
+⊢ ∀b x a. FINITE_BAG b ∧ x ⋲ b ⇒ divides x (BAG_GEN_PROD b a)
+</pre>
+
+<DT><span class="strong">BAG_IN_FINITE_BAG_IMAGE</span>
+<DD>
+<pre>
+⊢ FINITE_BAG b ⇒ (x ⋲ BAG_IMAGE f b ⇔ ∃y. (f y = x) ∧ y ⋲ b)
+</pre>
+
+<DT><span class="strong">BAG_IN_unibag</span>
+<DD>
+<pre>
+⊢ ∀e b. e ⋲ unibag b ⇔ e ⋲ b
+</pre>
+
+<DT><span class="strong">BAG_LESS_ADD</span>
+<DD>
+<pre>
+⊢ mlt1 r N (M0 ⊎ {|a|}) ⇒
+  (∃M. mlt1 r M M0 ∧ (N = M ⊎ {|a|})) ∨
+  ∃KK. (∀b. b ⋲ KK ⇒ r b a) ∧ (N = M0 ⊎ KK)
+</pre>
+
+<DT><span class="strong">BAG_MEMBER_NOT_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀b. (∃x. x ⋲ b) ⇔ b ≠ {||}
+</pre>
+
+<DT><span class="strong">BAG_MERGE_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀e a b.
+    (a e ≤ b e ⇒ (BAG_MERGE a (BAG_INSERT e b) = BAG_INSERT e (BAG_MERGE a b))) ∧
+    (b e < a e ⇒ (BAG_MERGE a (BAG_INSERT e b) = BAG_MERGE a b)) ∧
+    (a e < b e ⇒ (BAG_MERGE (BAG_INSERT e a) b = BAG_MERGE a b)) ∧
+    (b e ≤ a e ⇒ (BAG_MERGE (BAG_INSERT e a) b = BAG_INSERT e (BAG_MERGE a b))) ∧
+    ((a e = b e) ⇒
+     (BAG_MERGE (BAG_INSERT e a) (BAG_INSERT e b) =
+      BAG_INSERT e (BAG_MERGE a b)))
+</pre>
+
+<DT><span class="strong">BAG_MERGE_CARD</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    FINITE_BAG a ∧ FINITE_BAG b ⇒
+    BAG_CARD (BAG_MERGE a b) ≤ BAG_CARD a + BAG_CARD b
+</pre>
+
+<DT><span class="strong">BAG_MERGE_ELBAG_SUB_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀A b. BAG_MERGE {|A|} b ≤ BAG_INSERT A b
+</pre>
+
+<DT><span class="strong">BAG_MERGE_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀b. (BAG_MERGE {||} b = b) ∧ (BAG_MERGE b {||} = b)
+</pre>
+
+<DT><span class="strong">BAG_MERGE_EQ_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀a b. (BAG_MERGE a b = {||}) ⇔ (a = {||}) ∧ (b = {||})
+</pre>
+
+<DT><span class="strong">BAG_MERGE_IDEM</span>
+<DD>
+<pre>
+⊢ ∀b. BAG_MERGE b b = b
+</pre>
+
+<DT><span class="strong">BAG_MERGE_SUB_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀s t. BAG_MERGE s t ≤ s ⊎ t
+</pre>
+
+<DT><span class="strong">BAG_NOT_LESS_EMPTY</span>
+<DD>
+<pre>
+⊢ ¬mlt1 r b {||}
+</pre>
+
+<DT><span class="strong">BAG_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ SET_OF_BAG {||} = ∅
+</pre>
+
+<DT><span class="strong">BAG_OF_SET_BAG_DIFF_DIFF</span>
+<DD>
+<pre>
+⊢ ∀b s. BAG_OF_SET s − b = BAG_OF_SET (s DIFF SET_OF_BAG b)
+</pre>
+
+<DT><span class="strong">BAG_OF_SET_DIFF</span>
+<DD>
+<pre>
+⊢ ∀b b'. BAG_OF_SET (b DIFF b') = BAG_FILTER (COMPL b') (BAG_OF_SET b)
+</pre>
+
+<DT><span class="strong">BAG_OF_SET_DISJOINT_UNION</span>
+<DD>
+<pre>
+⊢ ∀s1 s2.
+    DISJOINT s1 s2 ⇒ (BAG_OF_SET (s1 ∪ s2) = BAG_OF_SET s1 ⊎ BAG_OF_SET s2)
+</pre>
+
+<DT><span class="strong">BAG_OF_SET_EQ_INSERT</span>
+<DD>
+<pre>
+⊢ ∀e b s. (BAG_INSERT e b = BAG_OF_SET s) ⇒ ∃s'. s = e INSERT s'
+</pre>
+
+<DT><span class="strong">BAG_OF_SET_INJ</span>
+<DD>
+<pre>
+⊢ ∀s1 s2. (BAG_OF_SET s1 = BAG_OF_SET s2) ⇔ (s1 = s2)
+</pre>
+
+<DT><span class="strong">BAG_OF_SET_INSERT</span>
+<DD>
+<pre>
+⊢ ∀e s. BAG_OF_SET (e INSERT s) = BAG_MERGE {|e|} (BAG_OF_SET s)
+</pre>
+
+<DT><span class="strong">BAG_OF_SET_INSERT_NON_ELEMENT</span>
+<DD>
+<pre>
+⊢ ∀e s. e ∉ s ⇒ (BAG_OF_SET (e INSERT s) = BAG_INSERT e (BAG_OF_SET s))
+</pre>
+
+<DT><span class="strong">BAG_OF_SET_UNION</span>
+<DD>
+<pre>
+⊢ ∀b b'. BAG_OF_SET (b ∪ b') = BAG_MERGE (BAG_OF_SET b) (BAG_OF_SET b')
+</pre>
+
+<DT><span class="strong">BAG_REST_SING</span>
+<DD>
+<pre>
+⊢ BAG_REST {|x|} = {||}
+</pre>
+
+<DT><span class="strong">BAG_SIZE_EMPTY</span>
+<DD>
+<pre>
+⊢ bag_size eltsize {||} = 0
+</pre>
+
+<DT><span class="strong">BAG_SIZE_INSERT</span>
+<DD>
+<pre>
+⊢ FINITE_BAG b ⇒
+  (bag_size eltsize (BAG_INSERT e b) = 1 + eltsize e + bag_size eltsize b)
+</pre>
+
+<DT><span class="strong">BAG_UNION_DIFF</span>
+<DD>
+<pre>
+⊢ ∀X Y Z. Z ≤ Y ⇒ (X ⊎ (Y − Z) = X ⊎ Y − Z) ∧ (Y − Z ⊎ X = X ⊎ Y − Z)
+</pre>
+
+<DT><span class="strong">BAG_UNION_DIFF_eliminate</span>
+<DD>
+<pre>
+⊢ (b ⊎ c − c = b) ∧ (c ⊎ b − c = b)
+</pre>
+
+<DT><span class="strong">BAG_UNION_EMPTY</span>
+<DD>
+<pre>
+⊢ (∀b. b ⊎ {||} = b) ∧ (∀b. {||} ⊎ b = b) ∧
+  ∀b1 b2. (b1 ⊎ b2 = {||}) ⇔ (b1 = {||}) ∧ (b2 = {||})
+</pre>
+
+<DT><span class="strong">BAG_UNION_EQ_LCANCEL1</span>
+<DD>
+<pre>
+⊢ (b = b ⊎ c) ⇔ (c = {||})
+</pre>
+
+<DT><span class="strong">BAG_UNION_EQ_LEFT</span>
+<DD>
+<pre>
+⊢ ∀b c d. (b ⊎ c = b ⊎ d) ⇒ (c = d)
+</pre>
+
+<DT><span class="strong">BAG_UNION_EQ_RCANCEL1</span>
+<DD>
+<pre>
+⊢ (b = c ⊎ b) ⇔ (c = {||})
+</pre>
+
+<DT><span class="strong">BAG_UNION_INSERT</span>
+<DD>
+<pre>
+⊢ ∀e b1 b2.
+    (BAG_INSERT e b1 ⊎ b2 = BAG_INSERT e (b1 ⊎ b2)) ∧
+    (b1 ⊎ BAG_INSERT e b2 = BAG_INSERT e (b1 ⊎ b2))
+</pre>
+
+<DT><span class="strong">BAG_UNION_LEFT_CANCEL</span>
+<DD>
+<pre>
+⊢ ∀b b1 b2. (b ⊎ b1 = b ⊎ b2) ⇔ (b1 = b2)
+</pre>
+
+<DT><span class="strong">BAG_UNION_RIGHT_CANCEL</span>
+<DD>
+<pre>
+⊢ ∀b b1 b2. (b1 ⊎ b = b2 ⊎ b) ⇔ (b1 = b2)
+</pre>
+
+<DT><span class="strong">BAG_cases</span>
+<DD>
+<pre>
+⊢ ∀b. (b = {||}) ∨ ∃b0 e. b = BAG_INSERT e b0
+</pre>
+
+<DT><span class="strong">BCARD_0</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ ((BAG_CARD b = 0) ⇔ (b = {||}))
+</pre>
+
+<DT><span class="strong">BCARD_SUC</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒
+      ∀n. (BAG_CARD b = SUC n) ⇔
+          ∃b0 e. (b = BAG_INSERT e b0) ∧ (BAG_CARD b0 = n)
+</pre>
+
+<DT><span class="strong">BIG_BAG_UNION_DELETE</span>
+<DD>
+<pre>
+⊢ FINITE sob ⇒
+  (BIG_BAG_UNION (sob DELETE b) =
+   if b ∈ sob then BIG_BAG_UNION sob − b else BIG_BAG_UNION sob)
+</pre>
+
+<DT><span class="strong">BIG_BAG_UNION_EMPTY</span>
+<DD>
+<pre>
+⊢ BIG_BAG_UNION ∅ = {||}
+</pre>
+
+<DT><span class="strong">BIG_BAG_UNION_EQ_ELEMENT</span>
+<DD>
+<pre>
+⊢ FINITE sob ∧ b ∈ sob ⇒
+  ((BIG_BAG_UNION sob = b) ⇔ ∀b'. b' ∈ sob ⇒ (b' = b) ∨ (b' = {||}))
+</pre>
+
+<DT><span class="strong">BIG_BAG_UNION_EQ_EMPTY_BAG</span>
+<DD>
+<pre>
+⊢ ∀sob. FINITE sob ⇒ ((BIG_BAG_UNION sob = {||}) ⇔ ∀b. b ∈ sob ⇒ (b = {||}))
+</pre>
+
+<DT><span class="strong">BIG_BAG_UNION_INSERT</span>
+<DD>
+<pre>
+⊢ FINITE sob ⇒
+  (BIG_BAG_UNION (b INSERT sob) = b ⊎ BIG_BAG_UNION (sob DELETE b))
+</pre>
+
+<DT><span class="strong">BIG_BAG_UNION_ITSET_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀sob. FINITE sob ⇒ (BIG_BAG_UNION sob = ITSET $⊎ sob {||})
+</pre>
+
+<DT><span class="strong">BIG_BAG_UNION_UNION</span>
+<DD>
+<pre>
+⊢ FINITE s1 ∧ FINITE s2 ⇒
+  (BIG_BAG_UNION (s1 ∪ s2) =
+   BIG_BAG_UNION s1 ⊎ BIG_BAG_UNION s2 − BIG_BAG_UNION (s1 ∩ s2))
+</pre>
+
+<DT><span class="strong">COMMUTING_ITBAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀f b.
+    (∀x y z. f x (f y z) = f y (f x z)) ∧ FINITE_BAG b ⇒
+    ∀x a. ITBAG f (BAG_INSERT x b) a = ITBAG f b (f x a)
+</pre>
+
+<DT><span class="strong">COMMUTING_ITBAG_RECURSES</span>
+<DD>
+<pre>
+⊢ ∀f e b a.
+    (∀x y z. f x (f y z) = f y (f x z)) ∧ FINITE_BAG b ⇒
+    (ITBAG f (BAG_INSERT e b) a = f e (ITBAG f b a))
+</pre>
+
+<DT><span class="strong">COMM_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. b1 ⊎ b2 = b2 ⊎ b1
+</pre>
+
+<DT><span class="strong">C_BAG_INSERT_ONE_ONE</span>
+<DD>
+<pre>
+⊢ ∀x y b. (BAG_INSERT x b = BAG_INSERT y b) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">EL_BAG_11</span>
+<DD>
+<pre>
+⊢ ∀x y. (EL_BAG x = EL_BAG y) ⇒ (x = y)
+</pre>
+
+<DT><span class="strong">EL_BAG_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ({|x|} = BAG_INSERT y b) ⇔ (x = y) ∧ (b = {||})
+</pre>
+
+<DT><span class="strong">EL_BAG_INSERT_squeeze</span>
+<DD>
+<pre>
+⊢ ∀x b y. (EL_BAG x = BAG_INSERT y b) ⇒ (x = y) ∧ (b = {||})
+</pre>
+
+<DT><span class="strong">EL_BAG_SUB_BAG</span>
+<DD>
+<pre>
+⊢ {|x|} ≤ b ⇔ x ⋲ b
+</pre>
+
+<DT><span class="strong">EMPTY_BAG_alt</span>
+<DD>
+<pre>
+⊢ {||} = (λx. 0)
+</pre>
+
+<DT><span class="strong">FINITE_BAG_DIFF</span>
+<DD>
+<pre>
+⊢ ∀b1. FINITE_BAG b1 ⇒ ∀b2. FINITE_BAG (b1 − b2)
+</pre>
+
+<DT><span class="strong">FINITE_BAG_DIFF_dual</span>
+<DD>
+<pre>
+⊢ ∀b1. FINITE_BAG b1 ⇒ ∀b2. FINITE_BAG (b2 − b1) ⇒ FINITE_BAG b2
+</pre>
+
+<DT><span class="strong">FINITE_BAG_FILTER</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ FINITE_BAG (BAG_FILTER P b)
+</pre>
+
+<DT><span class="strong">FINITE_BAG_INDUCT</span>
+<DD>
+<pre>
+⊢ ∀P. P {||} ∧ (∀b. P b ⇒ ∀e. P (BAG_INSERT e b)) ⇒ ∀b. FINITE_BAG b ⇒ P b
+</pre>
+
+<DT><span class="strong">FINITE_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ ∀e. FINITE_BAG (BAG_INSERT e b)
+</pre>
+
+<DT><span class="strong">FINITE_BAG_MERGE</span>
+<DD>
+<pre>
+⊢ ∀a b. FINITE_BAG (BAG_MERGE a b) ⇔ FINITE_BAG a ∧ FINITE_BAG b
+</pre>
+
+<DT><span class="strong">FINITE_BAG_OF_SET</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE_BAG (BAG_OF_SET s) ⇔ FINITE s
+</pre>
+
+<DT><span class="strong">FINITE_BAG_THM</span>
+<DD>
+<pre>
+⊢ FINITE_BAG {||} ∧ ∀e b. FINITE_BAG (BAG_INSERT e b) ⇔ FINITE_BAG b
+</pre>
+
+<DT><span class="strong">FINITE_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. FINITE_BAG (b1 ⊎ b2) ⇔ FINITE_BAG b1 ∧ FINITE_BAG b2
+</pre>
+
+<DT><span class="strong">FINITE_BIG_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀sob.
+    FINITE sob ∧ (∀b. b ∈ sob ⇒ FINITE_BAG b) ⇒ FINITE_BAG (BIG_BAG_UNION sob)
+</pre>
+
+<DT><span class="strong">FINITE_EL_BAG</span>
+<DD>
+<pre>
+⊢ FINITE_BAG (EL_BAG e)
+</pre>
+
+<DT><span class="strong">FINITE_EMPTY_BAG</span>
+<DD>
+<pre>
+⊢ FINITE_BAG {||}
+</pre>
+
+<DT><span class="strong">FINITE_SET_OF_BAG</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE (SET_OF_BAG b) ⇔ FINITE_BAG b
+</pre>
+
+<DT><span class="strong">FINITE_SUB_BAG</span>
+<DD>
+<pre>
+⊢ ∀b1. FINITE_BAG b1 ⇒ ∀b2. b2 ≤ b1 ⇒ FINITE_BAG b2
+</pre>
+
+<DT><span class="strong">FINITE_SUB_BAGS</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG b ⇒ FINITE {s | s ≤ b}
+</pre>
+
+<DT><span class="strong">IN_SET_OF_BAG</span>
+<DD>
+<pre>
+⊢ ∀x b. x ∈ SET_OF_BAG b ⇔ x ⋲ b
+</pre>
+
+<DT><span class="strong">ITBAG_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀f acc. ITBAG f {||} acc = acc
+</pre>
+
+<DT><span class="strong">ITBAG_IND</span>
+<DD>
+<pre>
+⊢ ∀P. (∀b acc.
+         (FINITE_BAG b ∧ b ≠ {||} ⇒ P (BAG_REST b) (f (BAG_CHOICE b) acc)) ⇒
+         P b acc) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">ITBAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀f acc.
+    FINITE_BAG b ⇒
+    (ITBAG f (BAG_INSERT x b) acc =
+     ITBAG f (BAG_REST (BAG_INSERT x b)) (f (BAG_CHOICE (BAG_INSERT x b)) acc))
+</pre>
+
+<DT><span class="strong">ITBAG_SING</span>
+<DD>
+<pre>
+⊢ ITBAG f {|x|} a = f x a
+</pre>
+
+<DT><span class="strong">ITBAG_THM</span>
+<DD>
+<pre>
+⊢ ∀b f acc.
+    FINITE_BAG b ⇒
+    (ITBAG f b acc =
+     if b = {||} then acc else ITBAG f (BAG_REST b) (f (BAG_CHOICE b) acc))
+</pre>
+
+<DT><span class="strong">ITSET_BAG_INSERT_BAG_UNION_BAG_IMAGE_BAG_OF_SET</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    FINITE s ⇒
+    ∀a. ITSET (λx b. BAG_INSERT (f x) b) s a = a ⊎ BAG_IMAGE f (BAG_OF_SET s)
+</pre>
+
+<DT><span class="strong">MONOID_BAG_UNION_EMPTY_BAG</span>
+<DD>
+<pre>
+⊢ MONOID $⊎ {||}
+</pre>
+
+<DT><span class="strong">NOT_BAG_IN</span>
+<DD>
+<pre>
+⊢ ∀b x. (b x = 0) ⇔ ¬(x ⋲ b)
+</pre>
+
+<DT><span class="strong">NOT_IN_BAG_DIFF</span>
+<DD>
+<pre>
+⊢ ∀x b1 b2. ¬(x ⋲ b1) ⇒ (b1 − BAG_INSERT x b2 = b1 − b2)
+</pre>
+
+<DT><span class="strong">NOT_IN_EMPTY_BAG</span>
+<DD>
+<pre>
+⊢ ∀x. ¬(x ⋲ {||})
+</pre>
+
+<DT><span class="strong">NOT_IN_SUB_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 e. ¬(e ⋲ b1) ⇒ (b1 ≤ BAG_INSERT e b2 ⇔ b1 ≤ b2)
+</pre>
+
+<DT><span class="strong">NOT_mlt_EMPTY</span>
+<DD>
+<pre>
+⊢ ¬mlt R b {||}
+</pre>
+
+<DT><span class="strong">PSUB_BAG_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. ¬(b1 < b2 ∧ b2 < b1)
+</pre>
+
+<DT><span class="strong">PSUB_BAG_CARD</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. FINITE_BAG b2 ∧ b1 < b2 ⇒ BAG_CARD b1 < BAG_CARD b2
+</pre>
+
+<DT><span class="strong">PSUB_BAG_IRREFL</span>
+<DD>
+<pre>
+⊢ ∀b. ¬(b < b)
+</pre>
+
+<DT><span class="strong">PSUB_BAG_NOT_EQ</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. b1 < b2 ⇒ b1 ≠ b2
+</pre>
+
+<DT><span class="strong">PSUB_BAG_REST</span>
+<DD>
+<pre>
+⊢ ∀b. b ≠ {||} ⇒ BAG_REST b < b
+</pre>
+
+<DT><span class="strong">PSUB_BAG_SUB_BAG</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. b1 < b2 ⇒ b1 ≤ b2
+</pre>
+
+<DT><span class="strong">PSUB_BAG_TRANS</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 b3. b1 < b2 ∧ b2 < b3 ⇒ b1 < b3
+</pre>
+
+<DT><span class="strong">SET_BAG_I</span>
+<DD>
+<pre>
+⊢ ∀s. SET_OF_BAG (BAG_OF_SET s) = s
+</pre>
+
+<DT><span class="strong">SET_OF_BAG_DIFF_SUBSET_down</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. SET_OF_BAG b1 DIFF SET_OF_BAG b2 ⊆ SET_OF_BAG (b1 − b2)
+</pre>
+
+<DT><span class="strong">SET_OF_BAG_DIFF_SUBSET_up</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. SET_OF_BAG (b1 − b2) ⊆ SET_OF_BAG b1
+</pre>
+
+<DT><span class="strong">SET_OF_BAG_EQ_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀b. ((∅ = SET_OF_BAG b) ⇔ (b = {||})) ∧ ((SET_OF_BAG b = ∅) ⇔ (b = {||}))
+</pre>
+
+<DT><span class="strong">SET_OF_BAG_EQ_INSERT</span>
+<DD>
+<pre>
+⊢ ∀b e s.
+    (e INSERT s = SET_OF_BAG b) ⇔
+    ∃b0 eb.
+      (b = eb ⊎ b0) ∧ (s = SET_OF_BAG b0) ∧ (∀e'. e' ⋲ eb ⇒ (e' = e)) ∧
+      (e ∉ s ⇒ e ⋲ eb)
+</pre>
+
+<DT><span class="strong">SET_OF_BAG_IMAGE</span>
+<DD>
+<pre>
+⊢ SET_OF_BAG (BAG_IMAGE f b) = IMAGE f (SET_OF_BAG b)
+</pre>
+
+<DT><span class="strong">SET_OF_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀e b. SET_OF_BAG (BAG_INSERT e b) = e INSERT SET_OF_BAG b
+</pre>
+
+<DT><span class="strong">SET_OF_BAG_MERGE</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. SET_OF_BAG (BAG_MERGE b1 b2) = SET_OF_BAG b1 ∪ SET_OF_BAG b2
+</pre>
+
+<DT><span class="strong">SET_OF_BAG_SING</span>
+<DD>
+<pre>
+⊢ ∀b e. (SET_OF_BAG b = {e}) ⇔ ∃n. 0 < n ∧ (b = (λx. if x = e then n else 0))
+</pre>
+
+<DT><span class="strong">SET_OF_BAG_SING_CARD</span>
+<DD>
+<pre>
+⊢ ∀b e. (SET_OF_BAG b = {e}) ⇒ (BAG_CARD b = b e)
+</pre>
+
+<DT><span class="strong">SET_OF_BAG_UNION</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. SET_OF_BAG (b1 ⊎ b2) = SET_OF_BAG b1 ∪ SET_OF_BAG b2
+</pre>
+
+<DT><span class="strong">SET_OF_EL_BAG</span>
+<DD>
+<pre>
+⊢ ∀e. SET_OF_BAG (EL_BAG e) = {e}
+</pre>
+
+<DT><span class="strong">SET_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ BAG_OF_SET ∅ = {||}
+</pre>
+
+<DT><span class="strong">SET_OF_SINGLETON_BAG</span>
+<DD>
+<pre>
+⊢ ∀e. SET_OF_BAG {|e|} = {e}
+</pre>
+
+<DT><span class="strong">SING_BAG_THM</span>
+<DD>
+<pre>
+⊢ ∀e. SING_BAG {|e|}
+</pre>
+
+<DT><span class="strong">SING_EL_BAG</span>
+<DD>
+<pre>
+⊢ ∀e. SING_BAG (EL_BAG e)
+</pre>
+
+<DT><span class="strong">STRONG_FINITE_BAG_INDUCT</span>
+<DD>
+<pre>
+⊢ ∀P. P {||} ∧ (∀b. FINITE_BAG b ∧ P b ⇒ ∀e. P (BAG_INSERT e b)) ⇒
+      ∀b. FINITE_BAG b ⇒ P b
+</pre>
+
+<DT><span class="strong">SUB_BAG_ALL_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. BAG_ALL_DISTINCT b1 ⇒ (b1 ≤ b2 ⇔ ∀x. x ⋲ b1 ⇒ x ⋲ b2)
+</pre>
+
+<DT><span class="strong">SUB_BAG_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. b1 ≤ b2 ∧ b2 ≤ b1 ⇒ (b1 = b2)
+</pre>
+
+<DT><span class="strong">SUB_BAG_BAG_DIFF</span>
+<DD>
+<pre>
+⊢ ∀X Y Y' Z W. X − Y ≤ Z − W ⇒ X − (Y ⊎ Y') ≤ Z − (W ⊎ Y')
+</pre>
+
+<DT><span class="strong">SUB_BAG_BAG_IN</span>
+<DD>
+<pre>
+⊢ ∀x b1 b2. BAG_INSERT x b1 ≤ b2 ⇒ x ⋲ b2
+</pre>
+
+<DT><span class="strong">SUB_BAG_CARD</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. FINITE_BAG b2 ∧ b1 ≤ b2 ⇒ BAG_CARD b1 ≤ BAG_CARD b2
+</pre>
+
+<DT><span class="strong">SUB_BAG_DIFF</span>
+<DD>
+<pre>
+⊢ (∀b1 b2. b1 ≤ b2 ⇒ ∀b3. b1 − b3 ≤ b2) ∧
+  ∀b1 b2 b3 b4. b2 ≤ b1 ⇒ b4 ≤ b3 ⇒ (b1 − b2 ≤ b3 − b4 ⇔ b1 ⊎ b4 ≤ b2 ⊎ b3)
+</pre>
+
+<DT><span class="strong">SUB_BAG_DIFF_EQ</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. b1 ≤ b2 ⇒ (b2 = b1 ⊎ (b2 − b1))
+</pre>
+
+<DT><span class="strong">SUB_BAG_DIFF_simple</span>
+<DD>
+<pre>
+⊢ b − c ≤ b
+</pre>
+
+<DT><span class="strong">SUB_BAG_EL_BAG</span>
+<DD>
+<pre>
+⊢ ∀e b. EL_BAG e ≤ b ⇔ e ⋲ b
+</pre>
+
+<DT><span class="strong">SUB_BAG_EMPTY</span>
+<DD>
+<pre>
+⊢ (∀b. {||} ≤ b) ∧ ∀b. b ≤ {||} ⇔ (b = {||})
+</pre>
+
+<DT><span class="strong">SUB_BAG_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. b1 ≤ b2 ⇔ ∃b. b2 = b1 ⊎ b
+</pre>
+
+<DT><span class="strong">SUB_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀e b1 b2. BAG_INSERT e b1 ≤ BAG_INSERT e b2 ⇔ b1 ≤ b2
+</pre>
+
+<DT><span class="strong">SUB_BAG_INSERT_I</span>
+<DD>
+<pre>
+⊢ ∀b c e. b ≤ c ⇒ b ≤ BAG_INSERT e c
+</pre>
+
+<DT><span class="strong">SUB_BAG_LEQ</span>
+<DD>
+<pre>
+⊢ b1 ≤ b2 ⇔ ∀x. b1 x ≤ b2 x
+</pre>
+
+<DT><span class="strong">SUB_BAG_PSUB_BAG</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. (b1 ≤ b2 ⇔ b1 < b2) ∨ (b1 = b2)
+</pre>
+
+<DT><span class="strong">SUB_BAG_REFL</span>
+<DD>
+<pre>
+⊢ ∀b. b ≤ b
+</pre>
+
+<DT><span class="strong">SUB_BAG_REST</span>
+<DD>
+<pre>
+⊢ ∀b. BAG_REST b ≤ b
+</pre>
+
+<DT><span class="strong">SUB_BAG_SET</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. b1 ≤ b2 ⇒ SET_OF_BAG b1 ⊆ SET_OF_BAG b2
+</pre>
+
+<DT><span class="strong">SUB_BAG_SING</span>
+<DD>
+<pre>
+⊢ b ≤ {|e|} ⇔ (b = {||}) ∨ (b = {|e|})
+</pre>
+
+<DT><span class="strong">SUB_BAG_TRANS</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 b3. b1 ≤ b2 ∧ b2 ≤ b3 ⇒ b1 ≤ b3
+</pre>
+
+<DT><span class="strong">SUB_BAG_UNION</span>
+<DD>
+<pre>
+⊢ (∀b1 b2. b1 ≤ b2 ⇒ ∀b. b1 ≤ b2 ⊎ b) ∧ (∀b1 b2. b1 ≤ b2 ⇒ ∀b. b1 ≤ b ⊎ b2) ∧
+  (∀b1 b2 b3. b1 ≤ b2 ⊎ b3 ⇒ ∀b. b1 ≤ b2 ⊎ b ⊎ b3) ∧
+  (∀b1 b2 b3. b1 ≤ b2 ⊎ b3 ⇒ ∀b. b1 ≤ b ⊎ b2 ⊎ b3) ∧
+  (∀b1 b2 b3. b1 ≤ b3 ⊎ b2 ⇒ ∀b. b1 ≤ b3 ⊎ (b2 ⊎ b)) ∧
+  (∀b1 b2 b3. b1 ≤ b3 ⊎ b2 ⇒ ∀b. b1 ≤ b3 ⊎ (b ⊎ b2)) ∧
+  (∀b1 b2 b3 b4. b1 ≤ b3 ⇒ b2 ≤ b4 ⇒ b1 ⊎ b2 ≤ b3 ⊎ b4) ∧
+  (∀b1 b2 b3 b4. b1 ≤ b4 ⇒ b2 ≤ b3 ⇒ b1 ⊎ b2 ≤ b3 ⊎ b4) ∧
+  (∀b1 b2 b3 b4 b5. b1 ≤ b3 ⊎ b5 ⇒ b2 ≤ b4 ⇒ b1 ⊎ b2 ≤ b3 ⊎ b4 ⊎ b5) ∧
+  (∀b1 b2 b3 b4 b5. b1 ≤ b4 ⊎ b5 ⇒ b2 ≤ b3 ⇒ b1 ⊎ b2 ≤ b3 ⊎ b4 ⊎ b5) ∧
+  (∀b1 b2 b3 b4 b5. b2 ≤ b3 ⊎ b5 ⇒ b1 ≤ b4 ⇒ b1 ⊎ b2 ≤ b3 ⊎ b4 ⊎ b5) ∧
+  (∀b1 b2 b3 b4 b5. b2 ≤ b4 ⊎ b5 ⇒ b1 ≤ b3 ⇒ b1 ⊎ b2 ≤ b3 ⊎ b4 ⊎ b5) ∧
+  (∀b1 b2 b3 b4 b5. b1 ≤ b5 ⊎ b3 ⇒ b2 ≤ b4 ⇒ b2 ⊎ b1 ≤ b5 ⊎ (b3 ⊎ b4)) ∧
+  (∀b1 b2 b3 b4 b5. b1 ≤ b5 ⊎ b4 ⇒ b2 ≤ b3 ⇒ b2 ⊎ b1 ≤ b5 ⊎ (b3 ⊎ b4)) ∧
+  (∀b1 b2 b3 b4 b5. b2 ≤ b5 ⊎ b3 ⇒ b1 ≤ b4 ⇒ b2 ⊎ b1 ≤ b5 ⊎ (b3 ⊎ b4)) ∧
+  (∀b1 b2 b3 b4 b5. b2 ≤ b5 ⊎ b4 ⇒ b1 ≤ b3 ⇒ b2 ⊎ b1 ≤ b5 ⊎ (b3 ⊎ b4)) ∧
+  (∀b1 b2 b3 b4 b5. b1 ⊎ b2 ≤ b4 ⇒ b3 ≤ b5 ⇒ b1 ⊎ b3 ⊎ b2 ≤ b4 ⊎ b5) ∧
+  (∀b1 b2 b3 b4 b5. b1 ⊎ b2 ≤ b5 ⇒ b3 ≤ b4 ⇒ b1 ⊎ b3 ⊎ b2 ≤ b4 ⊎ b5) ∧
+  (∀b1 b2 b3 b4 b5. b3 ⊎ b2 ≤ b4 ⇒ b1 ≤ b5 ⇒ b1 ⊎ b3 ⊎ b2 ≤ b4 ⊎ b5) ∧
+  (∀b1 b2 b3 b4 b5. b3 ⊎ b2 ≤ b5 ⇒ b1 ≤ b4 ⇒ b1 ⊎ b3 ⊎ b2 ≤ b4 ⊎ b5) ∧
+  (∀b1 b2 b3 b4 b5. b2 ⊎ b1 ≤ b4 ⇒ b3 ≤ b5 ⇒ b2 ⊎ (b1 ⊎ b3) ≤ b5 ⊎ b4) ∧
+  (∀b1 b2 b3 b4 b5. b2 ⊎ b1 ≤ b5 ⇒ b3 ≤ b4 ⇒ b2 ⊎ (b1 ⊎ b3) ≤ b5 ⊎ b4) ∧
+  (∀b1 b2 b3 b4 b5. b2 ⊎ b3 ≤ b4 ⇒ b1 ≤ b5 ⇒ b2 ⊎ (b1 ⊎ b3) ≤ b5 ⊎ b4) ∧
+  ∀b1 b2 b3 b4 b5. b2 ⊎ b3 ≤ b5 ⇒ b1 ≤ b4 ⇒ b2 ⊎ (b1 ⊎ b3) ≤ b5 ⊎ b4
+</pre>
+
+<DT><span class="strong">SUB_BAG_UNION_DIFF</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 b3. b1 ≤ b3 ⇒ (b2 ≤ b3 − b1 ⇔ b1 ⊎ b2 ≤ b3)
+</pre>
+
+<DT><span class="strong">SUB_BAG_UNION_MONO</span>
+<DD>
+<pre>
+⊢ (∀x y. x ≤ x ⊎ y) ∧ ∀x y. x ≤ y ⊎ x
+</pre>
+
+<DT><span class="strong">SUB_BAG_UNION_down</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 b3. b1 ⊎ b2 ≤ b3 ⇒ b1 ≤ b3 ∧ b2 ≤ b3
+</pre>
+
+<DT><span class="strong">SUB_BAG_UNION_eliminate</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 b3.
+    (b1 ⊎ b2 ≤ b1 ⊎ b3 ⇔ b2 ≤ b3) ∧ (b1 ⊎ b2 ≤ b3 ⊎ b1 ⇔ b2 ≤ b3) ∧
+    (b2 ⊎ b1 ≤ b1 ⊎ b3 ⇔ b2 ≤ b3) ∧ (b2 ⊎ b1 ≤ b3 ⊎ b1 ⇔ b2 ≤ b3)
+</pre>
+
+<DT><span class="strong">TC_mlt1_FINITE_BAG</span>
+<DD>
+<pre>
+⊢ ∀b1 b2. mlt R b1 b2 ⇒ FINITE_BAG b1 ∧ FINITE_BAG b2
+</pre>
+
+<DT><span class="strong">TC_mlt1_UNION1_I</span>
+<DD>
+<pre>
+⊢ ∀b2 b1. FINITE_BAG b2 ∧ FINITE_BAG b1 ∧ b1 ≠ {||} ⇒ mlt R b2 (b1 ⊎ b2)
+</pre>
+
+<DT><span class="strong">TC_mlt1_UNION2_I</span>
+<DD>
+<pre>
+⊢ ∀b2 b1. FINITE_BAG b2 ∧ FINITE_BAG b1 ∧ b2 ≠ {||} ⇒ mlt R b1 (b1 ⊎ b2)
+</pre>
+
+<DT><span class="strong">WF_mlt1</span>
+<DD>
+<pre>
+⊢ WF R ⇒ WF (mlt1 R)
+</pre>
+
+<DT><span class="strong">bdominates_BAG_DIFF</span>
+<DD>
+<pre>
+⊢ WF R ∧ transitive R ∧ bdominates R x y ∧ FINITE_BAG i ∧ i ≤ x ∧ i ≤ y ⇒
+  bdominates R (x − i) (y − i)
+</pre>
+
+<DT><span class="strong">dominates_DIFF</span>
+<DD>
+<pre>
+⊢ WF R ∧ transitive R ∧ dominates R x y ∧ FINITE i ∧ i ⊆ x ∧ i ⊆ y ⇒
+  dominates R (x DIFF i) (y DIFF i)
+</pre>
+
+<DT><span class="strong">dominates_EMPTY</span>
+<DD>
+<pre>
+⊢ dominates R ∅ b
+</pre>
+
+<DT><span class="strong">dominates_SUBSET</span>
+<DD>
+<pre>
+⊢ transitive R ∧ FINITE Y ∧ dominates R Y X ∧ X ⊆ Y ∧ X ≠ ∅ ⇒
+  ∃x. x ∈ X ∧ R x x
+</pre>
+
+<DT><span class="strong">mlt1_INSERT_CANCEL</span>
+<DD>
+<pre>
+⊢ WF R ⇒ (mlt1 R (BAG_INSERT e a) (BAG_INSERT e b) ⇔ mlt1 R a b)
+</pre>
+
+<DT><span class="strong">mlt1_all_accessible</span>
+<DD>
+<pre>
+⊢ WF R ⇒ ∀M. WFP (mlt1 R) M
+</pre>
+
+<DT><span class="strong">mltLT_SING0</span>
+<DD>
+<pre>
+⊢ mlt $< {|0|} b ⇔ FINITE_BAG b ∧ b ≠ {|0|} ∧ b ≠ {||}
+</pre>
+
+<DT><span class="strong">mlt_INSERT_CANCEL</span>
+<DD>
+<pre>
+⊢ transitive R ∧ WF R ⇒ (mlt R (BAG_INSERT e a) (BAG_INSERT e b) ⇔ mlt R a b)
+</pre>
+
+<DT><span class="strong">mlt_INSERT_CANCEL_I</span>
+<DD>
+<pre>
+⊢ ∀a b. mlt R a b ⇒ mlt R (BAG_INSERT e a) (BAG_INSERT e b)
+</pre>
+
+<DT><span class="strong">mlt_NOT_REFL</span>
+<DD>
+<pre>
+⊢ WF R ⇒ ¬mlt R a a
+</pre>
+
+<DT><span class="strong">mlt_UNION_CANCEL_EQN</span>
+<DD>
+<pre>
+⊢ WF R ⇒
+  (mlt R b1 (b1 ⊎ b2) ⇔ FINITE_BAG b1 ∧ FINITE_BAG b2 ∧ b2 ≠ {||}) ∧
+  (mlt R b1 (b2 ⊎ b1) ⇔ FINITE_BAG b1 ∧ FINITE_BAG b2 ∧ b2 ≠ {||})
+</pre>
+
+<DT><span class="strong">mlt_UNION_EMPTY_EQN</span>
+<DD>
+<pre>
+⊢ T
+</pre>
+
+<DT><span class="strong">mlt_UNION_LCANCEL</span>
+<DD>
+<pre>
+⊢ WF R ∧ transitive R ⇒ (mlt R (c ⊎ a) (c ⊎ b) ⇔ mlt R a b ∧ FINITE_BAG c)
+</pre>
+
+<DT><span class="strong">mlt_UNION_LCANCEL_I</span>
+<DD>
+<pre>
+⊢ mlt R a b ∧ FINITE_BAG c ⇒ mlt R (c ⊎ a) (c ⊎ b)
+</pre>
+
+<DT><span class="strong">mlt_UNION_RCANCEL</span>
+<DD>
+<pre>
+⊢ WF R ∧ transitive R ⇒ (mlt R (a ⊎ c) (b ⊎ c) ⇔ mlt R a b ∧ FINITE_BAG c)
+</pre>
+
+<DT><span class="strong">mlt_UNION_RCANCEL_I</span>
+<DD>
+<pre>
+⊢ mlt R a b ∧ FINITE_BAG c ⇒ mlt R (a ⊎ c) (b ⊎ c)
+</pre>
+
+<DT><span class="strong">mlt_dominates_thm1</span>
+<DD>
+<pre>
+⊢ transitive R ⇒
+  ∀b1 b2.
+    mlt R b1 b2 ⇔
+    FINITE_BAG b1 ∧ FINITE_BAG b2 ∧
+    ∃x y. x ≠ {||} ∧ x ≤ b2 ∧ (b1 = b2 − x ⊎ y) ∧ bdominates R y x
+</pre>
+
+<DT><span class="strong">mlt_dominates_thm2</span>
+<DD>
+<pre>
+⊢ WF R ∧ transitive R ⇒
+  ∀b1 b2.
+    mlt R b1 b2 ⇔
+    FINITE_BAG b1 ∧ FINITE_BAG b2 ∧
+    ∃x y.
+      x ≠ {||} ∧ x ≤ b2 ∧ BAG_DISJOINT x y ∧ (b1 = b2 − x ⊎ y) ∧
+      bdominates R y x
+</pre>
+
+<DT><span class="strong">move_BAG_UNION_over_eq</span>
+<DD>
+<pre>
+⊢ ∀X Y Z. (X ⊎ Y = Z) ⇒ (X = Z − Y)
+</pre>
+
+<DT><span class="strong">unibag_ALL_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀b. BAG_ALL_DISTINCT (unibag b)
+</pre>
+
+<DT><span class="strong">unibag_DECOMPOSE</span>
+<DD>
+<pre>
+⊢ unibag g ≠ g ⇒ ∃A g0. g = {|A; A|} ⊎ g0
+</pre>
+
+<DT><span class="strong">unibag_EL_MERGE_cases</span>
+<DD>
+<pre>
+⊢ ∀e b.
+    (e ⋲ b ⇒ (BAG_MERGE {|e|} (unibag b) = unibag b)) ∧
+    (¬(e ⋲ b) ⇒ (BAG_MERGE {|e|} (unibag b) = BAG_INSERT e (unibag b)))
+</pre>
+
+<DT><span class="strong">unibag_EQ_BAG_INSERT</span>
+<DD>
+<pre>
+⊢ ∀e b b'. (unibag b = BAG_INSERT e b') ⇒ ∃c. b' = unibag c
+</pre>
+
+<DT><span class="strong">unibag_FINITE</span>
+<DD>
+<pre>
+⊢ ∀b. FINITE_BAG (unibag b) ⇔ FINITE_BAG b
+</pre>
+
+<DT><span class="strong">unibag_INSERT</span>
+<DD>
+<pre>
+⊢ ∀a b. unibag (BAG_INSERT a b) = BAG_MERGE {|a|} (unibag b)
+</pre>
+
+<DT><span class="strong">unibag_SUB_BAG</span>
+<DD>
+<pre>
+⊢ ∀b. unibag b ≤ b
+</pre>
+
+<DT><span class="strong">unibag_UNION</span>
+<DD>
+<pre>
+⊢ ∀a b. unibag (a ⊎ b) = BAG_MERGE (unibag a) (unibag b)
+</pre>
+
+<DT><span class="strong">unibag_thm</span>
+<DD>
+<pre>
+⊢ (∀P. BAG_OF_SET P = (λx. if x ∈ P then 1 else 0)) ∧
+  ∀b. SET_OF_BAG b = (λx. x ⋲ b)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

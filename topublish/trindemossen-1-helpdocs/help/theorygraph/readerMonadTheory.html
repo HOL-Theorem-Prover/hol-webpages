@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: readerMonad</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "readerMonad"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "indexedListsTheory.html"><span class="strong">indexedLists</span></a>&nbsp;&nbsp;
+    <a href = "patternMatchesTheory.html"><span class="strong">patternMatches</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">BIND</span>
+    <td>
+    :(σ -> α) -> (α -> σ -> β) -> σ -> β
+    <tr><td>
+    <span class="strong">FMAP</span>
+    <td>
+    :(α -> β) -> (σ -> α) -> σ -> β
+    <tr><td> <span class="strong">JOIN</span> <td> :(σ -> σ -> α) -> σ -> α
+    <tr><td>
+    <span class="strong">MCOMPOSE</span>
+    <td>
+    :(α -> σ -> β) -> (β -> σ -> γ) -> α -> σ -> γ
+    <tr><td> <span class="strong">UNIT</span> <td> :α -> β -> α
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">BIND_def</span>
+<DD>
+<pre>
+⊢ ∀M f s. BIND M f s = f (M s) s
+</pre>
+
+<DT><span class="strong">FMAP_def</span>
+<DD>
+<pre>
+⊢ ∀f M1. FMAP f M1 = f ∘ M1
+</pre>
+
+<DT><span class="strong">JOIN_def</span>
+<DD>
+<pre>
+⊢ ∀MM s. JOIN MM s = MM s s
+</pre>
+
+<DT><span class="strong">MCOMPOSE_def</span>
+<DD>
+<pre>
+⊢ ∀f1 f2 a. MCOMPOSE f1 f2 a = BIND (f1 a) f2
+</pre>
+
+<DT><span class="strong">UNIT_def</span>
+<DD>
+<pre>
+⊢ ∀x s. UNIT x s = x
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">BIND_JOIN</span>
+<DD>
+<pre>
+⊢ BIND M f = JOIN (FMAP f M)
+</pre>
+
+<DT><span class="strong">BIND_UNITL</span>
+<DD>
+<pre>
+⊢ BIND (UNIT x) f = f x
+</pre>
+
+<DT><span class="strong">BIND_UNITR</span>
+<DD>
+<pre>
+⊢ BIND m UNIT = m
+</pre>
+
+<DT><span class="strong">FMAP_BIND</span>
+<DD>
+<pre>
+⊢ FMAP f M = BIND M (UNIT ∘ f)
+</pre>
+
+<DT><span class="strong">FMAP_ID</span>
+<DD>
+<pre>
+⊢ (FMAP (λx. x) M = M) ∧ (FMAP I M = M)
+</pre>
+
+<DT><span class="strong">FMAP_o</span>
+<DD>
+<pre>
+⊢ FMAP (f ∘ g) = FMAP f ∘ FMAP g
+</pre>
+
+<DT><span class="strong">JOIN_BIND</span>
+<DD>
+<pre>
+⊢ JOIN M = BIND M I
+</pre>
+
+<DT><span class="strong">MCOMPOSE_ASSOC</span>
+<DD>
+<pre>
+⊢ MCOMPOSE f (MCOMPOSE g h) = MCOMPOSE (MCOMPOSE f g) h
+</pre>
+
+<DT><span class="strong">MCOMPOSE_LEFT_ID</span>
+<DD>
+<pre>
+⊢ MCOMPOSE UNIT g = g
+</pre>
+
+<DT><span class="strong">MCOMPOSE_RIGHT_ID</span>
+<DD>
+<pre>
+⊢ MCOMPOSE f UNIT = f
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release notes for HOL4, ??????</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="index.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Release notes for HOL4, ??????</h1>
+</header>
+<!-- search and replace ?????? strings corresponding to release name -->
+<!-- indent code within bulleted lists to column 11 -->
+<p>(Released: xxxxxx)</p>
+<p>We are pleased to announce the Trindemossen 1 release of HOL4. We
+have changed the name (from Kananaskis) because of the kernel change
+reflected by the new efficient compute tool (see <a
+href="#verified-comp">below</a>).</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><a href="#new-features">New features</a></li>
+<li><a href="#bugs-fixed">Bugs fixed</a></li>
+<li><a href="#new-theories">New theories</a></li>
+<li><a href="#new-tools">New tools</a></li>
+<li><a href="#new-examples">New Examples</a></li>
+<li><a href="#incompatibilities">Incompatibilities</a></li>
+</ul>
+<h2 id="new-features">New features:</h2>
+<ul>
+<li><p>The <code>HOL_CONFIG</code> environment variable is now consulted
+when HOL sessions begin, allowing for a custom <code>hol-config</code>
+configuration at a non-standard location, or potentially ignoring any
+present hol-config. If the variable is set, any other hol-config file
+will be ignored. If the value of <code>HOL_CONFIG</code> is a readable
+file, it will be used.</p></li>
+<li><p>There is a new theorem attribute, <code>unlisted</code>, which
+causes theorems to be saved/stored in the usual fashion but kept
+somewhat hidden from user-view. Such theorems can be accessed with
+<code>DB.fetch</code>, and may be passed to other tools though the
+action of other attributes, but will not appear in the results of
+<code>DB.find</code> and <code>DB.match</code>, and will not occur as
+SML bindings in theory files.</p></li>
+<li><p><code>Holmake</code> will now look for <code>.hol_preexec</code>
+files in the hierarchy surrounding its invocation. The contents of such
+files will be executed by the shell before <code>Holmake</code> begins
+its work. See the DESCRIPTION manual for more.</p></li>
+<li><p><code>Holmake</code> (at least under Poly/ML) now stores most of
+the products of theory-building in a “dot”-directory
+<code>.holobjs</code>. For example, if <code>fooScript.sml</code> is
+compiled, the result in the current directory is the addition of
+<code>fooTheory.sig</code> only. The files <code>fooTheory.sml</code>,
+<code>fooTheory.dat</code>, <code>fooTheory.uo</code> and
+<code>fooTheory.ui</code> are all deposited in the <code>.holobjs</code>
+directory. This reduces clutter.</p></li>
+<li><p>Paralleling the existing <code>Excl</code> form for removing
+specific theorems from a simplifier invocation, there is now a
+<code>ExclSF</code> form (also taking a string argument) that removes a
+simpset fragment from the simplifier. For example</p>
+<pre><code>     &gt; simp[ExclSF &quot;BOOL&quot;] ([], “(λx. x + 1) (6 + 1)”);
+     val it = ([([], “(λx. x + 1) 7”)], fn)</code></pre>
+<p>where the <code>BOOL</code> fragment includes the treatment of
+β-reduction.</p></li>
+</ul>
+<h2 id="bugs-fixed">Bugs fixed:</h2>
+<ul>
+<li>Fix <a
+href="https://github.com/HOL-Theorem-Prover/HOL/issues/1140">a failure
+to define a polymorphic datatype with name <code>a</code></a>.</li>
+</ul>
+<h2 id="new-theories">New theories:</h2>
+<ul>
+<li><p>A theory of “contiguity types”, as discussed in the paper
+<em>Specifying Message Formats with Contiguity Types</em>, ITP 2021.
+(DOI: <a
+href="https://doi.org/10.4230/LIPIcs.ITP.2021.30">10.4230/LIPIcs.ITP.2021.30</a>)</p>
+<p>Contiguity types express formal languages where later parts of a
+string may depend on information held earlier in the string. Thus contig
+types capture a class of context-sensitive languages. They are helpful
+for expressing serialized data containing, for example, variable length
+arrays. The soundness of a parameterized matcher is proved.</p></li>
+<li><p><code>permutes</code>: The theory of permutations for general and
+finite sets, originally ported from HOL-Light’s
+<code>Library/permutations.ml</code>.</p></li>
+<li><p><code>keccak</code>: Defines the SHA-3 standard family of hash
+functions, based on the Keccak permutation and sponge construction.
+Keccak256, which is widely used in Ethereum, is included and was the
+basis for this work. A rudimentary computable version based on sptrees
+is included; faster evaluation using cvcompute is left for future
+work.</p></li>
+</ul>
+<h2 id="new-tools">New tools:</h2>
+<ul>
+<li><p>The linear decision procedure for the reals
+(<code>REAL_ARITH</code>, <code>REAL_ARITH_TAC</code> and
+<code>REAL_ASM_ARITH_TAC</code>) have been updated by porting the latest
+code from HOL-Light. There are two versions: those in the existing
+<code>RealArith</code> package only support integral-valued
+coefficients, while those in the new package <code>RealField</code>
+support rational-valued coefficients (this includes division of reals,
+e.g. <code>|- x / 2 + x /2 = x</code> can be proved by
+<code>RealField.REAL_ARITH</code>). Users can explicitly choose between
+different versions by explicitly opening <code>RealArith</code> or
+<code>RealField</code> in their proof scripts. If <code>realLib</code>
+were opened, the maximal backward compatibilities are provided by first
+trying the old solver (now available as
+<code>RealArith.OLD_REAL_ARITH</code>, etc.) and (if failed) then the
+new solver. Some existing proofs from HOL-Light can be ported to HOL4
+more easily.</p></li>
+<li><p>New decision procedure for the reals ported from HOL-Light:
+<code>REAL_FIELD</code>, <code>REAL_FIELD_TAC</code> and
+<code>REAL_ASM_FIELD_TAC</code> (in the package <code>RealField</code>).
+These new tools first try <code>RealField.REAL_ARITH</code> and then
+turn to new solvers based on calculations of Grobner’s Basis (from the
+new package <code>Grobner</code>).</p></li>
+<li><p><strong>Multiplying large numbers more efficiently</strong>:</p>
+<p>In <code>src/real</code> there is a new library
+<code>bitArithLib.sml</code> which improves the performance of large
+multiplications for the types <code>:num</code> and <code>:real</code>.
+The library uses arithmetic of bitstrings in combination with the
+Karatsuba multiplication algorithm. To use the library, it has to be
+loaded before the functions that should be evaluated are
+<strong>defined</strong>.</p></li>
+<li><p><a name="verified-comp"><strong>Fast in-logic computation
+primitive</strong>:</a> A port of the Candle theorem prover’s primitive
+rule for computation, described in the paper <em>“Fast, Verified
+Computation for Candle”</em> (ITP 2023), has been added to the kernel.
+The new compute primitive works on certain operations on a lisp-like
+datatype of pairs of numbers:</p>
+<pre><code>     Datatype: cv = Pair cv cv
+                  | Num num
+     End</code></pre>
+<p>This datatype and its operations are defined in
+<code>cvScript.sml</code>, and the compute primitive
+<code>cv_compute</code> is accessible via the library
+<code>cv_computeLib.sml</code> (both in
+<code>src/cv_compute</code>).</p>
+<p>There is also new automation that enables the use of
+<code>cv_compute</code> on functional HOL definitions which do not use
+the <code>:cv</code> type. In particular, <code>cv_trans</code>
+translates such definitions into equivalent functions operating over the
+<code>:cv</code> type. These can then be evaluated using
+<code>cv_eval</code>, which uses <code>cv_compute</code> internally.
+Both <code>cv_trans</code> and <code>cv_eval</code> can be found in the
+new <code>cv_transLib</code>.</p>
+<p>Some usage examples are located in <code>examples/cv_compute</code>.
+See the DESCRIPTION manual for a full description of the functionality
+offered by <code>cv_compute</code>.</p>
+<p>NB. To support <code>cv_compute</code>, the definitions of
+<code>DIV</code> and <code>MOD</code> over natural numbers
+<code>num</code> have been given specifications for the case when the
+second operand is zero. We follow HOL Light and Candle in defining
+<code>n DIV 0 = 0</code> and <code>n MOD 0 = n</code>. These changes
+make <code>DIV</code> and <code>MOD</code> match the way Candle’s
+compute primitive handles <code>DIV</code> and
+<code>MOD</code>.</p></li>
+<li><p><strong>Polarity-aware theorem-search</strong>. Extending what is
+available through <code>DB.find</code> and <code>DB.match</code>, the
+<code>DB.polarity_search</code> allows the user to search for explicitly
+negative or positive occurrences of the specified pattern. Thanks to
+Eric Hall for this contribution.</p></li>
+</ul>
+<h2 id="new-examples">New examples:</h2>
+<ul>
+<li><p><strong>Dependability Analysis</strong>: Dependability is an
+umbrella term encompassing Reliability, Availability and
+Maintainability. Two widely used dependability modeling techniques have
+been formalized namely, Reliability Block Diagrams (RBD) and Fault Trees
+(FT). Both these techniques graphically analyze the causes and factors
+contributing the functioning and failure of the system under study.
+Moreover, these dependability techniques have been highly recommended by
+several safety standards, such as IEC61508, ISO26262 and EN50128, for
+developing safe hardware and software systems.</p>
+<p>The new recursive datatypes are defined to model RBD and FT providing
+compositional features in order to analyze complex systems with
+arbitrary number of components.</p>
+<pre><code>    Datatype: rbd = series (rbd list)
+                  | parallel (rbd list)
+                  | atomic (α event)
+    End
+
+    Datatype: gate = AND (gate list)
+                   | OR (gate list)
+                   | NOT gate
+                   | atomic (α event)
+    End</code></pre>
+<p>Some case studies are also formalized and placed with dependability
+theories, for illustration purposes, including smart grids, WSN data
+transport protocols, satellite solar arrays, virtual data centers, oil
+and gas pipeline systems and an air traffic management system.</p></li>
+<li><p><strong>large_numberTheory</strong> (in
+<code>examples/probability</code>): various versions of The Law of Large
+Numbers (LLN) of Probability Theory.</p>
+<p>Some LLN theorems (<code>WLLN_uncorrelated</code> and
+<code>SLLN_uncorrelated</code>) previously in
+<code>probabilityTheory</code> are now moved to
+<code>large_numberTheory</code> with unified statements.</p></li>
+<li><p><strong>Vector and Matrix theories</strong> (in
+<code>examples/vector</code>) translated from HOL-Light’s
+<code>Multivariate/vectors.ml</code>.</p></li>
+<li><p><strong>Relevant Logic</strong> (in
+<code>examples/logic/relevant-logic</code>): material contributed by
+James Taylor, mechanising a number of foundational results for
+propositional relevant logic. Three proof systems (two Hilbert, one
+natural deduction) are shown equivalent, and two model theories (the
+Routley-Meyer ternary-relation Kripke semantics, and Goldblatt’s “cover”
+semantics) are shown sound and complete with respect to the proof
+systems.</p></li>
+<li><p><strong>armv8-memory-model</strong> (in
+<code>examples/arm</code>): a port by Anthony Fox of Viktor Vafeiadis’s
+<a href="https://github.com/vafeiadis/arm-model">Coq formalization of
+the Armv8 Memory Model</a>, which is based on the official <a
+href="https://github.com/herd/herdtools7/blob/95785c747750be4a3b64adfab9d5f5ee0ead8240/herd/libdir/aarch64.cat">mixed-size
+Armv8 memory model</a> and associated <a
+href="https://doi.org/10.1145/3458926">paper</a>.</p></li>
+<li><p><strong><em>p</em>-adic numbers</strong> (in
+<code>examples/padics</code>): a construction of the <em>p</em>-adic
+numbers by Noah Gorrell. The approach taken defines the prime valuation
+function <em>ν</em> on first the natural numbers and then the rationals.
+It then defines the absolute value on ℚ so as to establish a <span
+class="math inline"><em>p</em></span>-metric. Cauchy sequences over
+these can be constructed and quotiented to construct a new numeric type.
+The new type <code>adic</code> is polymorphic such that the cardinality
+of the universe of the argument defines the prime number <em>p</em> of
+the construction. For types that have infinite or non-prime universes,
+<em>p</em> is taken to be 2. Thus, <code>:2 adic</code>,
+<code>:4 adic</code> and <code>:num adic</code> are isomorphic types,
+but <code>:3 adic</code> is distinct. Addition, multiplication and
+injection from the rationals are defined.</p></li>
+</ul>
+<h2 id="incompatibilities">Incompatibilities:</h2>
+<ul>
+<li><p>Some new automatic rewrites to do with natural number arithmetic
+(particularly exponentiation) have been added. The most potentially
+disruptive of these is probably <code>LT1_EQ0</code>, which states</p>
+<pre><code>   ⊢ n &lt; 1 ⇔ n = 0</code></pre>
+<p>The other new rewrites will simplify terms such as
+<code>10 &lt; 2 ** x</code> (where both the base of the exponentiation
+and the other argument to the relation are numerals). By taking a
+natural number logarithm, it is possible to turn the above into
+<code>3 &lt; x</code> and <code>5 ** n &lt; 10654</code> into
+<code>n ≤ 5</code>. The theorems to exclude (using <code>Excl</code>, or
+<code>temp_delsimps</code>, or …) if these new rules break proofs are:
+<code>EXP_LE_LOG_SIMP</code>, <code>EXP_LT_LOG_SIMP</code>,
+<code>LE_EXP_LOG_SIMP</code>, <code>LT_EXP_LOG_SIMP</code>,
+<code>LOG_NUMERAL</code>, <code>EXP_LT_1</code>,
+<code>ONE_LE_EXP</code>, and <code>TWO_LE_EXP</code>.</p></li>
+<li><p>The small <code>productTheory</code> (products of natural numbers
+and real numbers, ported from HOL-Light) has been merged into
+<code>iterateTheory</code> (on which <code>extrealTheory</code> now
+depends).</p></li>
+<li><p>Changes in the <code>formal-languages/context-free</code>
+example:</p>
+<ul>
+<li>The location type (defined in <code>locationTheory</code>) has been
+simplified</li>
+<li>The PEG machinery now has a simple error-reporting facility that
+attempts to report the end of the longest prefix of the input that might
+still be in the PEG’s language. This means that instead of returning
+either <code>SOME result</code> or <code>NONE</code>, PEGs now return a
+custom <code>Success</code>/<code>Failure</code> data type with values
+attached to both constructors.</li>
+</ul></li>
+<li><p>The <code>MEMBER_NOT_EMPTY</code> theorem in
+<code>bagTheory</code> has been renamed to
+<code>BAG_MEMBER_NOT_EMPTY</code> to avoid a name-clash with a theorem
+of the same name in <code>pred_setTheory</code>.</p></li>
+<li><p>The “global” simplification tactics (<code>gs</code>,
+<code>gvs</code> <em>et al</em>) have been adjusted to simplify older
+assumptions before later ones. This will keep assumption <em>A</em> in
+the list if it is newer (more recently added) than, and equivalent to,
+older assumption <em>B</em>. The new <code>rgs</code> is like the old
+<code>gs</code>.</p></li>
+<li><p>The infix operator <code>..</code> from
+<code>iterateTheory</code> is now called <code>numseg</code> and is
+parsed/printed as <code>{m .. n}</code> (a “close-fix” operator). This
+brings the syntax into line with <code>listRangeTheory</code>’s
+<code>[m..n]</code> syntax. In many contexts, expressions with this had
+to use parentheses as delimiters, and so fixing the incompatibility will
+require turning something like <code>(t1..t2)</code> into
+<code>{t1..t2}</code>. However, the old style did allow
+<code>e ∈ m..n</code>, which no longer works without the
+braces.</p></li>
+<li><p>Due to internal dependency changes, <code>Diff.DIFF_CONV</code>
+(a conversion for proving differentiate expressions) is not included in
+<code>realLib</code> any more. Users of <code>DIFF_CONV</code> should
+explicitly open <code>Diff</code> in proof scripts.</p></li>
+<li><p>The internally-stored names (<code>string</code> values) for
+various simpset fragments have been changed to lose <code>_ss</code>
+suffixes. For example, though the <code>BETA_ss</code> fragment still
+appears under that name in the SML namespace, the name it has stored
+internally is now just <code>"BETA"</code>. This change makes the naming
+consistent across all of HOL’s fragments. These names are used when
+referring to fragments in calls to <code>diminish_srw_ss</code>, when
+using <code>ExclSF</code> (see above), and in printing the values in the
+REPL.</p></li>
+<li><p>In <code>sigma_algebraTheory</code>, the definition of
+<code>measurable</code> has been generalized without requiring that the
+involved systems of sets must be σ-algebras. This change allows the user
+to express measurable mappings over generators of σ-algebras
+(cf. <code>MEASURABLE_LIFT</code> for a related important lemma).
+Existing proofs may break in two ways (both are easy to fix): 1. The
+need for extra antecedents (usually easily available) when applying some
+existing measure and probability theorems. 2. When proving
+<code>f IN measurable a b</code>, some proof branches regarding
+σ-algebras no longer exists (thus the related proof scripts must be
+eliminated).</p></li>
+<li><p>Both the <code>Definition</code> syntax when a
+<code>Termination</code> argument has been provided, and the underlying
+<code>TotalDefn.tDefine</code> function, won’t now make schematic
+definitions unless they have been explicitly allowed. (With the
+<code>Definition</code> syntax, this is done by using the
+<code>schematic</code> attribute.) This brings this flavour of
+definition into line with the others, where the presence of extra free
+variables on the RHS of a definition’s equation is usually flagged as an
+error.</p></li>
+<li><p>In <code>real_topologyTheory</code>, some definitions (only the
+theorem names but not the underlying logical constants) have been
+renamed to avoid conflicts with similar definitions in
+<code>seqTheory</code>: from <code>sums</code> to <code>sums_def</code>,
+from <code>summable</code> to <code>summable_def</code>. Besides,
+<code>infsum</code> has been renamed to <code>suminf_def</code> to
+reflect its overloading to <code>suminf</code>. (All these definitions
+are generalized versions of those in <code>seqTheory</code>.)</p></li>
+<li><p>The constant <code>lg</code> (logarithm with base 2) has moved
+from the <code>util_prob</code> theory to <code>transc</code>.</p></li>
+<li><p>The theories under <code>src/ring/src</code> have all been
+prefixed with the string <code>EVAL_</code> reflecting the way they are
+exclusively used within the system, to provide polynomial normalisation
+using reflection and <code>computeLib</code>. This frees up the name
+<code>ring</code> to be used only by the material under
+<code>examples/algebra</code>. (In the absence of this change, theories
+that depended on what was in <code>src/ring/src</code> could not be used
+in a development alongside what is in
+<code>examples/algebra</code>.)</p></li>
+<li><p>It is now an error to bind the same name twice in a theory.
+Binding names is what happens when theorems are saved or stored, or when
+definitions are made. These names appear in the exported
+<em>thy</em><code>Theory.sig</code> files. Previously, rebound values
+would replace old ones with only a warning interactively. Now an
+exception is raised. In some circumstances when rebinding is
+appropriate, the <code>allow_rebind</code> annotation can be used to
+permit the behaviour. For example:</p>
+<pre><code>   Theorem foo: p /\ q &lt;=&gt; q /\ p
+   Proof DECIDE_TAC
+   QED
+
+   Theorem foo[allow_rebind]: p \/ q &lt;=&gt; q \/ p
+   Proof DECIDE_TAC
+   QED</code></pre>
+<p>The content of the theorem is irrelevant; any attempt to rebind will
+cause an error. Programmatically, the trace variable
+<code>Theory.allow_rebinds</code> can be set to <code>1</code> to allow
+the old behaviour. Thus, the following could be done at the head of a
+script file to completely turn off checking for the whole file</p>
+<pre><code>   val _ = set_trace &quot;Theory.allow_rebinds&quot; 1</code></pre>
+<p>Rebinding is permitted dynamically when the
+<code>Globals.interactive</code> flag is true so that interactive
+development of theories is not hindered.</p></li>
+<li><p>One error detected by the above change was in
+<code>examples/miller/</code>’s <code>extra_bool</code> theory. This
+defines an <code>xor</code> operator and included two successive
+theorems:</p>
+<pre><code>   [xor_F] : !p. p xor F = p
+   [xor_F] : !p. F xor p = p</code></pre>
+<p>The failure to flag the second as an error meant that the theorem
+called <code>xor_F</code> completely masked the rewrite in the opposite
+direction. The fix was to rename the second <code>xor_F</code> to now be
+<code>F_xor</code>, which is an incompatibility if your theory depends
+on <code>extra_boolTheory</code>.</p></li>
+<li><p>The labels for clauses/rules in the “modern”
+<code>Inductive</code> syntax are now syntactically equivalent to
+conjunctions, so what used to be written as something like</p>
+<pre><code>   Inductive reln:
+   [~name1:] (!x y. x &lt; y ==&gt; reln (x + 1) y) /\
+   [~sym:]
+      (!x y. reln x y ==&gt; reln y x) /\
+   [~zero:]
+      (!x. reln x 0)
+   End</code></pre>
+<p>should now be written</p>
+<pre><code>   Inductive reln:
+   [~name1:] (!x y. x &lt; y ==&gt; reln (x + 1) y)
+   [~sym:]
+      (!x y. reln x y ==&gt; reln y x)
+   [~zero:]
+      (!x. reln x 0)
+   End</code></pre>
+<p>where all of the trailing/separating conjunctions have been removed.
+The parentheses around each clause above can also be removed, if
+desired.</p>
+<p>Attempting to mix labels and top-level conjunctions will lead to very
+confusing results: it’s best to only use one or the other. If you do not
+wish to name rules, you can use any of the following as “nullary”
+labels: <code>[]</code>, <code>[/\]</code>, or <code>[∧]</code>. As with
+normal labels, these need to occur in column zero.</p>
+<p>The first rule need not have a label at all, so that</p>
+<pre><code>   Inductive reln:
+      !x y. x &lt; y ==&gt; reln (x + 1) y
+   [/\]
+      !x y. reln x y ==&gt; reln y x
+   [~zero:]
+      !x. reln x 0
+   End</code></pre>
+<p>will work. It will also work to switch to conjunctions for trailing
+rules:</p>
+<pre><code>   Inductive reln:
+   [~name1:] !x y. x &lt; y ==&gt; reln (x + 1) y
+   [~sym:]
+      (!x y. reln x y ==&gt; reln y x) /\
+      (!x. reln x 0) /\
+      (!y. reln 100 y)
+   End</code></pre></li>
+<li><p>A number of theories embodying the “old” approach to measure
+theory and probability (using a real number as a set’s measure rather
+than an extended real) have moved from <code>src/probability</code> to
+<code>examples/probability/legacy</code>. These theories are still used
+by the dependability analysis example mentioned above, and by the
+verification of the probabilistic Miller-Rabin primality test
+(<code>examples/miller</code>). The effect of this is that the default
+build of the system will not build these theories; <code>Holmake</code>
+will build them when used in their new directory.</p></li>
+<li><p>The mechanisation of temporal logic that used to live in
+<code>src/temporal</code> has been moved to
+<code>examples/logic/temporal</code>.</p></li>
+</ul>
+<hr />
+<div class="footer">
+<p><em><a href="http://hol-theorem-prover.org">HOL4, Trindemossen
+1</a></em></p>
+<p><a href="kananaskis-14.release.html">Release notes for the previous
+version</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>monadsyntax.declare_monad</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>declare_monad :
+  string * { bind : term, unit : term, ignorebind : term option,
+             choice : term option, fail : term option, guard : term option }
+    -&gt;
+  unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/monadsyntax.html">monadsyntax</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Declares a monad type for which the do/od syntax can be used.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">declare_monad(mname,&nbsp;minfo)</SPAN><SPAN class = "TEXT"> alters the internal &ldquo;monad
+database&rdquo; so that a subsequent call to </SPAN><SPAN class = "BRKT">enable_monad&nbsp;mname</SPAN><SPAN class = "TEXT"> will
+cause do/od syntax to try to use the terms in </SPAN><SPAN class = "BRKT">minfo</SPAN><SPAN class = "TEXT"> as
+interpretations of that syntax. The only compulsory values are the
+</SPAN><SPAN class = "BRKT">unit</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">bind</SPAN><SPAN class = "TEXT"> values, which should have types conforming to the
+pattern </SPAN><SPAN class = "BRKT">:α&nbsp;M</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">:α&nbsp;-&gt;&nbsp;β&nbsp;M</SPAN><SPAN class = "TEXT"> respectively. For example, the list
+monad would have </SPAN><SPAN class = "BRKT">M</SPAN><SPAN class = "TEXT"> instantiated by the pattern </SPAN><SPAN class = "BRKT">:_&nbsp;list</SPAN><SPAN class = "TEXT">, while the
+reader monad would have </SPAN><SPAN class = "BRKT">M</SPAN><SPAN class = "TEXT"> instantiated by the pattern </SPAN><SPAN class = "BRKT">:'env&nbsp;-&gt;&nbsp;_</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">ignorebind</SPAN><SPAN class = "TEXT"> field allows the user to provide a specific constant
+to interpret a </SPAN><SPAN class = "BRKT">bind</SPAN><SPAN class = "TEXT"> where the second argument ignores the value. If
+this is not provided, then syntax such as </SPAN><SPAN class = "BRKT">do&nbsp;M1;&nbsp;M2;&nbsp;od</SPAN><SPAN class = "TEXT"> will be
+interpreted as </SPAN><SPAN class = "BRKT">bind&nbsp;M1&nbsp;(K&nbsp;M2)</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">K</SPAN><SPAN class = "TEXT"> is the constant combinator.</SPAN>
+<P>
+<SPAN class = "TEXT">The remaining fields are used when the monad has a notion of failure.
+For example, the option monad uses </SPAN><SPAN class = "BRKT">NONE</SPAN><SPAN class = "TEXT"> as the appropriate value for
+</SPAN><SPAN class = "BRKT">fail</SPAN><SPAN class = "TEXT">. The </SPAN><SPAN class = "BRKT">choice</SPAN><SPAN class = "TEXT"> term should be of type </SPAN><SPAN class = "BRKT">:α&nbsp;M&nbsp;-&gt;&nbsp;α&nbsp;M&nbsp;-&gt;&nbsp;α&nbsp;M</SPAN><SPAN class = "TEXT">, and
+should return the first value if it is not a failure, or otherwise use
+the second argument. The supported syntax for </SPAN><SPAN class = "BRKT">choice</SPAN><SPAN class = "TEXT"> is </SPAN><SPAN class = "BRKT">++</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Finally, the </SPAN><SPAN class = "BRKT">guard</SPAN><SPAN class = "TEXT"> field should be a term of type </SPAN><SPAN class = "BRKT">:bool&nbsp;-&gt;&nbsp;unit&nbsp;M</SPAN><SPAN class = "TEXT">.
+It is rendered as </SPAN><SPAN class = "BRKT">assert&nbsp;b</SPAN><SPAN class = "TEXT"> with </SPAN><SPAN class = "BRKT">b</SPAN><SPAN class = "TEXT"> a boolean value. If </SPAN><SPAN class = "BRKT">b</SPAN><SPAN class = "TEXT"> is true,
+the monad &ldquo;returns&rdquo; the unit value; if </SPAN><SPAN class = "BRKT">b</SPAN><SPAN class = "TEXT"> is false the monad fails.</SPAN>
+<P>
+<SPAN class = "TEXT">The information declared with a call to </SPAN><SPAN class = "BRKT">declare_monad</SPAN><SPAN class = "TEXT"> is exported
+with the current theory and is thus available to descendent theories.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails. However, the terms present in the monad-information
+record must have appropriate types if strange type-checking errors on
+subsequent uses of the do/od syntax are to be avoided.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A set monad could be declared:
+</SPAN><DIV class = "XMPL"><pre>
+&gt; declare_monad("set", {
+    unit = “λa. {a}”, bind = “λs f. BIGUNION (IMAGE f s)”,
+    ignorebind = NONE,
+    fail = SOME “{}”, guard = SOME “λb. if b then {()} else {}”,
+    choice = SOME “$UNION”
+  });
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function does not even care if the constants have the right
+respective types; it certainly doesn&rsquo;t care if the constants satisfy
+the monadic axioms.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "monadsyntax.all_monads.html">all_monads</A>,
+<A HREF = "monadsyntax.enable_monad.html">enable_monad</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

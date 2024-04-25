@@ -1,0 +1,1661 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: rat</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "rat"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "fracTheory.html"><span class="strong">frac</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">rat</span> <td> 0
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">RATD</span>
+    <td>
+    :rat -> num
+    <tr><td> <span class="strong">RATN</span> <td> :rat -> int
+    <tr><td> <span class="strong">abs_rat</span> <td> :frac -> rat
+    <tr><td>
+    <span class="strong">abs_rat_CLASS</span>
+    <td>
+    :(frac -> bool) -> rat
+    <tr><td> <span class="strong">rat_0</span> <td> :rat
+    <tr><td> <span class="strong">rat_1</span> <td> :rat
+    <tr><td> <span class="strong">rat_add</span> <td> :rat -> rat -> rat
+    <tr><td> <span class="strong">rat_ainv</span> <td> :rat -> rat
+    <tr><td> <span class="strong">rat_cons</span> <td> :int -> int -> rat
+    <tr><td> <span class="strong">rat_div</span> <td> :rat -> rat -> rat
+    <tr><td> <span class="strong">rat_dnm</span> <td> :rat -> int
+    <tr><td> <span class="strong">rat_equiv</span> <td> :frac -> frac -> bool
+    <tr><td> <span class="strong">rat_geq</span> <td> :rat -> rat -> bool
+    <tr><td> <span class="strong">rat_gre</span> <td> :rat -> rat -> bool
+    <tr><td> <span class="strong">rat_leq</span> <td> :rat -> rat -> bool
+    <tr><td> <span class="strong">rat_les</span> <td> :rat -> rat -> bool
+    <tr><td> <span class="strong">rat_max</span> <td> :rat -> rat -> rat
+    <tr><td> <span class="strong">rat_min</span> <td> :rat -> rat -> rat
+    <tr><td> <span class="strong">rat_minv</span> <td> :rat -> rat
+    <tr><td> <span class="strong">rat_mul</span> <td> :rat -> rat -> rat
+    <tr><td> <span class="strong">rat_nmr</span> <td> :rat -> int
+    <tr><td> <span class="strong">rat_of_int</span> <td> :int -> rat
+    <tr><td> <span class="strong">rat_of_num</span> <td> :num -> rat
+    <tr><td> <span class="strong">rat_sgn</span> <td> :rat -> int
+    <tr><td> <span class="strong">rat_sub</span> <td> :rat -> rat -> rat
+    <tr><td> <span class="strong">rep_rat</span> <td> :rat -> frac
+    <tr><td>
+    <span class="strong">rep_rat_CLASS</span>
+    <td>
+    :rat -> frac -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">RATND_THM</span>
+<DD>
+<pre>
+⊢ ∀r. (r = rat_of_int (RATN r) / &RATD r) ∧ 0 < RATD r ∧
+      ((RATN r = 0) ⇒ (RATD r = 1)) ∧
+      ∀n' d'. (r = rat_of_int n' / &d') ∧ 0 < d' ⇒ ABS (RATN r) ≤ ABS n'
+</pre>
+
+<DT><span class="strong">abs_rat_def</span>
+<DD>
+<pre>
+⊢ ∀r. abs_rat r = abs_rat_CLASS (rat_equiv r)
+</pre>
+
+<DT><span class="strong">rat_0_def</span>
+<DD>
+<pre>
+⊢ rat_0 = abs_rat frac_0
+</pre>
+
+<DT><span class="strong">rat_1_def</span>
+<DD>
+<pre>
+⊢ rat_1 = abs_rat frac_1
+</pre>
+
+<DT><span class="strong">rat_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION (λc. ∃r. rat_equiv r r ∧ (c = rat_equiv r)) rep
+</pre>
+
+<DT><span class="strong">rat_add_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 + r2 = abs_rat (frac_add (rep_rat r1) (rep_rat r2))
+</pre>
+
+<DT><span class="strong">rat_ainv_def</span>
+<DD>
+<pre>
+⊢ ∀r1. -r1 = abs_rat (frac_ainv (rep_rat r1))
+</pre>
+
+<DT><span class="strong">rat_bijections</span>
+<DD>
+<pre>
+⊢ (∀a. abs_rat_CLASS (rep_rat_CLASS a) = a) ∧
+  ∀r. (λc. ∃r. rat_equiv r r ∧ (c = rat_equiv r)) r ⇔
+      (rep_rat_CLASS (abs_rat_CLASS r) = r)
+</pre>
+
+<DT><span class="strong">rat_cons_def</span>
+<DD>
+<pre>
+⊢ ∀nmr dnm.
+    nmr // dnm = abs_rat (abs_frac (SGN nmr * SGN dnm * ABS nmr,ABS dnm))
+</pre>
+
+<DT><span class="strong">rat_div_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 / r2 = abs_rat (frac_div (rep_rat r1) (rep_rat r2))
+</pre>
+
+<DT><span class="strong">rat_dnm_def</span>
+<DD>
+<pre>
+⊢ ∀r. rat_dnm r = frac_dnm (rep_rat r)
+</pre>
+
+<DT><span class="strong">rat_equiv_def</span>
+<DD>
+<pre>
+⊢ ∀f1 f2.
+    rat_equiv f1 f2 ⇔ (frac_nmr f1 * frac_dnm f2 = frac_nmr f2 * frac_dnm f1)
+</pre>
+
+<DT><span class="strong">rat_geq_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 ≥ r2 ⇔ r2 ≤ r1
+</pre>
+
+<DT><span class="strong">rat_gre_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 > r2 ⇔ r2 < r1
+</pre>
+
+<DT><span class="strong">rat_leq_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 ≤ r2 ⇔ r1 < r2 ∨ (r1 = r2)
+</pre>
+
+<DT><span class="strong">rat_les_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 < r2 ⇔ (rat_sgn (r2 − r1) = 1)
+</pre>
+
+<DT><span class="strong">rat_max_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. rat_max r1 r2 = if r1 > r2 then r1 else r2
+</pre>
+
+<DT><span class="strong">rat_min_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. rat_min r1 r2 = if r1 < r2 then r1 else r2
+</pre>
+
+<DT><span class="strong">rat_minv_def</span>
+<DD>
+<pre>
+⊢ ∀r1. rat_minv r1 = abs_rat (frac_minv (rep_rat r1))
+</pre>
+
+<DT><span class="strong">rat_mul_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 * r2 = abs_rat (frac_mul (rep_rat r1) (rep_rat r2))
+</pre>
+
+<DT><span class="strong">rat_nmr_def</span>
+<DD>
+<pre>
+⊢ ∀r. rat_nmr r = frac_nmr (rep_rat r)
+</pre>
+
+<DT><span class="strong">rat_of_int_def</span>
+<DD>
+<pre>
+⊢ ∀i. rat_of_int i = if i < 0 then -&Num (-i) else &Num i
+</pre>
+
+<DT><span class="strong">rat_of_num_def_primitive</span>
+<DD>
+<pre>
+⊢ $& =
+  WFREC (@R. WF R ∧ ∀n. R (SUC n) (SUC (SUC n)))
+    (λrat_of_num a.
+         case a of
+           0 => I rat_0
+         | SUC 0 => I rat_1
+         | SUC (SUC n) => I (rat_of_num (SUC n) + rat_1))
+</pre>
+
+<DT><span class="strong">rat_sgn_def</span>
+<DD>
+<pre>
+⊢ ∀r. rat_sgn r = frac_sgn (rep_rat r)
+</pre>
+
+<DT><span class="strong">rat_sub_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 − r2 = abs_rat (frac_sub (rep_rat r1) (rep_rat r2))
+</pre>
+
+<DT><span class="strong">rep_rat_def</span>
+<DD>
+<pre>
+⊢ ∀a. rep_rat a = $@ (rep_rat_CLASS a)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">FRAC_ADD_EQUIV1</span>
+<DD>
+<pre>
+⊢ rat_equiv x x' ⇒ rat_equiv (frac_add x y) (frac_add x' y)
+</pre>
+
+<DT><span class="strong">FRAC_MINV_EQUIV</span>
+<DD>
+<pre>
+⊢ frac_nmr y ≠ 0 ⇒ rat_equiv x y ⇒ rat_equiv (frac_minv x) (frac_minv y)
+</pre>
+
+<DT><span class="strong">FRAC_MUL_EQUIV1</span>
+<DD>
+<pre>
+⊢ rat_equiv x x' ⇒ rat_equiv (frac_mul x y) (frac_mul x' y)
+</pre>
+
+<DT><span class="strong">FRAC_MUL_EQUIV2</span>
+<DD>
+<pre>
+⊢ rat_equiv x x' ⇒ rat_equiv (frac_mul y x) (frac_mul y x')
+</pre>
+
+<DT><span class="strong">LDIV_MUL_OUT</span>
+<DD>
+<pre>
+⊢ r1 / r2 * r3 = r1 * r3 / r2
+</pre>
+
+<DT><span class="strong">RAT</span>
+<DD>
+<pre>
+⊢ ∀r. abs_rat (rep_rat r) = r
+</pre>
+
+<DT><span class="strong">RATD_NEG</span>
+<DD>
+<pre>
+⊢ RATD (-r) = RATD r
+</pre>
+
+<DT><span class="strong">RATD_NZERO</span>
+<DD>
+<pre>
+⊢ 0 < RATD r ∧ RATD r ≠ 0
+</pre>
+
+<DT><span class="strong">RATND_RAT_OF_NUM</span>
+<DD>
+<pre>
+⊢ (RATN (&n) = &n) ∧ (RATD (&n) = 1)
+</pre>
+
+<DT><span class="strong">RATN_DIV_RATD</span>
+<DD>
+<pre>
+⊢ rat_of_int (RATN r) / &RATD r = r
+</pre>
+
+<DT><span class="strong">RATN_EQ0</span>
+<DD>
+<pre>
+⊢ ((RATN r = 0) ⇔ (r = 0)) ∧ ((0 = RATN r) ⇔ (r = 0))
+</pre>
+
+<DT><span class="strong">RATN_LEAST</span>
+<DD>
+<pre>
+⊢ ∀n' d'. (r = rat_of_int n' / &d') ∧ 0 < d' ⇒ ABS (RATN r) ≤ ABS n'
+</pre>
+
+<DT><span class="strong">RATN_NEG</span>
+<DD>
+<pre>
+⊢ RATN (-r) = -RATN r
+</pre>
+
+<DT><span class="strong">RATN_RATD_EQ_THM</span>
+<DD>
+<pre>
+⊢ r = rat_of_int (RATN r) / &RATD r
+</pre>
+
+<DT><span class="strong">RATN_RATD_MULT</span>
+<DD>
+<pre>
+⊢ r * &RATD r = rat_of_int (RATN r)
+</pre>
+
+<DT><span class="strong">RATN_RATD_RAT_OF_INT</span>
+<DD>
+<pre>
+⊢ (RATN (rat_of_int i) = i) ∧ (RATD (rat_of_int i) = 1)
+</pre>
+
+<DT><span class="strong">RATN_SIGN</span>
+<DD>
+<pre>
+⊢ (0 < RATN x ⇔ 0 < x) ∧ (0 ≤ RATN x ⇔ 0 ≤ x) ∧ (RATN x < 0 ⇔ x < 0) ∧
+  (RATN x ≤ 0 ⇔ x ≤ 0)
+</pre>
+
+<DT><span class="strong">RAT_0</span>
+<DD>
+<pre>
+⊢ rat_0 = 0
+</pre>
+
+<DT><span class="strong">RAT_0LEQ_NMR</span>
+<DD>
+<pre>
+⊢ ∀r1. 0 ≤ r1 ⇔ 0 ≤ rat_nmr r1
+</pre>
+
+<DT><span class="strong">RAT_0LES_0LEQ_ADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. 0 < r1 ⇒ 0 ≤ r2 ⇒ 0 < r1 + r2
+</pre>
+
+<DT><span class="strong">RAT_0LES_0LES_ADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. 0 < r1 ⇒ 0 < r2 ⇒ 0 < r1 + r2
+</pre>
+
+<DT><span class="strong">RAT_0LES_NMR</span>
+<DD>
+<pre>
+⊢ ∀r1. 0 < r1 ⇔ 0 < rat_nmr r1
+</pre>
+
+<DT><span class="strong">RAT_1</span>
+<DD>
+<pre>
+⊢ rat_1 = 1
+</pre>
+
+<DT><span class="strong">RAT_1_NOT_0</span>
+<DD>
+<pre>
+⊢ 1 ≠ 0
+</pre>
+
+<DT><span class="strong">RAT_ABS_EQUIV</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. (abs_rat f1 = abs_rat f2) ⇔ rat_equiv f1 f2
+</pre>
+
+<DT><span class="strong">RAT_ADD_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀a b c. a + (b + c) = a + b + c
+</pre>
+
+<DT><span class="strong">RAT_ADD_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. abs_rat f1 + abs_rat f2 = abs_rat (frac_add f1 f2)
+</pre>
+
+<DT><span class="strong">RAT_ADD_COMM</span>
+<DD>
+<pre>
+⊢ ∀a b. a + b = b + a
+</pre>
+
+<DT><span class="strong">RAT_ADD_CONG</span>
+<DD>
+<pre>
+⊢ (∀x y. abs_rat (frac_add (rep_rat (abs_rat x)) y) = abs_rat (frac_add x y)) ∧
+  ∀x y. abs_rat (frac_add x (rep_rat (abs_rat y))) = abs_rat (frac_add x y)
+</pre>
+
+<DT><span class="strong">RAT_ADD_CONG1</span>
+<DD>
+<pre>
+⊢ ∀x y. abs_rat (frac_add (rep_rat (abs_rat x)) y) = abs_rat (frac_add x y)
+</pre>
+
+<DT><span class="strong">RAT_ADD_CONG2</span>
+<DD>
+<pre>
+⊢ ∀x y. abs_rat (frac_add x (rep_rat (abs_rat y))) = abs_rat (frac_add x y)
+</pre>
+
+<DT><span class="strong">RAT_ADD_LID</span>
+<DD>
+<pre>
+⊢ ∀a. 0 + a = a
+</pre>
+
+<DT><span class="strong">RAT_ADD_LINV</span>
+<DD>
+<pre>
+⊢ ∀a. -a + a = 0
+</pre>
+
+<DT><span class="strong">RAT_ADD_MONO</span>
+<DD>
+<pre>
+⊢ ∀a b c d. a ≤ b ∧ c ≤ d ⇒ a + c ≤ b + d
+</pre>
+
+<DT><span class="strong">RAT_ADD_NUM_CALCULATE</span>
+<DD>
+<pre>
+⊢ (∀n m. &n + &m = &(n + m)) ∧
+  (∀n m. -&n + &m = if n ≤ m then &(m − n) else -&(n − m)) ∧
+  (∀n m. &n + -&m = if m ≤ n then &(n − m) else -&(m − n)) ∧
+  ∀n m. -&n + -&m = -&(n + m)
+</pre>
+
+<DT><span class="strong">RAT_ADD_ONE_ONE</span>
+<DD>
+<pre>
+⊢ ∀r1. ONE_ONE ($+ r1)
+</pre>
+
+<DT><span class="strong">RAT_ADD_RID</span>
+<DD>
+<pre>
+⊢ ∀a. a + 0 = a
+</pre>
+
+<DT><span class="strong">RAT_ADD_RINV</span>
+<DD>
+<pre>
+⊢ ∀a. a + -a = 0
+</pre>
+
+<DT><span class="strong">RAT_AINV_0</span>
+<DD>
+<pre>
+⊢ -0 = 0
+</pre>
+
+<DT><span class="strong">RAT_AINV_ADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. -(r1 + r2) = -r1 + -r2
+</pre>
+
+<DT><span class="strong">RAT_AINV_AINV</span>
+<DD>
+<pre>
+⊢ ∀r1. - -r1 = r1
+</pre>
+
+<DT><span class="strong">RAT_AINV_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀f1. -abs_rat f1 = abs_rat (frac_ainv f1)
+</pre>
+
+<DT><span class="strong">RAT_AINV_CONG</span>
+<DD>
+<pre>
+⊢ ∀x. abs_rat (frac_ainv (rep_rat (abs_rat x))) = abs_rat (frac_ainv x)
+</pre>
+
+<DT><span class="strong">RAT_AINV_EQ</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. (-r1 = r2) ⇔ (r1 = -r2)
+</pre>
+
+<DT><span class="strong">RAT_AINV_EQ_NUM</span>
+<DD>
+<pre>
+⊢ (-x = &n) ⇔ (x = rat_of_int (-&n))
+</pre>
+
+<DT><span class="strong">RAT_AINV_LES</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. -r1 < r2 ⇔ -r2 < r1
+</pre>
+
+<DT><span class="strong">RAT_AINV_LMUL</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. -(r1 * r2) = -r1 * r2
+</pre>
+
+<DT><span class="strong">RAT_AINV_MINV</span>
+<DD>
+<pre>
+⊢ ∀r1. r1 ≠ 0 ⇒ (-rat_minv r1 = rat_minv (-r1))
+</pre>
+
+<DT><span class="strong">RAT_AINV_ONE_ONE</span>
+<DD>
+<pre>
+⊢ ONE_ONE numeric_negate
+</pre>
+
+<DT><span class="strong">RAT_AINV_RMUL</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. -(r1 * r2) = r1 * -r2
+</pre>
+
+<DT><span class="strong">RAT_AINV_SGN</span>
+<DD>
+<pre>
+⊢ (0 < -r ⇔ r < 0) ∧ (-r < 0 ⇔ 0 < r)
+</pre>
+
+<DT><span class="strong">RAT_AINV_SUB</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. -(r1 − r2) = r2 − r1
+</pre>
+
+<DT><span class="strong">RAT_CONS_TO_NUM</span>
+<DD>
+<pre>
+⊢ ∀n. (&n // 1 = &n) ∧ (-&n // 1 = -&n)
+</pre>
+
+<DT><span class="strong">RAT_DENSE_THM</span>
+<DD>
+<pre>
+⊢ ∀r1 r3. r1 < r3 ⇒ ∃r2. r1 < r2 ∧ r2 < r3
+</pre>
+
+<DT><span class="strong">RAT_DIVDIV_ADD</span>
+<DD>
+<pre>
+⊢ y ≠ 0 ∧ b ≠ 0 ⇒ (x / y + a / b = (x * b + a * y) / (y * b))
+</pre>
+
+<DT><span class="strong">RAT_DIVDIV_MUL</span>
+<DD>
+<pre>
+⊢ b ≠ 0 ∧ d ≠ 0 ⇒ (a / b * (c / d) = a * c / (b * d))
+</pre>
+
+<DT><span class="strong">RAT_DIV_0</span>
+<DD>
+<pre>
+⊢ 0 / x = 0
+</pre>
+
+<DT><span class="strong">RAT_DIV_1</span>
+<DD>
+<pre>
+⊢ r / 1 = r
+</pre>
+
+<DT><span class="strong">RAT_DIV_AINV</span>
+<DD>
+<pre>
+⊢ -(x / y) = -x / y
+</pre>
+
+<DT><span class="strong">RAT_DIV_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀f1 f2.
+    frac_nmr f2 ≠ 0 ⇒ (abs_rat f1 / abs_rat f2 = abs_rat (frac_div f1 f2))
+</pre>
+
+<DT><span class="strong">RAT_DIV_CONG</span>
+<DD>
+<pre>
+⊢ (∀x y.
+     frac_nmr y ≠ 0 ⇒
+     (abs_rat (frac_div (rep_rat (abs_rat x)) y) = abs_rat (frac_div x y))) ∧
+  ∀x y.
+    frac_nmr y ≠ 0 ⇒
+    (abs_rat (frac_div x (rep_rat (abs_rat y))) = abs_rat (frac_div x y))
+</pre>
+
+<DT><span class="strong">RAT_DIV_CONG1</span>
+<DD>
+<pre>
+⊢ ∀x y.
+    frac_nmr y ≠ 0 ⇒
+    (abs_rat (frac_div (rep_rat (abs_rat x)) y) = abs_rat (frac_div x y))
+</pre>
+
+<DT><span class="strong">RAT_DIV_CONG2</span>
+<DD>
+<pre>
+⊢ ∀x y.
+    frac_nmr y ≠ 0 ⇒
+    (abs_rat (frac_div x (rep_rat (abs_rat y))) = abs_rat (frac_div x y))
+</pre>
+
+<DT><span class="strong">RAT_DIV_EQ0</span>
+<DD>
+<pre>
+⊢ d ≠ 0 ⇒ ((n / d = 0) ⇔ (n = 0)) ∧ ((0 = n / d) ⇔ (n = 0))
+</pre>
+
+<DT><span class="strong">RAT_DIV_INV</span>
+<DD>
+<pre>
+⊢ r ≠ 0 ⇒ (r / r = 1)
+</pre>
+
+<DT><span class="strong">RAT_DIV_MINV</span>
+<DD>
+<pre>
+⊢ x ≠ 0 ∧ y ≠ 0 ⇒ (rat_minv (x / y) = y / x)
+</pre>
+
+<DT><span class="strong">RAT_DIV_MULMINV</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 / r2 = r1 * rat_minv r2
+</pre>
+
+<DT><span class="strong">RAT_DIV_NEG1</span>
+<DD>
+<pre>
+⊢ r / -1 = -r
+</pre>
+
+<DT><span class="strong">RAT_EQ</span>
+<DD>
+<pre>
+⊢ ∀f1 f2.
+    (abs_rat f1 = abs_rat f2) ⇔
+    (frac_nmr f1 * frac_dnm f2 = frac_nmr f2 * frac_dnm f1)
+</pre>
+
+<DT><span class="strong">RAT_EQ0_NMR</span>
+<DD>
+<pre>
+⊢ ∀r1. (r1 = 0) ⇔ (rat_nmr r1 = 0)
+</pre>
+
+<DT><span class="strong">RAT_EQUIV</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. rat_equiv f1 f2 ⇔ (rat_equiv f1 = rat_equiv f2)
+</pre>
+
+<DT><span class="strong">RAT_EQUIV_ALT</span>
+<DD>
+<pre>
+⊢ ∀a. rat_equiv a =
+      (λx.
+           ∃b c.
+             0 < b ∧ 0 < c ∧
+             (frac_mul a (abs_frac (b,b)) = frac_mul x (abs_frac (c,c))))
+</pre>
+
+<DT><span class="strong">RAT_EQUIV_NMR_GTZ_IFF</span>
+<DD>
+<pre>
+⊢ ∀a b. rat_equiv a b ⇒ (frac_nmr a > 0 ⇔ frac_nmr b > 0)
+</pre>
+
+<DT><span class="strong">RAT_EQUIV_NMR_LTZ_IFF</span>
+<DD>
+<pre>
+⊢ ∀a b. rat_equiv a b ⇒ (frac_nmr a < 0 ⇔ frac_nmr b < 0)
+</pre>
+
+<DT><span class="strong">RAT_EQUIV_NMR_Z_IFF</span>
+<DD>
+<pre>
+⊢ ∀a b. rat_equiv a b ⇒ ((frac_nmr a = 0) ⇔ (frac_nmr b = 0))
+</pre>
+
+<DT><span class="strong">RAT_EQUIV_REF</span>
+<DD>
+<pre>
+⊢ ∀a. rat_equiv a a
+</pre>
+
+<DT><span class="strong">RAT_EQUIV_SYM</span>
+<DD>
+<pre>
+⊢ ∀a b. rat_equiv a b ⇔ rat_equiv b a
+</pre>
+
+<DT><span class="strong">RAT_EQUIV_TRANS</span>
+<DD>
+<pre>
+⊢ ∀a b c. rat_equiv a b ∧ rat_equiv b c ⇒ rat_equiv a c
+</pre>
+
+<DT><span class="strong">RAT_EQ_0SUB</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. (0 = r1 − r2) ⇔ (r1 = r2)
+</pre>
+
+<DT><span class="strong">RAT_EQ_AINV</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. (-r1 = -r2) ⇔ (r1 = r2)
+</pre>
+
+<DT><span class="strong">RAT_EQ_ALT</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. (r1 = r2) ⇔ (rat_nmr r1 * rat_dnm r2 = rat_nmr r2 * rat_dnm r1)
+</pre>
+
+<DT><span class="strong">RAT_EQ_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀f1 f2.
+    (abs_rat f1 = abs_rat f2) ⇔
+    (frac_nmr f1 * frac_dnm f2 = frac_nmr f2 * frac_dnm f1)
+</pre>
+
+<DT><span class="strong">RAT_EQ_LADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. (r3 + r1 = r3 + r2) ⇔ (r1 = r2)
+</pre>
+
+<DT><span class="strong">RAT_EQ_LMUL</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r3 ≠ 0 ⇒ ((r3 * r1 = r3 * r2) ⇔ (r1 = r2))
+</pre>
+
+<DT><span class="strong">RAT_EQ_NUM_CALCULATE</span>
+<DD>
+<pre>
+⊢ (∀n m. (&n = &m) ⇔ (n = m)) ∧ (∀n m. (&n = -&m) ⇔ (n = 0) ∧ (m = 0)) ∧
+  (∀n m. (-&n = &m) ⇔ (n = 0) ∧ (m = 0)) ∧ ∀n m. (-&n = -&m) ⇔ (n = m)
+</pre>
+
+<DT><span class="strong">RAT_EQ_RADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. (r1 + r3 = r2 + r3) ⇔ (r1 = r2)
+</pre>
+
+<DT><span class="strong">RAT_EQ_RMUL</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r3 ≠ 0 ⇒ ((r1 * r3 = r2 * r3) ⇔ (r1 = r2))
+</pre>
+
+<DT><span class="strong">RAT_EQ_SUB0</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. (r1 − r2 = 0) ⇔ (r1 = r2)
+</pre>
+
+<DT><span class="strong">RAT_LDISTRIB</span>
+<DD>
+<pre>
+⊢ ∀a b c. c * (a + b) = c * a + c * b
+</pre>
+
+<DT><span class="strong">RAT_LDIV_EQ</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r2 ≠ 0 ⇒ ((r1 / r2 = r3) ⇔ (r1 = r2 * r3))
+</pre>
+
+<DT><span class="strong">RAT_LDIV_LEQ_NEG</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r2 < 0 ⇒ (r1 / r2 ≤ r3 ⇔ r2 * r3 ≤ r1)
+</pre>
+
+<DT><span class="strong">RAT_LDIV_LEQ_POS</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. 0 < r2 ⇒ (r1 / r2 ≤ r3 ⇔ r1 ≤ r2 * r3)
+</pre>
+
+<DT><span class="strong">RAT_LDIV_LES_NEG</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r2 < 0 ⇒ (r1 / r2 < r3 ⇔ r2 * r3 < r1)
+</pre>
+
+<DT><span class="strong">RAT_LDIV_LES_POS</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. 0 < r2 ⇒ (r1 / r2 < r3 ⇔ r1 < r2 * r3)
+</pre>
+
+<DT><span class="strong">RAT_LEQ0_NMR</span>
+<DD>
+<pre>
+⊢ ∀r1. r1 ≤ 0 ⇔ rat_nmr r1 ≤ 0
+</pre>
+
+<DT><span class="strong">RAT_LEQ_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 ≤ r2 ∧ r2 ≤ r1 ⇒ (r1 = r2)
+</pre>
+
+<DT><span class="strong">RAT_LEQ_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀f1 f2.
+    abs_rat f1 ≤ abs_rat f2 ⇔
+    frac_nmr f1 * frac_dnm f2 ≤ frac_nmr f2 * frac_dnm f1
+</pre>
+
+<DT><span class="strong">RAT_LEQ_LADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r3 + r1 ≤ r3 + r2 ⇔ r1 ≤ r2
+</pre>
+
+<DT><span class="strong">RAT_LEQ_LES</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. ¬(r2 < r1) ⇔ r1 ≤ r2
+</pre>
+
+<DT><span class="strong">RAT_LEQ_LES_TRANS</span>
+<DD>
+<pre>
+⊢ ∀a b c. a ≤ b ∧ b < c ⇒ a < c
+</pre>
+
+<DT><span class="strong">RAT_LEQ_RADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r1 + r3 ≤ r2 + r3 ⇔ r1 ≤ r2
+</pre>
+
+<DT><span class="strong">RAT_LEQ_REF</span>
+<DD>
+<pre>
+⊢ ∀r1. r1 ≤ r1
+</pre>
+
+<DT><span class="strong">RAT_LEQ_TRANS</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r1 ≤ r2 ∧ r2 ≤ r3 ⇒ r1 ≤ r3
+</pre>
+
+<DT><span class="strong">RAT_LES0_LEQ0_ADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 < 0 ⇒ r2 ≤ 0 ⇒ r1 + r2 < 0
+</pre>
+
+<DT><span class="strong">RAT_LES0_LES0_ADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 < 0 ⇒ r2 < 0 ⇒ r1 + r2 < 0
+</pre>
+
+<DT><span class="strong">RAT_LES0_NMR</span>
+<DD>
+<pre>
+⊢ ∀r1. r1 < 0 ⇔ rat_nmr r1 < 0
+</pre>
+
+<DT><span class="strong">RAT_LES_01</span>
+<DD>
+<pre>
+⊢ 0 < 1
+</pre>
+
+<DT><span class="strong">RAT_LES_0SUB</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. 0 < r1 − r2 ⇔ r2 < r1
+</pre>
+
+<DT><span class="strong">RAT_LES_AINV</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. -r1 < -r2 ⇔ r2 < r1
+</pre>
+
+<DT><span class="strong">RAT_LES_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 < r2 ⇒ ¬(r2 < r1)
+</pre>
+
+<DT><span class="strong">RAT_LES_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀f1 f2.
+    abs_rat f1 < abs_rat f2 ⇔
+    frac_nmr f1 * frac_dnm f2 < frac_nmr f2 * frac_dnm f1
+</pre>
+
+<DT><span class="strong">RAT_LES_IMP_LEQ</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 < r2 ⇒ r1 ≤ r2
+</pre>
+
+<DT><span class="strong">RAT_LES_IMP_NEQ</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 < r2 ⇒ r1 ≠ r2
+</pre>
+
+<DT><span class="strong">RAT_LES_LADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r3 + r1 < r3 + r2 ⇔ r1 < r2
+</pre>
+
+<DT><span class="strong">RAT_LES_LEQ</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. ¬(r2 ≤ r1) ⇔ r1 < r2
+</pre>
+
+<DT><span class="strong">RAT_LES_LEQ2</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 < r2 ⇔ r1 ≤ r2 ∧ ¬(r2 ≤ r1)
+</pre>
+
+<DT><span class="strong">RAT_LES_LEQ_TRANS</span>
+<DD>
+<pre>
+⊢ ∀a b c. a < b ∧ b ≤ c ⇒ a < c
+</pre>
+
+<DT><span class="strong">RAT_LES_LMUL_NEG</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r3 < 0 ⇒ (r3 * r2 < r3 * r1 ⇔ r1 < r2)
+</pre>
+
+<DT><span class="strong">RAT_LES_LMUL_POS</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. 0 < r3 ⇒ (r3 * r1 < r3 * r2 ⇔ r1 < r2)
+</pre>
+
+<DT><span class="strong">RAT_LES_RADD</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r1 + r3 < r2 + r3 ⇔ r1 < r2
+</pre>
+
+<DT><span class="strong">RAT_LES_REF</span>
+<DD>
+<pre>
+⊢ ∀r1. ¬(r1 < r1)
+</pre>
+
+<DT><span class="strong">RAT_LES_RMUL_NEG</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r3 < 0 ⇒ (r2 * r3 < r1 * r3 ⇔ r1 < r2)
+</pre>
+
+<DT><span class="strong">RAT_LES_RMUL_POS</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. 0 < r3 ⇒ (r1 * r3 < r2 * r3 ⇔ r1 < r2)
+</pre>
+
+<DT><span class="strong">RAT_LES_SUB0</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 − r2 < 0 ⇔ r1 < r2
+</pre>
+
+<DT><span class="strong">RAT_LES_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 < r2 ∨ (r1 = r2) ∨ r2 < r1
+</pre>
+
+<DT><span class="strong">RAT_LES_TRANS</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r1 < r2 ∧ r2 < r3 ⇒ r1 < r3
+</pre>
+
+<DT><span class="strong">RAT_LE_NUM_CALCULATE</span>
+<DD>
+<pre>
+⊢ (&a ≤ &b ⇔ a ≤ b) ∧ (-&m ≤ &n ⇔ T) ∧ (&m ≤ -&n ⇔ (m = 0) ∧ (n = 0)) ∧
+  (-&m ≤ -&n ⇔ n ≤ m)
+</pre>
+
+<DT><span class="strong">RAT_LSUB_EQ</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. (r1 − r2 = r3) ⇔ (r1 = r2 + r3)
+</pre>
+
+<DT><span class="strong">RAT_LSUB_LEQ</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r1 − r2 ≤ r3 ⇔ r1 ≤ r2 + r3
+</pre>
+
+<DT><span class="strong">RAT_LSUB_LES</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r1 − r2 < r3 ⇔ r1 < r2 + r3
+</pre>
+
+<DT><span class="strong">RAT_LT_NUM_CALCULATE</span>
+<DD>
+<pre>
+⊢ (&a < &b ⇔ a < b) ∧ (-&m < &n ⇔ 0 < m ∨ 0 < n) ∧ (&m < -&n ⇔ F) ∧
+  (-&m < -&n ⇔ n < m)
+</pre>
+
+<DT><span class="strong">RAT_MINV_1</span>
+<DD>
+<pre>
+⊢ rat_minv 1 = 1
+</pre>
+
+<DT><span class="strong">RAT_MINV_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀f1. 0 ≠ frac_nmr f1 ⇒ (rat_minv (abs_rat f1) = abs_rat (frac_minv f1))
+</pre>
+
+<DT><span class="strong">RAT_MINV_CONG</span>
+<DD>
+<pre>
+⊢ ∀x. frac_nmr x ≠ 0 ⇒
+      (abs_rat (frac_minv (rep_rat (abs_rat x))) = abs_rat (frac_minv x))
+</pre>
+
+<DT><span class="strong">RAT_MINV_EQ_0</span>
+<DD>
+<pre>
+⊢ r ≠ 0 ⇒ rat_minv r ≠ 0
+</pre>
+
+<DT><span class="strong">RAT_MINV_LES</span>
+<DD>
+<pre>
+⊢ ∀r1. 0 < r1 ⇒ (rat_minv r1 < 0 ⇔ r1 < 0) ∧ (0 < rat_minv r1 ⇔ 0 < r1)
+</pre>
+
+<DT><span class="strong">RAT_MINV_MUL</span>
+<DD>
+<pre>
+⊢ a ≠ 0 ∧ b ≠ 0 ⇒ (rat_minv (a * b) = rat_minv a * rat_minv b)
+</pre>
+
+<DT><span class="strong">RAT_MINV_RATND</span>
+<DD>
+<pre>
+⊢ r ≠ 0 ⇒
+  (rat_minv r = rat_of_int (rat_sgn r) * &RATD r / rat_of_int (ABS (RATN r)))
+</pre>
+
+<DT><span class="strong">RAT_MUL_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀a b c. a * (b * c) = a * b * c
+</pre>
+
+<DT><span class="strong">RAT_MUL_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. abs_rat f1 * abs_rat f2 = abs_rat (frac_mul f1 f2)
+</pre>
+
+<DT><span class="strong">RAT_MUL_COMM</span>
+<DD>
+<pre>
+⊢ ∀a b. a * b = b * a
+</pre>
+
+<DT><span class="strong">RAT_MUL_CONG</span>
+<DD>
+<pre>
+⊢ (∀x y. abs_rat (frac_mul (rep_rat (abs_rat x)) y) = abs_rat (frac_mul x y)) ∧
+  ∀x y. abs_rat (frac_mul x (rep_rat (abs_rat y))) = abs_rat (frac_mul x y)
+</pre>
+
+<DT><span class="strong">RAT_MUL_CONG1</span>
+<DD>
+<pre>
+⊢ ∀x y. abs_rat (frac_mul (rep_rat (abs_rat x)) y) = abs_rat (frac_mul x y)
+</pre>
+
+<DT><span class="strong">RAT_MUL_CONG2</span>
+<DD>
+<pre>
+⊢ ∀x y. abs_rat (frac_mul x (rep_rat (abs_rat y))) = abs_rat (frac_mul x y)
+</pre>
+
+<DT><span class="strong">RAT_MUL_LID</span>
+<DD>
+<pre>
+⊢ ∀a. 1 * a = a
+</pre>
+
+<DT><span class="strong">RAT_MUL_LINV</span>
+<DD>
+<pre>
+⊢ ∀a. a ≠ 0 ⇒ (rat_minv a * a = 1)
+</pre>
+
+<DT><span class="strong">RAT_MUL_LZERO</span>
+<DD>
+<pre>
+⊢ ∀r1. 0 * r1 = 0
+</pre>
+
+<DT><span class="strong">RAT_MUL_NUM_CALCULATE</span>
+<DD>
+<pre>
+⊢ (∀n m. &n * &m = &(n * m)) ∧ (∀n m. -&n * &m = -&(n * m)) ∧
+  (∀n m. &n * -&m = -&(n * m)) ∧ ∀n m. -&n * -&m = &(n * m)
+</pre>
+
+<DT><span class="strong">RAT_MUL_ONE_ONE</span>
+<DD>
+<pre>
+⊢ ∀r1. r1 ≠ 0 ⇔ ONE_ONE ($* r1)
+</pre>
+
+<DT><span class="strong">RAT_MUL_RID</span>
+<DD>
+<pre>
+⊢ ∀a. a * 1 = a
+</pre>
+
+<DT><span class="strong">RAT_MUL_RINV</span>
+<DD>
+<pre>
+⊢ ∀a. a ≠ 0 ⇒ (a * rat_minv a = 1)
+</pre>
+
+<DT><span class="strong">RAT_MUL_RZERO</span>
+<DD>
+<pre>
+⊢ ∀r1. r1 * 0 = 0
+</pre>
+
+<DT><span class="strong">RAT_MUL_SIGN_CASES</span>
+<DD>
+<pre>
+⊢ ∀p q.
+    (0 < p * q ⇔ 0 < p ∧ 0 < q ∨ p < 0 ∧ q < 0) ∧
+    (p * q < 0 ⇔ 0 < p ∧ q < 0 ∨ p < 0 ∧ 0 < q)
+</pre>
+
+<DT><span class="strong">RAT_NMRDNM_EQ</span>
+<DD>
+<pre>
+⊢ (abs_rat (abs_frac (frac_nmr f1,frac_dnm f1)) = 1) ⇔
+  (frac_nmr f1 = frac_dnm f1)
+</pre>
+
+<DT><span class="strong">RAT_NMREQ0_CONG</span>
+<DD>
+<pre>
+⊢ ∀f1. (frac_nmr (rep_rat (abs_rat f1)) = 0) ⇔ (frac_nmr f1 = 0)
+</pre>
+
+<DT><span class="strong">RAT_NMRGT0_CONG</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_nmr (rep_rat (abs_rat f1)) > 0 ⇔ frac_nmr f1 > 0
+</pre>
+
+<DT><span class="strong">RAT_NMRLT0_CONG</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_nmr (rep_rat (abs_rat f1)) < 0 ⇔ frac_nmr f1 < 0
+</pre>
+
+<DT><span class="strong">RAT_NMR_Z_IFF_EQUIV</span>
+<DD>
+<pre>
+⊢ ∀a b. (frac_nmr a = 0) ⇒ (rat_equiv a b ⇔ (frac_nmr b = 0))
+</pre>
+
+<DT><span class="strong">RAT_NO_IDDIV</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. (r1 * r2 = r2) ⇔ (r1 = 1) ∨ (r2 = 0)
+</pre>
+
+<DT><span class="strong">RAT_NO_ZERODIV</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. (r1 = 0) ∨ (r2 = 0) ⇔ (r1 * r2 = 0)
+</pre>
+
+<DT><span class="strong">RAT_NO_ZERODIV_NEG</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 * r2 ≠ 0 ⇔ r1 ≠ 0 ∧ r2 ≠ 0
+</pre>
+
+<DT><span class="strong">RAT_NO_ZERODIV_THM</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. (r1 * r2 = 0) ⇔ (r1 = 0) ∨ (r2 = 0)
+</pre>
+
+<DT><span class="strong">RAT_OF_INT_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀i. rat_of_int i = abs_rat (abs_frac (i,1))
+</pre>
+
+<DT><span class="strong">RAT_OF_NUM</span>
+<DD>
+<pre>
+⊢ ∀n. (0 = rat_0) ∧ ∀n. &SUC n = &n + rat_1
+</pre>
+
+<DT><span class="strong">RAT_OF_NUM_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀n1. &n1 = abs_rat (abs_frac (&n1,1))
+</pre>
+
+<DT><span class="strong">RAT_OF_NUM_LEQ</span>
+<DD>
+<pre>
+⊢ &a ≤ &b ⇔ a ≤ b
+</pre>
+
+<DT><span class="strong">RAT_OF_NUM_LES</span>
+<DD>
+<pre>
+⊢ &a < &b ⇔ a < b
+</pre>
+
+<DT><span class="strong">RAT_RDISTRIB</span>
+<DD>
+<pre>
+⊢ ∀a b c. (a + b) * c = a * c + b * c
+</pre>
+
+<DT><span class="strong">RAT_RDIV_EQ</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r3 ≠ 0 ⇒ ((r1 = r2 / r3) ⇔ (r1 * r3 = r2))
+</pre>
+
+<DT><span class="strong">RAT_RDIV_LEQ_NEG</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r3 < 0 ⇒ (r1 ≤ r2 / r3 ⇔ r2 ≤ r1 * r3)
+</pre>
+
+<DT><span class="strong">RAT_RDIV_LEQ_POS</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. 0 < r3 ⇒ (r1 ≤ r2 / r3 ⇔ r1 * r3 ≤ r2)
+</pre>
+
+<DT><span class="strong">RAT_RDIV_LES_NEG</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r3 < 0 ⇒ (r1 < r2 / r3 ⇔ r2 < r1 * r3)
+</pre>
+
+<DT><span class="strong">RAT_RDIV_LES_POS</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. 0 < r3 ⇒ (r1 < r2 / r3 ⇔ r1 * r3 < r2)
+</pre>
+
+<DT><span class="strong">RAT_RSUB_EQ</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. (r1 = r2 − r3) ⇔ (r1 + r3 = r2)
+</pre>
+
+<DT><span class="strong">RAT_RSUB_LEQ</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r1 ≤ r2 − r3 ⇔ r1 + r3 ≤ r2
+</pre>
+
+<DT><span class="strong">RAT_RSUB_LES</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 r3. r1 < r2 − r3 ⇔ r1 + r3 < r2
+</pre>
+
+<DT><span class="strong">RAT_SAVE</span>
+<DD>
+<pre>
+⊢ ∀r1. ∃a1 b1. r1 = abs_rat (frac_save a1 b1)
+</pre>
+
+<DT><span class="strong">RAT_SAVE_MINV</span>
+<DD>
+<pre>
+⊢ ∀a1 b1.
+    abs_rat (frac_save a1 b1) ≠ 0 ⇒
+    (rat_minv (abs_rat (frac_save a1 b1)) =
+     abs_rat (frac_save (SGN a1 * (&b1 + 1)) (Num (ABS a1 − 1))))
+</pre>
+
+<DT><span class="strong">RAT_SAVE_NUM</span>
+<DD>
+<pre>
+⊢ ∀n. &n = abs_rat (frac_save (&n) 0)
+</pre>
+
+<DT><span class="strong">RAT_SAVE_TO_CONS</span>
+<DD>
+<pre>
+⊢ ∀a1 b1. abs_rat (frac_save a1 b1) = a1 // (&b1 + 1)
+</pre>
+
+<DT><span class="strong">RAT_SGN_0</span>
+<DD>
+<pre>
+⊢ rat_sgn 0 = 0
+</pre>
+
+<DT><span class="strong">RAT_SGN_AINV</span>
+<DD>
+<pre>
+⊢ ∀r1. -rat_sgn (-r1) = rat_sgn r1
+</pre>
+
+<DT><span class="strong">RAT_SGN_AINV_RWT</span>
+<DD>
+<pre>
+⊢ rat_sgn (-r) = -rat_sgn r
+</pre>
+
+<DT><span class="strong">RAT_SGN_ALT</span>
+<DD>
+<pre>
+⊢ rat_sgn r = SGN (RATN r)
+</pre>
+
+<DT><span class="strong">RAT_SGN_CALCULATE</span>
+<DD>
+<pre>
+⊢ rat_sgn (abs_rat f1) = frac_sgn f1
+</pre>
+
+<DT><span class="strong">RAT_SGN_CLAUSES</span>
+<DD>
+<pre>
+⊢ ∀r1.
+    ((rat_sgn r1 = -1) ⇔ r1 < 0) ∧ ((rat_sgn r1 = 0) ⇔ (r1 = 0)) ∧
+    ((rat_sgn r1 = 1) ⇔ r1 > 0)
+</pre>
+
+<DT><span class="strong">RAT_SGN_COMPLEMENT</span>
+<DD>
+<pre>
+⊢ ∀r1.
+    (rat_sgn r1 ≠ -1 ⇔ (rat_sgn r1 = 0) ∨ (rat_sgn r1 = 1)) ∧
+    (rat_sgn r1 ≠ 0 ⇔ (rat_sgn r1 = -1) ∨ (rat_sgn r1 = 1)) ∧
+    (rat_sgn r1 ≠ 1 ⇔ (rat_sgn r1 = -1) ∨ (rat_sgn r1 = 0))
+</pre>
+
+<DT><span class="strong">RAT_SGN_CONG</span>
+<DD>
+<pre>
+⊢ ∀f1. frac_sgn (rep_rat (abs_rat f1)) = frac_sgn f1
+</pre>
+
+<DT><span class="strong">RAT_SGN_DIV</span>
+<DD>
+<pre>
+⊢ d ≠ 0 ⇒ (rat_sgn (n / d) = rat_sgn n * rat_sgn d)
+</pre>
+
+<DT><span class="strong">RAT_SGN_EQ0</span>
+<DD>
+<pre>
+⊢ ((rat_sgn r = 0) ⇔ (r = 0)) ∧ ((0 = rat_sgn r) ⇔ (r = 0))
+</pre>
+
+<DT><span class="strong">RAT_SGN_MINV</span>
+<DD>
+<pre>
+⊢ ∀r1. r1 ≠ 0 ⇒ (rat_sgn (rat_minv r1) = rat_sgn r1)
+</pre>
+
+<DT><span class="strong">RAT_SGN_MUL</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. rat_sgn (r1 * r2) = rat_sgn r1 * rat_sgn r2
+</pre>
+
+<DT><span class="strong">RAT_SGN_NEG</span>
+<DD>
+<pre>
+⊢ (rat_sgn r = -1) ⇔ r < 0
+</pre>
+
+<DT><span class="strong">RAT_SGN_NUM_BITs</span>
+<DD>
+<pre>
+⊢ (rat_sgn (&NUMERAL (BIT1 n)) = 1) ∧ (rat_sgn (&NUMERAL (BIT2 n)) = 1)
+</pre>
+
+<DT><span class="strong">RAT_SGN_NUM_COND</span>
+<DD>
+<pre>
+⊢ rat_sgn (&n) = if n = 0 then 0 else 1
+</pre>
+
+<DT><span class="strong">RAT_SGN_POS</span>
+<DD>
+<pre>
+⊢ (rat_sgn r = 1) ⇔ 0 < r
+</pre>
+
+<DT><span class="strong">RAT_SGN_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀r1. (rat_sgn r1 = -1) ∨ (rat_sgn r1 = 0) ∨ (rat_sgn r1 = 1)
+</pre>
+
+<DT><span class="strong">RAT_SUB_ADDAINV</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 − r2 = r1 + -r2
+</pre>
+
+<DT><span class="strong">RAT_SUB_CALCULATE</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. abs_rat f1 − abs_rat f2 = abs_rat (frac_sub f1 f2)
+</pre>
+
+<DT><span class="strong">RAT_SUB_CONG</span>
+<DD>
+<pre>
+⊢ (∀x y. abs_rat (frac_sub (rep_rat (abs_rat x)) y) = abs_rat (frac_sub x y)) ∧
+  ∀x y. abs_rat (frac_sub x (rep_rat (abs_rat y))) = abs_rat (frac_sub x y)
+</pre>
+
+<DT><span class="strong">RAT_SUB_CONG1</span>
+<DD>
+<pre>
+⊢ ∀x y. abs_rat (frac_sub (rep_rat (abs_rat x)) y) = abs_rat (frac_sub x y)
+</pre>
+
+<DT><span class="strong">RAT_SUB_CONG2</span>
+<DD>
+<pre>
+⊢ ∀x y. abs_rat (frac_sub x (rep_rat (abs_rat y))) = abs_rat (frac_sub x y)
+</pre>
+
+<DT><span class="strong">RAT_SUB_ID</span>
+<DD>
+<pre>
+⊢ ∀r. r − r = 0
+</pre>
+
+<DT><span class="strong">RAT_SUB_LDISTRIB</span>
+<DD>
+<pre>
+⊢ ∀a b c. c * (a − b) = c * a − c * b
+</pre>
+
+<DT><span class="strong">RAT_SUB_LID</span>
+<DD>
+<pre>
+⊢ ∀r1. 0 − r1 = -r1
+</pre>
+
+<DT><span class="strong">RAT_SUB_RDISTRIB</span>
+<DD>
+<pre>
+⊢ ∀a b c. (a − b) * c = a * c − b * c
+</pre>
+
+<DT><span class="strong">RAT_SUB_RID</span>
+<DD>
+<pre>
+⊢ ∀r1. r1 − 0 = r1
+</pre>
+
+<DT><span class="strong">RDIV_MUL_OUT</span>
+<DD>
+<pre>
+⊢ r1 * (r2 / r3) = r1 * r2 / r3
+</pre>
+
+<DT><span class="strong">rat_0</span>
+<DD>
+<pre>
+⊢ 0 = abs_rat frac_0
+</pre>
+
+<DT><span class="strong">rat_1</span>
+<DD>
+<pre>
+⊢ 1 = abs_rat frac_1
+</pre>
+
+<DT><span class="strong">rat_ABS_REP_CLASS</span>
+<DD>
+<pre>
+⊢ (∀a. abs_rat_CLASS (rep_rat_CLASS a) = a) ∧
+  ∀c. (∃r. rat_equiv r r ∧ (c = rat_equiv r)) ⇔
+      (rep_rat_CLASS (abs_rat_CLASS c) = c)
+</pre>
+
+<DT><span class="strong">rat_QUOTIENT</span>
+<DD>
+<pre>
+⊢ QUOTIENT rat_equiv abs_rat rep_rat
+</pre>
+
+<DT><span class="strong">rat_def</span>
+<DD>
+<pre>
+⊢ QUOTIENT rat_equiv abs_rat rep_rat
+</pre>
+
+<DT><span class="strong">rat_equiv_rep_abs</span>
+<DD>
+<pre>
+⊢ rat_equiv (rep_rat (abs_rat f)) f
+</pre>
+
+<DT><span class="strong">rat_equiv_reps</span>
+<DD>
+<pre>
+⊢ rat_equiv (rep_rat r1) (rep_rat r2) ⇔ (r1 = r2)
+</pre>
+
+<DT><span class="strong">rat_of_int_11</span>
+<DD>
+<pre>
+⊢ (rat_of_int i1 = rat_of_int i2) ⇔ (i1 = i2)
+</pre>
+
+<DT><span class="strong">rat_of_int_ADD</span>
+<DD>
+<pre>
+⊢ rat_of_int x + rat_of_int y = rat_of_int (x + y)
+</pre>
+
+<DT><span class="strong">rat_of_int_LE</span>
+<DD>
+<pre>
+⊢ rat_of_int i ≤ rat_of_int j ⇔ i ≤ j
+</pre>
+
+<DT><span class="strong">rat_of_int_LT</span>
+<DD>
+<pre>
+⊢ rat_of_int i < rat_of_int j ⇔ i < j
+</pre>
+
+<DT><span class="strong">rat_of_int_MUL</span>
+<DD>
+<pre>
+⊢ rat_of_int x * rat_of_int y = rat_of_int (x * y)
+</pre>
+
+<DT><span class="strong">rat_of_int_ainv</span>
+<DD>
+<pre>
+⊢ rat_of_int (-i) = -rat_of_int i
+</pre>
+
+<DT><span class="strong">rat_of_int_of_num</span>
+<DD>
+<pre>
+⊢ rat_of_int (&x) = &x
+</pre>
+
+<DT><span class="strong">rat_of_num_compute</span>
+<DD>
+<pre>
+⊢ (0 = rat_0) ∧ (&SUC 0 = rat_1) ∧
+  (∀n. &SUC (NUMERAL (BIT1 n)) = &NUMERAL (BIT1 n) + rat_1) ∧
+  ∀n. &SUC (NUMERAL (BIT2 n)) = &NUMERAL (BIT2 n) + rat_1
+</pre>
+
+<DT><span class="strong">rat_of_num_def</span>
+<DD>
+<pre>
+⊢ (0 = rat_0) ∧ (&SUC 0 = rat_1) ∧ ∀n. &SUC (SUC n) = &SUC n + rat_1
+</pre>
+
+<DT><span class="strong">rat_of_num_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P 0 ∧ P (SUC 0) ∧ (∀n. P (SUC n) ⇒ P (SUC (SUC n))) ⇒ ∀v. P v
+</pre>
+
+<DT><span class="strong">rat_type_thm</span>
+<DD>
+<pre>
+⊢ (∀a. abs_rat (rep_rat a) = a) ∧
+  ∀r s. rat_equiv r s ⇔ (abs_rat r = abs_rat s)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

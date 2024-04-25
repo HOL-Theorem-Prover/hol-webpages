@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: string_num</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "string_num"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "stringTheory.html"><span class="strong">string</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">n2nsum</span>
+    <td>
+    :num -> num + num
+    <tr><td> <span class="strong">n2s</span> <td> :num -> string
+    <tr><td> <span class="strong">nsum2n</span> <td> :num + num -> num
+    <tr><td> <span class="strong">s2n</span> <td> :string -> num
+    <tr><td>
+    <span class="strong">s2ssum</span>
+    <td>
+    :string -> string + string
+    <tr><td>
+    <span class="strong">ssum2s</span>
+    <td>
+    :string + string -> string
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">n2nsum_def</span>
+<DD>
+<pre>
+⊢ ∀n. n2nsum n = if ODD n then INL (n DIV 2) else INR (n DIV 2)
+</pre>
+
+<DT><span class="strong">n2s_def_primitive</span>
+<DD>
+<pre>
+⊢ n2s =
+  WFREC
+    (@R. WF R ∧
+         ∀n r0 r.
+           n ≠ 0 ∧ (r0 = n MOD 256) ∧ (r = if r0 = 0 then 256 else r0) ⇒
+           R ((n − r) DIV 256) n)
+    (λn2s a.
+         I
+           (if a = 0 then ""
+            else
+              (let
+                 r0 = a MOD 256;
+                 r = if r0 = 0 then 256 else r0;
+                 s0 = n2s ((a − r) DIV 256)
+               in
+                 STRING (CHR (r − 1)) s0)))
+</pre>
+
+<DT><span class="strong">nsum2n_def</span>
+<DD>
+<pre>
+⊢ (∀n. nsum2n (INL n) = 2 * n + 1) ∧ ∀n. nsum2n (INR n) = 2 * n
+</pre>
+
+<DT><span class="strong">s2n_def</span>
+<DD>
+<pre>
+⊢ (s2n "" = 0) ∧ ∀c s. s2n (STRING c s) = s2n s * 256 + ORD c + 1
+</pre>
+
+<DT><span class="strong">s2ssum_def</span>
+<DD>
+<pre>
+⊢ ∀s. s2ssum s = SUM_MAP n2s n2s (n2nsum (s2n s))
+</pre>
+
+<DT><span class="strong">ssum2s_def</span>
+<DD>
+<pre>
+⊢ ∀sm. ssum2s sm = n2s (nsum2n (SUM_MAP s2n s2n sm))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">n2nsum_nsum2n</span>
+<DD>
+<pre>
+⊢ n2nsum (nsum2n ns) = ns
+</pre>
+
+<DT><span class="strong">n2s_11</span>
+<DD>
+<pre>
+⊢ (n2s x = n2s y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">n2s_def</span>
+<DD>
+<pre>
+⊢ ∀n. n2s n =
+      if n = 0 then ""
+      else
+        (let
+           r0 = n MOD 256;
+           r = if r0 = 0 then 256 else r0;
+           s0 = n2s ((n − r) DIV 256)
+         in
+           STRING (CHR (r − 1)) s0)
+</pre>
+
+<DT><span class="strong">n2s_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n. (∀r0 r.
+              n ≠ 0 ∧ (r0 = n MOD 256) ∧ (r = if r0 = 0 then 256 else r0) ⇒
+              P ((n − r) DIV 256)) ⇒
+           P n) ⇒
+      ∀v. P v
+</pre>
+
+<DT><span class="strong">n2s_onto</span>
+<DD>
+<pre>
+⊢ ∀s. ∃n. s = n2s n
+</pre>
+
+<DT><span class="strong">n2s_s2n</span>
+<DD>
+<pre>
+⊢ n2s (s2n s) = s
+</pre>
+
+<DT><span class="strong">nsum2n_n2nsum</span>
+<DD>
+<pre>
+⊢ nsum2n (n2nsum n) = n
+</pre>
+
+<DT><span class="strong">s2n_11</span>
+<DD>
+<pre>
+⊢ (s2n x = s2n y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">s2n_n2s</span>
+<DD>
+<pre>
+⊢ ∀n. s2n (n2s n) = n
+</pre>
+
+<DT><span class="strong">s2n_onto</span>
+<DD>
+<pre>
+⊢ ∀n. ∃s. n = s2n s
+</pre>
+
+<DT><span class="strong">s2ssum_ssum2s</span>
+<DD>
+<pre>
+⊢ s2ssum (ssum2s sm) = sm
+</pre>
+
+<DT><span class="strong">ssum2s_s2ssum</span>
+<DD>
+<pre>
+⊢ ssum2s (s2ssum s) = s
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

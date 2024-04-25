@@ -1,0 +1,1608 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: topology</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "topology"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "cardinalTheory.html"><span class="strong">cardinal</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">topology</span>
+    <td>
+    1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">ARBITRARY</span>
+    <td>
+    :((α -> bool) -> bool) -> bool
+    <tr><td>
+    <span class="strong">INTERSECTION_OF</span>
+    <td>
+    :(((α -> bool) -> bool) -> bool) ->
+    ((α -> bool) -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">UNION_OF</span>
+    <td>
+    :(((α -> bool) -> bool) -> bool) ->
+    ((α -> bool) -> bool) -> (α -> bool) -> bool
+    <tr><td> <span class="strong">closed</span> <td> :α topology -> bool
+    <tr><td>
+    <span class="strong">closed_in</span>
+    <td>
+    :α topology -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">hull</span>
+    <td>
+    :((α -> bool) -> bool) -> (α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">istopology</span>
+    <td>
+    :((α -> bool) -> bool) -> bool
+    <tr><td>
+    <span class="strong">limpt</span>
+    <td>
+    :α topology -> α -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">neigh</span>
+    <td>
+    :α topology -> (α -> bool) # α -> bool
+    <tr><td> <span class="strong">open</span> <td> :α topology -> bool
+    <tr><td>
+    <span class="strong">open_in</span>
+    <td>
+    :α topology -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">pairwise</span>
+    <td>
+    :(α -> α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">relative_to</span>
+    <td>
+    :((α -> bool) -> bool) -> (α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">subtopology</span>
+    <td>
+    :α topology -> (α -> bool) -> α topology
+    <tr><td>
+    <span class="strong">topology</span>
+    <td>
+    :((α -> bool) -> bool) -> α topology
+    <tr><td>
+    <span class="strong">topspace</span>
+    <td>
+    :α topology -> α -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">ARBITRARY</span>
+<DD>
+<pre>
+⊢ ∀s. ARBITRARY s ⇔ T
+</pre>
+
+<DT><span class="strong">INTERSECTION_OF</span>
+<DD>
+<pre>
+⊢ ∀P Q.
+    P INTERSECTION_OF Q = (λs. ∃u. P u ∧ (∀c. c ∈ u ⇒ Q c) ∧ (BIGINTER u = s))
+</pre>
+
+<DT><span class="strong">UNION_OF</span>
+<DD>
+<pre>
+⊢ ∀P Q. P UNION_OF Q = (λs. ∃u. P u ∧ (∀c. c ∈ u ⇒ Q c) ∧ (BIGUNION u = s))
+</pre>
+
+<DT><span class="strong">closed_DEF</span>
+<DD>
+<pre>
+⊢ ∀s. closed s ⇔ closed_in s 𝕌(:α)
+</pre>
+
+<DT><span class="strong">closed_in</span>
+<DD>
+<pre>
+⊢ ∀top s.
+    closed_in top s ⇔ s ⊆ topspace top ∧ open_in top (topspace top DIFF s)
+</pre>
+
+<DT><span class="strong">hull</span>
+<DD>
+<pre>
+⊢ ∀P s. P hull s = BIGINTER {t | P t ∧ s ⊆ t}
+</pre>
+
+<DT><span class="strong">istopology</span>
+<DD>
+<pre>
+⊢ ∀L. istopology L ⇔
+      ∅ ∈ L ∧ (∀s t. s ∈ L ∧ t ∈ L ⇒ s ∩ t ∈ L) ∧ ∀k. k ⊆ L ⇒ BIGUNION k ∈ L
+</pre>
+
+<DT><span class="strong">limpt</span>
+<DD>
+<pre>
+⊢ ∀top x S'.
+    limpt top x S' ⇔
+    x ∈ topspace top ∧ ∀N. neigh top (N,x) ⇒ ∃y. x ≠ y ∧ S' y ∧ N y
+</pre>
+
+<DT><span class="strong">neigh</span>
+<DD>
+<pre>
+⊢ ∀top N x.
+    neigh top (N,x) ⇔ ∃P. open_in top P ∧ P ⊆ N ∧ P x ∧ N ⊆ topspace top
+</pre>
+
+<DT><span class="strong">open_DEF</span>
+<DD>
+<pre>
+⊢ ∀s. open s ⇔ open_in s 𝕌(:α)
+</pre>
+
+<DT><span class="strong">pairwise</span>
+<DD>
+<pre>
+⊢ ∀r s. pairwise r s ⇔ ∀x y. x ∈ s ∧ y ∈ s ∧ x ≠ y ⇒ r x y
+</pre>
+
+<DT><span class="strong">relative_to</span>
+<DD>
+<pre>
+⊢ ∀P s t. (P relative_to s) t ⇔ ∃u. P u ∧ (s ∩ u = t)
+</pre>
+
+<DT><span class="strong">subtopology</span>
+<DD>
+<pre>
+⊢ ∀top u. subtopology top u = topology {s ∩ u | open_in top s}
+</pre>
+
+<DT><span class="strong">topology_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION istopology rep
+</pre>
+
+<DT><span class="strong">topology_tybij</span>
+<DD>
+<pre>
+⊢ (∀a. topology (open_in a) = a) ∧
+  ∀r. istopology r ⇔ (open_in (topology r) = r)
+</pre>
+
+<DT><span class="strong">topspace</span>
+<DD>
+<pre>
+⊢ ∀top. topspace top = BIGUNION {s | open_in top s}
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ARBITRARY_INTERSECTION_OF_COMPLEMENT</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    (ARBITRARY INTERSECTION_OF P) s ⇔
+    (ARBITRARY UNION_OF (λs. P (𝕌(:α) DIFF s))) (𝕌(:α) DIFF s)
+</pre>
+
+<DT><span class="strong">ARBITRARY_INTERSECTION_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀P. (ARBITRARY INTERSECTION_OF P) 𝕌(:α)
+</pre>
+
+<DT><span class="strong">ARBITRARY_INTERSECTION_OF_IDEMPOT</span>
+<DD>
+<pre>
+⊢ ∀P. ARBITRARY INTERSECTION_OF ARBITRARY INTERSECTION_OF P =
+      ARBITRARY INTERSECTION_OF P
+</pre>
+
+<DT><span class="strong">ARBITRARY_INTERSECTION_OF_INC</span>
+<DD>
+<pre>
+⊢ ∀P s. P s ⇒ (ARBITRARY INTERSECTION_OF P) s
+</pre>
+
+<DT><span class="strong">ARBITRARY_INTERSECTION_OF_INTER</span>
+<DD>
+<pre>
+⊢ ∀P s t.
+    (ARBITRARY INTERSECTION_OF P) s ∧ (ARBITRARY INTERSECTION_OF P) t ⇒
+    (ARBITRARY INTERSECTION_OF P) (s ∩ t)
+</pre>
+
+<DT><span class="strong">ARBITRARY_INTERSECTION_OF_INTERS</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    (∀s. s ∈ u ⇒ (ARBITRARY INTERSECTION_OF P) s) ⇒
+    (ARBITRARY INTERSECTION_OF P) (BIGINTER u)
+</pre>
+
+<DT><span class="strong">ARBITRARY_INTERSECTION_OF_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    ARBITRARY INTERSECTION_OF P relative_to u =
+    ARBITRARY INTERSECTION_OF (P relative_to u) relative_to u
+</pre>
+
+<DT><span class="strong">ARBITRARY_INTERSECTION_OF_UNION</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t. P s ∧ P t ⇒ P (s ∪ t)) ⇒
+      ∀s t.
+        (ARBITRARY INTERSECTION_OF P) s ∧ (ARBITRARY INTERSECTION_OF P) t ⇒
+        (ARBITRARY INTERSECTION_OF P) (s ∪ t)
+</pre>
+
+<DT><span class="strong">ARBITRARY_INTERSECTION_OF_UNION_EQ</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t.
+         (ARBITRARY INTERSECTION_OF P) s ∧ (ARBITRARY INTERSECTION_OF P) t ⇒
+         (ARBITRARY INTERSECTION_OF P) (s ∪ t)) ⇔
+      ∀s t. P s ∧ P t ⇒ (ARBITRARY INTERSECTION_OF P) (s ∪ t)
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_ALT</span>
+<DD>
+<pre>
+⊢ ∀B s. (ARBITRARY UNION_OF B) s ⇔ ∀x. x ∈ s ⇒ ∃u. u ∈ B ∧ x ∈ u ∧ u ⊆ s
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_COMPLEMENT</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    (ARBITRARY UNION_OF P) s ⇔
+    (ARBITRARY INTERSECTION_OF (λs. P (𝕌(:α) DIFF s))) (𝕌(:α) DIFF s)
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀P. (ARBITRARY UNION_OF P) ∅
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_IDEMPOT</span>
+<DD>
+<pre>
+⊢ ∀P. ARBITRARY UNION_OF ARBITRARY UNION_OF P = ARBITRARY UNION_OF P
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_INC</span>
+<DD>
+<pre>
+⊢ ∀P s. P s ⇒ (ARBITRARY UNION_OF P) s
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_INTER</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t. P s ∧ P t ⇒ P (s ∩ t)) ⇒
+      ∀s t.
+        (ARBITRARY UNION_OF P) s ∧ (ARBITRARY UNION_OF P) t ⇒
+        (ARBITRARY UNION_OF P) (s ∩ t)
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_INTER_EQ</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t.
+         (ARBITRARY UNION_OF P) s ∧ (ARBITRARY UNION_OF P) t ⇒
+         (ARBITRARY UNION_OF P) (s ∩ t)) ⇔
+      ∀s t. P s ∧ P t ⇒ (ARBITRARY UNION_OF P) (s ∩ t)
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_NONEMPTY_FINITE_INTERSECTION</span>
+<DD>
+<pre>
+⊢ ∀u. ARBITRARY UNION_OF (λs. FINITE s ∧ s ≠ ∅) INTERSECTION_OF u =
+      ARBITRARY UNION_OF (FINITE INTERSECTION_OF u relative_to BIGUNION u)
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    ARBITRARY UNION_OF P relative_to u = ARBITRARY UNION_OF (P relative_to u)
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_UNION</span>
+<DD>
+<pre>
+⊢ ∀P s t.
+    (ARBITRARY UNION_OF P) s ∧ (ARBITRARY UNION_OF P) t ⇒
+    (ARBITRARY UNION_OF P) (s ∪ t)
+</pre>
+
+<DT><span class="strong">ARBITRARY_UNION_OF_UNIONS</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    (∀s. s ∈ u ⇒ (ARBITRARY UNION_OF P) s) ⇒
+    (ARBITRARY UNION_OF P) (BIGUNION u)
+</pre>
+
+<DT><span class="strong">BIGUNION_2</span>
+<DD>
+<pre>
+⊢ ∀s t. BIGUNION {s; t} = s ∪ t
+</pre>
+
+<DT><span class="strong">CLOSED_IN_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀top k. k ≠ ∅ ∧ (∀s. s ∈ k ⇒ closed_in top s) ⇒ closed_in top (BIGINTER k)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀top s.
+    FINITE s ∧ (∀t. t ∈ s ⇒ closed_in top t) ⇒ closed_in top (BIGUNION s)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_DIFF</span>
+<DD>
+<pre>
+⊢ ∀top s t. closed_in top s ∧ open_in top t ⇒ closed_in top (s DIFF t)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀top. closed_in top ∅
+</pre>
+
+<DT><span class="strong">CLOSED_IN_IMP_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀top s t. closed_in (subtopology top s) t ⇒ t ⊆ s
+</pre>
+
+<DT><span class="strong">CLOSED_IN_INTER</span>
+<DD>
+<pre>
+⊢ ∀top s t. closed_in top s ∧ closed_in top t ⇒ closed_in top (s ∩ t)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_OPEN_IN_COMPL</span>
+<DD>
+<pre>
+⊢ ∀top. closed top ⇒ ∀s. closed_in top s ⇔ open_in top (COMPL s)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀top s. closed_in top relative_to s = closed_in (subtopology top s)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀top s. closed_in top s ⇒ s ⊆ topspace top
+</pre>
+
+<DT><span class="strong">CLOSED_IN_SUBTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀top u s.
+    closed_in (subtopology top u) s ⇔ ∃t. closed_in top t ∧ (s = t ∩ u)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_SUBTOPOLOGY_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀top s. closed_in (subtopology top ∅) s ⇔ (s = ∅)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_SUBTOPOLOGY_REFL</span>
+<DD>
+<pre>
+⊢ ∀top u. closed_in (subtopology top u) u ⇔ u ⊆ topspace top
+</pre>
+
+<DT><span class="strong">CLOSED_IN_SUBTOPOLOGY_UNION</span>
+<DD>
+<pre>
+⊢ ∀top s t u.
+    closed_in (subtopology top t) s ∧ closed_in (subtopology top u) s ⇒
+    closed_in (subtopology top (t ∪ u)) s
+</pre>
+
+<DT><span class="strong">CLOSED_IN_TOPSPACE</span>
+<DD>
+<pre>
+⊢ ∀top. closed_in top (topspace top)
+</pre>
+
+<DT><span class="strong">CLOSED_IN_UNION</span>
+<DD>
+<pre>
+⊢ ∀top s t. closed_in top s ∧ closed_in top t ⇒ closed_in top (s ∪ t)
+</pre>
+
+<DT><span class="strong">CLOSED_LIMPT</span>
+<DD>
+<pre>
+⊢ ∀top. closed top ⇒ ∀S'. closed_in top S' ⇔ ∀x. limpt top x S' ⇒ S' x
+</pre>
+
+<DT><span class="strong">COMPL_COMPL_applied</span>
+<DD>
+<pre>
+⊢ ∀s. 𝕌(:α) DIFF (𝕌(:α) DIFF s) = s
+</pre>
+
+<DT><span class="strong">COUNTABLE_DISJOINT_UNION_OF_IDEMPOT</span>
+<DD>
+<pre>
+⊢ ∀P. (countable ∩ pairwise DISJOINT) UNION_OF
+      (countable ∩ pairwise DISJOINT) UNION_OF P =
+      (countable ∩ pairwise DISJOINT) UNION_OF P
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_COMPLEMENT</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    (countable INTERSECTION_OF P) s ⇔
+    (countable UNION_OF (λs. P (𝕌(:α) DIFF s))) (𝕌(:α) DIFF s)
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀P. (countable INTERSECTION_OF P) 𝕌(:α)
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_IDEMPOT</span>
+<DD>
+<pre>
+⊢ ∀P. countable INTERSECTION_OF countable INTERSECTION_OF P =
+      countable INTERSECTION_OF P
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_INC</span>
+<DD>
+<pre>
+⊢ ∀P s. P s ⇒ (countable INTERSECTION_OF P) s
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_INTER</span>
+<DD>
+<pre>
+⊢ ∀P s t.
+    (countable INTERSECTION_OF P) s ∧ (countable INTERSECTION_OF P) t ⇒
+    (countable INTERSECTION_OF P) (s ∩ t)
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_INTERS</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    countable u ∧ (∀s. s ∈ u ⇒ (countable INTERSECTION_OF P) s) ⇒
+    (countable INTERSECTION_OF P) (BIGINTER u)
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    countable INTERSECTION_OF P relative_to u =
+    countable INTERSECTION_OF (P relative_to u) relative_to u
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_RELATIVE_TO_ALT</span>
+<DD>
+<pre>
+⊢ ∀P u s.
+    P u ⇒
+    ((countable INTERSECTION_OF P relative_to u) s ⇔
+     (countable INTERSECTION_OF P) s ∧ s ⊆ u)
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_UNION</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t. P s ∧ P t ⇒ P (s ∪ t)) ⇒
+      ∀s t.
+        (countable INTERSECTION_OF P) s ∧ (countable INTERSECTION_OF P) t ⇒
+        (countable INTERSECTION_OF P) (s ∪ t)
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_UNIONS</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    (countable INTERSECTION_OF P) ∅ ∧ (∀s t. P s ∧ P t ⇒ P (s ∪ t)) ∧
+    FINITE u ∧ (∀s. s ∈ u ⇒ (countable INTERSECTION_OF P) s) ⇒
+    (countable INTERSECTION_OF P) (BIGUNION u)
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_UNIONS_NONEMPTY</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    (∀s t. P s ∧ P t ⇒ P (s ∪ t)) ∧ FINITE u ∧ u ≠ ∅ ∧
+    (∀s. s ∈ u ⇒ (countable INTERSECTION_OF P) s) ⇒
+    (countable INTERSECTION_OF P) (BIGUNION u)
+</pre>
+
+<DT><span class="strong">COUNTABLE_INTERSECTION_OF_UNION_EQ</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t.
+         (countable INTERSECTION_OF P) s ∧ (countable INTERSECTION_OF P) t ⇒
+         (countable INTERSECTION_OF P) (s ∪ t)) ⇔
+      ∀s t. P s ∧ P t ⇒ (countable INTERSECTION_OF P) (s ∪ t)
+</pre>
+
+<DT><span class="strong">COUNTABLE_SUBSET_NUM</span>
+<DD>
+<pre>
+⊢ ∀s. countable s
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_ASCENDING</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    P ∅ ∧ (∀t u. P t ∧ P u ⇒ P (t ∪ u)) ⇒
+    ((countable UNION_OF P) s ⇔
+     ∃t. (∀n. P (t n)) ∧ (∀n. t n ⊆ t (SUC n)) ∧
+         (BIGUNION {t n | n ∈ 𝕌(:num)} = s))
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_COMPLEMENT</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    (countable UNION_OF P) s ⇔
+    (countable INTERSECTION_OF (λs. P (𝕌(:α) DIFF s))) (𝕌(:α) DIFF s)
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀P. (countable UNION_OF P) ∅
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_EXPLICIT</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    P ∅ ⇒
+    ((countable UNION_OF P) s ⇔
+     ∃t. (∀n. P (t n)) ∧ (BIGUNION {t n | n ∈ 𝕌(:num)} = s))
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_IDEMPOT</span>
+<DD>
+<pre>
+⊢ ∀P. countable UNION_OF countable UNION_OF P = countable UNION_OF P
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_INC</span>
+<DD>
+<pre>
+⊢ ∀P s. P s ⇒ (countable UNION_OF P) s
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_INTER</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t. P s ∧ P t ⇒ P (s ∩ t)) ⇒
+      ∀s t.
+        (countable UNION_OF P) s ∧ (countable UNION_OF P) t ⇒
+        (countable UNION_OF P) (s ∩ t)
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_INTERS</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    (countable UNION_OF P) 𝕌(:α) ∧ (∀s t. P s ∧ P t ⇒ P (s ∩ t)) ∧ FINITE u ∧
+    (∀s. s ∈ u ⇒ (countable UNION_OF P) s) ⇒
+    (countable UNION_OF P) (BIGINTER u)
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_INTERS_NONEMPTY</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    (∀s t. P s ∧ P t ⇒ P (s ∩ t)) ∧ FINITE u ∧ u ≠ ∅ ∧
+    (∀s. s ∈ u ⇒ (countable UNION_OF P) s) ⇒
+    (countable UNION_OF P) (BIGINTER u)
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_INTER_EQ</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t.
+         (countable UNION_OF P) s ∧ (countable UNION_OF P) t ⇒
+         (countable UNION_OF P) (s ∩ t)) ⇔
+      ∀s t. P s ∧ P t ⇒ (countable UNION_OF P) (s ∩ t)
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    countable UNION_OF P relative_to u = countable UNION_OF (P relative_to u)
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_UNION</span>
+<DD>
+<pre>
+⊢ ∀P s t.
+    (countable UNION_OF P) s ∧ (countable UNION_OF P) t ⇒
+    (countable UNION_OF P) (s ∪ t)
+</pre>
+
+<DT><span class="strong">COUNTABLE_UNION_OF_UNIONS</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    countable u ∧ (∀s. s ∈ u ⇒ (countable UNION_OF P) s) ⇒
+    (countable UNION_OF P) (BIGUNION u)
+</pre>
+
+<DT><span class="strong">DIFF_INTERS</span>
+<DD>
+<pre>
+⊢ ∀u s. u DIFF BIGINTER s = BIGUNION {u DIFF t | t ∈ s}
+</pre>
+
+<DT><span class="strong">DIFF_UNIONS</span>
+<DD>
+<pre>
+⊢ ∀u s. u DIFF BIGUNION s = u ∩ BIGINTER {u DIFF t | t ∈ s}
+</pre>
+
+<DT><span class="strong">DIFF_UNIONS_NONEMPTY</span>
+<DD>
+<pre>
+⊢ ∀u s. s ≠ ∅ ⇒ (u DIFF BIGUNION s = BIGINTER {u DIFF t | t ∈ s})
+</pre>
+
+<DT><span class="strong">EMPTY_GSPEC</span>
+<DD>
+<pre>
+⊢ {x | F} = ∅
+</pre>
+
+<DT><span class="strong">EXT_SKOLEM_THM</span>
+<DD>
+<pre>
+⊢ ∀P Q. (∀x. x ∈ P ⇒ ∃y. Q x y) ⇔ ∃f. ∀x. x ∈ P ⇒ Q x (f x)
+</pre>
+
+<DT><span class="strong">EXT_SKOLEM_THM'</span>
+<DD>
+<pre>
+⊢ ∀P Q. (∀x. P x ⇒ ∃y. Q x y) ⇔ ∃f. ∀x. P x ⇒ Q x (f x)
+</pre>
+
+<DT><span class="strong">FINITE_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀f. FINITE (IMAGE f s)
+</pre>
+
+<DT><span class="strong">FINITE_INDUCT_STRONG</span>
+<DD>
+<pre>
+⊢ ∀P. P ∅ ∧ (∀x s. P s ∧ x ∉ s ∧ FINITE s ⇒ P (x INSERT s)) ⇒
+      ∀s. FINITE s ⇒ P s
+</pre>
+
+<DT><span class="strong">FINITE_INTERSECTION_OF_COMPLEMENT</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    (FINITE INTERSECTION_OF P) s ⇔
+    (FINITE UNION_OF (λs. P (𝕌(:α) DIFF s))) (𝕌(:α) DIFF s)
+</pre>
+
+<DT><span class="strong">FINITE_INTERSECTION_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀P. (FINITE INTERSECTION_OF P) 𝕌(:α)
+</pre>
+
+<DT><span class="strong">FINITE_INTERSECTION_OF_IDEMPOT</span>
+<DD>
+<pre>
+⊢ ∀P. FINITE INTERSECTION_OF FINITE INTERSECTION_OF P =
+      FINITE INTERSECTION_OF P
+</pre>
+
+<DT><span class="strong">FINITE_INTERSECTION_OF_INC</span>
+<DD>
+<pre>
+⊢ ∀P s. P s ⇒ (FINITE INTERSECTION_OF P) s
+</pre>
+
+<DT><span class="strong">FINITE_INTERSECTION_OF_INTER</span>
+<DD>
+<pre>
+⊢ ∀P s t.
+    (FINITE INTERSECTION_OF P) s ∧ (FINITE INTERSECTION_OF P) t ⇒
+    (FINITE INTERSECTION_OF P) (s ∩ t)
+</pre>
+
+<DT><span class="strong">FINITE_INTERSECTION_OF_INTERS</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    FINITE u ∧ (∀s. s ∈ u ⇒ (FINITE INTERSECTION_OF P) s) ⇒
+    (FINITE INTERSECTION_OF P) (BIGINTER u)
+</pre>
+
+<DT><span class="strong">FINITE_INTERSECTION_OF_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    FINITE INTERSECTION_OF P relative_to u =
+    FINITE INTERSECTION_OF (P relative_to u) relative_to u
+</pre>
+
+<DT><span class="strong">FINITE_INTERSECTION_OF_RELATIVE_TO_ALT</span>
+<DD>
+<pre>
+⊢ ∀P u s.
+    P u ⇒
+    ((FINITE INTERSECTION_OF P relative_to u) s ⇔
+     (FINITE INTERSECTION_OF P) s ∧ s ⊆ u)
+</pre>
+
+<DT><span class="strong">FINITE_INTERSECTION_OF_UNION</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t. P s ∧ P t ⇒ P (s ∪ t)) ⇒
+      ∀s t.
+        (FINITE INTERSECTION_OF P) s ∧ (FINITE INTERSECTION_OF P) t ⇒
+        (FINITE INTERSECTION_OF P) (s ∪ t)
+</pre>
+
+<DT><span class="strong">FINITE_INTERSECTION_OF_UNION_EQ</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t.
+         (FINITE INTERSECTION_OF P) s ∧ (FINITE INTERSECTION_OF P) t ⇒
+         (FINITE INTERSECTION_OF P) (s ∪ t)) ⇔
+      ∀s t. P s ∧ P t ⇒ (FINITE INTERSECTION_OF P) (s ∪ t)
+</pre>
+
+<DT><span class="strong">FINITE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s t. FINITE s ∧ t ⊆ s ⇒ FINITE t
+</pre>
+
+<DT><span class="strong">FINITE_UNION_OF_COMPLEMENT</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    (FINITE UNION_OF P) s ⇔
+    (FINITE INTERSECTION_OF (λs. P (𝕌(:α) DIFF s))) (𝕌(:α) DIFF s)
+</pre>
+
+<DT><span class="strong">FINITE_UNION_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀P. (FINITE UNION_OF P) ∅
+</pre>
+
+<DT><span class="strong">FINITE_UNION_OF_IDEMPOT</span>
+<DD>
+<pre>
+⊢ ∀P. FINITE UNION_OF FINITE UNION_OF P = FINITE UNION_OF P
+</pre>
+
+<DT><span class="strong">FINITE_UNION_OF_INC</span>
+<DD>
+<pre>
+⊢ ∀P s. P s ⇒ (FINITE UNION_OF P) s
+</pre>
+
+<DT><span class="strong">FINITE_UNION_OF_INTER</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t. P s ∧ P t ⇒ P (s ∩ t)) ⇒
+      ∀s t.
+        (FINITE UNION_OF P) s ∧ (FINITE UNION_OF P) t ⇒
+        (FINITE UNION_OF P) (s ∩ t)
+</pre>
+
+<DT><span class="strong">FINITE_UNION_OF_INTER_EQ</span>
+<DD>
+<pre>
+⊢ ∀P. (∀s t.
+         (FINITE UNION_OF P) s ∧ (FINITE UNION_OF P) t ⇒
+         (FINITE UNION_OF P) (s ∩ t)) ⇔
+      ∀s t. P s ∧ P t ⇒ (FINITE UNION_OF P) (s ∩ t)
+</pre>
+
+<DT><span class="strong">FINITE_UNION_OF_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀P u. FINITE UNION_OF P relative_to u = FINITE UNION_OF (P relative_to u)
+</pre>
+
+<DT><span class="strong">FINITE_UNION_OF_UNION</span>
+<DD>
+<pre>
+⊢ ∀P s t.
+    (FINITE UNION_OF P) s ∧ (FINITE UNION_OF P) t ⇒
+    (FINITE UNION_OF P) (s ∪ t)
+</pre>
+
+<DT><span class="strong">FINITE_UNION_OF_UNIONS</span>
+<DD>
+<pre>
+⊢ ∀P u.
+    FINITE u ∧ (∀s. s ∈ u ⇒ (FINITE UNION_OF P) s) ⇒
+    (FINITE UNION_OF P) (BIGUNION u)
+</pre>
+
+<DT><span class="strong">FORALL_INTERSECTION_OF</span>
+<DD>
+<pre>
+⊢ (∀s. (P INTERSECTION_OF Q) s ⇒ R s) ⇔
+  ∀t. P t ∧ (∀c. c ∈ t ⇒ Q c) ⇒ R (BIGINTER t)
+</pre>
+
+<DT><span class="strong">FORALL_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ (∀s. (P relative_to u) s ⇒ Q s) ⇔ ∀s. P s ⇒ Q (u ∩ s)
+</pre>
+
+<DT><span class="strong">FORALL_UNION_OF</span>
+<DD>
+<pre>
+⊢ (∀s. (P UNION_OF Q) s ⇒ R s) ⇔ ∀t. P t ∧ (∀c. c ∈ t ⇒ Q c) ⇒ R (BIGUNION t)
+</pre>
+
+<DT><span class="strong">HULLS_EQ</span>
+<DD>
+<pre>
+⊢ ∀P s t.
+    (∀f. (∀s. s ∈ f ⇒ P s) ⇒ P (BIGINTER f)) ∧ s ⊆ P hull t ∧ t ⊆ P hull s ⇒
+    (P hull s = P hull t)
+</pre>
+
+<DT><span class="strong">HULL_ANTIMONO</span>
+<DD>
+<pre>
+⊢ ∀P Q s. P ⊆ Q ⇒ Q hull s ⊆ P hull s
+</pre>
+
+<DT><span class="strong">HULL_EQ</span>
+<DD>
+<pre>
+⊢ ∀P s. (∀f. (∀s. s ∈ f ⇒ P s) ⇒ P (BIGINTER f)) ⇒ ((P hull s = s) ⇔ P s)
+</pre>
+
+<DT><span class="strong">HULL_HULL</span>
+<DD>
+<pre>
+⊢ ∀P s. P hull (P hull s) = P hull s
+</pre>
+
+<DT><span class="strong">HULL_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀P f s.
+    (∀s. P (P hull s)) ∧ (∀s. P (IMAGE f s) ⇔ P s) ∧
+    (∀x y. (f x = f y) ⇒ (x = y)) ∧ (∀y. ∃x. f x = y) ⇒
+    (P hull IMAGE f s = IMAGE f (P hull s))
+</pre>
+
+<DT><span class="strong">HULL_IMAGE_GALOIS</span>
+<DD>
+<pre>
+⊢ ∀P f g s.
+    (∀s. P (P hull s)) ∧ (∀s. P s ⇒ P (IMAGE f s)) ∧
+    (∀s. P s ⇒ P (IMAGE g s)) ∧ (∀s t. s ⊆ IMAGE g t ⇔ IMAGE f s ⊆ t) ⇒
+    (P hull IMAGE f s = IMAGE f (P hull s))
+</pre>
+
+<DT><span class="strong">HULL_IMAGE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀P f s.
+    P (P hull s) ∧ (∀s. P s ⇒ P (IMAGE f s)) ⇒
+    P hull IMAGE f s ⊆ IMAGE f (P hull s)
+</pre>
+
+<DT><span class="strong">HULL_INC</span>
+<DD>
+<pre>
+⊢ ∀P s x. x ∈ s ⇒ x ∈ P hull s
+</pre>
+
+<DT><span class="strong">HULL_INDUCT</span>
+<DD>
+<pre>
+⊢ ∀P p s. (∀x. x ∈ s ⇒ p x) ∧ P {x | p x} ⇒ ∀x. x ∈ P hull s ⇒ p x
+</pre>
+
+<DT><span class="strong">HULL_MINIMAL</span>
+<DD>
+<pre>
+⊢ ∀P s t. s ⊆ t ∧ P t ⇒ P hull s ⊆ t
+</pre>
+
+<DT><span class="strong">HULL_MONO</span>
+<DD>
+<pre>
+⊢ ∀P s t. s ⊆ t ⇒ P hull s ⊆ P hull t
+</pre>
+
+<DT><span class="strong">HULL_P</span>
+<DD>
+<pre>
+⊢ ∀P s. P s ⇒ (P hull s = s)
+</pre>
+
+<DT><span class="strong">HULL_P_AND_Q</span>
+<DD>
+<pre>
+⊢ ∀P Q.
+    (∀f. (∀s. s ∈ f ⇒ P s) ⇒ P (BIGINTER f)) ∧
+    (∀f. (∀s. s ∈ f ⇒ Q s) ⇒ Q (BIGINTER f)) ∧ (∀s. Q s ⇒ Q (P hull s)) ⇒
+    ((λx. P x ∧ Q x) hull s = P hull (Q hull s))
+</pre>
+
+<DT><span class="strong">HULL_REDUNDANT</span>
+<DD>
+<pre>
+⊢ ∀P a s. a ∈ P hull s ⇒ (P hull (a INSERT s) = P hull s)
+</pre>
+
+<DT><span class="strong">HULL_REDUNDANT_EQ</span>
+<DD>
+<pre>
+⊢ ∀P a s. a ∈ P hull s ⇔ (P hull (a INSERT s) = P hull s)
+</pre>
+
+<DT><span class="strong">HULL_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀P s. s ⊆ P hull s
+</pre>
+
+<DT><span class="strong">HULL_UNION</span>
+<DD>
+<pre>
+⊢ ∀P s t. P hull s ∪ t = P hull (P hull s) ∪ (P hull t)
+</pre>
+
+<DT><span class="strong">HULL_UNION_LEFT</span>
+<DD>
+<pre>
+⊢ ∀P s t. P hull s ∪ t = P hull (P hull s) ∪ t
+</pre>
+
+<DT><span class="strong">HULL_UNION_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀P s t. P hull s ∪ t = P hull s ∪ (P hull t)
+</pre>
+
+<DT><span class="strong">HULL_UNION_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀P s t. (P hull s) ∪ (P hull t) ⊆ P hull s ∪ t
+</pre>
+
+<DT><span class="strong">HULL_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀P s t. s ⊆ t ∧ P t ∧ (∀t'. s ⊆ t' ∧ P t' ⇒ t ⊆ t') ⇒ (P hull s = t)
+</pre>
+
+<DT><span class="strong">IMP_CONJ</span>
+<DD>
+<pre>
+⊢ ∀p q r. p ∧ q ⇒ r ⇔ p ⇒ q ⇒ r
+</pre>
+
+<DT><span class="strong">IMP_IMP</span>
+<DD>
+<pre>
+⊢ ∀t1 t2 t3. t1 ⇒ t2 ⇒ t3 ⇔ t1 ∧ t2 ⇒ t3
+</pre>
+
+<DT><span class="strong">INTERSECTION_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀P Q. P ∅ ⇒ (P INTERSECTION_OF Q) 𝕌(:α)
+</pre>
+
+<DT><span class="strong">INTERSECTION_OF_INC</span>
+<DD>
+<pre>
+⊢ ∀P Q s. P {s} ∧ Q s ⇒ (P INTERSECTION_OF Q) s
+</pre>
+
+<DT><span class="strong">INTERSECTION_OF_MONO</span>
+<DD>
+<pre>
+⊢ ∀P Q Q' s.
+    (P INTERSECTION_OF Q) s ∧ (∀x. Q x ⇒ Q' x) ⇒ (P INTERSECTION_OF Q') s
+</pre>
+
+<DT><span class="strong">INTERS_0</span>
+<DD>
+<pre>
+⊢ BIGINTER ∅ = 𝕌(:α)
+</pre>
+
+<DT><span class="strong">INTERS_1</span>
+<DD>
+<pre>
+⊢ ∀P. BIGINTER {P} = P
+</pre>
+
+<DT><span class="strong">INTERS_2</span>
+<DD>
+<pre>
+⊢ ∀P Q. BIGINTER {P; Q} = P ∩ Q
+</pre>
+
+<DT><span class="strong">INTERS_GSPEC</span>
+<DD>
+<pre>
+⊢ (∀P f. BIGINTER {f x | P x} = {a | ∀x. P x ⇒ a ∈ f x}) ∧
+  (∀P f. BIGINTER {f x y | P x y} = {a | ∀x y. P x y ⇒ a ∈ f x y}) ∧
+  ∀P f. BIGINTER {f x y z | P x y z} = {a | ∀x y z. P x y z ⇒ a ∈ f x y z}
+</pre>
+
+<DT><span class="strong">INTERS_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f s. BIGINTER (IMAGE f s) = {y | ∀x. x ∈ s ⇒ y ∈ f x}
+</pre>
+
+<DT><span class="strong">INTERS_INSERT</span>
+<DD>
+<pre>
+⊢ ∀P B. BIGINTER (P INSERT B) = P ∩ BIGINTER B
+</pre>
+
+<DT><span class="strong">INTERS_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀u s. u ≠ ∅ ∧ (∀t. t ∈ u ⇒ t ⊆ s) ⇒ BIGINTER u ⊆ s
+</pre>
+
+<DT><span class="strong">INTERS_SUBSET_STRONG</span>
+<DD>
+<pre>
+⊢ ∀u s. (∃t. t ∈ u ∧ t ⊆ s) ⇒ BIGINTER u ⊆ s
+</pre>
+
+<DT><span class="strong">INTERS_UNIONS</span>
+<DD>
+<pre>
+⊢ ∀s. BIGINTER s = 𝕌(:α) DIFF BIGUNION {𝕌(:α) DIFF t | t ∈ s}
+</pre>
+
+<DT><span class="strong">INTER_INTERS</span>
+<DD>
+<pre>
+⊢ (∀f s. s ∩ BIGINTER f = if f = ∅ then s else BIGINTER {s ∩ t | t ∈ f}) ∧
+  ∀f s. BIGINTER f ∩ s = if f = ∅ then s else BIGINTER {t ∩ s | t ∈ f}
+</pre>
+
+<DT><span class="strong">INTER_UNIONS</span>
+<DD>
+<pre>
+⊢ (∀s t. BIGUNION s ∩ t = BIGUNION {x ∩ t | x ∈ s}) ∧
+  ∀s t. t ∩ BIGUNION s = BIGUNION {t ∩ x | x ∈ s}
+</pre>
+
+<DT><span class="strong">IN_GSPEC</span>
+<DD>
+<pre>
+⊢ ∀s. {x | x ∈ s} = s
+</pre>
+
+<DT><span class="strong">IN_INTERS</span>
+<DD>
+<pre>
+⊢ x ∈ BIGINTER B ⇔ ∀P. P ∈ B ⇒ x ∈ P
+</pre>
+
+<DT><span class="strong">IN_UNIONS</span>
+<DD>
+<pre>
+⊢ ∀x sos. x ∈ BIGUNION sos ⇔ ∃s. x ∈ s ∧ s ∈ sos
+</pre>
+
+<DT><span class="strong">ISTOPOLOGY_OPEN_IN</span>
+<DD>
+<pre>
+⊢ ∀top. istopology (open_in top)
+</pre>
+
+<DT><span class="strong">ISTOPOLOGY_SUBTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀top u. istopology {s ∩ u | open_in top s}
+</pre>
+
+<DT><span class="strong">IS_HULL</span>
+<DD>
+<pre>
+⊢ ∀P s. (∀f. (∀s. s ∈ f ⇒ P s) ⇒ P (BIGINTER f)) ⇒ (P s ⇔ ∃t. s = P hull t)
+</pre>
+
+<DT><span class="strong">LE_0</span>
+<DD>
+<pre>
+⊢ ∀n. 0 ≤ n
+</pre>
+
+<DT><span class="strong">OPEN_IN_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀top s.
+    FINITE s ∧ s ≠ ∅ ∧ (∀t. t ∈ s ⇒ open_in top t) ⇒ open_in top (BIGINTER s)
+</pre>
+
+<DT><span class="strong">OPEN_IN_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀top k. (∀s. s ∈ k ⇒ open_in top s) ⇒ open_in top (BIGUNION k)
+</pre>
+
+<DT><span class="strong">OPEN_IN_CLAUSES</span>
+<DD>
+<pre>
+⊢ ∀top.
+    open_in top ∅ ∧
+    (∀s t. open_in top s ∧ open_in top t ⇒ open_in top (s ∩ t)) ∧
+    ∀k. (∀s. s ∈ k ⇒ open_in top s) ⇒ open_in top (BIGUNION k)
+</pre>
+
+<DT><span class="strong">OPEN_IN_CLOSED_IN</span>
+<DD>
+<pre>
+⊢ ∀top s.
+    s ⊆ topspace top ⇒ (open_in top s ⇔ closed_in top (topspace top DIFF s))
+</pre>
+
+<DT><span class="strong">OPEN_IN_CLOSED_IN_EQ</span>
+<DD>
+<pre>
+⊢ ∀top s.
+    open_in top s ⇔ s ⊆ topspace top ∧ closed_in top (topspace top DIFF s)
+</pre>
+
+<DT><span class="strong">OPEN_IN_DIFF</span>
+<DD>
+<pre>
+⊢ ∀top s t. open_in top s ∧ closed_in top t ⇒ open_in top (s DIFF t)
+</pre>
+
+<DT><span class="strong">OPEN_IN_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀top. open_in top ∅
+</pre>
+
+<DT><span class="strong">OPEN_IN_IMP_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀top s t. open_in (subtopology top s) t ⇒ t ⊆ s
+</pre>
+
+<DT><span class="strong">OPEN_IN_INTER</span>
+<DD>
+<pre>
+⊢ ∀top s t. open_in top s ∧ open_in top t ⇒ open_in top (s ∩ t)
+</pre>
+
+<DT><span class="strong">OPEN_IN_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀top s. open_in top relative_to s = open_in (subtopology top s)
+</pre>
+
+<DT><span class="strong">OPEN_IN_SUBOPEN</span>
+<DD>
+<pre>
+⊢ ∀top s. open_in top s ⇔ ∀x. x ∈ s ⇒ ∃t. open_in top t ∧ x ∈ t ∧ t ⊆ s
+</pre>
+
+<DT><span class="strong">OPEN_IN_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀top s. open_in top s ⇒ s ⊆ topspace top
+</pre>
+
+<DT><span class="strong">OPEN_IN_SUBTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀top u s. open_in (subtopology top u) s ⇔ ∃t. open_in top t ∧ (s = t ∩ u)
+</pre>
+
+<DT><span class="strong">OPEN_IN_SUBTOPOLOGY_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀top s. open_in (subtopology top ∅) s ⇔ (s = ∅)
+</pre>
+
+<DT><span class="strong">OPEN_IN_SUBTOPOLOGY_REFL</span>
+<DD>
+<pre>
+⊢ ∀top u. open_in (subtopology top u) u ⇔ u ⊆ topspace top
+</pre>
+
+<DT><span class="strong">OPEN_IN_SUBTOPOLOGY_UNION</span>
+<DD>
+<pre>
+⊢ ∀top s t u.
+    open_in (subtopology top t) s ∧ open_in (subtopology top u) s ⇒
+    open_in (subtopology top (t ∪ u)) s
+</pre>
+
+<DT><span class="strong">OPEN_IN_TOPSPACE</span>
+<DD>
+<pre>
+⊢ ∀top. open_in top (topspace top)
+</pre>
+
+<DT><span class="strong">OPEN_IN_UNION</span>
+<DD>
+<pre>
+⊢ ∀top s t. open_in top s ∧ open_in top t ⇒ open_in top (s ∪ t)
+</pre>
+
+<DT><span class="strong">OPEN_NEIGH</span>
+<DD>
+<pre>
+⊢ ∀A top. open_in top A ⇔ ∀x. A x ⇒ ∃N. neigh top (N,x) ∧ N ⊆ A
+</pre>
+
+<DT><span class="strong">OPEN_OWN_NEIGH</span>
+<DD>
+<pre>
+⊢ ∀A top x. open_in top A ∧ A x ⇒ neigh top (A,x)
+</pre>
+
+<DT><span class="strong">OPEN_SUBOPEN</span>
+<DD>
+<pre>
+⊢ ∀S' top. open_in top S' ⇔ ∀x. S' x ⇒ ∃P. P x ∧ open_in top P ∧ P ⊆ S'
+</pre>
+
+<DT><span class="strong">OPEN_UNOPEN</span>
+<DD>
+<pre>
+⊢ ∀S' top. open_in top S' ⇔ (BIGUNION {P | open_in top P ∧ P ⊆ S'} = S')
+</pre>
+
+<DT><span class="strong">PAIRWISE_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀r. pairwise r ∅ ⇔ T
+</pre>
+
+<DT><span class="strong">PAIRWISE_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀r f. pairwise r (IMAGE f s) ⇔ pairwise (λx y. f x ≠ f y ⇒ r (f x) (f y)) s
+</pre>
+
+<DT><span class="strong">PAIRWISE_INSERT</span>
+<DD>
+<pre>
+⊢ ∀r x s.
+    pairwise r (x INSERT s) ⇔
+    (∀y. y ∈ s ∧ y ≠ x ⇒ r x y ∧ r y x) ∧ pairwise r s
+</pre>
+
+<DT><span class="strong">PAIRWISE_MONO</span>
+<DD>
+<pre>
+⊢ ∀r s t. pairwise r s ∧ t ⊆ s ⇒ pairwise r t
+</pre>
+
+<DT><span class="strong">PAIRWISE_SING</span>
+<DD>
+<pre>
+⊢ ∀r x. pairwise r {x} ⇔ T
+</pre>
+
+<DT><span class="strong">P_HULL</span>
+<DD>
+<pre>
+⊢ ∀P s. (∀f. (∀s. s ∈ f ⇒ P s) ⇒ P (BIGINTER f)) ⇒ P (P hull s)
+</pre>
+
+<DT><span class="strong">RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ P relative_to u = {u ∩ s | P s}
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_COMPL</span>
+<DD>
+<pre>
+⊢ ∀P u s.
+    s ⊆ u ⇒
+    ((P relative_to u) (u DIFF s) ⇔ ((λc. P (𝕌(:α) DIFF c)) relative_to u) s)
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_IMP_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀P s t. (P relative_to s) t ⇒ t ⊆ s
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_INC</span>
+<DD>
+<pre>
+⊢ ∀P u s. P s ⇒ (P relative_to u) (u ∩ s)
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_INTER</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    (∀c d. P c ∧ P d ⇒ P (c ∩ d)) ⇒
+    ∀c d.
+      (P relative_to s) c ∧ (P relative_to s) d ⇒ (P relative_to s) (c ∩ d)
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_MONO</span>
+<DD>
+<pre>
+⊢ ∀P Q. (∀s. P s ⇒ Q s) ⇒ ∀u. (P relative_to u) s ⇒ (Q relative_to u) s
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀P s t. P relative_to s relative_to t = P relative_to s ∩ t
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀P s t. s ⊆ t ∧ P s ⇒ (P relative_to t) s
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_SUBSET_INC</span>
+<DD>
+<pre>
+⊢ ∀P u s. s ⊆ u ∧ P s ⇒ (P relative_to u) s
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_SUBSET_TRANS</span>
+<DD>
+<pre>
+⊢ ∀P u s t. (P relative_to u) s ∧ s ⊆ t ∧ t ⊆ u ⇒ (P relative_to t) s
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_UNION</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    (∀c d. P c ∧ P d ⇒ P (c ∪ d)) ⇒
+    ∀c d.
+      (P relative_to s) c ∧ (P relative_to s) d ⇒ (P relative_to s) (c ∪ d)
+</pre>
+
+<DT><span class="strong">RELATIVE_TO_UNIV</span>
+<DD>
+<pre>
+⊢ ∀P s. (P relative_to 𝕌(:α)) s ⇔ P s
+</pre>
+
+<DT><span class="strong">SIMPLE_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f s. {f x | x ∈ s} = IMAGE f s
+</pre>
+
+<DT><span class="strong">SING_GSPEC</span>
+<DD>
+<pre>
+⊢ (∀a. {x | x = a} = {a}) ∧ ∀a. {x | a = x} = {a}
+</pre>
+
+<DT><span class="strong">SUBSET_HULL</span>
+<DD>
+<pre>
+⊢ ∀P s t. P t ⇒ (P hull s ⊆ t ⇔ s ⊆ t)
+</pre>
+
+<DT><span class="strong">SUBSET_RESTRICT</span>
+<DD>
+<pre>
+⊢ ∀s P. {x | x ∈ s ∧ P x} ⊆ s
+</pre>
+
+<DT><span class="strong">SUBTOPOLOGY_SUBTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀top s t. subtopology (subtopology top s) t = subtopology top (s ∩ t)
+</pre>
+
+<DT><span class="strong">SUBTOPOLOGY_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀top s. topspace top ⊆ s ⇒ (subtopology top s = top)
+</pre>
+
+<DT><span class="strong">SUBTOPOLOGY_TOPSPACE</span>
+<DD>
+<pre>
+⊢ ∀top. subtopology top (topspace top) = top
+</pre>
+
+<DT><span class="strong">SUBTOPOLOGY_UNIV</span>
+<DD>
+<pre>
+⊢ ∀top. subtopology top 𝕌(:α) = top
+</pre>
+
+<DT><span class="strong">TOPOLOGY_EQ</span>
+<DD>
+<pre>
+⊢ ∀top1 top2. (top1 = top2) ⇔ ∀s. open_in top1 s ⇔ open_in top2 s
+</pre>
+
+<DT><span class="strong">TOPSPACE_SUBTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀top u. topspace (subtopology top u) = topspace top ∩ u
+</pre>
+
+<DT><span class="strong">UNIONS_0</span>
+<DD>
+<pre>
+⊢ BIGUNION ∅ = ∅
+</pre>
+
+<DT><span class="strong">UNIONS_1</span>
+<DD>
+<pre>
+⊢ ∀x. BIGUNION {x} = x
+</pre>
+
+<DT><span class="strong">UNIONS_2</span>
+<DD>
+<pre>
+⊢ ∀s t. BIGUNION {s; t} = s ∪ t
+</pre>
+
+<DT><span class="strong">UNIONS_GSPEC</span>
+<DD>
+<pre>
+⊢ (∀P f. BIGUNION {f x | P x} = {a | ∃x. P x ∧ a ∈ f x}) ∧
+  (∀P f. BIGUNION {f x y | P x y} = {a | ∃x y. P x y ∧ a ∈ f x y}) ∧
+  ∀P f. BIGUNION {f x y z | P x y z} = {a | ∃x y z. P x y z ∧ a ∈ f x y z}
+</pre>
+
+<DT><span class="strong">UNIONS_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f s. BIGUNION (IMAGE f s) = {y | ∃x. x ∈ s ∧ y ∈ f x}
+</pre>
+
+<DT><span class="strong">UNIONS_INSERT</span>
+<DD>
+<pre>
+⊢ ∀s P. BIGUNION (s INSERT P) = s ∪ BIGUNION P
+</pre>
+
+<DT><span class="strong">UNIONS_INTERS</span>
+<DD>
+<pre>
+⊢ ∀s. BIGUNION s = 𝕌(:α) DIFF BIGINTER {𝕌(:α) DIFF t | t ∈ s}
+</pre>
+
+<DT><span class="strong">UNIONS_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀X P. BIGUNION P ⊆ X ⇔ ∀Y. Y ∈ P ⇒ Y ⊆ X
+</pre>
+
+<DT><span class="strong">UNIONS_UNION</span>
+<DD>
+<pre>
+⊢ ∀s1 s2. BIGUNION (s1 ∪ s2) = BIGUNION s1 ∪ BIGUNION s2
+</pre>
+
+<DT><span class="strong">UNION_OF_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀P Q. P ∅ ⇒ (P UNION_OF Q) ∅
+</pre>
+
+<DT><span class="strong">UNION_OF_INC</span>
+<DD>
+<pre>
+⊢ ∀P Q s. P {s} ∧ Q s ⇒ (P UNION_OF Q) s
+</pre>
+
+<DT><span class="strong">UNION_OF_MONO</span>
+<DD>
+<pre>
+⊢ ∀P Q Q' s. (P UNION_OF Q) s ∧ (∀x. Q x ⇒ Q' x) ⇒ (P UNION_OF Q') s
+</pre>
+
+<DT><span class="strong">UNIV_GSPEC</span>
+<DD>
+<pre>
+⊢ {x | T} = 𝕌(:α)
+</pre>
+
+<DT><span class="strong">closed_topspace</span>
+<DD>
+<pre>
+⊢ ∀top. closed top ⇒ (topspace top = 𝕌(:α))
+</pre>
+
+<DT><span class="strong">limpt_thm</span>
+<DD>
+<pre>
+⊢ limpt t x A ⇔
+  x ∈ topspace t ∧ ∀U. open_in t U ∧ x ∈ U ⇒ ∃y. y ∈ U ∧ y ∈ A ∧ y ≠ x
+</pre>
+
+<DT><span class="strong">open_topspace</span>
+<DD>
+<pre>
+⊢ ∀top. open top ⇒ (topspace top = 𝕌(:α))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

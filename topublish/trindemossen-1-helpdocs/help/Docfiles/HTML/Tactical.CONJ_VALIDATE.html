@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactical.CONJ_VALIDATE</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>CONJ_VALIDATE : tactic -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactical.html">Tactical</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Adds requirement to prove assumptions that would make a tactic invalid.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">CONJ_VALIDATE&nbsp;tac&nbsp;g</SPAN><SPAN class = "TEXT"> behaves the same as </SPAN><SPAN class = "BRKT">tac&nbsp;g</SPAN><SPAN class = "TEXT"> if this
+tactic application is valid (meaning that when the tactic&rsquo;s validation
+function is applied to the resulting sub-goals, the generated theorem
+has no more assumptions than the original goal).</SPAN>
+<P>
+<SPAN class = "TEXT">If the tactic&rsquo;s application is not valid because the resulting theorem
+has the wrong conclusion, </SPAN><SPAN class = "BRKT">CONJ_VALIDATE&nbsp;tac&nbsp;g</SPAN><SPAN class = "TEXT"> will fail. If the
+resulting theorem has hypotheses not present in the goal state, then
+these hypotheses are added to the new goals as new proof obligations.
+The way in which this addition is done depends on how many subgoals
+</SPAN><SPAN class = "BRKT">tac</SPAN><SPAN class = "TEXT"> generated when applied to </SPAN><SPAN class = "BRKT">g</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">tac</SPAN><SPAN class = "TEXT"> completely solves </SPAN><SPAN class = "BRKT">g</SPAN><SPAN class = "TEXT"> (though in an invalid way), the excess
+hypotheses </SPAN><SPAN class = "BRKT">h1...hn</SPAN><SPAN class = "TEXT"> are bundled into a big conjunction and this
+becomes the one remaining goal. If </SPAN><SPAN class = "BRKT">tac&nbsp;g</SPAN><SPAN class = "TEXT"> results in more than one
+new goal, then </SPAN><SPAN class = "BRKT">CONJ_VALIDATE&nbsp;tac&nbsp;g</SPAN><SPAN class = "TEXT"> will produce one extra goal,
+consisting of a conjunction of hypotheses, as above. Finally, if
+</SPAN><SPAN class = "BRKT">tac&nbsp;g</SPAN><SPAN class = "TEXT"> produces exactly one new goal to prove, and if the new goal&rsquo;s
+assumptions are a subset of the original goal&rsquo;s, </SPAN><SPAN class = "BRKT">CONJ_VALIDATE&nbsp;tac&nbsp;g</SPAN><SPAN class = "TEXT">
+will do the same, but with the conjunction of extra hypotheses to
+prove conjoined to that one goal&rsquo;s conclusion.  If there is one new
+goal, but its assumptions are not a subset, then a separate sub-goal
+is generated.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call </SPAN><SPAN class = "BRKT">CONJ_VALIDATE&nbsp;tac&nbsp;g</SPAN><SPAN class = "TEXT"> will fail if </SPAN><SPAN class = "BRKT">tac&nbsp;g</SPAN><SPAN class = "TEXT"> fails, or if
+</SPAN><SPAN class = "BRKT">tac&nbsp;g</SPAN><SPAN class = "TEXT">&rsquo;s validation function produces a theorem whose conclusion is
+not the same as </SPAN><SPAN class = "BRKT">g</SPAN><SPAN class = "TEXT">&rsquo;s conclusion.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">CONJ_VALIDATE</SPAN><SPAN class = "TEXT"> performs the same role as </SPAN><SPAN class = "BRKT">VALIDATE</SPAN><SPAN class = "TEXT"> but tries to
+preserve the property of having a single successor goal in its
+argument tactics; when it does generate extra sub-goals, it also
+generates only one such.</SPAN>
+<P>
+<SPAN class = "TEXT">Because </SPAN><SPAN class = "BRKT">CONJ_VALIDATE</SPAN><SPAN class = "TEXT"> prefers to generate just one sub-goal, the
+result may be a state where one ends up having to prove a hypothesis
+in a weaker context (with fewer assumptions) to hand than if </SPAN><SPAN class = "BRKT">VALIDATE</SPAN><SPAN class = "TEXT">
+had been used.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactical.VALIDATE.html">VALIDATE</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

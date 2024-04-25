@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>smlParallel.parmap_queue_extern</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>parmap_queue_extern :
+  int -&gt; ('a,'b,'c) extspec -&gt; 'a -&gt; 'b list -&gt; 'c list)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/smlParallel.html">smlParallel</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Run a function </SPAN><SPAN class = "BRKT">#function</SPAN><SPAN class = "TEXT"> with parameter </SPAN><SPAN class = "BRKT">'a</SPAN><SPAN class = "TEXT"> in parallel on a list of arguments </SPAN><SPAN class = "BRKT">'b&nbsp;list</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The first argument of </SPAN><SPAN class = "BRKT">parmap_queue_extern</SPAN><SPAN class = "TEXT"> precises the number of cores.
+To be efficient, each of worker is executed
+on its own process. Thus, I/O functions for parameter, argument list and result
+need to be specfied in the structure </SPAN><SPAN class = "BRKT">extspec</SPAN><SPAN class = "TEXT">. The communications files are
+stored under the directory </SPAN><SPAN class = "BRKT">#parallel_dir</SPAN><SPAN class = "TEXT">.
+As soon as a worker is available, a new job is started on the next argument of
+the list. Since the workers are executing from a script, it is possible to
+execute arbitrary side-effect code before running </SPAN><SPAN class = "BRKT">#function</SPAN><SPAN class = "TEXT"> by specifing
+</SPAN><SPAN class = "BRKT">#reflect_globals</SPAN><SPAN class = "TEXT">.
+The directory where the signature containing </SPAN><SPAN class = "BRKT">extspec</SPAN><SPAN class = "TEXT"> is located has to be given in </SPAN><SPAN class = "BRKT">#self_dir</SPAN><SPAN class = "TEXT"> and its full sml identifier in </SPAN><SPAN class = "BRKT">#self</SPAN><SPAN class = "TEXT"> (see Example).</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails but can produce uncaught exceptions causing the main thread to be
+stuck in a loop. See </SPAN><SPAN class = "BRKT">buildheap_</SPAN><SPAN class = "TEXT"> files in subdirectories of </SPAN><SPAN class = "BRKT">#parallel_dir</SPAN><SPAN class = "TEXT"> for observing the standard out of </SPAN><SPAN class = "BRKT">#function</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+(*
+(* in foo.sml *)
+val doublespec : (unit,int,int) extspec =
+  {
+  self_dir = change "directory where foo.sig is located",
+  self = "foo.doublespec",
+  parallel_dir = default_parallel_dir,
+  reflect_globals = "()",
+  function = let fun f _ (x:int) = 2 * x in f end,
+  write_param = let fun f _ () = () in f end,
+  read_param = let fun f _ = () in f end,
+  write_arg = let fun f file arg = writel file [its arg] in f end,
+  read_arg = let fun f file =
+     string_to_int (singleton_of_list (readl file)) in f end,
+  write_result = let fun f file r = writel file [its r] in f end,
+  read_result = let fun f file = string_to_int (hd (readl_rm file)) in f end
+  }
+
+(* in foo.sig *)
+val doublespec : (unit,int,int) extspec
+*)
+
+- load "smlParallel"; open smlParallel; load "foo"; open foo;
+(* output omitted *)
+&gt; val it = (): unit
+
+- parmap_queue_extern 2 doublespec () [1,2,3];
+(* output omitted *)
+&gt; val it = [2, 4, 6]: int list
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If a user requires shared memory between workers,
+it is possible to rely on smlParallel.parmap_queue (or Parmap.parmap).
+However, in general it is quite difficult to obtain a significant speed-up
+when calling smlParallel.parmap_queue (or Parmap.parmap). One reason is that
+the threads need to be stopped temporarily during garbage collection.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "smlExecScripts.exec_script.html">exec_script</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

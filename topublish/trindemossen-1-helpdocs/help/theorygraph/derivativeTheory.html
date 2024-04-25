@@ -1,0 +1,804 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: derivative</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "derivative"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "seqTheory.html"><span class="strong">seq</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">convex</span>
+    <td>
+    :(real -> bool) -> bool
+    <tr><td>
+    <span class="strong">convex_on</span>
+    <td>
+    :(real -> real) -> (real -> bool) -> bool
+    <tr><td>
+    <span class="strong">differentiable</span>
+    <td>
+    :(real -> real) -> real net -> bool
+    <tr><td>
+    <span class="strong">differentiable_on</span>
+    <td>
+    :(real -> real) -> (real -> bool) -> bool
+    <tr><td> <span class="strong">exp</span> <td> :real -> real
+    <tr><td>
+    <span class="strong">frechet_derivative</span>
+    <td>
+    :(real -> real) -> real net -> real -> real
+    <tr><td>
+    <span class="strong">has_derivative</span>
+    <td>
+    :(real -> real) -> (real -> real) -> real net -> bool
+    <tr><td>
+    <span class="strong">has_vector_derivative</span>
+    <td>
+    :(real -> real) -> real -> real net -> bool
+    <tr><td> <span class="strong">oabs</span> <td> :(real -> real) -> real
+    <tr><td>
+    <span class="strong">vector_derivative</span>
+    <td>
+    :(real -> real) -> real net -> real
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">convex</span>
+<DD>
+<pre>
+⊢ ∀s. convex s ⇔
+      ∀x y u v.
+        x ∈ s ∧ y ∈ s ∧ 0 ≤ u ∧ 0 ≤ v ∧ (u + v = 1) ⇒ u * x + v * y ∈ s
+</pre>
+
+<DT><span class="strong">convex_on</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    f convex_on s ⇔
+    ∀x y u v.
+      x ∈ s ∧ y ∈ s ∧ 0 ≤ u ∧ 0 ≤ v ∧ (u + v = 1) ⇒
+      f (u * x + v * y) ≤ u * f x + v * f y
+</pre>
+
+<DT><span class="strong">differentiable</span>
+<DD>
+<pre>
+⊢ ∀f net. f differentiable net ⇔ ∃f'. (f has_derivative f') net
+</pre>
+
+<DT><span class="strong">differentiable_on</span>
+<DD>
+<pre>
+⊢ ∀f s. f differentiable_on s ⇔ ∀x. x ∈ s ⇒ f differentiable (at x within s)
+</pre>
+
+<DT><span class="strong">exp</span>
+<DD>
+<pre>
+⊢ ∀x. exp x = suminf (λn. (λn. (&FACT n)⁻¹) n * x pow n)
+</pre>
+
+<DT><span class="strong">frechet_derivative</span>
+<DD>
+<pre>
+⊢ ∀f net. frechet_derivative f net = @f'. (f has_derivative f') net
+</pre>
+
+<DT><span class="strong">has_derivative</span>
+<DD>
+<pre>
+⊢ ∀f f' net.
+    (f has_derivative f') net ⇔
+    linear f' ∧
+    ((λy.
+          (abs (y − netlimit net))⁻¹ *
+          (f y − (f (netlimit net) + f' (y − netlimit net)))) --> 0) net
+</pre>
+
+<DT><span class="strong">has_vector_derivative</span>
+<DD>
+<pre>
+⊢ ∀f f' net.
+    (f has_vector_derivative f') net ⇔ (f has_derivative (λx. x * f')) net
+</pre>
+
+<DT><span class="strong">oabs</span>
+<DD>
+<pre>
+⊢ ∀f. oabs f = sup {abs (f x) | abs x = 1}
+</pre>
+
+<DT><span class="strong">vector_derivative</span>
+<DD>
+<pre>
+⊢ ∀f net. vector_derivative f net = @f'. (f has_vector_derivative f') net
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ABS_BOUND_GENERALIZE</span>
+<DD>
+<pre>
+⊢ ∀f b.
+    linear f ⇒ ((∀x. (abs x = 1) ⇒ abs (f x) ≤ b) ⇔ ∀x. abs (f x) ≤ b * abs x)
+</pre>
+
+<DT><span class="strong">CONNECTED_COMPACT_INTERVAL_1</span>
+<DD>
+<pre>
+⊢ ∀s. connected s ∧ compact s ⇔ ∃a b. s = interval [(a,b)]
+</pre>
+
+<DT><span class="strong">CONTINUOUS_AT_EXP</span>
+<DD>
+<pre>
+⊢ ∀z. exp continuous at z
+</pre>
+
+<DT><span class="strong">CONTINUOUS_ON_EXP</span>
+<DD>
+<pre>
+⊢ ∀s. exp continuous_on s
+</pre>
+
+<DT><span class="strong">CONTINUOUS_WITHIN_EXP</span>
+<DD>
+<pre>
+⊢ ∀s z. exp continuous (at z within s)
+</pre>
+
+<DT><span class="strong">CONVEX_ALT</span>
+<DD>
+<pre>
+⊢ ∀s. convex s ⇔
+      ∀x y u. x ∈ s ∧ y ∈ s ∧ 0 ≤ u ∧ u ≤ 1 ⇒ (1 − u) * x + u * y ∈ s
+</pre>
+
+<DT><span class="strong">CONVEX_BALL</span>
+<DD>
+<pre>
+⊢ ∀x e. convex (ball (x,e))
+</pre>
+
+<DT><span class="strong">CONVEX_CBALL</span>
+<DD>
+<pre>
+⊢ ∀x e. convex (cball (x,e))
+</pre>
+
+<DT><span class="strong">CONVEX_CONNECTED</span>
+<DD>
+<pre>
+⊢ ∀s. convex s ⇒ connected s
+</pre>
+
+<DT><span class="strong">CONVEX_DISTANCE</span>
+<DD>
+<pre>
+⊢ ∀s a. (λx. dist (a,x)) convex_on s
+</pre>
+
+<DT><span class="strong">CONVEX_INDEXED</span>
+<DD>
+<pre>
+⊢ ∀s. convex s ⇔
+      ∀k u x.
+        (∀i. 1 ≤ i ∧ i ≤ k ⇒ 0 ≤ u i ∧ x i ∈ s) ∧ (sum {1 .. k} u = 1) ⇒
+        sum {1 .. k} (λi. u i * x i) ∈ s
+</pre>
+
+<DT><span class="strong">CONVEX_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀a b. convex (interval [(a,b)]) ∧ convex (interval (a,b))
+</pre>
+
+<DT><span class="strong">CONVEX_SUM</span>
+<DD>
+<pre>
+⊢ ∀s k u x.
+    FINITE k ∧ convex s ∧ (sum k u = 1) ∧ (∀i. i ∈ k ⇒ 0 ≤ u i ∧ x i ∈ s) ⇒
+    sum k (λi. u i * x i) ∈ s
+</pre>
+
+<DT><span class="strong">DIFFERENTIABLE_BOUND</span>
+<DD>
+<pre>
+⊢ ∀f f' s B.
+    convex s ∧ (∀x. x ∈ s ⇒ (f has_derivative f' x) (at x within s)) ∧
+    (∀x. x ∈ s ⇒ oabs (f' x) ≤ B) ⇒
+    ∀x y. x ∈ s ∧ y ∈ s ⇒ abs (f x − f y) ≤ B * abs (x − y)
+</pre>
+
+<DT><span class="strong">DIFFERENTIABLE_IMP_CONTINUOUS_AT</span>
+<DD>
+<pre>
+⊢ ∀f x. f differentiable at x ⇒ f continuous at x
+</pre>
+
+<DT><span class="strong">DIFFERENTIABLE_IMP_CONTINUOUS_ON</span>
+<DD>
+<pre>
+⊢ ∀f s. f differentiable_on s ⇒ f continuous_on s
+</pre>
+
+<DT><span class="strong">DIFFERENTIABLE_IMP_CONTINUOUS_WITHIN</span>
+<DD>
+<pre>
+⊢ ∀f x s. f differentiable (at x within s) ⇒ f continuous (at x within s)
+</pre>
+
+<DT><span class="strong">DIFFERENTIABLE_ON_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀f. f differentiable_on ∅
+</pre>
+
+<DT><span class="strong">DIFFERENTIABLE_ON_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀f s t. f differentiable_on t ∧ s ⊆ t ⇒ f differentiable_on s
+</pre>
+
+<DT><span class="strong">DIFFERENTIABLE_WITHIN_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀f s t x.
+    f differentiable (at x within t) ∧ s ⊆ t ⇒
+    f differentiable (at x within s)
+</pre>
+
+<DT><span class="strong">DIFFERENTIAL_COMPONENT_NEG_AT_MAXIMUM</span>
+<DD>
+<pre>
+⊢ ∀f f' x s e.
+    x ∈ s ∧ convex s ∧ (f has_derivative f') (at x within s) ∧ 0 < e ∧
+    (∀w. w ∈ s ∩ ball (x,e) ⇒ f w ≤ f x) ⇒
+    ∀y. y ∈ s ⇒ f' (y − x) ≤ 0
+</pre>
+
+<DT><span class="strong">DIFFERENTIAL_COMPONENT_POS_AT_MINIMUM</span>
+<DD>
+<pre>
+⊢ ∀f f' x s e.
+    x ∈ s ∧ convex s ∧ (f has_derivative f') (at x within s) ∧ 0 < e ∧
+    (∀w. w ∈ s ∩ ball (x,e) ⇒ f x ≤ f w) ⇒
+    ∀y. y ∈ s ⇒ 0 ≤ f' (y − x)
+</pre>
+
+<DT><span class="strong">DIFFERENTIAL_COMPONENT_ZERO_AT_MAXMIN</span>
+<DD>
+<pre>
+⊢ ∀f f' x s.
+    x ∈ s ∧ open s ∧ (f has_derivative f') (at x) ∧
+    ((∀w. w ∈ s ⇒ f w ≤ f x) ∨ ∀w. w ∈ s ⇒ f x ≤ f w) ⇒
+    ∀h. f' h = 0
+</pre>
+
+<DT><span class="strong">DIFFERENTIAL_ZERO_MAXMIN</span>
+<DD>
+<pre>
+⊢ ∀f f' x s.
+    x ∈ s ∧ open s ∧ (f has_derivative f') (at x) ∧
+    ((∀y. y ∈ s ⇒ f y ≤ f x) ∨ ∀y. y ∈ s ⇒ f x ≤ f y) ⇒
+    (f' = (λv. 0))
+</pre>
+
+<DT><span class="strong">DIFF_CHAIN_WITHIN</span>
+<DD>
+<pre>
+⊢ ∀f g f' g' x s.
+    (f has_derivative f') (at x within s) ∧
+    (g has_derivative g') (at (f x) within IMAGE f s) ⇒
+    (g ∘ f has_derivative g' ∘ f') (at x within s)
+</pre>
+
+<DT><span class="strong">EXP_CONVERGES</span>
+<DD>
+<pre>
+⊢ ∀z. ((λn. z pow n / &FACT n) sums exp z) (from 0)
+</pre>
+
+<DT><span class="strong">EXP_CONVERGES_UNIFORMLY</span>
+<DD>
+<pre>
+⊢ ∀R e.
+    0 < R ∧ 0 < e ⇒
+    ∃N. ∀n z.
+      n ≥ N ∧ abs z < R ⇒
+      abs (sum {0 .. n} (λi. z pow i / &FACT i) − exp z) ≤ e
+</pre>
+
+<DT><span class="strong">EXP_CONVERGES_UNIFORMLY_CAUCHY</span>
+<DD>
+<pre>
+⊢ ∀R e.
+    0 < e ∧ 0 < R ⇒
+    ∃N. ∀m n z.
+      m ≥ N ∧ abs z ≤ R ⇒ abs (sum {m .. n} (λi. z pow i / &FACT i)) < e
+</pre>
+
+<DT><span class="strong">EXP_CONVERGES_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀w z. ((λn. z pow n / &FACT n) sums w) (from 0) ⇔ (w = exp z)
+</pre>
+
+<DT><span class="strong">FRECHET_DERIVATIVE_WORKS</span>
+<DD>
+<pre>
+⊢ ∀f net.
+    f differentiable net ⇔ (f has_derivative frechet_derivative f net) net
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_ADD</span>
+<DD>
+<pre>
+⊢ ∀f f' g g' net.
+    (f has_derivative f') net ∧ (g has_derivative g') net ⇒
+    ((λx. f x + g x) has_derivative (λh. f' h + g' h)) net
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_AT</span>
+<DD>
+<pre>
+⊢ ∀f f' x.
+    (f has_derivative f') (at x) ⇔
+    linear f' ∧
+    ∀e. 0 < e ⇒
+        ∃d. 0 < d ∧
+            ∀x'.
+              0 < abs (x' − x) ∧ abs (x' − x) < d ⇒
+              abs (f x' − f x − f' (x' − x)) / abs (x' − x) < e
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_AT_ALT</span>
+<DD>
+<pre>
+⊢ ∀f f' x.
+    (f has_derivative f') (at x) ⇔
+    linear f' ∧
+    ∀e. 0 < e ⇒
+        ∃d. 0 < d ∧
+            ∀y. abs (y − x) < d ⇒
+                abs (f y − f x − f' (y − x)) ≤ e * abs (y − x)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_AT_WITHIN</span>
+<DD>
+<pre>
+⊢ ∀f f' x s.
+    (f has_derivative f') (at x) ⇒ (f has_derivative f') (at x within s)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_BILINEAR_AT</span>
+<DD>
+<pre>
+⊢ ∀h f g f' g' x.
+    (f has_derivative f') (at x) ∧ (g has_derivative g') (at x) ∧ bilinear h ⇒
+    ((λx. h (f x) (g x)) has_derivative (λd. h (f x) (g' d) + h (f' d) (g x)))
+      (at x)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_BILINEAR_WITHIN</span>
+<DD>
+<pre>
+⊢ ∀h f g f' g' x s.
+    (f has_derivative f') (at x within s) ∧
+    (g has_derivative g') (at x within s) ∧ bilinear h ⇒
+    ((λx. h (f x) (g x)) has_derivative (λd. h (f x) (g' d) + h (f' d) (g x)))
+      (at x within s)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_CMUL</span>
+<DD>
+<pre>
+⊢ ∀f f' net c.
+    (f has_derivative f') net ⇒
+    ((λx. c * f x) has_derivative (λh. c * f' h)) net
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_CONST</span>
+<DD>
+<pre>
+⊢ ∀c net. ((λx. c) has_derivative (λh. 0)) net
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_EXP</span>
+<DD>
+<pre>
+⊢ ∀z. (exp has_derivative (λy. exp z * y)) (at z)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_ID</span>
+<DD>
+<pre>
+⊢ ∀net. ((λx. x) has_derivative (λh. h)) net
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_IMP_CONTINUOUS_AT</span>
+<DD>
+<pre>
+⊢ ∀f f' x. (f has_derivative f') (at x) ⇒ f continuous at x
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_LINEAR</span>
+<DD>
+<pre>
+⊢ ∀f net. linear f ⇒ (f has_derivative f) net
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_MUL_AT</span>
+<DD>
+<pre>
+⊢ ∀f f' g g' a.
+    (f has_derivative f') (at a) ∧ (g has_derivative g') (at a) ⇒
+    ((λx. f x * g x) has_derivative (λh. f a * g' h + f' h * g a)) (at a)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_MUL_WITHIN</span>
+<DD>
+<pre>
+⊢ ∀f f' g g' a s.
+    (f has_derivative f') (at a within s) ∧
+    (g has_derivative g') (at a within s) ⇒
+    ((λx. f x * g x) has_derivative (λh. f a * g' h + f' h * g a))
+      (at a within s)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_NEG</span>
+<DD>
+<pre>
+⊢ ∀f f' net.
+    (f has_derivative f') net ⇒ ((λx. -f x) has_derivative (λh. -f' h)) net
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_POW</span>
+<DD>
+<pre>
+⊢ ∀q0 n.
+    ((λq. q pow n) has_derivative
+     (λq. sum {1 .. n} (λi. q0 pow (n − i) * q * q0 pow (i − 1)))) (at q0)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_SEQUENCE</span>
+<DD>
+<pre>
+⊢ ∀s f f' g'.
+    convex s ∧ (∀n x. x ∈ s ⇒ (f n has_derivative f' n x) (at x within s)) ∧
+    (∀e. 0 < e ⇒
+         ∃N. ∀n x h. n ≥ N ∧ x ∈ s ⇒ abs (f' n x h − g' x h) ≤ e * abs h) ∧
+    (∃x l. x ∈ s ∧ ((λn. f n x) --> l) sequentially) ⇒
+    ∃g. ∀x.
+      x ∈ s ⇒
+      ((λn. f n x) --> g x) sequentially ∧
+      (g has_derivative g' x) (at x within s)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_SEQUENCE_LIPSCHITZ</span>
+<DD>
+<pre>
+⊢ ∀s f f' g'.
+    convex s ∧ (∀n x. x ∈ s ⇒ (f n has_derivative f' n x) (at x within s)) ∧
+    (∀e. 0 < e ⇒
+         ∃N. ∀n x h. n ≥ N ∧ x ∈ s ⇒ abs (f' n x h − g' x h) ≤ e * abs h) ⇒
+    ∀e. 0 < e ⇒
+        ∃N. ∀m n x y.
+          m ≥ N ∧ n ≥ N ∧ x ∈ s ∧ y ∈ s ⇒
+          abs (f m x − f n x − (f m y − f n y)) ≤ e * abs (x − y)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_SERIES</span>
+<DD>
+<pre>
+⊢ ∀s f f' g' k.
+    convex s ∧ (∀n x. x ∈ s ⇒ (f n has_derivative f' n x) (at x within s)) ∧
+    (∀e. 0 < e ⇒
+         ∃N. ∀n x h.
+           n ≥ N ∧ x ∈ s ⇒
+           abs (sum (k ∩ {x | 0 ≤ x ∧ x ≤ n}) (λi. f' i x h) − g' x h) ≤
+           e * abs h) ∧ (∃x l. x ∈ s ∧ ((λn. f n x) sums l) k) ⇒
+    ∃g. ∀x.
+      x ∈ s ⇒
+      ((λn. f n x) sums g x) k ∧ (g has_derivative g' x) (at x within s)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_SERIES'</span>
+<DD>
+<pre>
+⊢ ∀s f f' g' k.
+    convex s ∧
+    (∀n x. x ∈ s ⇒ (f n has_derivative (λy. f' n x * y)) (at x within s)) ∧
+    (∀e. 0 < e ⇒
+         ∃N. ∀n x.
+           n ≥ N ∧ x ∈ s ⇒ abs (sum (k ∩ {0 .. n}) (λi. f' i x) − g' x) ≤ e) ∧
+    (∃x l. x ∈ s ∧ ((λn. f n x) sums l) k) ⇒
+    ∃g. ∀x.
+      x ∈ s ⇒
+      ((λn. f n x) sums g x) k ∧
+      (g has_derivative (λy. g' x * y)) (at x within s)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_SUB</span>
+<DD>
+<pre>
+⊢ ∀f f' g g' net.
+    (f has_derivative f') net ∧ (g has_derivative g') net ⇒
+    ((λx. f x − g x) has_derivative (λh. f' h − g' h)) net
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_SUM</span>
+<DD>
+<pre>
+⊢ ∀f f' net s.
+    FINITE s ∧ (∀a. a ∈ s ⇒ (f a has_derivative f' a) net) ⇒
+    ((λx. sum s (λa. f a x)) has_derivative (λh. sum s (λa. f' a h))) net
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_TRANSFORM_AT</span>
+<DD>
+<pre>
+⊢ ∀f f' g x d.
+    0 < d ∧ (∀x'. dist (x',x) < d ⇒ (f x' = g x')) ∧
+    (f has_derivative f') (at x) ⇒
+    (g has_derivative f') (at x)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_TRANSFORM_WITHIN</span>
+<DD>
+<pre>
+⊢ ∀f f' g x s d.
+    0 < d ∧ x ∈ s ∧ (∀x'. x' ∈ s ∧ dist (x',x) < d ⇒ (f x' = g x')) ∧
+    (f has_derivative f') (at x within s) ⇒
+    (g has_derivative f') (at x within s)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_WITHIN</span>
+<DD>
+<pre>
+⊢ ∀f f' x s.
+    (f has_derivative f') (at x within s) ⇔
+    linear f' ∧
+    ∀e. 0 < e ⇒
+        ∃d. 0 < d ∧
+            ∀x'.
+              x' ∈ s ∧ 0 < abs (x' − x) ∧ abs (x' − x) < d ⇒
+              abs (f x' − f x − f' (x' − x)) / abs (x' − x) < e
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_WITHIN_ALT</span>
+<DD>
+<pre>
+⊢ ∀f f' s x.
+    (f has_derivative f') (at x within s) ⇔
+    linear f' ∧
+    ∀e. 0 < e ⇒
+        ∃d. 0 < d ∧
+            ∀y. y ∈ s ∧ abs (y − x) < d ⇒
+                abs (f y − f x − f' (y − x)) ≤ e * abs (y − x)
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_WITHIN_OPEN</span>
+<DD>
+<pre>
+⊢ ∀f f' a s.
+    a ∈ s ∧ open s ⇒
+    ((f has_derivative f') (at a within s) ⇔ (f has_derivative f') (at a))
+</pre>
+
+<DT><span class="strong">HAS_DERIVATIVE_WITHIN_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀f f' s t x.
+    (f has_derivative f') (at x within s) ∧ t ⊆ s ⇒
+    (f has_derivative f') (at x within t)
+</pre>
+
+<DT><span class="strong">HAS_VECTOR_DERIVATIVE_AT_WITHIN</span>
+<DD>
+<pre>
+⊢ ∀f f' x s.
+    (f has_vector_derivative f') (at x) ⇒
+    (f has_vector_derivative f') (at x within s)
+</pre>
+
+<DT><span class="strong">HAS_VECTOR_DERIVATIVE_BILINEAR_AT</span>
+<DD>
+<pre>
+⊢ ∀h f g f' g' x.
+    (f has_vector_derivative f') (at x) ∧
+    (g has_vector_derivative g') (at x) ∧ bilinear h ⇒
+    ((λx. h (f x) (g x)) has_vector_derivative h (f x) g' + h f' (g x)) (at x)
+</pre>
+
+<DT><span class="strong">HAS_VECTOR_DERIVATIVE_BILINEAR_WITHIN</span>
+<DD>
+<pre>
+⊢ ∀h f g f' g' x s.
+    (f has_vector_derivative f') (at x within s) ∧
+    (g has_vector_derivative g') (at x within s) ∧ bilinear h ⇒
+    ((λx. h (f x) (g x)) has_vector_derivative h (f x) g' + h f' (g x))
+      (at x within s)
+</pre>
+
+<DT><span class="strong">HAS_VECTOR_DERIVATIVE_WITHIN_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀f f' s t x.
+    (f has_vector_derivative f') (at x within s) ∧ t ⊆ s ⇒
+    (f has_vector_derivative f') (at x within t)
+</pre>
+
+<DT><span class="strong">IN_CONVEX_SET</span>
+<DD>
+<pre>
+⊢ ∀s a b u. convex s ∧ a ∈ s ∧ b ∈ s ∧ 0 ≤ u ∧ u ≤ 1 ⇒ (1 − u) * a + u * b ∈ s
+</pre>
+
+<DT><span class="strong">IS_INTERVAL_CONNECTED</span>
+<DD>
+<pre>
+⊢ ∀s. is_interval s ⇒ connected s
+</pre>
+
+<DT><span class="strong">IS_INTERVAL_CONNECTED_1</span>
+<DD>
+<pre>
+⊢ ∀s. is_interval s ⇔ connected s
+</pre>
+
+<DT><span class="strong">IS_INTERVAL_CONVEX</span>
+<DD>
+<pre>
+⊢ ∀s. is_interval s ⇒ convex s
+</pre>
+
+<DT><span class="strong">IS_INTERVAL_CONVEX_1</span>
+<DD>
+<pre>
+⊢ ∀s. is_interval s ⇔ convex s
+</pre>
+
+<DT><span class="strong">LIMPT_APPROACHABLE</span>
+<DD>
+<pre>
+⊢ ∀x s.
+    x limit_point_of s ⇔ ∀e. 0 < e ⇒ ∃x'. x' ∈ s ∧ x' ≠ x ∧ dist (x',x) < e
+</pre>
+
+<DT><span class="strong">LIMPT_OF_CONVEX</span>
+<DD>
+<pre>
+⊢ ∀s x. convex s ∧ x ∈ s ⇒ (x limit_point_of s ⇔ s ≠ {x})
+</pre>
+
+<DT><span class="strong">LIM_MUL_ABS_WITHIN</span>
+<DD>
+<pre>
+⊢ ∀f a s.
+    (f --> 0) (at a within s) ⇒
+    ((λx. abs (x − a) * f x) --> 0) (at a within s)
+</pre>
+
+<DT><span class="strong">LINEAR_FRECHET_DERIVATIVE</span>
+<DD>
+<pre>
+⊢ ∀f net. f differentiable net ⇒ linear (frechet_derivative f net)
+</pre>
+
+<DT><span class="strong">MVT</span>
+<DD>
+<pre>
+⊢ ∀f f' a b.
+    a < b ∧ f continuous_on interval [(a,b)] ∧
+    (∀x. x ∈ interval (a,b) ⇒ (f has_derivative f' x) (at x)) ⇒
+    ∃x. x ∈ interval (a,b) ∧ (f b − f a = f' x (b − a))
+</pre>
+
+<DT><span class="strong">MVT_GENERAL</span>
+<DD>
+<pre>
+⊢ ∀f f' a b.
+    a < b ∧ f continuous_on interval [(a,b)] ∧
+    (∀x. x ∈ interval (a,b) ⇒ (f has_derivative f' x) (at x)) ⇒
+    ∃x. x ∈ interval (a,b) ∧ abs (f b − f a) ≤ abs (f' x (b − a))
+</pre>
+
+<DT><span class="strong">OABS</span>
+<DD>
+<pre>
+⊢ ∀f. linear f ⇒
+      (∀x. abs (f x) ≤ oabs f * abs x) ∧
+      ∀b. (∀x. abs (f x) ≤ b * abs x) ⇒ oabs f ≤ b
+</pre>
+
+<DT><span class="strong">REAL_CONVEX_BOUND2_LT</span>
+<DD>
+<pre>
+⊢ ∀x y a b u v.
+    x < a ∧ y < b ∧ 0 ≤ u ∧ 0 ≤ v ∧ (u + v = 1) ⇒
+    u * x + v * y < u * a + v * b
+</pre>
+
+<DT><span class="strong">REAL_CONVEX_BOUND_LT</span>
+<DD>
+<pre>
+⊢ ∀x y a u v. x < a ∧ y < a ∧ 0 ≤ u ∧ 0 ≤ v ∧ (u + v = 1) ⇒ u * x + v * y < a
+</pre>
+
+<DT><span class="strong">REAL_MUL_NZ</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≠ 0 ∧ b ≠ 0 ⇒ a * b ≠ 0
+</pre>
+
+<DT><span class="strong">ROLLE</span>
+<DD>
+<pre>
+⊢ ∀f f' a b.
+    a < b ∧ (f a = f b) ∧ f continuous_on interval [(a,b)] ∧
+    (∀x. x ∈ interval (a,b) ⇒ (f has_derivative f' x) (at x)) ⇒
+    ∃x. x ∈ interval (a,b) ∧ (f' x = (λv. 0))
+</pre>
+
+<DT><span class="strong">TRIVIAL_LIMIT_WITHIN_CONVEX</span>
+<DD>
+<pre>
+⊢ ∀s x. convex s ∧ x ∈ s ⇒ (trivial_limit (at x within s) ⇔ (s = {x}))
+</pre>
+
+<DT><span class="strong">has_derivative_at</span>
+<DD>
+<pre>
+⊢ ∀f f' x.
+    (f has_derivative f') (at x) ⇔
+    linear f' ∧
+    ((λy. (abs (y − x))⁻¹ * (f y − (f x + f' (y − x)))) --> 0) (at x)
+</pre>
+
+<DT><span class="strong">has_derivative_within</span>
+<DD>
+<pre>
+⊢ ∀f f' x s.
+    (f has_derivative f') (at x within s) ⇔
+    linear f' ∧
+    ((λy. (abs (y − x))⁻¹ * (f y − (f x + f' (y − x)))) --> 0) (at x within s)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,1355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: set_relation</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "set_relation"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "pred_setTheory.html"><span class="strong">pred_set</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">RREFL_EXP</span>
+    <td>
+    :(α -> α -> bool) -> (α -> bool) -> α -> α -> bool
+    <tr><td>
+    <span class="strong">RRUNIV</span>
+    <td>
+    :(α -> bool) -> α -> α -> bool
+    <tr><td> <span class="strong">acyclic</span> <td> :(α # α -> bool) -> bool
+    <tr><td>
+    <span class="strong">all_choices</span>
+    <td>
+    :((α -> bool) -> bool) -> (α -> bool) -> bool
+    <tr><td> <span class="strong">antisym</span> <td> :(α # α -> bool) -> bool
+    <tr><td>
+    <span class="strong">chain</span>
+    <td>
+    :(α -> bool) -> (α # α -> bool) -> bool
+    <tr><td>
+    <span class="strong">domain</span>
+    <td>
+    :(α # β -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">fchains</span>
+    <td>
+    :(α # α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">finite_prefixes</span>
+    <td>
+    :(α # β -> bool) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">get_min</span>
+    <td>
+    :(α # α -> bool) -> (α -> bool) # (α # α -> bool) -> α option
+    <tr><td>
+    <span class="strong">irreflexive</span>
+    <td>
+    :(α # α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">linear_order</span>
+    <td>
+    :(α # α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">maximal_elements</span>
+    <td>
+    :(α -> bool) -> (α # α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">minimal_elements</span>
+    <td>
+    :(α -> bool) -> (α # α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">nth_min</span>
+    <td>
+    :(α # α -> bool) -> (α -> bool) # (α # α -> bool) -> num -> α option
+    <tr><td>
+    <span class="strong">num_order</span>
+    <td>
+    :(α -> num) -> (α -> bool) -> α # α -> bool
+    <tr><td>
+    <span class="strong">partial_order</span>
+    <td>
+    :(α # α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">per</span>
+    <td>
+    :(α -> bool) -> ((α -> bool) -> bool) -> bool
+    <tr><td>
+    <span class="strong">per_restrict</span>
+    <td>
+    :((α -> bool) -> bool) -> (α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">range</span>
+    <td>
+    :(β # α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">rcomp</span>
+    <td>
+    :(α # γ -> bool) -> (γ # β -> bool) -> α # β -> bool
+    <tr><td>
+    <span class="strong">reflexive</span>
+    <td>
+    :(α # α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">rel_to_reln</span>
+    <td>
+    :(α -> β -> bool) -> α # β -> bool
+    <tr><td>
+    <span class="strong">reln_to_rel</span>
+    <td>
+    :(α # β -> bool) -> α -> β -> bool
+    <tr><td>
+    <span class="strong">rrestrict</span>
+    <td>
+    :(α # α -> bool) -> (α -> bool) -> α # α -> bool
+    <tr><td>
+    <span class="strong">strict</span>
+    <td>
+    :(α # α -> bool) -> α # α -> bool
+    <tr><td>
+    <span class="strong">strict_linear_order</span>
+    <td>
+    :(α # α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">tc</span>
+    <td>
+    :(α # α -> bool) -> α # α -> bool
+    <tr><td>
+    <span class="strong">transitive</span>
+    <td>
+    :(α # α -> bool) -> bool
+    <tr><td>
+    <span class="strong">univ_reln</span>
+    <td>
+    :(α -> bool) -> α # α -> bool
+    <tr><td>
+    <span class="strong">upper_bounds</span>
+    <td>
+    :(β -> bool) -> (β # α -> bool) -> α -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">RREFL_EXP_def</span>
+<DD>
+<pre>
+⊢ ∀R s. RREFL_EXP R s = R ∪ᵣ (λx y. (x = y) ∧ x ∉ s)
+</pre>
+
+<DT><span class="strong">RRUNIV_def</span>
+<DD>
+<pre>
+⊢ ∀s. RRUNIV s = (λx y. x ∈ s ∧ y ∈ s)
+</pre>
+
+<DT><span class="strong">acyclic_def</span>
+<DD>
+<pre>
+⊢ ∀r. acyclic r ⇔ ∀x. (x,x) ∉ tc r
+</pre>
+
+<DT><span class="strong">all_choices_def</span>
+<DD>
+<pre>
+⊢ ∀xss.
+    all_choices xss =
+    {IMAGE choice xss | choice | ∀xs. xs ∈ xss ⇒ choice xs ∈ xs}
+</pre>
+
+<DT><span class="strong">antisym_def</span>
+<DD>
+<pre>
+⊢ ∀r. antisym r ⇔ ∀x y. (x,y) ∈ r ∧ (y,x) ∈ r ⇒ (x = y)
+</pre>
+
+<DT><span class="strong">chain_def</span>
+<DD>
+<pre>
+⊢ ∀s r. chain s r ⇔ ∀x y. x ∈ s ∧ y ∈ s ⇒ (x,y) ∈ r ∨ (y,x) ∈ r
+</pre>
+
+<DT><span class="strong">domain_def</span>
+<DD>
+<pre>
+⊢ ∀r. domain r = {x | ∃y. (x,y) ∈ r}
+</pre>
+
+<DT><span class="strong">fchains_def</span>
+<DD>
+<pre>
+⊢ ∀r. fchains r =
+      {k |
+       chain k r ∧ k ≠ ∅ ∧
+       ∀C. chain C r ∧ C ⊆ k ∧ (upper_bounds C r DIFF C) ∩ k ≠ ∅ ⇒
+           CHOICE (upper_bounds C r DIFF C) ∈
+           minimal_elements ((upper_bounds C r DIFF C) ∩ k) r}
+</pre>
+
+<DT><span class="strong">finite_prefixes_def</span>
+<DD>
+<pre>
+⊢ ∀r s. finite_prefixes r s ⇔ ∀e. e ∈ s ⇒ FINITE {e' | (e',e) ∈ r}
+</pre>
+
+<DT><span class="strong">get_min_def</span>
+<DD>
+<pre>
+⊢ ∀r' s r.
+    get_min r' (s,r) =
+    (let
+       mins = minimal_elements (minimal_elements s r) r'
+     in
+       if SING mins then SOME (CHOICE mins) else NONE)
+</pre>
+
+<DT><span class="strong">irreflexive_def</span>
+<DD>
+<pre>
+⊢ ∀r s. irreflexive r s ⇔ ∀x. x ∈ s ⇒ (x,x) ∉ r
+</pre>
+
+<DT><span class="strong">linear_order_def</span>
+<DD>
+<pre>
+⊢ ∀r s.
+    linear_order r s ⇔
+    domain r ⊆ s ∧ range r ⊆ s ∧ transitive r ∧ antisym r ∧
+    ∀x y. x ∈ s ∧ y ∈ s ⇒ (x,y) ∈ r ∨ (y,x) ∈ r
+</pre>
+
+<DT><span class="strong">maximal_elements_def</span>
+<DD>
+<pre>
+⊢ ∀xs r.
+    maximal_elements xs r =
+    {x | x ∈ xs ∧ ∀x'. x' ∈ xs ∧ (x,x') ∈ r ⇒ (x = x')}
+</pre>
+
+<DT><span class="strong">minimal_elements_def</span>
+<DD>
+<pre>
+⊢ ∀xs r.
+    minimal_elements xs r =
+    {x | x ∈ xs ∧ ∀x'. x' ∈ xs ∧ (x',x) ∈ r ⇒ (x = x')}
+</pre>
+
+<DT><span class="strong">num_order_def</span>
+<DD>
+<pre>
+⊢ ∀f s. num_order f s = {(x,y) | x ∈ s ∧ y ∈ s ∧ f x ≤ f y}
+</pre>
+
+<DT><span class="strong">partial_order_def</span>
+<DD>
+<pre>
+⊢ ∀r s.
+    partial_order r s ⇔
+    domain r ⊆ s ∧ range r ⊆ s ∧ transitive r ∧ reflexive r s ∧ antisym r
+</pre>
+
+<DT><span class="strong">per_def</span>
+<DD>
+<pre>
+⊢ ∀xs xss.
+    per xs xss ⇔
+    BIGUNION xss ⊆ xs ∧ ∅ ∉ xss ∧
+    ∀xs1 xs2. xs1 ∈ xss ∧ xs2 ∈ xss ∧ xs1 ≠ xs2 ⇒ DISJOINT xs1 xs2
+</pre>
+
+<DT><span class="strong">per_restrict_def</span>
+<DD>
+<pre>
+⊢ ∀xss xs. per_restrict xss xs = {xs' ∩ xs | xs' ∈ xss} DELETE ∅
+</pre>
+
+<DT><span class="strong">range_def</span>
+<DD>
+<pre>
+⊢ ∀r. range r = {y | ∃x. (x,y) ∈ r}
+</pre>
+
+<DT><span class="strong">rcomp_def</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. r1 OO r2 = {(x,y) | ∃z. (x,z) ∈ r1 ∧ (z,y) ∈ r2}
+</pre>
+
+<DT><span class="strong">reflexive_def</span>
+<DD>
+<pre>
+⊢ ∀r s. reflexive r s ⇔ ∀x. x ∈ s ⇒ (x,x) ∈ r
+</pre>
+
+<DT><span class="strong">rel_to_reln_def</span>
+<DD>
+<pre>
+⊢ ∀R. rel_to_reln R = {(x,y) | R x y}
+</pre>
+
+<DT><span class="strong">reln_to_rel_def</span>
+<DD>
+<pre>
+⊢ ∀r. reln_to_rel r = (λx y. (x,y) ∈ r)
+</pre>
+
+<DT><span class="strong">rrestrict_def</span>
+<DD>
+<pre>
+⊢ ∀r s. rrestrict r s = {(x,y) | (x,y) ∈ r ∧ x ∈ s ∧ y ∈ s}
+</pre>
+
+<DT><span class="strong">strict_def</span>
+<DD>
+<pre>
+⊢ ∀r. strict r = {(x,y) | (x,y) ∈ r ∧ x ≠ y}
+</pre>
+
+<DT><span class="strong">strict_linear_order_def</span>
+<DD>
+<pre>
+⊢ ∀r s.
+    strict_linear_order r s ⇔
+    domain r ⊆ s ∧ range r ⊆ s ∧ transitive r ∧ (∀x. (x,x) ∉ r) ∧
+    ∀x y. x ∈ s ∧ y ∈ s ∧ x ≠ y ⇒ (x,y) ∈ r ∨ (y,x) ∈ r
+</pre>
+
+<DT><span class="strong">tc_def</span>
+<DD>
+<pre>
+⊢ tc =
+  (λr a0.
+       ∀tc'.
+         (∀a0.
+            (∃x y. (a0 = (x,y)) ∧ r (x,y)) ∨
+            (∃x y. (a0 = (x,y)) ∧ ∃z. tc' (x,z) ∧ tc' (z,y)) ⇒
+            tc' a0) ⇒
+         tc' a0)
+</pre>
+
+<DT><span class="strong">transitive_def</span>
+<DD>
+<pre>
+⊢ ∀r. transitive r ⇔ ∀x y z. (x,y) ∈ r ∧ (y,z) ∈ r ⇒ (x,z) ∈ r
+</pre>
+
+<DT><span class="strong">univ_reln_def</span>
+<DD>
+<pre>
+⊢ ∀xs. univ_reln xs = {(x1,x2) | x1 ∈ xs ∧ x2 ∈ xs}
+</pre>
+
+<DT><span class="strong">upper_bounds_def</span>
+<DD>
+<pre>
+⊢ ∀s r. upper_bounds s r = {x | x ∈ range r ∧ ∀y. y ∈ s ⇒ (y,x) ∈ r}
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">IN_MIN_LO</span>
+<DD>
+<pre>
+⊢ x ∈ X ⇒ linear_order lo X ⇒ y ∈ minimal_elements X lo ⇒ (y,x) ∈ lo
+</pre>
+
+<DT><span class="strong">REL_RESTRICT_UNIV</span>
+<DD>
+<pre>
+⊢ REL_RESTRICT R 𝕌(:α) = R
+</pre>
+
+<DT><span class="strong">RREFL_EXP_RSUBSET</span>
+<DD>
+<pre>
+⊢ R ⊆ᵣ RREFL_EXP R s
+</pre>
+
+<DT><span class="strong">RREFL_EXP_UNIV</span>
+<DD>
+<pre>
+⊢ RREFL_EXP R 𝕌(:α) = R
+</pre>
+
+<DT><span class="strong">WF_has_minimal_path</span>
+<DD>
+<pre>
+⊢ WF (reln_to_rel r) ⇒
+  x ∈ s ⇒
+  ∃y. y ∈ minimal_elements s r ∧ ((y,x) ∈ tc r ∨ (y = x))
+</pre>
+
+<DT><span class="strong">acyclic_SWAP</span>
+<DD>
+<pre>
+⊢ acyclic (IMAGE SWAP r) ⇔ acyclic r
+</pre>
+
+<DT><span class="strong">acyclic_WF</span>
+<DD>
+<pre>
+⊢ FINITE s ∧ acyclic r ∧ domain r ⊆ s ∧ range r ⊆ s ⇒ WF (reln_to_rel r)
+</pre>
+
+<DT><span class="strong">acyclic_bigunion</span>
+<DD>
+<pre>
+⊢ ∀rs.
+    (∀r r'.
+       r ∈ rs ∧ r' ∈ rs ∧ r ≠ r' ⇒
+       DISJOINT (domain r ∪ range r) (domain r' ∪ range r')) ∧
+    (∀r. r ∈ rs ⇒ acyclic r) ⇒
+    acyclic (BIGUNION rs)
+</pre>
+
+<DT><span class="strong">acyclic_irreflexive</span>
+<DD>
+<pre>
+⊢ ∀r x. acyclic r ⇒ (x,x) ∉ r
+</pre>
+
+<DT><span class="strong">acyclic_reln_to_rel_conv</span>
+<DD>
+<pre>
+⊢ acyclic r ⇔ irreflexive (reln_to_rel r)⁺
+</pre>
+
+<DT><span class="strong">acyclic_rrestrict</span>
+<DD>
+<pre>
+⊢ ∀r s. acyclic r ⇒ acyclic (rrestrict r s)
+</pre>
+
+<DT><span class="strong">acyclic_subset</span>
+<DD>
+<pre>
+⊢ ∀r1 r2. acyclic r1 ∧ r2 ⊆ r1 ⇒ acyclic r2
+</pre>
+
+<DT><span class="strong">acyclic_union</span>
+<DD>
+<pre>
+⊢ ∀r r'.
+    DISJOINT (domain r ∪ range r) (domain r' ∪ range r') ∧ acyclic r ∧
+    acyclic r' ⇒
+    acyclic (r ∪ r')
+</pre>
+
+<DT><span class="strong">all_choices_thm</span>
+<DD>
+<pre>
+⊢ ∀x s y. x ∈ all_choices s ∧ y ∈ x ⇒ ∃z. z ∈ s ∧ y ∈ z
+</pre>
+
+<DT><span class="strong">antisym_reln_to_rel_conv</span>
+<DD>
+<pre>
+⊢ antisym r ⇔ antisymmetric (reln_to_rel r)
+</pre>
+
+<DT><span class="strong">antisym_subset</span>
+<DD>
+<pre>
+⊢ antisym t ⇒ s ⊆ t ⇒ antisym s
+</pre>
+
+<DT><span class="strong">countable_per</span>
+<DD>
+<pre>
+⊢ ∀xs xss. countable xs ∧ per xs xss ⇒ countable xss
+</pre>
+
+<DT><span class="strong">domain_mono</span>
+<DD>
+<pre>
+⊢ r ⊆ r' ⇒ domain r ⊆ domain r'
+</pre>
+
+<DT><span class="strong">domain_rrestrict_SUBSET</span>
+<DD>
+<pre>
+⊢ domain (rrestrict r s) ⊆ s
+</pre>
+
+<DT><span class="strong">domain_to_rel_conv</span>
+<DD>
+<pre>
+⊢ domain r = RDOM (reln_to_rel r)
+</pre>
+
+<DT><span class="strong">empty_linear_order</span>
+<DD>
+<pre>
+⊢ ∀r. linear_order r ∅ ⇔ (r = ∅)
+</pre>
+
+<DT><span class="strong">empty_strict_linear_order</span>
+<DD>
+<pre>
+⊢ ∀r. strict_linear_order r ∅ ⇔ (r = ∅)
+</pre>
+
+<DT><span class="strong">extend_linear_order</span>
+<DD>
+<pre>
+⊢ ∀r s x.
+    x ∉ s ∧ linear_order r s ⇒
+    linear_order (r ∪ {(y,x) | y | y ∈ s ∪ {x}}) (s ∪ {x})
+</pre>
+
+<DT><span class="strong">finite_acyclic_has_maximal</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ s ≠ ∅ ⇒ ∀r. acyclic r ⇒ ∃x. x ∈ maximal_elements s r
+</pre>
+
+<DT><span class="strong">finite_acyclic_has_maximal_path</span>
+<DD>
+<pre>
+⊢ ∀s r x.
+    FINITE s ∧ acyclic r ∧ x ∈ s ∧ x ∉ maximal_elements s r ⇒
+    ∃y. y ∈ maximal_elements s r ∧ (x,y) ∈ tc r
+</pre>
+
+<DT><span class="strong">finite_acyclic_has_minimal</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ s ≠ ∅ ⇒ ∀r. acyclic r ⇒ ∃x. x ∈ minimal_elements s r
+</pre>
+
+<DT><span class="strong">finite_acyclic_has_minimal_path</span>
+<DD>
+<pre>
+⊢ ∀s r x.
+    FINITE s ∧ acyclic r ∧ x ∈ s ∧ x ∉ minimal_elements s r ⇒
+    ∃y. y ∈ minimal_elements s r ∧ (y,x) ∈ tc r
+</pre>
+
+<DT><span class="strong">finite_linear_order_has_maximal</span>
+<DD>
+<pre>
+⊢ ∀s r. FINITE s ∧ linear_order r s ∧ s ≠ ∅ ⇒ ∃x. x ∈ maximal_elements s r
+</pre>
+
+<DT><span class="strong">finite_linear_order_has_minimal</span>
+<DD>
+<pre>
+⊢ ∀s r. FINITE s ∧ linear_order r s ∧ s ≠ ∅ ⇒ ∃x. x ∈ minimal_elements s r
+</pre>
+
+<DT><span class="strong">finite_prefix_linear_order_has_unique_minimal</span>
+<DD>
+<pre>
+⊢ ∀r s s'.
+    linear_order r s ∧ finite_prefixes r s ∧ x ∈ s' ∧ s' ⊆ s ⇒
+    SING (minimal_elements s' r)
+</pre>
+
+<DT><span class="strong">finite_prefix_po_has_minimal_path</span>
+<DD>
+<pre>
+⊢ ∀r s x s'.
+    partial_order r s ∧ finite_prefixes r s ∧ x ∉ minimal_elements s' r ∧
+    x ∈ s' ∧ s' ⊆ s ⇒
+    ∃x'. x' ∈ minimal_elements s' r ∧ (x',x) ∈ r
+</pre>
+
+<DT><span class="strong">finite_prefixes_comp</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 s1 s2.
+    finite_prefixes r1 s1 ∧ finite_prefixes r2 s2 ∧
+    {x | ∃y. y ∈ s2 ∧ (x,y) ∈ r2} ⊆ s1 ⇒
+    finite_prefixes (r1 OO r2) s2
+</pre>
+
+<DT><span class="strong">finite_prefixes_inj_image</span>
+<DD>
+<pre>
+⊢ ∀f r s.
+    (∀x y. (f x = f y) ⇒ (x = y)) ∧ finite_prefixes r s ⇒
+    finite_prefixes {(f x,f y) | (x,y) ∈ r} (IMAGE f s)
+</pre>
+
+<DT><span class="strong">finite_prefixes_range</span>
+<DD>
+<pre>
+⊢ ∀r s t.
+    finite_prefixes r s ∧ DISJOINT t (range r) ⇒ finite_prefixes r (s ∪ t)
+</pre>
+
+<DT><span class="strong">finite_prefixes_subset</span>
+<DD>
+<pre>
+⊢ ∀r s s'.
+    finite_prefixes r s ∧ s' ⊆ s ⇒
+    finite_prefixes r s' ∧ finite_prefixes (rrestrict r s') s'
+</pre>
+
+<DT><span class="strong">finite_prefixes_subset_r</span>
+<DD>
+<pre>
+⊢ ∀r r' s. finite_prefixes r s ∧ r' ⊆ r ⇒ finite_prefixes r' s
+</pre>
+
+<DT><span class="strong">finite_prefixes_subset_rs</span>
+<DD>
+<pre>
+⊢ ∀r s r' s'. finite_prefixes r s ⇒ r' ⊆ r ⇒ s' ⊆ s ⇒ finite_prefixes r' s'
+</pre>
+
+<DT><span class="strong">finite_prefixes_subset_s</span>
+<DD>
+<pre>
+⊢ ∀r s s'. finite_prefixes r s ∧ s' ⊆ s ⇒ finite_prefixes r s'
+</pre>
+
+<DT><span class="strong">finite_prefixes_union</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 s1 s2.
+    finite_prefixes r1 s1 ∧ finite_prefixes r2 s2 ⇒
+    finite_prefixes (r1 ∪ r2) (s1 ∩ s2)
+</pre>
+
+<DT><span class="strong">finite_strict_linear_order_has_maximal</span>
+<DD>
+<pre>
+⊢ ∀s r.
+    FINITE s ∧ strict_linear_order r s ∧ s ≠ ∅ ⇒ ∃x. x ∈ maximal_elements s r
+</pre>
+
+<DT><span class="strong">finite_strict_linear_order_has_minimal</span>
+<DD>
+<pre>
+⊢ ∀s r.
+    FINITE s ∧ strict_linear_order r s ∧ s ≠ ∅ ⇒ ∃x. x ∈ minimal_elements s r
+</pre>
+
+<DT><span class="strong">in_dom_rg</span>
+<DD>
+<pre>
+⊢ (x,y) ∈ r ⇒ x ∈ domain r ∧ y ∈ range r
+</pre>
+
+<DT><span class="strong">in_domain</span>
+<DD>
+<pre>
+⊢ ∀x r. x ∈ domain r ⇔ ∃y. (x,y) ∈ r
+</pre>
+
+<DT><span class="strong">in_range</span>
+<DD>
+<pre>
+⊢ ∀y r. y ∈ range r ⇔ ∃x. (x,y) ∈ r
+</pre>
+
+<DT><span class="strong">in_rel_to_reln</span>
+<DD>
+<pre>
+⊢ xy ∈ rel_to_reln R ⇔ R (FST xy) (SND xy)
+</pre>
+
+<DT><span class="strong">in_rrestrict</span>
+<DD>
+<pre>
+⊢ ∀x y r s. (x,y) ∈ rrestrict r s ⇔ (x,y) ∈ r ∧ x ∈ s ∧ y ∈ s
+</pre>
+
+<DT><span class="strong">in_rrestrict_alt</span>
+<DD>
+<pre>
+⊢ x ∈ rrestrict r s ⇔ x ∈ r ∧ FST x ∈ s ∧ SND x ∈ s
+</pre>
+
+<DT><span class="strong">irreflexive_reln_to_rel_conv</span>
+<DD>
+<pre>
+⊢ irreflexive r s ⇔ irreflexive (REL_RESTRICT (reln_to_rel r) s)
+</pre>
+
+<DT><span class="strong">irreflexive_reln_to_rel_conv_UNIV</span>
+<DD>
+<pre>
+⊢ irreflexive r 𝕌(:α) ⇔ irreflexive (reln_to_rel r)
+</pre>
+
+<DT><span class="strong">linear_order</span>
+<DD>
+<pre>
+⊢ ∀r s. strict_linear_order r s ⇒ linear_order (r ∪ {(x,x) | x ∈ s}) s
+</pre>
+
+<DT><span class="strong">linear_order_dom_rg</span>
+<DD>
+<pre>
+⊢ linear_order lo X ⇒ (domain lo ∪ range lo = X)
+</pre>
+
+<DT><span class="strong">linear_order_dom_rng</span>
+<DD>
+<pre>
+⊢ ∀r s x y. (x,y) ∈ r ∧ linear_order r s ⇒ x ∈ s ∧ y ∈ s
+</pre>
+
+<DT><span class="strong">linear_order_in_set</span>
+<DD>
+<pre>
+⊢ linear_order lo X ⇒ (x,y) ∈ lo ⇒ x ∈ X ∧ y ∈ X
+</pre>
+
+<DT><span class="strong">linear_order_num_order</span>
+<DD>
+<pre>
+⊢ ∀f s t. INJ f s t ⇒ linear_order (num_order f s) s
+</pre>
+
+<DT><span class="strong">linear_order_of_countable_po</span>
+<DD>
+<pre>
+⊢ ∀r s.
+    countable s ∧ partial_order r s ∧ finite_prefixes r s ⇒
+    ∃r'. linear_order r' s ∧ finite_prefixes r' s ∧ r ⊆ r'
+</pre>
+
+<DT><span class="strong">linear_order_refl</span>
+<DD>
+<pre>
+⊢ linear_order lo X ⇒ x ∈ X ⇒ (x,x) ∈ lo
+</pre>
+
+<DT><span class="strong">linear_order_reln_to_rel_conv_UNIV</span>
+<DD>
+<pre>
+⊢ linear_order r 𝕌(:α) ⇔ WeakLinearOrder (reln_to_rel r)
+</pre>
+
+<DT><span class="strong">linear_order_restrict</span>
+<DD>
+<pre>
+⊢ ∀s r s'. linear_order r s ⇒ linear_order (rrestrict r s') (s ∩ s')
+</pre>
+
+<DT><span class="strong">linear_order_subset</span>
+<DD>
+<pre>
+⊢ ∀r s s'. linear_order r s ∧ s' ⊆ s ⇒ linear_order (rrestrict r s') s'
+</pre>
+
+<DT><span class="strong">maximal_TC</span>
+<DD>
+<pre>
+⊢ ∀s r.
+    domain r ⊆ s ∧ range r ⊆ s ⇒
+    (maximal_elements s (tc r) = maximal_elements s r)
+</pre>
+
+<DT><span class="strong">maximal_linear_order</span>
+<DD>
+<pre>
+⊢ ∀s r x y. y ∈ s ∧ linear_order r s ∧ x ∈ maximal_elements s r ⇒ (y,x) ∈ r
+</pre>
+
+<DT><span class="strong">maximal_union</span>
+<DD>
+<pre>
+⊢ ∀e s r1 r2.
+    e ∈ maximal_elements s (r1 ∪ r2) ⇒
+    e ∈ maximal_elements s r1 ∧ e ∈ maximal_elements s r2
+</pre>
+
+<DT><span class="strong">minimal_TC</span>
+<DD>
+<pre>
+⊢ ∀s r.
+    domain r ⊆ s ∧ range r ⊆ s ⇒
+    (minimal_elements s (tc r) = minimal_elements s r)
+</pre>
+
+<DT><span class="strong">minimal_elements_SWAP</span>
+<DD>
+<pre>
+⊢ minimal_elements xs (IMAGE SWAP r) = maximal_elements xs r
+</pre>
+
+<DT><span class="strong">minimal_elements_mono</span>
+<DD>
+<pre>
+⊢ r ⊆ r' ⇒ minimal_elements xs r' ⊆ minimal_elements xs r
+</pre>
+
+<DT><span class="strong">minimal_elements_rrestrict</span>
+<DD>
+<pre>
+⊢ minimal_elements xs (rrestrict r xs) = minimal_elements xs r
+</pre>
+
+<DT><span class="strong">minimal_elements_subset</span>
+<DD>
+<pre>
+⊢ minimal_elements s lo ⊆ s
+</pre>
+
+<DT><span class="strong">minimal_linear_order</span>
+<DD>
+<pre>
+⊢ ∀s r x y. y ∈ s ∧ linear_order r s ∧ x ∈ minimal_elements s r ⇒ (x,y) ∈ r
+</pre>
+
+<DT><span class="strong">minimal_linear_order_unique</span>
+<DD>
+<pre>
+⊢ ∀r s s' x y.
+    linear_order r s ∧ x ∈ minimal_elements s' r ∧ y ∈ minimal_elements s' r ∧
+    s' ⊆ s ⇒
+    (x = y)
+</pre>
+
+<DT><span class="strong">minimal_union</span>
+<DD>
+<pre>
+⊢ ∀e s r1 r2.
+    e ∈ minimal_elements s (r1 ∪ r2) ⇒
+    e ∈ minimal_elements s r1 ∧ e ∈ minimal_elements s r2
+</pre>
+
+<DT><span class="strong">nat_order_iso_thm</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    (∀n m. (f m = f n) ∧ f m ≠ NONE ⇒ (m = n)) ∧
+    (∀x. x ∈ s ⇒ ∃m. f m = SOME x) ∧ (∀m x. (f m = SOME x) ⇒ x ∈ s) ⇒
+    linear_order {(x,y) | (∃m n. m ≤ n ∧ (f m = SOME x) ∧ (f n = SOME y))} s ∧
+    finite_prefixes {(x,y) | (∃m n. m ≤ n ∧ (f m = SOME x) ∧ (f n = SOME y))}
+      s
+</pre>
+
+<DT><span class="strong">nth_min_compute</span>
+<DD>
+<pre>
+⊢ (∀s r' r. nth_min r' (s,r) 0 = get_min r' (s,r)) ∧
+  (∀s r' r n.
+     nth_min r' (s,r) (NUMERAL (BIT1 n)) =
+     (let
+        min = get_min r' (s,r)
+      in
+        if min = NONE then NONE
+        else nth_min r' (s DELETE THE min,r) (NUMERAL (BIT1 n) − 1))) ∧
+  ∀s r' r n.
+    nth_min r' (s,r) (NUMERAL (BIT2 n)) =
+    (let
+       min = get_min r' (s,r)
+     in
+       if min = NONE then NONE
+       else nth_min r' (s DELETE THE min,r) (NUMERAL (BIT1 n)))
+</pre>
+
+<DT><span class="strong">nth_min_def</span>
+<DD>
+<pre>
+⊢ (∀s r' r. nth_min r' (s,r) 0 = get_min r' (s,r)) ∧
+  ∀s r' r n.
+    nth_min r' (s,r) (SUC n) =
+    (let
+       min = get_min r' (s,r)
+     in
+       if min = NONE then NONE else nth_min r' (s DELETE THE min,r) n)
+</pre>
+
+<DT><span class="strong">nth_min_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀r' s r. P r' (s,r) 0) ∧
+      (∀r' s r n.
+         (∀min.
+            (min = get_min r' (s,r)) ∧ min ≠ NONE ⇒
+            P r' (s DELETE THE min,r) n) ⇒
+         P r' (s,r) (SUC n)) ⇒
+      ∀v v1 v2 v3. P v (v1,v2) v3
+</pre>
+
+<DT><span class="strong">num_order_finite_prefix</span>
+<DD>
+<pre>
+⊢ ∀f s t. INJ f s t ⇒ finite_prefixes (num_order f s) s
+</pre>
+
+<DT><span class="strong">partial_order_dom_rng</span>
+<DD>
+<pre>
+⊢ ∀r s x y. (x,y) ∈ r ∧ partial_order r s ⇒ x ∈ s ∧ y ∈ s
+</pre>
+
+<DT><span class="strong">partial_order_linear_order</span>
+<DD>
+<pre>
+⊢ ∀r s. linear_order r s ⇒ partial_order r s
+</pre>
+
+<DT><span class="strong">partial_order_reln_to_rel_conv</span>
+<DD>
+<pre>
+⊢ partial_order r s ⇔
+  reln_to_rel r ⊆ᵣ RRUNIV s ∧ WeakOrder (RREFL_EXP (reln_to_rel r) s)
+</pre>
+
+<DT><span class="strong">partial_order_reln_to_rel_conv_UNIV</span>
+<DD>
+<pre>
+⊢ partial_order r 𝕌(:α) ⇔ WeakOrder (reln_to_rel r)
+</pre>
+
+<DT><span class="strong">partial_order_subset</span>
+<DD>
+<pre>
+⊢ ∀r s s'. partial_order r s ∧ s' ⊆ s ⇒ partial_order (rrestrict r s') s'
+</pre>
+
+<DT><span class="strong">per_delete</span>
+<DD>
+<pre>
+⊢ ∀xs xss e.
+    per xs xss ⇒
+    per (xs DELETE e) {es | es ∈ IMAGE (λes. es DELETE e) xss ∧ es ≠ ∅}
+</pre>
+
+<DT><span class="strong">per_restrict_per</span>
+<DD>
+<pre>
+⊢ ∀r s s'. per s r ⇒ per s' (per_restrict r s')
+</pre>
+
+<DT><span class="strong">range_mono</span>
+<DD>
+<pre>
+⊢ r ⊆ r' ⇒ range r ⊆ range r'
+</pre>
+
+<DT><span class="strong">range_rrestrict_SUBSET</span>
+<DD>
+<pre>
+⊢ range (rrestrict r s) ⊆ s
+</pre>
+
+<DT><span class="strong">range_to_rel_conv</span>
+<DD>
+<pre>
+⊢ range r = RRANGE (reln_to_rel r)
+</pre>
+
+<DT><span class="strong">rcomp_to_rel_conv</span>
+<DD>
+<pre>
+⊢ r1 OO r2 = rel_to_reln (reln_to_rel r2 ∘ᵣ reln_to_rel r1)
+</pre>
+
+<DT><span class="strong">reflexive_reln_to_rel_conv</span>
+<DD>
+<pre>
+⊢ reflexive r s ⇔ reflexive (RREFL_EXP (reln_to_rel r) s)
+</pre>
+
+<DT><span class="strong">reflexive_reln_to_rel_conv_UNIV</span>
+<DD>
+<pre>
+⊢ reflexive r 𝕌(:α) ⇔ reflexive (reln_to_rel r)
+</pre>
+
+<DT><span class="strong">rel_to_reln_11</span>
+<DD>
+<pre>
+⊢ (rel_to_reln R1 = rel_to_reln R2) ⇔ (R1 = R2)
+</pre>
+
+<DT><span class="strong">rel_to_reln_IS_UNCURRY</span>
+<DD>
+<pre>
+⊢ rel_to_reln = UNCURRY
+</pre>
+
+<DT><span class="strong">rel_to_reln_inv</span>
+<DD>
+<pre>
+⊢ reln_to_rel (rel_to_reln R) = R
+</pre>
+
+<DT><span class="strong">rel_to_reln_swap</span>
+<DD>
+<pre>
+⊢ (r = rel_to_reln R) ⇔ (reln_to_rel r = R)
+</pre>
+
+<DT><span class="strong">reln_rel_conv_thms</span>
+<DD>
+<pre>
+⊢ ((xy ∈ rel_to_reln R ⇔ R (FST xy) (SND xy)) ∧
+   (reln_to_rel r x y ⇔ (x,y) ∈ r) ∧ (reln_to_rel (rel_to_reln R) = R) ∧
+   (rel_to_reln (reln_to_rel r) = r) ∧
+   ((reln_to_rel r1 = reln_to_rel r2) ⇔ (r1 = r2)) ∧
+   ((rel_to_reln R1 = rel_to_reln R2) ⇔ (R1 = R2))) ∧
+  (RREFL_EXP R 𝕌(:α) = R) ∧ (REL_RESTRICT R 𝕌(:α) = R) ∧
+  (domain r = RDOM (reln_to_rel r)) ∧ (range r = RRANGE (reln_to_rel r)) ∧
+  (strict r = rel_to_reln (STRORD (reln_to_rel r))) ∧
+  (rrestrict r s = rel_to_reln (REL_RESTRICT (reln_to_rel r) s)) ∧
+  (r1 OO r2 = rel_to_reln (reln_to_rel r2 ∘ᵣ reln_to_rel r1)) ∧
+  (univ_reln s = rel_to_reln (RRUNIV s)) ∧
+  (tc r = rel_to_reln (reln_to_rel r)⁺) ∧
+  (acyclic r ⇔ irreflexive (reln_to_rel r)⁺) ∧
+  (irreflexive r s ⇔ irreflexive (REL_RESTRICT (reln_to_rel r) s)) ∧
+  (reflexive r s ⇔ reflexive (RREFL_EXP (reln_to_rel r) s)) ∧
+  (transitive r ⇔ transitive (reln_to_rel r)) ∧
+  (antisym r ⇔ antisymmetric (reln_to_rel r)) ∧
+  (partial_order r 𝕌(:α) ⇔ WeakOrder (reln_to_rel r)) ∧
+  (linear_order r 𝕌(:α) ⇔ WeakLinearOrder (reln_to_rel r)) ∧
+  (strict_linear_order r 𝕌(:α) ⇔ StrongLinearOrder (reln_to_rel r))
+</pre>
+
+<DT><span class="strong">reln_to_rel_11</span>
+<DD>
+<pre>
+⊢ (reln_to_rel r1 = reln_to_rel r2) ⇔ (r1 = r2)
+</pre>
+
+<DT><span class="strong">reln_to_rel_IS_CURRY</span>
+<DD>
+<pre>
+⊢ reln_to_rel = CURRY
+</pre>
+
+<DT><span class="strong">reln_to_rel_app</span>
+<DD>
+<pre>
+⊢ reln_to_rel r x y ⇔ (x,y) ∈ r
+</pre>
+
+<DT><span class="strong">reln_to_rel_inv</span>
+<DD>
+<pre>
+⊢ rel_to_reln (reln_to_rel r) = r
+</pre>
+
+<DT><span class="strong">rextension</span>
+<DD>
+<pre>
+⊢ ∀s t. (s = t) ⇔ ∀x y. (x,y) ∈ s ⇔ (x,y) ∈ t
+</pre>
+
+<DT><span class="strong">rrestrict_SUBSET</span>
+<DD>
+<pre>
+⊢ rrestrict r s ⊆ r
+</pre>
+
+<DT><span class="strong">rrestrict_rrestrict</span>
+<DD>
+<pre>
+⊢ ∀r x y. rrestrict (rrestrict r x) y = rrestrict r (x ∩ y)
+</pre>
+
+<DT><span class="strong">rrestrict_tc</span>
+<DD>
+<pre>
+⊢ ∀e e'. (e,e') ∈ tc (rrestrict r x) ⇒ (e,e') ∈ tc r
+</pre>
+
+<DT><span class="strong">rrestrict_to_rel_conv</span>
+<DD>
+<pre>
+⊢ rrestrict r s = rel_to_reln (REL_RESTRICT (reln_to_rel r) s)
+</pre>
+
+<DT><span class="strong">rrestrict_union</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 s. rrestrict (r1 ∪ r2) s = rrestrict r1 s ∪ rrestrict r2 s
+</pre>
+
+<DT><span class="strong">rtc_ind_right</span>
+<DD>
+<pre>
+⊢ ∀r tc'.
+    (∀x. x ∈ domain r ∨ x ∈ range r ⇒ tc' x x) ∧
+    (∀x y. (∃z. tc' x z ∧ (z,y) ∈ r) ⇒ tc' x y) ⇒
+    ∀x y. (x,y) ∈ tc r ⇒ tc' x y
+</pre>
+
+<DT><span class="strong">strict_linear_order</span>
+<DD>
+<pre>
+⊢ ∀r s. linear_order r s ⇒ strict_linear_order (strict r) s
+</pre>
+
+<DT><span class="strong">strict_linear_order_acyclic</span>
+<DD>
+<pre>
+⊢ ∀r s. strict_linear_order r s ⇒ acyclic r
+</pre>
+
+<DT><span class="strong">strict_linear_order_dom_rng</span>
+<DD>
+<pre>
+⊢ ∀r s x y. (x,y) ∈ r ∧ strict_linear_order r s ⇒ x ∈ s ∧ y ∈ s
+</pre>
+
+<DT><span class="strong">strict_linear_order_reln_to_rel_conv_UNIV</span>
+<DD>
+<pre>
+⊢ strict_linear_order r 𝕌(:α) ⇔ StrongLinearOrder (reln_to_rel r)
+</pre>
+
+<DT><span class="strong">strict_linear_order_restrict</span>
+<DD>
+<pre>
+⊢ ∀s r s'.
+    strict_linear_order r s ⇒ strict_linear_order (rrestrict r s') (s ∩ s')
+</pre>
+
+<DT><span class="strong">strict_linear_order_union_acyclic</span>
+<DD>
+<pre>
+⊢ ∀r1 r2 s.
+    strict_linear_order r1 s ∧ domain r2 ∪ range r2 ⊆ s ⇒
+    (acyclic (r1 ∪ r2) ⇔ r2 ⊆ r1)
+</pre>
+
+<DT><span class="strong">strict_partial_order</span>
+<DD>
+<pre>
+⊢ ∀r s.
+    partial_order r s ⇒
+    domain (strict r) ⊆ s ∧ range (strict r) ⊆ s ∧ transitive (strict r) ∧
+    antisym (strict r)
+</pre>
+
+<DT><span class="strong">strict_partial_order_acyclic</span>
+<DD>
+<pre>
+⊢ ∀r s. partial_order r s ⇒ acyclic (strict r)
+</pre>
+
+<DT><span class="strong">strict_rrestrict</span>
+<DD>
+<pre>
+⊢ ∀r s. strict (rrestrict r s) = rrestrict (strict r) s
+</pre>
+
+<DT><span class="strong">strict_to_rel_conv</span>
+<DD>
+<pre>
+⊢ strict r = rel_to_reln (STRORD (reln_to_rel r))
+</pre>
+
+<DT><span class="strong">subset_tc</span>
+<DD>
+<pre>
+⊢ r ⊆ tc r
+</pre>
+
+<DT><span class="strong">tc_SWAP</span>
+<DD>
+<pre>
+⊢ tc (IMAGE SWAP r) = IMAGE SWAP (tc r)
+</pre>
+
+<DT><span class="strong">tc_cases</span>
+<DD>
+<pre>
+⊢ ∀r x y. (x,y) ∈ tc r ⇔ (x,y) ∈ r ∨ ∃z. (x,z) ∈ tc r ∧ (z,y) ∈ tc r
+</pre>
+
+<DT><span class="strong">tc_cases_left</span>
+<DD>
+<pre>
+⊢ ∀r x y. (x,y) ∈ tc r ⇔ (x,y) ∈ r ∨ ∃z. (x,z) ∈ r ∧ (z,y) ∈ tc r
+</pre>
+
+<DT><span class="strong">tc_cases_right</span>
+<DD>
+<pre>
+⊢ ∀r x y. (x,y) ∈ tc r ⇔ (x,y) ∈ r ∨ ∃z. (x,z) ∈ tc r ∧ (z,y) ∈ r
+</pre>
+
+<DT><span class="strong">tc_closure</span>
+<DD>
+<pre>
+⊢ r ⊆ tc s ⇒ tc r ⊆ tc s
+</pre>
+
+<DT><span class="strong">tc_domain_range</span>
+<DD>
+<pre>
+⊢ ∀x y. (x,y) ∈ tc r ⇒ x ∈ domain r ∧ y ∈ range r
+</pre>
+
+<DT><span class="strong">tc_empty</span>
+<DD>
+<pre>
+⊢ ∀x y. (x,y) ∉ tc ∅
+</pre>
+
+<DT><span class="strong">tc_empty_eqn</span>
+<DD>
+<pre>
+⊢ tc ∅ = ∅
+</pre>
+
+<DT><span class="strong">tc_idemp</span>
+<DD>
+<pre>
+⊢ tc (tc r) = tc r
+</pre>
+
+<DT><span class="strong">tc_implication</span>
+<DD>
+<pre>
+⊢ ∀r1 r2.
+    (∀x y. (x,y) ∈ r1 ⇒ (x,y) ∈ r2) ⇒ ∀x y. (x,y) ∈ tc r1 ⇒ (x,y) ∈ tc r2
+</pre>
+
+<DT><span class="strong">tc_ind</span>
+<DD>
+<pre>
+⊢ ∀r tc'.
+    (∀x y. (x,y) ∈ r ⇒ tc' x y) ∧ (∀x y. (∃z. tc' x z ∧ tc' z y) ⇒ tc' x y) ⇒
+    ∀x y. (x,y) ∈ tc r ⇒ tc' x y
+</pre>
+
+<DT><span class="strong">tc_ind_left</span>
+<DD>
+<pre>
+⊢ ∀r tc'.
+    (∀x y. (x,y) ∈ r ⇒ tc' x y) ∧ (∀x y. (∃z. (x,z) ∈ r ∧ tc' z y) ⇒ tc' x y) ⇒
+    ∀x y. (x,y) ∈ tc r ⇒ tc' x y
+</pre>
+
+<DT><span class="strong">tc_ind_right</span>
+<DD>
+<pre>
+⊢ ∀r tc'.
+    (∀x y. (x,y) ∈ r ⇒ tc' x y) ∧ (∀x y. (∃z. tc' x z ∧ (z,y) ∈ r) ⇒ tc' x y) ⇒
+    ∀x y. (x,y) ∈ tc r ⇒ tc' x y
+</pre>
+
+<DT><span class="strong">tc_mono</span>
+<DD>
+<pre>
+⊢ r ⊆ s ⇒ tc r ⊆ tc s
+</pre>
+
+<DT><span class="strong">tc_rules</span>
+<DD>
+<pre>
+⊢ ∀r. (∀x y. (x,y) ∈ r ⇒ (x,y) ∈ tc r) ∧
+      ∀x y. (∃z. (x,z) ∈ tc r ∧ (z,y) ∈ tc r) ⇒ (x,y) ∈ tc r
+</pre>
+
+<DT><span class="strong">tc_strongind</span>
+<DD>
+<pre>
+⊢ ∀r tc'.
+    (∀x y. (x,y) ∈ r ⇒ tc' x y) ∧
+    (∀x y. (∃z. (x,z) ∈ tc r ∧ tc' x z ∧ (z,y) ∈ tc r ∧ tc' z y) ⇒ tc' x y) ⇒
+    ∀x y. (x,y) ∈ tc r ⇒ tc' x y
+</pre>
+
+<DT><span class="strong">tc_strongind_left</span>
+<DD>
+<pre>
+⊢ ∀r tc'.
+    (∀x y. (x,y) ∈ r ⇒ tc' x y) ∧
+    (∀x y. (∃z. (x,z) ∈ r ∧ (z,y) ∈ tc r ∧ tc' z y) ⇒ tc' x y) ⇒
+    ∀x y. (x,y) ∈ tc r ⇒ tc' x y
+</pre>
+
+<DT><span class="strong">tc_strongind_right</span>
+<DD>
+<pre>
+⊢ ∀r tc'.
+    (∀x y. (x,y) ∈ r ⇒ tc' x y) ∧
+    (∀x y. (∃z. (x,z) ∈ tc r ∧ tc' x z ∧ (z,y) ∈ r) ⇒ tc' x y) ⇒
+    ∀x y. (x,y) ∈ tc r ⇒ tc' x y
+</pre>
+
+<DT><span class="strong">tc_to_rel_conv</span>
+<DD>
+<pre>
+⊢ tc r = rel_to_reln (reln_to_rel r)⁺
+</pre>
+
+<DT><span class="strong">tc_transitive</span>
+<DD>
+<pre>
+⊢ ∀r. transitive (tc r)
+</pre>
+
+<DT><span class="strong">tc_union</span>
+<DD>
+<pre>
+⊢ ∀x y. (x,y) ∈ tc r1 ⇒ ∀r2. (x,y) ∈ tc (r1 ∪ r2)
+</pre>
+
+<DT><span class="strong">transitive_reln_to_rel_conv</span>
+<DD>
+<pre>
+⊢ transitive r ⇔ transitive (reln_to_rel r)
+</pre>
+
+<DT><span class="strong">transitive_tc</span>
+<DD>
+<pre>
+⊢ ∀r. transitive r ⇒ (tc r = r)
+</pre>
+
+<DT><span class="strong">univ_reln_to_rel_conv</span>
+<DD>
+<pre>
+⊢ univ_reln s = rel_to_reln (RRUNIV s)
+</pre>
+
+<DT><span class="strong">upper_bounds_lem</span>
+<DD>
+<pre>
+⊢ ∀r s x1 x2.
+    transitive r ∧ x1 ∈ upper_bounds s r ∧ (x1,x2) ∈ r ⇒ x2 ∈ upper_bounds s r
+</pre>
+
+<DT><span class="strong">zorns_lemma</span>
+<DD>
+<pre>
+⊢ ∀r s.
+    s ≠ ∅ ∧ partial_order r s ∧ (∀t. chain t r ⇒ upper_bounds t r ≠ ∅) ⇒
+    ∃x. x ∈ maximal_elements s r
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

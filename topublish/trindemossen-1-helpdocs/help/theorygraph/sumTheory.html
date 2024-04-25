@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: sum</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "sum"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "pairTheory.html"><span class="strong">pair</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">sum</span> <td> 2
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">ABS_sum</span>
+    <td>
+    :(bool -> α -> β -> bool) -> α + β
+    <tr><td> <span class="strong">INL</span> <td> :α -> α + β
+    <tr><td> <span class="strong">INR</span> <td> :β -> α + β
+    <tr><td> <span class="strong">ISL</span> <td> :α + β -> bool
+    <tr><td> <span class="strong">ISR</span> <td> :α + β -> bool
+    <tr><td>
+    <span class="strong">IS_SUM_REP</span>
+    <td>
+    :(bool -> α -> β -> bool) -> bool
+    <tr><td> <span class="strong">OUTL</span> <td> :α + β -> α
+    <tr><td> <span class="strong">OUTR</span> <td> :α + β -> β
+    <tr><td>
+    <span class="strong">REP_sum</span>
+    <td>
+    :α + β -> bool -> α -> β -> bool
+    <tr><td>
+    <span class="strong">SUM_ALL</span>
+    <td>
+    :(α -> bool) -> (β -> bool) -> α + β -> bool
+    <tr><td>
+    <span class="strong">SUM_FIN</span>
+    <td>
+    :(α -> bool) -> (β -> bool) -> α + β -> bool
+    <tr><td>
+    <span class="strong">SUM_MAP</span>
+    <td>
+    :(α -> γ) -> (β -> δ) -> α + β -> γ + δ
+    <tr><td>
+    <span class="strong">SUM_REL</span>
+    <td>
+    :(α -> γ -> bool) -> (β -> δ -> bool) -> α + β -> γ + δ -> bool
+    <tr><td>
+    <span class="strong">SUM_SET</span>
+    <td>
+    :(α -> γ -> bool) -> (β -> γ -> bool) -> α + β -> γ -> bool
+    <tr><td>
+    <span class="strong">sum_CASE</span>
+    <td>
+    :α + β -> (α -> γ) -> (β -> γ) -> γ
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">INL_DEF</span>
+<DD>
+<pre>
+⊢ ∀e. INL e = ABS_sum (λb x y. (x = e) ∧ b)
+</pre>
+
+<DT><span class="strong">INR_DEF</span>
+<DD>
+<pre>
+⊢ ∀e. INR e = ABS_sum (λb x y. (y = e) ∧ ¬b)
+</pre>
+
+<DT><span class="strong">ISL</span>
+<DD>
+<pre>
+⊢ (∀x. ISL (INL x) ⇔ T) ∧ ∀y. ISL (INR y) ⇔ F
+</pre>
+
+<DT><span class="strong">ISR</span>
+<DD>
+<pre>
+⊢ (∀x. ISR (INR x) ⇔ T) ∧ ∀y. ISR (INL y) ⇔ F
+</pre>
+
+<DT><span class="strong">IS_SUM_REP</span>
+<DD>
+<pre>
+⊢ ∀f. IS_SUM_REP f ⇔
+      ∃v1 v2. (f = (λb x y. (x = v1) ∧ b)) ∨ (f = (λb x y. (y = v2) ∧ ¬b))
+</pre>
+
+<DT><span class="strong">OUTL</span>
+<DD>
+<pre>
+⊢ ∀x. OUTL (INL x) = x
+</pre>
+
+<DT><span class="strong">OUTR</span>
+<DD>
+<pre>
+⊢ ∀x. OUTR (INR x) = x
+</pre>
+
+<DT><span class="strong">SUM_ALL_def</span>
+<DD>
+<pre>
+⊢ (∀P Q x. SUM_ALL P Q (INL x) ⇔ P x) ∧ ∀P Q y. SUM_ALL P Q (INR y) ⇔ Q y
+</pre>
+
+<DT><span class="strong">SUM_FIN_def</span>
+<DD>
+<pre>
+⊢ ∀A B. SUM_FIN A B = (λab. case ab of INL a => a ∈ A | INR b => b ∈ B)
+</pre>
+
+<DT><span class="strong">SUM_MAP_def</span>
+<DD>
+<pre>
+⊢ (∀f g a. SUM_MAP f g (INL a) = INL (f a)) ∧
+  ∀f g b. SUM_MAP f g (INR b) = INR (g b)
+</pre>
+
+<DT><span class="strong">SUM_REL_def</span>
+<DD>
+<pre>
+⊢ (∀R1 R2 x ab. (R1 +++ R2) (INL x) ab ⇔ ISL ab ∧ R1 x (OUTL ab)) ∧
+  ∀R1 R2 y ab. (R1 +++ R2) (INR y) ab ⇔ ISR ab ∧ R2 y (OUTR ab)
+</pre>
+
+<DT><span class="strong">SUM_SET_def</span>
+<DD>
+<pre>
+⊢ (∀f1 f2 a. sum$SUM_SET f1 f2 (INL a) = f1 a) ∧
+  ∀f1 f2 b. sum$SUM_SET f1 f2 (INR b) = f2 b
+</pre>
+
+<DT><span class="strong">sum_ISO_DEF</span>
+<DD>
+<pre>
+⊢ (∀a. ABS_sum (REP_sum a) = a) ∧ ∀r. IS_SUM_REP r ⇔ (REP_sum (ABS_sum r) = r)
+</pre>
+
+<DT><span class="strong">sum_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION IS_SUM_REP rep
+</pre>
+
+<DT><span class="strong">sum_case_def</span>
+<DD>
+<pre>
+⊢ (∀x f f1. sum_CASE (INL x) f f1 = f x) ∧
+  ∀y f f1. sum_CASE (INR y) f f1 = f1 y
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">EXISTS_SUM</span>
+<DD>
+<pre>
+⊢ ∀P. (∃s. P s) ⇔ (∃x. P (INL x)) ∨ ∃y. P (INR y)
+</pre>
+
+<DT><span class="strong">FORALL_SUM</span>
+<DD>
+<pre>
+⊢ (∀s. P s) ⇔ (∀x. P (INL x)) ∧ ∀y. P (INR y)
+</pre>
+
+<DT><span class="strong">INL</span>
+<DD>
+<pre>
+⊢ ∀x. ISL x ⇒ (INL (OUTL x) = x)
+</pre>
+
+<DT><span class="strong">INL_11</span>
+<DD>
+<pre>
+⊢ (INL x = INL y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">INR</span>
+<DD>
+<pre>
+⊢ ∀x. ISR x ⇒ (INR (OUTR x) = x)
+</pre>
+
+<DT><span class="strong">INR_11</span>
+<DD>
+<pre>
+⊢ (INR x = INR y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">INR_INL_11</span>
+<DD>
+<pre>
+⊢ (∀y x. (INL x = INL y) ⇔ (x = y)) ∧ ∀y x. (INR x = INR y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">INR_neq_INL</span>
+<DD>
+<pre>
+⊢ ∀v1 v2. INR v2 ≠ INL v1
+</pre>
+
+<DT><span class="strong">IN_SUM_FIN_THM</span>
+<DD>
+<pre>
+⊢ (INL a ∈ SUM_FIN A B ⇔ a ∈ A) ∧ (INR b ∈ SUM_FIN A B ⇔ b ∈ B)
+</pre>
+
+<DT><span class="strong">ISL_OR_ISR</span>
+<DD>
+<pre>
+⊢ ∀x. ISL x ∨ ISR x
+</pre>
+
+<DT><span class="strong">NOT_ISL_ISR</span>
+<DD>
+<pre>
+⊢ ∀x. ¬ISL x ⇔ ISR x
+</pre>
+
+<DT><span class="strong">NOT_ISR_ISL</span>
+<DD>
+<pre>
+⊢ ∀x. ¬ISR x ⇔ ISL x
+</pre>
+
+<DT><span class="strong">SUM_ALL_CONG</span>
+<DD>
+<pre>
+⊢ ∀s s' P P' Q Q'.
+    (s = s') ∧ (∀a. (s' = INL a) ⇒ (P a ⇔ P' a)) ∧
+    (∀b. (s' = INR b) ⇒ (Q b ⇔ Q' b)) ⇒
+    (SUM_ALL P Q s ⇔ SUM_ALL P' Q' s')
+</pre>
+
+<DT><span class="strong">SUM_ALL_MONO</span>
+<DD>
+<pre>
+⊢ (∀x. P x ⇒ P' x) ∧ (∀y. Q y ⇒ Q' y) ⇒ SUM_ALL P Q s ⇒ SUM_ALL P' Q' s
+</pre>
+
+<DT><span class="strong">SUM_ALL_SET</span>
+<DD>
+<pre>
+⊢ SUM_ALL P Q ab ⇔ (∀a. a ∈ setL ab ⇒ P a) ∧ ∀b. b ∈ setR ab ⇒ Q b
+</pre>
+
+<DT><span class="strong">SUM_MAP</span>
+<DD>
+<pre>
+⊢ ∀f g z. SUM_MAP f g z = if ISL z then INL (f (OUTL z)) else INR (g (OUTR z))
+</pre>
+
+<DT><span class="strong">SUM_MAP_CASE</span>
+<DD>
+<pre>
+⊢ ∀f g z. SUM_MAP f g z = sum_CASE z (INL ∘ f) (INR ∘ g)
+</pre>
+
+<DT><span class="strong">SUM_MAP_CONG</span>
+<DD>
+<pre>
+⊢ (∀a. a ∈ setL ab ⇒ (f1 a = f2 a)) ∧ (∀b. b ∈ setR ab ⇒ (g1 b = g2 b)) ⇒
+  (SUM_MAP f1 g1 ab = SUM_MAP f2 g2 ab)
+</pre>
+
+<DT><span class="strong">SUM_MAP_I</span>
+<DD>
+<pre>
+⊢ SUM_MAP I I = I
+</pre>
+
+<DT><span class="strong">SUM_MAP_SET</span>
+<DD>
+<pre>
+⊢ (c ∈ setL (SUM_MAP f g ab) ⇔ ∃a. (c = f a) ∧ a ∈ setL ab) ∧
+  (d ∈ setR (SUM_MAP f g ab) ⇔ ∃b. (d = g b) ∧ b ∈ setR ab)
+</pre>
+
+<DT><span class="strong">SUM_MAP_o</span>
+<DD>
+<pre>
+⊢ SUM_MAP f g ∘ SUM_MAP h k = SUM_MAP (f ∘ h) (g ∘ k)
+</pre>
+
+<DT><span class="strong">SUM_REL_EQ</span>
+<DD>
+<pre>
+⊢ $= +++ $= = $=
+</pre>
+
+<DT><span class="strong">SUM_REL_REFL</span>
+<DD>
+<pre>
+⊢ (∀x. R1 x x) ∧ (∀a. R2 a a) ⇒ ∀xy. (R1 +++ R2) xy xy
+</pre>
+
+<DT><span class="strong">SUM_REL_SYM</span>
+<DD>
+<pre>
+⊢ (∀x y. R1 x y ⇔ R1 y x) ∧ (∀a b. R2 a b ⇔ R2 b a) ⇒
+  ∀xy ab. (R1 +++ R2) xy ab ⇔ (R1 +++ R2) ab xy
+</pre>
+
+<DT><span class="strong">SUM_REL_THM</span>
+<DD>
+<pre>
+⊢ ((R1 +++ R2) (INL x) (INL a) ⇔ R1 x a) ∧ ((R1 +++ R2) (INL x) (INR b) ⇔ F) ∧
+  ((R1 +++ R2) (INR y) (INL a) ⇔ F) ∧ ((R1 +++ R2) (INR y) (INR b) ⇔ R2 y b)
+</pre>
+
+<DT><span class="strong">SUM_REL_TRANS</span>
+<DD>
+<pre>
+⊢ (∀x y z. R1 x y ∧ R1 y z ⇒ R1 x z) ∧ (∀a b c. R2 a b ∧ R2 b c ⇒ R2 a c) ⇒
+  ∀xy ab uv. (R1 +++ R2) xy ab ∧ (R1 +++ R2) ab uv ⇒ (R1 +++ R2) xy uv
+</pre>
+
+<DT><span class="strong">SUM_SETLR_THM</span>
+<DD>
+<pre>
+⊢ (a1 ∈ setL (INL a2) ⇔ (a1 = a2)) ∧ (a ∈ setL (INR b) ⇔ F) ∧
+  (b ∈ setR (INL a) ⇔ F) ∧ (b1 ∈ setR (INR b2) ⇔ (b1 = b2))
+</pre>
+
+<DT><span class="strong">cond_sum_expand</span>
+<DD>
+<pre>
+⊢ (∀x y z. ((if P then INR x else INL y) = INR z) ⇔ P ∧ (z = x)) ∧
+  (∀x y z. ((if P then INR x else INL y) = INL z) ⇔ ¬P ∧ (z = y)) ∧
+  (∀x y z. ((if P then INL x else INR y) = INL z) ⇔ P ∧ (z = x)) ∧
+  ∀x y z. ((if P then INL x else INR y) = INR z) ⇔ ¬P ∧ (z = y)
+</pre>
+
+<DT><span class="strong">datatype_sum</span>
+<DD>
+<pre>
+⊢ DATATYPE (sum INL INR)
+</pre>
+
+<DT><span class="strong">sum_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f g. ∃h. (∀x. h (INL x) = f x) ∧ ∀y. h (INR y) = g y
+</pre>
+
+<DT><span class="strong">sum_CASES</span>
+<DD>
+<pre>
+⊢ ∀ss. (∃x. ss = INL x) ∨ ∃y. ss = INR y
+</pre>
+
+<DT><span class="strong">sum_INDUCT</span>
+<DD>
+<pre>
+⊢ ∀P. (∀x. P (INL x)) ∧ (∀y. P (INR y)) ⇒ ∀s. P s
+</pre>
+
+<DT><span class="strong">sum_axiom</span>
+<DD>
+<pre>
+⊢ ∀f g. ∃!h. (h ∘ INL = f) ∧ (h ∘ INR = g)
+</pre>
+
+<DT><span class="strong">sum_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' f f1.
+    (M = M') ∧ (∀x. (M' = INL x) ⇒ (f x = f' x)) ∧
+    (∀y. (M' = INR y) ⇒ (f1 y = f1' y)) ⇒
+    (sum_CASE M f f1 = sum_CASE M' f' f1')
+</pre>
+
+<DT><span class="strong">sum_distinct</span>
+<DD>
+<pre>
+⊢ ∀x y. INL x ≠ INR y
+</pre>
+
+<DT><span class="strong">sum_distinct1</span>
+<DD>
+<pre>
+⊢ ∀x y. INR y ≠ INL x
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

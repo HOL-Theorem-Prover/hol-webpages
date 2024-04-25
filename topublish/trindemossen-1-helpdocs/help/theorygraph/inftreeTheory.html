@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: inftree</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "inftree"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "indexedListsTheory.html"><span class="strong">indexedLists</span></a>&nbsp;&nbsp;
+    <a href = "patternMatchesTheory.html"><span class="strong">patternMatches</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">inftree</span>
+    <td>
+    3
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">from_inftree</span>
+    <td>
+    :(α, β, δ) inftree -> δ list -> α + β
+    <tr><td> <span class="strong">iLf</span> <td> :α -> (α, β, γ) inftree
+    <tr><td>
+    <span class="strong">iNd</span>
+    <td>
+    :β -> (γ -> (α, β, γ) inftree) -> (α, β, γ) inftree
+    <tr><td>
+    <span class="strong">inftree_CASE</span>
+    <td>
+    :(α, β, γ) inftree ->
+    (α -> δ) -> (β -> (γ -> (α, β, γ) inftree) -> δ) -> δ
+    <tr><td>
+    <span class="strong">inftree_rec</span>
+    <td>
+    :(β -> α) -> (γ -> (δ -> α) -> α) -> (β, γ, δ) inftree -> α
+    <tr><td>
+    <span class="strong">is_tree</span>
+    <td>
+    :(δ list -> α + β) -> bool
+    <tr><td>
+    <span class="strong">relrec</span>
+    <td>
+    :(α -> β) -> (γ -> (δ -> β) -> β) -> (α, γ, δ) inftree -> β -> bool
+    <tr><td>
+    <span class="strong">to_inftree</span>
+    <td>
+    :(δ list -> α + β) -> (α, β, δ) inftree
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">iLf_def</span>
+<DD>
+<pre>
+⊢ ∀a. iLf a = to_inftree (λp. INL a)
+</pre>
+
+<DT><span class="strong">iNd_def</span>
+<DD>
+<pre>
+⊢ ∀b f.
+    iNd b f =
+    to_inftree (λp. if p = [] then INR b else from_inftree (f (HD p)) (TL p))
+</pre>
+
+<DT><span class="strong">inftree_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION is_tree rep
+</pre>
+
+<DT><span class="strong">inftree_bijections</span>
+<DD>
+<pre>
+⊢ (∀a. to_inftree (from_inftree a) = a) ∧
+  ∀r. is_tree r ⇔ (from_inftree (to_inftree r) = r)
+</pre>
+
+<DT><span class="strong">inftree_case_def</span>
+<DD>
+<pre>
+⊢ (∀a f f1. inftree_CASE (iLf a) f f1 = f a) ∧
+  ∀b d f f1. inftree_CASE (iNd b d) f f1 = f1 b d
+</pre>
+
+<DT><span class="strong">inftree_rec_def</span>
+<DD>
+<pre>
+⊢ ∀lf nd t. inftree_rec lf nd t = @r. relrec lf nd t r
+</pre>
+
+<DT><span class="strong">is_tree_def</span>
+<DD>
+<pre>
+⊢ is_tree =
+  (λa0.
+       ∀is_tree'.
+         (∀a0.
+            (∃a. a0 = (λp. INL a)) ∨
+            (∃f b.
+               (a0 = (λp. if p = [] then INR b else f (HD p) (TL p))) ∧
+               ∀d. is_tree' (f d)) ⇒
+            is_tree' a0) ⇒
+         is_tree' a0)
+</pre>
+
+<DT><span class="strong">relrec_def</span>
+<DD>
+<pre>
+⊢ relrec =
+  (λa0 a1 a2 a3.
+       ∀relrec'.
+         (∀a0 a1 a2 a3.
+            (∃a. (a2 = iLf a) ∧ (a3 = a0 a)) ∨
+            (∃b df g.
+               (a2 = iNd b df) ∧ (a3 = a1 b g) ∧
+               ∀d. relrec' a0 a1 (df d) (g d)) ⇒
+            relrec' a0 a1 a2 a3) ⇒
+         relrec' a0 a1 a2 a3)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">iNd_is_tree</span>
+<DD>
+<pre>
+⊢ ∀b f. is_tree (λp. if p = [] then INR b else from_inftree (f (HD p)) (TL p))
+</pre>
+
+<DT><span class="strong">inftree_11</span>
+<DD>
+<pre>
+⊢ ((iLf a1 = iLf a2) ⇔ (a1 = a2)) ∧
+  ((iNd b1 f1 = iNd b2 f2) ⇔ (b1 = b2) ∧ (f1 = f2))
+</pre>
+
+<DT><span class="strong">inftree_Axiom</span>
+<DD>
+<pre>
+⊢ ∀lf nd. ∃f. (∀a. f (iLf a) = lf a) ∧ ∀b d. f (iNd b d) = nd b d (f ∘ d)
+</pre>
+
+<DT><span class="strong">inftree_distinct</span>
+<DD>
+<pre>
+⊢ iLf a ≠ iNd b f
+</pre>
+
+<DT><span class="strong">inftree_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a. P (iLf a)) ∧ (∀b f. (∀d. P (f d)) ⇒ P (iNd b f)) ⇒ ∀t. P t
+</pre>
+
+<DT><span class="strong">inftree_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀t. (∃a. t = iLf a) ∨ ∃b d. t = iNd b d
+</pre>
+
+<DT><span class="strong">is_tree_cases</span>
+<DD>
+<pre>
+⊢ ∀a0.
+    is_tree a0 ⇔
+    (∃a. a0 = (λp. INL a)) ∨
+    ∃f b.
+      (a0 = (λp. if p = [] then INR b else f (HD p) (TL p))) ∧
+      ∀d. is_tree (f d)
+</pre>
+
+<DT><span class="strong">is_tree_ind</span>
+<DD>
+<pre>
+⊢ ∀is_tree'.
+    (∀a. is_tree' (λp. INL a)) ∧
+    (∀f b.
+       (∀d. is_tree' (f d)) ⇒
+       is_tree' (λp. if p = [] then INR b else f (HD p) (TL p))) ⇒
+    ∀a0. is_tree a0 ⇒ is_tree' a0
+</pre>
+
+<DT><span class="strong">is_tree_rules</span>
+<DD>
+<pre>
+⊢ (∀a. is_tree (λp. INL a)) ∧
+  ∀f b.
+    (∀d. is_tree (f d)) ⇒
+    is_tree (λp. if p = [] then INR b else f (HD p) (TL p))
+</pre>
+
+<DT><span class="strong">is_tree_strongind</span>
+<DD>
+<pre>
+⊢ ∀is_tree'.
+    (∀a. is_tree' (λp. INL a)) ∧
+    (∀f b.
+       (∀d. is_tree (f d) ∧ is_tree' (f d)) ⇒
+       is_tree' (λp. if p = [] then INR b else f (HD p) (TL p))) ⇒
+    ∀a0. is_tree a0 ⇒ is_tree' a0
+</pre>
+
+<DT><span class="strong">relrec_cases</span>
+<DD>
+<pre>
+⊢ ∀a0 a1 a2 a3.
+    relrec a0 a1 a2 a3 ⇔
+    (∃a. (a2 = iLf a) ∧ (a3 = a0 a)) ∨
+    ∃b df g. (a2 = iNd b df) ∧ (a3 = a1 b g) ∧ ∀d. relrec a0 a1 (df d) (g d)
+</pre>
+
+<DT><span class="strong">relrec_ind</span>
+<DD>
+<pre>
+⊢ ∀relrec'.
+    (∀lf nd a. relrec' lf nd (iLf a) (lf a)) ∧
+    (∀lf nd b df g.
+       (∀d. relrec' lf nd (df d) (g d)) ⇒ relrec' lf nd (iNd b df) (nd b g)) ⇒
+    ∀a0 a1 a2 a3. relrec a0 a1 a2 a3 ⇒ relrec' a0 a1 a2 a3
+</pre>
+
+<DT><span class="strong">relrec_rules</span>
+<DD>
+<pre>
+⊢ (∀lf nd a. relrec lf nd (iLf a) (lf a)) ∧
+  ∀lf nd b df g.
+    (∀d. relrec lf nd (df d) (g d)) ⇒ relrec lf nd (iNd b df) (nd b g)
+</pre>
+
+<DT><span class="strong">relrec_strongind</span>
+<DD>
+<pre>
+⊢ ∀relrec'.
+    (∀lf nd a. relrec' lf nd (iLf a) (lf a)) ∧
+    (∀lf nd b df g.
+       (∀d. relrec lf nd (df d) (g d) ∧ relrec' lf nd (df d) (g d)) ⇒
+       relrec' lf nd (iNd b df) (nd b g)) ⇒
+    ∀a0 a1 a2 a3. relrec a0 a1 a2 a3 ⇒ relrec' a0 a1 a2 a3
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

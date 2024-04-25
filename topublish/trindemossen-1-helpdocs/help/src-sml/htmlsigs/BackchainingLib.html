@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure BackchainingLib</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure BackchainingLib</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/BackchainingLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature BackchainingLib =
+<a name="line2"></a>sig
+<a name="line3"></a> include Abbrev
+<a name="line4"></a>
+<a name="line5"></a>  (* Applying theorems of the form
+<a name="line6"></a>
+<a name="line7"></a>     !x y. R x y ==&gt; !x' y'. some complicated condition ==&gt; R x' y'
+<a name="line8"></a>
+<a name="line9"></a>     is a bit tricky. However, such theorems occurs frequently when e.g. R is a
+<a name="line10"></a>     relation between states and one wants to show that after certain steps
+<a name="line11"></a>     the resulting states are still in this relation.
+<a name="line12"></a>
+<a name="line13"></a>     Conditional rewriting (as implemented by the simplifier) requires
+<a name="line14"></a>     finding instances for the variables "x" and "y". Such instances
+<a name="line15"></a>     usually cannot be found by the simplifier, even if a term of the
+<a name="line16"></a>     form "R a b" is present in the list of assumptions. Applying
+<a name="line17"></a>     MATCH_MP_TAC is of course possible, but often tedious. Similarly,
+<a name="line18"></a>     consequence conversions work, but easily loop or might - in the
+<a name="line19"></a>     presence of multiple rules - pick up the wrong rule. IMP_RES_TAC
+<a name="line20"></a>     and similar tools, easily produce too many instances and clutter
+<a name="line21"></a>     the goal-state.
+<a name="line22"></a>
+<a name="line23"></a>     This library tries to address that. Let "bc_thms" be a
+<a name="line24"></a>     list of theorems of the form
+<a name="line25"></a>     (!x1 ... xn y1 ... yn. P x1 ... xn ==&gt; Q x1 ... xn y1 ... yn).
+<a name="line26"></a>     Then "BACKCHAIN_THEN (fn thms =&gt; tac thms) bc_thms" is a tactic
+<a name="line27"></a>     that tries to instantiate the variables x1 ... xn and discharge
+<a name="line28"></a>     the precondition P. The resulting theorems are handed to a
+<a name="line29"></a>     function to produce a tactic. This is done via matching against
+<a name="line30"></a>     assumptions. BACKCHAIN_THEN is similar to IMP_RES_THEN. However,
+<a name="line31"></a>     IMP_RES_THEN normalises P and Q, introduces many implications and
+<a name="line32"></a>     resorts them. It applies a tactic to all theorems resulting from
+<a name="line33"></a>     discharging one of these preconditions. In contrast
+<a name="line34"></a>     BACKCHAIN_THEN only normalises the precondition P and returns all
+<a name="line35"></a>     theorems resulting from discharging all preconditions produced by P.
+<a name="line36"></a>     Moreover, BACKCHAIN_THEN applies a tactic to all resulting theorems instead
+<a name="line37"></a>     of calling a theorem-tactic for each of them.
+<a name="line38"></a>
+<a name="line39"></a>     BACKCHAIN_THEN is the basis of this library. By providing multiple
+<a name="line40"></a>     instantiations for the tactic argument, the other tactics are derived.
+<a name="line41"></a>  *)
+<a name="line42"></a>  val BACKCHAIN_THEN : (thm list -&gt; tactic) -&gt; thm list -&gt; tactic
+<a name="line43"></a>
+<a name="line44"></a>
+<a name="line45"></a>  (* apply a theorem tactic to every resulting theorem *)
+<a name="line46"></a>  val BACKCHAIN_EVERY_THEN : (thm -&gt; tactic) -&gt; thm list -&gt; tactic
+<a name="line47"></a>
+<a name="line48"></a>  (* Assume each resulting theorem or add it as a precondition to the goal. *)
+<a name="line49"></a>  val BACKCHAIN_ASSUME_TAC : thm list -&gt; tactic
+<a name="line50"></a>  val BACKCHAIN_MP_TAC : thm list -&gt; tactic
+<a name="line51"></a>
+<a name="line52"></a>  (* Use the resulting theorems for backchaining via consequence conversions *)
+<a name="line53"></a>  val BACKCHAIN_TAC : thm list -&gt; tactic
+<a name="line54"></a>
+<a name="line55"></a>  (* Use resulting theorems together with the simplifier *)
+<a name="line56"></a>  val BC_SIMP_TAC      : simpLib.simpset -&gt; thm list -&gt; thm list -&gt; tactic
+<a name="line57"></a>  val ASM_BC_SIMP_TAC  : simpLib.simpset -&gt; thm list -&gt; thm list -&gt; tactic
+<a name="line58"></a>  val FULL_BC_SIMP_TAC : simpLib.simpset -&gt; thm list -&gt; thm list -&gt; tactic
+<a name="line59"></a>
+<a name="line60"></a>end
+<a name="line61"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/simp/src/BackchainingLib.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

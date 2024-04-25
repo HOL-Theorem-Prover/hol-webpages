@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Conv.RENAME_VARS_CONV</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Conv.RENAME_VARS_CONV : string list -&gt; conv</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Conv.html">Conv</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Renames variables underneath a binder.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Conv</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">RENAME_VARS_CONV</SPAN><SPAN class = "TEXT"> takes a list of strings specifying new names for
+variables under a binder.  More precisely, it will rename variables in
+abstractions, or bound by universal, existential, unique existence or
+the select (or Hilbert-choice) &ldquo;quantifier&rdquo;.</SPAN>
+<P>
+<SPAN class = "TEXT">More than one variable can be renamed at once.  If variables occur
+past the first, then the renaming continues on the appropriate
+sub-term of the first.  (That is, if the term is an abstraction, then
+renaming will continue on the body of the abstraction.  If it is one
+of the supported quantifiers, then renaming will continue on the body
+of the abstraction that is the argument of the &ldquo;binder constant&rdquo;.)</SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">RENAME_VARS_CONV</SPAN><SPAN class = "TEXT"> is passed the empty list, it is equivalent to
+</SPAN><SPAN class = "BRKT">ALL_CONV</SPAN><SPAN class = "TEXT">.  The binders do not need to be of the same type all the
+way into the term.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if an attempt is made to rename a variable in a term that is not
+an abstraction, or is not one of the accepted quantifiers.  Also fails
+if all of the names in the list are not distinct.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- RENAME_VARS_CONV ["a", "b"] ``\x y. x /\ y``;
+&gt; val it = |- (\x y. x /\ y) = (\a b. a /\ b) : thm
+- RENAME_VARS_CONV ["a", "b"] ``!x:'a y. P x /\ P y``;
+&gt; val it = |- (!x y. P x /\ P y) = !a b. P a /\ P b : thm
+- RENAME_VARS_CONV ["a", "b"] ``!x:'a. ?y. P x /\ P y``;
+&gt; val it = |- (!x. ?y. P x /\ P y) = !a. ?b. P a /\ P b : thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Post-processing mangling of names in code implementing derived logical
+procedures to make names look more appropriate.  Changing names can
+only affect the presentation of terms, not their semantics.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Term.aconv.html">aconv</A>,
+<A HREF = "Thm.ALPHA.html">ALPHA</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

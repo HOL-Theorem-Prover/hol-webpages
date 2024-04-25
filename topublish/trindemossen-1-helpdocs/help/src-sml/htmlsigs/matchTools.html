@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure matchTools</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure matchTools</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/matchTools.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ========================================================================= *)
+<a name="line2"></a>(* ADDITIONS TO HOL TERM AND TYPE MATCHING.                                  *)
+<a name="line3"></a>(* Created by Joe Hurd, June 2002.                                           *)
+<a name="line4"></a>(* ========================================================================= *)
+<a name="line5"></a>
+<a name="line6"></a>signature matchTools =
+<a name="line7"></a>sig
+<a name="line8"></a>
+<a name="line9"></a>type ('a, 'b) subst = ('a, 'b) Lib.subst
+<a name="line10"></a>type hol_type       = Type.hol_type
+<a name="line11"></a>type term           = Term.term
+<a name="line12"></a>type thm            = Thm.thm
+<a name="line13"></a>type tySubst        = (hol_type, hol_type) subst
+<a name="line14"></a>type Subst          = (term, term) subst * tySubst
+<a name="line15"></a>
+<a name="line16"></a>(* Basic operations on substitutions *)
+<a name="line17"></a>val pinst             : Subst -&gt; term -&gt; term
+<a name="line18"></a>val INST_TY           : tySubst -&gt; thm -&gt; thm
+<a name="line19"></a>val PINST             : Subst -&gt; thm -&gt; thm
+<a name="line20"></a>val type_refine_subst : tySubst -&gt; tySubst -&gt; tySubst
+<a name="line21"></a>val refine_subst      : Subst -&gt; Subst -&gt; Subst
+<a name="line22"></a>
+<a name="line23"></a>(* Raw matching *)
+<a name="line24"></a>type raw_subst
+<a name="line25"></a>val empty_raw_subst : raw_subst
+<a name="line26"></a>val raw_match_term  : raw_subst -&gt; term -&gt; term -&gt; raw_subst
+<a name="line27"></a>val raw_match_ty    : raw_subst -&gt; hol_type -&gt; hol_type -&gt; raw_subst
+<a name="line28"></a>val finalize_subst  : raw_subst -&gt; Subst
+<a name="line29"></a>
+<a name="line30"></a>(* Operations on types containing "locally constant" variables *)
+<a name="line31"></a>type tyVars = hol_type -&gt; bool
+<a name="line32"></a>val vmatch_type  : tyVars -&gt; hol_type -&gt; hol_type -&gt; tySubst
+<a name="line33"></a>val vunifyl_type : tyVars -&gt; tySubst -&gt; (hol_type * hol_type) list -&gt; tySubst
+<a name="line34"></a>val vunify_type  : tyVars -&gt; hol_type list -&gt; tySubst
+<a name="line35"></a>
+<a name="line36"></a>(* Operations on terms containing "locally constant" variables *)
+<a name="line37"></a>type tmVars = term -&gt; bool
+<a name="line38"></a>type Vars   = tmVars * tyVars
+<a name="line39"></a>val vfree_names : tmVars -&gt; term -&gt; string list
+<a name="line40"></a>val vfree_vars  : Vars -&gt; term -&gt; term list * hol_type list
+<a name="line41"></a>val vmatch      : Vars -&gt; term -&gt; term -&gt; Subst
+<a name="line42"></a>val vunifyl     : Vars -&gt; Subst -&gt; (term * term) list -&gt; Subst
+<a name="line43"></a>val vunify      : Vars -&gt; term list -&gt; Subst
+<a name="line44"></a>val vmatch_uty  : Vars -&gt; term -&gt; term -&gt; Subst
+<a name="line45"></a>
+<a name="line46"></a>end
+<a name="line47"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/matchTools.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

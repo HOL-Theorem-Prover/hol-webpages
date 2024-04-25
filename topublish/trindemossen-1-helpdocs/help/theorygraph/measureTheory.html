@@ -1,0 +1,1618 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: measure</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "measure"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "sigma_algebraTheory.html"><span class="strong">sigma_algebra</span></a>&nbsp;&nbsp;
+    <a href = "extrealTheory.html"><span class="strong">extreal</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">additive</span>
+    <td>
+    :α m_space -> bool
+    <tr><td>
+    <span class="strong">caratheodory_sets</span>
+    <td>
+    :(α -> bool) -> α measure -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">complete_measure_space</span>
+    <td>
+    :α m_space -> bool
+    <tr><td>
+    <span class="strong">completion</span>
+    <td>
+    :α m_space -> α algebra
+    <tr><td>
+    <span class="strong">countably_additive</span>
+    <td>
+    :α m_space -> bool
+    <tr><td>
+    <span class="strong">countably_subadditive</span>
+    <td>
+    :α m_space -> bool
+    <tr><td>
+    <span class="strong">exhausting_sequence</span>
+    <td>
+    :α algebra -> (num -> α -> bool) -> bool
+    <tr><td>
+    <span class="strong">finite_additive</span>
+    <td>
+    :α m_space -> bool
+    <tr><td>
+    <span class="strong">finite_subadditive</span>
+    <td>
+    :α m_space -> bool
+    <tr><td>
+    <span class="strong">has_exhausting_sequence</span>
+    <td>
+    :α algebra -> bool
+    <tr><td> <span class="strong">increasing</span> <td> :α m_space -> bool
+    <tr><td> <span class="strong">m_space</span> <td> :α m_space -> α -> bool
+    <tr><td>
+    <span class="strong">measurable_sets</span>
+    <td>
+    :α m_space -> (α -> bool) -> bool
+    <tr><td> <span class="strong">measure</span> <td> :α m_space -> α measure
+    <tr><td>
+    <span class="strong">measure_preserving</span>
+    <td>
+    :α m_space -> β m_space -> (α -> β) -> bool
+    <tr><td> <span class="strong">measure_space</span> <td> :α m_space -> bool
+    <tr><td>
+    <span class="strong">measure_space_eq</span>
+    <td>
+    :α m_space -> α m_space -> bool
+    <tr><td>
+    <span class="strong">metric_countable_covers</span>
+    <td>
+    :α metric ->
+    extreal ->
+    ((α -> bool) -> bool) -> (α -> bool) -> (num -> α -> bool) -> bool
+    <tr><td>
+    <span class="strong">null_set</span>
+    <td>
+    :α m_space -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">outer_measure</span>
+    <td>
+    :α measure -> ((α -> bool) -> (num -> α -> bool) -> bool) -> α measure
+    <tr><td>
+    <span class="strong">outer_measure_space</span>
+    <td>
+    :α m_space -> bool
+    <tr><td> <span class="strong">positive</span> <td> :α m_space -> bool
+    <tr><td> <span class="strong">premeasure</span> <td> :α m_space -> bool
+    <tr><td> <span class="strong">sigma_finite</span> <td> :α m_space -> bool
+    <tr><td>
+    <span class="strong">sigma_finite_measure_space</span>
+    <td>
+    :α m_space -> bool
+    <tr><td> <span class="strong">subadditive</span> <td> :α m_space -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">additive_def</span>
+<DD>
+<pre>
+⊢ ∀m. additive m ⇔
+      ∀s t.
+        s ∈ measurable_sets m ∧ t ∈ measurable_sets m ∧ DISJOINT s t ∧
+        s ∪ t ∈ measurable_sets m ⇒
+        (measure m (s ∪ t) = measure m s + measure m t)
+</pre>
+
+<DT><span class="strong">caratheodory_sets_def</span>
+<DD>
+<pre>
+⊢ ∀sp m.
+    caratheodory_sets sp m =
+    {a | a ⊆ sp ∧ ∀q. q ⊆ sp ⇒ (m q = m (q ∩ a) + m (q DIFF a))}
+</pre>
+
+<DT><span class="strong">complete_measure_space_def</span>
+<DD>
+<pre>
+⊢ ∀m. complete_measure_space m ⇔
+      measure_space m ∧ ∀s. null_set m s ⇒ ∀t. t ⊆ s ⇒ t ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">completion_def</span>
+<DD>
+<pre>
+⊢ ∀m. completion m =
+      (m_space m,{s ∪ n | s ∈ measurable_sets m ∧ ∃t. n ⊆ t ∧ null_set m t})
+</pre>
+
+<DT><span class="strong">countably_additive_def</span>
+<DD>
+<pre>
+⊢ ∀m. countably_additive m ⇔
+      ∀f. f ∈ (𝕌(:num) → measurable_sets m) ∧
+          (∀i j. i ≠ j ⇒ DISJOINT (f i) (f j)) ∧
+          BIGUNION (IMAGE f 𝕌(:num)) ∈ measurable_sets m ⇒
+          (measure m (BIGUNION (IMAGE f 𝕌(:num))) = suminf (measure m ∘ f))
+</pre>
+
+<DT><span class="strong">countably_subadditive_def</span>
+<DD>
+<pre>
+⊢ ∀m. countably_subadditive m ⇔
+      ∀f. f ∈ (𝕌(:num) → measurable_sets m) ∧
+          BIGUNION (IMAGE f 𝕌(:num)) ∈ measurable_sets m ⇒
+          measure m (BIGUNION (IMAGE f 𝕌(:num))) ≤ suminf (measure m ∘ f)
+</pre>
+
+<DT><span class="strong">exhausting_sequence_def</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    exhausting_sequence a f ⇔
+    f ∈ (𝕌(:num) → subsets a) ∧ (∀n. f n ⊆ f (SUC n)) ∧
+    (BIGUNION (IMAGE f 𝕌(:num)) = space a)
+</pre>
+
+<DT><span class="strong">finite_additive_def</span>
+<DD>
+<pre>
+⊢ ∀m. finite_additive m ⇔
+      ∀f n.
+        (∀i. i < n ⇒ f i ∈ measurable_sets m) ∧
+        (∀i j. i < n ∧ j < n ∧ i ≠ j ⇒ DISJOINT (f i) (f j)) ∧
+        BIGUNION (IMAGE f (count n)) ∈ measurable_sets m ⇒
+        (measure m (BIGUNION (IMAGE f (count n))) =
+         ∑ (measure m ∘ f) (count n))
+</pre>
+
+<DT><span class="strong">finite_subadditive_def</span>
+<DD>
+<pre>
+⊢ ∀m. finite_subadditive m ⇔
+      ∀f n.
+        (∀i. i < n ⇒ f i ∈ measurable_sets m) ∧
+        BIGUNION (IMAGE f (count n)) ∈ measurable_sets m ⇒
+        measure m (BIGUNION (IMAGE f (count n))) ≤ ∑ (measure m ∘ f) (count n)
+</pre>
+
+<DT><span class="strong">has_exhausting_sequence</span>
+<DD>
+<pre>
+⊢ ∀a. has_exhausting_sequence a ⇔ ∃f. exhausting_sequence a f
+</pre>
+
+<DT><span class="strong">increasing_def</span>
+<DD>
+<pre>
+⊢ ∀m. increasing m ⇔
+      ∀s t.
+        s ∈ measurable_sets m ∧ t ∈ measurable_sets m ∧ s ⊆ t ⇒
+        measure m s ≤ measure m t
+</pre>
+
+<DT><span class="strong">m_space_def</span>
+<DD>
+<pre>
+⊢ ∀sp sts mu. m_space (sp,sts,mu) = sp
+</pre>
+
+<DT><span class="strong">measurable_sets_def</span>
+<DD>
+<pre>
+⊢ ∀sp sts mu. measurable_sets (sp,sts,mu) = sts
+</pre>
+
+<DT><span class="strong">measure_def</span>
+<DD>
+<pre>
+⊢ ∀sp sts mu. measure (sp,sts,mu) = mu
+</pre>
+
+<DT><span class="strong">measure_preserving_def</span>
+<DD>
+<pre>
+⊢ ∀m1 m2.
+    measure_preserving m1 m2 =
+    {f |
+     f ∈ measurable (measurable_space m1) (measurable_space m2) ∧
+     ∀s. s ∈ measurable_sets m2 ⇒
+         (measure m1 (PREIMAGE f s ∩ m_space m1) = measure m2 s)}
+</pre>
+
+<DT><span class="strong">measure_space_def</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇔
+      sigma_algebra (measurable_space m) ∧ positive m ∧ countably_additive m
+</pre>
+
+<DT><span class="strong">measure_space_eq_def</span>
+<DD>
+<pre>
+⊢ ∀m1 m2.
+    measure_space_eq m1 m2 ⇔
+    (m_space m1 = m_space m2) ∧ (measurable_sets m1 = measurable_sets m2) ∧
+    ∀s. s ∈ measurable_sets m1 ⇒ (measure m1 s = measure m2 s)
+</pre>
+
+<DT><span class="strong">metric_countable_covers_def</span>
+<DD>
+<pre>
+⊢ ∀d e sts.
+    metric_countable_covers d e sts =
+    (λa.
+         {f |
+          f ∈ (𝕌(:num) → sts) ∧ a ⊆ BIGUNION (IMAGE f 𝕌(:num)) ∧
+          ∀i. Normal (set_diameter d (f i)) ≤ e})
+</pre>
+
+<DT><span class="strong">null_set_def</span>
+<DD>
+<pre>
+⊢ ∀m s. null_set m s ⇔ s ∈ measurable_sets m ∧ (measure m s = 0)
+</pre>
+
+<DT><span class="strong">outer_measure_def</span>
+<DD>
+<pre>
+⊢ ∀m C.
+    outer_measure m C = (λa. inf {r | (∃f. f ∈ C a ∧ (suminf (m ∘ f) = r))})
+</pre>
+
+<DT><span class="strong">outer_measure_space_def</span>
+<DD>
+<pre>
+⊢ ∀m. outer_measure_space m ⇔
+      subset_class (m_space m) (measurable_sets m) ∧ ∅ ∈ measurable_sets m ∧
+      positive m ∧ increasing m ∧ countably_subadditive m
+</pre>
+
+<DT><span class="strong">positive_def</span>
+<DD>
+<pre>
+⊢ ∀m. positive m ⇔
+      (measure m ∅ = 0) ∧ ∀s. s ∈ measurable_sets m ⇒ 0 ≤ measure m s
+</pre>
+
+<DT><span class="strong">premeasure_def</span>
+<DD>
+<pre>
+⊢ ∀m. premeasure m ⇔ positive m ∧ countably_additive m
+</pre>
+
+<DT><span class="strong">sigma_finite_measure_space_def</span>
+<DD>
+<pre>
+⊢ ∀m. sigma_finite_measure_space m ⇔ measure_space m ∧ sigma_finite m
+</pre>
+
+<DT><span class="strong">subadditive_def</span>
+<DD>
+<pre>
+⊢ ∀m. subadditive m ⇔
+      ∀s t.
+        s ∈ measurable_sets m ∧ t ∈ measurable_sets m ∧
+        s ∪ t ∈ measurable_sets m ⇒
+        measure m (s ∪ t) ≤ measure m s + measure m t
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s t u.
+    additive m ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ∧
+    DISJOINT s t ∧ u ∈ measurable_sets m ∧ (u = s ∪ t) ⇒
+    (measure m u = measure m s + measure m t)
+</pre>
+
+<DT><span class="strong">ADDITIVE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m. algebra (measurable_space m) ∧ positive m ∧ additive m ⇒ increasing m
+</pre>
+
+<DT><span class="strong">ADDITIVE_SUM</span>
+<DD>
+<pre>
+⊢ ∀m f n.
+    algebra (measurable_space m) ∧ positive m ∧ additive m ∧
+    f ∈ (𝕌(:num) → measurable_sets m) ∧ (∀m n. m ≠ n ⇒ DISJOINT (f m) (f n)) ⇒
+    (∑ (measure m ∘ f) (count n) = measure m (BIGUNION (IMAGE f (count n))))
+</pre>
+
+<DT><span class="strong">ALGEBRA_COUNTABLY_ADDITIVE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. algebra (measurable_space m) ∧ positive m ∧ countably_additive m ⇒
+      additive m
+</pre>
+
+<DT><span class="strong">ALGEBRA_PREMEASURE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. algebra (measurable_space m) ∧ premeasure m ⇒ additive m
+</pre>
+
+<DT><span class="strong">ALGEBRA_PREMEASURE_COMPL</span>
+<DD>
+<pre>
+⊢ ∀m s.
+    algebra (measurable_space m) ∧ premeasure m ∧ s ∈ measurable_sets m ∧
+    measure m s < +∞ ⇒
+    (measure m (m_space m DIFF s) = measure m (m_space m) − measure m s)
+</pre>
+
+<DT><span class="strong">ALGEBRA_PREMEASURE_COUNTABLE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m s f.
+    algebra (measurable_space m) ∧ premeasure m ∧
+    f ∈ (𝕌(:num) → measurable_sets m) ∧ (f 0 = ∅) ∧ (∀n. f n ⊆ f (SUC n)) ∧
+    (s = BIGUNION (IMAGE f 𝕌(:num))) ∧ s ∈ measurable_sets m ⇒
+    (sup (IMAGE (measure m ∘ f) 𝕌(:num)) = measure m s)
+</pre>
+
+<DT><span class="strong">ALGEBRA_PREMEASURE_COUNTABLY_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. algebra (measurable_space m) ∧ premeasure m ⇒ countably_subadditive m
+</pre>
+
+<DT><span class="strong">ALGEBRA_PREMEASURE_DIFF_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    algebra (measurable_space m) ∧ premeasure m ∧ s ∈ measurable_sets m ∧
+    t ∈ measurable_sets m ∧ s ⊆ t ∧ measure m s < +∞ ⇒
+    (measure m (t DIFF s) = measure m t − measure m s)
+</pre>
+
+<DT><span class="strong">ALGEBRA_PREMEASURE_FINITE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. algebra (measurable_space m) ∧ premeasure m ⇒ finite_additive m
+</pre>
+
+<DT><span class="strong">ALGEBRA_PREMEASURE_FINITE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. algebra (measurable_space m) ∧ premeasure m ⇒ finite_subadditive m
+</pre>
+
+<DT><span class="strong">ALGEBRA_PREMEASURE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m. algebra (measurable_space m) ∧ premeasure m ⇒ increasing m
+</pre>
+
+<DT><span class="strong">ALGEBRA_PREMEASURE_STRONG_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    algebra (measurable_space m) ∧ premeasure m ∧ s ∈ measurable_sets m ∧
+    t ∈ measurable_sets m ⇒
+    (measure m (s ∪ t) + measure m (s ∩ t) = measure m s + measure m t)
+</pre>
+
+<DT><span class="strong">ALGEBRA_PREMEASURE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. algebra (measurable_space m) ∧ premeasure m ⇒ subadditive m
+</pre>
+
+<DT><span class="strong">BIGUNION_IMAGE_Q</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ∧ f ∈ (ℚ → subsets a) ⇒ BIGUNION (IMAGE f ℚ) ∈ subsets a
+</pre>
+
+<DT><span class="strong">CARATHEODORY</span>
+<DD>
+<pre>
+⊢ ∀m0.
+    algebra (measurable_space m0) ∧ positive m0 ∧ countably_additive m0 ⇒
+    ∃m. (∀s. s ∈ measurable_sets m0 ⇒ (measure m s = measure m0 s)) ∧
+        (measurable_space m = sigma (m_space m0) (measurable_sets m0)) ∧
+        measure_space m
+</pre>
+
+<DT><span class="strong">CARATHEODORY_RING</span>
+<DD>
+<pre>
+⊢ ∀m0.
+    ring (measurable_space m0) ∧ positive m0 ∧ countably_additive m0 ⇒
+    ∃m. (∀s. s ∈ measurable_sets m0 ⇒ (measure m s = measure m0 s)) ∧
+        (measurable_space m = sigma (m_space m0) (measurable_sets m0)) ∧
+        measure_space m
+</pre>
+
+<DT><span class="strong">CARATHEODORY_SEMIRING</span>
+<DD>
+<pre>
+⊢ ∀m0.
+    semiring (measurable_space m0) ∧ premeasure m0 ⇒
+    ∃m. (∀s. s ∈ measurable_sets m0 ⇒ (measure m s = measure m0 s)) ∧
+        (measurable_space m = sigma (m_space m0) (measurable_sets m0)) ∧
+        measure_space m
+</pre>
+
+<DT><span class="strong">COMPLETE_MEASURE_THM</span>
+<DD>
+<pre>
+⊢ ∀m s t. complete_measure_space m ∧ t ∈ null_set m ∧ s ⊆ t ⇒ s ∈ null_set m
+</pre>
+
+<DT><span class="strong">COMPLETION_STABLE</span>
+<DD>
+<pre>
+⊢ ∀m. complete_measure_space m ⇒
+      (space (completion m) = m_space m) ∧
+      (subsets (completion m) = measurable_sets m)
+</pre>
+
+<DT><span class="strong">COMPLETION_SUBSET_SUBSETS</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ measurable_sets m ⊆ subsets (completion m)
+</pre>
+
+<DT><span class="strong">COUNTABLY_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s f.
+    countably_additive m ∧ f ∈ (𝕌(:num) → measurable_sets m) ∧
+    (∀i j. i ≠ j ⇒ DISJOINT (f i) (f j)) ∧ (s = BIGUNION (IMAGE f 𝕌(:num))) ∧
+    s ∈ measurable_sets m ⇒
+    (suminf (measure m ∘ f) = measure m s)
+</pre>
+
+<DT><span class="strong">COUNTABLY_ADDITIVE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ∅ ∈ measurable_sets m ∧ positive m ∧ countably_additive m ⇒ additive m
+</pre>
+
+<DT><span class="strong">COUNTABLY_ADDITIVE_FINITE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ∅ ∈ measurable_sets m ∧ positive m ∧ countably_additive m ⇒
+      finite_additive m
+</pre>
+
+<DT><span class="strong">COUNTABLY_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m f s.
+    countably_subadditive m ∧ f ∈ (𝕌(:num) → measurable_sets m) ∧
+    (s = BIGUNION (IMAGE f 𝕌(:num))) ∧ s ∈ measurable_sets m ⇒
+    measure m s ≤ suminf (measure m ∘ f)
+</pre>
+
+<DT><span class="strong">COUNTABLY_SUBADDITIVE_FINITE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ∅ ∈ measurable_sets m ∧ positive m ∧ countably_subadditive m ⇒
+      finite_subadditive m
+</pre>
+
+<DT><span class="strong">COUNTABLY_SUBADDITIVE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ∅ ∈ measurable_sets m ∧ positive m ∧ countably_subadditive m ⇒
+      subadditive m
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_DIFF_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀d s t.
+    dynkin_system d ∧ s ∈ subsets d ∧ t ∈ subsets d ∧ s ⊆ t ⇒
+    t DIFF s ∈ subsets d
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_PREMEASURE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. dynkin_system (measurable_space m) ∧ premeasure m ⇒ additive m
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_PREMEASURE_FINITE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. dynkin_system (measurable_space m) ∧ premeasure m ⇒ finite_additive m
+</pre>
+
+<DT><span class="strong">DYNKIN_SYSTEM_PREMEASURE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m. dynkin_system (measurable_space m) ∧ premeasure m ⇒ increasing m
+</pre>
+
+<DT><span class="strong">FINITE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s f n.
+    finite_additive m ∧ (∀i. i < n ⇒ f i ∈ measurable_sets m) ∧
+    (∀i j. i < n ∧ j < n ∧ i ≠ j ⇒ DISJOINT (f i) (f j)) ∧
+    (s = BIGUNION (IMAGE f (count n))) ∧ s ∈ measurable_sets m ⇒
+    (∑ (measure m ∘ f) (count n) = measure m s)
+</pre>
+
+<DT><span class="strong">FINITE_ADDITIVE_ALT</span>
+<DD>
+<pre>
+⊢ ∀m s c.
+    positive m ∧ finite_additive m ∧ c ⊆ measurable_sets m ∧ FINITE c ∧
+    disjoint c ∧ BIGUNION c ∈ measurable_sets m ⇒
+    (∑ (measure m) c = measure m (BIGUNION c))
+</pre>
+
+<DT><span class="strong">FINITE_IMP_SIGMA_FINITE</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ∧ measure m (m_space m) ≠ +∞ ⇒ sigma_finite m
+</pre>
+
+<DT><span class="strong">FINITE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s f n.
+    finite_subadditive m ∧ (∀i. i < n ⇒ f i ∈ measurable_sets m) ∧
+    (s = BIGUNION (IMAGE f (count n))) ∧ s ∈ measurable_sets m ⇒
+    measure m s ≤ ∑ (measure m ∘ f) (count n)
+</pre>
+
+<DT><span class="strong">FINITE_SUBADDITIVE_ALT</span>
+<DD>
+<pre>
+⊢ ∀m c.
+    positive m ∧ finite_subadditive m ∧ c ⊆ measurable_sets m ∧ FINITE c ∧
+    disjoint c ∧ BIGUNION c ∈ measurable_sets m ⇒
+    measure m (BIGUNION c) ≤ ∑ (measure m) c
+</pre>
+
+<DT><span class="strong">INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    increasing m ∧ s ⊆ t ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ⇒
+    measure m s ≤ measure m t
+</pre>
+
+<DT><span class="strong">IN_MEASURE_PRESERVING</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 f.
+    f ∈ measure_preserving m1 m2 ⇔
+    f ∈ measurable (measurable_space m1) (measurable_space m2) ∧
+    ∀s. s ∈ measurable_sets m2 ⇒
+        (measure m1 (PREIMAGE f s ∩ m_space m1) = measure m2 s)
+</pre>
+
+<DT><span class="strong">IN_NULL_SET</span>
+<DD>
+<pre>
+⊢ ∀m s. s ∈ null_set m ⇔ null_set m s
+</pre>
+
+<DT><span class="strong">MEASURABLE_IF</span>
+<DD>
+<pre>
+⊢ ∀f g M N P.
+    f ∈ measurable (measurable_space M) (measurable_space N) ∧
+    g ∈ measurable (measurable_space M) (measurable_space N) ∧
+    {x | x ∈ m_space M ∧ P x} ∈ measurable_sets M ∧ measure_space M ⇒
+    (λx. if P x then f x else g x) ∈
+    measurable (measurable_space M) (measurable_space N)
+</pre>
+
+<DT><span class="strong">MEASURABLE_IF_SET</span>
+<DD>
+<pre>
+⊢ ∀f g M N A.
+    f ∈ measurable (measurable_space M) (measurable_space N) ∧
+    g ∈ measurable (measurable_space M) (measurable_space N) ∧
+    A ∩ m_space M ∈ measurable_sets M ∧ measure_space M ⇒
+    (λx. if x ∈ A then f x else g x) ∈
+    measurable (measurable_space M) (measurable_space N)
+</pre>
+
+<DT><span class="strong">MEASURABLE_POW_TO_POW</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧ (measurable_sets m = POW (m_space m)) ⇒
+    f ∈ measurable (measurable_space m) (𝕌(:β),POW 𝕌(:β))
+</pre>
+
+<DT><span class="strong">MEASURABLE_POW_TO_POW_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧ (measurable_sets m = POW (m_space m)) ⇒
+    f ∈
+    measurable (measurable_space m)
+      (IMAGE f (m_space m),POW (IMAGE f (m_space m)))
+</pre>
+
+<DT><span class="strong">MEASURABLE_RANGE_REDUCE</span>
+<DD>
+<pre>
+⊢ ∀m f s.
+    measure_space m ∧ f ∈ measurable (measurable_space m) (s,POW s) ∧ s ≠ ∅ ⇒
+    f ∈
+    measurable (measurable_space m)
+      (s ∩ IMAGE f (m_space m),POW (s ∩ IMAGE f (m_space m)))
+</pre>
+
+<DT><span class="strong">MEASURABLE_SETS_SUBSET_SPACE</span>
+<DD>
+<pre>
+⊢ ∀m s. measure_space m ∧ s ∈ measurable_sets m ⇒ s ⊆ m_space m
+</pre>
+
+<DT><span class="strong">MEASURE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s t u.
+    measure_space m ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ∧
+    DISJOINT s t ∧ (u = s ∪ t) ⇒
+    (measure m u = measure m s + measure m t)
+</pre>
+
+<DT><span class="strong">MEASURE_COMPL</span>
+<DD>
+<pre>
+⊢ ∀m s.
+    measure_space m ∧ s ∈ measurable_sets m ∧ measure m s < +∞ ⇒
+    (measure m (m_space m DIFF s) = measure m (m_space m) − measure m s)
+</pre>
+
+<DT><span class="strong">MEASURE_COMPL_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    measure_space m ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ∧ t ⊆ s ∧
+    measure m t < +∞ ⇒
+    (measure m (s DIFF t) = measure m s − measure m t)
+</pre>
+
+<DT><span class="strong">MEASURE_COUNTABLE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m s f.
+    measure_space m ∧ f ∈ (𝕌(:num) → measurable_sets m) ∧ (f 0 = ∅) ∧
+    (∀n. f n ⊆ f (SUC n)) ∧ (s = BIGUNION (IMAGE f 𝕌(:num))) ⇒
+    (sup (IMAGE (measure m ∘ f) 𝕌(:num)) = measure m s)
+</pre>
+
+<DT><span class="strong">MEASURE_COUNTABLY_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s f.
+    measure_space m ∧ f ∈ (𝕌(:num) → measurable_sets m) ∧
+    (∀m n. m ≠ n ⇒ DISJOINT (f m) (f n)) ∧ (s = BIGUNION (IMAGE f 𝕌(:num))) ⇒
+    (suminf (measure m ∘ f) = measure m s)
+</pre>
+
+<DT><span class="strong">MEASURE_DIFF_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    measure_space m ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ∧ t ⊆ s ∧
+    measure m t < +∞ ⇒
+    (measure m (s DIFF t) = measure m s − measure m t)
+</pre>
+
+<DT><span class="strong">MEASURE_DOWN</span>
+<DD>
+<pre>
+⊢ ∀m0 m1.
+    sigma_algebra (measurable_space m0) ∧
+    measurable_sets m0 ⊆ measurable_sets m1 ∧ (measure m0 = measure m1) ∧
+    measure_space m1 ⇒
+    measure_space m0
+</pre>
+
+<DT><span class="strong">MEASURE_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ (measure m ∅ = 0)
+</pre>
+
+<DT><span class="strong">MEASURE_EXTREAL_SUM_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀m s.
+    measure_space m ∧ s ∈ measurable_sets m ∧
+    (∀x. x ∈ s ⇒ {x} ∈ measurable_sets m) ∧ FINITE s ⇒
+    (measure m s = ∑ (λx. measure m {x}) s)
+</pre>
+
+<DT><span class="strong">MEASURE_FINITE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ finite_additive m
+</pre>
+
+<DT><span class="strong">MEASURE_PRESERVING_LIFT</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 a f.
+    measure_space m1 ∧ measure_space m2 ∧
+    measure_space (m_space m2,a,measure m2) ∧ measure m1 (m_space m1) ≠ +∞ ∧
+    measure m2 (m_space m2) ≠ +∞ ∧
+    (measurable_sets m2 = subsets (sigma (m_space m2) a)) ∧
+    f ∈ measure_preserving m1 (m_space m2,a,measure m2) ⇒
+    f ∈ measure_preserving m1 m2
+</pre>
+
+<DT><span class="strong">MEASURE_PRESERVING_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 a.
+    measure_space m1 ∧ measure_space m2 ∧
+    measure_space (m_space m2,a,measure m2) ∧ measure m1 (m_space m1) ≠ +∞ ∧
+    measure m2 (m_space m2) ≠ +∞ ∧
+    (measurable_sets m2 = subsets (sigma (m_space m2) a)) ⇒
+    measure_preserving m1 (m_space m2,a,measure m2) ⊆ measure_preserving m1 m2
+</pre>
+
+<DT><span class="strong">MEASURE_PRESERVING_UP_LIFT</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 f a.
+    f ∈ measure_preserving (m_space m1,a,measure m1) m2 ∧
+    sigma_algebra (measurable_space m1) ∧ a ⊆ measurable_sets m1 ⇒
+    f ∈ measure_preserving m1 m2
+</pre>
+
+<DT><span class="strong">MEASURE_PRESERVING_UP_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 a.
+    (measurable_sets m1 = subsets (sigma (m_space m1) a)) ⇒
+    measure_preserving (m_space m1,a,measure m1) m2 ⊆ measure_preserving m1 m2
+</pre>
+
+<DT><span class="strong">MEASURE_PRESERVING_UP_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 a.
+    a ⊆ measurable_sets m1 ∧ sigma_algebra (measurable_space m1) ⇒
+    measure_preserving (m_space m1,a,measure m1) m2 ⊆ measure_preserving m1 m2
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ additive m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀m s.
+    measure_space m ∧ (∀n. s n ∈ measurable_sets m) ⇒
+    BIGINTER (IMAGE s 𝕌(:num)) ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀m s.
+    measure_space m ∧ (∀n. s n ∈ measurable_sets m) ⇒
+    BIGUNION (IMAGE s 𝕌(:num)) ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_CMUL</span>
+<DD>
+<pre>
+⊢ ∀m c.
+    measure_space m ∧ 0 ≤ c ⇒
+    measure_space (m_space m,measurable_sets m,(λa. Normal c * measure m a))
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_COMPL</span>
+<DD>
+<pre>
+⊢ ∀m s.
+    measure_space m ∧ s ∈ measurable_sets m ⇒
+    m_space m DIFF s ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_COUNTABLY_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ countably_subadditive m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_DIFF</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    measure_space m ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ⇒
+    s DIFF t ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_EMPTY_MEASURABLE</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ ∅ ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_FINITE_DIFF</span>
+<DD>
+<pre>
+⊢ ∀m s.
+    measure_space m ∧ s ∈ measurable_sets m ∧ measure m s ≠ +∞ ⇒
+    (measure m (m_space m DIFF s) = measure m (m_space m) − measure m s)
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_FINITE_DIFF_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    measure_space m ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ∧ t ⊆ s ∧
+    measure m s ≠ +∞ ⇒
+    (measure m (s DIFF t) = measure m s − measure m t)
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_FINITE_MEASURE</span>
+<DD>
+<pre>
+⊢ ∀m s.
+    measure_space m ∧ s ∈ measurable_sets m ∧ measure m (m_space m) ≠ +∞ ⇒
+    measure m s ≠ +∞
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_FINITE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ finite_subadditive m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ increasing m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_INTER</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    measure_space m ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ⇒
+    s ∩ t ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_IN_MSPACE</span>
+<DD>
+<pre>
+⊢ ∀m s. measure_space m ∧ s ∈ measurable_sets m ⇒ ∀x. x ∈ s ⇒ x ∈ m_space m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_MSPACE_MEASURABLE</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ m_space m ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_POSITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ positive m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_REDUCE</span>
+<DD>
+<pre>
+⊢ ∀m. (m_space m,measurable_sets m,measure m) = m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_RESTRICTED</span>
+<DD>
+<pre>
+⊢ ∀m s.
+    measure_space m ∧ s ∈ measurable_sets m ⇒
+    measure_space (s,IMAGE (λt. s ∩ t) (measurable_sets m),measure m)
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_RESTRICTED_MEASURE</span>
+<DD>
+<pre>
+⊢ ∀m s.
+    measure_space m ∧ s ∈ measurable_sets m ⇒
+    measure_space (m_space m,measurable_sets m,(λa. measure m (s ∩ a)))
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_RESTRICTION</span>
+<DD>
+<pre>
+⊢ ∀sp sts m sub.
+    measure_space (sp,sts,m) ∧ sub ⊆ sts ∧ sigma_algebra (sp,sub) ⇒
+    measure_space (sp,sub,m)
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_SIGMA_ALGEBRA</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ sigma_algebra (measurable_space m)
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_SPACE</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ m_space m ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_STRONG_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    measure_space m ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ⇒
+    (measure m (s ∪ t) + measure m (s ∩ t) = measure m s + measure m t)
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ subadditive m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s s' m. s' ⊆ s ∧ measure_space (s,POW s,m) ⇒ measure_space (s',POW s',m)
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_SUBSET_MSPACE</span>
+<DD>
+<pre>
+⊢ ∀m s. measure_space m ∧ s ∈ measurable_sets m ⇒ s ⊆ m_space m
+</pre>
+
+<DT><span class="strong">MEASURE_SPACE_UNION</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    measure_space m ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ⇒
+    s ∪ t ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">MONOTONE_CONVERGENCE</span>
+<DD>
+<pre>
+⊢ ∀m s f.
+    measure_space m ∧ f ∈ (𝕌(:num) → measurable_sets m) ∧
+    (∀n. f n ⊆ f (SUC n)) ∧ (s = BIGUNION (IMAGE f 𝕌(:num))) ⇒
+    (sup (IMAGE (measure m ∘ f) 𝕌(:num)) = measure m s)
+</pre>
+
+<DT><span class="strong">MONOTONE_CONVERGENCE2</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧ f ∈ (𝕌(:num) → measurable_sets m) ∧
+    (∀n. f n ⊆ f (SUC n)) ⇒
+    (sup (IMAGE (measure m ∘ f) 𝕌(:num)) =
+     measure m (BIGUNION (IMAGE f 𝕌(:num))))
+</pre>
+
+<DT><span class="strong">MONOTONE_CONVERGENCE_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀m s f.
+    measure_space m ∧ f ∈ (𝕌(:num) → measurable_sets m) ∧
+    (∀n. measure m (f n) ≠ +∞) ∧ (∀n. f (SUC n) ⊆ f n) ∧
+    (s = BIGINTER (IMAGE f 𝕌(:num))) ⇒
+    (inf (IMAGE (measure m ∘ f) 𝕌(:num)) = measure m s)
+</pre>
+
+<DT><span class="strong">MONOTONE_CONVERGENCE_BIGINTER2</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧ f ∈ (𝕌(:num) → measurable_sets m) ∧
+    (∀n. measure m (f n) ≠ +∞) ∧ (∀n. f (SUC n) ⊆ f n) ⇒
+    (inf (IMAGE (measure m ∘ f) 𝕌(:num)) =
+     measure m (BIGINTER (IMAGE f 𝕌(:num))))
+</pre>
+
+<DT><span class="strong">NULL_SET_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧ (∀n. f n ∈ null_set m) ⇒
+    BIGUNION (IMAGE f 𝕌(:num)) ∈ null_set m
+</pre>
+
+<DT><span class="strong">NULL_SET_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ null_set m ∅
+</pre>
+
+<DT><span class="strong">NULL_SET_INTER</span>
+<DD>
+<pre>
+⊢ ∀m N1 N2.
+    measure_space m ∧ N1 ∈ null_set m ∧ N2 ∈ null_set m ⇒ N1 ∩ N2 ∈ null_set m
+</pre>
+
+<DT><span class="strong">NULL_SET_THM</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    measure_space m ⇒
+    ∅ ∈ null_set m ∧
+    (t ∈ null_set m ∧ s ∈ measurable_sets m ∧ s ⊆ t ⇒ s ∈ null_set m) ∧
+    ∀f. f ∈ (𝕌(:num) → null_set m) ⇒ BIGUNION (IMAGE f 𝕌(:num)) ∈ null_set m
+</pre>
+
+<DT><span class="strong">NULL_SET_UNION</span>
+<DD>
+<pre>
+⊢ ∀m N1 N2.
+    measure_space m ∧ N1 ∈ null_set m ∧ N2 ∈ null_set m ⇒ N1 ∪ N2 ∈ null_set m
+</pre>
+
+<DT><span class="strong">OUTER_MEASURE_CONSTRUCTION</span>
+<DD>
+<pre>
+⊢ ∀sp sts m u.
+    subset_class sp sts ∧ ∅ ∈ sts ∧ positive (sp,sts,m) ∧
+    (u = outer_measure m (countable_covers sts)) ⇒
+    outer_measure_space (sp,POW sp,u) ∧ (∀x. x ∈ sts ⇒ u x ≤ m x) ∧
+    measure_space (sp,caratheodory_sets sp u,u) ∧
+    ∀v. outer_measure_space (sp,POW sp,v) ∧ (∀x. x ∈ sts ⇒ v x ≤ m x) ⇒
+        ∀x. x ⊆ sp ⇒ v x ≤ u x
+</pre>
+
+<DT><span class="strong">OUTER_MEASURE_SPACE_FINITE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. outer_measure_space m ⇒ finite_subadditive m
+</pre>
+
+<DT><span class="strong">OUTER_MEASURE_SPACE_POSITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. outer_measure_space m ⇒ positive m
+</pre>
+
+<DT><span class="strong">OUTER_MEASURE_SPACE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. outer_measure_space m ⇒ subadditive m
+</pre>
+
+<DT><span class="strong">RING_ADDITIVE_EVERYTHING</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ positive m ∧ additive m ⇒
+      finite_additive m ∧ increasing m ∧ subadditive m ∧ finite_subadditive m
+</pre>
+
+<DT><span class="strong">RING_ADDITIVE_FINITE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ positive m ∧ additive m ⇒ finite_additive m
+</pre>
+
+<DT><span class="strong">RING_ADDITIVE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ positive m ∧ additive m ⇒ increasing m
+</pre>
+
+<DT><span class="strong">RING_ADDITIVE_STRONG_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    ring (measurable_space m) ∧ additive m ∧ positive m ∧
+    s ∈ measurable_sets m ∧ t ∈ measurable_sets m ⇒
+    (measure m (s ∪ t) + measure m (s ∩ t) = measure m s + measure m t)
+</pre>
+
+<DT><span class="strong">RING_ADDITIVE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ positive m ∧ additive m ⇒ subadditive m
+</pre>
+
+<DT><span class="strong">RING_PREMEASURE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ premeasure m ⇒ additive m
+</pre>
+
+<DT><span class="strong">RING_PREMEASURE_COUNTABLE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m s f.
+    ring (measurable_space m) ∧ premeasure m ∧
+    f ∈ (𝕌(:num) → measurable_sets m) ∧ (f 0 = ∅) ∧ (∀n. f n ⊆ f (SUC n)) ∧
+    (s = BIGUNION (IMAGE f 𝕌(:num))) ∧ s ∈ measurable_sets m ⇒
+    (sup (IMAGE (measure m ∘ f) 𝕌(:num)) = measure m s)
+</pre>
+
+<DT><span class="strong">RING_PREMEASURE_COUNTABLY_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ premeasure m ⇒ countably_subadditive m
+</pre>
+
+<DT><span class="strong">RING_PREMEASURE_DIFF_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    ring (measurable_space m) ∧ premeasure m ∧ s ∈ measurable_sets m ∧
+    t ∈ measurable_sets m ∧ s ⊆ t ∧ measure m s < +∞ ⇒
+    (measure m (t DIFF s) = measure m t − measure m s)
+</pre>
+
+<DT><span class="strong">RING_PREMEASURE_FINITE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ premeasure m ⇒ finite_additive m
+</pre>
+
+<DT><span class="strong">RING_PREMEASURE_FINITE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ premeasure m ⇒ finite_subadditive m
+</pre>
+
+<DT><span class="strong">RING_PREMEASURE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ premeasure m ⇒ increasing m
+</pre>
+
+<DT><span class="strong">RING_PREMEASURE_STRONG_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s t.
+    ring (measurable_space m) ∧ premeasure m ∧ s ∈ measurable_sets m ∧
+    t ∈ measurable_sets m ⇒
+    (measure m (s ∪ t) + measure m (s ∩ t) = measure m s + measure m t)
+</pre>
+
+<DT><span class="strong">RING_PREMEASURE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ premeasure m ⇒ subadditive m
+</pre>
+
+<DT><span class="strong">RING_SUBADDITIVE_FINITE_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. ring (measurable_space m) ∧ positive m ∧ subadditive m ⇒
+      finite_subadditive m
+</pre>
+
+<DT><span class="strong">SEMIRING_FINITE_ADDITIVE_EXTENSION</span>
+<DD>
+<pre>
+⊢ ∀m0.
+    semiring (measurable_space m0) ∧ positive m0 ∧ finite_additive m0 ⇒
+    ∃m. (measurable_space m = smallest_ring (m_space m0) (measurable_sets m0)) ∧
+        (∀s. s ∈ measurable_sets m0 ⇒ (measure m s = measure m0 s)) ∧
+        positive m ∧ additive m
+</pre>
+
+<DT><span class="strong">SEMIRING_PREMEASURE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. semiring (measurable_space m) ∧ premeasure m ⇒ additive m
+</pre>
+
+<DT><span class="strong">SEMIRING_PREMEASURE_EXTENSION</span>
+<DD>
+<pre>
+⊢ ∀m0.
+    semiring (measurable_space m0) ∧ premeasure m0 ⇒
+    ∃m. (measurable_space m = smallest_ring (m_space m0) (measurable_sets m0)) ∧
+        (∀s. s ∈ measurable_sets m0 ⇒ (measure m s = measure m0 s)) ∧
+        premeasure m
+</pre>
+
+<DT><span class="strong">SEMIRING_PREMEASURE_FINITE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m. semiring (measurable_space m) ∧ premeasure m ⇒ finite_additive m
+</pre>
+
+<DT><span class="strong">SEMIRING_PREMEASURE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀m. semiring (measurable_space m) ∧ premeasure m ⇒ increasing m
+</pre>
+
+<DT><span class="strong">SEMIRING_SIGMA_MONOTONE</span>
+<DD>
+<pre>
+⊢ ∀sp sts u v.
+    semiring (sp,sts) ∧ has_exhausting_sequence (sp,sts) ∧
+    measure_space (sp,subsets (sigma sp sts),u) ∧
+    measure_space (sp,subsets (sigma sp sts),v) ∧
+    (∀s. s ∈ sts ⇒ u s ≤ v s ∧ v s < +∞) ⇒
+    ∀s. s ∈ subsets (sigma sp sts) ⇒ u s ≤ v s
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_COMPLETION</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ sigma_algebra (completion m)
+</pre>
+
+<DT><span class="strong">SIGMA_FINITE_ALT</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒
+      (sigma_finite m ⇔
+       ∃f. f ∈ (𝕌(:num) → measurable_sets m) ∧
+           (BIGUNION (IMAGE f 𝕌(:num)) = m_space m) ∧ ∀n. measure m (f n) < +∞)
+</pre>
+
+<DT><span class="strong">SIGMA_FINITE_ALT2</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒
+      (sigma_finite m ⇔
+       ∃A. countable A ∧ A ⊆ measurable_sets m ∧ (BIGUNION A = m_space m) ∧
+           ∀a. a ∈ A ⇒ measure m a ≠ +∞)
+</pre>
+
+<DT><span class="strong">SIGMA_SUBSET_MEASURABLE_SETS</span>
+<DD>
+<pre>
+⊢ ∀a m.
+    measure_space m ∧ a ⊆ measurable_sets m ⇒
+    subsets (sigma (m_space m) a) ⊆ measurable_sets m
+</pre>
+
+<DT><span class="strong">STRONG_MEASURE_SPACE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s s'.
+    s' ⊆ m_space s ∧ measure_space s ∧ POW s' ⊆ measurable_sets s ⇒
+    measure_space (s',POW s',measure s)
+</pre>
+
+<DT><span class="strong">SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀m s t u.
+    subadditive m ∧ s ∈ measurable_sets m ∧ t ∈ measurable_sets m ∧
+    u ∈ measurable_sets m ∧ (u = s ∪ t) ⇒
+    measure m u ≤ measure m s + measure m t
+</pre>
+
+<DT><span class="strong">UNIQUENESS_OF_MEASURE</span>
+<DD>
+<pre>
+⊢ ∀sp sts u v.
+    subset_class sp sts ∧ (∀s t. s ∈ sts ∧ t ∈ sts ⇒ s ∩ t ∈ sts) ∧
+    sigma_finite (sp,sts,u) ∧ measure_space (sp,subsets (sigma sp sts),u) ∧
+    measure_space (sp,subsets (sigma sp sts),v) ∧ (∀s. s ∈ sts ⇒ (u s = v s)) ⇒
+    ∀s. s ∈ subsets (sigma sp sts) ⇒ (u s = v s)
+</pre>
+
+<DT><span class="strong">UNIQUENESS_OF_MEASURE_FINITE</span>
+<DD>
+<pre>
+⊢ ∀sp sts u v.
+    subset_class sp sts ∧ (∀s t. s ∈ sts ∧ t ∈ sts ⇒ s ∩ t ∈ sts) ∧
+    measure_space (sp,subsets (sigma sp sts),u) ∧
+    measure_space (sp,subsets (sigma sp sts),v) ∧ (u sp = v sp) ∧ u sp < +∞ ∧
+    (∀s. s ∈ sts ⇒ (u s = v s)) ⇒
+    ∀s. s ∈ subsets (sigma sp sts) ⇒ (u s = v s)
+</pre>
+
+<DT><span class="strong">countable_covers_def</span>
+<DD>
+<pre>
+⊢ ∀sts.
+    countable_covers sts =
+    (λa. {f | f ∈ (𝕌(:num) → sts) ∧ a ⊆ BIGUNION (IMAGE f 𝕌(:num))})
+</pre>
+
+<DT><span class="strong">countably_additive_alt_eq</span>
+<DD>
+<pre>
+⊢ ∀sp M u.
+    countably_additive (sp,M,u) ⇔
+    ∀A. IMAGE A 𝕌(:num) ⊆ M ⇒
+        disjoint_family A ⇒
+        BIGUNION {A i | i ∈ 𝕌(:num)} ∈ M ⇒
+        (u (BIGUNION {A i | i ∈ 𝕌(:num)}) = suminf (u ∘ A))
+</pre>
+
+<DT><span class="strong">exhausting_sequence_alt</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    exhausting_sequence a f ⇔
+    f ∈ (𝕌(:num) → subsets a) ∧ (∀m n. m ≤ n ⇒ f m ⊆ f n) ∧
+    (BIGUNION (IMAGE f 𝕌(:num)) = space a)
+</pre>
+
+<DT><span class="strong">finite_additivity_sufficient_for_finite_spaces</span>
+<DD>
+<pre>
+⊢ ∀s m.
+    sigma_algebra s ∧ FINITE (space s) ∧ positive (space s,subsets s,m) ∧
+    additive (space s,subsets s,m) ⇒
+    measure_space (space s,subsets s,m)
+</pre>
+
+<DT><span class="strong">finite_additivity_sufficient_for_finite_spaces2</span>
+<DD>
+<pre>
+⊢ ∀m. sigma_algebra (measurable_space m) ∧ FINITE (m_space m) ∧ positive m ∧
+      additive m ⇒
+      measure_space m
+</pre>
+
+<DT><span class="strong">has_exhausting_sequence_alt</span>
+<DD>
+<pre>
+⊢ ∀a. has_exhausting_sequence a ⇔
+      ∃f. f ∈ (𝕌(:num) → subsets a) ∧ (∀m n. m ≤ n ⇒ f m ⊆ f n) ∧
+          (BIGUNION (IMAGE f 𝕌(:num)) = space a)
+</pre>
+
+<DT><span class="strong">has_exhausting_sequence_def</span>
+<DD>
+<pre>
+⊢ ∀a. has_exhausting_sequence a ⇔
+      ∃f. f ∈ (𝕌(:num) → subsets a) ∧ (∀n. f n ⊆ f (SUC n)) ∧
+          (BIGUNION (IMAGE f 𝕌(:num)) = space a)
+</pre>
+
+<DT><span class="strong">limsup_suminf_indicator_space</span>
+<DD>
+<pre>
+⊢ ∀a A.
+    sigma_algebra a ∧ (∀n. A n ∈ subsets a) ⇒
+    (limsup A = {x | x ∈ space a ∧ (suminf (λn. 𝟙 (A n) x) = +∞)})
+</pre>
+
+<DT><span class="strong">measure_liminf</span>
+<DD>
+<pre>
+⊢ ∀p A.
+    measure_space p ∧ (∀n. A n ∈ measurable_sets p) ⇒
+    (measure p (liminf A) =
+     sup (IMAGE (λm. measure p (BIGINTER {A n | m ≤ n})) 𝕌(:num)))
+</pre>
+
+<DT><span class="strong">measure_limsup</span>
+<DD>
+<pre>
+⊢ ∀p A.
+    measure_space p ∧ measure p (BIGUNION (IMAGE A 𝕌(:num))) < +∞ ∧
+    (∀n. A n ∈ measurable_sets p) ⇒
+    (measure p (limsup A) =
+     inf (IMAGE (λm. measure p (BIGUNION {A n | m ≤ n})) 𝕌(:num)))
+</pre>
+
+<DT><span class="strong">measure_limsup_finite</span>
+<DD>
+<pre>
+⊢ ∀p A.
+    measure_space p ∧ measure p (m_space p) < +∞ ∧
+    (∀n. A n ∈ measurable_sets p) ⇒
+    (measure p (limsup A) =
+     inf (IMAGE (λm. measure p (BIGUNION {A n | m ≤ n})) 𝕌(:num)))
+</pre>
+
+<DT><span class="strong">measure_space_add</span>
+<DD>
+<pre>
+⊢ ∀a mu nu p.
+    measure_space (space a,subsets a,mu) ∧
+    measure_space (space a,subsets a,nu) ∧
+    (∀s. s ∈ subsets a ⇒ (p s = mu s + nu s)) ⇒
+    measure_space (space a,subsets a,p)
+</pre>
+
+<DT><span class="strong">measure_space_cmul</span>
+<DD>
+<pre>
+⊢ ∀a u v c.
+    measure_space (space a,subsets a,u) ∧ 0 ≤ c ∧
+    (∀s. s ∈ subsets a ⇒ (v s = c * u s)) ⇒
+    measure_space (space a,subsets a,v)
+</pre>
+
+<DT><span class="strong">measure_space_cong</span>
+<DD>
+<pre>
+⊢ ∀sp sts u v.
+    (∀s. s ∈ sts ⇒ (u s = v s)) ⇒
+    (measure_space (sp,sts,u) ⇔ measure_space (sp,sts,v))
+</pre>
+
+<DT><span class="strong">measure_space_dirac_measure</span>
+<DD>
+<pre>
+⊢ ∀a x. sigma_algebra a ⇒ measure_space (space a,subsets a,flip 𝟙 x)
+</pre>
+
+<DT><span class="strong">measure_space_eq</span>
+<DD>
+<pre>
+⊢ ∀m1 m2.
+    measure_space m1 ∧ (m_space m2 = m_space m1) ∧
+    (measurable_sets m2 = measurable_sets m1) ∧
+    (∀s. s ∈ measurable_sets m2 ⇒ (measure m2 s = measure m1 s)) ⇒
+    measure_space m2
+</pre>
+
+<DT><span class="strong">measure_space_eq'</span>
+<DD>
+<pre>
+⊢ ∀sp sts u v.
+    measure_space (sp,sts,u) ∧ (∀s. s ∈ sts ⇒ (u s = v s)) ⇒
+    measure_space (sp,sts,v)
+</pre>
+
+<DT><span class="strong">measure_space_eq_comm</span>
+<DD>
+<pre>
+⊢ ∀m1 m2. measure_space_eq m1 m2 ⇒ measure_space_eq m2 m1
+</pre>
+
+<DT><span class="strong">measure_space_eq_trans</span>
+<DD>
+<pre>
+⊢ ∀m1 m2 m3.
+    measure_space_eq m1 m2 ∧ measure_space_eq m2 m3 ⇒ measure_space_eq m1 m3
+</pre>
+
+<DT><span class="strong">measure_space_sum</span>
+<DD>
+<pre>
+⊢ ∀a f m s.
+    FINITE s ∧ sigma_algebra a ∧
+    (∀i. i ∈ s ⇒ measure_space (space a,subsets a,f i)) ∧
+    (∀t. t ∈ subsets a ⇒ (m t = ∑ (flip f t) s)) ⇒
+    measure_space (space a,subsets a,m)
+</pre>
+
+<DT><span class="strong">measure_space_suminf</span>
+<DD>
+<pre>
+⊢ ∀a g m.
+    (∀n. measure_space (space a,subsets a,g n)) ∧
+    (∀s. s ∈ subsets a ⇒ (m s = suminf (flip g s))) ⇒
+    measure_space (space a,subsets a,m)
+</pre>
+
+<DT><span class="strong">measure_space_trivial</span>
+<DD>
+<pre>
+⊢ ∀a. sigma_algebra a ⇒ sigma_finite_measure_space (space a,subsets a,(λs. 0))
+</pre>
+
+<DT><span class="strong">measure_split</span>
+<DD>
+<pre>
+⊢ ∀r b m.
+    measure_space m ∧ FINITE r ∧ (BIGUNION (IMAGE b r) = m_space m) ∧
+    (∀i j. i ∈ r ∧ j ∈ r ∧ i ≠ j ⇒ DISJOINT (b i) (b j)) ∧
+    (∀i. i ∈ r ⇒ b i ∈ measurable_sets m) ⇒
+    ∀a. a ∈ measurable_sets m ⇒ (measure m a = ∑ (λi. measure m (a ∩ b i)) r)
+</pre>
+
+<DT><span class="strong">null_sets</span>
+<DD>
+<pre>
+⊢ null_set M = {N | N ∈ measurable_sets M ∧ (measure M N = 0)}
+</pre>
+
+<DT><span class="strong">positive_not_infty</span>
+<DD>
+<pre>
+⊢ ∀m. positive m ⇒ ∀s. s ∈ measurable_sets m ⇒ measure m s ≠ −∞
+</pre>
+
+<DT><span class="strong">sets_eq_imp_space_eq</span>
+<DD>
+<pre>
+⊢ ∀M M'.
+    measure_space M ∧ measure_space M' ∧
+    (measurable_sets M = measurable_sets M') ⇒
+    (m_space M = m_space M')
+</pre>
+
+<DT><span class="strong">sigma_finite</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ∧ sigma_finite m ⇒
+      ∃A. IMAGE A 𝕌(:num) ⊆ measurable_sets m ∧
+          (BIGUNION {A i | i ∈ 𝕌(:num)} = m_space m) ∧
+          ∀i. measure m (A i) ≠ +∞
+</pre>
+
+<DT><span class="strong">sigma_finite_alt</span>
+<DD>
+<pre>
+⊢ ∀m. sigma_finite m ⇔
+      ∃f. (f ∈ (𝕌(:num) → measurable_sets m) ∧ (∀m n. m ≤ n ⇒ f m ⊆ f n) ∧
+           (BIGUNION (IMAGE f 𝕌(:num)) = m_space m)) ∧
+          ∀n. measure m (f n) < +∞
+</pre>
+
+<DT><span class="strong">sigma_finite_alt_exhausting_sequence</span>
+<DD>
+<pre>
+⊢ ∀m. sigma_finite m ⇔
+      ∃f. exhausting_sequence (measurable_space m) f ∧
+          ∀n. measure m (f n) < +∞
+</pre>
+
+<DT><span class="strong">sigma_finite_def</span>
+<DD>
+<pre>
+⊢ ∀m. sigma_finite m ⇔
+      ∃f. f ∈ (𝕌(:num) → measurable_sets m) ∧ (∀n. f n ⊆ f (SUC n)) ∧
+          (BIGUNION (IMAGE f 𝕌(:num)) = m_space m) ∧ ∀n. measure m (f n) < +∞
+</pre>
+
+<DT><span class="strong">sigma_finite_disjoint</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ∧ sigma_finite m ⇒
+      ∃A. IMAGE A 𝕌(:num) ⊆ measurable_sets m ∧
+          (BIGUNION {A i | i ∈ 𝕌(:num)} = m_space m) ∧
+          (∀i. measure m (A i) ≠ +∞) ∧ disjoint_family A
+</pre>
+
+<DT><span class="strong">sigma_finite_has_exhausting_sequence</span>
+<DD>
+<pre>
+⊢ ∀sp sts u. sigma_finite (sp,sts,u) ⇒ has_exhausting_sequence (sp,sts)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

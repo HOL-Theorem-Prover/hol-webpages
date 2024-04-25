@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure psMCTS</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure psMCTS</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/AI/proof_search/psMCTS.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature psMCTS =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  include Abbrev
+<a name="line5"></a>
+<a name="line6"></a>  (* outcome *)
+<a name="line7"></a>  datatype status = Undecided | Win | Lose
+<a name="line8"></a>  val is_undecided : status -&gt; bool
+<a name="line9"></a>  val is_win : status -&gt; bool
+<a name="line10"></a>  val is_lose : status -&gt; bool
+<a name="line11"></a>  val string_of_status : status -&gt; string
+<a name="line12"></a>  datatype search_status = Success | Saturated | Timeout
+<a name="line13"></a>
+<a name="line14"></a>  (* search tree: 'a is a board position, 'b is a move *)
+<a name="line15"></a>  type 'a node =
+<a name="line16"></a>    {board : 'a, stati : status, sum : real, vis : real}
+<a name="line17"></a>  datatype ('a,'b) tree =
+<a name="line18"></a>    Leaf | Node of 'a node * ('b * real * ('a,'b) tree) vector
+<a name="line19"></a>  val dest_node : ('a,'b) tree -&gt; 'a node * ('b * real * ('a,'b) tree) vector
+<a name="line20"></a>  val is_node : ('a,'b) tree -&gt; bool
+<a name="line21"></a>  val is_leaf : ('a,'b) tree -&gt; bool
+<a name="line22"></a>
+<a name="line23"></a>  (* MCTS specification *)
+<a name="line24"></a>  type ('a,'b) game =
+<a name="line25"></a>    {
+<a name="line26"></a>    status_of : 'a -&gt; status,
+<a name="line27"></a>    apply_move : 'b -&gt; 'a -&gt; 'a,
+<a name="line28"></a>    available_movel : 'a -&gt; 'b list,
+<a name="line29"></a>    string_of_board : 'a -&gt; string,
+<a name="line30"></a>    string_of_move : 'b -&gt; string,
+<a name="line31"></a>    board_compare : 'a * 'a -&gt; order,
+<a name="line32"></a>    move_compare : 'b * 'b -&gt; order,
+<a name="line33"></a>    movel : 'b list
+<a name="line34"></a>    }
+<a name="line35"></a>
+<a name="line36"></a>  type ('a,'b) player = 'a -&gt; real * ('b * real) list
+<a name="line37"></a>  val uniform_player : ('a,'b) game -&gt; ('a,'b) player
+<a name="line38"></a>  val random_player : ('a,'b) game -&gt; ('a,'b) player
+<a name="line39"></a>
+<a name="line40"></a>  type mctsparam =
+<a name="line41"></a>    {time : real option, nsim : int option,
+<a name="line42"></a>     explo_coeff : real,
+<a name="line43"></a>     noise : bool, noise_coeff : real, noise_gen : unit -&gt; real}
+<a name="line44"></a>
+<a name="line45"></a>  type ('a,'b) mctsobj =
+<a name="line46"></a>    {mctsparam : mctsparam, game : ('a,'b) game, player : ('a,'b) player}
+<a name="line47"></a>
+<a name="line48"></a>  (* MCTS search function *)
+<a name="line49"></a>  val starting_tree : ('a,'b) mctsobj -&gt; 'a -&gt; ('a,'b) tree
+<a name="line50"></a>  val mcts : ('a,'b) mctsobj -&gt; ('a,'b) tree -&gt; ('a,'b) tree
+<a name="line51"></a>
+<a name="line52"></a>  (* Statistics *)
+<a name="line53"></a>  val most_visited_path : ('a,'b) tree -&gt; ('a node * 'b option) list
+<a name="line54"></a>
+<a name="line55"></a>
+<a name="line56"></a>  (* toy example *)
+<a name="line57"></a>  type toy_board = (int * int * int)
+<a name="line58"></a>  datatype toy_move = Incr | Decr
+<a name="line59"></a>  val toy_game : (toy_board,toy_move) game
+<a name="line60"></a>
+<a name="line61"></a>end
+<a name="line62"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/AI/proof_search/psMCTS.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

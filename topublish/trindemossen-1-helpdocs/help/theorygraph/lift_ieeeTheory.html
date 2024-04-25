@@ -1,0 +1,597 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: lift_ieee</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "lift_ieee"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "binary_ieeeTheory.html"><span class="strong">binary_ieee</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">error</span>
+    <td>
+    :(τ # χ) itself -> real -> real
+    <tr><td>
+    <span class="strong">normalizes</span>
+    <td>
+    :(τ # χ) itself -> real -> bool
+    <tr><td> <span class="strong">sqrtable</span> <td> :(α, β) float -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">error_def</span>
+<DD>
+<pre>
+⊢ ∀x. error (:τ # χ) x = float_to_real (round roundTiesToEven x) − x
+</pre>
+
+<DT><span class="strong">normalizes_def</span>
+<DD>
+<pre>
+⊢ ∀x. normalizes (:τ # χ) x ⇔
+      1 < INT_MAX (:χ) ∧ (2 pow (INT_MAX (:χ) − 1))⁻¹ ≤ abs x ∧
+      abs x < threshold (:τ # χ)
+</pre>
+
+<DT><span class="strong">sqrtable_def</span>
+<DD>
+<pre>
+⊢ ∀f. sqrtable f ⇔ (f.Sign = 0w) ∨ (f = NEG0)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">absolute_error_denormal</span>
+<DD>
+<pre>
+⊢ ∀x. abs x < threshold (:τ # χ) ∧ abs x < 2 * 1 / 2 pow (INT_MAX (:χ) − 1) ∧
+      1 < INT_MAX (:χ) ⇒
+      ∃e. abs (float_to_real (round roundTiesToEven x) − x) ≤ e ∧
+          e ≤ 1 / 2 pow (INT_MAX (:χ) + dimindex (:τ))
+</pre>
+
+<DT><span class="strong">closest_in_set</span>
+<DD>
+<pre>
+⊢ ∀p s x. s ≠ ∅ ⇒ closest_such p s x ∈ s
+</pre>
+
+<DT><span class="strong">closest_is_closest</span>
+<DD>
+<pre>
+⊢ ∀p s x. s ≠ ∅ ⇒ is_closest s x (closest_such p s x)
+</pre>
+
+<DT><span class="strong">closest_is_everything</span>
+<DD>
+<pre>
+⊢ ∀p s x.
+    s ≠ ∅ ⇒
+    is_closest s x (closest_such p s x) ∧
+    ((∃b. is_closest s x b ∧ p b) ⇒ p (closest_such p s x))
+</pre>
+
+<DT><span class="strong">error_at_worst_lemma</span>
+<DD>
+<pre>
+⊢ ∀a x.
+    abs x < threshold (:τ # χ) ∧ float_is_finite a ⇒
+    abs (error (:τ # χ) x) ≤ abs (float_to_real a − x)
+</pre>
+
+<DT><span class="strong">error_bound_lemma1</span>
+<DD>
+<pre>
+⊢ ∀fracw x.
+    0 ≤ x ∧ x < 1 ∧ 0 < fracw ⇒
+    ∃n. n < 2 ** fracw ∧ &n / 2 pow fracw ≤ x ∧ x < &SUC n / 2 pow fracw
+</pre>
+
+<DT><span class="strong">error_is_zero</span>
+<DD>
+<pre>
+⊢ ∀a x. float_is_finite a ∧ (float_to_real a = x) ⇒ (error (:τ # χ) x = 0)
+</pre>
+
+<DT><span class="strong">finite_float_within_threshold</span>
+<DD>
+<pre>
+⊢ ∀f. float_is_finite f ⇒
+      ¬(float_to_real f ≤ -threshold (:α # β)) ∧
+      ¬(float_to_real f ≥ threshold (:α # β))
+</pre>
+
+<DT><span class="strong">float_add</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    abs (float_to_real a + float_to_real b) < threshold (:τ # χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_add a) b)) ∧
+    (float_to_real (SND ((roundTiesToEven float_add a) b)) =
+     float_to_real a + float_to_real b +
+     error (:τ # χ) (float_to_real a + float_to_real b))
+</pre>
+
+<DT><span class="strong">float_add_finite</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    abs (float_to_real a + float_to_real b) < threshold (:τ # χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_add a) b))
+</pre>
+
+<DT><span class="strong">float_add_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    normalizes (:τ # χ) (float_to_real a + float_to_real b) ⇒
+    float_is_finite (SND ((roundTiesToEven float_add a) b)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (dimindex (:τ) + 1) ∧
+        (float_to_real (SND ((roundTiesToEven float_add a) b)) =
+         (float_to_real a + float_to_real b) * (1 + e))
+</pre>
+
+<DT><span class="strong">float_add_relative_denorm</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    abs (float_to_real a + float_to_real b) <
+    2 pow 1 / 2 pow (INT_MAX (:χ) − 1) ∧
+    abs (float_to_real a + float_to_real b) < threshold (:τ # χ) ∧
+    1 < INT_MAX (:χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_add a) b)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (INT_MAX (:χ) + dimindex (:τ)) ∧
+        (float_to_real (SND ((roundTiesToEven float_add a) b)) =
+         float_to_real a + float_to_real b + e)
+</pre>
+
+<DT><span class="strong">float_div</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧ ¬float_is_zero b ∧
+    abs (float_to_real a / float_to_real b) < threshold (:τ # χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_div a) b)) ∧
+    (float_to_real (SND ((roundTiesToEven float_div a) b)) =
+     float_to_real a / float_to_real b +
+     error (:τ # χ) (float_to_real a / float_to_real b))
+</pre>
+
+<DT><span class="strong">float_div_finite</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧ ¬float_is_zero b ∧
+    abs (float_to_real a / float_to_real b) < threshold (:τ # χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_div a) b))
+</pre>
+
+<DT><span class="strong">float_div_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧ ¬float_is_zero b ∧
+    normalizes (:τ # χ) (float_to_real a / float_to_real b) ⇒
+    float_is_finite (SND ((roundTiesToEven float_div a) b)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (dimindex (:τ) + 1) ∧
+        (float_to_real (SND ((roundTiesToEven float_div a) b)) =
+         float_to_real a / float_to_real b * (1 + e))
+</pre>
+
+<DT><span class="strong">float_div_relative_denorm</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧ ¬float_is_zero b ∧
+    abs (float_to_real a / float_to_real b) <
+    2 pow 1 / 2 pow (INT_MAX (:χ) − 1) ∧
+    abs (float_to_real a / float_to_real b) < threshold (:τ # χ) ∧
+    1 < INT_MAX (:χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_div a) b)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (INT_MAX (:χ) + dimindex (:τ)) ∧
+        (float_to_real (SND ((roundTiesToEven float_div a) b)) =
+         float_to_real a / float_to_real b + e)
+</pre>
+
+<DT><span class="strong">float_eq</span>
+<DD>
+<pre>
+⊢ ∀x y.
+    float_is_finite x ∧ float_is_finite y ⇒
+    (float_equal x y ⇔ (float_to_real x = float_to_real y))
+</pre>
+
+<DT><span class="strong">float_eq_refl</span>
+<DD>
+<pre>
+⊢ ∀x. float_equal x x ⇔ ¬float_is_nan x
+</pre>
+
+<DT><span class="strong">float_finite</span>
+<DD>
+<pre>
+⊢ FINITE 𝕌(:(τ, χ) float)
+</pre>
+
+<DT><span class="strong">float_ge</span>
+<DD>
+<pre>
+⊢ ∀x y.
+    float_is_finite x ∧ float_is_finite y ⇒
+    (float_greater_equal x y ⇔ float_to_real x ≥ float_to_real y)
+</pre>
+
+<DT><span class="strong">float_gt</span>
+<DD>
+<pre>
+⊢ ∀x y.
+    float_is_finite x ∧ float_is_finite y ⇒
+    (float_greater_than x y ⇔ float_to_real x > float_to_real y)
+</pre>
+
+<DT><span class="strong">float_le</span>
+<DD>
+<pre>
+⊢ ∀x y.
+    float_is_finite x ∧ float_is_finite y ⇒
+    (float_less_equal x y ⇔ float_to_real x ≤ float_to_real y)
+</pre>
+
+<DT><span class="strong">float_lt</span>
+<DD>
+<pre>
+⊢ ∀x y.
+    float_is_finite x ∧ float_is_finite y ⇒
+    (float_less_than x y ⇔ float_to_real x < float_to_real y)
+</pre>
+
+<DT><span class="strong">float_mul</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    abs (float_to_real a * float_to_real b) < threshold (:τ # χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_mul a) b)) ∧
+    (float_to_real (SND ((roundTiesToEven float_mul a) b)) =
+     float_to_real a * float_to_real b +
+     error (:τ # χ) (float_to_real a * float_to_real b))
+</pre>
+
+<DT><span class="strong">float_mul_add</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    float_is_finite a ∧ float_is_finite b ∧ float_is_finite c ∧
+    abs (float_to_real a * float_to_real b + float_to_real c) <
+    threshold (:τ # χ) ⇒
+    float_is_finite (SND (float_mul_add roundTiesToEven a b c)) ∧
+    (float_to_real (SND (float_mul_add roundTiesToEven a b c)) =
+     float_to_real a * float_to_real b + float_to_real c +
+     error (:τ # χ) (float_to_real a * float_to_real b + float_to_real c))
+</pre>
+
+<DT><span class="strong">float_mul_add_finite</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    float_is_finite a ∧ float_is_finite b ∧ float_is_finite c ∧
+    abs (float_to_real a * float_to_real b + float_to_real c) <
+    threshold (:τ # χ) ⇒
+    float_is_finite (SND (float_mul_add roundTiesToEven a b c))
+</pre>
+
+<DT><span class="strong">float_mul_add_relative</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    float_is_finite a ∧ float_is_finite b ∧ float_is_finite c ∧
+    normalizes (:τ # χ) (float_to_real a * float_to_real b + float_to_real c) ⇒
+    float_is_finite (SND (float_mul_add roundTiesToEven a b c)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (dimindex (:τ) + 1) ∧
+        (float_to_real (SND (float_mul_add roundTiesToEven a b c)) =
+         (float_to_real a * float_to_real b + float_to_real c) * (1 + e))
+</pre>
+
+<DT><span class="strong">float_mul_add_relative_denorm</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    float_is_finite a ∧ float_is_finite b ∧ float_is_finite c ∧
+    abs (float_to_real a * float_to_real b + float_to_real c) <
+    2 pow 1 / 2 pow (INT_MAX (:χ) − 1) ∧
+    abs (float_to_real a * float_to_real b + float_to_real c) <
+    threshold (:τ # χ) ∧ 1 < INT_MAX (:χ) ⇒
+    float_is_finite (SND (float_mul_add roundTiesToEven a b c)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (INT_MAX (:χ) + dimindex (:τ)) ∧
+        (float_to_real (SND (float_mul_add roundTiesToEven a b c)) =
+         float_to_real a * float_to_real b + float_to_real c + e)
+</pre>
+
+<DT><span class="strong">float_mul_finite</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    abs (float_to_real a * float_to_real b) < threshold (:τ # χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_mul a) b))
+</pre>
+
+<DT><span class="strong">float_mul_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    normalizes (:τ # χ) (float_to_real a * float_to_real b) ⇒
+    float_is_finite (SND ((roundTiesToEven float_mul a) b)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (dimindex (:τ) + 1) ∧
+        (float_to_real (SND ((roundTiesToEven float_mul a) b)) =
+         float_to_real a * float_to_real b * (1 + e))
+</pre>
+
+<DT><span class="strong">float_mul_relative_denorm</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    abs (float_to_real a * float_to_real b) <
+    2 pow 1 / 2 pow (INT_MAX (:χ) − 1) ∧
+    abs (float_to_real a * float_to_real b) < threshold (:τ # χ) ∧
+    1 < INT_MAX (:χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_mul a) b)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (INT_MAX (:χ) + dimindex (:τ)) ∧
+        (float_to_real (SND ((roundTiesToEven float_mul a) b)) =
+         float_to_real a * float_to_real b + e)
+</pre>
+
+<DT><span class="strong">float_mul_sub</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    float_is_finite a ∧ float_is_finite b ∧ float_is_finite c ∧
+    abs (float_to_real a * float_to_real b − float_to_real c) <
+    threshold (:τ # χ) ⇒
+    float_is_finite (SND (float_mul_sub roundTiesToEven a b c)) ∧
+    (float_to_real (SND (float_mul_sub roundTiesToEven a b c)) =
+     float_to_real a * float_to_real b − float_to_real c +
+     error (:τ # χ) (float_to_real a * float_to_real b − float_to_real c))
+</pre>
+
+<DT><span class="strong">float_mul_sub_finite</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    float_is_finite a ∧ float_is_finite b ∧ float_is_finite c ∧
+    abs (float_to_real a * float_to_real b − float_to_real c) <
+    threshold (:τ # χ) ⇒
+    float_is_finite (SND (float_mul_sub roundTiesToEven a b c))
+</pre>
+
+<DT><span class="strong">float_mul_sub_relative</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    float_is_finite a ∧ float_is_finite b ∧ float_is_finite c ∧
+    normalizes (:τ # χ) (float_to_real a * float_to_real b − float_to_real c) ⇒
+    float_is_finite (SND (float_mul_sub roundTiesToEven a b c)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (dimindex (:τ) + 1) ∧
+        (float_to_real (SND (float_mul_sub roundTiesToEven a b c)) =
+         (float_to_real a * float_to_real b − float_to_real c) * (1 + e))
+</pre>
+
+<DT><span class="strong">float_mul_sub_relative_denorm</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    float_is_finite a ∧ float_is_finite b ∧ float_is_finite c ∧
+    abs (float_to_real a * float_to_real b − float_to_real c) <
+    2 pow 1 / 2 pow (INT_MAX (:χ) − 1) ∧
+    abs (float_to_real a * float_to_real b − float_to_real c) <
+    threshold (:τ # χ) ∧ 1 < INT_MAX (:χ) ⇒
+    float_is_finite (SND (float_mul_sub roundTiesToEven a b c)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (INT_MAX (:χ) + dimindex (:τ)) ∧
+        (float_to_real (SND (float_mul_sub roundTiesToEven a b c)) =
+         float_to_real a * float_to_real b − float_to_real c + e)
+</pre>
+
+<DT><span class="strong">float_round_finite</span>
+<DD>
+<pre>
+⊢ ∀b x.
+    abs x < threshold (:τ # χ) ⇒
+    float_is_finite (float_round roundTiesToEven b x)
+</pre>
+
+<DT><span class="strong">float_sqrt</span>
+<DD>
+<pre>
+⊢ ∀a. float_is_finite a ∧ sqrtable a ∧
+      abs (sqrt (float_to_real a)) < threshold (:τ # χ) ⇒
+      float_is_finite (SND (float_sqrt roundTiesToEven a)) ∧
+      (float_to_real (SND (float_sqrt roundTiesToEven a)) =
+       sqrt (float_to_real a) + error (:τ # χ) (sqrt (float_to_real a)))
+</pre>
+
+<DT><span class="strong">float_sqrt_finite</span>
+<DD>
+<pre>
+⊢ ∀a. float_is_finite a ∧ sqrtable a ∧
+      abs (sqrt (float_to_real a)) < threshold (:τ # χ) ⇒
+      float_is_finite (SND (float_sqrt roundTiesToEven a))
+</pre>
+
+<DT><span class="strong">float_sqrt_relative</span>
+<DD>
+<pre>
+⊢ ∀a. float_is_finite a ∧ sqrtable a ∧
+      normalizes (:τ # χ) (sqrt (float_to_real a)) ⇒
+      float_is_finite (SND (float_sqrt roundTiesToEven a)) ∧
+      ∃e. abs e ≤ 1 / 2 pow (dimindex (:τ) + 1) ∧
+          (float_to_real (SND (float_sqrt roundTiesToEven a)) =
+           sqrt (float_to_real a) * (1 + e))
+</pre>
+
+<DT><span class="strong">float_sqrt_relative_denorm</span>
+<DD>
+<pre>
+⊢ ∀a. float_is_finite a ∧ sqrtable a ∧
+      abs (sqrt (float_to_real a)) < 2 pow 1 / 2 pow (INT_MAX (:χ) − 1) ∧
+      abs (sqrt (float_to_real a)) < threshold (:τ # χ) ∧ 1 < INT_MAX (:χ) ⇒
+      float_is_finite (SND (float_sqrt roundTiesToEven a)) ∧
+      ∃e. abs e ≤ 1 / 2 pow (INT_MAX (:χ) + dimindex (:τ)) ∧
+          (float_to_real (SND (float_sqrt roundTiesToEven a)) =
+           sqrt (float_to_real a) + e)
+</pre>
+
+<DT><span class="strong">float_sub</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    abs (float_to_real a − float_to_real b) < threshold (:τ # χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_sub a) b)) ∧
+    (float_to_real (SND ((roundTiesToEven float_sub a) b)) =
+     float_to_real a − float_to_real b +
+     error (:τ # χ) (float_to_real a − float_to_real b))
+</pre>
+
+<DT><span class="strong">float_sub_finite</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    abs (float_to_real a − float_to_real b) < threshold (:τ # χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_sub a) b))
+</pre>
+
+<DT><span class="strong">float_sub_relative</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    normalizes (:τ # χ) (float_to_real a − float_to_real b) ⇒
+    float_is_finite (SND ((roundTiesToEven float_sub a) b)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (dimindex (:τ) + 1) ∧
+        (float_to_real (SND ((roundTiesToEven float_sub a) b)) =
+         (float_to_real a − float_to_real b) * (1 + e))
+</pre>
+
+<DT><span class="strong">float_sub_relative_denorm</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    float_is_finite a ∧ float_is_finite b ∧
+    abs (float_to_real a − float_to_real b) <
+    2 pow 1 / 2 pow (INT_MAX (:χ) − 1) ∧
+    abs (float_to_real a − float_to_real b) < threshold (:τ # χ) ∧
+    1 < INT_MAX (:χ) ⇒
+    float_is_finite (SND ((roundTiesToEven float_sub a) b)) ∧
+    ∃e. abs e ≤ 1 / 2 pow (INT_MAX (:χ) + dimindex (:τ)) ∧
+        (float_to_real (SND ((roundTiesToEven float_sub a) b)) =
+         float_to_real a − float_to_real b + e)
+</pre>
+
+<DT><span class="strong">float_to_real_finite</span>
+<DD>
+<pre>
+⊢ ∀x. float_is_finite x ⇒ abs (float_to_real x) ≤ largest (:τ # χ)
+</pre>
+
+<DT><span class="strong">float_to_real_real_to_float_zero_id</span>
+<DD>
+<pre>
+⊢ float_to_real (real_to_float roundTiesToEven 0) = 0
+</pre>
+
+<DT><span class="strong">float_to_real_threshold</span>
+<DD>
+<pre>
+⊢ ∀x. float_is_finite x ⇒ abs (float_to_real x) < threshold (:τ # χ)
+</pre>
+
+<DT><span class="strong">is_finite_closest</span>
+<DD>
+<pre>
+⊢ ∀p x. float_is_finite (closest_such p {a | float_is_finite a} x)
+</pre>
+
+<DT><span class="strong">is_finite_finite</span>
+<DD>
+<pre>
+⊢ FINITE {a | float_is_finite a}
+</pre>
+
+<DT><span class="strong">is_finite_nonempty</span>
+<DD>
+<pre>
+⊢ {a | float_is_finite a} ≠ ∅
+</pre>
+
+<DT><span class="strong">non_representable_float_is_zero</span>
+<DD>
+<pre>
+⊢ ∀ff P.
+    2 * abs ff ≤ ulp (:α # β) ⇒
+    (float_to_real (float_round roundTiesToEven P ff) = 0)
+</pre>
+
+<DT><span class="strong">real_to_float_finite_normal_id</span>
+<DD>
+<pre>
+⊢ ∀f. float_is_finite f ∧ ¬float_is_zero f ⇒
+      (real_to_float roundTiesToEven (float_to_real f) = f)
+</pre>
+
+<DT><span class="strong">relative_error</span>
+<DD>
+<pre>
+⊢ ∀x. normalizes (:τ # χ) x ⇒
+      ∃e. abs e ≤ 1 / 2 pow (dimindex (:τ) + 1) ∧
+          (float_to_real (round roundTiesToEven x) = x * (1 + e))
+</pre>
+
+<DT><span class="strong">round_finite_normal_float_id</span>
+<DD>
+<pre>
+⊢ ∀f. float_is_finite f ∧ ¬float_is_zero f ⇒
+      (round roundTiesToEven (float_to_real f) = f)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

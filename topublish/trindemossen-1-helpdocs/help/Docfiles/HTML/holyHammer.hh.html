@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>holyHammer.hh</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>hh : tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/holyHammer.html">holyHammer</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">General purpose tactic relying on a automatic selection of theorems in the library.
+It returns a automatically generated call to </SPAN><SPAN class = "BRKT">METIS_TAC</SPAN><SPAN class = "TEXT"> that solves the goal. 
+A good practice is to replace the call of </SPAN><SPAN class = "BRKT">holyhammer.hh</SPAN><SPAN class = "TEXT"> by the generated tactic.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Select relevant theorems for proving a goal using the k-nearest neighbor 
+premise selection algorithm, translate the theorems
+together with the goal from higher-order to first-order, 
+call external provers (ATP) and reconstruct
+the final proof inside HOL4 by calling </SPAN><SPAN class = "BRKT">METIS_TAC</SPAN><SPAN class = "TEXT"> with the theorems appearing
+in the proof of the prover.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the supplied goal does not contain boolean terms only. 
+Or if no ATP is installed. Or if no proof is found by the installed ATPs in
+less than a 15 seconds (default). This timeout can be modifed by </SPAN><SPAN class = "BRKT">holyHammer.set_timeout</SPAN><SPAN class = "TEXT">. 
+Or if </SPAN><SPAN class = "BRKT">METIS_TAC</SPAN><SPAN class = "TEXT"> cannot reconstruct the proof from the selected theorems in less than one second.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- load "holyHammer"; open holyHammer;
+(* output omitted *)
+&gt; val it = () : unit
+
+- hh ([],``1+1=2``);
+Loading 3091 theorems 
+proof found by eprover:
+  metisTools.METIS_TAC [arithmeticTheory.ALT_ZERO , arithmeticTheory.SUC_ONE_ADD , arithmeticTheory.TWO , numeralTheory.numeral_distrib , numeralTheory.numeral_suc]
+minimized proof:  
+  METIS_TAC [arithmeticTheory.SUC_ONE_ADD, numeralTheory.numeral_distrib, numeralTheory.numeral_suc]
+(* output omitted *)
+&gt; val it = ([], fn): goal list * validation
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">See </SPAN><SPAN class = "BRKT">src/holyhammer/README</SPAN><SPAN class = "TEXT"> for more information on how to install the provers.
+See more examples in </SPAN><SPAN class = "BRKT">src/holyhammer/examples</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "holyHammer.holyhammer.html">holyhammer</A>,
+<A HREF = "tacticToe.ttt.html">ttt</A>,
+<A HREF = "DB.matchp.html">matchp</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

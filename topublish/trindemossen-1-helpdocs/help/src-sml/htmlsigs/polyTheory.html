@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure polyTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure polyTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/real/analysis/polyScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature polyTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#degree-val">degree</a> : thm
+<a name="line7"></a>    val <a href="#normalize-val">normalize</a> : thm
+<a name="line8"></a>    val <a href="#poly_add_def-val">poly_add_def</a> : thm
+<a name="line9"></a>    val <a href="#poly_cmul_def-val">poly_cmul_def</a> : thm
+<a name="line10"></a>    val <a href="#poly_def-val">poly_def</a> : thm
+<a name="line11"></a>    val <a href="#poly_diff_aux_def-val">poly_diff_aux_def</a> : thm
+<a name="line12"></a>    val <a href="#poly_diff_def-val">poly_diff_def</a> : thm
+<a name="line13"></a>    val <a href="#poly_divides-val">poly_divides</a> : thm
+<a name="line14"></a>    val <a href="#poly_exp_def-val">poly_exp_def</a> : thm
+<a name="line15"></a>    val <a href="#poly_mul_def-val">poly_mul_def</a> : thm
+<a name="line16"></a>    val <a href="#poly_neg_def-val">poly_neg_def</a> : thm
+<a name="line17"></a>    val <a href="#poly_order-val">poly_order</a> : thm
+<a name="line18"></a>    val <a href="#rsquarefree-val">rsquarefree</a> : thm
+<a name="line19"></a>  
+<a name="line20"></a>  (*  Theorems  *)
+<a name="line21"></a>    val <a href="#DEGREE_ZERO-val">DEGREE_ZERO</a> : thm
+<a name="line22"></a>    val <a href="#FINITE_LEMMA-val">FINITE_LEMMA</a> : thm
+<a name="line23"></a>    val <a href="#ORDER-val">ORDER</a> : thm
+<a name="line24"></a>    val <a href="#ORDER_DECOMP-val">ORDER_DECOMP</a> : thm
+<a name="line25"></a>    val <a href="#ORDER_DIFF-val">ORDER_DIFF</a> : thm
+<a name="line26"></a>    val <a href="#ORDER_DIVIDES-val">ORDER_DIVIDES</a> : thm
+<a name="line27"></a>    val <a href="#ORDER_MUL-val">ORDER_MUL</a> : thm
+<a name="line28"></a>    val <a href="#ORDER_POLY-val">ORDER_POLY</a> : thm
+<a name="line29"></a>    val <a href="#ORDER_ROOT-val">ORDER_ROOT</a> : thm
+<a name="line30"></a>    val <a href="#ORDER_THM-val">ORDER_THM</a> : thm
+<a name="line31"></a>    val <a href="#ORDER_UNIQUE-val">ORDER_UNIQUE</a> : thm
+<a name="line32"></a>    val <a href="#POLY_ADD-val">POLY_ADD</a> : thm
+<a name="line33"></a>    val <a href="#POLY_ADD_CLAUSES-val">POLY_ADD_CLAUSES</a> : thm
+<a name="line34"></a>    val <a href="#POLY_ADD_RZERO-val">POLY_ADD_RZERO</a> : thm
+<a name="line35"></a>    val <a href="#POLY_CMUL-val">POLY_CMUL</a> : thm
+<a name="line36"></a>    val <a href="#POLY_CMUL_CLAUSES-val">POLY_CMUL_CLAUSES</a> : thm
+<a name="line37"></a>    val <a href="#POLY_CONT-val">POLY_CONT</a> : thm
+<a name="line38"></a>    val <a href="#POLY_DIFF-val">POLY_DIFF</a> : thm
+<a name="line39"></a>    val <a href="#POLY_DIFFERENTIABLE-val">POLY_DIFFERENTIABLE</a> : thm
+<a name="line40"></a>    val <a href="#POLY_DIFF_ADD-val">POLY_DIFF_ADD</a> : thm
+<a name="line41"></a>    val <a href="#POLY_DIFF_AUX_ADD-val">POLY_DIFF_AUX_ADD</a> : thm
+<a name="line42"></a>    val <a href="#POLY_DIFF_AUX_CMUL-val">POLY_DIFF_AUX_CMUL</a> : thm
+<a name="line43"></a>    val <a href="#POLY_DIFF_AUX_ISZERO-val">POLY_DIFF_AUX_ISZERO</a> : thm
+<a name="line44"></a>    val <a href="#POLY_DIFF_AUX_MUL_LEMMA-val">POLY_DIFF_AUX_MUL_LEMMA</a> : thm
+<a name="line45"></a>    val <a href="#POLY_DIFF_AUX_NEG-val">POLY_DIFF_AUX_NEG</a> : thm
+<a name="line46"></a>    val <a href="#POLY_DIFF_CLAUSES-val">POLY_DIFF_CLAUSES</a> : thm
+<a name="line47"></a>    val <a href="#POLY_DIFF_CMUL-val">POLY_DIFF_CMUL</a> : thm
+<a name="line48"></a>    val <a href="#POLY_DIFF_EXP-val">POLY_DIFF_EXP</a> : thm
+<a name="line49"></a>    val <a href="#POLY_DIFF_EXP_PRIME-val">POLY_DIFF_EXP_PRIME</a> : thm
+<a name="line50"></a>    val <a href="#POLY_DIFF_ISZERO-val">POLY_DIFF_ISZERO</a> : thm
+<a name="line51"></a>    val <a href="#POLY_DIFF_LEMMA-val">POLY_DIFF_LEMMA</a> : thm
+<a name="line52"></a>    val <a href="#POLY_DIFF_MUL-val">POLY_DIFF_MUL</a> : thm
+<a name="line53"></a>    val <a href="#POLY_DIFF_MUL_LEMMA-val">POLY_DIFF_MUL_LEMMA</a> : thm
+<a name="line54"></a>    val <a href="#POLY_DIFF_NEG-val">POLY_DIFF_NEG</a> : thm
+<a name="line55"></a>    val <a href="#POLY_DIFF_WELLDEF-val">POLY_DIFF_WELLDEF</a> : thm
+<a name="line56"></a>    val <a href="#POLY_DIFF_ZERO-val">POLY_DIFF_ZERO</a> : thm
+<a name="line57"></a>    val <a href="#POLY_DIVIDES_ADD-val">POLY_DIVIDES_ADD</a> : thm
+<a name="line58"></a>    val <a href="#POLY_DIVIDES_EXP-val">POLY_DIVIDES_EXP</a> : thm
+<a name="line59"></a>    val <a href="#POLY_DIVIDES_REFL-val">POLY_DIVIDES_REFL</a> : thm
+<a name="line60"></a>    val <a href="#POLY_DIVIDES_SUB-val">POLY_DIVIDES_SUB</a> : thm
+<a name="line61"></a>    val <a href="#POLY_DIVIDES_SUB2-val">POLY_DIVIDES_SUB2</a> : thm
+<a name="line62"></a>    val <a href="#POLY_DIVIDES_TRANS-val">POLY_DIVIDES_TRANS</a> : thm
+<a name="line63"></a>    val <a href="#POLY_DIVIDES_ZERO-val">POLY_DIVIDES_ZERO</a> : thm
+<a name="line64"></a>    val <a href="#POLY_ENTIRE-val">POLY_ENTIRE</a> : thm
+<a name="line65"></a>    val <a href="#POLY_ENTIRE_LEMMA-val">POLY_ENTIRE_LEMMA</a> : thm
+<a name="line66"></a>    val <a href="#POLY_EXP-val">POLY_EXP</a> : thm
+<a name="line67"></a>    val <a href="#POLY_EXP_ADD-val">POLY_EXP_ADD</a> : thm
+<a name="line68"></a>    val <a href="#POLY_EXP_DIVIDES-val">POLY_EXP_DIVIDES</a> : thm
+<a name="line69"></a>    val <a href="#POLY_EXP_EQ_0-val">POLY_EXP_EQ_0</a> : thm
+<a name="line70"></a>    val <a href="#POLY_EXP_PRIME_EQ_0-val">POLY_EXP_PRIME_EQ_0</a> : thm
+<a name="line71"></a>    val <a href="#POLY_IVT_NEG-val">POLY_IVT_NEG</a> : thm
+<a name="line72"></a>    val <a href="#POLY_IVT_POS-val">POLY_IVT_POS</a> : thm
+<a name="line73"></a>    val <a href="#POLY_LENGTH_MUL-val">POLY_LENGTH_MUL</a> : thm
+<a name="line74"></a>    val <a href="#POLY_LINEAR_DIVIDES-val">POLY_LINEAR_DIVIDES</a> : thm
+<a name="line75"></a>    val <a href="#POLY_LINEAR_REM-val">POLY_LINEAR_REM</a> : thm
+<a name="line76"></a>    val <a href="#POLY_MONO-val">POLY_MONO</a> : thm
+<a name="line77"></a>    val <a href="#POLY_MUL-val">POLY_MUL</a> : thm
+<a name="line78"></a>    val <a href="#POLY_MUL_ASSOC-val">POLY_MUL_ASSOC</a> : thm
+<a name="line79"></a>    val <a href="#POLY_MUL_CLAUSES-val">POLY_MUL_CLAUSES</a> : thm
+<a name="line80"></a>    val <a href="#POLY_MUL_LCANCEL-val">POLY_MUL_LCANCEL</a> : thm
+<a name="line81"></a>    val <a href="#POLY_MVT-val">POLY_MVT</a> : thm
+<a name="line82"></a>    val <a href="#POLY_NEG-val">POLY_NEG</a> : thm
+<a name="line83"></a>    val <a href="#POLY_NEG_CLAUSES-val">POLY_NEG_CLAUSES</a> : thm
+<a name="line84"></a>    val <a href="#POLY_NORMALIZE-val">POLY_NORMALIZE</a> : thm
+<a name="line85"></a>    val <a href="#POLY_ORDER-val">POLY_ORDER</a> : thm
+<a name="line86"></a>    val <a href="#POLY_ORDER_EXISTS-val">POLY_ORDER_EXISTS</a> : thm
+<a name="line87"></a>    val <a href="#POLY_PRIMES-val">POLY_PRIMES</a> : thm
+<a name="line88"></a>    val <a href="#POLY_PRIME_EQ_0-val">POLY_PRIME_EQ_0</a> : thm
+<a name="line89"></a>    val <a href="#POLY_ROOTS_FINITE-val">POLY_ROOTS_FINITE</a> : thm
+<a name="line90"></a>    val <a href="#POLY_ROOTS_FINITE_LEMMA-val">POLY_ROOTS_FINITE_LEMMA</a> : thm
+<a name="line91"></a>    val <a href="#POLY_ROOTS_FINITE_SET-val">POLY_ROOTS_FINITE_SET</a> : thm
+<a name="line92"></a>    val <a href="#POLY_ROOTS_INDEX_LEMMA-val">POLY_ROOTS_INDEX_LEMMA</a> : thm
+<a name="line93"></a>    val <a href="#POLY_ROOTS_INDEX_LENGTH-val">POLY_ROOTS_INDEX_LENGTH</a> : thm
+<a name="line94"></a>    val <a href="#POLY_SQUAREFREE_DECOMP-val">POLY_SQUAREFREE_DECOMP</a> : thm
+<a name="line95"></a>    val <a href="#POLY_SQUAREFREE_DECOMP_ORDER-val">POLY_SQUAREFREE_DECOMP_ORDER</a> : thm
+<a name="line96"></a>    val <a href="#POLY_ZERO-val">POLY_ZERO</a> : thm
+<a name="line97"></a>    val <a href="#POLY_ZERO_LEMMA-val">POLY_ZERO_LEMMA</a> : thm
+<a name="line98"></a>    val <a href="#RSQUAREFREE_DECOMP-val">RSQUAREFREE_DECOMP</a> : thm
+<a name="line99"></a>    val <a href="#RSQUAREFREE_ROOTS-val">RSQUAREFREE_ROOTS</a> : thm
+<a name="line100"></a>  
+<a name="line101"></a>  val poly_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line102"></a>(*
+   [lim] Parent theory of "poly"
+   
+   [<a name="degree-val"><b>degree</b></a>]  Definition
+      
+      ⊢ ∀p. degree p = PRE (LENGTH (normalize p))
+   
+   [<a name="normalize-val"><b>normalize</b></a>]  Definition
+      
+      ⊢ (normalize [] = []) ∧
+        ∀h t.
+          normalize (h::t) =
+          if normalize t = [] then if h = 0 then [] else [h]
+          else h::normalize t
+   
+   [<a name="poly_add_def-val"><b>poly_add_def</b></a>]  Definition
+      
+      ⊢ (∀l2. [] + l2 = l2) ∧
+        ∀h t l2.
+          (h::t) + l2 = if l2 = [] then h::t else h + HD l2::t + TL l2
+   
+   [<a name="poly_cmul_def-val"><b>poly_cmul_def</b></a>]  Definition
+      
+      ⊢ (∀c. c ## [] = []) ∧ ∀c h t. c ## (h::t) = c * h::c ## t
+   
+   [<a name="poly_def-val"><b>poly_def</b></a>]  Definition
+      
+      ⊢ (∀x. poly [] x = 0) ∧ ∀h t x. poly (h::t) x = h + x * poly t x
+   
+   [<a name="poly_diff_aux_def-val"><b>poly_diff_aux_def</b></a>]  Definition
+      
+      ⊢ (∀n. poly_diff_aux n [] = []) ∧
+        ∀n h t. poly_diff_aux n (h::t) = &n * h::poly_diff_aux (SUC n) t
+   
+   [<a name="poly_diff_def-val"><b>poly_diff_def</b></a>]  Definition
+      
+      ⊢ ∀l. diff l = if l = [] then [] else poly_diff_aux 1 (TL l)
+   
+   [<a name="poly_divides-val"><b>poly_divides</b></a>]  Definition
+      
+      ⊢ ∀p1 p2. p1 poly_divides p2 ⇔ ∃q. poly p2 = poly (p1 * q)
+   
+   [<a name="poly_exp_def-val"><b>poly_exp_def</b></a>]  Definition
+      
+      ⊢ (∀p. p poly_exp 0 = [1]) ∧
+        ∀p n. p poly_exp SUC n = p * p poly_exp n
+   
+   [<a name="poly_mul_def-val"><b>poly_mul_def</b></a>]  Definition
+      
+      ⊢ (∀l2. [] * l2 = []) ∧
+        ∀h t l2.
+          (h::t) * l2 = if t = [] then h ## l2 else h ## l2 + (0::t * l2)
+   
+   [<a name="poly_neg_def-val"><b>poly_neg_def</b></a>]  Definition
+      
+      ⊢ $~ = $## (-1)
+   
+   [<a name="poly_order-val"><b>poly_order</b></a>]  Definition
+      
+      ⊢ ∀a p.
+          poly_order a p =
+          @n. [-a; 1] poly_exp n poly_divides p ∧
+              ¬([-a; 1] poly_exp SUC n poly_divides p)
+   
+   [<a name="rsquarefree-val"><b>rsquarefree</b></a>]  Definition
+      
+      ⊢ ∀p. rsquarefree p ⇔
+            poly p ≠ poly [] ∧
+            ∀a. (poly_order a p = 0) ∨ (poly_order a p = 1)
+   
+   [<a name="DEGREE_ZERO-val"><b>DEGREE_ZERO</b></a>]  Theorem
+      
+      ⊢ ∀p. (poly p = poly []) ⇒ (degree p = 0)
+   
+   [<a name="FINITE_LEMMA-val"><b>FINITE_LEMMA</b></a>]  Theorem
+      
+      ⊢ ∀i N P. (∀x. P x ⇒ ∃n. n &lt; N ∧ (x = i n)) ⇒ ∃a. ∀x. P x ⇒ x &lt; a
+   
+   [<a name="ORDER-val"><b>ORDER</b></a>]  Theorem
+      
+      ⊢ ∀p a n.
+          [-a; 1] poly_exp n poly_divides p ∧
+          ¬([-a; 1] poly_exp SUC n poly_divides p) ⇔
+          (n = poly_order a p) ∧ poly p ≠ poly []
+   
+   [<a name="ORDER_DECOMP-val"><b>ORDER_DECOMP</b></a>]  Theorem
+      
+      ⊢ ∀p a.
+          poly p ≠ poly [] ⇒
+          ∃q. (poly p = poly ([-a; 1] poly_exp poly_order a p * q)) ∧
+              ¬([-a; 1] poly_divides q)
+   
+   [<a name="ORDER_DIFF-val"><b>ORDER_DIFF</b></a>]  Theorem
+      
+      ⊢ ∀p a.
+          poly (diff p) ≠ poly [] ∧ poly_order a p ≠ 0 ⇒
+          (poly_order a p = SUC (poly_order a (diff p)))
+   
+   [<a name="ORDER_DIVIDES-val"><b>ORDER_DIVIDES</b></a>]  Theorem
+      
+      ⊢ ∀p a n.
+          [-a; 1] poly_exp n poly_divides p ⇔
+          (poly p = poly []) ∨ n ≤ poly_order a p
+   
+   [<a name="ORDER_MUL-val"><b>ORDER_MUL</b></a>]  Theorem
+      
+      ⊢ ∀a p q.
+          poly (p * q) ≠ poly [] ⇒
+          (poly_order a (p * q) = poly_order a p + poly_order a q)
+   
+   [<a name="ORDER_POLY-val"><b>ORDER_POLY</b></a>]  Theorem
+      
+      ⊢ ∀p q a. (poly p = poly q) ⇒ (poly_order a p = poly_order a q)
+   
+   [<a name="ORDER_ROOT-val"><b>ORDER_ROOT</b></a>]  Theorem
+      
+      ⊢ ∀p a. (poly p a = 0) ⇔ (poly p = poly []) ∨ poly_order a p ≠ 0
+   
+   [<a name="ORDER_THM-val"><b>ORDER_THM</b></a>]  Theorem
+      
+      ⊢ ∀p a.
+          poly p ≠ poly [] ⇒
+          [-a; 1] poly_exp poly_order a p poly_divides p ∧
+          ¬([-a; 1] poly_exp SUC (poly_order a p) poly_divides p)
+   
+   [<a name="ORDER_UNIQUE-val"><b>ORDER_UNIQUE</b></a>]  Theorem
+      
+      ⊢ ∀p a n.
+          poly p ≠ poly [] ∧ [-a; 1] poly_exp n poly_divides p ∧
+          ¬([-a; 1] poly_exp SUC n poly_divides p) ⇒
+          (n = poly_order a p)
+   
+   [<a name="POLY_ADD-val"><b>POLY_ADD</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2 x. poly (p1 + p2) x = poly p1 x + poly p2 x
+   
+   [<a name="POLY_ADD_CLAUSES-val"><b>POLY_ADD_CLAUSES</b></a>]  Theorem
+      
+      ⊢ ([] + p2 = p2) ∧ (p1 + [] = p1) ∧
+        ((h1::t1) + (h2::t2) = h1 + h2::t1 + t2)
+   
+   [<a name="POLY_ADD_RZERO-val"><b>POLY_ADD_RZERO</b></a>]  Theorem
+      
+      ⊢ ∀p. poly (p + []) = poly p
+   
+   [<a name="POLY_CMUL-val"><b>POLY_CMUL</b></a>]  Theorem
+      
+      ⊢ ∀p c x. poly (c ## p) x = c * poly p x
+   
+   [<a name="POLY_CMUL_CLAUSES-val"><b>POLY_CMUL_CLAUSES</b></a>]  Theorem
+      
+      ⊢ (c ## [] = []) ∧ (c ## (h::t) = c * h::c ## t)
+   
+   [<a name="POLY_CONT-val"><b>POLY_CONT</b></a>]  Theorem
+      
+      ⊢ ∀l x. (λx. poly l x) contl x
+   
+   [<a name="POLY_DIFF-val"><b>POLY_DIFF</b></a>]  Theorem
+      
+      ⊢ ∀l x. ((λx. poly l x) diffl poly (diff l) x) x
+   
+   [<a name="POLY_DIFFERENTIABLE-val"><b>POLY_DIFFERENTIABLE</b></a>]  Theorem
+      
+      ⊢ ∀l x. (λx. poly l x) differentiable x
+   
+   [<a name="POLY_DIFF_ADD-val"><b>POLY_DIFF_ADD</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2. poly (diff (p1 + p2)) = poly (diff p1 + diff p2)
+   
+   [<a name="POLY_DIFF_AUX_ADD-val"><b>POLY_DIFF_AUX_ADD</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2 n.
+          poly (poly_diff_aux n (p1 + p2)) =
+          poly (poly_diff_aux n p1 + poly_diff_aux n p2)
+   
+   [<a name="POLY_DIFF_AUX_CMUL-val"><b>POLY_DIFF_AUX_CMUL</b></a>]  Theorem
+      
+      ⊢ ∀p c n.
+          poly (poly_diff_aux n (c ## p)) = poly (c ## poly_diff_aux n p)
+   
+   [<a name="POLY_DIFF_AUX_ISZERO-val"><b>POLY_DIFF_AUX_ISZERO</b></a>]  Theorem
+      
+      ⊢ ∀p n.
+          EVERY (λc. c = 0) (poly_diff_aux (SUC n) p) ⇔ EVERY (λc. c = 0) p
+   
+   [<a name="POLY_DIFF_AUX_MUL_LEMMA-val"><b>POLY_DIFF_AUX_MUL_LEMMA</b></a>]  Theorem
+      
+      ⊢ ∀p n. poly (poly_diff_aux (SUC n) p) = poly (poly_diff_aux n p + p)
+   
+   [<a name="POLY_DIFF_AUX_NEG-val"><b>POLY_DIFF_AUX_NEG</b></a>]  Theorem
+      
+      ⊢ ∀p n. poly (poly_diff_aux n (~p)) = poly (~poly_diff_aux n p)
+   
+   [<a name="POLY_DIFF_CLAUSES-val"><b>POLY_DIFF_CLAUSES</b></a>]  Theorem
+      
+      ⊢ (diff [] = []) ∧ (diff [c] = []) ∧
+        (diff (h::t) = poly_diff_aux 1 t)
+   
+   [<a name="POLY_DIFF_CMUL-val"><b>POLY_DIFF_CMUL</b></a>]  Theorem
+      
+      ⊢ ∀p c. poly (diff (c ## p)) = poly (c ## diff p)
+   
+   [<a name="POLY_DIFF_EXP-val"><b>POLY_DIFF_EXP</b></a>]  Theorem
+      
+      ⊢ ∀p n.
+          poly (diff (p poly_exp SUC n)) =
+          poly (&SUC n ## p poly_exp n * diff p)
+   
+   [<a name="POLY_DIFF_EXP_PRIME-val"><b>POLY_DIFF_EXP_PRIME</b></a>]  Theorem
+      
+      ⊢ ∀n a.
+          poly (diff ([-a; 1] poly_exp SUC n)) =
+          poly (&SUC n ## [-a; 1] poly_exp n)
+   
+   [<a name="POLY_DIFF_ISZERO-val"><b>POLY_DIFF_ISZERO</b></a>]  Theorem
+      
+      ⊢ ∀p. (poly (diff p) = poly []) ⇒ ∃h. poly p = poly [h]
+   
+   [<a name="POLY_DIFF_LEMMA-val"><b>POLY_DIFF_LEMMA</b></a>]  Theorem
+      
+      ⊢ ∀l n x.
+          ((λx. x pow SUC n * poly l x) diffl
+           (x pow n * poly (poly_diff_aux (SUC n) l) x)) x
+   
+   [<a name="POLY_DIFF_MUL-val"><b>POLY_DIFF_MUL</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2. poly (diff (p1 * p2)) = poly (p1 * diff p2 + diff p1 * p2)
+   
+   [<a name="POLY_DIFF_MUL_LEMMA-val"><b>POLY_DIFF_MUL_LEMMA</b></a>]  Theorem
+      
+      ⊢ ∀t h. poly (diff (h::t)) = poly ((0::diff t) + t)
+   
+   [<a name="POLY_DIFF_NEG-val"><b>POLY_DIFF_NEG</b></a>]  Theorem
+      
+      ⊢ ∀p. poly (diff (~p)) = poly (~diff p)
+   
+   [<a name="POLY_DIFF_WELLDEF-val"><b>POLY_DIFF_WELLDEF</b></a>]  Theorem
+      
+      ⊢ ∀p q. (poly p = poly q) ⇒ (poly (diff p) = poly (diff q))
+   
+   [<a name="POLY_DIFF_ZERO-val"><b>POLY_DIFF_ZERO</b></a>]  Theorem
+      
+      ⊢ ∀p. (poly p = poly []) ⇒ (poly (diff p) = poly [])
+   
+   [<a name="POLY_DIVIDES_ADD-val"><b>POLY_DIVIDES_ADD</b></a>]  Theorem
+      
+      ⊢ ∀p q r. p poly_divides q ∧ p poly_divides r ⇒ p poly_divides q + r
+   
+   [<a name="POLY_DIVIDES_EXP-val"><b>POLY_DIVIDES_EXP</b></a>]  Theorem
+      
+      ⊢ ∀p m n. m ≤ n ⇒ p poly_exp m poly_divides p poly_exp n
+   
+   [<a name="POLY_DIVIDES_REFL-val"><b>POLY_DIVIDES_REFL</b></a>]  Theorem
+      
+      ⊢ ∀p. p poly_divides p
+   
+   [<a name="POLY_DIVIDES_SUB-val"><b>POLY_DIVIDES_SUB</b></a>]  Theorem
+      
+      ⊢ ∀p q r. p poly_divides q ∧ p poly_divides q + r ⇒ p poly_divides r
+   
+   [<a name="POLY_DIVIDES_SUB2-val"><b>POLY_DIVIDES_SUB2</b></a>]  Theorem
+      
+      ⊢ ∀p q r. p poly_divides r ∧ p poly_divides q + r ⇒ p poly_divides q
+   
+   [<a name="POLY_DIVIDES_TRANS-val"><b>POLY_DIVIDES_TRANS</b></a>]  Theorem
+      
+      ⊢ ∀p q r. p poly_divides q ∧ q poly_divides r ⇒ p poly_divides r
+   
+   [<a name="POLY_DIVIDES_ZERO-val"><b>POLY_DIVIDES_ZERO</b></a>]  Theorem
+      
+      ⊢ ∀p q. (poly p = poly []) ⇒ q poly_divides p
+   
+   [<a name="POLY_ENTIRE-val"><b>POLY_ENTIRE</b></a>]  Theorem
+      
+      ⊢ ∀p q.
+          (poly (p * q) = poly []) ⇔
+          (poly p = poly []) ∨ (poly q = poly [])
+   
+   [<a name="POLY_ENTIRE_LEMMA-val"><b>POLY_ENTIRE_LEMMA</b></a>]  Theorem
+      
+      ⊢ ∀p q. poly p ≠ poly [] ∧ poly q ≠ poly [] ⇒ poly (p * q) ≠ poly []
+   
+   [<a name="POLY_EXP-val"><b>POLY_EXP</b></a>]  Theorem
+      
+      ⊢ ∀p n x. poly (p poly_exp n) x = poly p x pow n
+   
+   [<a name="POLY_EXP_ADD-val"><b>POLY_EXP_ADD</b></a>]  Theorem
+      
+      ⊢ ∀d n p.
+          poly (p poly_exp (n + d)) = poly (p poly_exp n * p poly_exp d)
+   
+   [<a name="POLY_EXP_DIVIDES-val"><b>POLY_EXP_DIVIDES</b></a>]  Theorem
+      
+      ⊢ ∀p q m n.
+          p poly_exp n poly_divides q ∧ m ≤ n ⇒ p poly_exp m poly_divides q
+   
+   [<a name="POLY_EXP_EQ_0-val"><b>POLY_EXP_EQ_0</b></a>]  Theorem
+      
+      ⊢ ∀p n. (poly (p poly_exp n) = poly []) ⇔ (poly p = poly []) ∧ n ≠ 0
+   
+   [<a name="POLY_EXP_PRIME_EQ_0-val"><b>POLY_EXP_PRIME_EQ_0</b></a>]  Theorem
+      
+      ⊢ ∀a n. poly ([a; 1] poly_exp n) ≠ poly []
+   
+   [<a name="POLY_IVT_NEG-val"><b>POLY_IVT_NEG</b></a>]  Theorem
+      
+      ⊢ ∀p a b.
+          a &lt; b ∧ poly p a &gt; 0 ∧ poly p b &lt; 0 ⇒
+          ∃x. a &lt; x ∧ x &lt; b ∧ (poly p x = 0)
+   
+   [<a name="POLY_IVT_POS-val"><b>POLY_IVT_POS</b></a>]  Theorem
+      
+      ⊢ ∀p a b.
+          a &lt; b ∧ poly p a &lt; 0 ∧ poly p b &gt; 0 ⇒
+          ∃x. a &lt; x ∧ x &lt; b ∧ (poly p x = 0)
+   
+   [<a name="POLY_LENGTH_MUL-val"><b>POLY_LENGTH_MUL</b></a>]  Theorem
+      
+      ⊢ ∀q. LENGTH ([-a; 1] * q) = SUC (LENGTH q)
+   
+   [<a name="POLY_LINEAR_DIVIDES-val"><b>POLY_LINEAR_DIVIDES</b></a>]  Theorem
+      
+      ⊢ ∀a p. (poly p a = 0) ⇔ (p = []) ∨ ∃q. p = [-a; 1] * q
+   
+   [<a name="POLY_LINEAR_REM-val"><b>POLY_LINEAR_REM</b></a>]  Theorem
+      
+      ⊢ ∀t h. ∃q r. h::t = [r] + [-a; 1] * q
+   
+   [<a name="POLY_MONO-val"><b>POLY_MONO</b></a>]  Theorem
+      
+      ⊢ ∀x k p. abs x ≤ k ⇒ abs (poly p x) ≤ poly (MAP abs p) k
+   
+   [<a name="POLY_MUL-val"><b>POLY_MUL</b></a>]  Theorem
+      
+      ⊢ ∀x p1 p2. poly (p1 * p2) x = poly p1 x * poly p2 x
+   
+   [<a name="POLY_MUL_ASSOC-val"><b>POLY_MUL_ASSOC</b></a>]  Theorem
+      
+      ⊢ ∀p q r. poly (p * (q * r)) = poly (p * q * r)
+   
+   [<a name="POLY_MUL_CLAUSES-val"><b>POLY_MUL_CLAUSES</b></a>]  Theorem
+      
+      ⊢ ([] * p2 = []) ∧ ([h1] * p2 = h1 ## p2) ∧
+        ((h1::k1::t1) * p2 = h1 ## p2 + (0::(k1::t1) * p2))
+   
+   [<a name="POLY_MUL_LCANCEL-val"><b>POLY_MUL_LCANCEL</b></a>]  Theorem
+      
+      ⊢ ∀p q r.
+          (poly (p * q) = poly (p * r)) ⇔
+          (poly p = poly []) ∨ (poly q = poly r)
+   
+   [<a name="POLY_MVT-val"><b>POLY_MVT</b></a>]  Theorem
+      
+      ⊢ ∀p a b.
+          a &lt; b ⇒
+          ∃x. a &lt; x ∧ x &lt; b ∧
+              (poly p b − poly p a = (b − a) * poly (diff p) x)
+   
+   [<a name="POLY_NEG-val"><b>POLY_NEG</b></a>]  Theorem
+      
+      ⊢ ∀p x. poly (~p) x = -poly p x
+   
+   [<a name="POLY_NEG_CLAUSES-val"><b>POLY_NEG_CLAUSES</b></a>]  Theorem
+      
+      ⊢ (~[] = []) ∧ (~(h::t) = -h::~t)
+   
+   [<a name="POLY_NORMALIZE-val"><b>POLY_NORMALIZE</b></a>]  Theorem
+      
+      ⊢ ∀p. poly (normalize p) = poly p
+   
+   [<a name="POLY_ORDER-val"><b>POLY_ORDER</b></a>]  Theorem
+      
+      ⊢ ∀p a.
+          poly p ≠ poly [] ⇒
+          ∃!n.
+            [-a; 1] poly_exp n poly_divides p ∧
+            ¬([-a; 1] poly_exp SUC n poly_divides p)
+   
+   [<a name="POLY_ORDER_EXISTS-val"><b>POLY_ORDER_EXISTS</b></a>]  Theorem
+      
+      ⊢ ∀a d p.
+          (LENGTH p = d) ∧ poly p ≠ poly [] ⇒
+          ∃n. [-a; 1] poly_exp n poly_divides p ∧
+              ¬([-a; 1] poly_exp SUC n poly_divides p)
+   
+   [<a name="POLY_PRIMES-val"><b>POLY_PRIMES</b></a>]  Theorem
+      
+      ⊢ ∀a p q.
+          [a; 1] poly_divides p * q ⇔
+          [a; 1] poly_divides p ∨ [a; 1] poly_divides q
+   
+   [<a name="POLY_PRIME_EQ_0-val"><b>POLY_PRIME_EQ_0</b></a>]  Theorem
+      
+      ⊢ ∀a. poly [a; 1] ≠ poly []
+   
+   [<a name="POLY_ROOTS_FINITE-val"><b>POLY_ROOTS_FINITE</b></a>]  Theorem
+      
+      ⊢ ∀p. poly p ≠ poly [] ⇔
+            ∃N i. ∀x. (poly p x = 0) ⇒ ∃n. n &lt; N ∧ (x = i n)
+   
+   [<a name="POLY_ROOTS_FINITE_LEMMA-val"><b>POLY_ROOTS_FINITE_LEMMA</b></a>]  Theorem
+      
+      ⊢ ∀p. poly p ≠ poly [] ⇒
+            ∃N i. ∀x. (poly p x = 0) ⇒ ∃n. n &lt; N ∧ (x = i n)
+   
+   [<a name="POLY_ROOTS_FINITE_SET-val"><b>POLY_ROOTS_FINITE_SET</b></a>]  Theorem
+      
+      ⊢ ∀p. poly p ≠ poly [] ⇒ FINITE {x | poly p x = 0}
+   
+   [<a name="POLY_ROOTS_INDEX_LEMMA-val"><b>POLY_ROOTS_INDEX_LEMMA</b></a>]  Theorem
+      
+      ⊢ ∀n p.
+          poly p ≠ poly [] ∧ (LENGTH p = n) ⇒
+          ∃i. ∀x. (poly p x = 0) ⇒ ∃m. m ≤ n ∧ (x = i m)
+   
+   [<a name="POLY_ROOTS_INDEX_LENGTH-val"><b>POLY_ROOTS_INDEX_LENGTH</b></a>]  Theorem
+      
+      ⊢ ∀p. poly p ≠ poly [] ⇒
+            ∃i. ∀x. (poly p x = 0) ⇒ ∃n. n ≤ LENGTH p ∧ (x = i n)
+   
+   [<a name="POLY_SQUAREFREE_DECOMP-val"><b>POLY_SQUAREFREE_DECOMP</b></a>]  Theorem
+      
+      ⊢ ∀p q d e r s.
+          poly (diff p) ≠ poly [] ∧ (poly p = poly (q * d)) ∧
+          (poly (diff p) = poly (e * d)) ∧
+          (poly d = poly (r * p + s * diff p)) ⇒
+          rsquarefree q ∧ ∀a. (poly q a = 0) ⇔ (poly p a = 0)
+   
+   [<a name="POLY_SQUAREFREE_DECOMP_ORDER-val"><b>POLY_SQUAREFREE_DECOMP_ORDER</b></a>]  Theorem
+      
+      ⊢ ∀p q d e r s.
+          poly (diff p) ≠ poly [] ∧ (poly p = poly (q * d)) ∧
+          (poly (diff p) = poly (e * d)) ∧
+          (poly d = poly (r * p + s * diff p)) ⇒
+          ∀a. poly_order a q = if poly_order a p = 0 then 0 else 1
+   
+   [<a name="POLY_ZERO-val"><b>POLY_ZERO</b></a>]  Theorem
+      
+      ⊢ ∀p. (poly p = poly []) ⇔ EVERY (λc. c = 0) p
+   
+   [<a name="POLY_ZERO_LEMMA-val"><b>POLY_ZERO_LEMMA</b></a>]  Theorem
+      
+      ⊢ ∀h t. (poly (h::t) = poly []) ⇒ (h = 0) ∧ (poly t = poly [])
+   
+   [<a name="RSQUAREFREE_DECOMP-val"><b>RSQUAREFREE_DECOMP</b></a>]  Theorem
+      
+      ⊢ ∀p a.
+          rsquarefree p ∧ (poly p a = 0) ⇒
+          ∃q. (poly p = poly ([-a; 1] * q)) ∧ poly q a ≠ 0
+   
+   [<a name="RSQUAREFREE_ROOTS-val"><b>RSQUAREFREE_ROOTS</b></a>]  Theorem
+      
+      ⊢ ∀p. rsquarefree p ⇔ ∀a. ¬((poly p a = 0) ∧ (poly (diff p) a = 0))
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/real/analysis/polyScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

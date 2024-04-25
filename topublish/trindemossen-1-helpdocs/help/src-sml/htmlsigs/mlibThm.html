@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure mlibThm</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure mlibThm</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibThm.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ========================================================================= *)
+<a name="line2"></a>(* INTERFACE TO THE LCF-STYLE LOGICAL KERNEL, PLUS SOME DERIVED RULES        *)
+<a name="line3"></a>(* Copyright (c) 2001-2004 Joe Hurd.                                         *)
+<a name="line4"></a>(* ========================================================================= *)
+<a name="line5"></a>
+<a name="line6"></a>signature mlibThm =
+<a name="line7"></a>sig
+<a name="line8"></a>
+<a name="line9"></a>type 'a pp = 'a mlibUseful.pp
+<a name="line10"></a>
+<a name="line11"></a>include mlibKernel
+<a name="line12"></a>
+<a name="line13"></a>(* Annotated primitive inferences *)
+<a name="line14"></a>datatype inference' =
+<a name="line15"></a>  Axiom'    of formula list
+<a name="line16"></a>| Refl'     of term
+<a name="line17"></a>| Assume'   of formula
+<a name="line18"></a>| Inst'     of subst * thm
+<a name="line19"></a>| Factor'   of thm
+<a name="line20"></a>| Resolve'  of formula * thm * thm
+<a name="line21"></a>| Equality' of formula * int list * term * bool * thm
+<a name="line22"></a>
+<a name="line23"></a>val primitive_inference : inference' -&gt; thm
+<a name="line24"></a>
+<a name="line25"></a>(* User-friendly destructors *)
+<a name="line26"></a>val clause    : thm -&gt; formula list
+<a name="line27"></a>val inference : thm -&gt; inference'
+<a name="line28"></a>val proof     : thm -&gt; (thm * inference') list
+<a name="line29"></a>
+<a name="line30"></a>val dest_axiom : thm -&gt; formula list
+<a name="line31"></a>val is_axiom   : thm -&gt; bool
+<a name="line32"></a>
+<a name="line33"></a>(* Theorem operations *)
+<a name="line34"></a>val thm_compare : thm * thm -&gt; order
+<a name="line35"></a>val thm_map     : (thm * 'a list -&gt; 'a) -&gt; thm -&gt; 'a
+<a name="line36"></a>val thm_foldr   : (thm * 'a -&gt; 'a) -&gt; 'a -&gt; thm -&gt; 'a
+<a name="line37"></a>
+<a name="line38"></a>(* Contradictions and units *)
+<a name="line39"></a>val is_contradiction : thm -&gt; bool
+<a name="line40"></a>val dest_unit        : thm -&gt; formula
+<a name="line41"></a>val is_unit          : thm -&gt; bool
+<a name="line42"></a>val dest_unit_eq     : thm -&gt; term * term
+<a name="line43"></a>val is_unit_eq       : thm -&gt; bool
+<a name="line44"></a>
+<a name="line45"></a>(* Derived rules and theorems *)
+<a name="line46"></a>val CONTR          : formula -&gt; thm -&gt; thm
+<a name="line47"></a>val WEAKEN         : formula list -&gt; thm -&gt; thm
+<a name="line48"></a>val FRESH_VARS     : thm -&gt; thm
+<a name="line49"></a>val FRESH_VARSL    : thm list -&gt; thm list
+<a name="line50"></a>val UNIT_SQUASH    : thm -&gt; thm
+<a name="line51"></a>val REFLEXIVITY    : thm
+<a name="line52"></a>val SYMMETRY       : thm
+<a name="line53"></a>val TRANSITIVITY   : thm
+<a name="line54"></a>val FUN_CONGRUENCE : string * int -&gt; thm
+<a name="line55"></a>val REL_CONGRUENCE : string * int -&gt; thm
+<a name="line56"></a>val SYM            : formula -&gt; thm -&gt; thm
+<a name="line57"></a>val EQ_FACTOR      : thm -&gt; thm
+<a name="line58"></a>val REWR           : thm * bool -&gt; thm * formula * int list -&gt; thm
+<a name="line59"></a>val DEPTH1         : (term-&gt;thm*term*bool) -&gt; thm * formula -&gt; thm * formula
+<a name="line60"></a>val DEPTH          : (term-&gt;thm*term*bool) -&gt; thm -&gt; thm
+<a name="line61"></a>
+<a name="line62"></a>(* Converting to clauses *)
+<a name="line63"></a>val axiomatize : formula -&gt; thm list
+<a name="line64"></a>val eq_axioms  : formula -&gt; thm list
+<a name="line65"></a>val clauses    : formula -&gt; {thms : thm list, hyps : thm list}
+<a name="line66"></a>
+<a name="line67"></a>(* Pretty-printing of theorems and inferences *)
+<a name="line68"></a>val pp_thm               : thm pp
+<a name="line69"></a>val pp_inference         : inference pp
+<a name="line70"></a>val pp_inference'        : inference' pp
+<a name="line71"></a>val pp_proof             : (thm * inference') list pp
+<a name="line72"></a>val thm_to_string'       : int -&gt; thm -&gt; string        (* purely functional *)
+<a name="line73"></a>val inference_to_string' : int -&gt; inference' -&gt; string
+<a name="line74"></a>val proof_to_string'     : int -&gt; (thm * inference') list -&gt; string
+<a name="line75"></a>val thm_to_string        : thm -&gt; string               (* uses !LINE_LENGTH *)
+<a name="line76"></a>val inference_to_string  : inference' -&gt; string
+<a name="line77"></a>val proof_to_string      : (thm * inference') list -&gt; string
+<a name="line78"></a>
+<a name="line79"></a>end
+<a name="line80"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/mlibThm.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: ltree</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "ltree"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "alistTheory.html"><span class="strong">alist</span></a>&nbsp;&nbsp;
+    <a href = "llistTheory.html"><span class="strong">llist</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">ltree</span> <td> 1
+    <tr><td> <span class="strong">rose_tree</span> <td> 1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">Branch</span>
+    <td>
+    :α -> α ltree llist -> α ltree
+    <tr><td>
+    <span class="strong">Branch_rep</span>
+    <td>
+    :α -> (num list -> α # num option) llist -> num list -> α # num option
+    <tr><td>
+    <span class="strong">Rose</span>
+    <td>
+    :α -> α rose_tree list -> α rose_tree
+    <tr><td>
+    <span class="strong">dest_Branch_rep</span>
+    <td>
+    :(num list -> α # num option) -> α # (num list -> α # num option) llist
+    <tr><td>
+    <span class="strong">from_rose</span>
+    <td>
+    :α rose_tree -> α ltree
+    <tr><td>
+    <span class="strong">gen_ltree</span>
+    <td>
+    :(num list -> α # num option) -> α ltree
+    <tr><td>
+    <span class="strong">ltree_CASE</span>
+    <td>
+    :β ltree -> (β -> β ltree llist -> α) -> α
+    <tr><td>
+    <span class="strong">ltree_abs</span>
+    <td>
+    :(num list -> α # num option) -> α ltree
+    <tr><td>
+    <span class="strong">ltree_el</span>
+    <td>
+    :α ltree -> num list -> (α # num option) option
+    <tr><td> <span class="strong">ltree_finite</span> <td> :α ltree -> bool
+    <tr><td>
+    <span class="strong">ltree_lookup</span>
+    <td>
+    :α ltree -> num list -> α ltree option
+    <tr><td>
+    <span class="strong">ltree_map</span>
+    <td>
+    :(α -> β) -> α ltree -> β ltree
+    <tr><td>
+    <span class="strong">ltree_rel</span>
+    <td>
+    :(α -> β -> bool) -> α ltree -> β ltree -> bool
+    <tr><td>
+    <span class="strong">ltree_rep</span>
+    <td>
+    :α ltree -> num list -> α # num option
+    <tr><td>
+    <span class="strong">ltree_rep_ok</span>
+    <td>
+    :(num list -> α # num option) -> bool
+    <tr><td> <span class="strong">ltree_set</span> <td> :α ltree -> α -> bool
+    <tr><td>
+    <span class="strong">ltree_unfold</span>
+    <td>
+    :(β -> α # β llist) -> β -> α ltree
+    <tr><td>
+    <span class="strong">make_ltree_rep</span>
+    <td>
+    :(num list -> α # num option) -> num list -> α # num option
+    <tr><td>
+    <span class="strong">make_unfold</span>
+    <td>
+    :(β -> α # β llist) -> β -> num list -> α # num option
+    <tr><td>
+    <span class="strong">path_ok</span>
+    <td>
+    :num list -> (num list -> α # num option) -> bool
+    <tr><td>
+    <span class="strong">rose_tree1_size</span>
+    <td>
+    :(α -> num) -> α rose_tree list -> num
+    <tr><td>
+    <span class="strong">rose_tree_CASE</span>
+    <td>
+    :α rose_tree -> (α -> α rose_tree list -> β) -> β
+    <tr><td>
+    <span class="strong">rose_tree_size</span>
+    <td>
+    :(α -> num) -> α rose_tree -> num
+    <tr><td>
+    <span class="strong">subtrees</span>
+    <td>
+    :α ltree -> α ltree -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">ltree_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION ltree_rep_ok rep
+</pre>
+
+<DT><span class="strong">ltree_map_def</span>
+<DD>
+<pre>
+⊢ ∀f. ltree_map f = ltree_unfold (λt. case t of Branch a ts => (f a,ts))
+</pre>
+
+<DT><span class="strong">ltree_rel_def</span>
+<DD>
+<pre>
+⊢ ∀R x y.
+    ltree_rel R x y ⇔
+    ∀path.
+      OPTREL (λx y. R (FST x) (FST y) ∧ (SND x = SND y)) (ltree_el x path)
+        (ltree_el y path)
+</pre>
+
+<DT><span class="strong">ltree_set_def</span>
+<DD>
+<pre>
+⊢ ∀t. ltree_set t = {a | ∃ts. Branch a ts ∈ subtrees t}
+</pre>
+
+<DT><span class="strong">rose_tree_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep.
+    TYPE_DEFINITION
+      (λa0'.
+           ∀ $var$('rose_tree') $var$('@temp @ind_typeltree0list').
+             (∀a0'.
+                (∃a0 a1.
+                   (a0' =
+                    (λa0 a1.
+                         ind_type$CONSTR 0 a0
+                           (ind_type$FCONS a1 (λn. ind_type$BOTTOM))) a0 a1) ∧
+                   $var$('@temp @ind_typeltree0list') a1) ⇒
+                $var$('rose_tree') a0') ∧
+             (∀a1'.
+                (a1' = ind_type$CONSTR (SUC 0) ARB (λn. ind_type$BOTTOM)) ∨
+                (∃a0 a1.
+                   (a1' =
+                    (λa0 a1.
+                         ind_type$CONSTR (SUC (SUC 0)) ARB
+                           (ind_type$FCONS a0
+                              (ind_type$FCONS a1 (λn. ind_type$BOTTOM)))) a0
+                      a1) ∧ $var$('rose_tree') a0 ∧
+                   $var$('@temp @ind_typeltree0list') a1) ⇒
+                $var$('@temp @ind_typeltree0list') a1') ⇒
+             $var$('rose_tree') a0') rep
+</pre>
+
+<DT><span class="strong">rose_tree_case_def</span>
+<DD>
+<pre>
+⊢ ∀a0 a1 f. rose_tree_CASE (Rose a0 a1) f = f a0 a1
+</pre>
+
+<DT><span class="strong">rose_tree_size_def</span>
+<DD>
+<pre>
+⊢ (∀f a0 a1. rose_tree_size f (Rose a0 a1) = 1 + (f a0 + rose_tree1_size f a1)) ∧
+  (∀f. rose_tree1_size f [] = 0) ∧
+  ∀f a0 a1.
+    rose_tree1_size f (a0::a1) =
+    1 + (rose_tree_size f a0 + rose_tree1_size f a1)
+</pre>
+
+<DT><span class="strong">subtrees_def</span>
+<DD>
+<pre>
+⊢ ∀t. subtrees t = {u | ∃path. ltree_lookup t path = SOME u}
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">Branch_11</span>
+<DD>
+<pre>
+⊢ ∀a1 a2 ts1 ts2. (Branch a1 ts1 = Branch a2 ts2) ⇔ (a1 = a2) ∧ (ts1 = ts2)
+</pre>
+
+<DT><span class="strong">datatype_ltree</span>
+<DD>
+<pre>
+⊢ DATATYPE (ltree Branch)
+</pre>
+
+<DT><span class="strong">datatype_rose_tree</span>
+<DD>
+<pre>
+⊢ DATATYPE (rose_tree Rose)
+</pre>
+
+<DT><span class="strong">from_rose_def</span>
+<DD>
+<pre>
+⊢ ∀ts a.
+    from_rose (Rose a ts) = Branch a (fromList (MAP (λa'. from_rose a') ts))
+</pre>
+
+<DT><span class="strong">from_rose_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a ts. (∀a'. MEM a' ts ⇒ P a') ⇒ P (Rose a ts)) ⇒ ∀v. P v
+</pre>
+
+<DT><span class="strong">gen_ltree</span>
+<DD>
+<pre>
+⊢ gen_ltree f =
+  (let
+     (a,len) = f []
+   in
+     Branch a (LGENLIST (λn. gen_ltree (λpath. f (n::path))) len))
+</pre>
+
+<DT><span class="strong">gen_ltree_LNIL</span>
+<DD>
+<pre>
+⊢ (gen_ltree f = Branch a [||]) ⇔ (f [] = (a,SOME 0))
+</pre>
+
+<DT><span class="strong">ltree_CASE</span>
+<DD>
+<pre>
+⊢ ltree_CASE (Branch a ts) f = f a ts
+</pre>
+
+<DT><span class="strong">ltree_CASE_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' f f'.
+    (M = M') ∧ (∀a ts. (M' = Branch a ts) ⇒ (f a ts = f' a ts)) ⇒
+    (ltree_CASE M f = ltree_CASE M' f')
+</pre>
+
+<DT><span class="strong">ltree_CASE_eq</span>
+<DD>
+<pre>
+⊢ (ltree_CASE t f = v) ⇔ ∃a ts. (t = Branch a ts) ∧ (f a ts = v)
+</pre>
+
+<DT><span class="strong">ltree_bisimulation</span>
+<DD>
+<pre>
+⊢ ∀t1 t2.
+    (t1 = t2) ⇔
+    ∃R. R t1 t2 ∧
+        ∀a ts a' ts'.
+          R (Branch a ts) (Branch a' ts') ⇒ (a = a') ∧ llist_rel R ts ts'
+</pre>
+
+<DT><span class="strong">ltree_cases</span>
+<DD>
+<pre>
+⊢ ∀t. ∃a ts. t = Branch a ts
+</pre>
+
+<DT><span class="strong">ltree_el_def</span>
+<DD>
+<pre>
+⊢ (ltree_el (Branch a ts) [] = SOME (a,LLENGTH ts)) ∧
+  (ltree_el (Branch a ts) (n::ns) =
+   case LNTH n ts of NONE => NONE | SOME t => ltree_el t ns)
+</pre>
+
+<DT><span class="strong">ltree_el_eqv</span>
+<DD>
+<pre>
+⊢ ∀t1 t2. (t1 = t2) ⇔ ∀path. ltree_el t1 path = ltree_el t2 path
+</pre>
+
+<DT><span class="strong">ltree_finite</span>
+<DD>
+<pre>
+⊢ ltree_finite (Branch a ts) ⇔ LFINITE ts ∧ ∀t. t ∈ LSET ts ⇒ ltree_finite t
+</pre>
+
+<DT><span class="strong">ltree_finite_cases</span>
+<DD>
+<pre>
+⊢ ∀a0.
+    ltree_finite a0 ⇔
+    ∃a ts. (a0 = Branch a (fromList ts)) ∧ EVERY ltree_finite ts
+</pre>
+
+<DT><span class="strong">ltree_finite_from_rose</span>
+<DD>
+<pre>
+⊢ ltree_finite t ⇔ ∃r. from_rose r = t
+</pre>
+
+<DT><span class="strong">ltree_finite_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a ts. EVERY P ts ⇒ P (Branch a (fromList ts))) ⇒
+      ∀t. ltree_finite t ⇒ P t
+</pre>
+
+<DT><span class="strong">ltree_finite_rules</span>
+<DD>
+<pre>
+⊢ ∀a ts. EVERY ltree_finite ts ⇒ ltree_finite (Branch a (fromList ts))
+</pre>
+
+<DT><span class="strong">ltree_finite_strongind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a ts.
+         EVERY (λa0. ltree_finite a0 ∧ P a0) ts ⇒ P (Branch a (fromList ts))) ⇒
+      ∀t. ltree_finite t ⇒ P t
+</pre>
+
+<DT><span class="strong">ltree_lookup_def</span>
+<DD>
+<pre>
+⊢ (ltree_lookup t [] = SOME t) ∧
+  (ltree_lookup (Branch a ts) (n::ns) =
+   case LNTH n ts of NONE => NONE | SOME t => ltree_lookup t ns)
+</pre>
+
+<DT><span class="strong">ltree_map</span>
+<DD>
+<pre>
+⊢ ltree_map f (Branch a xs) = Branch (f a) (LMAP (ltree_map f) xs)
+</pre>
+
+<DT><span class="strong">ltree_map_id</span>
+<DD>
+<pre>
+⊢ ltree_map I t = t
+</pre>
+
+<DT><span class="strong">ltree_map_map</span>
+<DD>
+<pre>
+⊢ ltree_map f (ltree_map g t) = ltree_map (f ∘ g) t
+</pre>
+
+<DT><span class="strong">ltree_rel</span>
+<DD>
+<pre>
+⊢ ltree_rel R (Branch a ts) (Branch b us) ⇔
+  R a b ∧ llist_rel (ltree_rel R) ts us
+</pre>
+
+<DT><span class="strong">ltree_rel_O</span>
+<DD>
+<pre>
+⊢ ltree_rel R1 ∘ᵣ ltree_rel R2 ⊆ᵣ ltree_rel (R1 ∘ᵣ R2)
+</pre>
+
+<DT><span class="strong">ltree_rel_eq</span>
+<DD>
+<pre>
+⊢ ltree_rel $= x y ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">ltree_set</span>
+<DD>
+<pre>
+⊢ ltree_set (Branch a ts) = a INSERT BIGUNION (IMAGE ltree_set (LSET ts))
+</pre>
+
+<DT><span class="strong">ltree_set_map</span>
+<DD>
+<pre>
+⊢ ltree_set (ltree_map f t) = IMAGE f (ltree_set t)
+</pre>
+
+<DT><span class="strong">ltree_unfold</span>
+<DD>
+<pre>
+⊢ ltree_unfold f seed =
+  (let (a,seeds) = f seed in Branch a (LMAP (ltree_unfold f) seeds))
+</pre>
+
+<DT><span class="strong">rose_tree_11</span>
+<DD>
+<pre>
+⊢ ∀a0 a1 a0' a1'. (Rose a0 a1 = Rose a0' a1') ⇔ (a0 = a0') ∧ (a1 = a1')
+</pre>
+
+<DT><span class="strong">rose_tree_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f0 f1 f2. ∃fn0 fn1.
+    (∀a0 a1. fn0 (Rose a0 a1) = f0 a0 a1 (fn1 a1)) ∧ (fn1 [] = f1) ∧
+    ∀a0 a1. fn1 (a0::a1) = f2 a0 a1 (fn0 a0) (fn1 a1)
+</pre>
+
+<DT><span class="strong">rose_tree_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' f.
+    (M = M') ∧ (∀a0 a1. (M' = Rose a0 a1) ⇒ (f a0 a1 = f' a0 a1)) ⇒
+    (rose_tree_CASE M f = rose_tree_CASE M' f')
+</pre>
+
+<DT><span class="strong">rose_tree_case_eq</span>
+<DD>
+<pre>
+⊢ (rose_tree_CASE x f = v) ⇔ ∃a l. (x = Rose a l) ∧ (f a l = v)
+</pre>
+
+<DT><span class="strong">rose_tree_induction</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a ts. (∀a'. MEM a' ts ⇒ P a') ⇒ P (Rose a ts)) ⇒ ∀v. P v
+</pre>
+
+<DT><span class="strong">rose_tree_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀rr. ∃a l. rr = Rose a l
+</pre>
+
+<DT><span class="strong">rose_tree_size_eq</span>
+<DD>
+<pre>
+⊢ rose_tree1_size f = list_size (rose_tree_size f)
+</pre>
+
+<DT><span class="strong">subtrees</span>
+<DD>
+<pre>
+⊢ subtrees (Branch a ts) =
+  Branch a ts INSERT BIGUNION (IMAGE subtrees (LSET ts))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>smlExecScripts.exec_script</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>exec_script : string -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/smlExecScripts.html">smlExecScripts</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Execute the script given in the file </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The script is executed only for its side effects.
+The execution standard out is redirected to
+</SPAN><SPAN class = "BRKT">src/AI/sml_inspection/buildheap/buildheap_yourscript</SPAN><SPAN class = "TEXT"> where yourscript is
+the basename of </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> without extension. This file is worth expecting to debug
+uncaught errors.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- load "aiLib"; open aiLib;
+- load "smlExecScripts"; open smlExecScripts;
+(* output omitted *)
+&gt; val it = () : unit
+
+val dir = HOLDIR ^ "/src/AI/sml_inspection"; (* user can choose *)
+val scriptin = dir ^ "/script.sml";
+val scriptout = dir ^ "/script-out";
+(* output omitted *)
+
+- writel scriptin
+  ["load \"aiLib\"; open aiLib;",
+   String.concatWith " " ["writel", mlquote scriptout, "[\"hello world!\"]"]];
+&gt; val it = (): unit
+
+- exec_script scriptin;
+&gt; val it = (): unit
+
+- readl "script-out";
+&gt; val it = ["hello world!"]: string list
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">An Holmakefile might be placed in the same directory as the script to help
+</SPAN><SPAN class = "BRKT">exec_script</SPAN><SPAN class = "TEXT"> (</SPAN><SPAN class = "BRKT">heapname</SPAN><SPAN class = "TEXT">,</SPAN><SPAN class = "BRKT">genscriptdep</SPAN><SPAN class = "TEXT">) figure out the dependencies of the
+script. For example, a Holmakefile might include the line 
+</SPAN><SPAN class = "BRKT">INCLUDES&nbsp;=&nbsp;path-to-your-dependency</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "smlOpen.view_struct.html">view_struct</A>,
+<A HREF = "smlExecute.quse_string.html">quse_string</A>,
+<A HREF = "smlParallel.parmap_queue_extern.html">parmap_queue_extern</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

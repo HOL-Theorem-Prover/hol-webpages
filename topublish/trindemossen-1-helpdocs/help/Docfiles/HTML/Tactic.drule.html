@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactic.drule</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>drule : thm -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactic.html">Tactic</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Performs one step of resolution (or modus ponens) against implication theorem.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If theorem </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is of the form </SPAN><SPAN class = "BRKT">A&nbsp;|-&nbsp;t</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> is of the form
+</SPAN><SPAN class = "BRKT">!x1..xn.&nbsp;P&nbsp;..&nbsp;/\&nbsp;...&nbsp;==&gt;&nbsp;Q</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">!x1..xn.&nbsp;P&nbsp;..&nbsp;==&gt;&nbsp;Q</SPAN><SPAN class = "TEXT">, then a call to
+</SPAN><SPAN class = "BRKT">drule&nbsp;th&nbsp;(asl,g)</SPAN><SPAN class = "TEXT"> looks for an assumption in </SPAN><SPAN class = "BRKT">asl</SPAN><SPAN class = "TEXT"> that matches the
+pattern </SPAN><SPAN class = "BRKT">P&nbsp;..</SPAN><SPAN class = "TEXT"> in </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">. It then performs instantiation of </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">&rsquo;s
+universally quantified and free variables, transforms any conjunctions
+on the left into a minimal number of chained implications, and calls
+</SPAN><SPAN class = "BRKT">MP</SPAN><SPAN class = "TEXT"> once to generate a consequent theorem </SPAN><SPAN class = "BRKT">A&nbsp;|-&nbsp;t'</SPAN><SPAN class = "TEXT">. This theorem is
+then passed to </SPAN><SPAN class = "BRKT">MP_TAC</SPAN><SPAN class = "TEXT">, turning the goal into </SPAN><SPAN class = "BRKT">(asl,&nbsp;t'&nbsp;==&gt;&nbsp;g)</SPAN><SPAN class = "TEXT">. (We
+assume that </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> is a subset of </SPAN><SPAN class = "BRKT">asl</SPAN><SPAN class = "TEXT">; otherwise the tactic is
+invalid.)</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">drule&nbsp;th&nbsp;(asl,g)</SPAN><SPAN class = "TEXT"> will fail if </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is not a (possibly
+universally quantified) implication (or negation), or if there are no
+assumptions in </SPAN><SPAN class = "BRKT">asl</SPAN><SPAN class = "TEXT"> matching the “first” hypothesis of </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">DIV_LESS</SPAN><SPAN class = "TEXT"> theorem states:
+</SPAN><DIV class = "XMPL"><pre>
+   !n d. 0 &lt; n /\ 1 &lt; d ==&gt; (n DIV d &lt; n)
+</pre></DIV>
+<SPAN class = "TEXT">
+Then:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; drule arithmeticTheory.DIV_LESS ([“1 &lt; x”, “0 &lt; y”], “P:bool”);
+   val it =
+      ([([“1 &lt; x”, “0 &lt; y”], “(!d. 1 &lt; d ==&gt; y DIV d &lt; y) ==&gt; P”)], fn):
+      goal list * validation
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">drule</SPAN><SPAN class = "TEXT"> tactic is similar to, but a great deal more controlled
+than, the </SPAN><SPAN class = "BRKT">IMP_RES_TAC</SPAN><SPAN class = "TEXT"> tactic, which will look for a great many more
+possible instantiations and resolutions to perform. </SPAN><SPAN class = "BRKT">IMP_RES_TAC</SPAN><SPAN class = "TEXT"> also
+puts all of its derived consequences into the assumption list; </SPAN><SPAN class = "BRKT">drule</SPAN><SPAN class = "TEXT">
+can be sure that there will be just one such consequence, and puts
+this into the goal directly.</SPAN>
+<P>
+<SPAN class = "TEXT">The related </SPAN><SPAN class = "BRKT">dxrule</SPAN><SPAN class = "TEXT"> tactic removes the matching assumption from the
+assumption list. In this example above, the resulting assumption list
+would just contain </SPAN><SPAN class = "BRKT">1&nbsp;&lt;&nbsp;x</SPAN><SPAN class = "TEXT">, having lost the </SPAN><SPAN class = "BRKT">0&nbsp;&lt;&nbsp;y</SPAN><SPAN class = "TEXT"> which was
+resolved against the </SPAN><SPAN class = "BRKT">DIV_LESS</SPAN><SPAN class = "TEXT"> theorem.</SPAN>
+<P>
+<SPAN class = "TEXT">The </SPAN><SPAN class = "BRKT">drule</SPAN><SPAN class = "TEXT"> tactic uses the </SPAN><SPAN class = "BRKT">MP_TAC</SPAN><SPAN class = "TEXT"> </SPAN><SPAN class = "BRKT">thm_tactic</SPAN><SPAN class = "TEXT"> as its fixed
+continuation; the </SPAN><SPAN class = "BRKT">drule_then</SPAN><SPAN class = "TEXT"> variation takes a </SPAN><SPAN class = "BRKT">thm_tactic</SPAN><SPAN class = "TEXT">
+continuation as its first parameter and applies this to the result of
+the instantiation and </SPAN><SPAN class = "BRKT">MP</SPAN><SPAN class = "TEXT"> call. There is also a </SPAN><SPAN class = "BRKT">dxrule_then</SPAN><SPAN class = "TEXT">, that
+combines both variations described here.</SPAN>
+<P>
+<SPAN class = "TEXT">Finally, note that the implicational theorem may itself have come from
+the goal&rsquo;s assumptions, extracted with tools such as </SPAN><SPAN class = "BRKT">FIRST_ASSUM</SPAN><SPAN class = "TEXT"> and
+</SPAN><SPAN class = "BRKT">PAT_ASSUM</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactic.drule_all.html">drule_all</A>,
+<A HREF = "Tactic.IMP_RES_TAC.html">IMP_RES_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

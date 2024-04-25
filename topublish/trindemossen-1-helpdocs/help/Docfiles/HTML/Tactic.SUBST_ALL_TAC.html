@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactic.SUBST_ALL_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>SUBST_ALL_TAC : thm_tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactic.html">Tactic</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Substitutes using a single equation in both the assumptions and conclusion of a
+goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_ALL_TAC</SPAN><SPAN class = "TEXT"> breaches the style of natural deduction, where the assumptions
+are kept fixed.  Given a theorem </SPAN><SPAN class = "BRKT">A|-u=v</SPAN><SPAN class = "TEXT"> and a goal </SPAN><SPAN class = "BRKT">([t1;...;tn],&nbsp;t)</SPAN><SPAN class = "TEXT">,
+</SPAN><SPAN class = "BRKT">SUBST_ALL_TAC&nbsp;(A|-u=v)</SPAN><SPAN class = "TEXT"> transforms the assumptions </SPAN><SPAN class = "BRKT">t1</SPAN><SPAN class = "TEXT">,...,</SPAN><SPAN class = "BRKT">tn</SPAN><SPAN class = "TEXT"> and the term
+</SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> into </SPAN><SPAN class = "BRKT">t1[v/u]</SPAN><SPAN class = "TEXT">,...,</SPAN><SPAN class = "BRKT">tn[v/u]</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">t[v/u]</SPAN><SPAN class = "TEXT"> respectively, by substituting </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT">
+for each free occurrence of </SPAN><SPAN class = "BRKT">u</SPAN><SPAN class = "TEXT"> in both the assumptions and the conclusion of
+the goal.
+</SPAN><DIV class = "XMPL"><pre>
+           {t1,...,tn} ?- t
+   =================================  SUBST_ALL_TAC (A|-u=v)
+    {t1[v/u],...,tn[v/u]} ?- t[v/u]
+</pre></DIV>
+<SPAN class = "TEXT">
+The assumptions of the theorem used to substitute with are not added
+to the assumptions of the goal, but they are recorded in the proof.  If </SPAN><SPAN class = "BRKT">A</SPAN><SPAN class = "TEXT"> is
+not a subset of the assumptions of the goal (up to alpha-conversion), then
+</SPAN><SPAN class = "BRKT">SUBST_ALL_TAC&nbsp;(A|-u=v)</SPAN><SPAN class = "TEXT"> results in an invalid tactic.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_ALL_TAC</SPAN><SPAN class = "TEXT"> automatically renames bound variables to prevent
+free variables in </SPAN><SPAN class = "BRKT">v</SPAN><SPAN class = "TEXT"> becoming bound after substitution.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">SUBST_ALL_TAC&nbsp;th&nbsp;(A,t)</SPAN><SPAN class = "TEXT"> fails if the conclusion of </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is not an equation.
+No change is made to the goal if no occurrence of the left-hand side of
+</SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> appears free in </SPAN><SPAN class = "BRKT">(A,t)</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Simplifying both the assumption and the term in the goal
+</SPAN><DIV class = "XMPL"><pre>
+   {0 + m = n} ?- 0 + (0 + m) = n
+</pre></DIV>
+<SPAN class = "TEXT">
+by substituting with the theorem </SPAN><SPAN class = "BRKT">|-&nbsp;0&nbsp;+&nbsp;m&nbsp;=&nbsp;m</SPAN><SPAN class = "TEXT"> for addition
+</SPAN><DIV class = "XMPL"><pre>
+   SUBST_ALL_TAC (CONJUNCT1 ADD_CLAUSES)
+</pre></DIV>
+<SPAN class = "TEXT">
+results in the goal
+</SPAN><DIV class = "XMPL"><pre>
+   {m = n} ?- 0 + m = n
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Rewrite.ONCE_REWRITE_TAC.html">ONCE_REWRITE_TAC</A>,
+<A HREF = "Rewrite.PURE_REWRITE_TAC.html">PURE_REWRITE_TAC</A>,
+<A HREF = "Rewrite.REWRITE_TAC.html">REWRITE_TAC</A>,
+<A HREF = "Tactic.SUBST1_TAC.html">SUBST1_TAC</A>,
+<A HREF = "Tactic.SUBST_TAC.html">SUBST_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

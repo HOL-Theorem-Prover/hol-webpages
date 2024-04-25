@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Cond_rewrite.COND_REWR_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>COND_REWR_TAC :
+ (term -&gt; term -&gt; ((term * term) list * (type * type) list) list) -&gt;
+ thm_tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Cond_rewrite.html">Cond_rewrite</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A lower level tactic used to implement simple conditional rewriting tactic.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT"> is one of the basic building blocks for the
+implementation of conditional rewriting in the HOL system. In
+particular, the conditional term replacement or rewriting done by all
+the built-in  conditional
+rewriting tactics is ultimately done by applications of
+</SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT">.  The description given here for </SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT"> may
+therefore be taken as a specification of the atomic action of
+replacing equals by equals in the goal under certain conditions that
+aare used in all these higher level conditional rewriting tactics.</SPAN>
+<P>
+<SPAN class = "TEXT">The first argument to </SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT"> is expected to be a function
+which returns a list of matches. Each of these matches is in the form
+of the value returned by the built-in function </SPAN><SPAN class = "BRKT">match</SPAN><SPAN class = "TEXT">. It is used to
+search the goal for instances which may be rewritten.</SPAN>
+<P>
+<SPAN class = "TEXT">The second argument to </SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT"> is expected to be an implicative theorem
+in the following form:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- !x1 ... xn. P1 ==&gt; ... Pm ==&gt; (Q[x1,...,xn] = R[x1,...,xn])
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">x1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">xn</SPAN><SPAN class = "TEXT"> are all the variables that occur free in the
+left-hand side of the conclusion of the theorem but do not occur free in the
+assumptions.</SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">fn</SPAN><SPAN class = "TEXT"> is a function and </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is an implicative theorem of the kind
+shown above, then </SPAN><SPAN class = "BRKT">COND_REWR_TAC&nbsp;fn&nbsp;th</SPAN><SPAN class = "TEXT"> will be a tactic which returns
+a list of subgoals if evaluating
+</SPAN><DIV class = "XMPL"><pre>
+   fn Q[x1,...,xn] gl
+</pre></DIV>
+<SPAN class = "TEXT">
+returns a non-empty list of matches when applied to a goal
+</SPAN><SPAN class = "BRKT">(asm,gl)</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Let </SPAN><SPAN class = "BRKT">ml</SPAN><SPAN class = "TEXT"> be the match list returned by evaluating </SPAN><SPAN class = "BRKT">fn&nbsp;Q[x1,...,xn]&nbsp;gl</SPAN><SPAN class = "TEXT">.
+Each element in this list is in the form of
+</SPAN><DIV class = "XMPL"><pre>
+   ([(e1,x1);...;(ep,xp)], [(ty1,vty1);...;(tyq,vtyq)])
+</pre></DIV>
+<SPAN class = "TEXT">
+which specifies the term and type instantiations of the input theorem
+</SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">. Either the term pair list or the type pair list may be empty. In
+the case that both lists are empty, an exact match is found, i.e., no
+instantiation is required. If </SPAN><SPAN class = "BRKT">ml</SPAN><SPAN class = "TEXT"> is an empty list, no match has been
+found and the tactic will fail.</SPAN>
+<P>
+<SPAN class = "TEXT">For each match in </SPAN><SPAN class = "BRKT">ml</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT"> will perform the following:
+1) instantiate the input theorem </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> to get
+</SPAN><DIV class = "XMPL"><pre>
+   th' = A |- P1' ==&gt; ... ==&gt; Pm' ==&gt; (Q' = R')
+</pre></DIV>
+<SPAN class = "TEXT">
+where the primed subterms are instances of the corresponding
+unprimed subterms obtained by applying </SPAN><SPAN class = "BRKT">INST_TYPE</SPAN><SPAN class = "TEXT"> with
+</SPAN><SPAN class = "BRKT">[(ty1,vty1);...;(tyq,vtyq)]</SPAN><SPAN class = "TEXT"> and then </SPAN><SPAN class = "BRKT">INST</SPAN><SPAN class = "TEXT"> with </SPAN><SPAN class = "BRKT">[(e1,x1);...;(ep,xp)]</SPAN><SPAN class = "TEXT">;
+2) search the assumption list </SPAN><SPAN class = "BRKT">asm</SPAN><SPAN class = "TEXT"> for occurrences of any antecedents
+</SPAN><SPAN class = "BRKT">P1'</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">Pm'</SPAN><SPAN class = "TEXT">;
+3) if all antecedents appear in </SPAN><SPAN class = "BRKT">asm</SPAN><SPAN class = "TEXT">, the goal </SPAN><SPAN class = "BRKT">gl</SPAN><SPAN class = "TEXT"> is reduced to
+</SPAN><SPAN class = "BRKT">gl'</SPAN><SPAN class = "TEXT"> by substituting </SPAN><SPAN class = "BRKT">R'</SPAN><SPAN class = "TEXT"> for each free occurrence of </SPAN><SPAN class = "BRKT">Q'</SPAN><SPAN class = "TEXT">, otherwise,
+in addition to the substitution, all antecedents which do not appear
+in </SPAN><SPAN class = "BRKT">asm</SPAN><SPAN class = "TEXT"> are added to it and new
+subgoals corresponding to these antecedents are created. For example,
+if </SPAN><SPAN class = "BRKT">Pk'</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">Pm'</SPAN><SPAN class = "TEXT"> do not appear in </SPAN><SPAN class = "BRKT">asm</SPAN><SPAN class = "TEXT">, the following subgoals
+are returned:
+</SPAN><DIV class = "XMPL"><pre>
+   asm ?- Pk'  ...  asm ?- Pm'   {{asm,Pk',...,Pm'}} ?- gl'
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">If </SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT"> is given a theorem </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT">:
+</SPAN><DIV class = "XMPL"><pre>
+   A |- !x1 ... xn y1 ... yk. P1 ==&gt; ... ==&gt; Pm ==&gt; (Q = R)
+</pre></DIV>
+<SPAN class = "TEXT">
+where the variables </SPAN><SPAN class = "BRKT">y1</SPAN><SPAN class = "TEXT">, ..., </SPAN><SPAN class = "BRKT">ym</SPAN><SPAN class = "TEXT"> do not occur free in the
+left-hand side of the conclusion </SPAN><SPAN class = "BRKT">Q</SPAN><SPAN class = "TEXT"> but they do occur free in the
+antecedents, then, when carrying out Step 2 described
+above, </SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT"> will attempt to find instantiations for these
+variables from the assumption </SPAN><SPAN class = "BRKT">asm</SPAN><SPAN class = "TEXT">. For example, if </SPAN><SPAN class = "BRKT">x1</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">y1</SPAN><SPAN class = "TEXT">
+occur free in </SPAN><SPAN class = "BRKT">P1</SPAN><SPAN class = "TEXT">, and a match is found in which </SPAN><SPAN class = "BRKT">e1</SPAN><SPAN class = "TEXT"> is an
+instantiation of </SPAN><SPAN class = "BRKT">x1</SPAN><SPAN class = "TEXT">, then </SPAN><SPAN class = "BRKT">P1'</SPAN><SPAN class = "TEXT"> will become </SPAN><SPAN class = "BRKT">P1[e1/x1,&nbsp;y1]</SPAN><SPAN class = "TEXT">. If a term
+</SPAN><SPAN class = "BRKT">P1''&nbsp;=&nbsp;P1[e1,e1'/x1,y1]</SPAN><SPAN class = "TEXT"> appears in  </SPAN><SPAN class = "BRKT">asm</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">th'</SPAN><SPAN class = "TEXT"> is instantiated  with
+</SPAN><SPAN class = "BRKT">(e1',&nbsp;y1)</SPAN><SPAN class = "TEXT"> to get
+</SPAN><DIV class = "XMPL"><pre>
+   th'' = A |- P1'' ==&gt; ... ==&gt; Pm'' ==&gt; (Q' = R'')
+</pre></DIV>
+<SPAN class = "TEXT">
+then </SPAN><SPAN class = "BRKT">R''</SPAN><SPAN class = "TEXT"> is substituted into </SPAN><SPAN class = "BRKT">gl</SPAN><SPAN class = "TEXT"> for all free occurrences
+of </SPAN><SPAN class = "BRKT">Q'</SPAN><SPAN class = "TEXT">. If no consistent instantiation is found, then </SPAN><SPAN class = "BRKT">P1'</SPAN><SPAN class = "TEXT"> which
+contains the uninstantiated variable </SPAN><SPAN class = "BRKT">y1</SPAN><SPAN class = "TEXT"> will become one of the new
+subgoals. In such a case, the user has no control over the
+choice of the variable </SPAN><SPAN class = "BRKT">yi</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">COND_REWR_TAC&nbsp;fn&nbsp;th</SPAN><SPAN class = "TEXT"> fails if </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is not an implication of the form
+described above.  If </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is such an equation, but the function </SPAN><SPAN class = "BRKT">fn</SPAN><SPAN class = "TEXT">
+returns a null list of matches, or the function </SPAN><SPAN class = "BRKT">fn</SPAN><SPAN class = "TEXT"> returns a
+non-empty list of matches, but the term or type instantiation fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The following example illustrates a straightforward use of </SPAN><SPAN class = "BRKT">COND_REWR_TAC</SPAN><SPAN class = "TEXT">.
+We use the built-in theorem </SPAN><SPAN class = "BRKT">LESS_MOD</SPAN><SPAN class = "TEXT"> as the input theorem, and the function
+</SPAN><SPAN class = "BRKT">search_top_down</SPAN><SPAN class = "TEXT"> as the search function.
+</SPAN><DIV class = "XMPL"><pre>
+   #LESS_MOD;;
+   Theorem LESS_MOD autoloading from theory `arithmetic` ...
+   LESS_MOD = |- !n k. k &lt; n ==&gt; (k MOD n = k)
+
+   |- !n k. k &lt; n ==&gt; (k MOD n = k)
+
+   #search_top_down;;
+   - : (term -&gt; term -&gt; ((term # term) list # (type # type) list) list)
+</pre></DIV>
+<SPAN class = "TEXT">
+We set up a goal
+</SPAN><DIV class = "XMPL"><pre>
+   #g"2 MOD 3 = 2";;
+   "2 MOD 3 = 2"
+
+   () : void
+</pre></DIV>
+<SPAN class = "TEXT">
+and then apply the tactic
+</SPAN><DIV class = "XMPL"><pre>
+   #e(COND_REWR_TAC search_top_down LESS_MOD);;
+   OK..
+   2 subgoals
+   "2 = 2"
+       [ "2 &lt; 3" ]
+
+   "2 &lt; 3"
+
+    () : void
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Cond_rewrite.COND_REWRITE1_TAC.html">COND_REWRITE1_TAC</A>,
+<A HREF = "Cond_rewrite.COND_REWRITE1_CONV.html">COND_REWRITE1_CONV</A>,
+<A HREF = "Cond_rewrite.COND_REWR_CONV.html">COND_REWR_CONV</A>,
+<A HREF = "Cond_rewrite.COND_REWR_CANON.html">COND_REWR_CANON</A>,
+<A HREF = "Cond_rewrite.search_top_down.html">search_top_down</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

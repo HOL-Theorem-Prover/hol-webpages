@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>bossLib.wlog_tac</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>wlog_tac : term quotation -&gt; term quotation list -&gt; tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Enrich the hypotheses with a proposition that can be assumed without loss of
+generality.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">The user provides term quotations that parse to a proposition </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT"> and a list
+of variables. Typically there are 2 subgoals. The first subgoal is to prove
+that the general case of the original goal follows from the specific case
+where </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT"> holds; the second subgoal is the original goal with </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT"> added to the
+assumptions. The first subgoal is always present, and the subgoals (if any)
+produced by </SPAN><SPAN class = "BRKT">strip_assume_tac&nbsp;P&nbsp;|-&nbsp;P</SPAN><SPAN class = "TEXT"> follows.</SPAN>
+<P>
+<SPAN class = "TEXT">If the goal is </SPAN><SPAN class = "BRKT">hyp&nbsp;?-&nbsp;t</SPAN><SPAN class = "TEXT"> then the first subgoal is
+</SPAN><SPAN class = "BRKT">hyp,&nbsp;!vars.&nbsp;ant&nbsp;==&gt;&nbsp;t,&nbsp;~P&nbsp;?-&nbsp;t</SPAN><SPAN class = "TEXT"> where </SPAN><SPAN class = "BRKT">ant</SPAN><SPAN class = "TEXT"> is the conjunction of </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT"> and
+those hypotheses of the original subgoal where any variable in the
+user-provided list occurs free. The universal quantification is over the
+variables in the user-provided list plus any variable that appears free in </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT">
+or </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT"> and is not a local constant. For convenience </SPAN><SPAN class = "BRKT">~P</SPAN><SPAN class = "TEXT"> is always added to
+the assumptions in the first subgoal because the case for </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT"> follows
+immediately from the hypothesis. Passing a non-empty list of variables allows
+to quantify over local constants in the hypothesis </SPAN><SPAN class = "BRKT">!vars.&nbsp;ant&nbsp;==&gt;&nbsp;t</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Detailed description: Given </SPAN><SPAN class = "BRKT">wlog_tac&nbsp;q&nbsp;vars_q</SPAN><SPAN class = "TEXT"> let </SPAN><SPAN class = "BRKT">asm&nbsp;?-&nbsp;c</SPAN><SPAN class = "TEXT"> be the the
+goal. </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> is parsed in the goal context to a proposition </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT">. </SPAN><SPAN class = "BRKT">vars_q</SPAN><SPAN class = "TEXT"> are
+parsed to variables in the goal context. Let </SPAN><SPAN class = "BRKT">efv</SPAN><SPAN class = "TEXT"> (effectively free
+variables) be the free variables of </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT"> that are not free in the
+assumptions and are not in </SPAN><SPAN class = "BRKT">vars</SPAN><SPAN class = "TEXT"> from left to right and first </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT">, then
+</SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">. Let </SPAN><SPAN class = "BRKT">gen_vars</SPAN><SPAN class = "TEXT"> be </SPAN><SPAN class = "BRKT">vars&nbsp;@&nbsp;efv</SPAN><SPAN class = "TEXT">. Let </SPAN><SPAN class = "BRKT">asm'</SPAN><SPAN class = "TEXT"> be the elements of </SPAN><SPAN class = "BRKT">asm</SPAN><SPAN class = "TEXT"> in
+which any of </SPAN><SPAN class = "BRKT">vars</SPAN><SPAN class = "TEXT"> is a free variable. Let </SPAN><SPAN class = "BRKT">ant</SPAN><SPAN class = "TEXT"> be the result of splicing
+</SPAN><SPAN class = "BRKT">p&nbsp;::&nbsp;asm'</SPAN><SPAN class = "TEXT">. The first subgoal is
+</SPAN><SPAN class = "BRKT">asm,&nbsp;(!(gen_vars).&nbsp;ant&nbsp;==&gt;&nbsp;c),&nbsp;~P&nbsp;?-&nbsp;c</SPAN><SPAN class = "TEXT">. The proposition </SPAN><SPAN class = "BRKT">P</SPAN><SPAN class = "TEXT"> is added to the
+assumptions with </SPAN><SPAN class = "BRKT">strip_assume_tac</SPAN><SPAN class = "TEXT">. If this generates subgoals (as is usually
+the case), then those subgoals follow.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A typical use case is to continue the proof assuming one case where all cases
+are symmetric. The first subgoal is a good candidate to be solved by a first
+order prover like </SPAN><SPAN class = "BRKT">PROVE_TAC</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">METIS_TAC</SPAN><SPAN class = "TEXT"> providing to it the appropriate
+symmetry theorems.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In the following examples assume </SPAN><SPAN class = "BRKT">arithmeticTheory</SPAN><SPAN class = "TEXT"> is open.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+&gt; g(`ABS_DIFF x y + ABS_DIFF y z &lt;= ABS_DIFF x z`);
+...
+&gt; e(wlog_tac `x &lt;= z` []);
+val it =
+   ABS_DIFF x y + ABS_DIFF y z &lt;= ABS_DIFF x z
+   ------------------------------------
+    x &lt;= z
+
+   ABS_DIFF x y + ABS_DIFF y z &lt;= ABS_DIFF x z
+   ------------------------------------
+     0.  !x z y. x &lt;= z ==&gt; ABS_DIFF x y + ABS_DIFF y z &lt;= ABS_DIFF x z
+     1.  ~(x &lt;= z)
+2 subgoals : proof
+</pre></DIV>
+<SPAN class = "TEXT">
+The first subgoal can be solved by
+</SPAN><SPAN class = "BRKT">prove_tac&nbsp;[ABS_DIFF_SYM,&nbsp;LESS_EQ_CASES,&nbsp;ADD_COMM]</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+&gt; g`MAX x y &lt;= z &lt;=&gt; x &lt;= z /\ y &lt;= z`
+...
+&gt; e(wlog_tac `x &lt;= y` []);
+val it =
+   MAX x y &lt;= z &lt;=&gt; x &lt;= z /\ y &lt;= z
+   ------------------------------------
+    x &lt;= y
+
+   MAX x y &lt;= z &lt;=&gt; x &lt;= z /\ y &lt;= z
+   ------------------------------------
+     0.  !x y z. x &lt;= y ==&gt; (MAX x y &lt;= z &lt;=&gt; x &lt;= z /\ y &lt;= z)
+     1.  ~(x &lt;= y)
+2 subgoals : proof
+</pre></DIV>
+<SPAN class = "TEXT">
+The first subgoal can be solved by </SPAN><SPAN class = "BRKT">prove_tac&nbsp;[LESS_EQ_CASES,&nbsp;MAX_COMM]</SPAN><SPAN class = "TEXT">;</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Never fails.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.wlog_then.html">wlog_then</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

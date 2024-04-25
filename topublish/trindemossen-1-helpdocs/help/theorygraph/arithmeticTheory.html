@@ -1,0 +1,2816 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: arithmetic</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "arithmetic"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "prim_recTheory.html"><span class="strong">prim_rec</span></a>&nbsp;&nbsp;
+    <a href = "pairTheory.html"><span class="strong">pair</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">*</span>
+    <td>
+    :num -> num -> num
+    <tr><td> <span class="strong">+</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">-</span> <td> :num -> num -> num
+    <tr><td> <span class="strong"><=</span> <td> :num -> num -> bool
+    <tr><td> <span class="strong">></span> <td> :num -> num -> bool
+    <tr><td> <span class="strong">>=</span> <td> :num -> num -> bool
+    <tr><td> <span class="strong">ABS_DIFF</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">BIT1</span> <td> :num -> num
+    <tr><td> <span class="strong">BIT2</span> <td> :num -> num
+    <tr><td> <span class="strong">CEILING_DIV</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">CEILING_MOD</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">DIV</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">DIV2</span> <td> :num -> num
+    <tr><td>
+    <span class="strong">DIVMOD</span>
+    <td>
+    :num # num # num -> num # num
+    <tr><td> <span class="strong">EVEN</span> <td> :num -> bool
+    <tr><td> <span class="strong">EXP</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">FACT</span> <td> :num -> num
+    <tr><td>
+    <span class="strong">FUNPOW</span>
+    <td>
+    :(α -> α) -> num -> α -> α
+    <tr><td> <span class="strong">MAX</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">MIN</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">MOD</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">MODEQ</span> <td> :num -> num -> num -> bool
+    <tr><td>
+    <span class="strong">NRC</span>
+    <td>
+    :(α -> α -> bool) -> num -> α -> α -> bool
+    <tr><td> <span class="strong">NUMERAL</span> <td> :num -> num
+    <tr><td> <span class="strong">ODD</span> <td> :num -> bool
+    <tr><td> <span class="strong">ZERO</span> <td> :num
+    <tr><td> <span class="strong">findq</span> <td> :num # num # num -> num
+    <tr><td> <span class="strong">nat_elim__magic</span> <td> :num -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">ABS_DIFF_def</span>
+<DD>
+<pre>
+⊢ ∀n m. ABS_DIFF n m = if n < m then m − n else n − m
+</pre>
+
+<DT><span class="strong">ADD</span>
+<DD>
+<pre>
+⊢ (∀n. 0 + n = n) ∧ ∀m n. SUC m + n = SUC (m + n)
+</pre>
+
+<DT><span class="strong">ALT_ZERO</span>
+<DD>
+<pre>
+⊢ ZERO = 0
+</pre>
+
+<DT><span class="strong">BIT1</span>
+<DD>
+<pre>
+⊢ ∀n. BIT1 n = n + (n + SUC 0)
+</pre>
+
+<DT><span class="strong">BIT2</span>
+<DD>
+<pre>
+⊢ ∀n. BIT2 n = n + (n + SUC (SUC 0))
+</pre>
+
+<DT><span class="strong">DIV2_def</span>
+<DD>
+<pre>
+⊢ ∀n. DIV2 n = n DIV 2
+</pre>
+
+<DT><span class="strong">DIVISION</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀k. (k = k DIV n * n + k MOD n) ∧ k MOD n < n
+</pre>
+
+<DT><span class="strong">DIVMOD_DEF</span>
+<DD>
+<pre>
+⊢ DIVMOD =
+  WFREC (measure (FST ∘ SND))
+    (λf (a,m,n).
+         if n = 0 then (0,0)
+         else if m < n then (a,m)
+         else (let q = findq (1,m,n) in f (a + q,m − n * q,n)))
+</pre>
+
+<DT><span class="strong">EVEN</span>
+<DD>
+<pre>
+⊢ (EVEN 0 ⇔ T) ∧ ∀n. EVEN (SUC n) ⇔ ¬EVEN n
+</pre>
+
+<DT><span class="strong">EXP</span>
+<DD>
+<pre>
+⊢ (∀m. m ** 0 = 1) ∧ ∀m n. m ** SUC n = m * m ** n
+</pre>
+
+<DT><span class="strong">FACT</span>
+<DD>
+<pre>
+⊢ (FACT 0 = 1) ∧ ∀n. FACT (SUC n) = SUC n * FACT n
+</pre>
+
+<DT><span class="strong">FUNPOW</span>
+<DD>
+<pre>
+⊢ (∀f x. FUNPOW f 0 x = x) ∧ ∀f n x. FUNPOW f (SUC n) x = FUNPOW f n (f x)
+</pre>
+
+<DT><span class="strong">GREATER_DEF</span>
+<DD>
+<pre>
+⊢ ∀m n. m > n ⇔ n < m
+</pre>
+
+<DT><span class="strong">GREATER_OR_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≥ n ⇔ m > n ∨ (m = n)
+</pre>
+
+<DT><span class="strong">LESS_OR_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇔ m < n ∨ (m = n)
+</pre>
+
+<DT><span class="strong">MAX_DEF</span>
+<DD>
+<pre>
+⊢ ∀m n. MAX m n = if m < n then n else m
+</pre>
+
+<DT><span class="strong">MIN_DEF</span>
+<DD>
+<pre>
+⊢ ∀m n. MIN m n = if m < n then m else n
+</pre>
+
+<DT><span class="strong">MODEQ_DEF</span>
+<DD>
+<pre>
+⊢ ∀n m1 m2. MODEQ n m1 m2 ⇔ ∃a b. a * n + m1 = b * n + m2
+</pre>
+
+<DT><span class="strong">MULT</span>
+<DD>
+<pre>
+⊢ (∀n. 0 * n = 0) ∧ ∀m n. SUC m * n = m * n + n
+</pre>
+
+<DT><span class="strong">NRC</span>
+<DD>
+<pre>
+⊢ (∀R x y. NRC R 0 x y ⇔ (x = y)) ∧
+  ∀R n x y. NRC R (SUC n) x y ⇔ ∃z. R x z ∧ NRC R n z y
+</pre>
+
+<DT><span class="strong">NUMERAL_DEF</span>
+<DD>
+<pre>
+⊢ ∀x. NUMERAL x = x
+</pre>
+
+<DT><span class="strong">ODD</span>
+<DD>
+<pre>
+⊢ (ODD 0 ⇔ F) ∧ ∀n. ODD (SUC n) ⇔ ¬ODD n
+</pre>
+
+<DT><span class="strong">SUB</span>
+<DD>
+<pre>
+⊢ (∀m. 0 − m = 0) ∧ ∀m n. SUC m − n = if m < n then 0 else SUC (m − n)
+</pre>
+
+<DT><span class="strong">findq_def</span>
+<DD>
+<pre>
+⊢ findq =
+  WFREC (measure (λ(a,m,n). m − n))
+    (λf (a,m,n).
+         if n = 0 then a
+         else (let d = 2 * n in if m < d then a else f (2 * a,m,d)))
+</pre>
+
+<DT><span class="strong">nat_elim__magic</span>
+<DD>
+<pre>
+⊢ ∀n. &n = n
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ABS_DIFF_ADD_SAME</span>
+<DD>
+<pre>
+⊢ ∀n m p. ABS_DIFF (n + p) (m + p) = ABS_DIFF n m
+</pre>
+
+<DT><span class="strong">ABS_DIFF_COMM</span>
+<DD>
+<pre>
+⊢ ∀n m. ABS_DIFF n m = ABS_DIFF m n
+</pre>
+
+<DT><span class="strong">ABS_DIFF_EQS</span>
+<DD>
+<pre>
+⊢ ∀n. ABS_DIFF n n = 0
+</pre>
+
+<DT><span class="strong">ABS_DIFF_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n m. (ABS_DIFF n m = 0) ⇔ (n = m)
+</pre>
+
+<DT><span class="strong">ABS_DIFF_LE_SUM</span>
+<DD>
+<pre>
+⊢ ABS_DIFF x z ≤ x + z
+</pre>
+
+<DT><span class="strong">ABS_DIFF_PLUS_LE</span>
+<DD>
+<pre>
+⊢ ∀x z y. ABS_DIFF x (y + z) ≤ y + ABS_DIFF x z
+</pre>
+
+<DT><span class="strong">ABS_DIFF_SUC</span>
+<DD>
+<pre>
+⊢ ∀n m. ABS_DIFF (SUC n) (SUC m) = ABS_DIFF n m
+</pre>
+
+<DT><span class="strong">ABS_DIFF_SUC_LE</span>
+<DD>
+<pre>
+⊢ ∀x z. ABS_DIFF x (SUC z) ≤ SUC (ABS_DIFF x z)
+</pre>
+
+<DT><span class="strong">ABS_DIFF_SUMS</span>
+<DD>
+<pre>
+⊢ ∀n1 n2 m1 m2. ABS_DIFF (n1 + n2) (m1 + m2) ≤ ABS_DIFF n1 m1 + ABS_DIFF n2 m2
+</pre>
+
+<DT><span class="strong">ABS_DIFF_SYM</span>
+<DD>
+<pre>
+⊢ ∀n m. ABS_DIFF n m = ABS_DIFF m n
+</pre>
+
+<DT><span class="strong">ABS_DIFF_TRIANGLE</span>
+<DD>
+<pre>
+⊢ ∀x y z. ABS_DIFF x z ≤ ABS_DIFF x y + ABS_DIFF y z
+</pre>
+
+<DT><span class="strong">ABS_DIFF_TRIANGLE_lem</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ ABS_DIFF x y + y
+</pre>
+
+<DT><span class="strong">ABS_DIFF_ZERO</span>
+<DD>
+<pre>
+⊢ ∀n. (ABS_DIFF n 0 = n) ∧ (ABS_DIFF 0 n = n)
+</pre>
+
+<DT><span class="strong">ADD1</span>
+<DD>
+<pre>
+⊢ ∀m. SUC m = m + 1
+</pre>
+
+<DT><span class="strong">ADD_0</span>
+<DD>
+<pre>
+⊢ ∀m. m + 0 = m
+</pre>
+
+<DT><span class="strong">ADD_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀m n p. m + (n + p) = m + n + p
+</pre>
+
+<DT><span class="strong">ADD_CLAUSES</span>
+<DD>
+<pre>
+⊢ (0 + m = m) ∧ (m + 0 = m) ∧ (SUC m + n = SUC (m + n)) ∧
+  (m + SUC n = SUC (m + n))
+</pre>
+
+<DT><span class="strong">ADD_COMM</span>
+<DD>
+<pre>
+⊢ ∀m n. m + n = n + m
+</pre>
+
+<DT><span class="strong">ADD_DIV_ADD_DIV</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀x r. (x * n + r) DIV n = x + r DIV n
+</pre>
+
+<DT><span class="strong">ADD_DIV_RWT</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒
+      ∀m p.
+        (m MOD n = 0) ∨ (p MOD n = 0) ⇒ ((m + p) DIV n = m DIV n + p DIV n)
+</pre>
+
+<DT><span class="strong">ADD_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀m n. (m + n = 0) ⇔ (m = 0) ∧ (n = 0)
+</pre>
+
+<DT><span class="strong">ADD_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀m n. (m + n = 1) ⇔ (m = 1) ∧ (n = 0) ∨ (m = 0) ∧ (n = 1)
+</pre>
+
+<DT><span class="strong">ADD_EQ_SUB</span>
+<DD>
+<pre>
+⊢ ∀m n p. n ≤ p ⇒ ((m + n = p) ⇔ (m = p − n))
+</pre>
+
+<DT><span class="strong">ADD_INV_0</span>
+<DD>
+<pre>
+⊢ ∀m n. (m + n = m) ⇒ (n = 0)
+</pre>
+
+<DT><span class="strong">ADD_INV_0_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. (m + n = m) ⇔ (n = 0)
+</pre>
+
+<DT><span class="strong">ADD_MOD</span>
+<DD>
+<pre>
+⊢ ∀n a b p. 0 < n ⇒ (((a + p) MOD n = (b + p) MOD n) ⇔ (a MOD n = b MOD n))
+</pre>
+
+<DT><span class="strong">ADD_MODULUS</span>
+<DD>
+<pre>
+⊢ (∀n x. 0 < n ⇒ ((x + n) MOD n = x MOD n)) ∧
+  ∀n x. 0 < n ⇒ ((n + x) MOD n = x MOD n)
+</pre>
+
+<DT><span class="strong">ADD_MODULUS_LEFT</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 < n ⇒ ((x + n) MOD n = x MOD n)
+</pre>
+
+<DT><span class="strong">ADD_MODULUS_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 < n ⇒ ((n + x) MOD n = x MOD n)
+</pre>
+
+<DT><span class="strong">ADD_MONO_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n p. m + n ≤ m + p ⇔ n ≤ p
+</pre>
+
+<DT><span class="strong">ADD_SUB</span>
+<DD>
+<pre>
+⊢ ∀a c. a + c − c = a
+</pre>
+
+<DT><span class="strong">ADD_SUB2</span>
+<DD>
+<pre>
+⊢ ∀m n. m + n − m = n
+</pre>
+
+<DT><span class="strong">ADD_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC (m + n) = m + SUC n
+</pre>
+
+<DT><span class="strong">ADD_SYM</span>
+<DD>
+<pre>
+⊢ ∀m n. m + n = n + m
+</pre>
+
+<DT><span class="strong">BOUNDED_EXISTS_THM</span>
+<DD>
+<pre>
+⊢ ∀c. 0 < c ⇒ ((∃n. n < c ∧ P n) ⇔ P (c − 1) ∨ ∃n. n < c − 1 ∧ P n)
+</pre>
+
+<DT><span class="strong">BOUNDED_FORALL_THM</span>
+<DD>
+<pre>
+⊢ ∀c. 0 < c ⇒ ((∀n. n < c ⇒ P n) ⇔ P (c − 1) ∧ ∀n. n < c − 1 ⇒ P n)
+</pre>
+
+<DT><span class="strong">CANCEL_SUB</span>
+<DD>
+<pre>
+⊢ ∀p n m. p ≤ n ∧ p ≤ m ⇒ ((n − p = m − p) ⇔ (n = m))
+</pre>
+
+<DT><span class="strong">CEILING_DIV</span>
+<DD>
+<pre>
+⊢ ∀k. 0 < k ⇒ ∀n. n \\ k = n DIV k + MIN (n MOD k) 1
+</pre>
+
+<DT><span class="strong">CEILING_DIV_LE_X</span>
+<DD>
+<pre>
+⊢ ∀k m n. 0 < k ⇒ (n \\ k ≤ m ⇔ n ≤ m * k)
+</pre>
+
+<DT><span class="strong">CEILING_DIV_MOD</span>
+<DD>
+<pre>
+⊢ ∀k. 0 < k ⇒ ∀n. (n = k * (n \\ k) − n %% k) ∧ n %% k < k
+</pre>
+
+<DT><span class="strong">CEILING_DIV_def</span>
+<DD>
+<pre>
+⊢ ∀m n. m \\ n = (m + (n − 1)) DIV n
+</pre>
+
+<DT><span class="strong">CEILING_MOD_def</span>
+<DD>
+<pre>
+⊢ ∀m n. m %% n = (n − m MOD n) MOD n
+</pre>
+
+<DT><span class="strong">COMPLETE_INDUCTION</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n. (∀m. m < n ⇒ P m) ⇒ P n) ⇒ ∀n. P n
+</pre>
+
+<DT><span class="strong">DA</span>
+<DD>
+<pre>
+⊢ ∀k n. 0 < n ⇒ ∃r q. (k = q * n + r) ∧ r < n
+</pre>
+
+<DT><span class="strong">DIV2_DOUBLE</span>
+<DD>
+<pre>
+⊢ ∀n. DIV2 (2 * n) = n
+</pre>
+
+<DT><span class="strong">DIVMOD_CALC</span>
+<DD>
+<pre>
+⊢ (∀m n. 0 < n ⇒ (m DIV n = FST (DIVMOD (0,m,n)))) ∧
+  ∀m n. 0 < n ⇒ (m MOD n = SND (DIVMOD (0,m,n)))
+</pre>
+
+<DT><span class="strong">DIVMOD_CORRECT</span>
+<DD>
+<pre>
+⊢ ∀m n a. 0 < n ⇒ (DIVMOD (a,m,n) = (a + m DIV n,m MOD n))
+</pre>
+
+<DT><span class="strong">DIVMOD_ELIM_THM</span>
+<DD>
+<pre>
+⊢ ∀P m n.
+    0 < n ⇒ (P (m DIV n) (m MOD n) ⇔ ∀q r. (m = q * n + r) ∧ r < n ⇒ P q r)
+</pre>
+
+<DT><span class="strong">DIVMOD_ELIM_THM'</span>
+<DD>
+<pre>
+⊢ ∀P m n.
+    0 < n ⇒ (P (m DIV n) (m MOD n) ⇔ ∃q r. (m = q * n + r) ∧ r < n ∧ P q r)
+</pre>
+
+<DT><span class="strong">DIVMOD_ID</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ (n DIV n = 1) ∧ (n MOD n = 0)
+</pre>
+
+<DT><span class="strong">DIVMOD_THM</span>
+<DD>
+<pre>
+⊢ DIVMOD (a,m,n) =
+  if n = 0 then (0,0)
+  else if m < n then (a,m)
+  else (let q = findq (1,m,n) in DIVMOD (a + q,m − n * q,n))
+</pre>
+
+<DT><span class="strong">DIVMOD_UNIQ</span>
+<DD>
+<pre>
+⊢ ∀m n q r. (m = q * n + r) ∧ r < n ⇒ (m DIV n = q) ∧ (m MOD n = r)
+</pre>
+
+<DT><span class="strong">DIV_0_IMP_LT</span>
+<DD>
+<pre>
+⊢ ∀b n. 1 < b ∧ (n DIV b = 0) ⇒ n < b
+</pre>
+
+<DT><span class="strong">DIV_1</span>
+<DD>
+<pre>
+⊢ ∀q. q DIV 1 = q
+</pre>
+
+<DT><span class="strong">DIV_DIV_DIV_MULT</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ 0 < n ⇒ ∀x. x DIV m DIV n = x DIV (m * n)
+</pre>
+
+<DT><span class="strong">DIV_EQ_0</span>
+<DD>
+<pre>
+⊢ 1 < b ⇒ ((n DIV b = 0) ⇔ n < b)
+</pre>
+
+<DT><span class="strong">DIV_EQ_X</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ⇒ ((y DIV z = x) ⇔ x * z ≤ y ∧ y < SUC x * z)
+</pre>
+
+<DT><span class="strong">DIV_LESS</span>
+<DD>
+<pre>
+⊢ ∀n d. 0 < n ∧ 1 < d ⇒ n DIV d < n
+</pre>
+
+<DT><span class="strong">DIV_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀k. k DIV n ≤ k
+</pre>
+
+<DT><span class="strong">DIV_LE_MONOTONE</span>
+<DD>
+<pre>
+⊢ ∀n x y. 0 < n ∧ x ≤ y ⇒ x DIV n ≤ y DIV n
+</pre>
+
+<DT><span class="strong">DIV_LE_X</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ⇒ (y DIV z ≤ x ⇔ y < (x + 1) * z)
+</pre>
+
+<DT><span class="strong">DIV_LT_X</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ⇒ (y DIV z < x ⇔ y < x * z)
+</pre>
+
+<DT><span class="strong">DIV_MOD_MOD_DIV</span>
+<DD>
+<pre>
+⊢ ∀m n k. 0 < n ∧ 0 < k ⇒ ((m DIV n) MOD k = m MOD (n * k) DIV n)
+</pre>
+
+<DT><span class="strong">DIV_MULT</span>
+<DD>
+<pre>
+⊢ ∀n r. r < n ⇒ ∀q. (q * n + r) DIV n = q
+</pre>
+
+<DT><span class="strong">DIV_NUMERAL_THM</span>
+<DD>
+<pre>
+⊢ (NUMERAL (BIT1 n) * x DIV NUMERAL (BIT1 n) = x) ∧
+  (NUMERAL (BIT2 n) * x DIV NUMERAL (BIT2 n) = x) ∧
+  ((NUMERAL (BIT1 n) * x + y) DIV NUMERAL (BIT1 n) =
+   x + y DIV NUMERAL (BIT1 n)) ∧
+  ((NUMERAL (BIT2 n) * x + y) DIV NUMERAL (BIT2 n) =
+   x + y DIV NUMERAL (BIT2 n)) ∧
+  ((y + NUMERAL (BIT1 n) * x) DIV NUMERAL (BIT1 n) =
+   x + y DIV NUMERAL (BIT1 n)) ∧
+  ((y + NUMERAL (BIT2 n) * x) DIV NUMERAL (BIT2 n) =
+   x + y DIV NUMERAL (BIT2 n))
+</pre>
+
+<DT><span class="strong">DIV_ONE</span>
+<DD>
+<pre>
+⊢ ∀q. q DIV SUC 0 = q
+</pre>
+
+<DT><span class="strong">DIV_P</span>
+<DD>
+<pre>
+⊢ ∀P p q. 0 < q ⇒ (P (p DIV q) ⇔ ∃k r. (p = k * q + r) ∧ r < q ∧ P k)
+</pre>
+
+<DT><span class="strong">DIV_P_UNIV</span>
+<DD>
+<pre>
+⊢ ∀P m n. 0 < n ⇒ (P (m DIV n) ⇔ ∀q r. (m = q * n + r) ∧ r < n ⇒ P q)
+</pre>
+
+<DT><span class="strong">DIV_SUB</span>
+<DD>
+<pre>
+⊢ 0 < n ∧ n * q ≤ m ⇒ ((m − n * q) DIV n = m DIV n − q)
+</pre>
+
+<DT><span class="strong">DIV_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀n k q. (∃r. (k = q * n + r) ∧ r < n) ⇒ (k DIV n = q)
+</pre>
+
+<DT><span class="strong">DOUBLE_LT</span>
+<DD>
+<pre>
+⊢ ∀p q. 2 * p + 1 < 2 * q ⇔ p < q
+</pre>
+
+<DT><span class="strong">EQ_ADD_LCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. (m + n = m + p) ⇔ (n = p)
+</pre>
+
+<DT><span class="strong">EQ_ADD_RCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. (m + p = n + p) ⇔ (m = n)
+</pre>
+
+<DT><span class="strong">EQ_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. (m = n) ⇔ m ≤ n ∧ n ≤ m
+</pre>
+
+<DT><span class="strong">EQ_MONO_ADD_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n p. (m + p = n + p) ⇔ (m = n)
+</pre>
+
+<DT><span class="strong">EQ_MULT_LCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. (m * n = m * p) ⇔ (m = 0) ∨ (n = p)
+</pre>
+
+<DT><span class="strong">EQ_MULT_RCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. (n * m = p * m) ⇔ (m = 0) ∨ (n = p)
+</pre>
+
+<DT><span class="strong">EVEN_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. EVEN (m + n) ⇔ (EVEN m ⇔ EVEN n)
+</pre>
+
+<DT><span class="strong">EVEN_AND_ODD</span>
+<DD>
+<pre>
+⊢ ∀n. ¬(EVEN n ∧ ODD n)
+</pre>
+
+<DT><span class="strong">EVEN_DIV_2</span>
+<DD>
+<pre>
+⊢ ∀n. ¬EVEN n ⇒ (SUC n DIV 2 = SUC ((n − 1) DIV 2))
+</pre>
+
+<DT><span class="strong">EVEN_DOUBLE</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN (2 * n)
+</pre>
+
+<DT><span class="strong">EVEN_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN n ⇔ ∃m. n = 2 * m
+</pre>
+
+<DT><span class="strong">EVEN_EXP</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ EVEN m ⇒ EVEN (m ** n)
+</pre>
+
+<DT><span class="strong">EVEN_EXP_IFF</span>
+<DD>
+<pre>
+⊢ ∀n m. EVEN (m ** n) ⇔ 0 < n ∧ EVEN m
+</pre>
+
+<DT><span class="strong">EVEN_MOD2</span>
+<DD>
+<pre>
+⊢ ∀x. EVEN x ⇔ (x MOD 2 = 0)
+</pre>
+
+<DT><span class="strong">EVEN_MULT</span>
+<DD>
+<pre>
+⊢ ∀m n. EVEN (m * n) ⇔ EVEN m ∨ EVEN n
+</pre>
+
+<DT><span class="strong">EVEN_ODD</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN n ⇔ ¬ODD n
+</pre>
+
+<DT><span class="strong">EVEN_ODD_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀n. (EVEN n ⇒ ∃m. n = 2 * m) ∧ (ODD n ⇒ ∃m. n = SUC (2 * m))
+</pre>
+
+<DT><span class="strong">EVEN_OR_ODD</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN n ∨ ODD n
+</pre>
+
+<DT><span class="strong">EVEN_SUB</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ (EVEN (n − m) ⇔ (EVEN n ⇔ EVEN m))
+</pre>
+
+<DT><span class="strong">EXISTS_GREATEST</span>
+<DD>
+<pre>
+⊢ ∀P. (∃x. P x) ∧ (∃x. ∀y. y > x ⇒ ¬P y) ⇔ ∃x. P x ∧ ∀y. y > x ⇒ ¬P y
+</pre>
+
+<DT><span class="strong">EXISTS_NUM</span>
+<DD>
+<pre>
+⊢ ∀P. (∃n. P n) ⇔ P 0 ∨ ∃m. P (SUC m)
+</pre>
+
+<DT><span class="strong">EXP0</span>
+<DD>
+<pre>
+⊢ ∀m. m ** 0 = 1
+</pre>
+
+<DT><span class="strong">EXP2_LT</span>
+<DD>
+<pre>
+⊢ ∀m n. n DIV 2 < 2 ** m ⇔ n < 2 ** SUC m
+</pre>
+
+<DT><span class="strong">EXP_1</span>
+<DD>
+<pre>
+⊢ ∀n. (1 ** n = 1) ∧ (n ** 1 = n)
+</pre>
+
+<DT><span class="strong">EXP_ADD</span>
+<DD>
+<pre>
+⊢ ∀p q n. n ** (p + q) = n ** p * n ** q
+</pre>
+
+<DT><span class="strong">EXP_ALWAYS_BIG_ENOUGH</span>
+<DD>
+<pre>
+⊢ ∀b. 1 < b ⇒ ∀n. ∃m. n ≤ b ** m
+</pre>
+
+<DT><span class="strong">EXP_BASE_INJECTIVE</span>
+<DD>
+<pre>
+⊢ ∀b. 1 < b ⇒ ∀n m. (b ** n = b ** m) ⇔ (n = m)
+</pre>
+
+<DT><span class="strong">EXP_BASE_LEQ_MONO_IMP</span>
+<DD>
+<pre>
+⊢ ∀n m b. 0 < b ∧ m ≤ n ⇒ b ** m ≤ b ** n
+</pre>
+
+<DT><span class="strong">EXP_BASE_LEQ_MONO_SUC_IMP</span>
+<DD>
+<pre>
+⊢ m ≤ n ⇒ SUC b ** m ≤ SUC b ** n
+</pre>
+
+<DT><span class="strong">EXP_BASE_LE_IFF</span>
+<DD>
+<pre>
+⊢ b ** m ≤ b ** n ⇔
+  (b = 0) ∧ (n = 0) ∨ (b = 0) ∧ 0 < m ∨ (b = 1) ∨ 1 < b ∧ m ≤ n
+</pre>
+
+<DT><span class="strong">EXP_BASE_LE_MONO</span>
+<DD>
+<pre>
+⊢ ∀b. 1 < b ⇒ ∀n m. b ** m ≤ b ** n ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">EXP_BASE_LT_MONO</span>
+<DD>
+<pre>
+⊢ ∀b. 1 < b ⇒ ∀n m. b ** m < b ** n ⇔ m < n
+</pre>
+
+<DT><span class="strong">EXP_BASE_MULT</span>
+<DD>
+<pre>
+⊢ ∀z x y. (x * y) ** z = x ** z * y ** z
+</pre>
+
+<DT><span class="strong">EXP_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n m. (n ** m = 0) ⇔ (n = 0) ∧ 0 < m
+</pre>
+
+<DT><span class="strong">EXP_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀n m. (n ** m = 1) ⇔ (n = 1) ∨ (m = 0)
+</pre>
+
+<DT><span class="strong">EXP_EQ_BASE</span>
+<DD>
+<pre>
+⊢ ∀n m. (n ** m = n) ⇔ (m = 1) ∨ (n = 0) ∧ 0 < m ∨ (n = 1)
+</pre>
+
+<DT><span class="strong">EXP_EXP_INJECTIVE</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 x. (b1 ** x = b2 ** x) ⇔ (x = 0) ∨ (b1 = b2)
+</pre>
+
+<DT><span class="strong">EXP_EXP_LE_MONO</span>
+<DD>
+<pre>
+⊢ ∀a b. a ** n ≤ b ** n ⇔ a ≤ b ∨ (n = 0)
+</pre>
+
+<DT><span class="strong">EXP_EXP_LT_MONO</span>
+<DD>
+<pre>
+⊢ ∀a b. a ** n < b ** n ⇔ a < b ∧ 0 < n
+</pre>
+
+<DT><span class="strong">EXP_EXP_MULT</span>
+<DD>
+<pre>
+⊢ ∀z x y. x ** (y * z) = (x ** y) ** z
+</pre>
+
+<DT><span class="strong">EXP_MOD</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ ((x MOD n) ** e MOD n = x ** e MOD n)
+</pre>
+
+<DT><span class="strong">EXP_SUB</span>
+<DD>
+<pre>
+⊢ ∀p q n. 0 < n ∧ q ≤ p ⇒ (n ** (p − q) = n ** p DIV n ** q)
+</pre>
+
+<DT><span class="strong">EXP_SUB_NUMERAL</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒
+  (n ** NUMERAL (BIT1 x) DIV n = n ** (NUMERAL (BIT1 x) − 1)) ∧
+  (n ** NUMERAL (BIT2 x) DIV n = n ** NUMERAL (BIT1 x))
+</pre>
+
+<DT><span class="strong">FACT_LESS</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < FACT n
+</pre>
+
+<DT><span class="strong">FORALL_NUM</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n. P n) ⇔ P 0 ∧ ∀n. P (SUC n)
+</pre>
+
+<DT><span class="strong">FORALL_NUM_THM</span>
+<DD>
+<pre>
+⊢ (∀n. P n) ⇔ P 0 ∧ ∀n. P n ⇒ P (SUC n)
+</pre>
+
+<DT><span class="strong">FUNPOW_0</span>
+<DD>
+<pre>
+⊢ FUNPOW f 0 x = x
+</pre>
+
+<DT><span class="strong">FUNPOW_1</span>
+<DD>
+<pre>
+⊢ FUNPOW f 1 x = f x
+</pre>
+
+<DT><span class="strong">FUNPOW_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. FUNPOW f (m + n) x = FUNPOW f m (FUNPOW f n x)
+</pre>
+
+<DT><span class="strong">FUNPOW_SUC</span>
+<DD>
+<pre>
+⊢ ∀f n x. FUNPOW f (SUC n) x = f (FUNPOW f n x)
+</pre>
+
+<DT><span class="strong">GREATER_EQ</span>
+<DD>
+<pre>
+⊢ ∀n m. n ≥ m ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">INV_PRE_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ 0 < n ⇒ ((PRE m = PRE n) ⇔ (m = n))
+</pre>
+
+<DT><span class="strong">INV_PRE_LESS</span>
+<DD>
+<pre>
+⊢ ∀m. 0 < m ⇒ ∀n. PRE m < PRE n ⇔ m < n
+</pre>
+
+<DT><span class="strong">INV_PRE_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀m. PRE m ≤ PRE n ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">LE</span>
+<DD>
+<pre>
+⊢ (∀n. n ≤ 0 ⇔ (n = 0)) ∧ ∀m n. m ≤ SUC n ⇔ (m = SUC n) ∨ m ≤ n
+</pre>
+
+<DT><span class="strong">LEFT_ADD_DISTRIB</span>
+<DD>
+<pre>
+⊢ ∀m n p. p * (m + n) = p * m + p * n
+</pre>
+
+<DT><span class="strong">LEFT_SUB_DISTRIB</span>
+<DD>
+<pre>
+⊢ ∀m n p. p * (m − n) = p * m − p * n
+</pre>
+
+<DT><span class="strong">LESS_0_CASES</span>
+<DD>
+<pre>
+⊢ ∀m. (0 = m) ∨ 0 < m
+</pre>
+
+<DT><span class="strong">LESS_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. n < m ⇒ ∃p. p + n = m
+</pre>
+
+<DT><span class="strong">LESS_ADD_1</span>
+<DD>
+<pre>
+⊢ ∀m n. n < m ⇒ ∃p. m = n + (p + 1)
+</pre>
+
+<DT><span class="strong">LESS_ADD_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀m n. n ≠ 0 ⇒ m < m + n
+</pre>
+
+<DT><span class="strong">LESS_ADD_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. m < m + SUC n
+</pre>
+
+<DT><span class="strong">LESS_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀m n. ¬(m < n ∧ n < m)
+</pre>
+
+<DT><span class="strong">LESS_CASES</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ∨ n ≤ m
+</pre>
+
+<DT><span class="strong">LESS_CASES_IMP</span>
+<DD>
+<pre>
+⊢ ∀m n. ¬(m < n) ∧ m ≠ n ⇒ n < m
+</pre>
+
+<DT><span class="strong">LESS_DIV_EQ_ZERO</span>
+<DD>
+<pre>
+⊢ ∀r n. r < n ⇒ (r DIV n = 0)
+</pre>
+
+<DT><span class="strong">LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ⇔ SUC m ≤ n
+</pre>
+
+<DT><span class="strong">LESS_EQUAL_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ ∃p. n = m + p
+</pre>
+
+<DT><span class="strong">LESS_EQUAL_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀n m. n ≤ m ∧ m ≤ n ⇒ (n = m)
+</pre>
+
+<DT><span class="strong">LESS_EQUAL_DIFF</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ ∃k. m = n − k
+</pre>
+
+<DT><span class="strong">LESS_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n. n ≤ 0 ⇔ (n = 0)
+</pre>
+
+<DT><span class="strong">LESS_EQ_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ m + n
+</pre>
+
+<DT><span class="strong">LESS_EQ_ADD_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀m n. n ≤ m ⇒ ∃p. p + n = m
+</pre>
+
+<DT><span class="strong">LESS_EQ_ADD_SUB</span>
+<DD>
+<pre>
+⊢ ∀c b. c ≤ b ⇒ ∀a. a + b − c = a + (b − c)
+</pre>
+
+<DT><span class="strong">LESS_EQ_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀m n. ¬(m < n ∧ n ≤ m)
+</pre>
+
+<DT><span class="strong">LESS_EQ_CASES</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ∨ n ≤ m
+</pre>
+
+<DT><span class="strong">LESS_EQ_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇔ ∃p. n = m + p
+</pre>
+
+<DT><span class="strong">LESS_EQ_IFF_LESS_SUC</span>
+<DD>
+<pre>
+⊢ ∀n m. n ≤ m ⇔ n < SUC m
+</pre>
+
+<DT><span class="strong">LESS_EQ_IMP_LESS_SUC</span>
+<DD>
+<pre>
+⊢ ∀n m. n ≤ m ⇒ n < SUC m
+</pre>
+
+<DT><span class="strong">LESS_EQ_LESS_EQ_MONO</span>
+<DD>
+<pre>
+⊢ ∀m n p q. m ≤ p ∧ n ≤ q ⇒ m + n ≤ p + q
+</pre>
+
+<DT><span class="strong">LESS_EQ_LESS_TRANS</span>
+<DD>
+<pre>
+⊢ ∀m n p. m ≤ n ∧ n < p ⇒ m < p
+</pre>
+
+<DT><span class="strong">LESS_EQ_MONO</span>
+<DD>
+<pre>
+⊢ ∀n m. SUC n ≤ SUC m ⇔ n ≤ m
+</pre>
+
+<DT><span class="strong">LESS_EQ_MONO_ADD_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n p. m + p ≤ n + p ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">LESS_EQ_REFL</span>
+<DD>
+<pre>
+⊢ ∀m. m ≤ m
+</pre>
+
+<DT><span class="strong">LESS_EQ_SUB_LESS</span>
+<DD>
+<pre>
+⊢ ∀a b. b ≤ a ⇒ ∀c. a − b < c ⇔ a < b + c
+</pre>
+
+<DT><span class="strong">LESS_EQ_SUC_REFL</span>
+<DD>
+<pre>
+⊢ ∀m. m ≤ SUC m
+</pre>
+
+<DT><span class="strong">LESS_EQ_TRANS</span>
+<DD>
+<pre>
+⊢ ∀m n p. m ≤ n ∧ n ≤ p ⇒ m ≤ p
+</pre>
+
+<DT><span class="strong">LESS_EXP_SUC_MONO</span>
+<DD>
+<pre>
+⊢ ∀n m. SUC (SUC m) ** n < SUC (SUC m) ** SUC n
+</pre>
+
+<DT><span class="strong">LESS_IMP_LESS_ADD</span>
+<DD>
+<pre>
+⊢ ∀n m. n < m ⇒ ∀p. n < m + p
+</pre>
+
+<DT><span class="strong">LESS_IMP_LESS_OR_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ⇒ m ≤ n
+</pre>
+
+<DT><span class="strong">LESS_LESS_CASES</span>
+<DD>
+<pre>
+⊢ ∀m n. (m = n) ∨ m < n ∨ n < m
+</pre>
+
+<DT><span class="strong">LESS_LESS_EQ_TRANS</span>
+<DD>
+<pre>
+⊢ ∀m n p. m < n ∧ n ≤ p ⇒ m < p
+</pre>
+
+<DT><span class="strong">LESS_LESS_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. ¬(m < n ∧ n < SUC m)
+</pre>
+
+<DT><span class="strong">LESS_MOD</span>
+<DD>
+<pre>
+⊢ ∀n k. k < n ⇒ (k MOD n = k)
+</pre>
+
+<DT><span class="strong">LESS_MONO_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n p. m < n ⇒ m + p < n + p
+</pre>
+
+<DT><span class="strong">LESS_MONO_ADD_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n p. m + p < n + p ⇔ m < n
+</pre>
+
+<DT><span class="strong">LESS_MONO_ADD_INV</span>
+<DD>
+<pre>
+⊢ ∀m n p. m + p < n + p ⇒ m < n
+</pre>
+
+<DT><span class="strong">LESS_MONO_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC m < SUC n ⇔ m < n
+</pre>
+
+<DT><span class="strong">LESS_MONO_MULT</span>
+<DD>
+<pre>
+⊢ ∀m n p. m ≤ n ⇒ m * p ≤ n * p
+</pre>
+
+<DT><span class="strong">LESS_MONO_MULT2</span>
+<DD>
+<pre>
+⊢ ∀m n i j. m ≤ i ∧ n ≤ j ⇒ m * n ≤ i * j
+</pre>
+
+<DT><span class="strong">LESS_MONO_REV</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC m < SUC n ⇒ m < n
+</pre>
+
+<DT><span class="strong">LESS_MULT2</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ 0 < n ⇒ 0 < m * n
+</pre>
+
+<DT><span class="strong">LESS_MULT_MONO</span>
+<DD>
+<pre>
+⊢ ∀m i n. SUC n * m < SUC n * i ⇔ m < i
+</pre>
+
+<DT><span class="strong">LESS_NOT_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ∧ n ≠ SUC m ⇒ SUC m < n
+</pre>
+
+<DT><span class="strong">LESS_OR</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ⇒ SUC m ≤ n
+</pre>
+
+<DT><span class="strong">LESS_OR_EQ_ADD</span>
+<DD>
+<pre>
+⊢ ∀n m. n < m ∨ ∃p. n = p + m
+</pre>
+
+<DT><span class="strong">LESS_OR_EQ_ALT</span>
+<DD>
+<pre>
+⊢ $<= = (λx y. y = SUC x)꙳
+</pre>
+
+<DT><span class="strong">LESS_STRONG_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. n < m ⇒ ∃p. SUC p + n = m
+</pre>
+
+<DT><span class="strong">LESS_SUB_ADD_LESS</span>
+<DD>
+<pre>
+⊢ ∀n m i. i < n − m ⇒ i + m < n
+</pre>
+
+<DT><span class="strong">LESS_SUC_EQ_COR</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ∧ SUC m ≠ n ⇒ SUC m < n
+</pre>
+
+<DT><span class="strong">LESS_SUC_NOT</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ⇒ ¬(n < SUC m)
+</pre>
+
+<DT><span class="strong">LESS_TRANS</span>
+<DD>
+<pre>
+⊢ ∀m n p. m < n ∧ n < p ⇒ m < p
+</pre>
+
+<DT><span class="strong">LE_ADD_LCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. m + n ≤ m + p ⇔ n ≤ p
+</pre>
+
+<DT><span class="strong">LE_ADD_RCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. n + m ≤ p + m ⇔ n ≤ p
+</pre>
+
+<DT><span class="strong">LE_LT</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇔ m < n ∨ (m = n)
+</pre>
+
+<DT><span class="strong">LE_LT1</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ⇔ x < y + 1
+</pre>
+
+<DT><span class="strong">LE_MULT_CANCEL_LBARE</span>
+<DD>
+<pre>
+⊢ (m ≤ m * n ⇔ (m = 0) ∨ 0 < n) ∧ (m ≤ n * m ⇔ (m = 0) ∨ 0 < n)
+</pre>
+
+<DT><span class="strong">LE_MULT_CANCEL_RBARE</span>
+<DD>
+<pre>
+⊢ (m * n ≤ m ⇔ (m = 0) ∨ n ≤ 1) ∧ (m * n ≤ n ⇔ (n = 0) ∨ m ≤ 1)
+</pre>
+
+<DT><span class="strong">LE_MULT_CEILING_DIV</span>
+<DD>
+<pre>
+⊢ ∀k. 0 < k ⇒ ∀n. n ≤ k * (n \\ k)
+</pre>
+
+<DT><span class="strong">LE_MULT_LCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. m * n ≤ m * p ⇔ (m = 0) ∨ n ≤ p
+</pre>
+
+<DT><span class="strong">LE_MULT_RCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. m * n ≤ p * n ⇔ (n = 0) ∨ m ≤ p
+</pre>
+
+<DT><span class="strong">LE_SUB_LCANCEL</span>
+<DD>
+<pre>
+⊢ ∀z y x. x − y ≤ x − z ⇔ z ≤ y ∨ x ≤ y
+</pre>
+
+<DT><span class="strong">LE_SUB_RCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. n − m ≤ p − m ⇔ n ≤ m ∨ n ≤ p
+</pre>
+
+<DT><span class="strong">LT</span>
+<DD>
+<pre>
+⊢ (∀m. m < 0 ⇔ F) ∧ ∀m n. m < SUC n ⇔ (m = n) ∨ m < n
+</pre>
+
+<DT><span class="strong">LT_ADD_LCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. p + m < p + n ⇔ m < n
+</pre>
+
+<DT><span class="strong">LT_ADD_RCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. m + p < n + p ⇔ m < n
+</pre>
+
+<DT><span class="strong">LT_LE</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ⇔ m ≤ n ∧ m ≠ n
+</pre>
+
+<DT><span class="strong">LT_MULT_CANCEL_LBARE</span>
+<DD>
+<pre>
+⊢ (m < m * n ⇔ 0 < m ∧ 1 < n) ∧ (m < n * m ⇔ 0 < m ∧ 1 < n)
+</pre>
+
+<DT><span class="strong">LT_MULT_CANCEL_RBARE</span>
+<DD>
+<pre>
+⊢ (m * n < m ⇔ 0 < m ∧ (n = 0)) ∧ (m * n < n ⇔ 0 < n ∧ (m = 0))
+</pre>
+
+<DT><span class="strong">LT_MULT_LCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. m * n < m * p ⇔ 0 < m ∧ n < p
+</pre>
+
+<DT><span class="strong">LT_MULT_RCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. m * n < p * n ⇔ 0 < n ∧ m < p
+</pre>
+
+<DT><span class="strong">LT_SUB_LCANCEL</span>
+<DD>
+<pre>
+⊢ ∀z y x. x − y < x − z ⇔ z < y ∧ z < x
+</pre>
+
+<DT><span class="strong">LT_SUB_RCANCEL</span>
+<DD>
+<pre>
+⊢ ∀m n p. n − m < p − m ⇔ n < p ∧ m < p
+</pre>
+
+<DT><span class="strong">LT_SUC</span>
+<DD>
+<pre>
+⊢ n < SUC m ⇔ (n = 0) ∨ ∃n0. (n = SUC n0) ∧ n0 < m
+</pre>
+
+<DT><span class="strong">LT_SUC_LE</span>
+<DD>
+<pre>
+⊢ ∀m n. m < SUC n ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">MAX_0</span>
+<DD>
+<pre>
+⊢ ∀n. (MAX n 0 = n) ∧ (MAX 0 n = n)
+</pre>
+
+<DT><span class="strong">MAX_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀m n p. MAX m (MAX n p) = MAX (MAX m n) p
+</pre>
+
+<DT><span class="strong">MAX_COMM</span>
+<DD>
+<pre>
+⊢ ∀m n. MAX m n = MAX n m
+</pre>
+
+<DT><span class="strong">MAX_EQ_0</span>
+<DD>
+<pre>
+⊢ (MAX m n = 0) ⇔ (m = 0) ∧ (n = 0)
+</pre>
+
+<DT><span class="strong">MAX_IDEM</span>
+<DD>
+<pre>
+⊢ ∀n. MAX n n = n
+</pre>
+
+<DT><span class="strong">MAX_LE</span>
+<DD>
+<pre>
+⊢ ∀n m p. (p ≤ MAX m n ⇔ p ≤ m ∨ p ≤ n) ∧ (MAX m n ≤ p ⇔ m ≤ p ∧ n ≤ p)
+</pre>
+
+<DT><span class="strong">MAX_LT</span>
+<DD>
+<pre>
+⊢ ∀n m p. (p < MAX m n ⇔ p < m ∨ p < n) ∧ (MAX m n < p ⇔ m < p ∧ n < p)
+</pre>
+
+<DT><span class="strong">MIN_0</span>
+<DD>
+<pre>
+⊢ ∀n. (MIN n 0 = 0) ∧ (MIN 0 n = 0)
+</pre>
+
+<DT><span class="strong">MIN_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀m n p. MIN m (MIN n p) = MIN (MIN m n) p
+</pre>
+
+<DT><span class="strong">MIN_COMM</span>
+<DD>
+<pre>
+⊢ ∀m n. MIN m n = MIN n m
+</pre>
+
+<DT><span class="strong">MIN_EQ_0</span>
+<DD>
+<pre>
+⊢ (MIN m n = 0) ⇔ (m = 0) ∨ (n = 0)
+</pre>
+
+<DT><span class="strong">MIN_IDEM</span>
+<DD>
+<pre>
+⊢ ∀n. MIN n n = n
+</pre>
+
+<DT><span class="strong">MIN_LE</span>
+<DD>
+<pre>
+⊢ ∀n m p. (MIN m n ≤ p ⇔ m ≤ p ∨ n ≤ p) ∧ (p ≤ MIN m n ⇔ p ≤ m ∧ p ≤ n)
+</pre>
+
+<DT><span class="strong">MIN_LT</span>
+<DD>
+<pre>
+⊢ ∀n m p. (MIN m n < p ⇔ m < p ∨ n < p) ∧ (p < MIN m n ⇔ p < m ∧ p < n)
+</pre>
+
+<DT><span class="strong">MIN_MAX_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. (MIN m n = MAX m n) ⇔ (m = n)
+</pre>
+
+<DT><span class="strong">MIN_MAX_LE</span>
+<DD>
+<pre>
+⊢ ∀m n. MIN m n ≤ MAX m n
+</pre>
+
+<DT><span class="strong">MIN_MAX_LT</span>
+<DD>
+<pre>
+⊢ ∀m n. MIN m n < MAX m n ⇔ m ≠ n
+</pre>
+
+<DT><span class="strong">MIN_MAX_PRED</span>
+<DD>
+<pre>
+⊢ ∀P m n. P m ∧ P n ⇒ P (MIN m n) ∧ P (MAX m n)
+</pre>
+
+<DT><span class="strong">MODEQ_0</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ MODEQ n n 0
+</pre>
+
+<DT><span class="strong">MODEQ_0_CONG</span>
+<DD>
+<pre>
+⊢ MODEQ 0 m1 m2 ⇔ (m1 = m2)
+</pre>
+
+<DT><span class="strong">MODEQ_EXP_CONG</span>
+<DD>
+<pre>
+⊢ MODEQ n x y ⇒ MODEQ n (x ** e) (y ** e)
+</pre>
+
+<DT><span class="strong">MODEQ_INTRO_CONG</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ MODEQ n e0 e1 ⇒ (e0 MOD n = e1 MOD n)
+</pre>
+
+<DT><span class="strong">MODEQ_MOD</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ MODEQ n (x MOD n) x
+</pre>
+
+<DT><span class="strong">MODEQ_MULT_CONG</span>
+<DD>
+<pre>
+⊢ MODEQ n x0 x1 ⇒ MODEQ n y0 y1 ⇒ MODEQ n (x0 * y0) (x1 * y1)
+</pre>
+
+<DT><span class="strong">MODEQ_NONZERO_MODEQUALITY</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ (MODEQ n m1 m2 ⇔ (m1 MOD n = m2 MOD n))
+</pre>
+
+<DT><span class="strong">MODEQ_NUMERAL</span>
+<DD>
+<pre>
+⊢ (NUMERAL n ≤ NUMERAL m ⇒
+   MODEQ (NUMERAL (BIT1 n)) (NUMERAL (BIT1 m))
+     (NUMERAL (BIT1 m) MOD NUMERAL (BIT1 n))) ∧
+  (NUMERAL n ≤ NUMERAL m ⇒
+   MODEQ (NUMERAL (BIT1 n)) (NUMERAL (BIT2 m))
+     (NUMERAL (BIT2 m) MOD NUMERAL (BIT1 n))) ∧
+  (NUMERAL n ≤ NUMERAL m ⇒
+   MODEQ (NUMERAL (BIT2 n)) (NUMERAL (BIT2 m))
+     (NUMERAL (BIT2 m) MOD NUMERAL (BIT2 n))) ∧
+  (NUMERAL n < NUMERAL m ⇒
+   MODEQ (NUMERAL (BIT2 n)) (NUMERAL (BIT1 m))
+     (NUMERAL (BIT1 m) MOD NUMERAL (BIT2 n)))
+</pre>
+
+<DT><span class="strong">MODEQ_PLUS_CONG</span>
+<DD>
+<pre>
+⊢ MODEQ n x0 x1 ⇒ MODEQ n y0 y1 ⇒ MODEQ n (x0 + y0) (x1 + y1)
+</pre>
+
+<DT><span class="strong">MODEQ_REFL</span>
+<DD>
+<pre>
+⊢ ∀x. MODEQ n x x
+</pre>
+
+<DT><span class="strong">MODEQ_SUC_CONG</span>
+<DD>
+<pre>
+⊢ MODEQ n x y ⇒ MODEQ n (SUC x) (SUC y)
+</pre>
+
+<DT><span class="strong">MODEQ_SYM</span>
+<DD>
+<pre>
+⊢ MODEQ n x y ⇔ MODEQ n y x
+</pre>
+
+<DT><span class="strong">MODEQ_THM</span>
+<DD>
+<pre>
+⊢ MODEQ n m1 m2 ⇔ (n = 0) ∧ (m1 = m2) ∨ 0 < n ∧ (m1 MOD n = m2 MOD n)
+</pre>
+
+<DT><span class="strong">MODEQ_TRANS</span>
+<DD>
+<pre>
+⊢ ∀x y z. MODEQ n x y ∧ MODEQ n y z ⇒ MODEQ n x z
+</pre>
+
+<DT><span class="strong">MOD_1</span>
+<DD>
+<pre>
+⊢ ∀k. k MOD 1 = 0
+</pre>
+
+<DT><span class="strong">MOD_2</span>
+<DD>
+<pre>
+⊢ ∀n. n MOD 2 = if EVEN n then 0 else 1
+</pre>
+
+<DT><span class="strong">MOD_COMMON_FACTOR</span>
+<DD>
+<pre>
+⊢ ∀n p q. 0 < n ∧ 0 < q ⇒ (n * p MOD q = (n * p) MOD (n * q))
+</pre>
+
+<DT><span class="strong">MOD_ELIM</span>
+<DD>
+<pre>
+⊢ ∀P x n. 0 < n ∧ P x ∧ (∀y. P (y + n) ⇒ P y) ⇒ P (x MOD n)
+</pre>
+
+<DT><span class="strong">MOD_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀k. (k * n) MOD n = 0
+</pre>
+
+<DT><span class="strong">MOD_EQ_0_DIVISOR</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ ((k MOD n = 0) ⇔ ∃d. k = d * n)
+</pre>
+
+<DT><span class="strong">MOD_LESS</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ⇒ m MOD n < n
+</pre>
+
+<DT><span class="strong">MOD_LESS_EQ</span>
+<DD>
+<pre>
+⊢ 0 < y ⇒ x MOD y ≤ x
+</pre>
+
+<DT><span class="strong">MOD_LIFT_PLUS</span>
+<DD>
+<pre>
+⊢ 0 < n ∧ k < n − x MOD n ⇒ ((x + k) MOD n = x MOD n + k)
+</pre>
+
+<DT><span class="strong">MOD_LIFT_PLUS_IFF</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ (((x + k) MOD n = x MOD n + k) ⇔ k < n − x MOD n)
+</pre>
+
+<DT><span class="strong">MOD_MOD</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀k. k MOD n MOD n = k MOD n
+</pre>
+
+<DT><span class="strong">MOD_MULT</span>
+<DD>
+<pre>
+⊢ ∀n r. r < n ⇒ ∀q. (q * n + r) MOD n = r
+</pre>
+
+<DT><span class="strong">MOD_MULT_MOD</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ 0 < m ⇒ ∀x. x MOD (n * m) MOD n = x MOD n
+</pre>
+
+<DT><span class="strong">MOD_ONE</span>
+<DD>
+<pre>
+⊢ ∀k. k MOD SUC 0 = 0
+</pre>
+
+<DT><span class="strong">MOD_P</span>
+<DD>
+<pre>
+⊢ ∀P p q. 0 < q ⇒ (P (p MOD q) ⇔ ∃k r. (p = k * q + r) ∧ r < q ∧ P r)
+</pre>
+
+<DT><span class="strong">MOD_PLUS</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀j k. (j MOD n + k MOD n) MOD n = (j + k) MOD n
+</pre>
+
+<DT><span class="strong">MOD_P_UNIV</span>
+<DD>
+<pre>
+⊢ ∀P m n. 0 < n ⇒ (P (m MOD n) ⇔ ∀q r. (m = q * n + r) ∧ r < n ⇒ P r)
+</pre>
+
+<DT><span class="strong">MOD_SUB</span>
+<DD>
+<pre>
+⊢ 0 < n ∧ n * q ≤ m ⇒ ((m − n * q) MOD n = m MOD n)
+</pre>
+
+<DT><span class="strong">MOD_SUC</span>
+<DD>
+<pre>
+⊢ 0 < y ∧ SUC x ≠ SUC (x DIV y) * y ⇒ (SUC x MOD y = SUC (x MOD y))
+</pre>
+
+<DT><span class="strong">MOD_SUC_IFF</span>
+<DD>
+<pre>
+⊢ 0 < y ⇒ ((SUC x MOD y = SUC (x MOD y)) ⇔ SUC x ≠ SUC (x DIV y) * y)
+</pre>
+
+<DT><span class="strong">MOD_TIMES</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀q r. (q * n + r) MOD n = r MOD n
+</pre>
+
+<DT><span class="strong">MOD_TIMES2</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀j k. (j MOD n * k MOD n) MOD n = (j * k) MOD n
+</pre>
+
+<DT><span class="strong">MOD_TIMES_SUB</span>
+<DD>
+<pre>
+⊢ ∀n q r. 0 < n ∧ 0 < q ∧ r ≤ n ⇒ ((q * n − r) MOD n = (n − r) MOD n)
+</pre>
+
+<DT><span class="strong">MOD_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀n k r. (∃q. (k = q * n + r) ∧ r < n) ⇒ (k MOD n = r)
+</pre>
+
+<DT><span class="strong">MULT_0</span>
+<DD>
+<pre>
+⊢ ∀m. m * 0 = 0
+</pre>
+
+<DT><span class="strong">MULT_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀m n p. m * (n * p) = m * n * p
+</pre>
+
+<DT><span class="strong">MULT_CLAUSES</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    (0 * m = 0) ∧ (m * 0 = 0) ∧ (1 * m = m) ∧ (m * 1 = m) ∧
+    (SUC m * n = m * n + n) ∧ (m * SUC n = m + m * n)
+</pre>
+
+<DT><span class="strong">MULT_COMM</span>
+<DD>
+<pre>
+⊢ ∀m n. m * n = n * m
+</pre>
+
+<DT><span class="strong">MULT_DIV</span>
+<DD>
+<pre>
+⊢ ∀n q. 0 < n ⇒ (q * n DIV n = q)
+</pre>
+
+<DT><span class="strong">MULT_DIV_2</span>
+<DD>
+<pre>
+⊢ ∀n. 2 * n DIV 2 = n
+</pre>
+
+<DT><span class="strong">MULT_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀m n. (m * n = 0) ⇔ (m = 0) ∨ (n = 0)
+</pre>
+
+<DT><span class="strong">MULT_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀x y. (x * y = 1) ⇔ (x = 1) ∧ (y = 1)
+</pre>
+
+<DT><span class="strong">MULT_EQ_DIV</span>
+<DD>
+<pre>
+⊢ 0 < x ⇒ ((x * y = z) ⇔ (y = z DIV x) ∧ (z MOD x = 0))
+</pre>
+
+<DT><span class="strong">MULT_EQ_ID</span>
+<DD>
+<pre>
+⊢ ∀m n. ((m * n = n) ⇔ (m = 1) ∨ (n = 0)) ∧ ((n * m = n) ⇔ (m = 1) ∨ (n = 0))
+</pre>
+
+<DT><span class="strong">MULT_EXP_MONO</span>
+<DD>
+<pre>
+⊢ ∀p q n m. (n * SUC q ** p = m * SUC q ** p) ⇔ (n = m)
+</pre>
+
+<DT><span class="strong">MULT_INCREASES</span>
+<DD>
+<pre>
+⊢ ∀m n. 1 < m ∧ 0 < n ⇒ SUC n ≤ m * n
+</pre>
+
+<DT><span class="strong">MULT_LEFT_1</span>
+<DD>
+<pre>
+⊢ ∀m. 1 * m = m
+</pre>
+
+<DT><span class="strong">MULT_LESS_EQ_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n p. m ≤ n ⇔ SUC p * m ≤ SUC p * n
+</pre>
+
+<DT><span class="strong">MULT_MONO_EQ</span>
+<DD>
+<pre>
+⊢ ∀m i n. (SUC n * m = SUC n * i) ⇔ (m = i)
+</pre>
+
+<DT><span class="strong">MULT_RIGHT_1</span>
+<DD>
+<pre>
+⊢ ∀m. m * 1 = m
+</pre>
+
+<DT><span class="strong">MULT_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. m * SUC n = m + m * n
+</pre>
+
+<DT><span class="strong">MULT_SUC_EQ</span>
+<DD>
+<pre>
+⊢ ∀p m n. (n * SUC p = m * SUC p) ⇔ (n = m)
+</pre>
+
+<DT><span class="strong">MULT_SYM</span>
+<DD>
+<pre>
+⊢ ∀m n. m * n = n * m
+</pre>
+
+<DT><span class="strong">NORM_0</span>
+<DD>
+<pre>
+⊢ 0 = 0
+</pre>
+
+<DT><span class="strong">NOT_EXP_0</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC n ** m ≠ 0
+</pre>
+
+<DT><span class="strong">NOT_GREATER</span>
+<DD>
+<pre>
+⊢ ∀m n. ¬(m > n) ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">NOT_GREATER_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. ¬(m ≥ n) ⇔ SUC m ≤ n
+</pre>
+
+<DT><span class="strong">NOT_LEQ</span>
+<DD>
+<pre>
+⊢ ∀m n. ¬(m ≤ n) ⇔ SUC n ≤ m
+</pre>
+
+<DT><span class="strong">NOT_LESS</span>
+<DD>
+<pre>
+⊢ ∀m n. ¬(m < n) ⇔ n ≤ m
+</pre>
+
+<DT><span class="strong">NOT_LESS_EQUAL</span>
+<DD>
+<pre>
+⊢ ∀m n. ¬(m ≤ n) ⇔ n < m
+</pre>
+
+<DT><span class="strong">NOT_LT_ZERO_EQ_ZERO</span>
+<DD>
+<pre>
+⊢ ∀n. ¬(0 < n) ⇔ (n = 0)
+</pre>
+
+<DT><span class="strong">NOT_NUM_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≠ n ⇔ SUC m ≤ n ∨ SUC n ≤ m
+</pre>
+
+<DT><span class="strong">NOT_ODD_EQ_EVEN</span>
+<DD>
+<pre>
+⊢ ∀n m. SUC (n + n) ≠ m + m
+</pre>
+
+<DT><span class="strong">NOT_STRICTLY_DECREASING</span>
+<DD>
+<pre>
+⊢ ∀f. ¬∀n. f (SUC n) < f n
+</pre>
+
+<DT><span class="strong">NOT_SUC_ADD_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. ¬(SUC (m + n) ≤ m)
+</pre>
+
+<DT><span class="strong">NOT_SUC_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀n m. ¬(SUC n ≤ m) ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">NOT_SUC_LESS_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n. ¬(SUC n ≤ 0)
+</pre>
+
+<DT><span class="strong">NOT_ZERO_LT_ZERO</span>
+<DD>
+<pre>
+⊢ ∀n. n ≠ 0 ⇔ 0 < n
+</pre>
+
+<DT><span class="strong">NRC_0</span>
+<DD>
+<pre>
+⊢ ∀R x y. NRC R 0 x y ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">NRC_1</span>
+<DD>
+<pre>
+⊢ NRC R 1 x y ⇔ R x y
+</pre>
+
+<DT><span class="strong">NRC_ADD_E</span>
+<DD>
+<pre>
+⊢ ∀m n x z. NRC R (m + n) x z ⇒ ∃y. NRC R m x y ∧ NRC R n y z
+</pre>
+
+<DT><span class="strong">NRC_ADD_EQN</span>
+<DD>
+<pre>
+⊢ NRC R (m + n) x z ⇔ ∃y. NRC R m x y ∧ NRC R n y z
+</pre>
+
+<DT><span class="strong">NRC_ADD_I</span>
+<DD>
+<pre>
+⊢ ∀m n x y z. NRC R m x y ∧ NRC R n y z ⇒ NRC R (m + n) x z
+</pre>
+
+<DT><span class="strong">NRC_RTC</span>
+<DD>
+<pre>
+⊢ ∀n x y. NRC R n x y ⇒ R꙳ x y
+</pre>
+
+<DT><span class="strong">NRC_SUC_RECURSE_LEFT</span>
+<DD>
+<pre>
+⊢ NRC R (SUC n) x y ⇔ ∃z. NRC R n x z ∧ R z y
+</pre>
+
+<DT><span class="strong">NUMERAL_MULT_EQ_DIV</span>
+<DD>
+<pre>
+⊢ ((NUMERAL (BIT1 x) * y = NUMERAL z) ⇔
+   (y = NUMERAL z DIV NUMERAL (BIT1 x)) ∧ (NUMERAL z MOD NUMERAL (BIT1 x) = 0)) ∧
+  ((NUMERAL (BIT2 x) * y = NUMERAL z) ⇔
+   (y = NUMERAL z DIV NUMERAL (BIT2 x)) ∧ (NUMERAL z MOD NUMERAL (BIT2 x) = 0))
+</pre>
+
+<DT><span class="strong">NUM_EXP_ADD</span>
+<DD>
+<pre>
+⊢ ∀p q n. n ** (p + q) = n ** p * n ** q
+</pre>
+
+<DT><span class="strong">ODD_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. ODD (m + n) ⇔ (ODD m ⇎ ODD n)
+</pre>
+
+<DT><span class="strong">ODD_DOUBLE</span>
+<DD>
+<pre>
+⊢ ∀n. ODD (SUC (2 * n))
+</pre>
+
+<DT><span class="strong">ODD_EVEN</span>
+<DD>
+<pre>
+⊢ ∀n. ODD n ⇔ ¬EVEN n
+</pre>
+
+<DT><span class="strong">ODD_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀n. ODD n ⇔ ∃m. n = SUC (2 * m)
+</pre>
+
+<DT><span class="strong">ODD_EXP</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ ODD m ⇒ ODD (m ** n)
+</pre>
+
+<DT><span class="strong">ODD_EXP_IFF</span>
+<DD>
+<pre>
+⊢ ∀n m. ODD (m ** n) ⇔ (n = 0) ∨ ODD m
+</pre>
+
+<DT><span class="strong">ODD_MULT</span>
+<DD>
+<pre>
+⊢ ∀m n. ODD (m * n) ⇔ ODD m ∧ ODD n
+</pre>
+
+<DT><span class="strong">ODD_OR_EVEN</span>
+<DD>
+<pre>
+⊢ ∀n. ∃m. (n = SUC (SUC 0) * m) ∨ (n = SUC (SUC 0) * m + 1)
+</pre>
+
+<DT><span class="strong">ODD_POS</span>
+<DD>
+<pre>
+⊢ ∀n. ODD n ⇒ 0 < n
+</pre>
+
+<DT><span class="strong">ODD_SUB</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ (ODD (n − m) ⇔ (ODD n ⇎ ODD m))
+</pre>
+
+<DT><span class="strong">ONE</span>
+<DD>
+<pre>
+⊢ 1 = SUC 0
+</pre>
+
+<DT><span class="strong">ONE_LT_EXP</span>
+<DD>
+<pre>
+⊢ ∀x y. 1 < x ** y ⇔ 1 < x ∧ 0 < y
+</pre>
+
+<DT><span class="strong">ONE_LT_MULT</span>
+<DD>
+<pre>
+⊢ ∀x y. 1 < x * y ⇔ 0 < x ∧ 1 < y ∨ 0 < y ∧ 1 < x
+</pre>
+
+<DT><span class="strong">ONE_LT_MULT_IMP</span>
+<DD>
+<pre>
+⊢ ∀p q. 1 < p ∧ 0 < q ⇒ 1 < p * q
+</pre>
+
+<DT><span class="strong">ONE_MOD</span>
+<DD>
+<pre>
+⊢ 1 < n ⇒ (1 MOD n = 1)
+</pre>
+
+<DT><span class="strong">ONE_MOD_IFF</span>
+<DD>
+<pre>
+⊢ 1 < n ⇔ 0 < n ∧ (1 MOD n = 1)
+</pre>
+
+<DT><span class="strong">ONE_ONE_INV_IMAGE_BOUNDED</span>
+<DD>
+<pre>
+⊢ ONE_ONE f ⇒ ∀b. ∃a. ∀x. f x ≤ b ⇒ x ≤ a
+</pre>
+
+<DT><span class="strong">ONE_ONE_UNBOUNDED</span>
+<DD>
+<pre>
+⊢ ∀f. ONE_ONE f ⇒ ∀b. ∃n. b < f n
+</pre>
+
+<DT><span class="strong">OR_LESS</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC m ≤ n ⇒ m < n
+</pre>
+
+<DT><span class="strong">PRE_ELIM_THM</span>
+<DD>
+<pre>
+⊢ P (PRE n) ⇔ ∀m. ((n = 0) ⇒ P 0) ∧ ((n = SUC m) ⇒ P m)
+</pre>
+
+<DT><span class="strong">PRE_ELIM_THM'</span>
+<DD>
+<pre>
+⊢ P (PRE n) ⇔ ∀m. (n = SUC m) ∨ (m = 0) ∧ (n = 0) ⇒ P m
+</pre>
+
+<DT><span class="strong">PRE_ELIM_THM_EXISTS</span>
+<DD>
+<pre>
+⊢ P (PRE n) ⇔ ∃m. ((n = SUC m) ∨ (m = 0) ∧ (n = 0)) ∧ P m
+</pre>
+
+<DT><span class="strong">PRE_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀n. m ≤ n ⇒ PRE m ≤ PRE n
+</pre>
+
+<DT><span class="strong">PRE_SUB</span>
+<DD>
+<pre>
+⊢ ∀m n. PRE (m − n) = PRE m − n
+</pre>
+
+<DT><span class="strong">PRE_SUB1</span>
+<DD>
+<pre>
+⊢ ∀m. PRE m = m − 1
+</pre>
+
+<DT><span class="strong">PRE_SUC_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ⇒ ((m = PRE n) ⇔ (SUC m = n))
+</pre>
+
+<DT><span class="strong">RIGHT_ADD_DISTRIB</span>
+<DD>
+<pre>
+⊢ ∀m n p. (m + n) * p = m * p + n * p
+</pre>
+
+<DT><span class="strong">RIGHT_SUB_DISTRIB</span>
+<DD>
+<pre>
+⊢ ∀m n p. (m − n) * p = m * p − n * p
+</pre>
+
+<DT><span class="strong">RTC_NRC</span>
+<DD>
+<pre>
+⊢ ∀x y. R꙳ x y ⇒ ∃n. NRC R n x y
+</pre>
+
+<DT><span class="strong">RTC_eq_NRC</span>
+<DD>
+<pre>
+⊢ ∀R x y. R꙳ x y ⇔ ∃n. NRC R n x y
+</pre>
+
+<DT><span class="strong">STRICTLY_INCREASING_ONE_ONE</span>
+<DD>
+<pre>
+⊢ ∀f. (∀n. f n < f (SUC n)) ⇒ ONE_ONE f
+</pre>
+
+<DT><span class="strong">STRICTLY_INCREASING_TC</span>
+<DD>
+<pre>
+⊢ ∀f. (∀n. f n < f (SUC n)) ⇒ ∀m n. m < n ⇒ f m < f n
+</pre>
+
+<DT><span class="strong">STRICTLY_INCREASING_UNBOUNDED</span>
+<DD>
+<pre>
+⊢ ∀f. (∀n. f n < f (SUC n)) ⇒ ∀b. ∃n. b < f n
+</pre>
+
+<DT><span class="strong">SUB_0</span>
+<DD>
+<pre>
+⊢ ∀m. (0 − m = 0) ∧ (m − 0 = m)
+</pre>
+
+<DT><span class="strong">SUB_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. n ≤ m ⇒ (m − n + n = m)
+</pre>
+
+<DT><span class="strong">SUB_CANCEL</span>
+<DD>
+<pre>
+⊢ ∀p n m. n ≤ p ∧ m ≤ p ⇒ ((p − n = p − m) ⇔ (n = m))
+</pre>
+
+<DT><span class="strong">SUB_ELIM_THM</span>
+<DD>
+<pre>
+⊢ P (a − b) ⇔ ∀d. ((b = a + d) ⇒ P 0) ∧ ((a = b + d) ⇒ P d)
+</pre>
+
+<DT><span class="strong">SUB_ELIM_THM'</span>
+<DD>
+<pre>
+⊢ P (a − b) ⇔ ∀d. (a = b + d) ∨ a < b ∧ (d = 0) ⇒ P d
+</pre>
+
+<DT><span class="strong">SUB_ELIM_THM_EXISTS</span>
+<DD>
+<pre>
+⊢ P (a − b) ⇔ (∃d. (b = a + d) ∧ P 0) ∨ ∃d. (a = b + d) ∧ P d
+</pre>
+
+<DT><span class="strong">SUB_ELIM_THM_EXISTS'</span>
+<DD>
+<pre>
+⊢ P (a − b) ⇔ ∃d. ((a = b + d) ∨ a < b ∧ (d = 0)) ∧ P d
+</pre>
+
+<DT><span class="strong">SUB_EQUAL_0</span>
+<DD>
+<pre>
+⊢ ∀c. c − c = 0
+</pre>
+
+<DT><span class="strong">SUB_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀m n. (m − n = 0) ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">SUB_EQ_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀m n. (m − n = m) ⇔ (m = 0) ∨ (n = 0)
+</pre>
+
+<DT><span class="strong">SUB_LEFT_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n p. m + (n − p) = if n ≤ p then m else m + n − p
+</pre>
+
+<DT><span class="strong">SUB_LEFT_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n p. (m = n − p) ⇔ (m + p = n) ∨ m ≤ 0 ∧ n ≤ p
+</pre>
+
+<DT><span class="strong">SUB_LEFT_GREATER</span>
+<DD>
+<pre>
+⊢ ∀m n p. m > n − p ⇔ m + p > n ∧ m > 0
+</pre>
+
+<DT><span class="strong">SUB_LEFT_GREATER_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n p. m ≥ n − p ⇔ m + p ≥ n
+</pre>
+
+<DT><span class="strong">SUB_LEFT_LESS</span>
+<DD>
+<pre>
+⊢ ∀m n p. m < n − p ⇔ m + p < n
+</pre>
+
+<DT><span class="strong">SUB_LEFT_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n p. m ≤ n − p ⇔ m + p ≤ n ∨ m ≤ 0
+</pre>
+
+<DT><span class="strong">SUB_LEFT_SUB</span>
+<DD>
+<pre>
+⊢ ∀m n p. m − (n − p) = if n ≤ p then m else m + p − n
+</pre>
+
+<DT><span class="strong">SUB_LEFT_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC (m − n) = if m ≤ n then SUC 0 else SUC m − n
+</pre>
+
+<DT><span class="strong">SUB_LESS</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ n ≤ m ⇒ m − n < m
+</pre>
+
+<DT><span class="strong">SUB_LESS_0</span>
+<DD>
+<pre>
+⊢ ∀n m. m < n ⇔ 0 < n − m
+</pre>
+
+<DT><span class="strong">SUB_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀n m. n − m ≤ n
+</pre>
+
+<DT><span class="strong">SUB_LESS_EQ_ADD</span>
+<DD>
+<pre>
+⊢ ∀m p. m ≤ p ⇒ ∀n. p − m ≤ n ⇔ p ≤ m + n
+</pre>
+
+<DT><span class="strong">SUB_LESS_OR</span>
+<DD>
+<pre>
+⊢ ∀m n. n < m ⇒ n ≤ m − 1
+</pre>
+
+<DT><span class="strong">SUB_LESS_SUC</span>
+<DD>
+<pre>
+⊢ ∀p m. p − m < SUC p
+</pre>
+
+<DT><span class="strong">SUB_MOD</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ n ≤ m ⇒ ((m − n) MOD n = m MOD n)
+</pre>
+
+<DT><span class="strong">SUB_MONO_EQ</span>
+<DD>
+<pre>
+⊢ ∀n m. SUC n − SUC m = n − m
+</pre>
+
+<DT><span class="strong">SUB_PLUS</span>
+<DD>
+<pre>
+⊢ ∀a b c. a − (b + c) = a − b − c
+</pre>
+
+<DT><span class="strong">SUB_RIGHT_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n p. m − n + p = if m ≤ n then p else m + p − n
+</pre>
+
+<DT><span class="strong">SUB_RIGHT_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n p. (m − n = p) ⇔ (m = n + p) ∨ m ≤ n ∧ p ≤ 0
+</pre>
+
+<DT><span class="strong">SUB_RIGHT_GREATER</span>
+<DD>
+<pre>
+⊢ ∀m n p. m − n > p ⇔ m > n + p
+</pre>
+
+<DT><span class="strong">SUB_RIGHT_GREATER_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n p. m − n ≥ p ⇔ m ≥ n + p ∨ 0 ≥ p
+</pre>
+
+<DT><span class="strong">SUB_RIGHT_LESS</span>
+<DD>
+<pre>
+⊢ ∀m n p. m − n < p ⇔ m < n + p ∧ 0 < p
+</pre>
+
+<DT><span class="strong">SUB_RIGHT_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n p. m − n ≤ p ⇔ m ≤ n + p
+</pre>
+
+<DT><span class="strong">SUB_RIGHT_SUB</span>
+<DD>
+<pre>
+⊢ ∀m n p. m − n − p = m − (n + p)
+</pre>
+
+<DT><span class="strong">SUB_SUB</span>
+<DD>
+<pre>
+⊢ ∀b c. c ≤ b ⇒ ∀a. a − (b − c) = a + c − b
+</pre>
+
+<DT><span class="strong">SUC_ADD_SYM</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC (m + n) = SUC n + m
+</pre>
+
+<DT><span class="strong">SUC_ELIM_NUMERALS</span>
+<DD>
+<pre>
+⊢ ∀f g.
+    (∀n. g (SUC n) = f n (SUC n)) ⇔
+    (∀n. g (NUMERAL (BIT1 n)) = f (NUMERAL (BIT1 n) − 1) (NUMERAL (BIT1 n))) ∧
+    ∀n. g (NUMERAL (BIT2 n)) = f (NUMERAL (BIT1 n)) (NUMERAL (BIT2 n))
+</pre>
+
+<DT><span class="strong">SUC_ELIM_THM</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n. P (SUC n) n) ⇔ ∀n. 0 < n ⇒ P n (n − 1)
+</pre>
+
+<DT><span class="strong">SUC_LT</span>
+<DD>
+<pre>
+⊢ SUC n < m ⇔ ∃m0. (m = SUC m0) ∧ n < m0
+</pre>
+
+<DT><span class="strong">SUC_MOD</span>
+<DD>
+<pre>
+⊢ ∀n a b. 0 < n ⇒ ((SUC a MOD n = SUC b MOD n) ⇔ (a MOD n = b MOD n))
+</pre>
+
+<DT><span class="strong">SUC_NOT</span>
+<DD>
+<pre>
+⊢ ∀n. 0 ≠ SUC n
+</pre>
+
+<DT><span class="strong">SUC_ONE_ADD</span>
+<DD>
+<pre>
+⊢ ∀n. SUC n = 1 + n
+</pre>
+
+<DT><span class="strong">SUC_PRE</span>
+<DD>
+<pre>
+⊢ 0 < m ⇔ (SUC (PRE m) = m)
+</pre>
+
+<DT><span class="strong">SUC_SUB</span>
+<DD>
+<pre>
+⊢ ∀a. SUC a − a = 1
+</pre>
+
+<DT><span class="strong">SUC_SUB1</span>
+<DD>
+<pre>
+⊢ ∀m. SUC m − 1 = m
+</pre>
+
+<DT><span class="strong">SUM_SQUARED</span>
+<DD>
+<pre>
+⊢ (x + y)² = x² + 2 * x * y + y²
+</pre>
+
+<DT><span class="strong">TC_eq_NRC</span>
+<DD>
+<pre>
+⊢ ∀R x y. R⁺ x y ⇔ ∃n. NRC R (SUC n) x y
+</pre>
+
+<DT><span class="strong">TIMES2</span>
+<DD>
+<pre>
+⊢ ∀n. 2 * n = n + n
+</pre>
+
+<DT><span class="strong">TWO</span>
+<DD>
+<pre>
+⊢ 2 = SUC 1
+</pre>
+
+<DT><span class="strong">WOP</span>
+<DD>
+<pre>
+⊢ ∀P. (∃n. P n) ⇒ ∃n. P n ∧ ∀m. m < n ⇒ ¬P m
+</pre>
+
+<DT><span class="strong">WOP_measure</span>
+<DD>
+<pre>
+⊢ ∀P m. (∃a. P a) ⇒ ∃b. P b ∧ ∀c. P c ⇒ m b ≤ m c
+</pre>
+
+<DT><span class="strong">X_LE_DIV</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ⇒ (x ≤ y DIV z ⇔ x * z ≤ y)
+</pre>
+
+<DT><span class="strong">X_LE_X_EXP</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ x ≤ x ** n
+</pre>
+
+<DT><span class="strong">X_LE_X_SQUARED</span>
+<DD>
+<pre>
+⊢ x ≤ x²
+</pre>
+
+<DT><span class="strong">X_LT_DIV</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ⇒ (x < y DIV z ⇔ (x + 1) * z ≤ y)
+</pre>
+
+<DT><span class="strong">X_LT_EXP_X</span>
+<DD>
+<pre>
+⊢ 1 < b ⇒ x < b ** x
+</pre>
+
+<DT><span class="strong">X_LT_EXP_X_IFF</span>
+<DD>
+<pre>
+⊢ x < b ** x ⇔ 1 < b ∨ (x = 0)
+</pre>
+
+<DT><span class="strong">X_LT_X_SQUARED</span>
+<DD>
+<pre>
+⊢ x < x² ⇔ 1 < x
+</pre>
+
+<DT><span class="strong">X_MOD_Y_EQ_X</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < y ⇒ ((x MOD y = x) ⇔ x < y)
+</pre>
+
+<DT><span class="strong">ZERO_DIV</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ (0 DIV n = 0)
+</pre>
+
+<DT><span class="strong">ZERO_EXP</span>
+<DD>
+<pre>
+⊢ 0 ** x = if x = 0 then 1 else 0
+</pre>
+
+<DT><span class="strong">ZERO_LESS_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m + n ⇔ 0 < m ∨ 0 < n
+</pre>
+
+<DT><span class="strong">ZERO_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀n. 0 ≤ n
+</pre>
+
+<DT><span class="strong">ZERO_LESS_EXP</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < SUC n ** m
+</pre>
+
+<DT><span class="strong">ZERO_LESS_MULT</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m * n ⇔ 0 < m ∧ 0 < n
+</pre>
+
+<DT><span class="strong">ZERO_LT_EXP</span>
+<DD>
+<pre>
+⊢ 0 < x ** y ⇔ 0 < x ∨ (y = 0)
+</pre>
+
+<DT><span class="strong">ZERO_MOD</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ (0 MOD n = 0)
+</pre>
+
+<DT><span class="strong">binary_induct</span>
+<DD>
+<pre>
+⊢ ∀P. P 0 ∧ (∀n. P n ⇒ P (2 * n) ∧ P (2 * n + 1)) ⇒ ∀n. P n
+</pre>
+
+<DT><span class="strong">datatype_num</span>
+<DD>
+<pre>
+⊢ DATATYPE (num 0 SUC)
+</pre>
+
+<DT><span class="strong">findq_divisor</span>
+<DD>
+<pre>
+⊢ n ≤ m ⇒ findq (a,m,n) * n ≤ a * m
+</pre>
+
+<DT><span class="strong">findq_eq_0</span>
+<DD>
+<pre>
+⊢ ∀a m n. (findq (a,m,n) = 0) ⇔ (a = 0)
+</pre>
+
+<DT><span class="strong">findq_thm</span>
+<DD>
+<pre>
+⊢ findq (a,m,n) =
+  if n = 0 then a
+  else (let d = 2 * n in if m < d then a else findq (2 * a,m,d))
+</pre>
+
+<DT><span class="strong">num_CASES</span>
+<DD>
+<pre>
+⊢ ∀m. (m = 0) ∨ ∃n. m = SUC n
+</pre>
+
+<DT><span class="strong">num_MAX</span>
+<DD>
+<pre>
+⊢ ∀P. (∃x. P x) ∧ (∃M. ∀x. P x ⇒ x ≤ M) ⇔ ∃m. P m ∧ ∀x. P x ⇒ x ≤ m
+</pre>
+
+<DT><span class="strong">num_case_NUMERAL_compute</span>
+<DD>
+<pre>
+⊢ (num_CASE (NUMERAL (BIT1 n)) z s = s (NUMERAL (BIT1 n) − 1)) ∧
+  (num_CASE (NUMERAL (BIT2 n)) z s = s (NUMERAL (BIT1 n)))
+</pre>
+
+<DT><span class="strong">num_case_compute</span>
+<DD>
+<pre>
+⊢ ∀n. num_CASE n f g = if n = 0 then f else g (PRE n)
+</pre>
+
+<DT><span class="strong">num_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' v f.
+    (M = M') ∧ ((M' = 0) ⇒ (v = v')) ∧ (∀n. (M' = SUC n) ⇒ (f n = f' n)) ⇒
+    (num_CASE M v f = num_CASE M' v' f')
+</pre>
+
+<DT><span class="strong">num_case_def</span>
+<DD>
+<pre>
+⊢ (∀v f. num_CASE 0 v f = v) ∧ ∀n v f. num_CASE (SUC n) v f = f n
+</pre>
+
+<DT><span class="strong">num_case_eq</span>
+<DD>
+<pre>
+⊢ (num_CASE n zc sc = v) ⇔ (n = 0) ∧ (zc = v) ∨ ∃x. (n = SUC x) ∧ (sc x = v)
+</pre>
+
+<DT><span class="strong">transitive_LESS</span>
+<DD>
+<pre>
+⊢ transitive $<
+</pre>
+
+<DT><span class="strong">transitive_measure</span>
+<DD>
+<pre>
+⊢ ∀f. transitive (measure f)
+</pre>
+
+<DT><span class="strong">transitive_monotone</span>
+<DD>
+<pre>
+⊢ ∀R f. transitive R ∧ (∀n. R (f n) (f (SUC n))) ⇒ ∀m n. m < n ⇒ R (f m) (f n)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

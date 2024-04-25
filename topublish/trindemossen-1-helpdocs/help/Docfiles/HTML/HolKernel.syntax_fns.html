@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>HolKernel.syntax_fns</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>syntax_fns : {dest: term -&gt; exn -&gt; term -&gt; 'a, make: term -&gt; 'b -&gt; term, n: int} -&gt; string -&gt; string -&gt;
+             term * ('b -&gt; term) * (term -&gt; 'a) * (term -&gt; bool)</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/HolKernel.html">HolKernel</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Helps in providing syntax support for theory constants.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">syntax_fns&nbsp;syntax&nbsp;thy&nbsp;name</SPAN><SPAN class = "TEXT"> returns a 4-tuple, consisting of: a term, a term destructor function, a term constructor function and a term recogniser function. These provide syntax support for operation </SPAN><SPAN class = "BRKT">name</SPAN><SPAN class = "TEXT"> from theory </SPAN><SPAN class = "BRKT">thy</SPAN><SPAN class = "TEXT">. The record argument </SPAN><SPAN class = "BRKT">syntax</SPAN><SPAN class = "TEXT"> consists of </SPAN><SPAN class = "BRKT">dest:&nbsp;term&nbsp;-&gt;&nbsp;exn&nbsp;-&gt;&nbsp;term&nbsp;-&gt;&nbsp;'a</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">make:&nbsp;term&nbsp;-&gt;&nbsp;'b&nbsp;-&gt;&nbsp;term</SPAN><SPAN class = "TEXT"> functions, together with an "expected arity" value </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT">.
+Through a sequence of instantiations, the </SPAN><SPAN class = "BRKT">syntax_fns</SPAN><SPAN class = "TEXT"> function can be used to quickly and reliably write a </SPAN><SPAN class = "BRKT">thySyntax.sml</SPAN><SPAN class = "TEXT"> file.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">To provide syntax support for unary operations from the theory </SPAN><SPAN class = "BRKT">num</SPAN><SPAN class = "TEXT">, one can use the following function:
+</SPAN><DIV class = "XMPL"><pre>
+&gt; val num1 = HolKernel.syntax_fns {n = 1, make = HolKernel.mk_monop, dest = HolKernel.dest_monop} "num";
+val num1 = fn:
+   string -&gt; term * (term -&gt; term) * (term -&gt; term) * (term -&gt; bool)
+</pre></DIV>
+<SPAN class = "TEXT">
+The following call then provides support for the </SPAN><SPAN class = "BRKT">SUC</SPAN><SPAN class = "TEXT"> constant:
+</SPAN><DIV class = "XMPL"><pre>
+&gt; val (suc_tm, mk_suc, dest_suc, is_suc) = num1 "SUC";
+val dest_suc = fn: term -&gt; term
+val is_suc = fn: term -&gt; bool
+val mk_suc = fn: term -&gt; term
+val suc_tm = ``SUC``: term
+</pre></DIV>
+<SPAN class = "TEXT">
+A </SPAN><SPAN class = "BRKT">SUC</SPAN><SPAN class = "TEXT"> term can be constructed with
+</SPAN><DIV class = "XMPL"><pre>
+&gt; val tm = mk_suc ``4n``;
+val tm = ``SUC 4``: term
+</pre></DIV>
+<SPAN class = "TEXT">
+The resulting term </SPAN><SPAN class = "BRKT">tm</SPAN><SPAN class = "TEXT"> can be identified and destructed as follows:
+</SPAN><DIV class = "XMPL"><pre>
+&gt; is_suc tm;
+val it = true: bool
+&gt; val v = dest_suc tm;
+val v = ``4``: term
+</pre></DIV>
+<SPAN class = "TEXT">
+A standard error message is raised when </SPAN><SPAN class = "BRKT">dest_suc</SPAN><SPAN class = "TEXT"> fails, e.g.
+</SPAN><DIV class = "XMPL"><pre>
+&gt; is_suc ``SUC``;
+val it = false: bool
+&gt; val v = dest_suc ``SUC``;
+Exception-
+   HOL_ERR
+     {message = "", origin_function = "dest_SUC", origin_structure =
+     "numSyntax"} raised
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT">The value </SPAN><SPAN class = "BRKT">n</SPAN><SPAN class = "TEXT"> in the call to </SPAN><SPAN class = "BRKT">syntax_fns</SPAN><SPAN class = "TEXT"> acts purely as a sanity check. For example, the following fails because </SPAN><SPAN class = "BRKT">SUC</SPAN><SPAN class = "TEXT"> is not a binary operation:
+</SPAN><DIV class = "XMPL"><pre>
+&gt; HolKernel.syntax_fns {n = 2, make = HolKernel.mk_binop, dest = HolKernel.dest_binop} "num" "SUC";
+Exception-
+   HOL_ERR
+     {message = "bad number of arguments", origin_function = "systax_fns",
+       origin_structure = "numSyntax"} raised
+</pre></DIV>
+<SPAN class = "TEXT">
+Typically, the </SPAN><SPAN class = "BRKT">dest</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">make</SPAN><SPAN class = "TEXT"> functions will be complementary (with type variables </SPAN><SPAN class = "BRKT">'a</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">'b</SPAN><SPAN class = "TEXT"> being the same), however this need not be the case. Advanced uses of </SPAN><SPAN class = "BRKT">syntax_fns</SPAN><SPAN class = "TEXT"> can take types into consideration. For example, the constant </SPAN><SPAN class = "BRKT">bitstring$v2w</SPAN><SPAN class = "TEXT"> with type </SPAN><SPAN class = "BRKT">bitstring-&gt;'a&nbsp;word</SPAN><SPAN class = "TEXT"> is supported as follows:
+</SPAN><DIV class = "XMPL"><pre>
+&gt; val tm = bitstringSyntax.mk_v2w (``l:bitstring``, ``:32``);
+val tm = ``v2w l``: term
+&gt; type_of tm;
+val it = ``:word32``: hol_type
+&gt; bitstringSyntax.dest_v2w tm;
+val it = (``l``, ``:32``): term * hol_type
+</pre></DIV>
+<SPAN class = "TEXT">
+This is implemented as follows:
+</SPAN><DIV class = "XMPL"><pre>
+val (v2w_tm, mk_v2w, dest_v2w, is_v2w) =
+   HolKernel.syntax_fns
+     {n = 1,
+      dest = fn tm1 =&gt; fn e =&gt; fn w =&gt; (HolKernel.dest_monop tm1 e w, wordsSyntax.dim_of w),
+      make = fn tm =&gt; fn (v, ty) =&gt; Term.mk_comb (Term.inst [Type.alpha |-&gt; ty] tm, v)}
+     "bitstring" "v2w"
+</pre></DIV>
+</DIV></DD>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

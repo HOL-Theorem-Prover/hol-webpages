@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure string_encodingTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure string_encodingTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/string/string_encodingScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature string_encodingTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#char_decode_def-val">char_decode_def</a> : thm
+<a name="line7"></a>    val <a href="#char_encode_def-val">char_encode_def</a> : thm
+<a name="line8"></a>    val <a href="#del_to_char_def-val">del_to_char_def</a> : thm
+<a name="line9"></a>    val <a href="#delimiter_BIJ-val">delimiter_BIJ</a> : thm
+<a name="line10"></a>    val <a href="#delimiter_CASE-val">delimiter_CASE</a> : thm
+<a name="line11"></a>    val <a href="#delimiter_TY_DEF-val">delimiter_TY_DEF</a> : thm
+<a name="line12"></a>    val <a href="#delimiter_size_def-val">delimiter_size_def</a> : thm
+<a name="line13"></a>    val <a href="#delopt_to_str_def-val">delopt_to_str_def</a> : thm
+<a name="line14"></a>    val <a href="#strencode_def-val">strencode_def</a> : thm
+<a name="line15"></a>  
+<a name="line16"></a>  (*  Theorems  *)
+<a name="line17"></a>    val <a href="#char_decode_encode-val">char_decode_encode</a> : thm
+<a name="line18"></a>    val <a href="#char_decode_reduces-val">char_decode_reduces</a> : thm
+<a name="line19"></a>    val <a href="#char_encode_isPrintable-val">char_encode_isPrintable</a> : thm
+<a name="line20"></a>    val <a href="#datatype_delimiter-val">datatype_delimiter</a> : thm
+<a name="line21"></a>    val <a href="#delimiter2num_11-val">delimiter2num_11</a> : thm
+<a name="line22"></a>    val <a href="#delimiter2num_ONTO-val">delimiter2num_ONTO</a> : thm
+<a name="line23"></a>    val <a href="#delimiter2num_num2delimiter-val">delimiter2num_num2delimiter</a> : thm
+<a name="line24"></a>    val <a href="#delimiter2num_thm-val">delimiter2num_thm</a> : thm
+<a name="line25"></a>    val <a href="#delimiter_Axiom-val">delimiter_Axiom</a> : thm
+<a name="line26"></a>    val <a href="#delimiter_EQ_delimiter-val">delimiter_EQ_delimiter</a> : thm
+<a name="line27"></a>    val <a href="#delimiter_case_cong-val">delimiter_case_cong</a> : thm
+<a name="line28"></a>    val <a href="#delimiter_case_def-val">delimiter_case_def</a> : thm
+<a name="line29"></a>    val <a href="#delimiter_case_eq-val">delimiter_case_eq</a> : thm
+<a name="line30"></a>    val <a href="#delimiter_distinct-val">delimiter_distinct</a> : thm
+<a name="line31"></a>    val <a href="#delimiter_induction-val">delimiter_induction</a> : thm
+<a name="line32"></a>    val <a href="#delimiter_nchotomy-val">delimiter_nchotomy</a> : thm
+<a name="line33"></a>    val <a href="#num2delimiter_11-val">num2delimiter_11</a> : thm
+<a name="line34"></a>    val <a href="#num2delimiter_ONTO-val">num2delimiter_ONTO</a> : thm
+<a name="line35"></a>    val <a href="#num2delimiter_delimiter2num-val">num2delimiter_delimiter2num</a> : thm
+<a name="line36"></a>    val <a href="#num2delimiter_thm-val">num2delimiter_thm</a> : thm
+<a name="line37"></a>    val <a href="#strdecode_def-val">strdecode_def</a> : thm
+<a name="line38"></a>    val <a href="#strdecode_ind-val">strdecode_ind</a> : thm
+<a name="line39"></a>    val <a href="#strdecode_strencode-val">strdecode_strencode</a> : thm
+<a name="line40"></a>    val <a href="#strdecode_strencode_tail_delimited-val">strdecode_strencode_tail_delimited</a> : thm
+<a name="line41"></a>    val <a href="#strencode_isPrintable-val">strencode_isPrintable</a> : thm
+<a name="line42"></a>  
+<a name="line43"></a>  val string_encoding_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line44"></a>(*
+   [ASCIInumbers] Parent theory of "string_encoding"
+   
+   [<a name="char_decode_def-val"><b>char_decode_def</b></a>]  Definition
+      
+      ⊢ (∀delopt. char_decode delopt "" = NONE) ∧
+        ∀delopt c s.
+          char_decode delopt (STRING c s) =
+          if c = #"\\" then
+            case s of
+              "" =&gt; NONE
+            | STRING #"n" stl =&gt; SOME (#"\n",stl)
+            | STRING #"t" stl =&gt; SOME (#"\t",stl)
+            | STRING #"\\" stl =&gt; SOME (#"\\",stl)
+            | STRING c2 stl =&gt;
+              if isDigit c2 then
+                (let
+                   d23 = TAKE 2 stl
+                 in
+                   if STRLEN d23 = 2 ∧ EVERY isDigit d23 then
+                     (let
+                        n = toNum (STRING c2 d23)
+                      in
+                        if n &lt; 256 then SOME (CHR n,DROP 2 stl) else NONE)
+                   else NONE)
+              else
+                case delopt of
+                  NONE =&gt; NONE
+                | SOME d =&gt;
+                  if del_to_char d = c2 then SOME (c2,stl) else NONE
+          else if isPrint c then
+            case delopt of
+              NONE =&gt; SOME (c,s)
+            | SOME d =&gt; if del_to_char d = c then NONE else SOME (c,s)
+          else NONE
+   
+   [<a name="char_encode_def-val"><b>char_encode_def</b></a>]  Definition
+      
+      ⊢ ∀delopt c.
+          char_encode delopt c =
+          if ¬isPrint c then
+            if c = #"\n" then "\\n"
+            else if c = #"\t" then "\\t"
+            else if ORD c &lt; 10 then STRCAT "\\00" (toString (ORD c))
+            else if ORD c &lt; 100 then STRCAT "\\0" (toString (ORD c))
+            else STRCAT "\\" (toString (ORD c))
+          else if c = #"\\" then "\\\\"
+          else
+            case delopt of
+              NONE =&gt; STRING c ""
+            | SOME d =&gt;
+              if c = del_to_char d then STRCAT "\\" (STRING c "")
+              else STRING c ""
+   
+   [<a name="del_to_char_def-val"><b>del_to_char_def</b></a>]  Definition
+      
+      ⊢ del_to_char DQ = #"\"" ∧ del_to_char SQ = #"'" ∧
+        del_to_char PIPE = #"|"
+   
+   [<a name="delimiter_BIJ-val"><b>delimiter_BIJ</b></a>]  Definition
+      
+      ⊢ (∀a. num2delimiter (delimiter2num a) = a) ∧
+        ∀r. (λn. n &lt; 3) r ⇔ delimiter2num (num2delimiter r) = r
+   
+   [<a name="delimiter_CASE-val"><b>delimiter_CASE</b></a>]  Definition
+      
+      ⊢ ∀x v0 v1 v2.
+          (case x of DQ =&gt; v0 | SQ =&gt; v1 | PIPE =&gt; v2) =
+          (λm. if m &lt; 1 then v0 else if m = 1 then v1 else v2)
+            (delimiter2num x)
+   
+   [<a name="delimiter_TY_DEF-val"><b>delimiter_TY_DEF</b></a>]  Definition
+      
+      ⊢ ∃rep. TYPE_DEFINITION (λn. n &lt; 3) rep
+   
+   [<a name="delimiter_size_def-val"><b>delimiter_size_def</b></a>]  Definition
+      
+      ⊢ ∀x. delimiter_size x = 0
+   
+   [<a name="delopt_to_str_def-val"><b>delopt_to_str_def</b></a>]  Definition
+      
+      ⊢ delopt_to_str NONE = "" ∧
+        ∀d. delopt_to_str (SOME d) = STRING (del_to_char d) ""
+   
+   [<a name="strencode_def-val"><b>strencode_def</b></a>]  Definition
+      
+      ⊢ ∀delopt s. strencode delopt s = CONCAT (MAP (char_encode delopt) s)
+   
+   [<a name="char_decode_encode-val"><b>char_decode_encode</b></a>]  Theorem
+      
+      ⊢ char_decode delopt (STRCAT (char_encode delopt c) s) = SOME (c,s)
+   
+   [<a name="char_decode_reduces-val"><b>char_decode_reduces</b></a>]  Theorem
+      
+      ⊢ char_decode delopt s = SOME (c,s') ⇒ STRLEN s' &lt; STRLEN s
+   
+   [<a name="char_encode_isPrintable-val"><b>char_encode_isPrintable</b></a>]  Theorem
+      
+      ⊢ EVERY isPrint (char_encode delopt c)
+   
+   [<a name="datatype_delimiter-val"><b>datatype_delimiter</b></a>]  Theorem
+      
+      ⊢ DATATYPE (delimiter DQ SQ PIPE)
+   
+   [<a name="delimiter2num_11-val"><b>delimiter2num_11</b></a>]  Theorem
+      
+      ⊢ ∀a a'. delimiter2num a = delimiter2num a' ⇔ a = a'
+   
+   [<a name="delimiter2num_ONTO-val"><b>delimiter2num_ONTO</b></a>]  Theorem
+      
+      ⊢ ∀r. r &lt; 3 ⇔ ∃a. r = delimiter2num a
+   
+   [<a name="delimiter2num_num2delimiter-val"><b>delimiter2num_num2delimiter</b></a>]  Theorem
+      
+      ⊢ ∀r. r &lt; 3 ⇔ delimiter2num (num2delimiter r) = r
+   
+   [<a name="delimiter2num_thm-val"><b>delimiter2num_thm</b></a>]  Theorem
+      
+      ⊢ delimiter2num DQ = 0 ∧ delimiter2num SQ = 1 ∧
+        delimiter2num PIPE = 2
+   
+   [<a name="delimiter_Axiom-val"><b>delimiter_Axiom</b></a>]  Theorem
+      
+      ⊢ ∀x0 x1 x2. ∃f. f DQ = x0 ∧ f SQ = x1 ∧ f PIPE = x2
+   
+   [<a name="delimiter_EQ_delimiter-val"><b>delimiter_EQ_delimiter</b></a>]  Theorem
+      
+      ⊢ ∀a a'. a = a' ⇔ delimiter2num a = delimiter2num a'
+   
+   [<a name="delimiter_case_cong-val"><b>delimiter_case_cong</b></a>]  Theorem
+      
+      ⊢ ∀M M' v0 v1 v2.
+          M = M' ∧ (M' = DQ ⇒ v0 = v0') ∧ (M' = SQ ⇒ v1 = v1') ∧
+          (M' = PIPE ⇒ v2 = v2') ⇒
+          (case M of DQ =&gt; v0 | SQ =&gt; v1 | PIPE =&gt; v2) =
+          case M' of DQ =&gt; v0' | SQ =&gt; v1' | PIPE =&gt; v2'
+   
+   [<a name="delimiter_case_def-val"><b>delimiter_case_def</b></a>]  Theorem
+      
+      ⊢ (∀v0 v1 v2. (case DQ of DQ =&gt; v0 | SQ =&gt; v1 | PIPE =&gt; v2) = v0) ∧
+        (∀v0 v1 v2. (case SQ of DQ =&gt; v0 | SQ =&gt; v1 | PIPE =&gt; v2) = v1) ∧
+        ∀v0 v1 v2. (case PIPE of DQ =&gt; v0 | SQ =&gt; v1 | PIPE =&gt; v2) = v2
+   
+   [<a name="delimiter_case_eq-val"><b>delimiter_case_eq</b></a>]  Theorem
+      
+      ⊢ (case x of DQ =&gt; v0 | SQ =&gt; v1 | PIPE =&gt; v2) = v ⇔
+        x = DQ ∧ v0 = v ∨ x = SQ ∧ v1 = v ∨ x = PIPE ∧ v2 = v
+   
+   [<a name="delimiter_distinct-val"><b>delimiter_distinct</b></a>]  Theorem
+      
+      ⊢ DQ ≠ SQ ∧ DQ ≠ PIPE ∧ SQ ≠ PIPE
+   
+   [<a name="delimiter_induction-val"><b>delimiter_induction</b></a>]  Theorem
+      
+      ⊢ ∀P. P DQ ∧ P PIPE ∧ P SQ ⇒ ∀a. P a
+   
+   [<a name="delimiter_nchotomy-val"><b>delimiter_nchotomy</b></a>]  Theorem
+      
+      ⊢ ∀a. a = DQ ∨ a = SQ ∨ a = PIPE
+   
+   [<a name="num2delimiter_11-val"><b>num2delimiter_11</b></a>]  Theorem
+      
+      ⊢ ∀r r'.
+          r &lt; 3 ⇒ r' &lt; 3 ⇒ (num2delimiter r = num2delimiter r' ⇔ r = r')
+   
+   [<a name="num2delimiter_ONTO-val"><b>num2delimiter_ONTO</b></a>]  Theorem
+      
+      ⊢ ∀a. ∃r. a = num2delimiter r ∧ r &lt; 3
+   
+   [<a name="num2delimiter_delimiter2num-val"><b>num2delimiter_delimiter2num</b></a>]  Theorem
+      
+      ⊢ ∀a. num2delimiter (delimiter2num a) = a
+   
+   [<a name="num2delimiter_thm-val"><b>num2delimiter_thm</b></a>]  Theorem
+      
+      ⊢ num2delimiter 0 = DQ ∧ num2delimiter 1 = SQ ∧
+        num2delimiter 2 = PIPE
+   
+   [<a name="strdecode_def-val"><b>strdecode_def</b></a>]  Theorem
+      
+      ⊢ ∀s delopt.
+          strdecode delopt s =
+          case char_decode delopt s of
+            NONE =&gt;
+              (case (s,delopt) of
+                 ("",v1) =&gt; SOME ("","")
+               | (STRING c tl,NONE) =&gt; NONE
+               | (STRING c tl,SOME d) =&gt;
+                 if c = del_to_char d then SOME ("",STRING c tl) else NONE)
+          | SOME (c,rest) =&gt;
+            OPTION_MAP (STRING c ## I) (strdecode delopt rest)
+   
+   [<a name="strdecode_ind-val"><b>strdecode_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀delopt s.
+               (∀v2 c rest.
+                  char_decode delopt s = SOME v2 ∧ v2 = (c,rest) ⇒
+                  P delopt rest) ⇒
+               P delopt s) ⇒
+            ∀v v1. P v v1
+   
+   [<a name="strdecode_strencode-val"><b>strdecode_strencode</b></a>]  Theorem
+      
+      ⊢ strdecode delopt (strencode delopt s) = SOME (s,"")
+   
+   [<a name="strdecode_strencode_tail_delimited-val"><b>strdecode_strencode_tail_delimited</b></a>]  Theorem
+      
+      ⊢ strdecode delopt
+          (STRCAT (strencode delopt s) (delopt_to_str delopt)) =
+        SOME (s,delopt_to_str delopt)
+   
+   [<a name="strencode_isPrintable-val"><b>strencode_isPrintable</b></a>]  Theorem
+      
+      ⊢ EVERY isPrint (strencode delopt s)
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/string/string_encodingScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>cv_transLib.cv_trans_deep_embedding</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>cv_trans_deep_embedding : conv -&gt; thm -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/cv_transLib.html">cv_transLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Translates equations defining a deeply embedded AST to the </SPAN><SPAN class = "BRKT">cv_compute</SPAN><SPAN class = "TEXT"> subset
+of HOL.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">LIBRARY</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">cv_transLib</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">This function is similar to </SPAN><SPAN class = "BRKT">cv_transLib.cv_trans</SPAN><SPAN class = "TEXT">, but can only translate
+constants.  It is designed for the translation of large deep embeddings to
+</SPAN><SPAN class = "BRKT">:cv</SPAN><SPAN class = "TEXT"> functions.  It takes as an argument a conversion which must evaluate
+terms such as </SPAN><SPAN class = "BRKT">from&nbsp;&lt;deep_embedding&gt;</SPAN><SPAN class = "TEXT"> (e.g. </SPAN><SPAN class = "BRKT">computeLib.EVAL</SPAN><SPAN class = "TEXT">).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">When the input term is not a constant defining a suitable deep embedding.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+&gt; Datatype:
+    exp = Const num | Add exp exp
+  End
+&lt;&lt;HOL message: Defined type: "exp"&gt;&gt;
+&gt; Definition sem_def:
+    sem (Const n) = n ∧
+    sem (Add e1 e2) = sem e1 + sem e2
+  End
+Definition has been stored under "sem_def"
+val sem_def =
+   ⊢ (∀n. sem (Const n) = n) ∧ ∀e1 e2. sem (Add e1 e2) = sem e1 + sem e2: thm
+&gt; Definition deep_def:
+    deep = Add (Const 5) (Add (Const 2) (Const 3))
+  End
+Definition has been stored under "deep_def"
+val deep_def = ⊢ deep = Add (Const 5) (Add (Const 2) (Const 3)): thm
+&gt; cv_trans sem_def;
+Definition has been stored under "from_scratch_exp_def"
+Equations stored under "cv_sem_def".
+Induction stored under "cv_sem_ind".
+Finished translating sem, stored in cv_sem_thm
+val it = (): unit
+&gt; cv_trans_deep_embedding EVAL deep_def;
+val it = (): unit
+&gt; cv_eval “sem deep”;
+val it = ⊢ sem deep = 10: thm
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Designed to produce definitions suitable for evaluation by </SPAN><SPAN class = "BRKT">cv_transLib.cv_eval</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "cv_transLib.cv_trans.html">cv_trans</A>,
+<A HREF = "cv_transLib.cv_eval.html">cv_eval</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: simpleSetCat</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "simpleSetCat"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "cardinalTheory.html"><span class="strong">cardinal</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">Delta</span>
+    <td>
+    :(α -> bool) -> α -> α -> bool
+    <tr><td>
+    <span class="strong">Gr</span>
+    <td>
+    :(α -> β) -> (α -> bool) -> α -> β -> bool
+    <tr><td>
+    <span class="strong">RIMAGE</span>
+    <td>
+    :(α -> β) -> (α -> bool) -> (α -> α -> bool) -> β -> β -> bool
+    <tr><td>
+    <span class="strong">RINV_IMAGE</span>
+    <td>
+    :(α -> β) -> (α -> bool) -> (β -> β -> bool) -> α -> α -> bool
+    <tr><td>
+    <span class="strong">SPO</span>
+    <td>
+    :(γ -> bool) ->
+    (α -> bool) ->
+    (β -> bool) ->
+    (γ -> α) ->
+    (γ -> β) ->
+    ((α + β -> bool) -> bool) # (α -> α + β -> bool) # (β -> α + β -> bool)
+    <tr><td>
+    <span class="strong">SPO_pimg</span>
+    <td>
+    :(α -> bool) -> (α -> β) -> (α -> γ) -> β + γ -> α -> bool
+    <tr><td>
+    <span class="strong">SPOr</span>
+    <td>
+    :(γ -> bool) -> (γ -> α) -> (γ -> β) -> α + β -> α + β -> bool
+    <tr><td>
+    <span class="strong">Spushout</span>
+    <td>
+    :(α -> bool) ->
+    (β -> bool) ->
+    (γ -> bool) ->
+    (α -> β) ->
+    (α -> γ) -> (π -> bool) # (β -> π) # (γ -> π) -> δ itself -> bool
+    <tr><td> <span class="strong">cardgt</span> <td> :α itself -> num -> bool
+    <tr><td>
+    <span class="strong">eps</span>
+    <td>
+    :(α -> α -> bool) -> (α -> bool) -> α -> α -> bool
+    <tr><td>
+    <span class="strong">kernel</span>
+    <td>
+    :(α -> bool) -> (α -> β) -> α -> α -> bool
+    <tr><td>
+    <span class="strong">restr</span>
+    <td>
+    :(α -> β) -> (α -> bool) -> α -> β
+    <tr><td>
+    <span class="strong">shom</span>
+    <td>
+    :(α -> β) -> (α -> bool) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">span</span>
+    <td>
+    :(α -> bool) -> (α -> β) -> (α -> γ) -> β -> γ -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">Delta_def</span>
+<DD>
+<pre>
+⊢ ∀V a b. Δ V a b ⇔ (a = b) ∧ a ∈ V
+</pre>
+
+<DT><span class="strong">Gr_def</span>
+<DD>
+<pre>
+⊢ ∀h A a b. Gr h A a b ⇔ a ∈ A ∧ (b = h a)
+</pre>
+
+<DT><span class="strong">RIMAGE_def</span>
+<DD>
+<pre>
+⊢ ∀f A R x y.
+    RIMAGE f A R x y ⇔
+    ∃x0 y0. (x = f x0) ∧ (y = f y0) ∧ R x0 y0 ∧ x0 ∈ A ∧ y0 ∈ A
+</pre>
+
+<DT><span class="strong">RINV_IMAGE_def</span>
+<DD>
+<pre>
+⊢ ∀f A R x y. RINV_IMAGE f A R x y ⇔ x ∈ A ∧ y ∈ A ∧ R (f x) (f y)
+</pre>
+
+<DT><span class="strong">SPO_def</span>
+<DD>
+<pre>
+⊢ ∀A B C f g.
+    SPO A B C f g =
+    (partition (SPOr A f g) (B ⊔ C),
+     (λb. equiv_class (SPOr A f g) (B ⊔ C) (INL b))⟨B⟩,
+     (λc. equiv_class (SPOr A f g) (B ⊔ C) (INR c))⟨C⟩)
+</pre>
+
+<DT><span class="strong">SPO_pimg_def</span>
+<DD>
+<pre>
+⊢ (∀A f g x. SPO_pimg A f g (INL x) = PREIMAGE f {x} ∩ A) ∧
+  ∀A f g y. SPO_pimg A f g (INR y) = PREIMAGE g {y} ∩ A
+</pre>
+
+<DT><span class="strong">SPOr_def</span>
+<DD>
+<pre>
+⊢ ∀A f g.
+    SPOr A f g =
+    (λx y. (∃a. a ∈ A ∧ (x = INL (f a)) ∧ (y = INR (g a))) ∨ (x = y))^=
+</pre>
+
+<DT><span class="strong">cardgt_def</span>
+<DD>
+<pre>
+⊢ ∀n. cardgt (:α) n ⇔ FINITE 𝕌(:α) ⇒ n < CARD 𝕌(:α)
+</pre>
+
+<DT><span class="strong">eps_def</span>
+<DD>
+<pre>
+⊢ ∀R A a. eps R A a = if a ∈ A then {b | R a b ∧ b ∈ A} else ARB
+</pre>
+
+<DT><span class="strong">kernel_def</span>
+<DD>
+<pre>
+⊢ ∀A f x y. kernel A f x y ⇔ x ∈ A ∧ y ∈ A ∧ (f x = f y)
+</pre>
+
+<DT><span class="strong">restr_def</span>
+<DD>
+<pre>
+⊢ ∀f s. f⟨s⟩ = (λx. if x ∈ s then f x else ARB)
+</pre>
+
+<DT><span class="strong">shom_def</span>
+<DD>
+<pre>
+⊢ ∀f A B. shom f A B ⇔ (∀a. a ∈ A ⇒ f a ∈ B) ∧ ∀a. a ∉ A ⇒ (f a = ARB)
+</pre>
+
+<DT><span class="strong">span_def</span>
+<DD>
+<pre>
+⊢ ∀A f g b d. span A f g b d ⇔ ∃a. a ∈ A ∧ (b = f a) ∧ (d = g a)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">Delta_IMAGE</span>
+<DD>
+<pre>
+⊢ Δ (IMAGE f A) = RIMAGE f A (Δ A)
+</pre>
+
+<DT><span class="strong">Delta_INTER</span>
+<DD>
+<pre>
+⊢ Δ (s ∩ t) = Δ s ∩ᵣ Δ t
+</pre>
+
+<DT><span class="strong">Gr_Id</span>
+<DD>
+<pre>
+⊢ Gr (λx. x) A = Δ A
+</pre>
+
+<DT><span class="strong">Gr_restr</span>
+<DD>
+<pre>
+⊢ Gr f⟨A⟩ A = Gr f A
+</pre>
+
+<DT><span class="strong">IN_UNCURRY</span>
+<DD>
+<pre>
+⊢ (a,b) ∈ Rᴾ ⇔ R a b
+</pre>
+
+<DT><span class="strong">RIMAGE_Gr</span>
+<DD>
+<pre>
+⊢ RIMAGE f A R = Gr f A ∘ᵣ R ∘ᵣ (Gr f A)ᵀ
+</pre>
+
+<DT><span class="strong">RINV_IMAGE_Gr</span>
+<DD>
+<pre>
+⊢ RINV_IMAGE f A R = (Gr f A)ᵀ ∘ᵣ R ∘ᵣ Gr f A
+</pre>
+
+<DT><span class="strong">SPOr_REFL</span>
+<DD>
+<pre>
+⊢ SPOr A f g x x
+</pre>
+
+<DT><span class="strong">SPOr_lemma</span>
+<DD>
+<pre>
+⊢ ((j1 ∘ f)⟨A⟩ = (j2 ∘ g)⟨A⟩) ⇒
+  (∀b1 b2. SPOr A f g (INL b1) (INL b2) ⇒ (j1 b1 = j1 b2)) ∧
+  (∀b c. SPOr A f g (INL b) (INR c) ⇒ (j1 b = j2 c)) ∧
+  (∀b' c'. SPOr A f g (INR c') (INL b') ⇒ (j1 b' = j2 c')) ∧
+  ∀c1 c2. SPOr A f g (INR c1) (INR c2) ⇒ (j2 c1 = j2 c2)
+</pre>
+
+<DT><span class="strong">Spushout_def</span>
+<DD>
+<pre>
+⊢ Spushout A B C' f g (P,i1,i2) (:δ) ⇔
+  shom f A B ∧ shom g A C' ∧ shom i1 B P ∧ shom i2 C' P ∧
+  ((i1 ∘ f)⟨A⟩ = (i2 ∘ g)⟨A⟩) ∧
+  ∀Q j1 j2.
+    shom j1 B Q ∧ shom j2 C' Q ∧ ((j1 ∘ f)⟨A⟩ = (j2 ∘ g)⟨A⟩) ⇒
+    ∃!u. shom u P Q ∧ ((u ∘ i1)⟨B⟩ = j1) ∧ ((u ∘ i2)⟨C'⟩ = j2)
+</pre>
+
+<DT><span class="strong">Spushout_ind</span>
+<DD>
+<pre>
+⊢ ∀P'.
+    (∀A B C f g P i1 i2. P' A B C f g (P,i1,i2) (:δ)) ⇒
+    ∀v v1 v2 v3 v4 v5 v6 v7 v8. P' v v1 v2 v3 v4 (v5,v6,v7) v8
+</pre>
+
+<DT><span class="strong">Spushout_quotient</span>
+<DD>
+<pre>
+⊢ shom f A B ∧ shom g A C ⇒ Spushout A B C f g (SPO A B C f g) (:δ)
+</pre>
+
+<DT><span class="strong">Spushout_sym</span>
+<DD>
+<pre>
+⊢ Spushout A B C f g (P,p1,p2) (:δ) ⇒ Spushout A C B g f (P,p2,p1) (:δ)
+</pre>
+
+<DT><span class="strong">Spushout_transfer</span>
+<DD>
+<pre>
+⊢ Spushout A B C f g (P,i1,i2) (:δ) ∧ INJ h 𝕌(:ε) 𝕌(:δ) ⇒
+  Spushout A B C f g (P,i1,i2) (:ε)
+</pre>
+
+<DT><span class="strong">Spushouts_iso</span>
+<DD>
+<pre>
+⊢ Spushout A B C f g (P,i1,i2) (:ε) ∧ Spushout A B C f g (Q,j1,j2) (:δ) ∧
+  cardgt (:δ) 1 ∧ cardgt (:ε) 1 ⇒
+  ∃H. BIJ H P Q ∧ ((H ∘ i1)⟨B⟩ = j1) ∧ ((H ∘ i2)⟨C⟩ = j2)
+</pre>
+
+<DT><span class="strong">cardgt0</span>
+<DD>
+<pre>
+⊢ cardgt (:α) 0
+</pre>
+
+<DT><span class="strong">cardgt1_INJ_bool</span>
+<DD>
+<pre>
+⊢ cardgt (:α) 1 ⇔ ∃bf. INJ bf 𝟚 𝕌(:α)
+</pre>
+
+<DT><span class="strong">eps_partition</span>
+<DD>
+<pre>
+⊢ a ∈ A ⇒ eps R A a ∈ partition R A
+</pre>
+
+<DT><span class="strong">kernel_graph</span>
+<DD>
+<pre>
+⊢ kernel A f = (Gr f A)ᵀ ∘ᵣ Gr f A
+</pre>
+
+<DT><span class="strong">oID</span>
+<DD>
+<pre>
+⊢ (f ∘ (λx. x) = f) ∧ ((λx. x) ∘ f = f)
+</pre>
+
+<DT><span class="strong">restr_EMPTY</span>
+<DD>
+<pre>
+⊢ f⟨∅⟩ = K ARB
+</pre>
+
+<DT><span class="strong">restr_applies</span>
+<DD>
+<pre>
+⊢ x ∈ A ⇒ (f⟨A⟩ x = f x)
+</pre>
+
+<DT><span class="strong">restr_cases</span>
+<DD>
+<pre>
+⊢ (f⟨A⟩ x = g x) ⇔ x ∈ A ∧ (f x = g x) ∨ x ∉ A ∧ (g x = ARB)
+</pre>
+
+<DT><span class="strong">restr_restr_o</span>
+<DD>
+<pre>
+⊢ (f ∘ g⟨A⟩)⟨A⟩ = (f ∘ g)⟨A⟩
+</pre>
+
+<DT><span class="strong">shom_into_EMPTY</span>
+<DD>
+<pre>
+⊢ shom f A ∅ ⇔ (A = ∅) ∧ (f = K ARB)
+</pre>
+
+<DT><span class="strong">shom_outof_EMPTY</span>
+<DD>
+<pre>
+⊢ shom f ∅ A ⇔ (f = K ARB)
+</pre>
+
+<DT><span class="strong">shoms_exist</span>
+<DD>
+<pre>
+⊢ ∀A B. B ≠ ∅ ⇒ ∃h. shom h A B
+</pre>
+
+<DT><span class="strong">symmetric_SPOr</span>
+<DD>
+<pre>
+⊢ symmetric (SPOr A f g)
+</pre>
+
+<DT><span class="strong">transitive_SPOr</span>
+<DD>
+<pre>
+⊢ transitive (SPOr A f g)
+</pre>
+
+<DT><span class="strong">unit_pushout</span>
+<DD>
+<pre>
+⊢ shom f A B ∧ shom g A C ∧ A ≠ ∅ ⇒
+  Spushout A B C f g ({()},(K ())⟨B⟩,(K ())⟨C⟩) (:unit)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

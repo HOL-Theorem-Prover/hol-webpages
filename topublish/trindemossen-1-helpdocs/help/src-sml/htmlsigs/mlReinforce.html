@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure mlReinforce</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure mlReinforce</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/AI/machine_learning/mlReinforce.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature mlReinforce =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  include Abbrev
+<a name="line5"></a>
+<a name="line6"></a>  type tnn = mlTreeNeuralNetwork.tnn
+<a name="line7"></a>  type tnnex = mlTreeNeuralNetwork.tnnex
+<a name="line8"></a>  type tnndim = mlTreeNeuralNetwork.tnndim
+<a name="line9"></a>  type schedule = mlNeuralNetwork.schedule
+<a name="line10"></a>  type 'a rlex = 'a psBigSteps.rlex
+<a name="line11"></a>  type 'a targetd = ('a, bool list) Redblackmap.dict
+<a name="line12"></a>  (* I/O *)
+<a name="line13"></a>  type 'a gameio =
+<a name="line14"></a>    {write_boardl : string -&gt; 'a list -&gt; unit,
+<a name="line15"></a>     read_boardl : string -&gt; 'a list}
+<a name="line16"></a>  val write_rlex : 'a gameio -&gt; string -&gt; 'a rlex -&gt; unit
+<a name="line17"></a>  val read_rlex : 'a gameio -&gt; string -&gt; 'a rlex
+<a name="line18"></a>
+<a name="line19"></a>  (* players *)
+<a name="line20"></a>  type splayer =
+<a name="line21"></a>    {unib : bool, tnn : tnn, noiseb : bool, nsim : int}
+<a name="line22"></a>  type ('a,'b)  dplayer =
+<a name="line23"></a>    {player_from_tnn : tnn -&gt; ('a,'b) psMCTS.player,
+<a name="line24"></a>     tob : 'a -&gt; term list, schedule : schedule, tnndim : tnndim}
+<a name="line25"></a>
+<a name="line26"></a>  (* parallelization of the search *)
+<a name="line27"></a>  type 'a es = (splayer, 'a, bool * 'a rlex) smlParallel.extspec
+<a name="line28"></a>
+<a name="line29"></a>  (* reinforcement learning parameters *)
+<a name="line30"></a>  type rlparam =
+<a name="line31"></a>    {expdir : string, exwindow : int, ncore : int, ntarget : int, nsim : int}
+<a name="line32"></a>  type ('a,'b) rlobj =
+<a name="line33"></a>    {
+<a name="line34"></a>    rlparam : rlparam,
+<a name="line35"></a>    game : ('a,'b) psMCTS.game,
+<a name="line36"></a>    gameio : 'a gameio,
+<a name="line37"></a>    dplayer : ('a,'b) dplayer,
+<a name="line38"></a>    infobs : 'a list -&gt; unit
+<a name="line39"></a>    }
+<a name="line40"></a>  val mk_mctsobj : ('a,'b) rlobj -&gt; splayer -&gt; ('a,'b) psMCTS.mctsobj
+<a name="line41"></a>  val mk_extsearch : string -&gt; string -&gt; ('a,'b) rlobj -&gt; 'a es
+<a name="line42"></a>
+<a name="line43"></a>  (* storage *)
+<a name="line44"></a>  val log : ('a,'b) rlobj -&gt; string -&gt; unit
+<a name="line45"></a>  val store_rlex : ('a,'b) rlobj -&gt; int -&gt; 'a rlex -&gt; unit
+<a name="line46"></a>  val retrieve_rlex : ('a,'b) rlobj -&gt; int -&gt; 'a rlex
+<a name="line47"></a>  val store_tnn : ('a,'b) rlobj -&gt; int -&gt; tnn -&gt; unit
+<a name="line48"></a>  val retrieve_tnn : ('a,'b) rlobj -&gt; int -&gt; tnn
+<a name="line49"></a>  val store_targetd : ('a,'b) rlobj -&gt; int -&gt; 'a targetd -&gt; unit
+<a name="line50"></a>  val retrieve_targetd : ('a,'b) rlobj -&gt; int -&gt; 'a targetd
+<a name="line51"></a>
+<a name="line52"></a>  (* main functions *)
+<a name="line53"></a>  val rl_start : ('a,'b) rlobj * 'a es -&gt; 'a targetd -&gt; unit
+<a name="line54"></a>  val rl_restart : int -&gt; ('a,'b) rlobj * 'a es -&gt; 'a targetd -&gt; unit
+<a name="line55"></a>
+<a name="line56"></a>  (* final testing
+<a name="line57"></a>  type 'a ftes = (unit, 'a, bool * int * 'a option) smlParallel.extspec
+<a name="line58"></a>  type 'a fttnnes = (tnn, 'a, bool * int * 'a option) smlParallel.extspec
+<a name="line59"></a>  val ft_mk_extsearch : string -&gt; ('a,'b) rlobj -&gt;
+<a name="line60"></a>    ('a,'b) psMCTS.player -&gt; 'a ftes
+<a name="line61"></a>  val fttnn_mk_extsearch : string -&gt; ('a,'b) rlobj -&gt; 'a fttnnes
+<a name="line62"></a>  val fttnnbs_mk_extsearch : string -&gt; ('a,'b) rlobj -&gt; 'a fttnnes
+<a name="line63"></a>  *)
+<a name="line64"></a>end
+<a name="line65"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/AI/machine_learning/mlReinforce.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

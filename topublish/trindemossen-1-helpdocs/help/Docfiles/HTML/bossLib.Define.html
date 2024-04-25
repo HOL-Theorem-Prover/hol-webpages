@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>bossLib.Define</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Define : term quotation -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/bossLib.html">bossLib</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">General-purpose function definition facility.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> takes a high-level specification of a HOL function, and
+attempts to define the function in the logic. If this attempt is
+successful, the specification is derived from the definition. The
+derived specification is returned to the user, and also stored in the
+current theory. </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> may be used to define abbreviations,
+recursive functions, and mutually recursive functions. An induction
+theorem may be stored in the current theory as a by-product of
+</SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT">&rsquo;s activity. This induction theorem follows the
+recursion structure of the function, and may be useful when proving
+properties of the function.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> takes as input a quotation representing a conjunction of
+equations. The specified function(s) may be phrased using ML-style
+pattern-matching. A call </SPAN><SPAN class = "BRKT">Define&nbsp;`&lt;spec&gt;`</SPAN><SPAN class = "TEXT"> should conform with the
+following grammar:
+</SPAN><DIV class = "XMPL"><pre>
+       spec ::= &lt;eqn&gt;
+            |   (&lt;eqn&gt;) /\ &lt;spec&gt;
+
+        eqn ::= &lt;alphanumeric&gt; &lt;pat&gt; ... &lt;pat&gt; = &lt;term&gt;
+
+
+        pat ::= &lt;variable&gt;
+            |   &lt;wildcard&gt;
+            |   &lt;cname&gt;                          (* 0-ary constructor *)
+            |   (&lt;cname&gt;_n &lt;pat&gt;_1 ... &lt;pat&gt;_n)  (* constructor appl. *)
+
+      cname ::= &lt;alphanumeric&gt; | &lt;symbolic&gt;
+
+   wildcard ::= _
+            |   _&lt;wildcard&gt;
+</pre></DIV>
+<SPAN class = "TEXT">
+When processing the specification of a recursive function,
+</SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> must perform a termination proof. It automatically constructs
+termination conditions for the function, and invokes a termination
+prover in an attempt to prove the termination conditions.</SPAN>
+<P>
+<SPAN class = "TEXT">If the function is primitive recursive, in the sense that it exactly
+follows the recursion pattern of a previously declared HOL datatype,
+then this proof always succeeds, and </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> stores the derived
+equations in the current theory segment.  Otherwise, the function is
+not an instance of primitive recursion, and the termination prover may
+succeed or fail.</SPAN>
+<P>
+<SPAN class = "TEXT">If it succeeds, then </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> stores the specified equations in the
+current theory segment. An induction theorem customized for the defined
+function is also stored in the current segment. Note, however, that an
+induction theorem is not stored for primitive recursive functions, since
+that theorem would be identical to the induction theorem resulting from
+the declaration of the datatype.</SPAN>
+<P>
+<SPAN class = "TEXT">If the termination proof fails, then </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> fails.</SPAN>
+<P>
+<SPAN class = "TEXT">In general, </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> attempts to derive exactly the specified
+conjunction of equations. However, the rich syntax of patterns allows
+some ambiguity. For example, the input
+</SPAN><DIV class = "XMPL"><pre>
+    Define `(f 0 _ = 1)
+      /\    (f _ 0 = 2)`
+</pre></DIV>
+<SPAN class = "TEXT">
+is ambiguous at </SPAN><SPAN class = "BRKT">f&nbsp;0&nbsp;0</SPAN><SPAN class = "TEXT">: should the result be </SPAN><SPAN class = "BRKT">1</SPAN><SPAN class = "TEXT"> or </SPAN><SPAN class = "BRKT">2</SPAN><SPAN class = "TEXT">?
+The system attempts to resolve this ambiguity in the same way as
+compilers and interpreters for functional languages. Namely, a
+conjunction of equations is treated as being processed left-conjunct
+first, followed by processing the right conjunct. Therefore, in the
+example above, the right-hand side of the first clause is taken as the
+value of </SPAN><SPAN class = "BRKT">f&nbsp;0&nbsp;0</SPAN><SPAN class = "TEXT">. In the implementation, ambiguities arising from such
+overlapping patterns are systematically translated away in a
+pre-processing step.</SPAN>
+<P>
+<SPAN class = "TEXT">Another case of vagueness in patterns is shown above: the specification
+is &lsquo;incomplete&lsquo; since it does not tell us how </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> should behave when
+applied to two non-zero arguments: e.g., </SPAN><SPAN class = "BRKT">f&nbsp;(SUC&nbsp;m)&nbsp;(SUC&nbsp;n)</SPAN><SPAN class = "TEXT">. In the
+implementation, such missing clauses are filled in, and have the value
+</SPAN><SPAN class = "BRKT">ARB</SPAN><SPAN class = "TEXT">. This &lsquo;pattern-completion&lsquo; step is a way of turning descriptions
+of partial functions into total functions suitable for HOL. However,
+since the user has not completely specified the function, the system
+takes that as a hint that the user is not interested in using the
+function at the missing-but-filled-in clauses, and so such clauses are
+dropped from the final theorem.</SPAN>
+<P>
+<SPAN class = "TEXT">In summary, </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> will derive the unambiguous and complete
+equations
+</SPAN><DIV class = "XMPL"><pre>
+     |- (f 0 (SUC v4) = 1) /\
+        (f 0 0 = 1) /\
+        (f (SUC v2) 0 = 2)
+        (f (SUC v2) (SUC v4) = ARB)
+</pre></DIV>
+<SPAN class = "TEXT">
+from the above ambiguous and incomplete equations. The odd-looking
+variable names are due to the pre-processing steps described above. The
+above result is only an intermediate value: in the final result returned
+by </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT">, the last equation is droppped:
+</SPAN><DIV class = "XMPL"><pre>
+     |- (f 0 (SUC v4) = 1) /\
+        (f 0 0 = 1) /\
+        (f (SUC v2) 0 = 2)
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> automatically generates names with which to store the
+definition and, (if it exists) the associated induction theorem, in the
+current theory. The name for storing the definition is built by
+concatenating the name of the function with the value of the reference
+variable </SPAN><SPAN class = "BRKT">Defn.def_suffix</SPAN><SPAN class = "TEXT">. The name for storing the induction theorem
+is built by concatenating the name of the function with the value of the
+reference variable </SPAN><SPAN class = "BRKT">Defn.ind_suffix</SPAN><SPAN class = "TEXT">. For mutually recursive functions,
+where there is a choice of names, the name of the function in the first
+clause is taken.</SPAN>
+<P>
+<SPAN class = "TEXT">Since the names used to store elements in the current theory segment
+are transformed into ML bindings after the theory is exported, it is
+required that every invocation of </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> generates names that will
+be valid ML identifiers. For this reason, </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> requires alphanumeric
+function names. If one wishes to define symbolic identifiers, the
+ML function </SPAN><SPAN class = "BRKT">xDefine</SPAN><SPAN class = "TEXT"> should be used.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> fails if its input fails to parse and typecheck.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> fails if the name of the function being defined is not
+alphanumeric.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> fails if there are more free variables on the right hand
+sides of the recursion equations than the left.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> fails if it cannot prove the termination of the
+specified recursive function. In that case, one has to embark on the
+following multi-step process in order to get the same effect as if
+</SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> had succeeded: (1) construct the function and synthesize its
+termination conditions with </SPAN><SPAN class = "BRKT">Hol_defn</SPAN><SPAN class = "TEXT">; (2) set up a goal to prove the
+termination conditions with </SPAN><SPAN class = "BRKT">tgoal</SPAN><SPAN class = "TEXT">; (3) interactively prove the
+termination conditions, starting with an invocation of </SPAN><SPAN class = "BRKT">WF_REL_TAC</SPAN><SPAN class = "TEXT">;
+and (4) package everything up with an invocation of </SPAN><SPAN class = "BRKT">tDefine</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">We will give a number of examples that display the range of functions
+that may be defined with </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT">. First, we have a recursive function
+that uses "destructors" in the recursive call. Since </SPAN><SPAN class = "BRKT">fact</SPAN><SPAN class = "TEXT"> is not
+primitive recursive, an induction theorem for </SPAN><SPAN class = "BRKT">fact</SPAN><SPAN class = "TEXT"> is generated and
+stored in the current theory.
+</SPAN><DIV class = "XMPL"><pre>
+   Define `fact x = if x = 0 then 1 else x * fact(x-1)`;
+
+   Equations stored under "fact_def".
+   Induction stored under "fact_ind".
+   &gt; val it = |- fact x = (if x = 0 then 1 else x * fact (x - 1)) : thm
+
+   - DB.fetch "-" "fact_ind";
+
+   &gt; val it =
+     |- !P. (!x. (~(x = 0) ==&gt; P (x - 1)) ==&gt; P x) ==&gt; !v. P v : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Next we have a recursive function with relatively complex
+pattern-matching. We omit to examine the generated induction
+theorem.
+</SPAN><DIV class = "XMPL"><pre>
+   Define `(flatten  []           = [])
+      /\   (flatten ([]::rst)     = flatten rst)
+      /\   (flatten ((h::t)::rst) = h::flatten(t::rst))`
+
+   &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
+
+   Equations stored under "flatten_def".
+   Induction stored under "flatten_ind".
+
+   &gt; val it =
+       |- (flatten [] = []) /\
+          (flatten ([]::rst) = flatten rst) /\
+          (flatten ((h::t)::rst) = h::flatten (t::rst)) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Next we define a curried recursive function, which uses
+wildcard expansion and pattern-matching pre-processing.
+</SPAN><DIV class = "XMPL"><pre>
+   Define `(min (SUC x) (SUC y) = min x y + 1)
+      /\   (min  ____    ____   = 0)`;
+
+   Equations stored under "min_def".
+   Induction stored under "min_ind".
+
+   &gt; val it =
+       |- (min (SUC x) (SUC y) = min x y + 1) /\
+          (min (SUC v2) 0 = 0) /\
+          (min 0 v1 = 0) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Next we make a primitive recursive definition. Note that no
+induction theorem is generated in this case.
+</SPAN><DIV class = "XMPL"><pre>
+   Define `(filter P [] = [])
+     /\    (filter P (h::t) = if P h then h::filter P t else filter P t)`;
+
+   &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
+   Definition has been stored under "filter_def".
+
+   &gt; val it =
+      |- (!P. filter P [] = []) /\
+         !P h t. filter P (h::t) =
+                  (if P h then h::filter P t else filter P t) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> may also be used to define mutually recursive functions.
+For example, we can define a datatype of propositions and a function for
+putting a proposition into negation normal form as follows.
+First we define a datatype for boolean formulae (</SPAN><SPAN class = "BRKT">prop</SPAN><SPAN class = "TEXT">):
+</SPAN><DIV class = "XMPL"><pre>
+   - Hol_datatype
+       `prop = VAR of 'a
+             | NOT of prop
+             | AND of prop =&gt; prop
+             | OR  of prop =&gt; prop`;
+
+   &gt; val it = () : unit
+</pre></DIV>
+<SPAN class = "TEXT">
+Then two mutually recursive functions </SPAN><SPAN class = "BRKT">nnfpos</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">nnfneg</SPAN><SPAN class = "TEXT">
+are defined:
+</SPAN><DIV class = "XMPL"><pre>
+   - Define
+        `(nnfpos (VAR x)   = VAR x)
+    /\   (nnfpos (NOT p)   = nnfneg p)
+    /\   (nnfpos (AND p q) = AND (nnfpos p) (nnfpos q))
+    /\   (nnfpos (OR p q)  = OR  (nnfpos p) (nnfpos q))
+
+    /\   (nnfneg (VAR x)   = NOT (VAR x))
+    /\   (nnfneg (NOT p)   = nnfpos p)
+    /\   (nnfneg (AND p q) = OR  (nnfneg p) (nnfneg q))
+    /\   (nnfneg (OR p q)  = AND (nnfneg p) (nnfneg q))`;
+</pre></DIV>
+<SPAN class = "TEXT">
+The system returns:
+</SPAN><DIV class = "XMPL"><pre>
+   &lt;&lt;HOL message: inventing new type variable names: 'a&gt;&gt;
+
+   Equations stored under "nnfpos_def".
+   Induction stored under "nnfpos_ind".
+
+   &gt; val it =
+       |- (nnfpos (VAR x) = VAR x) /\
+          (nnfpos (NOT p) = nnfneg p) /\
+          (nnfpos (AND p q) = AND (nnfpos p) (nnfpos q)) /\
+          (nnfpos (OR p q) = OR (nnfpos p) (nnfpos q)) /\
+          (nnfneg (VAR x) = NOT (VAR x)) /\
+          (nnfneg (NOT p) = nnfpos p) /\
+          (nnfneg (AND p q) = OR (nnfneg p) (nnfneg q)) /\
+          (nnfneg (OR p q) = AND (nnfneg p) (nnfneg q)) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> may also be used to define non-recursive functions.
+</SPAN><DIV class = "XMPL"><pre>
+   Define `f x (y,z) = (x + 1 = y DIV z)`;
+
+   Definition has been stored under "f_def".
+
+   &gt; val it = |- !x y z. f x (y,z) = (x + 1 = y DIV z) : thm
+</pre></DIV>
+<SPAN class = "TEXT">
+</SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> may also be used to define non-recursive functions
+with complex pattern-matching. The pattern-matching pre-processing of
+</SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> can be convenient for this purpose, but can also generate a
+large number of equations. For example:
+</SPAN><DIV class = "XMPL"><pre>
+   Define `(g (0,_,_,_,_) = 1) /\
+           (g (_,0,_,_,_) = 2) /\
+           (g (_,_,0,_,_) = 3) /\
+           (g (_,_,_,0,_) = 4) /\
+           (g (_,_,_,_,0) = 5)`
+</pre></DIV>
+<SPAN class = "TEXT">
+yields a definition with thirty-one clauses.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In an </SPAN><SPAN class = "BRKT">eqn</SPAN><SPAN class = "TEXT">, no variable can occur more than once on the left hand side
+of the equation.</SPAN>
+<P>
+<SPAN class = "TEXT">In HOL, constructors are curried functions, unlike in ML. When used in
+a pattern, a constructor must be fully applied to its arguments.</SPAN>
+<P>
+<SPAN class = "TEXT">Also unlike ML, a pattern variable in a clause of a definition is not
+distinct from occurrences of that variable in other clauses.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> translates a wildcard into a new variable, which is named to be
+different from any other variable in the function definition. As in ML,
+wildcards are not allowed to occur on the right hand side of any clause
+in the definition.</SPAN>
+<P>
+<SPAN class = "TEXT">An induction theorem generated in the course of processing an invocation
+of </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> can be applied by </SPAN><SPAN class = "BRKT">recInduct</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Invoking </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> on a conjunction of non-recursive clauses having
+complex pattern-matching will result in an induction theorem being
+stored. This theorem may be useful for case analysis, and can be applied
+by </SPAN><SPAN class = "BRKT">recInduct</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> takes a &lsquo;quotation&lsquo; as an argument. Some might think that the
+input to </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> should instead be a term. However, some important
+pre-processing happens in </SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> that would not be possible if the
+input was a term.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> is a mechanization of a well-founded recursion theorem
+(</SPAN><SPAN class = "BRKT">relationTheory.WFREC_COROLLARY</SPAN><SPAN class = "TEXT">).</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> currently has a rather weak termination prover. For example, it
+always fails to prove the termination of nested recursive functions.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">bossLib.Define</SPAN><SPAN class = "TEXT"> is most commonly used. </SPAN><SPAN class = "BRKT">TotalDefn.Define</SPAN><SPAN class = "TEXT"> is identical
+to </SPAN><SPAN class = "BRKT">bossLib.Define</SPAN><SPAN class = "TEXT">, except that the </SPAN><SPAN class = "BRKT">TotalDefn</SPAN><SPAN class = "TEXT"> structure comes with
+less baggage---it depends only on </SPAN><SPAN class = "BRKT">numLib</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">pairLib</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">Define</SPAN><SPAN class = "TEXT"> automatically adds the definition it makes into the hidden
+&lsquo;compset&lsquo; accessed by </SPAN><SPAN class = "BRKT">EVAL</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">EVAL_TAC</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "bossLib.tDefine.html">tDefine</A>,
+<A HREF = "bossLib.xDefine.html">xDefine</A>,
+<A HREF = "TotalDefn.DefineSchema.html">DefineSchema</A>,
+<A HREF = "bossLib.Hol_defn.html">Hol_defn</A>,
+<A HREF = "Defn.tgoal.html">tgoal</A>,
+<A HREF = "Defn.tprove.html">tprove</A>,
+<A HREF = "bossLib.WF_REL_TAC.html">WF_REL_TAC</A>,
+<A HREF = "bossLib.recInduct.html">recInduct</A>,
+<A HREF = "bossLib.EVAL.html">EVAL</A>,
+<A HREF = "bossLib.EVAL_TAC.html">EVAL_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

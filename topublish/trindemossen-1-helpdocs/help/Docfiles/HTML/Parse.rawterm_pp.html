@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Parse.rawterm_pp</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>rawterm_pp : ('a -&gt; 'b) -&gt; 'a -&gt; 'b</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Parse.html">Parse</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Causes a function to use the raw terminal backend when pretty-printing.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Functions that pretty-print HOL types, terms and theorems do so
+through an abstraction called a &ldquo;backend&rdquo;. Using these backends
+allows output to be customised to the facilities provided by different
+display devices. For example, on terminals supporting DEC&rsquo;s vt100
+colour coding, free variables are displayed in blue. There is also a
+&ldquo;raw terminal&rdquo; backend, that doesn&rsquo;t change the output in any way.</SPAN>
+<P>
+<SPAN class = "TEXT">When an interactive session begins, HOL links all of the
+pretty-printing functions to a backend value stored in a reference,
+</SPAN><SPAN class = "BRKT">Parse.current_backend</SPAN><SPAN class = "TEXT">. Of course, this reference can be changed as a
+user desires. A call to </SPAN><SPAN class = "BRKT">rawterm_pp&nbsp;f</SPAN><SPAN class = "TEXT"> function wraps a call to
+</SPAN><SPAN class = "BRKT">Lib.with_flag</SPAN><SPAN class = "TEXT">, setting the current backend to be the raw terminal
+value for the duration of the </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">&rsquo;s application to its (first)
+argument.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">rawterm_pp&nbsp;f</SPAN><SPAN class = "TEXT"> never fails. A call to </SPAN><SPAN class = "BRKT">rawterm_pp&nbsp;f&nbsp;x</SPAN><SPAN class = "TEXT">
+should only fail if </SPAN><SPAN class = "BRKT">f&nbsp;x</SPAN><SPAN class = "TEXT"> would fail, but this ultimately depends on
+</SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">&rsquo;s implementation.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In a </SPAN><SPAN class = "BRKT">vt100</SPAN><SPAN class = "TEXT">-compatible terminal, capturing the output of </SPAN><SPAN class = "BRKT">pp_term</SPAN><SPAN class = "TEXT">
+reveals a stream of horrible-looking escape codes:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; ppstring pp_term ``p /\ q``;
+   val it = "\^[[0;1;34mp\^[[0m /\\ \^[[0;1;34mq\^[[0m": string
+</pre></DIV>
+<SPAN class = "TEXT">
+If this string is to be </SPAN><SPAN class = "BRKT">print</SPAN><SPAN class = "TEXT">-ed to the </SPAN><SPAN class = "BRKT">vt100</SPAN><SPAN class = "TEXT">, it will colour the
+</SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">q</SPAN><SPAN class = "TEXT"> a pleasant blue colour. If, on the other hand, the string
+is to be output to a file, the colouring is probably not desirable.
+Then one can use </SPAN><SPAN class = "BRKT">rawterm_pp</SPAN><SPAN class = "TEXT"> to get the unadorned characters of the
+output:
+</SPAN><DIV class = "XMPL"><pre>
+   &gt; rawterm_pp (ppstring pp_term) ``p /\ q``;
+   val it = "p /\\ q": string
+</pre></DIV>
+<SPAN class = "TEXT">
+This last usage is so common that it is already available in the
+library as </SPAN><SPAN class = "BRKT">term_to_string</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">If a function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> is curried with multiple arguments, say </SPAN><SPAN class = "BRKT">f&nbsp;x&nbsp;y</SPAN><SPAN class = "TEXT">,
+then care will probably be needed with modifying it with </SPAN><SPAN class = "BRKT">rawterm_pp</SPAN><SPAN class = "TEXT">.
+In particular, </SPAN><SPAN class = "BRKT">rawterm_pp&nbsp;f&nbsp;x&nbsp;y</SPAN><SPAN class = "TEXT"> is likely not to work, while
+</SPAN><SPAN class = "BRKT">rawterm_pp&nbsp;(f&nbsp;x)&nbsp;y</SPAN><SPAN class = "TEXT"> probably will.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Lib.ppstring.html">ppstring</A>,
+<A HREF = "Parse.term_to_string.html">term_to_string</A>,
+<A HREF = "Lib.with_flag.html">with_flag</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

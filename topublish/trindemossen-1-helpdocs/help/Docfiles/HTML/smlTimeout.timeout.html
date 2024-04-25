@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>smlTimeout.timeout</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>timeout : real -&gt; ('a -&gt; 'b) -&gt; 'a -&gt; 'b</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/smlTimeout.html">smlTimeout</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Interrupts a function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> after a time limit.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In case the limit is reached, the exception FunctionTimeout is raised,
+otherwise it behaves in the same way as a call to "f" on its argument.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails when the call to </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> exceeds the time limit or if </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> fails.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+- load "smlTimeout"; open smlTimeout;
+(* output omitted *)
+&gt; val it = () : unit
+
+- timeout 0.1 (fn (x:int) =&gt; (raise Match):int) 5;
+&gt; Exception- Match raised
+
+- timeout 0.2 OS.Process.sleep (Time.fromReal 2.0);
+&gt; Exception- FunctionTimeout raised
+
+- timeout 1.0 (fn x =&gt; x) 5;
+&gt; val it = 5: int
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Relies on a conditional variable to decide if and when to send an Interrupt
+signal to the worker thread in which the function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> is called.
+In the case an interrupt is needed, a bit of time is given to the function </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT">
+to catch the Interrupt and return a result. This last step has been implemented
+with a busy waiting loop that has experimentally been determined to be more
+efficient than relying on an additional condition variable.</SPAN></DIV></DD>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

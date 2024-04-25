@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>monadsyntax.enable_monad</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>enable_monad : string -&gt; unit</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/monadsyntax.html">monadsyntax</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Enables a particular monadic type for use with do/od syntax.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">enable_monad&nbsp;mname</SPAN><SPAN class = "TEXT">, where </SPAN><SPAN class = "BRKT">mname</SPAN><SPAN class = "TEXT"> is an SML value of type
+</SPAN><SPAN class = "BRKT">string</SPAN><SPAN class = "TEXT">, enables the stored information about monad </SPAN><SPAN class = "BRKT">mname</SPAN><SPAN class = "TEXT"> to govern
+the interpretation of the do/od syntax. If multiple monads are
+enabled, normal overloading resolution will decide between them.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if </SPAN><SPAN class = "BRKT">mname</SPAN><SPAN class = "TEXT"> is not the name of a stored monad in the internal
+database (which can be examined with a call to
+</SPAN><SPAN class = "BRKT">monadsyntax.all_monads()</SPAN><SPAN class = "TEXT">. Will have little effect if monad syntax
+has not been generally enabled with a prior call to
+</SPAN><SPAN class = "BRKT">enable_monadsyntax</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In what follows, </SPAN><SPAN class = "BRKT">oHD</SPAN><SPAN class = "TEXT"> is the function which maps a non-empty list to
+</SPAN><SPAN class = "BRKT">SOME</SPAN><SPAN class = "TEXT"> applied to that list&rsquo;s first element, and the empty list to
+</SPAN><SPAN class = "BRKT">NONE</SPAN><SPAN class = "TEXT">. The </SPAN><SPAN class = "BRKT">++</SPAN><SPAN class = "TEXT"> is the monad choice function (the option monad has a
+notion of failure). Thus, the function below that is bound to SML
+variable </SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> is one that either increments the first element of a list
+and returns that value, or returns 0.
+</SPAN><DIV class = "XMPL"><pre>
+&gt; enable_monadsyntax(); enable_monad "option";
+val it = () : unit
+val it = () : unit
+
+&gt; val f = “λl. do x &lt;- oHD l; return (x + 1); od ++ return 0”
+val f = “λl. do x &lt;- oHD l; SOME (x + 1); od ++ SOME 0” : term
+
+&gt; EVAL “^f [3; 10]”;
+val it = ⊢ (λl. do x &lt;- oHD l; SOME (x + 1) od ⧺ SOME 0) [3; 10] = SOME 4:
+   thm
+
+&gt; EVAL “^f []”;
+val it = ⊢ (λl. do x &lt;- oHD l; SOME (x + 1) od ⧺ SOME 0) [] = SOME 0: thm
+</pre></DIV>
+<SPAN class = "TEXT">
+Note how the </SPAN><SPAN class = "BRKT">return</SPAN><SPAN class = "TEXT"> keyword is not printed as such by the parser; it
+would be too confusing if all occurrences of common functions such as
+</SPAN><SPAN class = "BRKT">SOME</SPAN><SPAN class = "TEXT"> were printed as </SPAN><SPAN class = "BRKT">return</SPAN><SPAN class = "TEXT">.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">As with other parsing and printing functions, there is a
+</SPAN><SPAN class = "BRKT">temp_enable_monad</SPAN><SPAN class = "TEXT"> function whose changes to the parser and printer
+do not persist to descendent theories.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "monadsyntax.all_monads.html">all_monads</A>,
+<A HREF = "monadsyntax.declare_monad.html">declare_monad</A>,
+<A HREF = "monadsyntax.enable_monadsyntax.html">enable_monadsyntax</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

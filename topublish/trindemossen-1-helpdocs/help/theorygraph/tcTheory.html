@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: tc</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "tc"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "totoTheory.html"><span class="strong">toto</span></a>&nbsp;&nbsp;
+    <a href = "finite_mapTheory.html"><span class="strong">finite_map</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">FMAP_TO_RELN</span>
+    <td>
+    :(α |-> (α -> bool)) -> α -> α -> bool
+    <tr><td>
+    <span class="strong">RELN_TO_FMAP</span>
+    <td>
+    :(α -> α -> bool) -> (α |-> (α -> bool))
+    <tr><td>
+    <span class="strong">TC_ITER</span>
+    <td>
+    :α list -> (α |-> (α -> bool)) -> (α |-> (α -> bool))
+    <tr><td>
+    <span class="strong">TC_MOD</span>
+    <td>
+    :α -> (α -> bool) -> (α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">^|</span>
+    <td>
+    :(α -> α -> bool) -> (α -> bool) -> α -> α -> bool
+    <tr><td>
+    <span class="strong">^|^</span>
+    <td>
+    :(α -> α -> bool) -> (α -> bool) -> α -> α -> bool
+    <tr><td>
+    <span class="strong">subTC</span>
+    <td>
+    :(α -> α -> bool) -> (α -> bool) -> α -> α -> bool
+    <tr><td>
+    <span class="strong">|^</span>
+    <td>
+    :(α -> α -> bool) -> (α -> bool) -> α -> α -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">BRESTR</span>
+<DD>
+<pre>
+⊢ ∀R s. R ^|^ s = R ^| s |^ s
+</pre>
+
+<DT><span class="strong">DRESTR</span>
+<DD>
+<pre>
+⊢ ∀R s a b. (R ^| s) a b ⇔ a ∈ s ∧ R a b
+</pre>
+
+<DT><span class="strong">FMAP_TO_RELN</span>
+<DD>
+<pre>
+⊢ ∀f x. FMAP_TO_RELN f x = if x ∈ FDOM f then f ' x else ∅
+</pre>
+
+<DT><span class="strong">RELN_TO_FMAP</span>
+<DD>
+<pre>
+⊢ ∀R. RELN_TO_FMAP R = FUN_FMAP R (RDOM R)
+</pre>
+
+<DT><span class="strong">RRESTR</span>
+<DD>
+<pre>
+⊢ ∀R s a b. (R |^ s) a b ⇔ b ∈ s ∧ R a b
+</pre>
+
+<DT><span class="strong">TC_ITER</span>
+<DD>
+<pre>
+⊢ (∀r. TC_ITER [] r = r) ∧
+  ∀x d r. TC_ITER (x::d) r = TC_ITER d (TC_MOD x (r ' x) o_f r)
+</pre>
+
+<DT><span class="strong">TC_MOD</span>
+<DD>
+<pre>
+⊢ ∀x rx ra. TC_MOD x rx ra = if x ∈ ra then ra ∪ rx else ra
+</pre>
+
+<DT><span class="strong">subTC</span>
+<DD>
+<pre>
+⊢ ∀R s x y.
+    subTC R s x y ⇔
+    R x y ∨ ∃a b. (R ^|^ s)꙳ a b ∧ a ∈ s ∧ b ∈ s ∧ R x a ∧ R b y
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">DRESTR_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀R. R ^| ∅ = ∅ᵣ
+</pre>
+
+<DT><span class="strong">DRESTR_IN</span>
+<DD>
+<pre>
+⊢ ∀R s a. (R ^| s) a = if a ∈ s then R a else ∅
+</pre>
+
+<DT><span class="strong">DRESTR_RDOM</span>
+<DD>
+<pre>
+⊢ ∀R. R ^| RDOM R = R
+</pre>
+
+<DT><span class="strong">FDOM_RDOM</span>
+<DD>
+<pre>
+⊢ ∀R. FINITE (RDOM R) ⇒ (FDOM (RELN_TO_FMAP R) = RDOM R)
+</pre>
+
+<DT><span class="strong">FINITE_RDOM</span>
+<DD>
+<pre>
+⊢ ∀f. FINITE (RDOM (FMAP_TO_RELN f))
+</pre>
+
+<DT><span class="strong">I_o_f</span>
+<DD>
+<pre>
+⊢ ∀f. I o_f f = f
+</pre>
+
+<DT><span class="strong">NOT_IN_RDOM</span>
+<DD>
+<pre>
+⊢ ∀Q x. (Q x = ∅) ⇔ x ∉ RDOM Q
+</pre>
+
+<DT><span class="strong">O_REMPTY_O</span>
+<DD>
+<pre>
+⊢ (∀R. R ∘ᵣ ∅ᵣ = ∅ᵣ) ∧ ∀R. ∅ᵣ ∘ᵣ R = ∅ᵣ
+</pre>
+
+<DT><span class="strong">RDOM_SUBSET_FDOM</span>
+<DD>
+<pre>
+⊢ ∀f. RDOM (FMAP_TO_RELN f) ⊆ FDOM f
+</pre>
+
+<DT><span class="strong">RDOM_subTC</span>
+<DD>
+<pre>
+⊢ ∀R s. RDOM (subTC R s) = RDOM R
+</pre>
+
+<DT><span class="strong">RELN_TO_FMAP_TO_RELN_ID</span>
+<DD>
+<pre>
+⊢ ∀R. FINITE (RDOM R) ⇒ (FMAP_TO_RELN (RELN_TO_FMAP R) = R)
+</pre>
+
+<DT><span class="strong">REMPTY_RRESTR</span>
+<DD>
+<pre>
+⊢ ∀s. ∅ᵣ |^ s = ∅ᵣ
+</pre>
+
+<DT><span class="strong">RTC_INSERT</span>
+<DD>
+<pre>
+⊢ ∀R s a w z.
+    (R ^|^ (a INSERT s))꙳ w z ⇔
+    (R ^|^ s)꙳ w z ∨
+    ((a = w) ∨ ∃x. x ∈ s ∧ (R ^|^ s)꙳ w x ∧ R x a) ∧
+    ((a = z) ∨ ∃y. y ∈ s ∧ R a y ∧ (R ^|^ s)꙳ y z)
+</pre>
+
+<DT><span class="strong">SUBSET_FDOM_LEM</span>
+<DD>
+<pre>
+⊢ ∀R s f. (subTC R s = FMAP_TO_RELN f) ⇒ RDOM R ⊆ FDOM f
+</pre>
+
+<DT><span class="strong">TC_ITER_THM</span>
+<DD>
+<pre>
+⊢ ∀R d f s.
+    (s ∪ LIST_TO_SET d = FDOM f) ∧ (subTC R s = FMAP_TO_RELN f) ⇒
+    (R⁺ = FMAP_TO_RELN (TC_ITER d f))
+</pre>
+
+<DT><span class="strong">TC_MOD_EMPTY_ID</span>
+<DD>
+<pre>
+⊢ ∀x ra. TC_MOD x ∅ = I
+</pre>
+
+<DT><span class="strong">TC_MOD_LEM</span>
+<DD>
+<pre>
+⊢ ∀R s x f.
+    x ∈ FDOM f ∧ (subTC R s = FMAP_TO_RELN f) ⇒
+    (subTC R (x INSERT s) = FMAP_TO_RELN (TC_MOD x (f ' x) o_f f))
+</pre>
+
+<DT><span class="strong">subTC_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀R. subTC R ∅ = R
+</pre>
+
+<DT><span class="strong">subTC_FDOM</span>
+<DD>
+<pre>
+⊢ ∀g R.
+    (subTC R (RDOM R) = FMAP_TO_RELN g) ⇒
+    (subTC R (FDOM g) = subTC R (RDOM R))
+</pre>
+
+<DT><span class="strong">subTC_FDOM_RDOM</span>
+<DD>
+<pre>
+⊢ ∀R f.
+    (subTC R (FDOM f) = FMAP_TO_RELN f) ⇒ (subTC R (RDOM R) = FMAP_TO_RELN f)
+</pre>
+
+<DT><span class="strong">subTC_INSERT</span>
+<DD>
+<pre>
+⊢ ∀R s q x y.
+    subTC R (q INSERT s) x y ⇔ subTC R s x y ∨ subTC R s x q ∧ subTC R s q y
+</pre>
+
+<DT><span class="strong">subTC_INSERT_COR</span>
+<DD>
+<pre>
+⊢ ∀R s x a.
+    subTC R (x INSERT s) a =
+    if x ∈ subTC R s a then subTC R s a ∪ subTC R s x else subTC R s a
+</pre>
+
+<DT><span class="strong">subTC_MAX_RDOM</span>
+<DD>
+<pre>
+⊢ ∀R s x. x ∉ RDOM R ⇒ (subTC R (x INSERT s) = subTC R s)
+</pre>
+
+<DT><span class="strong">subTC_RDOM</span>
+<DD>
+<pre>
+⊢ ∀R. subTC R (RDOM R) = R⁺
+</pre>
+
+<DT><span class="strong">subTC_SUPERSET_RDOM</span>
+<DD>
+<pre>
+⊢ ∀R s. FINITE s ⇒ (subTC R (RDOM R ∪ s) = subTC R (RDOM R))
+</pre>
+
+<DT><span class="strong">subTC_thm</span>
+<DD>
+<pre>
+⊢ ∀R s. subTC R s = R ∪ᵣ R ∘ᵣ ((R ^|^ s)꙳ ^| s) ∘ᵣ R
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

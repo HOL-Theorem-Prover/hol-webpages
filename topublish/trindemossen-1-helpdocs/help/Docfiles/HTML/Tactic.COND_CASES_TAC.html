@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Tactic.COND_CASES_TAC</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>COND_CASES_TAC : tactic</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Tactic.html">Tactic</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Induces a case split on a conditional expression in the goal.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">COND_CASES_TAC</SPAN><SPAN class = "TEXT"> searches for a conditional sub-term in the term of a goal,
+i.e. a sub-term of the form </SPAN><SPAN class = "BRKT">p=&gt;u|v</SPAN><SPAN class = "TEXT">, choosing one by its own criteria if there
+is more than one. It then induces a case split over </SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT"> as follows:
+</SPAN><DIV class = "XMPL"><pre>
+                             A ?- t
+    ==============================================================  COND_CASES_TAC
+     A u {p} ?- t[u/(p=&gt;u|v),T/p]   A u {~p} ?- t[v/(p=&gt;u|v),F/p]
+</pre></DIV>
+<SPAN class = "TEXT">
+where </SPAN><SPAN class = "BRKT">p</SPAN><SPAN class = "TEXT"> is not a constant, and the term </SPAN><SPAN class = "BRKT">p=&gt;u|v</SPAN><SPAN class = "TEXT"> is free in </SPAN><SPAN class = "BRKT">t</SPAN><SPAN class = "TEXT">.
+Note that it both enriches the assumptions and inserts the assumed value into
+the conditional.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><SPAN class = "BRKT">COND_CASES_TAC</SPAN><SPAN class = "TEXT"> fails if there is no conditional sub-term as described above.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">For </SPAN><SPAN class = "BRKT">"x"</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">"y"</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">"z1"</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">"z2"</SPAN><SPAN class = "TEXT"> of type </SPAN><SPAN class = "BRKT">":*"</SPAN><SPAN class = "TEXT">, and </SPAN><SPAN class = "BRKT">"P:*-&gt;bool"</SPAN><SPAN class = "TEXT">,
+</SPAN><DIV class = "XMPL"><pre>
+   COND_CASES_TAC ([], "x = (P y =&gt; z1 | z2)");;
+   ([(["P y"], "x = z1"); (["~P y"], "x = z2")], -) : subgoals
+</pre></DIV>
+<SPAN class = "TEXT">
+but it fails, for example, if </SPAN><SPAN class = "BRKT">"y"</SPAN><SPAN class = "TEXT"> is not free in the
+term part of the goal:
+</SPAN><DIV class = "XMPL"><pre>
+   COND_CASES_TAC ([], "!y. x = (P y =&gt; z1 | z2)");;
+   evaluation failed     COND_CASES_TAC
+</pre></DIV>
+<SPAN class = "TEXT">
+In contrast, </SPAN><SPAN class = "BRKT">ASM_CASES_TAC</SPAN><SPAN class = "TEXT"> does not perform the replacement:
+</SPAN><DIV class = "XMPL"><pre>
+   ASM_CASES_TAC "P y" ([], "x = (P y =&gt; z1 | z2)");;
+   ([(["P y"], "x = (P y =&gt; z1 | z2)"); (["~P y"], "x = (P y =&gt; z1 | z2)")],
+    -)
+   : subgoals
+</pre></DIV>
+<SPAN class = "TEXT"></SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Useful for case analysis and replacement in one step, when there is a
+conditional sub-term in the term part of the goal.  When there is more than
+one such sub-term and one in particular is to be analyzed, </SPAN><SPAN class = "BRKT">COND_CASES_TAC</SPAN><SPAN class = "TEXT">
+cannot be depended on to choose the &lsquo;desired&rsquo; one. It can, however, be used
+repeatedly to analyze all conditional sub-terms of a goal.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Tactic.ASM_CASES_TAC.html">ASM_CASES_TAC</A>,
+<A HREF = "Tactic.DISJ_CASES_TAC.html">DISJ_CASES_TAC</A>,
+<A HREF = "Tactic.STRUCT_CASES_TAC.html">STRUCT_CASES_TAC</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

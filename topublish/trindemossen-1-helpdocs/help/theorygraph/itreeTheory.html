@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: itree</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "itree"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "indexedListsTheory.html"><span class="strong">indexedLists</span></a>&nbsp;&nbsp;
+    <a href = "patternMatchesTheory.html"><span class="strong">patternMatches</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">itree</span> <td> 3
+    <tr><td> <span class="strong">itree_el</span> <td> 2
+    <tr><td> <span class="strong">itree_next</span> <td> 4
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">Div</span>
+    <td>
+    :(α, β, γ) itree
+    <tr><td>
+    <span class="strong">Div'</span>
+    <td>
+    :(α, ε, ς, 'seed) itree_next
+    <tr><td>
+    <span class="strong">Div_rep</span>
+    <td>
+    :α list -> (β, γ) itree_el
+    <tr><td> <span class="strong">Event</span> <td> :ε -> (ε, ς) itree_el
+    <tr><td> <span class="strong">Ret</span> <td> :γ -> (α, β, γ) itree
+    <tr><td>
+    <span class="strong">Ret'</span>
+    <td>
+    :ς -> (α, ε, ς, 'seed) itree_next
+    <tr><td>
+    <span class="strong">Ret_rep</span>
+    <td>
+    :ς -> α list -> (β, ς) itree_el
+    <tr><td> <span class="strong">Return</span> <td> :ς -> (ε, ς) itree_el
+    <tr><td> <span class="strong">Stuck</span> <td> :(ε, ς) itree_el
+    <tr><td>
+    <span class="strong">Vis</span>
+    <td>
+    :β -> (α -> (α, β, γ) itree) -> (α, β, γ) itree
+    <tr><td>
+    <span class="strong">Vis'</span>
+    <td>
+    :ε -> (α -> 'seed) -> (α, ε, ς, 'seed) itree_next
+    <tr><td>
+    <span class="strong">Vis_rep</span>
+    <td>
+    :β -> (α -> α list -> (β, γ) itree_el) -> α list -> (β, γ) itree_el
+    <tr><td>
+    <span class="strong">itree_CASE</span>
+    <td>
+    :(α, ε, ς) itree ->
+    (ς -> β) -> β -> (ε -> (α -> (α, ε, ς) itree) -> β) -> β
+    <tr><td>
+    <span class="strong">itree_abs</span>
+    <td>
+    :(α list -> (ε, ς) itree_el) -> (α, ε, ς) itree
+    <tr><td>
+    <span class="strong">itree_el</span>
+    <td>
+    :(γ, α, β) itree -> γ list -> (α, β) itree_el
+    <tr><td>
+    <span class="strong">itree_el_CASE</span>
+    <td>
+    :(ε, ς) itree_el -> (ε -> α) -> (ς -> α) -> α -> α
+    <tr><td>
+    <span class="strong">itree_el_size</span>
+    <td>
+    :(ε -> num) -> (ς -> num) -> (ε, ς) itree_el -> num
+    <tr><td>
+    <span class="strong">itree_next_CASE</span>
+    <td>
+    :(α, ε, ς, 'seed) itree_next ->
+    (ς -> β) -> β -> (ε -> (α -> 'seed) -> β) -> β
+    <tr><td>
+    <span class="strong">itree_next_size</span>
+    <td>
+    :(α -> num) ->
+    (ε -> num) ->
+    (ς -> num) -> ('seed -> num) -> (α, ε, ς, 'seed) itree_next -> num
+    <tr><td>
+    <span class="strong">itree_rep</span>
+    <td>
+    :(α, ε, ς) itree -> α list -> (ε, ς) itree_el
+    <tr><td>
+    <span class="strong">itree_rep_ok</span>
+    <td>
+    :(α list -> (ε, ς) itree_el) -> bool
+    <tr><td>
+    <span class="strong">itree_unfold</span>
+    <td>
+    :(δ -> (α, β, γ, δ) itree_next) -> δ -> (α, β, γ) itree
+    <tr><td>
+    <span class="strong">itree_unfold_err</span>
+    <td>
+    :(ε -> (β, γ, δ, ε) itree_next) ->
+    (γ -> β -> bool) # (γ -> α -> δ) # (γ -> δ) -> ε -> (α + β, γ, δ) itree
+    <tr><td>
+    <span class="strong">itree_unfold_err_path</span>
+    <td>
+    :(γ -> (δ, α, β, γ) itree_next) ->
+    (α -> δ -> bool) # (α -> ε -> β) # (α -> β) ->
+    γ -> (ε + δ) list -> (α, β) itree_el
+    <tr><td>
+    <span class="strong">itree_unfold_path</span>
+    <td>
+    :(γ -> (δ, α, β, γ) itree_next) -> γ -> δ list -> (α, β) itree_el
+    <tr><td>
+    <span class="strong">path_ok</span>
+    <td>
+    :α list -> (α list -> (ε, ς) itree_el) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">itree_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION itree_rep_ok rep
+</pre>
+
+<DT><span class="strong">itree_el_case_def</span>
+<DD>
+<pre>
+⊢ (∀a f f1 v. itree_el_CASE (Event a) f f1 v = f a) ∧
+  (∀a f f1 v. itree_el_CASE (Return a) f f1 v = f1 a) ∧
+  ∀f f1 v. itree_el_CASE Stuck f f1 v = v
+</pre>
+
+<DT><span class="strong">itree_el_size_def</span>
+<DD>
+<pre>
+⊢ (∀f f1 a. itree_el_size f f1 (Event a) = 1 + f a) ∧
+  (∀f f1 a. itree_el_size f f1 (Return a) = 1 + f1 a) ∧
+  ∀f f1. itree_el_size f f1 Stuck = 0
+</pre>
+
+<DT><span class="strong">itree_next_case_def</span>
+<DD>
+<pre>
+⊢ (∀a f v f1. itree_next_CASE (Ret' a) f v f1 = f a) ∧
+  (∀f v f1. itree_next_CASE Div' f v f1 = v) ∧
+  ∀a0 a1 f v f1. itree_next_CASE (Vis' a0 a1) f v f1 = f1 a0 a1
+</pre>
+
+<DT><span class="strong">itree_next_size_def</span>
+<DD>
+<pre>
+⊢ (∀f f1 f2 f3 a. itree_next_size f f1 f2 f3 (Ret' a) = 1 + f2 a) ∧
+  (∀f f1 f2 f3. itree_next_size f f1 f2 f3 Div' = 0) ∧
+  ∀f f1 f2 f3 a0 a1. itree_next_size f f1 f2 f3 (Vis' a0 a1) = 1 + f1 a0
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">Ret_11</span>
+<DD>
+<pre>
+⊢ ∀x y. (Ret x = Ret y) ⇔ (x = y)
+</pre>
+
+<DT><span class="strong">Vis_11</span>
+<DD>
+<pre>
+⊢ ∀x f y g. (Vis x f = Vis y g) ⇔ (x = y) ∧ (f = g)
+</pre>
+
+<DT><span class="strong">datatype_itree</span>
+<DD>
+<pre>
+⊢ DATATYPE (itree Ret Div Vis)
+</pre>
+
+<DT><span class="strong">datatype_itree_el</span>
+<DD>
+<pre>
+⊢ DATATYPE (itree_el Event Return Stuck)
+</pre>
+
+<DT><span class="strong">datatype_itree_next</span>
+<DD>
+<pre>
+⊢ DATATYPE (itree_next Ret' Div' Vis')
+</pre>
+
+<DT><span class="strong">itree_11</span>
+<DD>
+<pre>
+⊢ (∀x y. (Ret x = Ret y) ⇔ (x = y)) ∧
+  ∀x f y g. (Vis x f = Vis y g) ⇔ (x = y) ∧ (f = g)
+</pre>
+
+<DT><span class="strong">itree_CASE</span>
+<DD>
+<pre>
+⊢ (itree_CASE (Ret r) ret div vis = ret r) ∧
+  (itree_CASE Div ret div vis = div) ∧
+  (itree_CASE (Vis a g) ret div vis = vis a g)
+</pre>
+
+<DT><span class="strong">itree_CASE_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' ret div vis ret' div' vis'.
+    (M = M') ∧ (∀x. (M' = Ret x) ⇒ (ret x = ret' x)) ∧
+    ((M' = Div) ⇒ (div = div')) ∧
+    (∀a g. (M' = Vis a g) ⇒ (vis a g = vis' a g)) ⇒
+    (itree_CASE M ret div vis = itree_CASE M' ret' div' vis')
+</pre>
+
+<DT><span class="strong">itree_CASE_eq</span>
+<DD>
+<pre>
+⊢ (itree_CASE t ret div vis = v) ⇔
+  (∃r. (t = Ret r) ∧ (ret r = v)) ∨ (t = Div) ∧ (div = v) ∨
+  ∃a g. (t = Vis a g) ∧ (vis a g = v)
+</pre>
+
+<DT><span class="strong">itree_bisimulation</span>
+<DD>
+<pre>
+⊢ ∀t1 t2.
+    (t1 = t2) ⇔
+    ∃R. R t1 t2 ∧ (∀x t. R (Ret x) t ⇒ (t = Ret x)) ∧
+        (∀t. R Div t ⇒ (t = Div)) ∧
+        ∀a f t. R (Vis a f) t ⇒ ∃b g. (t = Vis a g) ∧ ∀s. R (f s) (g s)
+</pre>
+
+<DT><span class="strong">itree_cases</span>
+<DD>
+<pre>
+⊢ ∀t. (∃x. t = Ret x) ∨ (t = Div) ∨ ∃a g. t = Vis a g
+</pre>
+
+<DT><span class="strong">itree_distinct</span>
+<DD>
+<pre>
+⊢ (∀x. Ret x ≠ Div) ∧ (∀x g e. Ret x ≠ Vis e g) ∧ ∀g e. Div ≠ Vis e g
+</pre>
+
+<DT><span class="strong">itree_el_11</span>
+<DD>
+<pre>
+⊢ (∀a a'. (Event a = Event a') ⇔ (a = a')) ∧
+  ∀a a'. (Return a = Return a') ⇔ (a = a')
+</pre>
+
+<DT><span class="strong">itree_el_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f0 f1 f2. ∃fn.
+    (∀a. fn (Event a) = f0 a) ∧ (∀a. fn (Return a) = f1 a) ∧ (fn Stuck = f2)
+</pre>
+
+<DT><span class="strong">itree_el_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' f f1 v.
+    (M = M') ∧ (∀a. (M' = Event a) ⇒ (f a = f' a)) ∧
+    (∀a. (M' = Return a) ⇒ (f1 a = f1' a)) ∧ ((M' = Stuck) ⇒ (v = v')) ⇒
+    (itree_el_CASE M f f1 v = itree_el_CASE M' f' f1' v')
+</pre>
+
+<DT><span class="strong">itree_el_case_eq</span>
+<DD>
+<pre>
+⊢ (itree_el_CASE x f f1 v = v') ⇔
+  (∃e. (x = Event e) ∧ (f e = v')) ∨ (∃r. (x = Return r) ∧ (f1 r = v')) ∨
+  (x = Stuck) ∧ (v = v')
+</pre>
+
+<DT><span class="strong">itree_el_def</span>
+<DD>
+<pre>
+⊢ (itree_el (Ret r) [] = Return r) ∧ (itree_el Div [] = Stuck) ∧
+  (itree_el (Vis e g) [] = Event e) ∧
+  (itree_el (Ret r) (a::ns) = Return ARB) ∧
+  (itree_el Div (a::ns) = Return ARB) ∧
+  (itree_el (Vis e g) (a::ns) = itree_el (g a) ns)
+</pre>
+
+<DT><span class="strong">itree_el_distinct</span>
+<DD>
+<pre>
+⊢ (∀a' a. Event a ≠ Return a') ∧ (∀a. Event a ≠ Stuck) ∧ ∀a. Return a ≠ Stuck
+</pre>
+
+<DT><span class="strong">itree_el_eqv</span>
+<DD>
+<pre>
+⊢ ∀t1 t2. (t1 = t2) ⇔ ∀path. itree_el t1 path = itree_el t2 path
+</pre>
+
+<DT><span class="strong">itree_el_induction</span>
+<DD>
+<pre>
+⊢ ∀P. (∀e. P (Event e)) ∧ (∀r. P (Return r)) ∧ P Stuck ⇒ ∀i. P i
+</pre>
+
+<DT><span class="strong">itree_el_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀ii. (∃e. ii = Event e) ∨ (∃r. ii = Return r) ∨ (ii = Stuck)
+</pre>
+
+<DT><span class="strong">itree_next_11</span>
+<DD>
+<pre>
+⊢ (∀a a'. (Ret' a = Ret' a') ⇔ (a = a')) ∧
+  ∀a0 a1 a0' a1'. (Vis' a0 a1 = Vis' a0' a1') ⇔ (a0 = a0') ∧ (a1 = a1')
+</pre>
+
+<DT><span class="strong">itree_next_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f0 f1 f2. ∃fn.
+    (∀a. fn (Ret' a) = f0 a) ∧ (fn Div' = f1) ∧
+    ∀a0 a1. fn (Vis' a0 a1) = f2 a0 a1
+</pre>
+
+<DT><span class="strong">itree_next_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' f v f1.
+    (M = M') ∧ (∀a. (M' = Ret' a) ⇒ (f a = f' a)) ∧ ((M' = Div') ⇒ (v = v')) ∧
+    (∀a0 a1. (M' = Vis' a0 a1) ⇒ (f1 a0 a1 = f1' a0 a1)) ⇒
+    (itree_next_CASE M f v f1 = itree_next_CASE M' f' v' f1')
+</pre>
+
+<DT><span class="strong">itree_next_case_eq</span>
+<DD>
+<pre>
+⊢ (itree_next_CASE x f v f1 = v') ⇔
+  (∃r. (x = Ret' r) ∧ (f r = v')) ∨ (x = Div') ∧ (v = v') ∨
+  ∃e f'. (x = Vis' e f') ∧ (f1 e f' = v')
+</pre>
+
+<DT><span class="strong">itree_next_distinct</span>
+<DD>
+<pre>
+⊢ (∀a. Ret' a ≠ Div') ∧ (∀a1 a0 a. Ret' a ≠ Vis' a0 a1) ∧
+  ∀a1 a0. Div' ≠ Vis' a0 a1
+</pre>
+
+<DT><span class="strong">itree_next_induction</span>
+<DD>
+<pre>
+⊢ ∀P. (∀r. P (Ret' r)) ∧ P Div' ∧ (∀e f. P (Vis' e f)) ⇒ ∀i. P i
+</pre>
+
+<DT><span class="strong">itree_next_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀ii. (∃r. ii = Ret' r) ∨ (ii = Div') ∨ ∃e f. ii = Vis' e f
+</pre>
+
+<DT><span class="strong">itree_unfold</span>
+<DD>
+<pre>
+⊢ itree_unfold f seed =
+  case f seed of
+    Ret' r => Ret r
+  | Div' => Div
+  | Vis' e g => Vis e (itree_unfold f ∘ g)
+</pre>
+
+<DT><span class="strong">itree_unfold_err</span>
+<DD>
+<pre>
+⊢ itree_unfold_err f (rel,err_f,err) seed =
+  case f seed of
+    Ret' r => Ret r
+  | Div' => Div
+  | Vis' e g =>
+    Vis e
+      (λa.
+           case a of
+             INL x => Ret (err_f e x)
+           | INR y =>
+             if rel e y then itree_unfold_err f (rel,err_f,err) (g y)
+             else Ret (err e))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

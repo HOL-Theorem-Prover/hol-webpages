@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure CoderTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure CoderTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/Boolify/src/CoderScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature CoderTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#blist_coder_def-val">blist_coder_def</a> : thm
+<a name="line7"></a>    val <a href="#bnum_coder_def-val">bnum_coder_def</a> : thm
+<a name="line8"></a>    val <a href="#bool_coder_def-val">bool_coder_def</a> : thm
+<a name="line9"></a>    val <a href="#decode_def-val">decode_def</a> : thm
+<a name="line10"></a>    val <a href="#decoder_def-val">decoder_def</a> : thm
+<a name="line11"></a>    val <a href="#domain_def-val">domain_def</a> : thm
+<a name="line12"></a>    val <a href="#encoder_def-val">encoder_def</a> : thm
+<a name="line13"></a>    val <a href="#list_coder_def-val">list_coder_def</a> : thm
+<a name="line14"></a>    val <a href="#num_coder_def-val">num_coder_def</a> : thm
+<a name="line15"></a>    val <a href="#option_coder_def-val">option_coder_def</a> : thm
+<a name="line16"></a>    val <a href="#prod_coder_def-val">prod_coder_def</a> : thm
+<a name="line17"></a>    val <a href="#sum_coder_def-val">sum_coder_def</a> : thm
+<a name="line18"></a>    val <a href="#tree_coder_def-val">tree_coder_def</a> : thm
+<a name="line19"></a>    val <a href="#unit_coder_def-val">unit_coder_def</a> : thm
+<a name="line20"></a>    val <a href="#wf_coder_def-val">wf_coder_def</a> : thm
+<a name="line21"></a>  
+<a name="line22"></a>  (*  Theorems  *)
+<a name="line23"></a>    val <a href="#decode_encode-val">decode_encode</a> : thm
+<a name="line24"></a>    val <a href="#wf_coder-val">wf_coder</a> : thm
+<a name="line25"></a>    val <a href="#wf_coder_blist-val">wf_coder_blist</a> : thm
+<a name="line26"></a>    val <a href="#wf_coder_bnum-val">wf_coder_bnum</a> : thm
+<a name="line27"></a>    val <a href="#wf_coder_bool-val">wf_coder_bool</a> : thm
+<a name="line28"></a>    val <a href="#wf_coder_closed-val">wf_coder_closed</a> : thm
+<a name="line29"></a>    val <a href="#wf_coder_list-val">wf_coder_list</a> : thm
+<a name="line30"></a>    val <a href="#wf_coder_num-val">wf_coder_num</a> : thm
+<a name="line31"></a>    val <a href="#wf_coder_op-val">wf_coder_op</a> : thm
+<a name="line32"></a>    val <a href="#wf_coder_option-val">wf_coder_option</a> : thm
+<a name="line33"></a>    val <a href="#wf_coder_prod-val">wf_coder_prod</a> : thm
+<a name="line34"></a>    val <a href="#wf_coder_sum-val">wf_coder_sum</a> : thm
+<a name="line35"></a>    val <a href="#wf_coder_tree-val">wf_coder_tree</a> : thm
+<a name="line36"></a>    val <a href="#wf_coder_unit-val">wf_coder_unit</a> : thm
+<a name="line37"></a>  
+<a name="line38"></a>  val Coder_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line39"></a>(*
+   [Decode] Parent theory of "Coder"
+   
+   [<a name="blist_coder_def-val"><b>blist_coder_def</b></a>]  Definition
+      
+      ⊢ ∀m p e d.
+          blist_coder m (p,e,d) =
+          (lift_blist m p,encode_blist m e,
+           decode_blist (lift_blist m p) m d)
+   
+   [<a name="bnum_coder_def-val"><b>bnum_coder_def</b></a>]  Definition
+      
+      ⊢ ∀m p. bnum_coder m p = (p,encode_bnum m,decode_bnum m p)
+   
+   [<a name="bool_coder_def-val"><b>bool_coder_def</b></a>]  Definition
+      
+      ⊢ ∀p. bool_coder p = (p,encode_bool,decode_bool p)
+   
+   [<a name="decode_def-val"><b>decode_def</b></a>]  Definition
+      
+      ⊢ ∀p d l.
+          decode p d l = case d l of NONE =&gt; @x. p x | SOME (x,v2) =&gt; x
+   
+   [<a name="decoder_def-val"><b>decoder_def</b></a>]  Definition
+      
+      ⊢ ∀p e d. decoder (p,e,d) = decode p d
+   
+   [<a name="domain_def-val"><b>domain_def</b></a>]  Definition
+      
+      ⊢ ∀p e d. domain (p,e,d) = p
+   
+   [<a name="encoder_def-val"><b>encoder_def</b></a>]  Definition
+      
+      ⊢ ∀p e d. encoder (p,e,d) = e
+   
+   [<a name="list_coder_def-val"><b>list_coder_def</b></a>]  Definition
+      
+      ⊢ ∀p e d.
+          list_coder (p,e,d) =
+          (EVERY p,encode_list e,decode_list (EVERY p) d)
+   
+   [<a name="num_coder_def-val"><b>num_coder_def</b></a>]  Definition
+      
+      ⊢ ∀p. num_coder p = (p,encode_num,decode_num p)
+   
+   [<a name="option_coder_def-val"><b>option_coder_def</b></a>]  Definition
+      
+      ⊢ ∀p e d.
+          option_coder (p,e,d) =
+          (lift_option p,encode_option e,decode_option (lift_option p) d)
+   
+   [<a name="prod_coder_def-val"><b>prod_coder_def</b></a>]  Definition
+      
+      ⊢ ∀p1 e1 d1 p2 e2 d2.
+          prod_coder (p1,e1,d1) (p2,e2,d2) =
+          (lift_prod p1 p2,encode_prod e1 e2,
+           decode_prod (lift_prod p1 p2) d1 d2)
+   
+   [<a name="sum_coder_def-val"><b>sum_coder_def</b></a>]  Definition
+      
+      ⊢ ∀p1 e1 d1 p2 e2 d2.
+          sum_coder (p1,e1,d1) (p2,e2,d2) =
+          (lift_sum p1 p2,encode_sum e1 e2,
+           decode_sum (lift_sum p1 p2) d1 d2)
+   
+   [<a name="tree_coder_def-val"><b>tree_coder_def</b></a>]  Definition
+      
+      ⊢ ∀p e d.
+          tree_coder (p,e,d) =
+          (lift_tree p,encode_tree e,decode_tree (lift_tree p) d)
+   
+   [<a name="unit_coder_def-val"><b>unit_coder_def</b></a>]  Definition
+      
+      ⊢ ∀p. unit_coder p = (p,encode_unit,decode_unit p)
+   
+   [<a name="wf_coder_def-val"><b>wf_coder_def</b></a>]  Definition
+      
+      ⊢ ∀p e d.
+          wf_coder (p,e,d) ⇔ wf_pred p ∧ wf_encoder p e ∧ d = enc2dec p e
+   
+   [<a name="decode_encode-val"><b>decode_encode</b></a>]  Theorem
+      
+      ⊢ ∀p e x. wf_encoder p e ∧ p x ⇒ decode p (enc2dec p e) (e x) = x
+   
+   [<a name="wf_coder-val"><b>wf_coder</b></a>]  Theorem
+      
+      ⊢ ∀c. wf_coder c ⇒ ∀x. domain c x ⇒ decoder c (encoder c x) = x
+   
+   [<a name="wf_coder_blist-val"><b>wf_coder_blist</b></a>]  Theorem
+      
+      ⊢ ∀m c. wf_coder c ⇒ wf_coder (blist_coder m c)
+   
+   [<a name="wf_coder_bnum-val"><b>wf_coder_bnum</b></a>]  Theorem
+      
+      ⊢ ∀m p. wf_pred_bnum m p ⇒ wf_coder (bnum_coder m p)
+   
+   [<a name="wf_coder_bool-val"><b>wf_coder_bool</b></a>]  Theorem
+      
+      ⊢ ∀p. wf_pred p ⇒ wf_coder (bool_coder p)
+   
+   [<a name="wf_coder_closed-val"><b>wf_coder_closed</b></a>]  Theorem
+      
+      ⊢ ∀c. wf_coder c ⇒ ∀l. domain c (decoder c l)
+   
+   [<a name="wf_coder_list-val"><b>wf_coder_list</b></a>]  Theorem
+      
+      ⊢ ∀c. wf_coder c ⇒ wf_coder (list_coder c)
+   
+   [<a name="wf_coder_num-val"><b>wf_coder_num</b></a>]  Theorem
+      
+      ⊢ ∀p. wf_pred p ⇒ wf_coder (num_coder p)
+   
+   [<a name="wf_coder_op-val"><b>wf_coder_op</b></a>]  Theorem
+      
+      ⊢ ∀p e f.
+          (∃x. p x) ∧ wf_encoder p e ∧ (∀x. p x ⇒ e x = f x) ⇒
+          wf_coder (p,e,enc2dec p f)
+   
+   [<a name="wf_coder_option-val"><b>wf_coder_option</b></a>]  Theorem
+      
+      ⊢ ∀c. wf_coder c ⇒ wf_coder (option_coder c)
+   
+   [<a name="wf_coder_prod-val"><b>wf_coder_prod</b></a>]  Theorem
+      
+      ⊢ ∀c1 c2. wf_coder c1 ∧ wf_coder c2 ⇒ wf_coder (prod_coder c1 c2)
+   
+   [<a name="wf_coder_sum-val"><b>wf_coder_sum</b></a>]  Theorem
+      
+      ⊢ ∀c1 c2. wf_coder c1 ∧ wf_coder c2 ⇒ wf_coder (sum_coder c1 c2)
+   
+   [<a name="wf_coder_tree-val"><b>wf_coder_tree</b></a>]  Theorem
+      
+      ⊢ ∀c. wf_coder c ⇒ wf_coder (tree_coder c)
+   
+   [<a name="wf_coder_unit-val"><b>wf_coder_unit</b></a>]  Theorem
+      
+      ⊢ ∀p. wf_pred p ⇒ wf_coder (unit_coder p)
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/Boolify/src/CoderScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

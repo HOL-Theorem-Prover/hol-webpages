@@ -1,0 +1,1174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: real_probability</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "real_probability"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "real_lebesgueTheory.html"><span class="strong">real_lebesgue</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">cond_prob</span>
+    <td>
+    :α real_measure$m_space -> (α -> bool) -> α real_measure$measure
+    <tr><td>
+    <span class="strong">conditional_distribution</span>
+    <td>
+    :α real_measure$m_space ->
+    (α -> β) -> (α -> γ) -> (β -> bool) -> γ real_measure$measure
+    <tr><td>
+    <span class="strong">conditional_expectation</span>
+    <td>
+    :α real_measure$m_space ->
+    (α -> real) -> ((α -> bool) -> bool) -> α -> real
+    <tr><td>
+    <span class="strong">conditional_prob</span>
+    <td>
+    :α real_measure$m_space ->
+    (α -> bool) -> ((α -> bool) -> bool) -> α -> real
+    <tr><td>
+    <span class="strong">distribution</span>
+    <td>
+    :β real_measure$m_space -> (β -> α) -> α real_measure$measure
+    <tr><td>
+    <span class="strong">events</span>
+    <td>
+    :α real_measure$m_space -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">expectation</span>
+    <td>
+    :α real_measure$m_space -> (α -> real) -> real
+    <tr><td>
+    <span class="strong">indep</span>
+    <td>
+    :α real_measure$m_space -> (α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">indep_families</span>
+    <td>
+    :α real_measure$m_space ->
+    ((α -> bool) -> bool) -> ((α -> bool) -> bool) -> bool
+    <tr><td>
+    <span class="strong">indep_function</span>
+    <td>
+    :α real_measure$m_space -> (α -> β # α) -> bool
+    <tr><td>
+    <span class="strong">indep_rv</span>
+    <td>
+    :α real_measure$m_space ->
+    (α -> β) -> (α -> γ) -> β algebra -> γ algebra -> bool
+    <tr><td>
+    <span class="strong">joint_distribution</span>
+    <td>
+    :γ real_measure$m_space ->
+    (γ -> α) -> (γ -> β) -> (α # β) real_measure$measure
+    <tr><td>
+    <span class="strong">joint_distribution3</span>
+    <td>
+    :δ real_measure$m_space ->
+    (δ -> α) -> (δ -> β) -> (δ -> γ) -> (α # β # γ) real_measure$measure
+    <tr><td>
+    <span class="strong">p_space</span>
+    <td>
+    :α real_measure$m_space -> α -> bool
+    <tr><td>
+    <span class="strong">possibly</span>
+    <td>
+    :α real_measure$m_space -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">prob</span>
+    <td>
+    :α real_measure$m_space -> α real_measure$measure
+    <tr><td>
+    <span class="strong">prob_preserving</span>
+    <td>
+    :α real_measure$m_space -> β real_measure$m_space -> (α -> β) -> bool
+    <tr><td>
+    <span class="strong">prob_space</span>
+    <td>
+    :α real_measure$m_space -> bool
+    <tr><td>
+    <span class="strong">probably</span>
+    <td>
+    :α real_measure$m_space -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">random_variable</span>
+    <td>
+    :(α -> β) -> α real_measure$m_space -> β algebra -> bool
+    <tr><td>
+    <span class="strong">real_random_variable</span>
+    <td>
+    :(α -> real) -> α real_measure$m_space -> bool
+    <tr><td>
+    <span class="strong">rv_conditional_expectation</span>
+    <td>
+    :α real_measure$m_space ->
+    β algebra -> (α -> real) -> (α -> β) -> α -> real
+    <tr><td>
+    <span class="strong">uniform_distribution</span>
+    <td>
+    :β -> γ -> δ algebra -> α real_measure$measure
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">cond_prob_def</span>
+<DD>
+<pre>
+⊢ ∀p e1 e2. cond_prob p e1 e2 = prob p (e1 ∩ e2) / prob p e2
+</pre>
+
+<DT><span class="strong">conditional_distribution_def</span>
+<DD>
+<pre>
+⊢ ∀p X Y a b.
+    conditional_distribution p X Y a b =
+    joint_distribution p X Y (a × b) / distribution p Y b
+</pre>
+
+<DT><span class="strong">conditional_expectation_def</span>
+<DD>
+<pre>
+⊢ ∀p X s.
+    conditional_expectation p X s =
+    @f. real_random_variable f p ∧
+        ∀g. g ∈ s ⇒
+            (integral p (λx. f x * indicator g x) =
+             integral p (λx. X x * indicator g x))
+</pre>
+
+<DT><span class="strong">conditional_prob_def</span>
+<DD>
+<pre>
+⊢ ∀p e1 e2.
+    conditional_prob p e1 e2 = conditional_expectation p (indicator e1) e2
+</pre>
+
+<DT><span class="strong">distribution_def</span>
+<DD>
+<pre>
+⊢ ∀p X. distribution p X = (λs. prob p (PREIMAGE X s ∩ p_space p))
+</pre>
+
+<DT><span class="strong">events_def</span>
+<DD>
+<pre>
+⊢ events = measurable_sets
+</pre>
+
+<DT><span class="strong">expectation_def</span>
+<DD>
+<pre>
+⊢ expectation = integral
+</pre>
+
+<DT><span class="strong">indep_def</span>
+<DD>
+<pre>
+⊢ ∀p a b.
+    indep p a b ⇔
+    a ∈ events p ∧ b ∈ events p ∧ (prob p (a ∩ b) = prob p a * prob p b)
+</pre>
+
+<DT><span class="strong">indep_families_def</span>
+<DD>
+<pre>
+⊢ ∀p q r. indep_families p q r ⇔ ∀s t. s ∈ q ∧ t ∈ r ⇒ indep p s t
+</pre>
+
+<DT><span class="strong">indep_function_def</span>
+<DD>
+<pre>
+⊢ ∀p. indep_function p =
+      {f |
+       indep_families p (IMAGE (PREIMAGE (FST ∘ f)) 𝕌(:β -> bool))
+         (IMAGE (PREIMAGE (SND ∘ f)) (events p))}
+</pre>
+
+<DT><span class="strong">indep_rv_def</span>
+<DD>
+<pre>
+⊢ ∀p X Y s t.
+    indep_rv p X Y s t ⇔
+    ∀A B.
+      A ∈ subsets s ∧ B ∈ subsets t ⇒ indep p (PREIMAGE X A) (PREIMAGE Y B)
+</pre>
+
+<DT><span class="strong">joint_distribution3_def</span>
+<DD>
+<pre>
+⊢ ∀p X Y Z.
+    joint_distribution3 p X Y Z =
+    (λa. prob p (PREIMAGE (λx. (X x,Y x,Z x)) a ∩ p_space p))
+</pre>
+
+<DT><span class="strong">joint_distribution_def</span>
+<DD>
+<pre>
+⊢ ∀p X Y.
+    joint_distribution p X Y =
+    (λa. prob p (PREIMAGE (λx. (X x,Y x)) a ∩ p_space p))
+</pre>
+
+<DT><span class="strong">p_space_def</span>
+<DD>
+<pre>
+⊢ p_space = m_space
+</pre>
+
+<DT><span class="strong">possibly_def</span>
+<DD>
+<pre>
+⊢ ∀p e. possibly p e ⇔ e ∈ events p ∧ prob p e ≠ 0
+</pre>
+
+<DT><span class="strong">prob_def</span>
+<DD>
+<pre>
+⊢ prob = measure
+</pre>
+
+<DT><span class="strong">prob_preserving_def</span>
+<DD>
+<pre>
+⊢ prob_preserving = measure_preserving
+</pre>
+
+<DT><span class="strong">prob_space_def</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇔ measure_space p ∧ (measure p (p_space p) = 1)
+</pre>
+
+<DT><span class="strong">probably_def</span>
+<DD>
+<pre>
+⊢ ∀p e. probably p e ⇔ e ∈ events p ∧ (prob p e = 1)
+</pre>
+
+<DT><span class="strong">random_variable_def</span>
+<DD>
+<pre>
+⊢ ∀X p s.
+    random_variable X p s ⇔
+    prob_space p ∧ X ∈ measurable (p_space p,events p) s
+</pre>
+
+<DT><span class="strong">real_random_variable_def</span>
+<DD>
+<pre>
+⊢ ∀X p.
+    real_random_variable X p ⇔
+    prob_space p ∧ X ∈ borel_measurable (p_space p,events p)
+</pre>
+
+<DT><span class="strong">rv_conditional_expectation_def</span>
+<DD>
+<pre>
+⊢ ∀p s X Y.
+    rv_conditional_expectation p s X Y =
+    conditional_expectation p X
+      (IMAGE (λa. PREIMAGE Y a ∩ p_space p) (subsets s))
+</pre>
+
+<DT><span class="strong">uniform_distribution_def</span>
+<DD>
+<pre>
+⊢ ∀p X s. uniform_distribution p X s = (λa. &CARD a / &CARD (space s))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ABS_1_MINUS_PROB</span>
+<DD>
+<pre>
+⊢ ∀p s. prob_space p ∧ s ∈ events p ∧ prob p s ≠ 0 ⇒ abs (1 − prob p s) < 1
+</pre>
+
+<DT><span class="strong">ABS_PROB</span>
+<DD>
+<pre>
+⊢ ∀p s. prob_space p ∧ s ∈ events p ⇒ (abs (prob p s) = prob p s)
+</pre>
+
+<DT><span class="strong">ADDITIVE_PROB</span>
+<DD>
+<pre>
+⊢ ∀p. additive p ⇔
+      ∀s t.
+        s ∈ events p ∧ t ∈ events p ∧ DISJOINT s t ⇒
+        (prob p (s ∪ t) = prob p s + prob p t)
+</pre>
+
+<DT><span class="strong">BAYES_RULE</span>
+<DD>
+<pre>
+⊢ ∀p A B.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ⇒
+    (cond_prob p B A = cond_prob p A B * prob p B / prob p A)
+</pre>
+
+<DT><span class="strong">BAYES_RULE_GENERAL_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀p A B s k.
+    prob_space p ∧ A ∈ events p ∧ FINITE s ∧ (∀x. x ∈ s ⇒ B x ∈ events p) ∧
+    k ∈ s ∧ (∀a b. a ∈ s ∧ b ∈ s ∧ a ≠ b ⇒ DISJOINT (B a) (B b)) ∧
+    (BIGUNION (IMAGE B s) = p_space p) ⇒
+    (cond_prob p (B k) A =
+     cond_prob p A (B k) * prob p (B k) /
+     ∑ (λi. prob p (B i) * cond_prob p A (B i)) s)
+</pre>
+
+<DT><span class="strong">COND_PROB_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀p A B s.
+    prob_space p ∧ FINITE s ∧ B ∈ events p ∧ (∀x. x ∈ s ⇒ A x ∈ events p) ∧
+    0 < prob p B ∧ (∀x y. x ∈ s ∧ y ∈ s ∧ x ≠ y ⇒ DISJOINT (A x) (A y)) ∧
+    (BIGUNION (IMAGE A s) = p_space p) ⇒
+    (∑ (λi. cond_prob p (A i) B) s = 1)
+</pre>
+
+<DT><span class="strong">COND_PROB_BOUNDS</span>
+<DD>
+<pre>
+⊢ ∀p A B.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ⇒
+    0 ≤ cond_prob p A B ∧ cond_prob p A B ≤ 1
+</pre>
+
+<DT><span class="strong">COND_PROB_COMPL</span>
+<DD>
+<pre>
+⊢ ∀A B p.
+    prob_space p ∧ A ∈ events p ∧ COMPL A ∈ events p ∧ B ∈ events p ∧
+    0 < prob p B ⇒
+    (cond_prob p (COMPL A) B = 1 − cond_prob p A B)
+</pre>
+
+<DT><span class="strong">COND_PROB_DIFF</span>
+<DD>
+<pre>
+⊢ ∀p A1 A2 B.
+    prob_space p ∧ A1 ∈ events p ∧ A2 ∈ events p ∧ B ∈ events p ⇒
+    (cond_prob p (A1 DIFF A2) B = cond_prob p A1 B − cond_prob p (A1 ∩ A2) B)
+</pre>
+
+<DT><span class="strong">COND_PROB_FINITE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀p A B n s.
+    prob_space p ∧ B ∈ events p ∧ A ∈ (count n → events p) ∧
+    (s = BIGUNION (IMAGE A (count n))) ∧ (∀a b. a ≠ b ⇒ DISJOINT (A a) (A b)) ⇒
+    (cond_prob p s B = ∑ (λi. cond_prob p (A i) B) (count n))
+</pre>
+
+<DT><span class="strong">COND_PROB_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀A B C p.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ∧ C ∈ events p ⇒
+    cond_prob p (A ∩ B) C ≤ cond_prob p A C
+</pre>
+
+<DT><span class="strong">COND_PROB_INTER_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀p A B C.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ∧ C ∈ events p ⇒
+    (cond_prob p (A ∩ B) C = cond_prob p A (B ∩ C) * cond_prob p B C)
+</pre>
+
+<DT><span class="strong">COND_PROB_INTER_ZERO</span>
+<DD>
+<pre>
+⊢ ∀p A B.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ∧ (prob p A = 0) ⇒
+    (cond_prob p A B = 0)
+</pre>
+
+<DT><span class="strong">COND_PROB_ITSELF</span>
+<DD>
+<pre>
+⊢ ∀p B. prob_space p ∧ B ∈ events p ∧ 0 < prob p B ⇒ (cond_prob p B B = 1)
+</pre>
+
+<DT><span class="strong">COND_PROB_MUL_EQ</span>
+<DD>
+<pre>
+⊢ ∀A B p.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ⇒
+    (cond_prob p A B * prob p B = cond_prob p B A * prob p A)
+</pre>
+
+<DT><span class="strong">COND_PROB_MUL_RULE</span>
+<DD>
+<pre>
+⊢ ∀p A B.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ⇒
+    (prob p (A ∩ B) = prob p B * cond_prob p A B)
+</pre>
+
+<DT><span class="strong">COND_PROB_POS_IMP_PROB_NZ</span>
+<DD>
+<pre>
+⊢ ∀A B p.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ∧ 0 < cond_prob p A B ⇒
+    prob p (A ∩ B) ≠ 0
+</pre>
+
+<DT><span class="strong">COND_PROB_SWAP</span>
+<DD>
+<pre>
+⊢ ∀p A B C.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ∧ C ∈ events p ⇒
+    (cond_prob p A (B ∩ C) * cond_prob p B C =
+     cond_prob p B (A ∩ C) * cond_prob p A C)
+</pre>
+
+<DT><span class="strong">COND_PROB_ZERO</span>
+<DD>
+<pre>
+⊢ ∀p A B.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ∧ (prob p B = 0) ⇒
+    (cond_prob p A B = 0)
+</pre>
+
+<DT><span class="strong">COND_PROB_ZERO_INTER</span>
+<DD>
+<pre>
+⊢ ∀p A B.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ∧ (prob p (A ∩ B) = 0) ⇒
+    (cond_prob p A B = 0)
+</pre>
+
+<DT><span class="strong">COUNTABLY_ADDITIVE_PROB</span>
+<DD>
+<pre>
+⊢ ∀p. countably_additive p ⇔
+      ∀f. f ∈ (𝕌(:num) → events p) ∧ (∀m n. m ≠ n ⇒ DISJOINT (f m) (f n)) ∧
+          BIGUNION (IMAGE f 𝕌(:num)) ∈ events p ⇒
+          prob p ∘ f sums prob p (BIGUNION (IMAGE f 𝕌(:num)))
+</pre>
+
+<DT><span class="strong">EVENTS</span>
+<DD>
+<pre>
+⊢ ∀a b c. events (a,b,c) = b
+</pre>
+
+<DT><span class="strong">EVENTS_ALGEBRA</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇒ algebra (p_space p,events p)
+</pre>
+
+<DT><span class="strong">EVENTS_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀p f n.
+    prob_space p ∧ f ∈ (count n → events p) ⇒
+    BIGUNION (IMAGE f (count n)) ∈ events p
+</pre>
+
+<DT><span class="strong">EVENTS_COMPL</span>
+<DD>
+<pre>
+⊢ ∀p s. prob_space p ∧ s ∈ events p ⇒ p_space p DIFF s ∈ events p
+</pre>
+
+<DT><span class="strong">EVENTS_COUNTABLE_INTER</span>
+<DD>
+<pre>
+⊢ ∀p c.
+    prob_space p ∧ c ⊆ events p ∧ countable c ∧ c ≠ ∅ ⇒ BIGINTER c ∈ events p
+</pre>
+
+<DT><span class="strong">EVENTS_COUNTABLE_UNION</span>
+<DD>
+<pre>
+⊢ ∀p c. prob_space p ∧ c ⊆ events p ∧ countable c ⇒ BIGUNION c ∈ events p
+</pre>
+
+<DT><span class="strong">EVENTS_DIFF</span>
+<DD>
+<pre>
+⊢ ∀p s t. prob_space p ∧ s ∈ events p ∧ t ∈ events p ⇒ s DIFF t ∈ events p
+</pre>
+
+<DT><span class="strong">EVENTS_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇒ ∅ ∈ events p
+</pre>
+
+<DT><span class="strong">EVENTS_INTER</span>
+<DD>
+<pre>
+⊢ ∀p s t. prob_space p ∧ s ∈ events p ∧ t ∈ events p ⇒ s ∩ t ∈ events p
+</pre>
+
+<DT><span class="strong">EVENTS_SIGMA_ALGEBRA</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇒ sigma_algebra (p_space p,events p)
+</pre>
+
+<DT><span class="strong">EVENTS_SPACE</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇒ p_space p ∈ events p
+</pre>
+
+<DT><span class="strong">EVENTS_UNION</span>
+<DD>
+<pre>
+⊢ ∀p s t. prob_space p ∧ s ∈ events p ∧ t ∈ events p ⇒ s ∪ t ∈ events p
+</pre>
+
+<DT><span class="strong">INCREASING_PROB</span>
+<DD>
+<pre>
+⊢ ∀p. increasing p ⇔
+      ∀s t. s ∈ events p ∧ t ∈ events p ∧ s ⊆ t ⇒ prob p s ≤ prob p t
+</pre>
+
+<DT><span class="strong">INDEP_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀p s. prob_space p ∧ s ∈ events p ⇒ indep p ∅ s
+</pre>
+
+<DT><span class="strong">INDEP_REFL</span>
+<DD>
+<pre>
+⊢ ∀p a.
+    prob_space p ∧ a ∈ events p ⇒
+    (indep p a a ⇔ (prob p a = 0)) ∨ (prob p a = 1)
+</pre>
+
+<DT><span class="strong">INDEP_SPACE</span>
+<DD>
+<pre>
+⊢ ∀p s. prob_space p ∧ s ∈ events p ⇒ indep p (p_space p) s
+</pre>
+
+<DT><span class="strong">INDEP_SYM</span>
+<DD>
+<pre>
+⊢ ∀p a b. prob_space p ∧ indep p a b ⇒ indep p b a
+</pre>
+
+<DT><span class="strong">INTER_PSPACE</span>
+<DD>
+<pre>
+⊢ ∀p s. prob_space p ∧ s ∈ events p ⇒ (p_space p ∩ s = s)
+</pre>
+
+<DT><span class="strong">POSITIVE_PROB</span>
+<DD>
+<pre>
+⊢ ∀p. positive p ⇔ (prob p ∅ = 0) ∧ ∀s. s ∈ events p ⇒ 0 ≤ prob p s
+</pre>
+
+<DT><span class="strong">PROB</span>
+<DD>
+<pre>
+⊢ ∀a b c. prob (a,b,c) = c
+</pre>
+
+<DT><span class="strong">PROB_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀p s t u.
+    prob_space p ∧ s ∈ events p ∧ t ∈ events p ∧ DISJOINT s t ∧ (u = s ∪ t) ⇒
+    (prob p u = prob p s + prob p t)
+</pre>
+
+<DT><span class="strong">PROB_COMPL</span>
+<DD>
+<pre>
+⊢ ∀p s.
+    prob_space p ∧ s ∈ events p ⇒ (prob p (p_space p DIFF s) = 1 − prob p s)
+</pre>
+
+<DT><span class="strong">PROB_COMPL_LE1</span>
+<DD>
+<pre>
+⊢ ∀p s r.
+    prob_space p ∧ s ∈ events p ⇒
+    (prob p (p_space p DIFF s) ≤ r ⇔ 1 − r ≤ prob p s)
+</pre>
+
+<DT><span class="strong">PROB_COUNTABLY_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀p s f.
+    prob_space p ∧ f ∈ (𝕌(:num) → events p) ∧
+    (∀m n. m ≠ n ⇒ DISJOINT (f m) (f n)) ∧ (s = BIGUNION (IMAGE f 𝕌(:num))) ⇒
+    prob p ∘ f sums prob p s
+</pre>
+
+<DT><span class="strong">PROB_COUNTABLY_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀p f.
+    prob_space p ∧ IMAGE f 𝕌(:num) ⊆ events p ∧ summable (prob p ∘ f) ⇒
+    prob p (BIGUNION (IMAGE f 𝕌(:num))) ≤ suminf (prob p ∘ f)
+</pre>
+
+<DT><span class="strong">PROB_COUNTABLY_ZERO</span>
+<DD>
+<pre>
+⊢ ∀p c.
+    prob_space p ∧ countable c ∧ c ⊆ events p ∧ (∀x. x ∈ c ⇒ (prob p x = 0)) ⇒
+    (prob p (BIGUNION c) = 0)
+</pre>
+
+<DT><span class="strong">PROB_DISCRETE_EVENTS</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ∧ FINITE (p_space p) ∧ (∀x. x ∈ p_space p ⇒ {x} ∈ events p) ⇒
+      ∀s. s ⊆ p_space p ⇒ s ∈ events p
+</pre>
+
+<DT><span class="strong">PROB_DISCRETE_EVENTS_COUNTABLE</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ∧ countable (p_space p) ∧
+      (∀x. x ∈ p_space p ⇒ {x} ∈ events p) ⇒
+      ∀s. s ⊆ p_space p ⇒ s ∈ events p
+</pre>
+
+<DT><span class="strong">PROB_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇒ (prob p ∅ = 0)
+</pre>
+
+<DT><span class="strong">PROB_EQUIPROBABLE_FINITE_UNIONS</span>
+<DD>
+<pre>
+⊢ ∀p s.
+    prob_space p ∧ s ∈ events p ∧ (∀x. x ∈ s ⇒ {x} ∈ events p) ∧ FINITE s ∧
+    (∀x y. x ∈ s ∧ y ∈ s ⇒ (prob p {x} = prob p {y})) ⇒
+    (prob p s = &CARD s * prob p {CHOICE s})
+</pre>
+
+<DT><span class="strong">PROB_EQ_BIGUNION_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀p f g.
+    prob_space p ∧ f ∈ (𝕌(:num) → events p) ∧ g ∈ (𝕌(:num) → events p) ∧
+    (∀m n. m ≠ n ⇒ DISJOINT (f m) (f n)) ∧
+    (∀m n. m ≠ n ⇒ DISJOINT (g m) (g n)) ∧ (∀n. prob p (f n) = prob p (g n)) ⇒
+    (prob p (BIGUNION (IMAGE f 𝕌(:num))) = prob p (BIGUNION (IMAGE g 𝕌(:num))))
+</pre>
+
+<DT><span class="strong">PROB_EQ_COMPL</span>
+<DD>
+<pre>
+⊢ ∀p s t.
+    prob_space p ∧ s ∈ events p ∧ t ∈ events p ∧
+    (prob p (p_space p DIFF s) = prob p (p_space p DIFF t)) ⇒
+    (prob p s = prob p t)
+</pre>
+
+<DT><span class="strong">PROB_FINITELY_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀p s f n.
+    prob_space p ∧ f ∈ (count n → events p) ∧
+    (∀a b. a < n ∧ b < n ∧ a ≠ b ⇒ DISJOINT (f a) (f b)) ∧
+    (s = BIGUNION (IMAGE f (count n))) ⇒
+    (sum (0,n) (prob p ∘ f) = prob p s)
+</pre>
+
+<DT><span class="strong">PROB_FINITE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀p s f t.
+    prob_space p ∧ FINITE s ∧ (∀x. x ∈ s ⇒ f x ∈ events p) ∧
+    (∀a b. a ∈ s ∧ b ∈ s ∧ a ≠ b ⇒ DISJOINT (f a) (f b)) ∧
+    (t = BIGUNION (IMAGE f s)) ⇒
+    (prob p t = ∑ (prob p ∘ f) s)
+</pre>
+
+<DT><span class="strong">PROB_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀p s t.
+    prob_space p ∧ s ∈ events p ∧ t ∈ events p ∧ s ⊆ t ⇒ prob p s ≤ prob p t
+</pre>
+
+<DT><span class="strong">PROB_INCREASING_UNION</span>
+<DD>
+<pre>
+⊢ ∀p s f.
+    prob_space p ∧ f ∈ (𝕌(:num) → events p) ∧ (∀n. f n ⊆ f (SUC n)) ∧
+    (s = BIGUNION (IMAGE f 𝕌(:num))) ⇒
+    prob p ∘ f --> prob p s
+</pre>
+
+<DT><span class="strong">PROB_INDEP</span>
+<DD>
+<pre>
+⊢ ∀p s t u. indep p s t ∧ (u = s ∩ t) ⇒ (prob p u = prob p s * prob p t)
+</pre>
+
+<DT><span class="strong">PROB_INTER_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀p A B C.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ∧ C ∈ events p ⇒
+    (prob p (A ∩ B ∩ C) = cond_prob p A (B ∩ C) * cond_prob p B C * prob p C)
+</pre>
+
+<DT><span class="strong">PROB_INTER_ZERO</span>
+<DD>
+<pre>
+⊢ ∀p A B.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ∧ (prob p B = 0) ⇒
+    (prob p (A ∩ B) = 0)
+</pre>
+
+<DT><span class="strong">PROB_LE_1</span>
+<DD>
+<pre>
+⊢ ∀p s. prob_space p ∧ s ∈ events p ⇒ prob p s ≤ 1
+</pre>
+
+<DT><span class="strong">PROB_ONE_INTER</span>
+<DD>
+<pre>
+⊢ ∀p s t.
+    prob_space p ∧ s ∈ events p ∧ t ∈ events p ∧ (prob p t = 1) ⇒
+    (prob p (s ∩ t) = prob p s)
+</pre>
+
+<DT><span class="strong">PROB_POSITIVE</span>
+<DD>
+<pre>
+⊢ ∀p s. prob_space p ∧ s ∈ events p ⇒ 0 ≤ prob p s
+</pre>
+
+<DT><span class="strong">PROB_PRESERVING</span>
+<DD>
+<pre>
+⊢ ∀p1 p2.
+    prob_preserving p1 p2 =
+    {f |
+     f ∈ measurable (p_space p1,events p1) (p_space p2,events p2) ∧
+     measure_space p1 ∧ measure_space p2 ∧
+     ∀s. s ∈ events p2 ⇒ (prob p1 (PREIMAGE f s ∩ p_space p1) = prob p2 s)}
+</pre>
+
+<DT><span class="strong">PROB_PRESERVING_LIFT</span>
+<DD>
+<pre>
+⊢ ∀p1 p2 a f.
+    prob_space p1 ∧ prob_space p2 ∧
+    (events p2 = subsets (sigma (m_space p2) a)) ∧
+    f ∈ prob_preserving p1 (m_space p2,a,prob p2) ⇒
+    f ∈ prob_preserving p1 p2
+</pre>
+
+<DT><span class="strong">PROB_PRESERVING_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀p1 p2 a.
+    prob_space p1 ∧ prob_space p2 ∧
+    (events p2 = subsets (sigma (p_space p2) a)) ⇒
+    prob_preserving p1 (p_space p2,a,prob p2) ⊆ prob_preserving p1 p2
+</pre>
+
+<DT><span class="strong">PROB_PRESERVING_UP_LIFT</span>
+<DD>
+<pre>
+⊢ ∀p1 p2 f.
+    prob_space p1 ∧ f ∈ prob_preserving (p_space p1,a,prob p1) p2 ∧
+    sigma_algebra (p_space p1,events p1) ∧ a ⊆ events p1 ⇒
+    f ∈ prob_preserving p1 p2
+</pre>
+
+<DT><span class="strong">PROB_PRESERVING_UP_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀p1 p2 a.
+    prob_space p1 ∧ (events p1 = subsets (sigma (p_space p1) a)) ⇒
+    prob_preserving (p_space p1,a,prob p1) p2 ⊆ prob_preserving p1 p2
+</pre>
+
+<DT><span class="strong">PROB_PRESERVING_UP_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀p1 p2.
+    prob_space p1 ∧ a ⊆ events p1 ∧ sigma_algebra (p_space p1,events p1) ⇒
+    prob_preserving (p_space p1,a,prob p1) p2 ⊆ prob_preserving p1 p2
+</pre>
+
+<DT><span class="strong">PROB_REAL_SUM_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀p s.
+    prob_space p ∧ s ∈ events p ∧ (∀x. x ∈ s ⇒ {x} ∈ events p) ∧ FINITE s ⇒
+    (prob p s = ∑ (λx. prob p {x}) s)
+</pre>
+
+<DT><span class="strong">PROB_REAL_SUM_IMAGE_FN</span>
+<DD>
+<pre>
+⊢ ∀p f e s.
+    prob_space p ∧ e ∈ events p ∧ (∀x. x ∈ s ⇒ e ∩ f x ∈ events p) ∧
+    FINITE s ∧ (∀x y. x ∈ s ∧ y ∈ s ∧ x ≠ y ⇒ DISJOINT (f x) (f y)) ∧
+    (BIGUNION (IMAGE f s) ∩ p_space p = p_space p) ⇒
+    (prob p e = ∑ (λx. prob p (e ∩ f x)) s)
+</pre>
+
+<DT><span class="strong">PROB_REAL_SUM_IMAGE_SPACE</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ∧ (∀x. x ∈ p_space p ⇒ {x} ∈ events p) ∧ FINITE (p_space p) ⇒
+      (∑ (λx. prob p {x}) (p_space p) = 1)
+</pre>
+
+<DT><span class="strong">PROB_SPACE</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇔
+      sigma_algebra (p_space p,events p) ∧ positive p ∧ countably_additive p ∧
+      (prob p (p_space p) = 1)
+</pre>
+
+<DT><span class="strong">PROB_SPACE_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇒ additive p
+</pre>
+
+<DT><span class="strong">PROB_SPACE_COUNTABLY_ADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇒ countably_additive p
+</pre>
+
+<DT><span class="strong">PROB_SPACE_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇒ increasing p
+</pre>
+
+<DT><span class="strong">PROB_SPACE_POSITIVE</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇒ positive p
+</pre>
+
+<DT><span class="strong">PROB_SUBADDITIVE</span>
+<DD>
+<pre>
+⊢ ∀p s t u.
+    prob_space p ∧ t ∈ events p ∧ u ∈ events p ∧ (s = t ∪ u) ⇒
+    prob p s ≤ prob p t + prob p u
+</pre>
+
+<DT><span class="strong">PROB_UNIV</span>
+<DD>
+<pre>
+⊢ ∀p. prob_space p ⇒ (prob p (p_space p) = 1)
+</pre>
+
+<DT><span class="strong">PROB_ZERO_INTER</span>
+<DD>
+<pre>
+⊢ ∀p A B.
+    prob_space p ∧ A ∈ events p ∧ B ∈ events p ∧ (prob p A = 0) ⇒
+    (prob p (A ∩ B) = 0)
+</pre>
+
+<DT><span class="strong">PROB_ZERO_UNION</span>
+<DD>
+<pre>
+⊢ ∀p s t.
+    prob_space p ∧ s ∈ events p ∧ t ∈ events p ∧ (prob p t = 0) ⇒
+    (prob p (s ∪ t) = prob p s)
+</pre>
+
+<DT><span class="strong">PSPACE</span>
+<DD>
+<pre>
+⊢ ∀a b c. p_space (a,b,c) = a
+</pre>
+
+<DT><span class="strong">TOTAL_PROB_SIGMA</span>
+<DD>
+<pre>
+⊢ ∀p A B s.
+    prob_space p ∧ A ∈ events p ∧ FINITE s ∧ (∀x. x ∈ s ⇒ B x ∈ events p) ∧
+    (∀a b. a ∈ s ∧ b ∈ s ∧ a ≠ b ⇒ DISJOINT (B a) (B b)) ∧
+    (BIGUNION (IMAGE B s) = p_space p) ⇒
+    (prob p A = ∑ (λi. prob p (B i) * cond_prob p A (B i)) s)
+</pre>
+
+<DT><span class="strong">conditional_distribution_le_1</span>
+<DD>
+<pre>
+⊢ ∀p X Y a b.
+    prob_space p ∧ (events p = POW (p_space p)) ⇒
+    conditional_distribution p X Y a b ≤ 1
+</pre>
+
+<DT><span class="strong">conditional_distribution_pos</span>
+<DD>
+<pre>
+⊢ ∀p X Y a b.
+    prob_space p ∧ (events p = POW (p_space p)) ⇒
+    0 ≤ conditional_distribution p X Y a b
+</pre>
+
+<DT><span class="strong">distribution_lebesgue_thm1</span>
+<DD>
+<pre>
+⊢ ∀X p s A.
+    random_variable X p s ∧ A ∈ subsets s ⇒
+    (distribution p X A = integral p (indicator (PREIMAGE X A ∩ p_space p)))
+</pre>
+
+<DT><span class="strong">distribution_lebesgue_thm2</span>
+<DD>
+<pre>
+⊢ ∀X p s A.
+    random_variable X p s ∧ A ∈ subsets s ⇒
+    (distribution p X A =
+     integral (space s,subsets s,distribution p X) (indicator A))
+</pre>
+
+<DT><span class="strong">distribution_pos</span>
+<DD>
+<pre>
+⊢ ∀p X a. prob_space p ∧ (events p = POW (p_space p)) ⇒ 0 ≤ distribution p X a
+</pre>
+
+<DT><span class="strong">distribution_prob_space</span>
+<DD>
+<pre>
+⊢ ∀p X s.
+    random_variable X p s ⇒ prob_space (space s,subsets s,distribution p X)
+</pre>
+
+<DT><span class="strong">distribution_x_eq_1_imp_distribution_y_eq_0</span>
+<DD>
+<pre>
+⊢ ∀X p x.
+    random_variable X p (IMAGE X (p_space p),POW (IMAGE X (p_space p))) ∧
+    (distribution p X {x} = 1) ⇒
+    ∀y. y ≠ x ⇒ (distribution p X {y} = 0)
+</pre>
+
+<DT><span class="strong">finite_expectation</span>
+<DD>
+<pre>
+⊢ ∀p X.
+    FINITE (p_space p) ∧ real_random_variable X p ⇒
+    (expectation p X = ∑ (λr. r * distribution p X {r}) (IMAGE X (p_space p)))
+</pre>
+
+<DT><span class="strong">finite_expectation1</span>
+<DD>
+<pre>
+⊢ ∀p X.
+    FINITE (p_space p) ∧ real_random_variable X p ⇒
+    (expectation p X =
+     ∑ (λr. r * prob p (PREIMAGE X {r} ∩ p_space p)) (IMAGE X (p_space p)))
+</pre>
+
+<DT><span class="strong">finite_marginal_product_space_POW</span>
+<DD>
+<pre>
+⊢ ∀p X Y.
+    (POW (p_space p) = events p) ∧
+    random_variable X p (IMAGE X (p_space p),POW (IMAGE X (p_space p))) ∧
+    random_variable Y p (IMAGE Y (p_space p),POW (IMAGE Y (p_space p))) ∧
+    FINITE (p_space p) ⇒
+    measure_space
+      (IMAGE X (p_space p) × IMAGE Y (p_space p),
+       POW (IMAGE X (p_space p) × IMAGE Y (p_space p)),
+       (λa. prob p (PREIMAGE (λx. (X x,Y x)) a ∩ p_space p)))
+</pre>
+
+<DT><span class="strong">finite_marginal_product_space_POW2</span>
+<DD>
+<pre>
+⊢ ∀p s1 s2 X Y.
+    (POW (p_space p) = events p) ∧ random_variable X p (s1,POW s1) ∧
+    random_variable Y p (s2,POW s2) ∧ FINITE (p_space p) ∧ FINITE s1 ∧
+    FINITE s2 ⇒
+    measure_space (s1 × s2,POW (s1 × s2),joint_distribution p X Y)
+</pre>
+
+<DT><span class="strong">finite_marginal_product_space_POW3</span>
+<DD>
+<pre>
+⊢ ∀p s1 s2 s3 X Y Z.
+    (POW (p_space p) = events p) ∧ random_variable X p (s1,POW s1) ∧
+    random_variable Y p (s2,POW s2) ∧ random_variable Z p (s3,POW s3) ∧
+    FINITE (p_space p) ∧ FINITE s1 ∧ FINITE s2 ∧ FINITE s3 ⇒
+    measure_space
+      (s1 × s2 × s3,POW (s1 × s2 × s3),joint_distribution3 p X Y Z)
+</pre>
+
+<DT><span class="strong">joint_conditional</span>
+<DD>
+<pre>
+⊢ ∀p X Y a b.
+    prob_space p ∧ (events p = POW (p_space p)) ⇒
+    (joint_distribution p X Y (a × b) =
+     conditional_distribution p Y X b a * distribution p X a)
+</pre>
+
+<DT><span class="strong">joint_distribution_le</span>
+<DD>
+<pre>
+⊢ ∀p X Y a b.
+    prob_space p ∧ (events p = POW (p_space p)) ⇒
+    joint_distribution p X Y (a × b) ≤ distribution p X a
+</pre>
+
+<DT><span class="strong">joint_distribution_le2</span>
+<DD>
+<pre>
+⊢ ∀p X Y a b.
+    prob_space p ∧ (events p = POW (p_space p)) ⇒
+    joint_distribution p X Y (a × b) ≤ distribution p Y b
+</pre>
+
+<DT><span class="strong">joint_distribution_le_1</span>
+<DD>
+<pre>
+⊢ ∀p X Y a.
+    prob_space p ∧ (events p = POW (p_space p)) ⇒
+    joint_distribution p X Y a ≤ 1
+</pre>
+
+<DT><span class="strong">joint_distribution_pos</span>
+<DD>
+<pre>
+⊢ ∀p X Y a.
+    prob_space p ∧ (events p = POW (p_space p)) ⇒
+    0 ≤ joint_distribution p X Y a
+</pre>
+
+<DT><span class="strong">joint_distribution_sum_mul1</span>
+<DD>
+<pre>
+⊢ ∀p X Y f.
+    prob_space p ∧ FINITE (p_space p) ∧ (events p = POW (p_space p)) ⇒
+    (∑ (λ(x,y). joint_distribution p X Y {(x,y)} * f x)
+       (IMAGE X (p_space p) × IMAGE Y (p_space p)) =
+     ∑ (λx. distribution p X {x} * f x) (IMAGE X (p_space p)))
+</pre>
+
+<DT><span class="strong">joint_distribution_sums_1</span>
+<DD>
+<pre>
+⊢ ∀p X Y.
+    prob_space p ∧ FINITE (p_space p) ∧ (events p = POW (p_space p)) ⇒
+    (∑ (λ(x,y). joint_distribution p X Y {(x,y)})
+       (IMAGE X (p_space p) × IMAGE Y (p_space p)) = 1)
+</pre>
+
+<DT><span class="strong">joint_distribution_sym</span>
+<DD>
+<pre>
+⊢ ∀p X Y a b.
+    prob_space p ⇒
+    (joint_distribution p X Y (a × b) = joint_distribution p Y X (b × a))
+</pre>
+
+<DT><span class="strong">marginal_distribution1</span>
+<DD>
+<pre>
+⊢ ∀p X Y a.
+    prob_space p ∧ FINITE (p_space p) ∧ (events p = POW (p_space p)) ⇒
+    (distribution p X a =
+     ∑ (λx. joint_distribution p X Y (a × {x})) (IMAGE Y (p_space p)))
+</pre>
+
+<DT><span class="strong">marginal_distribution2</span>
+<DD>
+<pre>
+⊢ ∀p X Y b.
+    prob_space p ∧ FINITE (p_space p) ∧ (events p = POW (p_space p)) ⇒
+    (distribution p Y b =
+     ∑ (λx. joint_distribution p X Y ({x} × b)) (IMAGE X (p_space p)))
+</pre>
+
+<DT><span class="strong">marginal_joint_zero</span>
+<DD>
+<pre>
+⊢ ∀p X Y s t.
+    prob_space p ∧ (events p = POW (p_space p)) ∧
+    ((distribution p X s = 0) ∨ (distribution p Y t = 0)) ⇒
+    (joint_distribution p X Y (s × t) = 0)
+</pre>
+
+<DT><span class="strong">marginal_joint_zero3</span>
+<DD>
+<pre>
+⊢ ∀p X Y Z s t u.
+    prob_space p ∧ (events p = POW (p_space p)) ∧
+    ((distribution p X s = 0) ∨ (distribution p Y t = 0) ∨
+     (distribution p Z u = 0)) ⇒
+    (joint_distribution3 p X Y Z (s × t × u) = 0)
+</pre>
+
+<DT><span class="strong">prob_x_eq_1_imp_prob_y_eq_0</span>
+<DD>
+<pre>
+⊢ ∀p x.
+    prob_space p ∧ {x} ∈ events p ∧ (prob p {x} = 1) ⇒
+    ∀y. {y} ∈ events p ∧ y ≠ x ⇒ (prob p {y} = 0)
+</pre>
+
+<DT><span class="strong">uniform_distribution_prob_space</span>
+<DD>
+<pre>
+⊢ ∀X p s.
+    FINITE (p_space p) ∧ FINITE (space s) ∧ random_variable X p s ⇒
+    prob_space (space s,subsets s,uniform_distribution p X s)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

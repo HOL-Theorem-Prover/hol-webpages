@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>Drule.pp</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>Drule.pp : thmpos_dtype.match_position -&gt; thm -&gt; thm</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/Drule.html">Drule</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Promotes the designated premise to the “top” of an implicational theorem.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">A call to </SPAN><SPAN class = "BRKT">pp&nbsp;pos&nbsp;th</SPAN><SPAN class = "TEXT"> finds the premise denoted by </SPAN><SPAN class = "BRKT">pos</SPAN><SPAN class = "TEXT"> in </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> and
+promotes it so that it occurs as the outermost antecedent of the
+theorem. The theorem argument </SPAN><SPAN class = "BRKT">th</SPAN><SPAN class = "TEXT"> is first normalised by a call to
+</SPAN><SPAN class = "BRKT">MP_CANON</SPAN><SPAN class = "TEXT">.</SPAN>
+<P>
+<SPAN class = "TEXT">Any theorem whose top level operator (after universal quantifiers are
+stripped away) is an implication can be viewed as being of the form
+</SPAN><DIV class = "XMPL"><pre>
+   ∀v1 .. vn. p1 /\ p2 /\ .. pn ==&gt; c
+</pre></DIV>
+<SPAN class = "TEXT">
+where the variables </SPAN><SPAN class = "BRKT">v1</SPAN><SPAN class = "TEXT"> to </SPAN><SPAN class = "BRKT">vn</SPAN><SPAN class = "TEXT"> may be free in some of the
+antecedents and/or conclusion </SPAN><SPAN class = "BRKT">c</SPAN><SPAN class = "TEXT">. To promote a premise </SPAN><SPAN class = "BRKT">pi</SPAN><SPAN class = "TEXT">
+transforms the above into
+</SPAN><DIV class = "XMPL"><pre>
+   ∀va .. vk. pi ==&gt; ∀vx .. vz. pa /\ pb ... /\ pj ==&gt; c
+</pre></DIV>
+<SPAN class = "TEXT">
+The four constructors of the </SPAN><SPAN class = "BRKT">match_position</SPAN><SPAN class = "TEXT"> type can be used to
+designate different premises. The </SPAN><SPAN class = "BRKT">Pos&nbsp;f</SPAN><SPAN class = "TEXT"> form applies the function
+</SPAN><SPAN class = "BRKT">f</SPAN><SPAN class = "TEXT"> to the list of premises, and is expected to return a member of the
+given list. The </SPAN><SPAN class = "BRKT">Pat&nbsp;q</SPAN><SPAN class = "TEXT"> form finds the first premise that matches the
+given quotation pattern. In this context, </SPAN><SPAN class = "BRKT">Any</SPAN><SPAN class = "TEXT"> is viewed as a synonym
+for </SPAN><SPAN class = "BRKT">Pos&nbsp;hd</SPAN><SPAN class = "TEXT">. Finally, the </SPAN><SPAN class = "BRKT">Concl</SPAN><SPAN class = "TEXT"> form selects the conclusion of the
+theorem, and “promotes” it by taking the contrapositive of the
+theorem.</SPAN>
+<P>
+<SPAN class = "TEXT">After promotion some cleanup is performed. If a contrapositive was
+taken, double negations in the promoted premise are removed, and in
+all cases, universal quantifiers of variables not present in the
+promoted premise are pushed down to govern other premises.</SPAN>
+<P>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">FAILURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Fails if the provided match position does not denote a premise present
+in the given theorem.</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+&gt; sortingTheory.ALL_DISTINCT_PERM;
+val it = ⊢ ∀l1 l2. PERM l1 l2 ⇒ (ALL_DISTINCT l1 ⇔ ALL_DISTINCT l2)
+
+&gt; it |&gt; iffLR |&gt; pp (Pos last);
+val it = ⊢ ∀l1. ALL_DISTINCT l1 ⇒ ∀l2. PERM l1 l2 ⇒ ALL_DISTINCT l2: thm
+</pre></DIV>
+</DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Drule.MP_CANON.html">MP_CANON</A>,
+<A HREF = "Tactic.mp_then.html">mp_then</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>

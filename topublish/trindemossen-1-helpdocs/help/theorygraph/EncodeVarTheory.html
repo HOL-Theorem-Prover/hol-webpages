@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: EncodeVar</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "EncodeVar"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "CoderTheory.html"><span class="strong">Coder</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">fixed_width</span>
+    <td>
+    :num ->
+    (α -> bool) # (α -> bool list) # (bool list -> (α # bool list) option) ->
+    bool
+    <tr><td> <span class="strong">of_length</span> <td> :num -> α list -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">fixed_width_def</span>
+<DD>
+<pre>
+⊢ ∀n c. fixed_width n c ⇔ ∀x. domain c x ⇒ (LENGTH (encoder c x) = n)
+</pre>
+
+<DT><span class="strong">of_length_def</span>
+<DD>
+<pre>
+⊢ ∀l n. l ∈ of_length n ⇔ (LENGTH l = n)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">fixed_width_bnum</span>
+<DD>
+<pre>
+⊢ ∀m p. fixed_width m (bnum_coder m p)
+</pre>
+
+<DT><span class="strong">fixed_width_bool</span>
+<DD>
+<pre>
+⊢ ∀p. fixed_width 1 (bool_coder p)
+</pre>
+
+<DT><span class="strong">fixed_width_exists</span>
+<DD>
+<pre>
+⊢ ∀phi c n.
+    wf_coder c ∧ fixed_width n c ⇒
+    ((∃x. domain c x ∧ phi x) ⇔ ∃w::of_length n. phi (decoder c w))
+</pre>
+
+<DT><span class="strong">fixed_width_prod</span>
+<DD>
+<pre>
+⊢ ∀c1 c2 n1 n2.
+    fixed_width n1 c1 ∧ fixed_width n2 c2 ⇒
+    fixed_width (n1 + n2) (prod_coder c1 c2)
+</pre>
+
+<DT><span class="strong">fixed_width_sum</span>
+<DD>
+<pre>
+⊢ ∀c1 c2 n.
+    fixed_width n c1 ∧ fixed_width n c2 ⇒
+    fixed_width (SUC n) (sum_coder c1 c2)
+</pre>
+
+<DT><span class="strong">fixed_width_unit</span>
+<DD>
+<pre>
+⊢ ∀p. fixed_width 0 (unit_coder p)
+</pre>
+
+<DT><span class="strong">fixed_width_univ</span>
+<DD>
+<pre>
+⊢ ∀phi c n.
+    wf_coder c ∧ fixed_width n c ⇒
+    ((∀x. domain c x ⇒ phi x) ⇔ ∀w::of_length n. phi (decoder c w))
+</pre>
+
+<DT><span class="strong">of_length_exists_suc</span>
+<DD>
+<pre>
+⊢ ∀phi n. (∃w::of_length (SUC n). phi w) ⇔ ∃x (w::of_length n). phi (x::w)
+</pre>
+
+<DT><span class="strong">of_length_exists_zero</span>
+<DD>
+<pre>
+⊢ ∀phi. (∃w::of_length 0. phi w) ⇔ phi []
+</pre>
+
+<DT><span class="strong">of_length_univ_suc</span>
+<DD>
+<pre>
+⊢ ∀phi n. (∀w::of_length (SUC n). phi w) ⇔ ∀x (w::of_length n). phi (x::w)
+</pre>
+
+<DT><span class="strong">of_length_univ_zero</span>
+<DD>
+<pre>
+⊢ ∀phi. (∀w::of_length 0. phi w) ⇔ phi []
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

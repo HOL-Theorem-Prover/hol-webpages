@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure cv_repTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure cv_repTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/theories/cv_compute/automation/cv_repScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature cv_repTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#cv_rep_def-val">cv_rep_def</a> : thm
+<a name="line7"></a>    val <a href="#implies_def-val">implies_def</a> : thm
+<a name="line8"></a>  
+<a name="line9"></a>  (*  Theorems  *)
+<a name="line10"></a>    val <a href="#IMP_CANCEL-val">IMP_CANCEL</a> : thm
+<a name="line11"></a>    val <a href="#IMP_COMM-val">IMP_COMM</a> : thm
+<a name="line12"></a>    val <a href="#UNCURRY_pair_case-val">UNCURRY_pair_case</a> : thm
+<a name="line13"></a>    val <a href="#cv_eval-val">cv_eval</a> : thm
+<a name="line14"></a>    val <a href="#cv_postprocess-val">cv_postprocess</a> : thm
+<a name="line15"></a>    val <a href="#cv_proj_def-val">cv_proj_def</a> : thm
+<a name="line16"></a>    val <a href="#cv_proj_ind-val">cv_proj_ind</a> : thm
+<a name="line17"></a>    val <a href="#cv_proj_less_eq-val">cv_proj_less_eq</a> : thm
+<a name="line18"></a>    val <a href="#cv_rep_assum-val">cv_rep_assum</a> : thm
+<a name="line19"></a>    val <a href="#cv_rep_eval-val">cv_rep_eval</a> : thm
+<a name="line20"></a>    val <a href="#cv_rep_move-val">cv_rep_move</a> : thm
+<a name="line21"></a>    val <a href="#cv_rep_trivial-val">cv_rep_trivial</a> : thm
+<a name="line22"></a>    val <a href="#cv_termination_simp-val">cv_termination_simp</a> : thm
+<a name="line23"></a>    val <a href="#if_eq_zero-val">if_eq_zero</a> : thm
+<a name="line24"></a>    val <a href="#lt_zero-val">lt_zero</a> : thm
+<a name="line25"></a>    val <a href="#to_cv_proj-val">to_cv_proj</a> : thm
+<a name="line26"></a>  
+<a name="line27"></a>  val cv_rep_grammars : type_grammar.grammar * term_grammar.grammar
+<a name="line28"></a>(*
+   [cv_type] Parent theory of "cv_rep"
+   
+   [<a name="cv_rep_def-val"><b>cv_rep_def</b></a>]  Definition
+      
+      ⊢ ∀pre_cond cv_tm from_fun hol_tm.
+          cv_rep pre_cond cv_tm from_fun hol_tm ⇔
+          pre_cond ⇒ from_fun hol_tm = cv_tm
+   
+   [<a name="implies_def-val"><b>implies_def</b></a>]  Definition
+      
+      ⊢ ∀x y. implies x y ⇔ x ⇒ y
+   
+   [<a name="IMP_CANCEL-val"><b>IMP_CANCEL</b></a>]  Theorem
+      
+      ⊢ b ⇒ b ⇒ c ⇔ b ⇒ c
+   
+   [<a name="IMP_COMM-val"><b>IMP_COMM</b></a>]  Theorem
+      
+      ⊢ b1 ⇒ b2 ⇒ c ⇔ b2 ⇒ b1 ⇒ c
+   
+   [<a name="UNCURRY_pair_case-val"><b>UNCURRY_pair_case</b></a>]  Theorem
+      
+      ⊢ ∀f. UNCURRY f = (λx'. case x' of (x,y) =&gt; f x y)
+   
+   [<a name="cv_eval-val"><b>cv_eval</b></a>]  Theorem
+      
+      ⊢ c2n (Num n) = n ∧ c2n (Pair x y) = 0 ∧ (c2b (Num n) ⇔ n ≠ 0) ∧
+        (c2b (Pair x y) ⇔ F)
+   
+   [<a name="cv_postprocess-val"><b>cv_postprocess</b></a>]  Theorem
+      
+      ⊢ cv_if c x x = x
+   
+   [<a name="cv_proj_def-val"><b>cv_proj_def</b></a>]  Theorem
+      
+      ⊢ (∀v. cv_proj [] v = v) ∧
+        (∀xs v. cv_proj (T::xs) v = cv_fst (cv_proj xs v)) ∧
+        ∀xs v. cv_proj (F::xs) v = cv_snd (cv_proj xs v)
+   
+   [<a name="cv_proj_ind-val"><b>cv_proj_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀v. P [] v) ∧ (∀xs v. P xs v ⇒ P (T::xs) v) ∧
+            (∀xs v. P xs v ⇒ P (F::xs) v) ⇒
+            ∀v v1. P v v1
+   
+   [<a name="cv_proj_less_eq-val"><b>cv_proj_less_eq</b></a>]  Theorem
+      
+      ⊢ ∀v xs. cv_size (cv_proj xs v) ≤ cv_size v
+   
+   [<a name="cv_rep_assum-val"><b>cv_rep_assum</b></a>]  Theorem
+      
+      ⊢ cv_rep p (cv (g a)) f x ⇒
+        ∀cv_a p_a. cv_rep p_a cv_a g a ⇒ cv_rep (p_a ∧ p) (cv cv_a) f x
+   
+   [<a name="cv_rep_eval-val"><b>cv_rep_eval</b></a>]  Theorem
+      
+      ⊢ cv_rep p y f x ⇒ from_to f t ⇒ p ⇒ x = t y
+   
+   [<a name="cv_rep_move-val"><b>cv_rep_move</b></a>]  Theorem
+      
+      ⊢ b ⇒ cv_rep p x y z ⇔ cv_rep (b ∧ p) x y z
+   
+   [<a name="cv_rep_trivial-val"><b>cv_rep_trivial</b></a>]  Theorem
+      
+      ⊢ ∀f n. cv_rep T (f n) f n
+   
+   [<a name="cv_termination_simp-val"><b>cv_termination_simp</b></a>]  Theorem
+      
+      ⊢ (c2b (cv_ispair cv_v) ⇔ ∃x1 x2. cv_v = Pair x1 x2) ∧
+        (c2b (cv_lt (Num 0) cv_v) ⇔ ∃k. cv_v = Num (SUC k)) ∧
+        (c2b (cv_lt (Num (NUMERAL (BIT1 n))) (cv_fst cv_v)) ⇔
+         ∃k z. cv_v = Pair (Num k) z ∧ NUMERAL (BIT1 n) &lt; k) ∧
+        (c2b (cv_lt (Num (NUMERAL (BIT2 n))) (cv_fst cv_v)) ⇔
+         ∃k z. cv_v = Pair (Num k) z ∧ NUMERAL (BIT2 n) &lt; k) ∧
+        (cv_fst cv_v = Pair x y ⇔ ∃z. cv_v = Pair (Pair x y) z) ∧
+        (cv_snd cv_v = Pair x y ⇔ ∃z. cv_v = Pair z (Pair x y)) ∧
+        (cv_fst cv_v = Num (SUC k) ⇔ ∃z. cv_v = Pair (Num (SUC k)) z) ∧
+        (cv_snd cv_v = Num (SUC k) ⇔ ∃z. cv_v = Pair z (Num (SUC k)))
+   
+   [<a name="if_eq_zero-val"><b>if_eq_zero</b></a>]  Theorem
+      
+      ⊢ (if n = 0 then x else y) = if 0 &lt; n then y else x
+   
+   [<a name="lt_zero-val"><b>lt_zero</b></a>]  Theorem
+      
+      ⊢ 0 &lt; n ⇔ n ≠ 0
+   
+   [<a name="to_cv_proj-val"><b>to_cv_proj</b></a>]  Theorem
+      
+      ⊢ cv_fst = cv_proj [T] ∧ cv_snd = cv_proj [F] ∧
+        cv_proj xs (cv_proj ys b) = cv_proj (xs ⧺ ys) b
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/theories/cv_compute/automation/cv_repScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure BasicProvers</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure BasicProvers</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/basicProof/BasicProvers.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature BasicProvers =
+<a name="line2"></a>sig
+<a name="line3"></a>  include Abbrev
+<a name="line4"></a>  type simpset = simpLib.simpset
+<a name="line5"></a>
+<a name="line6"></a>  (* Eliminate v = M or M = v from hypotheses *)
+<a name="line7"></a>
+<a name="line8"></a>  val <a href="../../Docfiles/HTML/BasicProvers.VAR_EQ_TAC.html">VAR_EQ_TAC</a>      : tactic
+<a name="line9"></a>  val var_eq_tac      : tactic
+<a name="line10"></a>
+<a name="line11"></a>  (* First order automatic proof *)
+<a name="line12"></a>
+<a name="line13"></a>  val <a href="../../Docfiles/HTML/BasicProvers.PROVE.html">PROVE</a>           : thm list -&gt; term -&gt; thm
+<a name="line14"></a>  val <a href="../../Docfiles/HTML/BasicProvers.PROVE_TAC.html">PROVE_TAC</a>       : thm list -&gt; tactic
+<a name="line15"></a>  val prove_tac       : thm list -&gt; tactic
+<a name="line16"></a>  val GEN_PROVE_TAC   : int -&gt; int -&gt; int -&gt; thm list -&gt; tactic
+<a name="line17"></a>
+<a name="line18"></a>  (* Simplification *)
+<a name="line19"></a>
+<a name="line20"></a>  val <a href="../../Docfiles/HTML/BasicProvers.bool_ss.html">bool_ss</a>         : simpset
+<a name="line21"></a>  val <a href="../../Docfiles/HTML/BasicProvers.srw_ss.html">srw_ss</a>          : unit -&gt; simpset
+<a name="line22"></a>  val <a href="../../Docfiles/HTML/BasicProvers.Abbr.html">Abbr</a>            : term quotation -&gt; thm
+<a name="line23"></a>  val LEAVE_LETS      : thm
+<a name="line24"></a>
+<a name="line25"></a>  val <a href="../../Docfiles/HTML/BasicProvers.RW_TAC.html">RW_TAC</a>          : simpset -&gt; thm list -&gt; tactic
+<a name="line26"></a>  val rw_tac          : simpset -&gt; thm list -&gt; tactic
+<a name="line27"></a>  val NORM_TAC        : simpset -&gt; thm list -&gt; tactic
+<a name="line28"></a>  val PRIM_SRW_TAC    : simpset -&gt; simpLib.ssfrag list -&gt; thm list -&gt; tactic
+<a name="line29"></a>  val <a href="../../Docfiles/HTML/BasicProvers.SRW_TAC.html">SRW_TAC</a>         : simpLib.ssfrag list -&gt; thm list -&gt; tactic
+<a name="line30"></a>  val srw_tac         : simpLib.ssfrag list -&gt; thm list -&gt; tactic
+<a name="line31"></a>  val <a href="../../Docfiles/HTML/BasicProvers.augment_srw_ss.html">augment_srw_ss</a>  : simpLib.ssfrag list -&gt; unit
+<a name="line32"></a>  val <a href="../../Docfiles/HTML/BasicProvers.diminish_srw_ss.html">diminish_srw_ss</a> : string list -&gt; unit
+<a name="line33"></a>  val <a href="../../Docfiles/HTML/BasicProvers.export_rewrites.html">export_rewrites</a> : string list -&gt; unit
+<a name="line34"></a>  val delsimps        : string list -&gt; unit
+<a name="line35"></a>  val temp_delsimps   : string list -&gt; unit
+<a name="line36"></a>  val <a href="../../Docfiles/HTML/BasicProvers.thy_ssfrag.html">thy_ssfrag</a>      : string -&gt; simpLib.ssfrag
+<a name="line37"></a>  val thy_simpset     : string -&gt; simpset option
+<a name="line38"></a>  val temp_setsimpset : simpset -&gt; unit
+<a name="line39"></a>  val merge_simpsets  : string list -&gt; simpset
+<a name="line40"></a>  datatype srw_update = ADD_SSFRAG of simpLib.ssfrag | REMOVE_RWT of string
+<a name="line41"></a>  val simpset_state   : unit -&gt; simpset * bool * srw_update list
+<a name="line42"></a>  val logged_update   : {thyname : string} -&gt; (simpset -&gt; simpset) -&gt; unit
+<a name="line43"></a>  val logged_addfrags : {thyname : string} -&gt; simpLib.ssfrag list -&gt; unit
+<a name="line44"></a>  val do_logged_updates : {theories : string list} -&gt; unit
+<a name="line45"></a>  val apply_logged_updates : {theories : string list} -&gt; (simpset -&gt; simpset)
+<a name="line46"></a>  val augment_with_typebase : TypeBasePure.typeBase -&gt; simpset -&gt; simpset
+<a name="line47"></a>  val temp_set_simpset_ancestry : string list -&gt; unit
+<a name="line48"></a>  val set_simpset_ancestry : string list -&gt; unit
+<a name="line49"></a>  val recreate_sset_at_parentage : string list -&gt; unit
+<a name="line50"></a>
+<a name="line51"></a>  (* update stateful simpset for duration of function call and then restore;
+<a name="line52"></a>     has same locking guarantees as underlying AncestryData.with_temp_value *)
+<a name="line53"></a>  val with_simpset_updates : (simpset -&gt; simpset) -&gt; ('a -&gt; 'b) -&gt; ('a -&gt; 'b)
+<a name="line54"></a>  val mk_tacmod : string -&gt; Manager.tacmodifier
+<a name="line55"></a>
+<a name="line56"></a>  val make_simpset_derived_value :
+<a name="line57"></a>      (simpset -&gt; 'a -&gt; 'a) -&gt; 'a -&gt; {get : unit -&gt; 'a, set : 'a -&gt; unit}
+<a name="line58"></a>
+<a name="line59"></a>  (* LET and Abbrev manoeuvres *)
+<a name="line60"></a>  val LET_ELIM_TAC    : tactic
+<a name="line61"></a>  val new_let_thms    : thm list -&gt; unit
+<a name="line62"></a>  val TIDY_ABBREVS    : tactic
+<a name="line63"></a>
+<a name="line64"></a>  (* Compound automated reasoners. *)
+<a name="line65"></a>
+<a name="line66"></a>  val PRIM_STP_TAC    : simpset -&gt; tactic -&gt; tactic
+<a name="line67"></a>  val STP_TAC         : simpset -&gt; tactic -&gt; tactic
+<a name="line68"></a>
+<a name="line69"></a>  (* Other reasoning support. *)
+<a name="line70"></a>  val SPOSE_NOT_THEN    : (thm -&gt; tactic) -&gt; tactic
+<a name="line71"></a>  val spose_not_then    : (thm -&gt; tactic) -&gt; tactic
+<a name="line72"></a>
+<a name="line73"></a>  val by                : term quotation * tactic -&gt; tactic  (* infix *)
+<a name="line74"></a>  val byA               : term quotation * tactic -&gt; tactic
+<a name="line75"></a>  val suffices_by       : term quotation * tactic -&gt; tactic  (* infix *)
+<a name="line76"></a>  val on                : (thm -&gt; tactic) * (term quotation * tactic) -&gt; tactic
+<a name="line77"></a>                          (* infix *)
+<a name="line78"></a>  val subgoal           : term quotation -&gt; tactic
+<a name="line79"></a>  val sg                : term quotation -&gt; tactic
+<a name="line80"></a>
+<a name="line81"></a>  datatype tmkind
+<a name="line82"></a>      = Free of term
+<a name="line83"></a>      | Bound of term list * term
+<a name="line84"></a>      | Alien of term
+<a name="line85"></a>
+<a name="line86"></a>  val dest_tmkind       : tmkind -&gt; term
+<a name="line87"></a>  val prim_find_subterm : term list -&gt; term -&gt; goal -&gt; tmkind
+<a name="line88"></a>  val find_subterm      : term quotation -&gt; goal -&gt; tmkind
+<a name="line89"></a>  val primInduct        : tmkind -&gt; tactic -&gt; tactic
+<a name="line90"></a>  val <a href="../../Docfiles/HTML/BasicProvers.Cases.html">Cases</a>             : tactic
+<a name="line91"></a>  val <a href="../../Docfiles/HTML/BasicProvers.Induct.html">Induct</a>            : tactic
+<a name="line92"></a>  val <a href="../../Docfiles/HTML/BasicProvers.namedCases.html">namedCases</a>        : string list -&gt; tactic
+<a name="line93"></a>  val update_induction  : thm -&gt; unit
+<a name="line94"></a>
+<a name="line95"></a>  val tmCases_on        : term -&gt; string list -&gt; tactic
+<a name="line96"></a>  val <a href="../../Docfiles/HTML/BasicProvers.Cases_on.html">Cases_on</a>          : term quotation -&gt; tactic
+<a name="line97"></a>  val <a href="../../Docfiles/HTML/BasicProvers.Induct_on.html">Induct_on</a>         : term quotation -&gt; tactic
+<a name="line98"></a>  val <a href="../../Docfiles/HTML/BasicProvers.namedCases_on.html">namedCases_on</a>     : term quotation -&gt; string list -&gt; tactic
+<a name="line99"></a>
+<a name="line100"></a>  val PURE_TOP_CASE_TAC : tactic  (* top-most case-split *)
+<a name="line101"></a>  val <a href="../../Docfiles/HTML/BasicProvers.PURE_CASE_TAC.html">PURE_CASE_TAC</a>     : tactic  (* smallest case-split (concl) *)
+<a name="line102"></a>  val PURE_FULL_CASE_TAC: tactic  (* smallest case-split  (goal) *)
+<a name="line103"></a>
+<a name="line104"></a>  val PURE_CASE_SIMP_CONV : thm list -&gt; conv
+<a name="line105"></a>  val CASE_SIMP_CONV    : conv     (* Apply case rewrites in theTypeBase *)
+<a name="line106"></a>
+<a name="line107"></a>  val <a href="../../Docfiles/HTML/BasicProvers.CASE_TAC.html">CASE_TAC</a>          : tactic   (* PURE_CASE_TAC then simplification *)
+<a name="line108"></a>  val TOP_CASE_TAC      : tactic   (* PURE_TOP_CASE_TAC then simplification *)
+<a name="line109"></a>  val FULL_CASE_TAC     : tactic   (* PURE_FULL_CASE_TAC then simplification *)
+<a name="line110"></a>  val full_case_tac     : tactic
+<a name="line111"></a>  val EVERY_CASE_TAC    : tactic   (* Repeat FULL_CASE_TAC *)
+<a name="line112"></a>  val every_case_tac    : tactic
+<a name="line113"></a>
+<a name="line114"></a>end
+<a name="line115"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/basicProof/BasicProvers.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

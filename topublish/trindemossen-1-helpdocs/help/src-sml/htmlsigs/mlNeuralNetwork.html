@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure mlNeuralNetwork</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure mlNeuralNetwork</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/AI/machine_learning/mlNeuralNetwork.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature mlNeuralNetwork =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  include Abbrev
+<a name="line5"></a>
+<a name="line6"></a>  type vect = real vector
+<a name="line7"></a>  type mat = vect vector
+<a name="line8"></a>
+<a name="line9"></a>  (* activation *)
+<a name="line10"></a>  val idactiv : real -&gt; real
+<a name="line11"></a>  val didactiv : real -&gt; real
+<a name="line12"></a>  val tanh : real -&gt; real
+<a name="line13"></a>  val dtanh : real -&gt; real
+<a name="line14"></a>
+<a name="line15"></a>  (* neural network *)
+<a name="line16"></a>  type layer = {a : real -&gt; real, da : real -&gt; real, w : mat}
+<a name="line17"></a>  type nn = layer list
+<a name="line18"></a>  type trainparam =
+<a name="line19"></a>    {ncore: int, verbose: bool,
+<a name="line20"></a>     learning_rate: real, batch_size: int, nepoch: int}
+<a name="line21"></a>  val string_of_trainparam : trainparam -&gt; string
+<a name="line22"></a>  val trainparam_of_string : string -&gt; trainparam
+<a name="line23"></a>  type schedule = trainparam list
+<a name="line24"></a>  val write_schedule : string -&gt; schedule -&gt; unit
+<a name="line25"></a>  val read_schedule : string -&gt; schedule
+<a name="line26"></a>
+<a name="line27"></a>  type fpdata = {layer : layer, inv : vect, outv : vect, outnv : vect}
+<a name="line28"></a>  type bpdata = {doutnv : vect, doutv : vect, dinv : vect, dw : mat}
+<a name="line29"></a>
+<a name="line30"></a>  (* dimension *)
+<a name="line31"></a>  val dimin_nn : nn -&gt; int
+<a name="line32"></a>  val dimout_nn : nn -&gt; int
+<a name="line33"></a>
+<a name="line34"></a>  (* weights randomly initialized *)
+<a name="line35"></a>  val random_nn : (real -&gt; real) * (real -&gt; real) -&gt; int list -&gt; nn
+<a name="line36"></a>
+<a name="line37"></a>  (* forward and backward pass *)
+<a name="line38"></a>  val fp_nn : nn -&gt; vect -&gt; fpdata list
+<a name="line39"></a>  val bp_nn : fpdata list -&gt; vect -&gt; bpdata list
+<a name="line40"></a>  val bp_nn_doutnv : fpdata list -&gt; vect -&gt; bpdata list
+<a name="line41"></a>
+<a name="line42"></a>  (* weight updates *)
+<a name="line43"></a>  val update_nn : trainparam -&gt; nn -&gt; mat list -&gt; nn
+<a name="line44"></a>  val smult_dwl : real -&gt; mat list -&gt; mat list
+<a name="line45"></a>  val sum_dwll : mat list list -&gt; mat list
+<a name="line46"></a>  val mean_square_error : vect -&gt; real
+<a name="line47"></a>  val average_loss : bpdata list list -&gt; real
+<a name="line48"></a>
+<a name="line49"></a>  (* input/output *)
+<a name="line50"></a>  val enc_nn : nn -&gt; HOLsexp_dtype.t
+<a name="line51"></a>  val dec_nn : HOLsexp_dtype.t -&gt; nn option
+<a name="line52"></a>  val write_nn : string -&gt; nn -&gt; unit
+<a name="line53"></a>  val read_nn : string -&gt; nn
+<a name="line54"></a>  val reall_to_string : real list -&gt; string
+<a name="line55"></a>  val string_to_reall : string -&gt; real list
+<a name="line56"></a>  val write_exl : string -&gt; (real list * real list) list -&gt; unit
+<a name="line57"></a>  val read_exl : string -&gt; (real list * real list) list
+<a name="line58"></a>
+<a name="line59"></a>  (* interface *)
+<a name="line60"></a>  val scale_real : real -&gt; real
+<a name="line61"></a>  val scale_out : real list -&gt; vect
+<a name="line62"></a>  val scale_ex : real list * real list -&gt; vect * vect
+<a name="line63"></a>  val descale_real : real -&gt; real
+<a name="line64"></a>  val descale_out : vect -&gt; real list
+<a name="line65"></a>  val infer_nn : nn -&gt; real list -&gt; real list
+<a name="line66"></a>  val train_nn : trainparam -&gt; nn -&gt; (real list * real list) list -&gt; nn
+<a name="line67"></a>
+<a name="line68"></a>
+<a name="line69"></a>end
+<a name="line70"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/AI/machine_learning/mlNeuralNetwork.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META CHARSET="utf-8">
+<TITLE>term_grammar.clear_overloads</TITLE>
+<LINK REL = "STYLESHEET" HREF = "../doc.css" TYPE = "text/css"></HEAD>
+<BODY>
+
+<DIV class = "TYPE"><PRE>clear_overloads : term_grammar.grammar -&gt; term_grammar.grammar</PRE></DIV>
+
+<DL>
+<DT><SPAN class = "FIELD-NAME">STRUCTURE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><A HREF = "../../src-sml/htmlsigs/term_grammar.html">term_grammar</A></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">SYNOPSIS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Remove non-trivial overloading from a term grammar</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">DESCRIPTION</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">For a term grammar </SPAN><SPAN class = "BRKT">tmG</SPAN><SPAN class = "TEXT">, </SPAN><SPAN class = "BRKT">clear_overloads&nbsp;tmG</SPAN><SPAN class = "TEXT"> is the similar grammar,
+changed to remove non-trivial overloading.
+(Each constant remains overloaded with itself, which avoids the printing of
+the theory name for every constant).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">USES</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">Sometimes overloading can be too helpful, when we would like to see the
+structure of a term (eg, in finding which theorems could simplify it).</SPAN></DIV></DD>
+<DT><SPAN class = "FIELD-NAME">EXAMPLE</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">In this example we obtain the current type and term grammars
+</SPAN><SPAN class = "BRKT">tyG</SPAN><SPAN class = "TEXT"> and </SPAN><SPAN class = "BRKT">tmG</SPAN><SPAN class = "TEXT">, then reset the current grammars to be these,
+except  with overloading cleared from the term grammar.
+We print some theorems (eg, to view their internal structure),
+and finally we reset the current grammars to the original ones.  </SPAN>
+<P>
+<SPAN class = "TEXT"></SPAN><DIV class = "XMPL"><pre>
+&gt; ratTheory.RATND_RAT_OF_NUM;
+val it = |- (RATN (&amp;n) = &amp;n) /\ (RATD (&amp;n) = 1): thm
+&gt; rich_listTheory.MEM_TAKE;
+val it = |- !m l. m &lt;= LENGTH l ==&gt; !x. MEM x (TAKE m l) ==&gt; MEM x l: thm
+
+val (tyG, tmG) = Parse.current_grammars () ;
+Parse.temp_set_grammars (tyG, term_grammar.clear_overloads tmG) ;
+
+&gt; ratTheory.RATND_RAT_OF_NUM;
+val it = |- (RATN (rat_of_num n) = int_of_num n) /\ 
+  (RATD (rat_of_num n) = 1n): thm
+&gt; rich_listTheory.MEM_TAKE;
+val it = |- !m l.  m &lt;= LENGTH l ==&gt;
+  !x. x IN LIST_TO_SET (TAKE m l) ==&gt; x IN LIST_TO_SET l: thm
+
+Parse.temp_set_grammars (tyG, tmG) ;
+</pre></DIV>
+</DIV></DD>
+<DT><SPAN class = "FIELD-NAME">COMMENTS</SPAN></DT>
+<DD><DIV class = "FIELD-BODY"><SPAN class = "TEXT">To print just a few terms without overloading, 
+</SPAN><SPAN class = "BRKT">print_without_macros</SPAN><SPAN class = "TEXT"> may be easier.</SPAN></DIV></DD>
+<dt><span class = "FIELD-NAME">SEEALSO</span></dt>
+<dd><div class = "FIELD-BODY"><A HREF = "Parse.print_without_macros.html">print_without_macros</A>,
+<A HREF = "Parse.current_grammars.html">current_grammars</A>,
+<A HREF = "Parse.temp_set_grammars.html">temp_set_grammars</A></div></dd>
+</DL>
+
+<div class = "HOL"><A HREF="http://hol.sourceforge.net">HOL</A>&nbsp;&nbsp;Trindemossen-1</div></BODY></HTML>
