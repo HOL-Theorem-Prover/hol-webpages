@@ -1,56 +1,74 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-UK" xml:lang="en-UK">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>HOL4 tactic cheatsheet</title>
-  <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="cheatsheet.css" type="text/css" />
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="cheatsheet.css" />
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Slab:wght@400&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="header">
+<header id="title-block-header">
 <h1 class="title">HOL4 tactic cheatsheet</h1>
-</div>
-<div id="TOC">
+</header>
+<nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#preliminaries">Preliminaries</a></li>
-<li><a href="#rewriting">Rewriting</a><ul>
-<li><a href="#general-purpose-tactics">General purpose tactics</a></li>
-<li><a href="#more-fine-grained-tactics">More fine-grained tactics</a></li>
-<li><a href="#rewrite-modifiers">Rewrite modifiers</a></li>
+<li><a href="#preliminaries" id="toc-preliminaries">Preliminaries</a></li>
+<li><a href="#rewriting" id="toc-rewriting">Rewriting</a>
+<ul>
+<li><a href="#general-purpose-tactics" id="toc-general-purpose-tactics">General purpose tactics</a></li>
+<li><a href="#more-fine-grained-tactics" id="toc-more-fine-grained-tactics">More fine-grained tactics</a></li>
+<li><a href="#rewrite-modifiers" id="toc-rewrite-modifiers">Rewrite modifiers</a></li>
 </ul></li>
-<li><a href="#provers">Provers</a></li>
-<li><a href="#induction">Induction</a></li>
-<li><a href="#case-splits">Case splits</a></li>
-<li><a href="#subgoal-management">Subgoal management</a></li>
-<li><a href="#goal-deconstruction">Goal deconstruction</a></li>
-<li><a href="#assumption-management">Assumption management</a></li>
-<li><a href="#instantiations-and-generalisations">Instantiations and generalisations</a><ul>
-<li><a href="#positional-modifiers">Positional modifiers</a></li>
+<li><a href="#provers" id="toc-provers">Provers</a></li>
+<li><a href="#induction" id="toc-induction">Induction</a></li>
+<li><a href="#case-splits" id="toc-case-splits">Case splits</a></li>
+<li><a href="#subgoal-management" id="toc-subgoal-management">Subgoal management</a></li>
+<li><a href="#goal-deconstruction" id="toc-goal-deconstruction">Goal deconstruction</a></li>
+<li><a href="#assumption-management" id="toc-assumption-management">Assumption management</a></li>
+<li><a href="#instantiations-and-generalisations" id="toc-instantiations-and-generalisations">Instantiations and generalisations</a>
+<ul>
+<li><a href="#positional-modifiers" id="toc-positional-modifiers">Positional modifiers</a></li>
 </ul></li>
-<li><a href="#renaming-and-abbreviating">Renaming and abbreviating</a></li>
-<li><a href="#examples-and-common-patterns">Examples and common patterns</a></li>
+<li><a href="#renaming-and-abbreviating" id="toc-renaming-and-abbreviating">Renaming and abbreviating</a></li>
+<li><a href="#examples-and-common-patterns" id="toc-examples-and-common-patterns">Examples and common patterns</a></li>
 </ul>
-</div>
+</nav>
 <p><em>Adapted from <a href="http://www.cse.chalmers.se/~myreen/">Magnus Myreen</a>'s <a href="http://sange.fi/~magnus/cheatsheet.txt">cheatsheet</a>.</em> <em>See also <a href="https://user.it.uu.se/~arvge836/">Arve Gengelbach</a>'s <a href="https://user.it.uu.se/~arvge836/holtactics.html">tips and tricks</a>.</em></p>
 <h2 id="preliminaries">Preliminaries</h2>
 <ul>
-<li><p>Join the <code>#hol</code> channel on the <a href="https://join.slack.com/t/cakeml/shared_invite/MjM1NjEyODgxODkzLTE1MDQzNjgwMTUtYjI4YTdlM2VmMQ">CakeML Slack</a>.</p></li>
-<li>Learn how to interact with HOL4 using the <a href="https://hol-theorem-prover.org/#doc">documentation</a>.
+<li><p>Join the <code>#hol</code> channel on the <a href="https://discord.gg/a8UUs6Ce6m">CakeML Discord</a>.</p></li>
+<li><p>Learn how to interact with HOL4 using the <a href="https://hol-theorem-prover.org/#doc">documentation</a>.</p>
 <ul>
 <li>For Emacs, the <a href="https://hol-theorem-prover.org/HOL-interaction.pdf">short guide</a> or <a href="https://hol-theorem-prover.org/hol-mode.html">complete documentation</a>.</li>
-<li>For Vim, the <a href="https://github.com/HOL-Theorem-Prover/HOL/blob/master/tools/vim/README.md">plugin documentation</a>. At first, you should use the <a href="https://github.com/HOL-Theorem-Prover/HOL/blob/master/tools/vim/README.md#vimholsh-script"><code>vimhol.sh</code></a> script to run side-by-side Vim and HOL4 using <code>tmux</code>.</li>
+<li>For Vim, the <a href="https://github.com/HOL-Theorem-Prover/HOL/blob/master/tools/editor-modes/vim/README.md">plugin documentation</a>. At first, you should use the <a href="https://github.com/HOL-Theorem-Prover/HOL/blob/master/tools/editor-modes/vim/README.md#vimholsh-script"><code>vimhol.sh</code></a> script to run side-by-side Vim and HOL4 using <code>tmux</code>.</li>
 </ul></li>
 <li><p>Add the following to your <code>.hol-config.sml</code> (in your home directory):</p>
 <pre><code>val m = Hol_pp.print_apropos;
 val f = Hol_pp.print_find;</code></pre>
-This allows you to use the following in your HOL4 REPL:
+<p>This allows you to use the following in your HOL4 REPL:</p>
 <ul>
 <li><code>m ``<i>pattern</i>``</code> to search for theorems with subterms matching the supplied pattern.</li>
-<li><code>f &quot;<i>string</i>&quot;</code> to search for theorems with names matching the supplied string.</li>
+<li><code>f "<i>string</i>"</code> to search for theorems with names matching the supplied string.</li>
 </ul></li>
 <li><p>You can also add the following if you wish:</p>
 <pre><code>local
@@ -62,11 +80,11 @@ in
   fun mf x y = DB.find y    |&gt; DB.apropos_in x |&gt; pp;
 end;</code></pre>
 <p>These functions combine the functionality of <code>m</code> and <code>f</code> above, allowing you to nest two searches.</p></li>
-<li><p>Use <code>help &quot;<i>string</i>&quot;</code> in the HOL4 REPL to examine documentation for ML-level identifiers.</p></li>
+<li><p>Use <code>help "<i>string</i>"</code> in the HOL4 REPL to examine documentation for ML-level identifiers.</p></li>
 <li><p>Bookmark the <a href="https://hol-theorem-prover.org/kananaskis-14-helpdocs/help/HOLindex.html">HOL4 online helpdocs</a>, for quick access to interactive documentation. This is particularly useful for discovering useful definitions in theories.</p></li>
 <li><p>You can also search for constants by type, using <code>find_consts ``:<i>type</i>``</code>.</p></li>
 <li><p>Be sure to <code>open HolKernel boolLib bossLib BasicProvers dep_rewrite</code> interactively. Otherwise, some of the tactics below may not be in scope.</p></li>
-<li>Remember that HOL4 exposes various useful ML bindings, including:
+<li><p>Remember that HOL4 exposes various useful ML bindings, including:</p>
 <ul>
 <li><code>f o g</code> - function composition</li>
 <li><code>x |&gt; f</code> - function application (i.e. <code>f x</code>), useful for chaining</li>
@@ -78,41 +96,52 @@ end;</code></pre>
 <h3 id="general-purpose-tactics">General purpose tactics</h3>
 <dl>
 <dt><code>simp[<i>theorems</i>]</code></dt>
-<dd>Simplifies the goal using current assumptions, the stateful simpset, and decision procedures for the natural numbers.
+<dd>
+Simplifies the goal using current assumptions, the stateful simpset, and decision procedures for the natural numbers.
 </dd>
 <dt><code>fs[<i>theorems</i>]</code></dt>
-<dd>Like <code>simp</code>, but also uses newer assumptions to rewrite older ones.
+<dd>
+Like <code>simp</code>, but also uses newer assumptions to rewrite older ones.
 </dd>
 <dt><code>rfs[<i>theorems</i>]</code></dt>
-<dd>Like <code>fs</code>, but reversed: uses older assumptions to rewrite newer ones.
+<dd>
+Like <code>fs</code>, but reversed: uses older assumptions to rewrite newer ones.
 </dd>
 <dt><code>gs[<i>theorems</i>]</code></dt>
-<dd>Effectively repeats <code>fs</code> and <code>rfs</code> until no further change.
+<dd>
+Effectively repeats <code>fs</code> and <code>rfs</code> until no further change.
 </dd>
 <dt><code>gvs[<i>theorems</i>]</code></dt>
-<dd>Like <code>gs</code>, but also uses substitution to eliminate assumptions concerning equalities on variables.
+<dd>
+Like <code>gs</code>, but also uses substitution to eliminate assumptions concerning equalities on variables.
 </dd>
 <dt><code>rw[<i>theorems</i>]</code></dt>
-<dd>Like <code>simp</code>, but also deconstructs the goal (stripping <code>∀</code> and <code>==&gt;</code>, and splitting conjuncts into subgoals)
+<dd>
+Like <code>simp</code>, but also deconstructs the goal (stripping <code>∀</code> and <code>==&gt;</code>, and splitting conjuncts into subgoals)
 </dd>
 <dt><code>DEP_REWRITE_TAC[<i>theorems</i>]</code></dt>
-<dd>Rewrites the goal using the supplied dependent rewrites, introducing dependencies as conjuncts in the goal. For example, given a goal <code>P</code> and a rewrite <code>thm = ⊢ R ==&gt; P = Q</code>, <code>DEP_REWRITE_TAC[thm]</code> will transform the goal into <code>R /\ Q</code>. <code>DEP_ASM_REWRITE_TAC</code> is a variant which additionally uses the assumptions as rewrites. Note that this can loop more often than other rewriting tactics.
+<dd>
+Rewrites the goal using the supplied dependent rewrites, introducing dependencies as conjuncts in the goal. For example, given a goal <code>P</code> and a rewrite <code>thm = ⊢ R ==&gt; P = Q</code>, <code>DEP_REWRITE_TAC[thm]</code> will transform the goal into <code>R /\ Q</code>. <code>DEP_ASM_REWRITE_TAC</code> is a variant which additionally uses the assumptions as rewrites. Note that this can loop more often than other rewriting tactics.
 </dd>
 </dl>
 <h3 id="more-fine-grained-tactics">More fine-grained tactics</h3>
 <p>In some cases, the general purpose tactics above do too much simplification, or can loop. Instead, there are more precise tactics we can use.</p>
 <dl>
 <dt><code>pure_rewrite_tac[<i>theorems</i>]</code></dt>
-<dd>Rewrites the goal using only the supplied theorems (i.e. no stateful simpset rewrites).
+<dd>
+Rewrites the goal using only the supplied theorems (i.e. no stateful simpset rewrites).
 </dd>
 <dt><code>{,asm_}rewrite_tac[<i>theorems</i>]</code></dt>
-<dd>Like <code>pure_rewrite_tac</code>, but also uses basic boolean expression rewrites. The <code>asm_rewrite_tac</code> variant additionally uses the assumptions as potential rewrites.
+<dd>
+Like <code>pure_rewrite_tac</code>, but also uses basic boolean expression rewrites. The <code>asm_rewrite_tac</code> variant additionally uses the assumptions as potential rewrites.
 </dd>
 <dt><code>once_{,asm_}rewrite_tac[<i>theorems</i>]</code></dt>
-<dd>Like <code>{,asm_}rewrite_tac</code>, but performs a top-down descent of the goal and rewrites at most once per subtree.
+<dd>
+Like <code>{,asm_}rewrite_tac</code>, but performs a top-down descent of the goal and rewrites at most once per subtree.
 </dd>
 <dt><code>DEP_ONCE_REWRITE_TAC[<i>theorems</i>]</code></dt>
-<dd>Is to <code>DEP_REWRITE_TAC</code> what <code>once_rewrite_tac</code> is to <code>rewrite_tac</code>. <code>DEP_ONCE_ASM_REWRITE_TAC</code> is analogous to <code>once_asm_rewrite_tac</code>.
+<dd>
+Is to <code>DEP_REWRITE_TAC</code> what <code>once_rewrite_tac</code> is to <code>rewrite_tac</code>. <code>DEP_ONCE_ASM_REWRITE_TAC</code> is analogous to <code>once_asm_rewrite_tac</code>.
 </dd>
 </dl>
 <h4 id="conversions">Conversions</h4>
@@ -121,356 +150,495 @@ end;</code></pre>
 <p>These are used when rewriting: they modify the rewrite behaviour of the theorem to which they are applied.</p>
 <dl>
 <dt><code>Once <i>theorem</i></code></dt>
-<dd>Uses the supplied theorem at most once when rewriting.
+<dd>
+Uses the supplied theorem at most once when rewriting.
 </dd>
 <dt><code>Ntimes <i>theorem int</i></code></dt>
-<dd>Uses the supplied theorem at most the given number of times when rewriting.
+<dd>
+Uses the supplied theorem at most the given number of times when rewriting.
 </dd>
-<dt><code>Excl <i>&quot;theorem_name&quot;</i></code><br><code>Excl <i>&quot;conversion_name&quot;</i></code></dt>
-<dd>Do not use the supplied theorem/conversion when rewriting. This allows temporary exclusion of theorems/conversions from the stateful simpset.
+<dt><code>Excl <i>"theorem_name"</i></code><br><code>Excl <i>"conversion_name"</i></code></dt>
+<dd>
+Do not use the supplied theorem/conversion when rewriting. This allows temporary exclusion of theorems/conversions from the stateful simpset.
 </dd>
 <dt><code>Simp{L,R}HS <i>theorem</i></code></dt>
-<dd>Uses the supplied theorem to simplify on the left-/right-hand side of equalities.
+<dd>
+Uses the supplied theorem to simplify on the left-/right-hand side of equalities.
 </dd>
 <dt><code>Req{0,D} <i>theorem</i></code></dt>
-<dd>Requires the supplied theorem to be used a number of times, by checking the number of subterms matching the LHS of the rewrite <em>after</em> simplification. <code>Req0</code> requires no matching subterms after simplification, <code>ReqD</code> requires the number to have strictly decreased - otherwise, an exception is thrown. This is most useful for ensuring that conditional rewrites have fired.
+<dd>
+Requires the supplied theorem to be used a number of times, by checking the number of subterms matching the LHS of the rewrite <em>after</em> simplification. <code>Req0</code> requires no matching subterms after simplification, <code>ReqD</code> requires the number to have strictly decreased - otherwise, an exception is thrown. This is most useful for ensuring that conditional rewrites have fired.
 </dd>
 </dl>
-<p><br> Also commonly used when rewriting are:</p>
+<br>
+
+<p>Also commonly used when rewriting are:</p>
 <dl>
 <dt><code>GSYM <i>theorem</i></code></dt>
-<dd>Flips equalities in the conclusion of the theorem. This works even when the equality is nested below implications and/or <code>∀</code>-quantification.
+<dd>
+Flips equalities in the conclusion of the theorem. This works even when the equality is nested below implications and/or <code>∀</code>-quantification.
 </dd>
 <dt><code>iff{LR,RL} <i>theorem</i></code></dt>
-<dd>Turns a bi-implication into an implication, going left-to-right or right-to-left respectively.
+<dd>
+Turns a bi-implication into an implication, going left-to-right or right-to-left respectively.
 </dd>
 <dt><code>cj <i>n</i> <i>theorem</i></code></dt>
-<dd>Returns the <code><i>n</i></code>th conjunct of the theorem, handling universal quantifiers and implications. For example, for <code>thm = ⊢ ∀ P Q R . P ==&gt; Q /\ R</code>, <code>cj 2 thm</code> gives <code>⊢ ∀ P R . P ==&gt; R)</code>. <strong>NB</strong> indexing begins at <code>1</code>.
+<dd>
+Returns the <code><i>n</i></code>th conjunct of the theorem, handling universal quantifiers and implications. For example, for <code>thm = ⊢ ∀ P Q R . P ==&gt; Q /\ R</code>, <code>cj 2 thm</code> gives <code>⊢ ∀ P R . P ==&gt; R)</code>. <strong>NB</strong> indexing begins at <code>1</code>.
 </dd>
 <dt><code>SRULE [<i>rewrites</i>] <i>theorem</i></code></dt>
-<dd>Uses the stateful simpset and supplied rewrites to rewrite the theorem.
+<dd>
+Uses the stateful simpset and supplied rewrites to rewrite the theorem.
 </dd>
 <dt><code>Cong <i>theorem</i></code></dt>
-<dd>Uses the supplied theorem as a <em>congruence rule</em> instead of a rewrite. Congruence rules tell the simplifier how to traverse terms, so they can be useful for rewriting within subterms. For example, using <code>Cong AND_CONG</code> allows use of each conjunct in a conjunction to rewrite the others; and the goal <code>(∀ e. MEM e l ==&gt; f e = g e) ==&gt; h (MAP f l) = h (MAP g l)</code> is solved by <code>simp[Cong MAP_CONG]</code>.
+<dd>
+Uses the supplied theorem as a <em>congruence rule</em> instead of a rewrite. Congruence rules tell the simplifier how to traverse terms, so they can be useful for rewriting within subterms. For example, using <code>Cong AND_CONG</code> allows use of each conjunct in a conjunction to rewrite the others; and the goal <code>(∀ e. MEM e l ==&gt; f e = g e) ==&gt; h (MAP f l) = h (MAP g l)</code> is solved by <code>simp[Cong MAP_CONG]</code>.
+</dd>
+<dt><code>oneline <i>theorem</i></code></dt>
+<dd>
+Converts a definition with multiple clauses into a single clause, turning pattern-matches into <code>case</code>-expressions. For example, <code>oneline listTheory.MAP</code> gives <code>⊢ MAP f v = case v of [] =&gt; [] | h::t =&gt; f h::MAP f t</code>.
+</dd>
+<dt><code>lambdify <i>theorem</i></code></dt>
+<dd>
+Converts a definition of the form <code>⊢ ∀ x y z. f x y z = ...</code> into one of the form <code>⊢ f = (λx y z. ...)</code>.
 </dd>
 </dl>
-<p><br> Note that the above are termed <em>rules</em> - these transform theorems to other theorems, allowing the above to be combined (e.g. <code>simp[Once $ GSYM thm]</code>). There are many other useful rules - see the HOL4 documentation for more details.</p>
-<p>In some cases we may wish to use a set of rewrites for simplification. One way to do this is to use the <code>SF</code> modifier in our list of rewrites, e.g. <code>simp[SF CONJ_ss]</code>.</p>
+<br>
+
+<p>Note that the above are termed <em>rules</em> - these transform theorems to other theorems, allowing the above to be combined (e.g. <code>simp[Once $ GSYM thm]</code>). There are many other useful rules - see the HOL4 documentation for more details.</p>
+<p>In some cases we may wish to use a set of rewrites for simplification. One way to do this is to use the <code>SF</code> modifier in our list of rewrites, e.g. <code>simp[SF CONJ_ss]</code>.</p>
 <dl>
 <dt><code>SF <i>&lt;simpset fragment&gt;</i></code></dt>
-<dd>Turns the simpset fragment into a theorem encapsulating its rewrite behaviour, which can be passed in a list of rewrites.
+<dd>
+Turns the simpset fragment into a theorem encapsulating its rewrite behaviour, which can be passed in a list of rewrites.
 </dd>
 </dl>
-<p><br> This is most useful for certain simpset fragments:</p>
+<br>
+
+<p>This is most useful for certain simpset fragments:</p>
 <dl>
 <dt><code>CONJ_ss</code></dt>
-<dd>Rewrites over conjuncts. This can deduplicate conjuncts, and use each conjunct to help simplify the others. For example, the goal <code>x = SUC n /\ if x = 0 then P else Q</code> transforms to <code>x = SUC n /\ Q</code> using <code>simp[SF CONJ_ss]</code>.
+<dd>
+Rewrites over conjuncts. This can deduplicate conjuncts, and use each conjunct to help simplify the others. For example, the goal <code>x = SUC n /\ if x = 0 then P else Q</code> transforms to <code>x = SUC n /\ Q</code> using <code>simp[SF CONJ_ss]</code>.
 </dd>
 <dt><code>SFY_ss</code></dt>
-<dd>Rewrites to prove simple <code>∃</code>-quantified goals using instantiations from assumptions/rewrites.
+<dd>
+Rewrites to prove simple <code>∃</code>-quantified goals using instantiations from assumptions/rewrites.
 </dd>
 <dt><code>ETA_ss</code></dt>
-<dd>Rewrites to remove eta-expansion.
+<dd>
+Rewrites to remove eta-expansion.
 </dd>
 <dt><code>DNF_ss</code></dt>
-<dd>Rewrites to convert to disjunctive normal form.
+<dd>
+Rewrites to convert to disjunctive normal form.
+</dd>
+</dl>
+<br>
+
+<p>Conversely, <code>ExclSF</code> is like <code>Excl</code> above, but can be used to <em>exclude</em> a set of rewrites.</p>
+<dl>
+<dt><code>ExclSF <i>"simpset fragment name"</i></code></dt>
+<dd>
+Do not use the supplied simpset fragment when rewriting. This allows temporary exclusion of a fragment from the stateful simpset.
 </dd>
 </dl>
 <h2 id="provers">Provers</h2>
 <p>In some cases, a decision procedure can save you some work.</p>
 <dl>
 <dt><code>metis_tac[<i>theorems</i>]</code></dt>
-<dd>First-order decision procedure using the supplied theorems. Note that this can easily loop if given too much information.
+<dd>
+First-order decision procedure using the supplied theorems. Note that this can easily loop if given too much information.
 </dd>
 <dt><code>decide_tac</code></dt>
-<dd>Linear arithmetic over the natural numbers.
+<dd>
+Linear arithmetic over the natural numbers.
 </dd>
 <dt><code>intLib.COOPER_TAC</code></dt>
-<dd>Like <code>decide_tac</code> but for integers.
+<dd>
+Like <code>decide_tac</code> but for integers.
 </dd>
 <dt><code>blastLib.BBLAST_TAC</code></dt>
-<dd>Bit-blasting (i.e. SAT) for goals concerning concrete word types (i.e. <code>word32</code> and others).
+<dd>
+Bit-blasting (i.e. SAT) for goals concerning concrete word types (i.e. <code>word32</code> and others).
 </dd>
 </dl>
 <h2 id="induction">Induction</h2>
 <p>Many proofs rely on induction, and there are several ways to induct in HOL4.</p>
 <dl>
 <dt><code>Induct</code></dt>
-<dd>Inducts over the first variable in a <code>∀</code>-quantified goal, based on the type of the variable. For example, applying <code>Induct</code> to <code>∀ n : num. P n</code> begins induction over the natural number <code>n</code>, giving a base case <code>0</code> and a step/successor case.
+<dd>
+Inducts over the first variable in a <code>∀</code>-quantified goal, based on the type of the variable. For example, applying <code>Induct</code> to <code>∀ n : num. P n</code> begins induction over the natural number <code>n</code>, giving a base case <code>0</code> and a step/successor case.
 </dd>
 <dt><code>Induct_on `<i>term</i>`</code></dt>
-<dd>Inducts over the given term, based on its type. This can be used similarly to <code>Induct</code> - e.g. to prove <code>P (n : num)</code> we can use <code>Induct_on `n`</code>. However, we can also induct over an inductive relation - given a relation <code>is_even</code> and a goal <code>is_even n</code>, we can use <code>Induct_on `is_even`</code>.
+<dd>
+Inducts over the given term, based on its type. This can be used similarly to <code>Induct</code> - e.g. to prove <code>P (n : num)</code> we can use <code>Induct_on `n`</code>. However, we can also induct over an inductive relation - given a relation <code>is_even</code> and a goal <code>is_even n</code>, we can use <code>Induct_on `is_even`</code>.
 </dd>
 <dt><code>... using <i>theorem</i></code></dt>
-<dd>Used as as suffix to <code>Induct</code> or <code>Induct_on `<i>term</i>`</code> to specify a particular induction theorem for use. For example, <code>Induct_on `l` using SNOC_INDUCT</code> begins induction over list <code>l</code> from the tail, rather than the head (<code>SNOC</code> is the reverse of <code>CONS</code>).
+<dd>
+Used as as suffix to <code>Induct</code> or <code>Induct_on `<i>term</i>`</code> to specify a particular induction theorem for use. For example, <code>Induct_on `l` using SNOC_INDUCT</code> begins induction over list <code>l</code> from the tail, rather than the head (<code>SNOC</code> is the reverse of <code>CONS</code>).
 </dd>
 <dt><code>completeInduct_on `<i>term</i>`</code></dt>
-<dd>Begins strong/complete induction on the supplied natural number. In other words, the inductive hypothesis is over all numbers strictly less than the goal instance.
+<dd>
+Begins strong/complete induction on the supplied natural number. In other words, the inductive hypothesis is over all numbers strictly less than the goal instance.
 </dd>
 <dt><code>measureInduct_on `<i>term</i>`</code></dt>
-<dd>Begins strong/complete induction using the supplied measure. This should be in the form of a measure function (one which returns a natural number) applied to an input variable which is currently free in the goal. For example, <code>measureInduct_on `LENGTH l`</code> begins induction over the length of the list <code>l</code> from the current goal.
+<dd>
+Begins strong/complete induction using the supplied measure. This should be in the form of a measure function (one which returns a natural number) applied to an input variable which is currently free in the goal. For example, <code>measureInduct_on `LENGTH l`</code> begins induction over the length of the list <code>l</code> from the current goal.
 </dd>
 <dt><code>recInduct <i>theorem</i></code><br><code>ho_match_mp_tac <i>theorem</i></code></dt>
-<dd>Induction using the supplied theorem, which usually arises from definition of a recursive function or an inductive relation.
+<dd>
+Induction using the supplied theorem, which usually arises from definition of a recursive function or an inductive relation.
 </dd>
 </dl>
 <h2 id="case-splits">Case splits</h2>
 <p>It is often useful to perform case splits over the course of a proof.</p>
 <dl>
 <dt><code>Cases</code></dt>
-<dd>Case splits on the first variable in a <code>∀</code>-quantified goal.
+<dd>
+Case splits on the first variable in a <code>∀</code>-quantified goal.
 </dd>
 <dt><code>Cases_on `<i>term</i>`</code></dt>
-<dd>Case splits on the supplied term.
+<dd>
+Case splits on the supplied term.
 </dd>
 <dt><code>PairCases_on `<i>var</i>`</code></dt>
-<dd>Given a variable <code>p</code> of a pair type, instantiates <code>p</code> to <code>(p0,p1,...,pn)</code>. This provides better naming than <code>Cases_on</code>, and requires fewer case splits for <code>n</code>-tuples where <code>n</code> is greater than 2.
+<dd>
+Given a variable <code>p</code> of a pair type, instantiates <code>p</code> to <code>(p0,p1,...,pn)</code>. This provides better naming than <code>Cases_on</code>, and requires fewer case splits for <code>n</code>-tuples where <code>n</code> is greater than 2.
 </dd>
 <dt><code>pairarg_tac</code></dt>
-<dd>Searches the goal and assumptions for <code>(λ(x,y,...). body) arg</code>, and introduces the assumption <code>arg = (x,y,...)</code>. This can often provide better naming than <code>PairCases_on</code>.
+<dd>
+Searches the goal and assumptions for <code>(λ(x,y,...). body) arg</code>, and introduces the assumption <code>arg = (x,y,...)</code>. This can often provide better naming than <code>PairCases_on</code>.
 </dd>
 <dt><code>CASE_TAC</code></dt>
-<dd>Case splits the smallest <code>case</code> expression in the goal.
+<dd>
+Case splits the smallest <code>case</code> expression in the goal.
 </dd>
 <dt><code>FULL_CASE_TAC</code></dt>
-<dd>Like <code>CASE_TAC</code>, but picks the smallest <code>case</code> expression in the goal <em>and</em> assumptions.
+<dd>
+Like <code>CASE_TAC</code>, but picks the smallest <code>case</code> expression in the goal <em>and</em> assumptions.
 </dd>
 <dt><code>TOP_CASE_TAC</code></dt>
-<dd>Like <code>CASE_TAC</code>, but picks the top-most <code>case</code> expression.
+<dd>
+Like <code>CASE_TAC</code>, but picks the top-most <code>case</code> expression.
 </dd>
 <dt><code>every_case_tac</code></dt>
-<dd>Splits every possible <code>case</code> expression. This can be slow and explode the number of subgoals!
+<dd>
+Splits every possible <code>case</code> expression. This can be slow and explode the number of subgoals!
 </dd>
-<dt><code>CaseEq &quot;<i>string</i>&quot;</code></dt>
-<dd>Returns a theorem of the form <code>(case x of ...) = v &lt;=&gt; ...</code>, where the type of <code>x</code> is given by the supplied string. This is intended for use with simplification, where it can help remove tautologies/absurdities in <code>case</code> expressions.
+<dt><code>IF_CASES_TAC</code></dt>
+<dd>
+Case splits on an <code>if ... then ... else ...</code> expression in the goal.
+</dd>
+<dt><code>CaseEq "<i>string</i>"</code></dt>
+<dd>
+Returns a theorem of the form <code>(case x of ...) = v &lt;=&gt; ...</code>, where the type of <code>x</code> is given by the supplied string. This is intended for use with simplification, where it can help remove tautologies/absurdities in <code>case</code> expressions.
 </dd>
 <dt><code>AllCaseEqs()</code></dt>
-<dd>Like <code>CaseEq</code>, but returns a conjunction of all currently-available cases theorems. Most commonly used as <code>gvs[AllCaseEqs()]</code>.
+<dd>
+Like <code>CaseEq</code>, but returns a conjunction of all currently-available cases theorems. Most commonly used as <code>gvs[AllCaseEqs()]</code>.
 </dd>
 </dl>
 <h2 id="subgoal-management">Subgoal management</h2>
 <p>Maintainable and readable files require organised proofs - in particular, careful management of subgoals.</p>
 <dl>
 <dt><code><i>tactic1</i> &gt;&gt; <i>tactic2</i></code><br><code><i>tactic1</i> \\ <i>tactic2</i></code><br><code><i>tactic1</i> THEN <i>tactic2</i></code></dt>
-<dd>Performs <em><code>tactic1</code></em> and then performs <em><code>tactic2</code></em> on all subgoals produced.
+<dd>
+Performs <em><code>tactic1</code></em> and then performs <em><code>tactic2</code></em> on all subgoals produced.
 </dd>
 <dt><code><i>tactic1</i> &gt;- <i>tactic2</i></code><br><code><i>tactic1</i> THEN1 <i>tactic2</i></code></dt>
-<dd>Performs <em><code>tactic1</code></em> and then uses <em><code>tactic2</code></em> to solve the first subgoal produced. This fails if the second tactic does not completely solve the subgoal.
+<dd>
+Performs <em><code>tactic1</code></em> and then uses <em><code>tactic2</code></em> to solve the first subgoal produced. This fails if the second tactic does not completely solve the subgoal.
 </dd>
 <dt><code>`<i>term</i>` by <i>tactic</i></code></dt>
-<dd>Creates a new subgoal from the given term, and solves it with the given tactic. The proved subgoal is added as an assumption for the rest of the proof.
+<dd>
+Creates a new subgoal from the given term, and solves it with the given tactic. The proved subgoal is added as an assumption for the rest of the proof.
 </dd>
 <dt><code>qsuff_tac `<i>term</i>`</code></dt>
-<dd>In some ways a dual of <code>by</code> above: attempts a &quot;suffices by&quot; proof. Adds the supplied term as an implication to the current goal, and adds the term itself as a new subgoal.
+<dd>
+In some ways a dual of <code>by</code> above: attempts a "suffices by" proof. Adds the supplied term as an implication to the current goal, and adds the term itself as a new subgoal.
 </dd>
 <dt><code>`<i>term</i>` suffices_by <i>tactic</i></code></dt>
-<dd>Like <code>qsuff_tac</code>, but solves the first subgoal (i.e. that the supplied term implies the goal) using the given tactic.
+<dd>
+Like <code>qsuff_tac</code>, but solves the first subgoal (i.e. that the supplied term implies the goal) using the given tactic.
 </dd>
 <dt><code><i>tactic</i> &gt;~ [`<i>pat</i>`s]</code></dt>
-<dd>Performs <em><code>tactic</code></em> and then searches for the first subgoal with subterms matching the supplied patterns. <a href="#renaming-and-abbreviating">Renames</a> these subterms to match the patterns, and brings the goal into focus as the current goal.
+<dd>
+Performs <em><code>tactic</code></em> and then searches for the first subgoal with subterms matching the supplied patterns. <a href="#renaming-and-abbreviating">Renames</a> these subterms to match the patterns, and brings the goal into focus as the current goal.
 </dd>
 <dt><code><i>tactic</i> &gt;&gt;~ [`<i>pat</i>`s]</code></dt>
-<dd>Like <code>&gt;~</code>, but can match/rename multiple goals and bring them all to the top of the goal-stack.
+<dd>
+Like <code>&gt;~</code>, but can match/rename multiple goals and bring them all to the top of the goal-stack.
 </dd>
 <dt><code><i>tactic1</i> &gt;&gt;~- ([`<i>pat</i>`s], <i>tactic2</i>)</code></dt>
-<dd>Like <code>&gt;&gt;~</code>, but tries to solve the matched/renamed goals using <em><code>tactic2</code></em>. This fails if any of the goals are not completely solved.
+<dd>
+Like <code>&gt;&gt;~</code>, but tries to solve the matched/renamed goals using <em><code>tactic2</code></em>. This fails if any of the goals are not completely solved.
 </dd>
 <dt><code>rpt <i>tactic</i></code></dt>
-<dd>Repeats the given tactic until it fails.
+<dd>
+Repeats the given tactic until it fails.
 </dd>
 <dt><code>TRY <i>tactic</i></code></dt>
-<dd>Attempts to apply the given tactic - but if it fails, leaves the goal unchanged. <br><strong>NB</strong> use of <code>TRY</code> is generally regarded as poor style.
+<dd>
+Attempts to apply the given tactic - but if it fails, leaves the goal unchanged. <br><strong>NB</strong> use of <code>TRY</code> is generally regarded as poor style.
 </dd>
 </dl>
 <h2 id="goal-deconstruction">Goal deconstruction</h2>
 <p>In many cases, we may want to state exactly how the goal should be taken apart (rather than simply applying <code>rw[]</code> or similar).</p>
 <dl>
 <dt><code>strip_tac</code></dt>
-<dd>Splits a top-level conjunct into two subgoals, <em>or</em> move a top-level implication antecedent into the assumptions, <em>or</em> remove a top-level <code>∀</code>-quantified variable. Often <code>rpt strip_tac</code> (which repeats <code>strip_tac</code> as many times as possible) is used.
+<dd>
+Splits a top-level conjunct into two subgoals, <em>or</em> move a top-level implication antecedent into the assumptions, <em>or</em> remove a top-level <code>∀</code>-quantified variable. Often <code>rpt strip_tac</code> (which repeats <code>strip_tac</code> as many times as possible) is used.
 </dd>
 <dt><code>conj_tac</code></dt>
-<dd>Splits a top-level conjunct into two subgoals.
+<dd>
+Splits a top-level conjunct into two subgoals.
 </dd>
 <dt><code>conj_asm{1,2}_tac</code></dt>
-<dd>Like <code>conj_tac</code>, but adds the first/second conjunct (respectively) as an assumption for the other subgoal.
+<dd>
+Like <code>conj_tac</code>, but adds the first/second conjunct (respectively) as an assumption for the other subgoal.
 </dd>
 <dt><code>disj{1,2}_tac</code></dt>
-<dd>Reduces a goal of the form <code>p \/ q</code> into <code>p</code> or <code>q</code> respectively.
+<dd>
+Reduces a goal of the form <code>p \/ q</code> into <code>p</code> or <code>q</code> respectively.
 </dd>
 <dt><code>gen_tac</code></dt>
-<dd>Removes a top-level <code>∀</code>-quantified variable.
+<dd>
+Removes a top-level <code>∀</code>-quantified variable.
 </dd>
 <dt><code>AP_TERM_TAC</code></dt>
-<dd>Reduces a goal of the form <code>f x = f y</code> to <code>x = y</code>.
+<dd>
+Reduces a goal of the form <code>f x = f y</code> to <code>x = y</code>.
 </dd>
 <dt><code>AP_THM_TAC</code></dt>
-<dd>Reduces a goal of the form <code>f x = g x</code> to <code>f = g</code>.
+<dd>
+Reduces a goal of the form <code>f x = g x</code> to <code>f = g</code>.
 </dd>
 <dt><code>MK_COMB_TAC</code></dt>
-<dd>Reduces a goal of the form <code>f x = g y</code> to two subgoals, <code>f = g</code> and <code>x = y</code>.
+<dd>
+Reduces a goal of the form <code>f x = g y</code> to two subgoals, <code>f = g</code> and <code>x = y</code>.
+</dd>
+<dt><code>iff_tac</code><br><code>eq_tac</code></dt>
+<dd>
+Reduces a goal of the form <code>P &lt;=&gt; Q</code> to two subgoals, <code>P ==&gt; Q</code> and <code>Q ==&gt; P</code>.
 </dd>
 <dt><code>impl_tac</code></dt>
-<dd>For a goal of the form <code>(A ==&gt; B) ==&gt; C</code>, splits into the two subgoals <code>A</code> and <code>B ==&gt; C</code>. <code>impl_keep_tac</code> is a variant which keeps <code>A</code> as an assumption in the <code>B ==&gt; C</code> subgoal.
+<dd>
+For a goal of the form <code>(A ==&gt; B) ==&gt; C</code>, splits into the two subgoals <code>A</code> and <code>B ==&gt; C</code>. <code>impl_keep_tac</code> is a variant which keeps <code>A</code> as an assumption in the <code>B ==&gt; C</code> subgoal.
 </dd>
 <dt><code>qexists `<i>term</i>`</code></dt>
-<dd>Instantiates a top-level <code>∃</code> quantifier with the supplied term.
+<dd>
+Instantiates a top-level <code>∃</code> quantifier with the supplied term.
 </dd>
 <dt><code>qexistsl [`<i>term</i>`s]</code></dt>
-<dd>Like <code>qexists</code>, but accepts a list of terms to instantiate multiple <code>∃</code> quantifiers.
+<dd>
+Like <code>qexists</code>, but accepts a list of terms to instantiate multiple <code>∃</code> quantifiers.
 </dd>
 <dt><code>qrefine `<i>term</i>`</code></dt>
-<dd>Refines a top-level <code>∃</code> quantifier using the supplied term - any free variables in the term become<code>∃</code>-quantified. For example, for a goal <code>∃ n : num. if n = 0 then P n else Q n</code>, applying <code>qrefine `SUC k` &gt;&gt; simp[]</code> produces the goal <code>∃ k : num. Q (SUC k)</code> (where <code>SUC</code> is the successor function).
+<dd>
+Refines a top-level <code>∃</code> quantifier using the supplied term - any free variables in the term become<code>∃</code>-quantified. For example, for a goal <code>∃ n : num. if n = 0 then P n else Q n</code>, applying <code>qrefine `SUC k` &gt;&gt; simp[]</code> produces the goal <code>∃ k : num. Q (SUC k)</code> (where <code>SUC</code> is the successor function).
 </dd>
 <dt><code>qrefinel [`<i>term</i>`s]</code></dt>
-<dd>Like <code>qrefine</code>, but accepts a list of terms to instantiate multiple <code>∃</code> quantifiers. Also can be passed underscores, to avoid refining selected <code>∃</code> quantifiers. For example, for a goal <code>n = 2 /\ c = 5 ==&gt; ∃ a b c d. a + b = c + d</code>, the tactic <code>strip_tac &gt;&gt; qrefinel [`<em>`,`SUC c`,`</em>`,`n + m`]</code> produces the new goal <code>∃ a c' m. a + SUC c = c' + (n + m)</code> .
+<dd>
+Like <code>qrefine</code>, but accepts a list of terms to instantiate multiple <code>∃</code> quantifiers. Also can be passed underscores, to avoid refining selected <code>∃</code> quantifiers. For example, for a goal <code>n = 2 /\ c = 5 ==&gt; ∃ a b c d. a + b = c + d</code>, the tactic <code>strip_tac &gt;&gt; qrefinel [`<em>`,`SUC c`,`</em>`,`n + m`]</code> produces the new goal <code>∃ a c' m. a + SUC c = c' + (n + m)</code> .
 </dd>
 <dt><code>goal_assum $ drule_at Any</code></dt>
-<dd>For a goal of the form <code>∃ vars . P1 /\ ... /\ Pn</code> (where the <code>vars</code> may be free in the <code>Pi</code>), attempts to match the <code>Pi</code> against the assumptions. If a match is found for some <code>Pk</code>, the relevant <code>vars</code> are instantiated and <code>Pk</code> is removed from the goal.
+<dd>
+For a goal of the form <code>∃ vars . P1 /\ ... /\ Pn</code> (where the <code>vars</code> may be free in the <code>Pi</code>), attempts to match the <code>Pi</code> against the assumptions. If a match is found for some <code>Pk</code>, the relevant <code>vars</code> are instantiated and <code>Pk</code> is removed from the goal.
+</dd>
+<dt><code>wlog_tac `<i>term</i>` [`<i>variable</i>`s]</code></dt>
+<dd>
+Introduces the supplied term as a hypothesis that can be assumed without loss of generality, usually producing two subgoals. The first requires proving that no generality has been lost, i.e. if you can prove the goal equipped with the new hypothesis, then you can prove the goal as-is. The second is the original goal enriched with the new hypothesis. Any variables in the second argument to <code>wlog_tac</code> are additionally quantified over in the first subgoal. See <code>help "wlog_tac"</code> for examples.
 </dd>
 </dl>
 <h2 id="assumption-management">Assumption management</h2>
 <p>Managing assumptions is key to making progress in many goal states. This involves both the introduction and selection of assumptions.</p>
-<p>Note that when we select an assumption, we usually want to process it further. In these cases, we use functions of type <code>(thm -&gt; tactic) -&gt; tactic</code> - i.e. they select an assumption (of type <code>thm</code>), apply the given function (of type <code>thm -&gt; tactic</code>, pronounced &quot;theorem-tactic&quot;, and abbreviated <code>thm_tactic</code>) to it, and return the resulting tactic. These functions tend to have at least two variants: one which leaves the original assumption untouched (only operating on a copy), and one which removes the original assumption. The latter usually have a <code>&quot;_x_&quot;</code> in their names.</p>
+<p>Note that when we select an assumption, we usually want to process it further. In these cases, we use functions of type <code>(thm -&gt; tactic) -&gt; tactic</code> - i.e. they select an assumption (of type <code>thm</code>), apply the given function (of type <code>thm -&gt; tactic</code>, pronounced "theorem-tactic", and abbreviated <code>thm_tactic</code>) to it, and return the resulting tactic. These functions tend to have at least two variants: one which leaves the original assumption untouched (only operating on a copy), and one which removes the original assumption. The latter usually have a <code>"_x_"</code> in their names.</p>
 <dl>
 <dt><code>assume_tac <i>theorem</i></code></dt>
-<dd>Introduces the supplied theorem into the assumptions.
+<dd>
+Introduces the supplied theorem into the assumptions.
 </dd>
 <dt><code>mp_tac <i>theorem</i></code></dt>
-<dd>Introduces the supplied theorem into the goal as an implication (i.e. transforms the <code>goal</code> into <code><i>theorem</i> ==&gt; goal</code>).
+<dd>
+Introduces the supplied theorem into the goal as an implication (i.e. transforms the <code>goal</code> into <code><i>theorem</i> ==&gt; goal</code>).
 </dd>
 <dt><code>disch_then <i>thm_tactic</i></code></dt>
-<dd>Given a goal of the form <code>A ==&gt; B</code>, strips off <code>A</code> (i.e. <em>discharges</em> it) and applies the supplied theorem-tactic to it.
+<dd>
+Given a goal of the form <code>A ==&gt; B</code>, strips off <code>A</code> (i.e. <em>discharges</em> it) and applies the supplied theorem-tactic to it.
 </dd>
 <dt><code>first_assum <i>thm_tactic</i></code><br><code>first_x_assum <i>thm_tactic</i></code></dt>
-<dd>Applies the theorem-tactic to the first/newest assumption on which it succeeds.
+<dd>
+Applies the theorem-tactic to the first/newest assumption on which it succeeds.
 </dd>
 <dt><code>last_assum <i>thm_tactic</i></code><br><code>last_x_assum <i>thm_tactic</i></code></dt>
-<dd>Applies the theorem-tactic to the last/oldest assumption on which it succeeds.
+<dd>
+Applies the theorem-tactic to the last/oldest assumption on which it succeeds.
 </dd>
 <dt><code>pop_assum <i>thm_tactic</i></code></dt>
-<dd>Removes the first/newest assumption and applies the theorem-tactic to it.
+<dd>
+Removes the first/newest assumption and applies the theorem-tactic to it.
 </dd>
 <dt><code>qpat_assum `<i>pat` thm_tactic</i></code><br><code>qpat_x_assum `<i>pat` thm_tactic</i></code></dt>
-<dd>Attempts to find an assumption matching the supplied pattern and applies the theorem-tactic to it.
+<dd>
+Attempts to find an assumption matching the supplied pattern and applies the theorem-tactic to it.
 </dd>
 <dt><code>goal_term <i>term_tactic</i></code></dt>
-<dd>Given <code><i>fun</i> : term -&gt; tactic</code>, applies <em><code>fun</code></em> to the current goal (i.e. a <code>term</code>). This is useful for programmatically selecting/specialising tactics based on the goal.
+<dd>
+Given <code><i>fun</i> : term -&gt; tactic</code>, applies <em><code>fun</code></em> to the current goal (i.e. a <code>term</code>). This is useful for programmatically selecting/specialising tactics based on the goal.
 </dd>
 <dt><code>goal_assum <i>thm_tactic</i></code></dt>
-<dd>Applies the given theorem-tactic to the negated goal - i.e. select the goal as a negated assumption.
+<dd>
+Applies the given theorem-tactic to the negated goal - i.e. select the goal as a negated assumption.
 </dd>
 <dt><code>spose_not_then <i>thm_tactic</i></code></dt>
-<dd>Like <code>goal_assum</code>, but geared towards proof-by-contradiction: negates the goal <strong>and</strong> pushes the negation inwards, before applying the given theorem-tactic to the result. A common usage is <code>spose_not_then assume_tac</code>.
+<dd>
+Like <code>goal_assum</code>, but geared towards proof-by-contradiction: negates the goal <strong>and</strong> pushes the negation inwards, before applying the given theorem-tactic to the result. A common usage is <code>spose_not_then assume_tac</code>.
 </dd>
-<dt><code>ASSUME_NAMED_TAC &quot;<i>label</i>&quot; <i>theorem</i></code></dt>
-<dd>Found in <code>markerLib</code>. Add the theorem as an labelled assumption: <code>label :- theorem</code>. E.g. <code>pop_assum $ ASSUME_NAMED_TAC &quot;...&quot;</code>.
+<dt><code>ASSUME_NAMED_TAC "<i>label</i>" <i>theorem</i></code></dt>
+<dd>
+Found in <code>markerLib</code>. Add the theorem as an labelled assumption: <code>label :- theorem</code>. E.g. <code>pop_assum $ ASSUME_NAMED_TAC "..."</code>.
 </dd>
-<dt><code>LABEL_ASSUM &quot;<i>label</i>&quot; <i>thm_tactic</i></code><br><code>LABEL_X_ASSUM &quot;<i>label</i>&quot; <i>thm_tactic</i></code></dt>
-<dd>Found in <code>markerLib</code>. Select the labelled assumption <code>label :- assumption</code> and apply <code><i>thm_tactic</i> assumption</code>.
+<dt><code>LABEL_ASSUM "<i>label</i>" <i>thm_tactic</i></code><br><code>LABEL_X_ASSUM "<i>label</i>" <i>thm_tactic</i></code></dt>
+<dd>
+Found in <code>markerLib</code>. Select the labelled assumption <code>label :- assumption</code> and apply <code><i>thm_tactic</i> assumption</code>.
 </dd>
-<dt><code>L &quot;<i>label</i>&quot;</code></dt>
-<dd>Found in <code>markerLib</code>. When used in a stateful simplifier, produces the theorem <code>assumption</code> from labelled assumption <code>label :- assumption</code>.
+<dt><code>L "<i>label</i>"</code></dt>
+<dd>
+Found in <code>markerLib</code>. When used in a stateful simplifier, produces the theorem <code>assumption</code> from labelled assumption <code>label :- assumption</code>.
 </dd>
 <dt><code>kall_tac</code></dt>
-<dd>Equivalent to <code>K ALL_TAC</code>, i.e. accepts any input and leaves the goal unchanged. Most useful to delete assumptions, e.g. <code>pop_assum kall_tac</code> removes the most recent assumption.
+<dd>
+Equivalent to <code>K ALL_TAC</code>, i.e. accepts any input and leaves the goal unchanged. Most useful to delete assumptions, e.g. <code>pop_assum kall_tac</code> removes the most recent assumption.
 </dd>
 </dl>
 <h2 id="instantiations-and-generalisations">Instantiations and generalisations</h2>
 <p>It is common to require instantiation of general inductive hypotheses or lemmas to more specific forms. In some cases, it is useful to generalise a goal in order to use a suitable induction theorem.</p>
 <dl>
 <dt><code>drule <i>theorem</i></code></dt>
-<dd>Given a theorem of the form <code>∀vars. P1 /\ ... /\ Pn ==&gt; Q</code>, look through the assumptions (newest to oldest) to find a matching for <code>P1</code>. If a match is found the relevant <code>vars</code> are instantiated, and the remaining <code>∀vars'. P2 /\ ... /\ Pn =&gt; Q</code> is added as an implication to the goal. <code>rev_drule</code> looks through assumptions in the opposite order.
+<dd>
+Given a theorem of the form <code>∀vars. P1 /\ ... /\ Pn ==&gt; Q</code>, look through the assumptions (newest to oldest) to find a matching for <code>P1</code>. If a match is found the relevant <code>vars</code> are instantiated, and the remaining <code>∀vars'. P2 /\ ... /\ Pn =&gt; Q</code> is added as an implication to the goal. <code>rev_drule</code> looks through assumptions in the opposite order.
 </dd>
 <dt><code>drule_all <i>theorem</i></code></dt>
-<dd>A variant of <code>drule</code> which attempts to match all the conjuncts <code>P1, ..., Pn</code>.
+<dd>
+A variant of <code>drule</code> which attempts to match all the conjuncts <code>P1, ..., Pn</code>.
 </dd>
 <dt><code>drule_then <i>theorem thm_tactic</i></code></dt>
-<dd>A variant of <code>drule</code> which processes the resulting instantiated theorem using a theorem-tactic, rather than adding it as an implication to the goal.
+<dd>
+A variant of <code>drule</code> which processes the resulting instantiated theorem using a theorem-tactic, rather than adding it as an implication to the goal.
 </dd>
 <dt><code>irule <i>theorem</i></code></dt>
-<dd>Attempts to convert the supplied theorem into the form <code>∀vars. P1 /\ ... /\ Pn ==&gt; Q</code>, matches <code>Q</code> against the goal, and if successful instantiates the necessary variables to turn the goal into <code>∃vars'. P1 /\ ... /\ Pn</code>. This is effectively the reverse of <em>modus ponens</em>.
+<dd>
+Attempts to convert the supplied theorem into the form <code>∀vars. P1 /\ ... /\ Pn ==&gt; Q</code>, matches <code>Q</code> against the goal, and if successful instantiates the necessary variables to turn the goal into <code>∃vars'. P1 /\ ... /\ Pn</code>. This is effectively the reverse of <em>modus ponens</em>.
 </dd>
 <dt><code>ho_match_mp_tac <i>theorem</i></code></dt>
-<dd>Like <code>irule</code>, but carries out higher-order matching and does not attempt to convert the input theorem. Wherever possible, <code>irule</code> should be used - however when the goal itself is <code>∀</code>-quantified, it may be necessary to use <code>ho_match_mp_tac</code>.
+<dd>
+Like <code>irule</code>, but carries out higher-order matching and does not attempt to convert the input theorem. Wherever possible, <code>irule</code> should be used - however when the goal itself is <code>∀</code>-quantified, it may be necessary to use <code>ho_match_mp_tac</code>.
 </dd>
 <dt><code>qspec_then `<i>tm` thm_tactic thm</i></code></dt>
-<dd>Instantiates the supplied (<code>∀</code>-quantified) theorem with the given term, and applies the theorem-tactic to the result.
+<dd>
+Instantiates the supplied (<code>∀</code>-quantified) theorem with the given term, and applies the theorem-tactic to the result.
 </dd>
 <dt><code>qspecl_then [`<i>tm`s] thm_tactic thm</i></code></dt>
-<dd>Like <code>qspec_then</code>, but instantiates multiple <code>∀</code>-quantified variables.
+<dd>
+Like <code>qspec_then</code>, but instantiates multiple <code>∀</code>-quantified variables.
 </dd>
 <dt><code>imp_res_tac <i>theorem</i></code></dt>
-<dd>Adds add all immediate consequences of the supplied theorem to the assumptions (i.e. performs resolution). The theorem should be an implication or bi-implication. Note that this can cause an explosion in the number of assumptions.
+<dd>
+Adds add all immediate consequences of the supplied theorem to the assumptions (i.e. performs resolution). The theorem should be an implication or bi-implication. Note that this can cause an explosion in the number of assumptions.
 </dd>
 <dt><code>res_tac</code></dt>
-<dd>Like <code>imp_res_tac</code>, but resolves all assumptions with each other (it takes no input theorem). This can easily cause an explosion in the number of assumptions.
+<dd>
+Like <code>imp_res_tac</code>, but resolves all assumptions with each other (it takes no input theorem). This can easily cause an explosion in the number of assumptions.
 </dd>
 <dt><code>qid_spec_tac `<i>variable</i>`</code></dt>
-<dd>Generalises the supplied variable in the goal (i.e. introduces a <code>∀</code> quantifier).
+<dd>
+Generalises the supplied variable in the goal (i.e. introduces a <code>∀</code> quantifier).
 </dd>
 </dl>
 <h3 id="positional-modifiers">Positional modifiers</h3>
 <p>There are positional variants of <code>irule</code> and <code>drule</code>.</p>
 <dl>
 <dt><code>irule_at <i>position theorem</i></code></dt>
-<dd>Applies <code>irule <i>theorem</i></code> within the goal, matching the conclusion at the position given by <em><code>position</code></em>.
+<dd>
+Applies <code>irule <i>theorem</i></code> within the goal, matching the conclusion at the position given by <em><code>position</code></em>.
 </dd>
 <dt><code>drule_at <i>position theorem</i></code></dt>
-<dd>Applies <code>drule <i>theorem</i></code>, but attempts to match/instantiate the conjunct given by <em><code>position</code></em>.
+<dd>
+Applies <code>drule <i>theorem</i></code>, but attempts to match/instantiate the conjunct given by <em><code>position</code></em>.
 </dd>
 </dl>
-<p><br> The <code><i>position</i></code> is expressed as a value of type <code>match_position</code>, with values and meanings:</p>
+<br>
+
+<p>The <code><i>position</i></code> is expressed as a value of type <code>match_position</code>, with values and meanings:</p>
 <dl>
 <dt><code>Any</code></dt>
-<dd>Any position which succeeds.
+<dd>
+Any position which succeeds.
 </dd>
 <dt><code>Pat `<i>pattern</i>`</code></dt>
-<dd>Any position which matches the pattern.
+<dd>
+Any position which matches the pattern.
 </dd>
 <dt><code>Pos <i>fun</i></code></dt>
-<dd>The position given by applying the supplied function (where <code><i>fun</i> : term list -&gt; term</code>) to the list of conjuncts. <code>Pos hd</code>, <code>Pos last</code>, and <code>Pos $ el <i>integer</i></code> are common uses.
+<dd>
+The position given by applying the supplied function (where <code><i>fun</i> : term list -&gt; term</code>) to the list of conjuncts. <code>Pos hd</code>, <code>Pos last</code>, and <code>Pos $ el <i>integer</i></code> are common uses.
 </dd>
 <dt><code>Concl</code></dt>
-<dd>Match against the negated conclusion, i.e. use the implication in a contrapositive way.
+<dd>
+Match against the negated conclusion, i.e. use the implication in a contrapositive way.
 </dd>
 </dl>
-<p><br> By way of example, given a goal <code>∃x y. P x /\ Q y</code> and a theorem <code>thm = ⊢ R a b ==&gt; P b</code>, <code>irule_at Any thm</code> produces the goal <code>∃a y. R a b /\ Q y</code>. <code>irule_at (Pos hd) thm</code> is equivalent in this case.</p>
+<br>
+
+<p>By way of example, given a goal <code>∃x y. P x /\ Q y</code> and a theorem <code>thm = ⊢ R a b ==&gt; P b</code>, <code>irule_at Any thm</code> produces the goal <code>∃a y. R a b /\ Q y</code>. <code>irule_at (Pos hd) thm</code> is equivalent in this case.</p>
 <h2 id="renaming-and-abbreviating">Renaming and abbreviating</h2>
 <p>HOL4 automatically generates fresh names where necessary, e.g. for case splits and existential witnesses. This is usually by appending apostrophes, and the resulting names become ugly. Sometimes large terms are generated too, and these are unwieldy.</p>
 <p>Small changes to proofs can change variable naming and large expression structure quite easily - explicitly relying on automatically-chosen variable names or the exact phrasing of large expressions can lead to brittle proofs. Both are therefore bad style. Instead, we can rename variables appropriately, and abbreviate large terms.</p>
 <dl>
 <dt><code>rename1 `<i>pattern</i>`</code></dt>
-<dd>Matches the pattern against a subterm in the goal or assumptions, and renames the subterm to match the pattern. For example, <code>rename1 `n + _ &lt;= foo`</code> renames <code>a + b &lt;= c + d</code> into <code>n + b &lt;= foo</code>. Note that we have lost information here on the RHS.
+<dd>
+Matches the pattern against a subterm in the goal or assumptions, and renames the subterm to match the pattern. For example, <code>rename1 `n + _ &lt;= foo` </code> renames <code>a + b &lt;= c + d</code> into <code>n + b &lt;= foo</code>. Note that we have lost information here on the RHS.
 </dd>
 <dt><code>qmatch_goalsub_abbrev_tac `<i>pattern</i>`</code></dt>
-<dd>Matches the pattern to a subterm in the goal, abbreviating the matching subterm to fit the pattern. Unlike renaming, abbreviating preserves information - assumptions are introduced which keep track of the abbreviations.
+<dd>
+Matches the pattern to a subterm in the goal, abbreviating the matching subterm to fit the pattern. Unlike renaming, abbreviating preserves information - assumptions are introduced which keep track of the abbreviations.
 </dd>
 <dt><code>qmatch_asmsub_abbrev_tac `<i>pattern</i>`</code></dt>
-<dd>Like <code>qmatch_goalsub_abbrev_tac</code>, but looks for matches in the assumptions only.
+<dd>
+Like <code>qmatch_goalsub_abbrev_tac</code>, but looks for matches in the assumptions only.
 </dd>
 <dt><code>qabbrev_tac `<i>var = term</i>`</code></dt>
-<dd>Abbreviates an exact given term to the supplied variable.
+<dd>
+Abbreviates an exact given term to the supplied variable.
 </dd>
 <dt><code>qpat_abbrev_tac `<i>var = pattern</i>`</code></dt>
-<dd>Matches the pattern to a subterm of the goal, and abbreviates the matching subterm to the supplied variable.
+<dd>
+Matches the pattern to a subterm of the goal, and abbreviates the matching subterm to the supplied variable.
 </dd>
 <dt><code>LET_ELIM_TAC</code></dt>
-<dd>Given a goal of the form <code>let x = e1 in e2</code>, abbreviates <code>e1</code> to <code>x</code> and transforms the goal to <code>e2</code>.
+<dd>
+Given a goal of the form <code>let x = e1 in e2</code>, abbreviates <code>e1</code> to <code>x</code> and transforms the goal to <code>e2</code>.
 </dd>
 <dt><code>unabbrev_all_tac</code></dt>
-<dd>Unabbreviates all existing abbreviations.
+<dd>
+Unabbreviates all existing abbreviations.
 </dd>
 <dt><code>Abbr `<i>var</i>`</code></dt>
-<dd>When used in a stateful simplifier, produces a rewrite theorem which unabbreviates the supplied variable. For example, if <code>x</code> is an abbreviation in the goal-state, using <code>simp[Abbr `x`]</code> will unabbreviate <code>x</code> in the goal.
+<dd>
+When used in a stateful simplifier, produces a rewrite theorem which unabbreviates the supplied variable. For example, if <code>x</code> is an abbreviation in the goal-state, using <code>simp[Abbr `x`]</code> will unabbreviate <code>x</code> in the goal.
 </dd>
 <dt><code>qx_gen_tac `<i>var</i>`</code></dt>
-<dd>Like <code>gen_tac</code>, but specialises the <code>∀</code>-quantified variable using the given name.
+<dd>
+Like <code>gen_tac</code>, but specialises the <code>∀</code>-quantified variable using the given name.
 </dd>
 <dt><code>qx_choose_then `<i>var</i>` <i>thm_tactic thm</i></code></dt>
-<dd>Takes the theorem supplied, which should be <code>∃</code>-quantified, and &quot;chooses&quot; the witness for the <code>∃</code> quantification to be the supplied variable. Processes the result using the supplied theorem tactic (often <code>mp_tac</code> or <code>assume_tac</code>).
+<dd>
+Takes the theorem supplied, which should be <code>∃</code>-quantified, and "chooses" the witness for the <code>∃</code> quantification to be the supplied variable. Processes the result using the supplied theorem tactic (often <code>mp_tac</code> or <code>assume_tac</code>).
 </dd>
-<dt><code>namedCases_on `<i>tm</i>` [&quot;<i>string</i>&quot;s]</code></dt>
-<dd>Like <code>Cases_on</code>, but allows naming of introduced variables. Each string in the list corresponds to a case, and multiple names are separated by a space. For example, <code>namedCases_on `l` [&quot;&quot;, &quot;head tail&quot;]</code> performs a case split on list <code>l</code>, naming the <code>head</code> and <code>tail</code> appropriately in the non-empty list case.
+<dt><code>namedCases_on `<i>tm</i>` ["<i>string</i>"s]</code></dt>
+<dd>
+Like <code>Cases_on</code>, but allows naming of introduced variables. Each string in the list corresponds to a case, and multiple names are separated by a space. For example, <code>namedCases_on `l` ["", "head tail"]</code> performs a case split on list <code>l</code>, naming the <code>head</code> and <code>tail</code> appropriately in the non-empty list case.
 </dd>
 </dl>
 <h2 id="examples-and-common-patterns">Examples and common patterns</h2>
@@ -493,8 +661,8 @@ end;</code></pre>
 </ul></li>
 <li><strong><a href="#case-splits">Case splits</a> followed by <a href="#rewriting">simplification</a> and <a href="#renaming-and-abbreviating">renaming</a>.</strong> Case splits introduce fresh variable names and equalities. Simplification can use the equalities, and renaming cleans up the fresh names.
 <ul>
-<li><code>TOP_CASE_TAC &gt;&gt; gvs[] &gt;&gt; rename1 `...`</code></li>
-<li><code>Cases_on ... &gt;&gt; simp[] &gt;&gt; qmatch_goalsub_abbrev_tac `...`</code></li>
+<li><code>TOP_CASE_TAC &gt;&gt; gvs[] &gt;&gt; rename1 `...` </code></li>
+<li><code>Cases_on ... &gt;&gt; simp[] &gt;&gt; qmatch_goalsub_abbrev_tac `...` </code></li>
 <li><em>and so on</em></li>
 </ul></li>
 <li><strong>Simpler targeted <a href="#rewriting">simplification</a>.</strong> Sometimes when <code>fs</code>, <code>gvs</code>, and so on do too much, it can be useful to select an assumption, move it to the goal as an implication, and then use <code>simp</code> instead. This can prevent looping rewrites between assumptions. E.g. <code>qpat_x_assum `...` mp_tac &gt;&gt; simp[]</code>
