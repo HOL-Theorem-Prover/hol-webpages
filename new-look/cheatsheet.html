@@ -290,6 +290,10 @@ Begins strong/complete induction using the supplied measure. This should be in t
 <dd>
 Induction using the supplied theorem, which usually arises from definition of a recursive function or an inductive relation.
 </dd>
+<dt><code>name_ind_cases <i>theorem</i></code></dt>
+<dd>
+Attempts to name each case of an induction theorem, simplifying <a href="#subgoal-management">goal selection</a> (e.g. using <code>&gt;~</code>).
+</dd>
 </dl>
 <h2 id="case-splits">Case splits</h2>
 <p>It is often useful to perform case splits over the course of a proof.</p>
@@ -388,7 +392,7 @@ Attempts to apply the given tactic - but if it fails, leaves the goal unchanged.
 <dl>
 <dt><code>strip_tac</code></dt>
 <dd>
-Splits a top-level conjunct into two subgoals, <em>or</em> move a top-level implication antecedent into the assumptions, <em>or</em> remove a top-level <code>∀</code>-quantified variable. Often <code>rpt strip_tac</code> (which repeats <code>strip_tac</code> as many times as possible) is used.
+Moves a top-level implication antecedent into the assumptions, <em>or</em> removes a top-level <code>∀</code>-quantified variable, <em>or</em> splits a top-level conjunct into two subgoals. When stripping an implication, <code>strip_tac</code> breaks apart conjunctions, disjunctions, and existentials (e.g. stripping <code>P /\ Q</code> introduces two assumptions, <code>P</code> and <code>Q</code>).
 </dd>
 <dt><code>conj_tac</code></dt>
 <dd>
@@ -459,6 +463,10 @@ Introduces the supplied term as a hypothesis that can be assumed without loss of
 <dd>
 Introduces the supplied theorem into the assumptions.
 </dd>
+<dt><code>strip_assume_tac <i>theorem</i></code></dt>
+<dd>
+A combination of <code>assume_tac</code> and <a href="#goal-deconstruction"><code>strip_tac</code></a>: introduces the supplied theorem into the assumptions after deconstructing its conjunctions, disjunctions, and existentials.
+</dd>
 <dt><code>mp_tac <i>theorem</i></code></dt>
 <dd>
 Introduces the supplied theorem into the goal as an implication (i.e. transforms the <code>goal</code> into <code><i>theorem</i> ==&gt; goal</code>).
@@ -521,11 +529,15 @@ Given a theorem of the form <code>∀vars. P1 /\ ... /\ Pn ==&gt; Q</code>, look
 </dd>
 <dt><code>drule_all <i>theorem</i></code></dt>
 <dd>
-A variant of <code>drule</code> which attempts to match all the conjuncts <code>P1, ..., Pn</code>.
+A variant of <code>drule</code> which attempts to match all the conjuncts <code>P1, ..., Pn</code>. This has a <code>rev_drule_all</code> variant.
 </dd>
 <dt><code>drule_then <i>theorem thm_tactic</i></code></dt>
 <dd>
-A variant of <code>drule</code> which processes the resulting instantiated theorem using a theorem-tactic, rather than adding it as an implication to the goal.
+A variant of <code>drule</code> which processes the resulting instantiated theorem using a theorem-tactic, rather than adding it as an implication to the goal. This has a <code>rev_drule_then</code> variant.
+</dd>
+<dt><code>dxrule <i>theorem</i></code> <br> <code>dxrule_all <i>theorem</i></code> <br> <code>dxrule_then <i>theorem thm_tactic</i></code></dt>
+<dd>
+Variants of the above which remove the matching assumption(s). They also have <code>rev_*</code> variants.
 </dd>
 <dt><code>irule <i>theorem</i></code></dt>
 <dd>
@@ -539,7 +551,7 @@ Like <code>irule</code>, but carries out higher-order matching and does not atte
 <dd>
 Instantiates the supplied (<code>∀</code>-quantified) theorem with the given term, and applies the theorem-tactic to the result.
 </dd>
-<dt><code>qspecl_then [`<i>tm`s] thm_tactic thm</i></code></dt>
+<dt><code>qspecl_then [`<i>tm</i>`s] <i>thm_tactic thm</i></code></dt>
 <dd>
 Like <code>qspec_then</code>, but instantiates multiple <code>∀</code>-quantified variables.
 </dd>
