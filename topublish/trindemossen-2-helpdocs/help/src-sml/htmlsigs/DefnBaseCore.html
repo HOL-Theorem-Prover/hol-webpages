@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure DefnBaseCore</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure DefnBaseCore</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/DefnBaseCore.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature DefnBaseCore =
+<a name="line2"></a>sig
+<a name="line3"></a>  type term = Term.term
+<a name="line4"></a>  type thm  = Thm.thm
+<a name="line5"></a>  type kname = KernelSig.kernelname
+<a name="line6"></a>
+<a name="line7"></a>  (* record various flavours of definition, keyed by constant and a
+<a name="line8"></a>     "tag", which is a user-choosable string. Assume that "user" and
+<a name="line9"></a>     "compute" exist for example.
+<a name="line10"></a>
+<a name="line11"></a>     Another might be "PMATCH", which would be the definition with
+<a name="line12"></a>     case constants translated into PMATCH versions.
+<a name="line13"></a>
+<a name="line14"></a>     For the moment, as per all the names that talk of "userdefs", the
+<a name="line15"></a>     only useful tag is "user".
+<a name="line16"></a>  *)
+<a name="line17"></a>  datatype defn_thm = STDEQNS of thm | OTHER of thm
+<a name="line18"></a>  type defn_presentation = {const: term, thmname: kname, thm : defn_thm}
+<a name="line19"></a>  exception nonstdform
+<a name="line20"></a>  val constants_of_defn : thm -&gt; kname list                (* EXN: nonstdform *)
+<a name="line21"></a>  val defn_eqns : thm -&gt; (kname * thm) list                (* EXN: nonstdform *)
+<a name="line22"></a>  val register_defn : {tag: string, thmname:string} -&gt; unit
+<a name="line23"></a>  val lookup_userdef : term -&gt; defn_presentation option
+<a name="line24"></a>  val current_userdefs : unit -&gt; defn_presentation list
+<a name="line25"></a>  val thy_userdefs : {thyname:string} -&gt; defn_presentation list
+<a name="line26"></a>
+<a name="line27"></a>  val register_indn : thm * kname list -&gt; unit
+<a name="line28"></a>  val lookup_indn : term -&gt; (thm * kname list) option
+<a name="line29"></a>
+<a name="line30"></a>  (* register_defn is given a tag and a theorem which is a conjunction of
+<a name="line31"></a>     possibly universally quantified equations.  The machinery here
+<a name="line32"></a>     will create a sub-conjunction of the clauses per constant (and this is
+<a name="line33"></a>     what is returned by lookup_defn).
+<a name="line34"></a>
+<a name="line35"></a>     Induction theorems have some number of induction variables (P1,
+<a name="line36"></a>     P2, ..) where each corresponds to a defined constant. This list
+<a name="line37"></a>     of constants is what is passed into register_indn alongside the
+<a name="line38"></a>     induction theorem. When a term is looked up, if lookup_indn t
+<a name="line39"></a>     returns SOME (th, ts), then t will be among the ts.
+<a name="line40"></a>   *)
+<a name="line41"></a>
+<a name="line42"></a>end
+<a name="line43"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/DefnBaseCore.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

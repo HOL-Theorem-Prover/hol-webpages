@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>bossLib.Datatype</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="datatype"><code>Datatype</code></h2>
+<pre class="hol4"><code>bossLib.Datatype : hol_type quotation -&gt; unit</code></pre>
+<hr />
+<p>Define a concrete datatype.</p>
+<p>Many formalizations require the definition of new types. For example,
+ML-style datatypes are commonly used to model the abstract syntax of
+programming languages and the state-space of elaborate transition
+systems. In HOL, such datatypes (at least, those that are inductive, or,
+alternatively, have a model in an initial algebra) may be specified
+using the invocation <code>Datatype `&lt;spec&gt;`</code>, where
+<code>&lt;spec&gt;</code> should conform to the following grammar:</p>
+<pre class="hol4"><code>   spec    ::= [ &lt;binding&gt; ; ]* &lt;binding&gt;
+
+   binding ::= &lt;ident&gt; = [ &lt;clause&gt; | ]* &lt;clause&gt;
+            |  &lt;ident&gt; = &lt;| [ &lt;ident&gt; : &lt;type&gt; ; ]* &lt;ident&gt; : &lt;type&gt; |&gt;
+
+   clause  ::= &lt;ident&gt; &lt;tyspec&gt;*
+
+   tyspec  ::= ( &lt;type&gt; )
+            |  &lt;atomic-type&gt;</code></pre>
+<p>where <code>&lt;atomic-type&gt;</code> is a single token denoting a
+type. For example, <code>num</code>, <code>bool</code> and
+<code>'a</code>.</p>
+<p>When a datatype is successfully defined, a number of standard
+theorems are automatically proved about the new type: the constructors
+of the type are proved to be injective and disjoint, induction and case
+analysis theorems are proved, and each type also has a ‘size’ function
+defined for it. All these theorems are stored in the current theory and
+added to a database accessed via the functions in
+<code>TypeBase</code>.</p>
+<p>The notation used to declare datatypes is, unfortunately, not the
+same as that of ML. If anything, the syntax is rather more like
+Haskell’s. For example, an ML declaration</p>
+<pre class="hol4"><code>   datatype (&#39;a,&#39;b) btree = Leaf of &#39;a
+                          | Node of (&#39;a,&#39;b) btree * &#39;b * (&#39;a,&#39;b) btree</code></pre>
+<p>would most likely be declared in HOL as</p>
+<pre class="hol4"><code>   Datatype `btree = Leaf &#39;a
+                   | Node btree &#39;b btree`</code></pre>
+<p>Note that any type parameters for the new type are not allowed; they
+are inferred from the right hand side of the binding. The type variables
+in the specification become arguments to the new type operator in
+alphabetic order.</p>
+<p>When a record type is defined, the parser is adjusted to allow new
+syntax (appropriate for records), and a number of useful simplification
+theorems are also proved. The most useful of the latter are
+automatically stored in the <code>TypeBase</code> and can be inspected
+using the <code>simpls_of</code> function. For further details on record
+types, see the DESCRIPTION.</p>
+<h3 id="example">Example</h3>
+<p>In the following, we shall give an overview of the kinds of types
+that may be defined by <code>Datatype</code>.</p>
+<p>To start, enumerated types can be defined as in the following
+example:</p>
+<pre class="hol4"><code>   Datatype `enum = A1  | A2  | A3  | A4  | A5
+                  | A6  | A7  | A8  | A9  | A10
+                  | A11 | A12 | A13 | A14 | A15
+                  | A16 | A17 | A18 | A19 | A20
+                  | A21 | A22 | A23 | A24 | A25
+                  | A26 | A27 | A28 | A29 | A30`</code></pre>
+<p>Other non-recursive types may be defined as well:</p>
+<pre class="hol4"><code>   Datatype `foo = N num
+                 | B bool
+                 | Fn (&#39;a -&gt; &#39;b)
+                 | Pr (&#39;a # &#39;b`)</code></pre>
+<p>Turning to recursive types, we can define a type of binary trees
+where the leaves are numbers.</p>
+<pre class="hol4"><code>   Datatype `tree = Leaf num | Node tree tree`</code></pre>
+<p>We have already seen a type of binary trees having polymorphic values
+at internal nodes. This time, we will declare it in “paired” format.</p>
+<pre class="hol4"><code>    Datatype `tree = Leaf &#39;a
+                   | Node (tree # &#39;b # tree)`</code></pre>
+<p>This specification seems closer to the declaration that one might
+make in ML, but is more difficult to deal with in proof than the curried
+format used above.</p>
+<p>The basic syntax of the named lambda calculus is easy to
+describe:</p>
+<pre class="hol4"><code>    - load &quot;stringTheory&quot;;
+    &gt; val it = () : unit
+
+    - Datatype `lambda = Var string
+                       | Const &#39;a
+                       | Comb lambda lambda
+                       | Abs lambda lambda`</code></pre>
+<p>The syntax for ‘de Bruijn’ terms is roughly similar:</p>
+<pre class="hol4"><code>   Datatype `dB = Var string
+                | Const &#39;a
+                | Bound num
+                | Comb dB dB
+                | Abs dB`</code></pre>
+<p>Arbitrarily branching trees may be defined by allowing a node to hold
+the list of its subtrees. In such a case, leaf nodes do not need to be
+explicitly declared.</p>
+<pre class="hol4"><code>   Datatype `ntree = Node of &#39;a (ntree list)`</code></pre>
+<p>A (tupled) type of ‘first order terms’ can be declared as
+follows:</p>
+<pre class="hol4"><code>   Datatype `term = Var string
+                  | Fnapp (string # term list)`</code></pre>
+<p>Mutally recursive types may also be defined. The following, extracted
+by Elsa Gunter from the Definition of Standard ML, captures a subset of
+Core ML.</p>
+<pre class="hol4"><code>   Datatype
+    `atexp = var_exp string
+           | let_exp dec exp ;
+
+       exp = aexp    atexp
+           | app_exp exp atexp
+           | fn_exp  match ;
+
+     match = match  rule
+           | matchl rule match ;
+
+      rule = rule pat exp ;
+
+       dec = val_dec   valbind
+           | local_dec dec dec
+           | seq_dec   dec dec ;
+
+   valbind = bind  pat exp
+           | bindl pat exp valbind
+           | rec_bind valbind ;
+
+       pat = wild_pat
+           | var_pat string`</code></pre>
+<p>Simple record types may be introduced using the
+<code>&lt;| ... |&gt;</code> notation.</p>
+<pre class="hol4"><code>    Datatype `state = &lt;| Reg1 : num; Reg2 : num; Waiting : bool |&gt;`</code></pre>
+<p>The use of record types may be recursive. For example, the following
+declaration could be used to formalize a simple file system.</p>
+<pre class="hol4"><code>   Datatype
+     `file = Text string
+           | Dir directory
+       ;
+      directory = &lt;| owner : string ;
+                     files : (string # file) list |&gt;`</code></pre>
+<h3 id="failure">Failure</h3>
+<p>Now we address some types that cannot be declared with
+<code>Datatype</code>. In some cases they cannot exist in HOL at all; in
+others, the type can be built in the HOL logic, but
+<code>Datatype</code> is not able to make the definition.</p>
+<p>First, an empty type is not allowed in HOL, so the following attempt
+is doomed to fail.</p>
+<pre class="hol4"><code>   Datatype `foo = A foo`</code></pre>
+<p>So called ‘nested types’, which are occasionally quite useful, cannot
+at present be built with <code>Datatype</code>:</p>
+<pre class="hol4"><code>   Datatype `btree = Leaf &#39;a
+                   | Node ((&#39;a # &#39;a) btree)`</code></pre>
+<p>Co-algebraic types may not currently be built with
+<code>Datatype</code>, not even by attempting to encode the remainder of
+the list as a function:</p>
+<pre class="hol4"><code>   Datatype `lazylist = Nil
+                      | Cons (&#39;a # (one -&gt; lazylist))`</code></pre>
+<p>Indeed, this specification corresponds to an algebraic type
+isomorphic to “standard” lists, but <code>Datatype</code> rejects it
+because it cannot handle recursion to the right of a function arrow. The
+type of co-algebraic lists can be built in HOL: see
+<code>llistTheory</code>.</p>
+<p>Finally, for cardinality reasons, HOL does not allow the following
+attempt to model the untyped lambda calculus as a set (note the
+<code>-&gt;</code> in the clause for the <code>Abs</code>
+constructor):</p>
+<pre class="hol4"><code>    Datatype `lambda = Var string
+                     | Const &#39;a
+                     | Comb lambda lambda
+                     | Abs (lambda -&gt; lambda)`</code></pre>
+<p>Instead, one would have to build a theory of complete partial orders
+(or something similar) with which to model the untyped lambda
+calculus.</p>
+<h3 id="comments">Comments</h3>
+<p>The consequences of an invocation of <code>Datatype</code> are stored
+in the current theory segment and in <code>TypeBase</code>. The
+principal consequences of a datatype definition are the primitive
+recursion and induction theorems. These provide the ability to define
+simple functions over the type, and an induction principle for the type.
+For a type named <code>ty</code>, the primitive recursion theorem is
+stored under <code>ty_Axiom</code> and the induction theorem is put
+under <code>ty_induction</code>. Other consequences include the
+distinctness of constructors (<code>ty_distinct</code>), and the
+injectivity of constructors (<code>ty_11</code>). A ‘degenerate’ version
+of <code>ty_induction</code> is also stored under
+<code>ty_nchotomy</code>: it provides for reasoning by cases on the
+construction of elements of <code>ty</code>. Finally, some
+special-purpose theorems are stored: <code>ty_case_cong</code> gives a
+congruence theorem for “case” statements on elements of <code>ty</code>.
+These case statements are introduced by <code>ty_case_def</code>. Also,
+a definition of the “size” of the type is added to the current theory,
+under the name <code>ty_size_def</code>.</p>
+<p>For example, invoking</p>
+<pre class="hol4"><code>   Datatype `tree = Leaf num | Node tree tree`;</code></pre>
+<p>results in the definitions</p>
+<pre class="hol4"><code>   tree_case_def =
+     |- (!a f f1. tree_CASE (Leaf a) f f1 = f a) /\
+        !a0 a1 f f1. tree_CASE (Node a0 a1) f f1 = f1 a0 a1
+
+   tree_size_def
+     |- (!a. tree_size (Leaf a) = 1 + a) /\
+         !a0 a1. tree_size (Node a0 a1) = 1 + (tree_size a0 + tree_size a1)</code></pre>
+<p>being added to the current theory. The following theorems about the
+datatype are also stored in the current theory.</p>
+<pre class="hol4"><code>   tree_Axiom
+     |- !f0 f1.
+          ?fn. (!a. fn (Leaf a) = f0 a) /\
+               !a0 a1. fn (Node a0 a1) = f1 a0 a1 (fn a0) (fn a1)
+
+   tree_induction
+     |- !P. (!n. P (Leaf n)) /\
+            (!t t0. P t /\ P t0 ==&gt; P (Node t t0))
+            ==&gt;
+            !t. P t
+
+   tree_nchotomy  |- !t. (?n. t = Leaf n) \/ ?t&#39; t0. t = Node t&#39; t0
+
+   tree_11
+     |- (!a a&#39;. (Leaf a = Leaf a&#39;) = (a = a&#39;)) /\
+         !a0 a1 a0&#39; a1&#39;. (Node a0 a1 = Node a0&#39; a1&#39;) = (a0=a0&#39;) /\ (a1=a1&#39;)
+
+   tree_distinct  |- !a1 a0 a. Leaf a &lt;&gt; Node a0 a1
+
+   tree_case_cong
+     |- !M M&#39; f f1.
+          (M = M&#39;) /\
+          (!a. (M&#39; = Leaf a) ==&gt; (f a = f&#39; a)) /\
+          (!a0 a1. (M&#39; = Node a0 a1) ==&gt; (f1 a0 a1 = f1&#39; a0 a1))
+          ==&gt;
+          (tree_CASE M f f1 = tree_CASE M&#39; f&#39; f1&#39;)</code></pre>
+<p>When a type involving records is defined, many more definitions are
+made and added to the current theory.</p>
+<p>A definition of mutually recursives types results in the above
+theorems and definitions being added for each of the defined types.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Definition.new_type_definition.html"><code>Definition.new_type_definition</code></a>,
+<a href="TotalDefn.Define.html"><code>TotalDefn.Define</code></a>, <a
+href="IndDefLib.Hol_reln.html"><code>IndDefLib.Hol_reln</code></a>, <a
+href="TypeBase.html"><code>TypeBase</code></a></p>
+</body>
+</html>

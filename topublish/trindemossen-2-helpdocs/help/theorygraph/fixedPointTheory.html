@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: fixedPoint</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "fixedPoint"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "pred_setTheory.html"><span class="strong">pred_set</span></a>&nbsp;&nbsp;
+    <a href = "posetTheory.html"><span class="strong">poset</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">closed</span>
+    <td>
+    :((α -> bool) -> α -> bool) -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">dense</span>
+    <td>
+    :((α -> bool) -> α -> bool) -> (α -> bool) -> bool
+    <tr><td> <span class="strong">empty</span> <td> :α -> β -> bool
+    <tr><td>
+    <span class="strong">fnsum</span>
+    <td>
+    :(β -> α -> bool) -> (β -> α -> bool) -> β -> α -> bool
+    <tr><td>
+    <span class="strong">gfp</span>
+    <td>
+    :((α -> bool) -> α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">lfp</span>
+    <td>
+    :((α -> bool) -> α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">monotone</span>
+    <td>
+    :((α -> bool) -> β -> bool) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">closed_def</span>
+<DD>
+<pre>
+⊢ ∀f X. closed f X ⇔ f X ⊆ X
+</pre>
+
+<DT><span class="strong">dense_def</span>
+<DD>
+<pre>
+⊢ ∀f X. dense f X ⇔ X ⊆ f X
+</pre>
+
+<DT><span class="strong">empty_def</span>
+<DD>
+<pre>
+⊢ empty = (λX. ∅)
+</pre>
+
+<DT><span class="strong">fnsum_def</span>
+<DD>
+<pre>
+⊢ ∀f1 f2 X. fnsum f1 f2 X = f1 X ∪ f2 X
+</pre>
+
+<DT><span class="strong">gfp_def</span>
+<DD>
+<pre>
+⊢ ∀f. gfp f = BIGUNION {X | X ⊆ f X}
+</pre>
+
+<DT><span class="strong">lfp_def</span>
+<DD>
+<pre>
+⊢ ∀f. lfp f = BIGINTER {X | f X ⊆ X}
+</pre>
+
+<DT><span class="strong">monotone_def</span>
+<DD>
+<pre>
+⊢ ∀f. monotone f ⇔ ∀X Y. X ⊆ Y ⇒ f X ⊆ f Y
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">SUBSET_complete</span>
+<DD>
+<pre>
+⊢ complete (𝕌(:α -> bool),$SUBSET)
+</pre>
+
+<DT><span class="strong">SUBSET_poset</span>
+<DD>
+<pre>
+⊢ poset (𝕌(:α -> bool),$SUBSET)
+</pre>
+
+<DT><span class="strong">empty_monotone</span>
+<DD>
+<pre>
+⊢ monotone empty
+</pre>
+
+<DT><span class="strong">fnsum_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀f g h. fnsum f (fnsum g h) = fnsum (fnsum f g) h
+</pre>
+
+<DT><span class="strong">fnsum_COMM</span>
+<DD>
+<pre>
+⊢ ∀f g. fnsum f g = fnsum g f
+</pre>
+
+<DT><span class="strong">fnsum_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀f g X. f X ⊆ fnsum f g X ∧ g X ⊆ fnsum f g X
+</pre>
+
+<DT><span class="strong">fnsum_empty</span>
+<DD>
+<pre>
+⊢ ∀f. fnsum f empty = f ∧ fnsum empty f = f
+</pre>
+
+<DT><span class="strong">fnsum_monotone</span>
+<DD>
+<pre>
+⊢ ∀f1 f2. monotone f1 ∧ monotone f2 ⇒ monotone (fnsum f1 f2)
+</pre>
+
+<DT><span class="strong">gfp_coinduction</span>
+<DD>
+<pre>
+⊢ ∀f. monotone f ⇒ ∀X. X ⊆ f X ⇒ X ⊆ gfp f
+</pre>
+
+<DT><span class="strong">gfp_greatest_dense</span>
+<DD>
+<pre>
+⊢ ∀f. monotone f ⇒ dense f (gfp f) ∧ ∀X. dense f X ⇒ X ⊆ gfp f
+</pre>
+
+<DT><span class="strong">gfp_greatest_fixedpoint</span>
+<DD>
+<pre>
+⊢ ∀f. monotone f ⇒ f (gfp f) = gfp f ∧ ∀X. f X = X ⇒ X ⊆ gfp f
+</pre>
+
+<DT><span class="strong">gfp_poset_gfp</span>
+<DD>
+<pre>
+⊢ monotone f ⇒ po_gfp (𝕌(:α -> bool),$SUBSET) f (gfp f)
+</pre>
+
+<DT><span class="strong">gfp_strong_coinduction</span>
+<DD>
+<pre>
+⊢ ∀f. monotone f ⇒ ∀X. X ⊆ f (X ∪ gfp f) ⇒ X ⊆ gfp f
+</pre>
+
+<DT><span class="strong">lfp_empty</span>
+<DD>
+<pre>
+⊢ ∀f x. monotone f ∧ x ∈ f ∅ ⇒ x ∈ lfp f
+</pre>
+
+<DT><span class="strong">lfp_fixedpoint</span>
+<DD>
+<pre>
+⊢ ∀f. monotone f ⇒ f (lfp f) = lfp f ∧ ∀X. f X = X ⇒ lfp f ⊆ X
+</pre>
+
+<DT><span class="strong">lfp_fnsum</span>
+<DD>
+<pre>
+⊢ ∀f1 f2.
+    monotone f1 ∧ monotone f2 ⇒
+    lfp f1 ⊆ lfp (fnsum f1 f2) ∧ lfp f2 ⊆ lfp (fnsum f1 f2)
+</pre>
+
+<DT><span class="strong">lfp_induction</span>
+<DD>
+<pre>
+⊢ ∀f. monotone f ⇒ ∀X. f X ⊆ X ⇒ lfp f ⊆ X
+</pre>
+
+<DT><span class="strong">lfp_least_closed</span>
+<DD>
+<pre>
+⊢ ∀f. monotone f ⇒ closed f (lfp f) ∧ ∀X. closed f X ⇒ lfp f ⊆ X
+</pre>
+
+<DT><span class="strong">lfp_poset_lfp</span>
+<DD>
+<pre>
+⊢ monotone f ⇒ po_lfp (𝕌(:α -> bool),$SUBSET) f (lfp f)
+</pre>
+
+<DT><span class="strong">lfp_rule_applied</span>
+<DD>
+<pre>
+⊢ ∀f X y. monotone f ∧ X ⊆ lfp f ∧ y ∈ f X ⇒ y ∈ lfp f
+</pre>
+
+<DT><span class="strong">lfp_strong_induction</span>
+<DD>
+<pre>
+⊢ ∀f. monotone f ⇒ ∀X. f (X ∩ lfp f) ⊆ X ⇒ lfp f ⊆ X
+</pre>
+
+<DT><span class="strong">monotonic_monotone</span>
+<DD>
+<pre>
+⊢ monotonic (𝕌(:α -> bool),$SUBSET) f ⇔ monotone f
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

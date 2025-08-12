@@ -1,0 +1,1274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: realax</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "realax"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "hrealTheory.html"><span class="strong">hreal</span></a>&nbsp;&nbsp;
+    <a href = "normalizerTheory.html"><span class="strong">normalizer</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">real</span> <td> 0
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">/</span>
+    <td>
+    :real -> real -> real
+    <tr><td> <span class="strong">NUM_CEILING</span> <td> :real -> num
+    <tr><td> <span class="strong">NUM_FLOOR</span> <td> :real -> num
+    <tr><td> <span class="strong">abs</span> <td> :real -> real
+    <tr><td> <span class="strong">hreal_of_real</span> <td> :real -> hreal
+    <tr><td> <span class="strong">inv</span> <td> :real -> real
+    <tr><td> <span class="strong">max</span> <td> :real -> real -> real
+    <tr><td> <span class="strong">min</span> <td> :real -> real -> real
+    <tr><td> <span class="strong">pow</span> <td> :real -> num -> real
+    <tr><td> <span class="strong">real_0</span> <td> :real
+    <tr><td> <span class="strong">real_1</span> <td> :real
+    <tr><td> <span class="strong">real_ABS</span> <td> :hreal # hreal -> real
+    <tr><td>
+    <span class="strong">real_ABS_CLASS</span>
+    <td>
+    :(hreal # hreal -> bool) -> real
+    <tr><td> <span class="strong">real_REP</span> <td> :real -> hreal # hreal
+    <tr><td>
+    <span class="strong">real_REP_CLASS</span>
+    <td>
+    :real -> hreal # hreal -> bool
+    <tr><td> <span class="strong">real_add</span> <td> :real -> real -> real
+    <tr><td> <span class="strong">real_ge</span> <td> :real -> real -> bool
+    <tr><td> <span class="strong">real_gt</span> <td> :real -> real -> bool
+    <tr><td> <span class="strong">real_lt</span> <td> :real -> real -> bool
+    <tr><td> <span class="strong">real_lte</span> <td> :real -> real -> bool
+    <tr><td> <span class="strong">real_mul</span> <td> :real -> real -> real
+    <tr><td> <span class="strong">real_neg</span> <td> :real -> real
+    <tr><td> <span class="strong">real_of_hreal</span> <td> :hreal -> real
+    <tr><td> <span class="strong">real_of_num</span> <td> :num -> real
+    <tr><td> <span class="strong">real_sub</span> <td> :real -> real -> real
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">NUM_CEILING_def</span>
+<DD>
+<pre>
+⊢ ∀x. clg x = LEAST n. x ≤ &n
+</pre>
+
+<DT><span class="strong">NUM_FLOOR_def</span>
+<DD>
+<pre>
+⊢ ∀x. flr x = LEAST n. &(n + 1) > x
+</pre>
+
+<DT><span class="strong">hreal_of_real</span>
+<DD>
+<pre>
+⊢ ∀T1. hreal_of_real T1 = hreal_of_treal (real_REP T1)
+</pre>
+
+<DT><span class="strong">real_0</span>
+<DD>
+<pre>
+⊢ real_0 = real_ABS treal_0
+</pre>
+
+<DT><span class="strong">real_1</span>
+<DD>
+<pre>
+⊢ real_1 = real_ABS treal_1
+</pre>
+
+<DT><span class="strong">real_ABS_def</span>
+<DD>
+<pre>
+⊢ ∀r. real_ABS r = real_ABS_CLASS (treal_eq r)
+</pre>
+
+<DT><span class="strong">real_REP_def</span>
+<DD>
+<pre>
+⊢ ∀a. real_REP a = $@ (real_REP_CLASS a)
+</pre>
+
+<DT><span class="strong">real_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION (λc. ∃r. treal_eq r r ∧ c = treal_eq r) rep
+</pre>
+
+<DT><span class="strong">real_abs</span>
+<DD>
+<pre>
+⊢ ∀x. abs x = if 0 ≤ x then x else -x
+</pre>
+
+<DT><span class="strong">real_add</span>
+<DD>
+<pre>
+⊢ ∀T1 T2. T1 + T2 = real_ABS (real_REP T1 treal_add real_REP T2)
+</pre>
+
+<DT><span class="strong">real_bijections</span>
+<DD>
+<pre>
+⊢ (∀a. real_ABS_CLASS (real_REP_CLASS a) = a) ∧
+  ∀r. (λc. ∃r. treal_eq r r ∧ c = treal_eq r) r ⇔
+      real_REP_CLASS (real_ABS_CLASS r) = r
+</pre>
+
+<DT><span class="strong">real_div</span>
+<DD>
+<pre>
+⊢ ∀x y. x / y = x * y⁻¹
+</pre>
+
+<DT><span class="strong">real_ge</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≥ y ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">real_gt</span>
+<DD>
+<pre>
+⊢ ∀x y. x > y ⇔ y < x
+</pre>
+
+<DT><span class="strong">real_inv</span>
+<DD>
+<pre>
+⊢ ∀T1. T1⁻¹ = real_ABS (treal_inv (real_REP T1))
+</pre>
+
+<DT><span class="strong">real_lte</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ⇔ ¬(y < x)
+</pre>
+
+<DT><span class="strong">real_max</span>
+<DD>
+<pre>
+⊢ ∀x y. max x y = if x ≤ y then y else x
+</pre>
+
+<DT><span class="strong">real_min</span>
+<DD>
+<pre>
+⊢ ∀x y. min x y = if x ≤ y then x else y
+</pre>
+
+<DT><span class="strong">real_mul</span>
+<DD>
+<pre>
+⊢ ∀T1 T2. T1 * T2 = real_ABS (real_REP T1 treal_mul real_REP T2)
+</pre>
+
+<DT><span class="strong">real_neg</span>
+<DD>
+<pre>
+⊢ ∀T1. -T1 = real_ABS (treal_neg (real_REP T1))
+</pre>
+
+<DT><span class="strong">real_of_hreal</span>
+<DD>
+<pre>
+⊢ ∀T1. real_of_hreal T1 = real_ABS (treal_of_hreal T1)
+</pre>
+
+<DT><span class="strong">real_of_num</span>
+<DD>
+<pre>
+⊢ 0 = real_0 ∧ ∀n. &SUC n = &n + real_1
+</pre>
+
+<DT><span class="strong">real_pow</span>
+<DD>
+<pre>
+⊢ (∀x. x pow 0 = 1) ∧ ∀x n. x pow SUC n = x * x pow n
+</pre>
+
+<DT><span class="strong">real_sub</span>
+<DD>
+<pre>
+⊢ ∀x y. x − y = x + -y
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ABSMAXMIN_ELIM_CONV2_pth_abs</span>
+<DD>
+<pre>
+⊢ P (abs x) ⇔ x ≥ 0 ∧ P x ∨ 0 > x ∧ P (-x)
+</pre>
+
+<DT><span class="strong">ABSMAXMIN_ELIM_CONV2_pth_max</span>
+<DD>
+<pre>
+⊢ P (max x y) ⇔ y ≥ x ∧ P y ∨ x > y ∧ P x
+</pre>
+
+<DT><span class="strong">ABSMAXMIN_ELIM_CONV2_pth_min</span>
+<DD>
+<pre>
+⊢ P (min x y) ⇔ y ≥ x ∧ P x ∨ x > y ∧ P y
+</pre>
+
+<DT><span class="strong">ABS_CASES_THM</span>
+<DD>
+<pre>
+⊢ abs x = x ∨ abs x = -x
+</pre>
+
+<DT><span class="strong">ABS_ELIM_THM</span>
+<DD>
+<pre>
+⊢ (0 ≤ -abs x + y ⇔ 0 ≤ x + y ∧ 0 ≤ -x + y) ∧
+  (0 < -abs x + y ⇔ 0 < x + y ∧ 0 < -x + y)
+</pre>
+
+<DT><span class="strong">ABS_STRONG_CASES_THM</span>
+<DD>
+<pre>
+⊢ 0 ≤ x ∧ abs x = x ∨ 0 ≤ -x ∧ abs x = -x
+</pre>
+
+<DT><span class="strong">ADD_INEQS_pth</span>
+<DD>
+<pre>
+⊢ (0 = a ∧ 0 = b ⇒ 0 = a + b) ∧ (0 = a ∧ 0 ≤ b ⇒ 0 ≤ a + b) ∧
+  (0 = a ∧ 0 < b ⇒ 0 < a + b) ∧ (0 ≤ a ∧ 0 = b ⇒ 0 ≤ a + b) ∧
+  (0 ≤ a ∧ 0 ≤ b ⇒ 0 ≤ a + b) ∧ (0 ≤ a ∧ 0 < b ⇒ 0 < a + b) ∧
+  (0 < a ∧ 0 = b ⇒ 0 < a + b) ∧ (0 < a ∧ 0 ≤ b ⇒ 0 < a + b) ∧
+  (0 < a ∧ 0 < b ⇒ 0 < a + b)
+</pre>
+
+<DT><span class="strong">GEN_REAL_ARITH0_pth_add</span>
+<DD>
+<pre>
+⊢ (x = 0 ∧ y = 0 ⇒ x + y = 0) ∧ (x = 0 ∧ y ≥ 0 ⇒ x + y ≥ 0) ∧
+  (x = 0 ∧ y > 0 ⇒ x + y > 0) ∧ (x ≥ 0 ∧ y = 0 ⇒ x + y ≥ 0) ∧
+  (x ≥ 0 ∧ y ≥ 0 ⇒ x + y ≥ 0) ∧ (x ≥ 0 ∧ y > 0 ⇒ x + y > 0) ∧
+  (x > 0 ∧ y = 0 ⇒ x + y > 0) ∧ (x > 0 ∧ y ≥ 0 ⇒ x + y > 0) ∧
+  (x > 0 ∧ y > 0 ⇒ x + y > 0)
+</pre>
+
+<DT><span class="strong">GEN_REAL_ARITH0_pth_emul</span>
+<DD>
+<pre>
+⊢ y = 0 ⇒ ∀x. x * y = 0
+</pre>
+
+<DT><span class="strong">GEN_REAL_ARITH0_pth_final</span>
+<DD>
+<pre>
+⊢ (¬p ⇒ F) ⇒ p
+</pre>
+
+<DT><span class="strong">GEN_REAL_ARITH0_pth_init</span>
+<DD>
+<pre>
+⊢ (x < y ⇔ y − x > 0) ∧ (x ≤ y ⇔ y − x ≥ 0) ∧ (x > y ⇔ x − y > 0) ∧
+  (x ≥ y ⇔ x − y ≥ 0) ∧ (x = y ⇔ x − y = 0) ∧ (¬(x < y) ⇔ x − y ≥ 0) ∧
+  (¬(x ≤ y) ⇔ x − y > 0) ∧ (¬(x > y) ⇔ y − x ≥ 0) ∧ (¬(x ≥ y) ⇔ y − x > 0) ∧
+  (x ≠ y ⇔ x − y > 0 ∨ -(x − y) > 0)
+</pre>
+
+<DT><span class="strong">GEN_REAL_ARITH0_pth_mul</span>
+<DD>
+<pre>
+⊢ (x = 0 ∧ y = 0 ⇒ x * y = 0) ∧ (x = 0 ∧ y ≥ 0 ⇒ x * y = 0) ∧
+  (x = 0 ∧ y > 0 ⇒ x * y = 0) ∧ (x ≥ 0 ∧ y = 0 ⇒ x * y = 0) ∧
+  (x ≥ 0 ∧ y ≥ 0 ⇒ x * y ≥ 0) ∧ (x ≥ 0 ∧ y > 0 ⇒ x * y ≥ 0) ∧
+  (x > 0 ∧ y = 0 ⇒ x * y = 0) ∧ (x > 0 ∧ y ≥ 0 ⇒ x * y ≥ 0) ∧
+  (x > 0 ∧ y > 0 ⇒ x * y > 0)
+</pre>
+
+<DT><span class="strong">GEN_REAL_ARITH0_pth_square</span>
+<DD>
+<pre>
+⊢ ∀x. x * x ≥ 0
+</pre>
+
+<DT><span class="strong">LINEAR_ADD_pth0a</span>
+<DD>
+<pre>
+⊢ 0 + x = x
+</pre>
+
+<DT><span class="strong">LINEAR_ADD_pth0b</span>
+<DD>
+<pre>
+⊢ x + 0 = x
+</pre>
+
+<DT><span class="strong">LINEAR_ADD_pth1</span>
+<DD>
+<pre>
+⊢ l1 + r1 + (l2 + r2) = l1 + l2 + (r1 + r2) ∧
+  l1 + r1 + tm2 = l1 + (r1 + tm2) ∧ tm1 + (l2 + r2) = l2 + (tm1 + r2) ∧
+  l1 + r1 + tm2 = l1 + tm2 + r1 ∧ tm1 + tm2 = tm2 + tm1 ∧
+  tm1 + (l2 + r2) = tm1 + l2 + r2
+</pre>
+
+<DT><span class="strong">LINEAR_MULT_pth</span>
+<DD>
+<pre>
+⊢ x * 0 = 0
+</pre>
+
+<DT><span class="strong">MULTIPLY_INEQS_pth</span>
+<DD>
+<pre>
+⊢ (0 = y ⇒ 0 = x * y) ∧ (0 ≤ y ⇒ 0 ≤ x ⇒ 0 ≤ x * y) ∧
+  (0 < y ⇒ 0 < x ⇒ 0 < x * y)
+</pre>
+
+<DT><span class="strong">REAL</span>
+<DD>
+<pre>
+⊢ ∀n. &SUC n = &n + 1
+</pre>
+
+<DT><span class="strong">REAL_0</span>
+<DD>
+<pre>
+⊢ real_0 = 0
+</pre>
+
+<DT><span class="strong">REAL_1</span>
+<DD>
+<pre>
+⊢ real_1 = 1
+</pre>
+
+<DT><span class="strong">REAL_10</span>
+<DD>
+<pre>
+⊢ real_1 ≠ real_0
+</pre>
+
+<DT><span class="strong">REAL_10'</span>
+<DD>
+<pre>
+⊢ 1 ≠ 0
+</pre>
+
+<DT><span class="strong">REAL_ABS_NEG</span>
+<DD>
+<pre>
+⊢ ∀x. abs (-x) = abs x
+</pre>
+
+<DT><span class="strong">REAL_ABS_NUM</span>
+<DD>
+<pre>
+⊢ ∀n. abs (&n) = &n
+</pre>
+
+<DT><span class="strong">REAL_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. &m + &n = &(m + n)
+</pre>
+
+<DT><span class="strong">REAL_ADD_AC</span>
+<DD>
+<pre>
+⊢ m + n = n + m ∧ m + n + p = m + (n + p) ∧ m + (n + p) = n + (m + p)
+</pre>
+
+<DT><span class="strong">REAL_ADD_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀x y z. x + (y + z) = x + y + z
+</pre>
+
+<DT><span class="strong">REAL_ADD_LDISTRIB</span>
+<DD>
+<pre>
+⊢ ∀x y z. x * (y + z) = x * y + x * z
+</pre>
+
+<DT><span class="strong">REAL_ADD_LID</span>
+<DD>
+<pre>
+⊢ ∀x. real_0 + x = x
+</pre>
+
+<DT><span class="strong">REAL_ADD_LID'</span>
+<DD>
+<pre>
+⊢ ∀x. 0 + x = x
+</pre>
+
+<DT><span class="strong">REAL_ADD_LINV</span>
+<DD>
+<pre>
+⊢ ∀x. -x + x = real_0
+</pre>
+
+<DT><span class="strong">REAL_ADD_LINV'</span>
+<DD>
+<pre>
+⊢ ∀x. -x + x = 0
+</pre>
+
+<DT><span class="strong">REAL_ADD_RDISTRIB</span>
+<DD>
+<pre>
+⊢ ∀x y z. (x + y) * z = x * z + y * z
+</pre>
+
+<DT><span class="strong">REAL_ADD_RID</span>
+<DD>
+<pre>
+⊢ ∀x. x + 0 = x
+</pre>
+
+<DT><span class="strong">REAL_ADD_RINV</span>
+<DD>
+<pre>
+⊢ ∀x. x + -x = 0
+</pre>
+
+<DT><span class="strong">REAL_ADD_SYM</span>
+<DD>
+<pre>
+⊢ ∀x y. x + y = y + x
+</pre>
+
+<DT><span class="strong">REAL_ATOM_NORM_CONV_pth2</span>
+<DD>
+<pre>
+⊢ (a < b ⇔ c < d) ⇔ (b ≤ a ⇔ d ≤ c)
+</pre>
+
+<DT><span class="strong">REAL_ATOM_NORM_CONV_pth3</span>
+<DD>
+<pre>
+⊢ (a ≤ b ⇔ c ≤ d) ⇔ (b < a ⇔ d < c)
+</pre>
+
+<DT><span class="strong">REAL_BIJ</span>
+<DD>
+<pre>
+⊢ (∀h. hreal_of_real (real_of_hreal h) = h) ∧
+  ∀r. real_0 < r ⇔ real_of_hreal (hreal_of_real r) = r
+</pre>
+
+<DT><span class="strong">REAL_ENTIRE</span>
+<DD>
+<pre>
+⊢ ∀x y. x * y = 0 ⇔ x = 0 ∨ y = 0
+</pre>
+
+<DT><span class="strong">REAL_EQ_ADD_LCANCEL</span>
+<DD>
+<pre>
+⊢ ∀x y z. x + y = x + z ⇔ y = z
+</pre>
+
+<DT><span class="strong">REAL_EQ_ADD_RCANCEL</span>
+<DD>
+<pre>
+⊢ ∀x y z. x + z = y + z ⇔ x = y
+</pre>
+
+<DT><span class="strong">REAL_INJ</span>
+<DD>
+<pre>
+⊢ ∀m n. &m = &n ⇔ m = n
+</pre>
+
+<DT><span class="strong">REAL_INT_ABS_CONV_pth</span>
+<DD>
+<pre>
+⊢ abs (-&x) = &x ∧ abs (&x) = &x
+</pre>
+
+<DT><span class="strong">REAL_INT_ADD_CONV_pth0</span>
+<DD>
+<pre>
+⊢ -&m + &m = 0 ∧ &m + -&m = 0
+</pre>
+
+<DT><span class="strong">REAL_INT_ADD_CONV_pth1</span>
+<DD>
+<pre>
+⊢ -&m + -&n = -&(m + n) ∧ -&m + &(m + n) = &n ∧ -&(m + n) + &m = -&n ∧
+  &(m + n) + -&m = &n ∧ &m + -&(m + n) = -&n ∧ &m + &n = &(m + n)
+</pre>
+
+<DT><span class="strong">REAL_INT_EQ_CONV_pth</span>
+<DD>
+<pre>
+⊢ (&m = &n ⇔ m = n) ∧ (-&m = -&n ⇔ m = n) ∧ (-&m = &n ⇔ m = 0 ∧ n = 0) ∧
+  (&m = -&n ⇔ m = 0 ∧ n = 0)
+</pre>
+
+<DT><span class="strong">REAL_INT_GE_CONV_pth</span>
+<DD>
+<pre>
+⊢ (&m ≥ -&n ⇔ T) ∧ (&m ≥ &n ⇔ n ≤ m) ∧ (-&m ≥ -&n ⇔ m ≤ n) ∧
+  (-&m ≥ &n ⇔ m = 0 ∧ n = 0)
+</pre>
+
+<DT><span class="strong">REAL_INT_GT_CONV_pth</span>
+<DD>
+<pre>
+⊢ (-&m > &n ⇔ F) ∧ (&m > &n ⇔ n < m) ∧ (-&m > -&n ⇔ m < n) ∧
+  (&m > -&n ⇔ ¬(m = 0 ∧ n = 0))
+</pre>
+
+<DT><span class="strong">REAL_INT_LE_CONV_nth</span>
+<DD>
+<pre>
+⊢ (¬T ⇔ F) ∧ (¬F ⇔ T)
+</pre>
+
+<DT><span class="strong">REAL_INT_LE_CONV_pth</span>
+<DD>
+<pre>
+⊢ (-&m ≤ &n ⇔ T) ∧ (&m ≤ &n ⇔ m ≤ n) ∧ (-&m ≤ -&n ⇔ n ≤ m) ∧
+  (&m ≤ -&n ⇔ m = 0 ∧ n = 0)
+</pre>
+
+<DT><span class="strong">REAL_INT_LE_CONV_tth</span>
+<DD>
+<pre>
+⊢ (F ∧ F ⇔ F) ∧ (F ∧ T ⇔ F) ∧ (T ∧ F ⇔ F) ∧ (T ∧ T ⇔ T)
+</pre>
+
+<DT><span class="strong">REAL_INT_LT_CONV_pth</span>
+<DD>
+<pre>
+⊢ (&m < -&n ⇔ F) ∧ (&m < &n ⇔ m < n) ∧ (-&m < -&n ⇔ n < m) ∧
+  (-&m < &n ⇔ ¬(m = 0 ∧ n = 0))
+</pre>
+
+<DT><span class="strong">REAL_INT_MUL_CONV_pth0</span>
+<DD>
+<pre>
+⊢ 0 * &x = 0 ∧ 0 * -&x = 0 ∧ &x * 0 = 0 ∧ -&x * 0 = 0
+</pre>
+
+<DT><span class="strong">REAL_INT_MUL_CONV_pth1</span>
+<DD>
+<pre>
+⊢ (&m * &n = &(m * n) ∧ -&m * -&n = &(m * n)) ∧ -&m * &n = -&(m * n) ∧
+  &m * -&n = -&(m * n)
+</pre>
+
+<DT><span class="strong">REAL_INT_NEG_CONV_pth</span>
+<DD>
+<pre>
+⊢ -0 = 0 ∧ - -&x = &x
+</pre>
+
+<DT><span class="strong">REAL_INT_POW_CONV_pth1</span>
+<DD>
+<pre>
+⊢ &x pow n = &(x ** n) ∧ -&x pow n = if EVEN n then &(x ** n) else -&(x ** n)
+</pre>
+
+<DT><span class="strong">REAL_INT_POW_CONV_tth</span>
+<DD>
+<pre>
+⊢ (if T then x else y) = x ∧ (if F then x else y) = y
+</pre>
+
+<DT><span class="strong">REAL_INV_0</span>
+<DD>
+<pre>
+⊢ real_0⁻¹ = real_0
+</pre>
+
+<DT><span class="strong">REAL_INV_0'</span>
+<DD>
+<pre>
+⊢ 0⁻¹ = 0
+</pre>
+
+<DT><span class="strong">REAL_ISO</span>
+<DD>
+<pre>
+⊢ ∀h i. h hreal_lt i ⇒ real_of_hreal h < real_of_hreal i
+</pre>
+
+<DT><span class="strong">REAL_ISO_EQ</span>
+<DD>
+<pre>
+⊢ ∀h i. h hreal_lt i ⇔ real_of_hreal h < real_of_hreal i
+</pre>
+
+<DT><span class="strong">REAL_LDISTRIB</span>
+<DD>
+<pre>
+⊢ ∀x y z. x * (y + z) = x * y + x * z
+</pre>
+
+<DT><span class="strong">REAL_LE</span>
+<DD>
+<pre>
+⊢ ∀m n. &m ≤ &n ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">REAL_LET_ADD</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 < y ⇒ 0 < x + y
+</pre>
+
+<DT><span class="strong">REAL_LET_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ∨ y < x
+</pre>
+
+<DT><span class="strong">REAL_LET_TRANS</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≤ y ∧ y < z ⇒ x < z
+</pre>
+
+<DT><span class="strong">REAL_LE_01</span>
+<DD>
+<pre>
+⊢ 0 ≤ 1
+</pre>
+
+<DT><span class="strong">REAL_LE_ADD</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 ≤ y ⇒ 0 ≤ x + y
+</pre>
+
+<DT><span class="strong">REAL_LE_ADDR</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ x + y ⇔ 0 ≤ y
+</pre>
+
+<DT><span class="strong">REAL_LE_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ∧ y ≤ x ⇔ x = y
+</pre>
+
+<DT><span class="strong">REAL_LE_LADD</span>
+<DD>
+<pre>
+⊢ ∀x y z. x + y ≤ x + z ⇔ y ≤ z
+</pre>
+
+<DT><span class="strong">REAL_LE_LADD_IMP</span>
+<DD>
+<pre>
+⊢ ∀x y z. y ≤ z ⇒ x + y ≤ x + z
+</pre>
+
+<DT><span class="strong">REAL_LE_LNEG</span>
+<DD>
+<pre>
+⊢ ∀x y. -x ≤ y ⇔ 0 ≤ x + y
+</pre>
+
+<DT><span class="strong">REAL_LE_LT</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ⇔ x < y ∨ x = y
+</pre>
+
+<DT><span class="strong">REAL_LE_MUL</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 ≤ y ⇒ 0 ≤ x * y
+</pre>
+
+<DT><span class="strong">REAL_LE_NEG2</span>
+<DD>
+<pre>
+⊢ ∀x y. -x ≤ -y ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">REAL_LE_NEGTOTAL</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ∨ 0 ≤ -x
+</pre>
+
+<DT><span class="strong">REAL_LE_RADD</span>
+<DD>
+<pre>
+⊢ ∀x y z. x + z ≤ y + z ⇔ x ≤ y
+</pre>
+
+<DT><span class="strong">REAL_LE_REFL</span>
+<DD>
+<pre>
+⊢ ∀x. x ≤ x
+</pre>
+
+<DT><span class="strong">REAL_LE_RNEG</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ -y ⇔ x + y ≤ 0
+</pre>
+
+<DT><span class="strong">REAL_LE_SQUARE</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x * x
+</pre>
+
+<DT><span class="strong">REAL_LE_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ∨ y ≤ x
+</pre>
+
+<DT><span class="strong">REAL_LE_TRANS</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≤ y ∧ y ≤ z ⇒ x ≤ z
+</pre>
+
+<DT><span class="strong">REAL_LINEAR_PROVER_pth</span>
+<DD>
+<pre>
+⊢ &n ≥ 0
+</pre>
+
+<DT><span class="strong">REAL_LINEAR_PROVER_pth'</span>
+<DD>
+<pre>
+⊢ &SUC n > 0
+</pre>
+
+<DT><span class="strong">REAL_LNEG_UNIQ</span>
+<DD>
+<pre>
+⊢ ∀x y. x + y = 0 ⇔ x = -y
+</pre>
+
+<DT><span class="strong">REAL_LTE_ADD</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 ≤ y ⇒ 0 < x + y
+</pre>
+
+<DT><span class="strong">REAL_LTE_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀x y. ¬(x ≤ y ∧ y < x)
+</pre>
+
+<DT><span class="strong">REAL_LTE_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ∨ y ≤ x
+</pre>
+
+<DT><span class="strong">REAL_LTE_TRANS</span>
+<DD>
+<pre>
+⊢ ∀x y z. x < y ∧ y ≤ z ⇒ x < z
+</pre>
+
+<DT><span class="strong">REAL_LT_01</span>
+<DD>
+<pre>
+⊢ 0 < 1
+</pre>
+
+<DT><span class="strong">REAL_LT_ADD</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ 0 < x + y
+</pre>
+
+<DT><span class="strong">REAL_LT_ADDR</span>
+<DD>
+<pre>
+⊢ ∀x y. x < x + y ⇔ 0 < y
+</pre>
+
+<DT><span class="strong">REAL_LT_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀x y. ¬(x < y ∧ y < x)
+</pre>
+
+<DT><span class="strong">REAL_LT_GT</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇒ ¬(y < x)
+</pre>
+
+<DT><span class="strong">REAL_LT_IADD</span>
+<DD>
+<pre>
+⊢ ∀x y z. y < z ⇒ x + y < x + z
+</pre>
+
+<DT><span class="strong">REAL_LT_IMP_LE</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇒ x ≤ y
+</pre>
+
+<DT><span class="strong">REAL_LT_LADD</span>
+<DD>
+<pre>
+⊢ ∀x y z. x + y < x + z ⇔ y < z
+</pre>
+
+<DT><span class="strong">REAL_LT_LADD_IMP</span>
+<DD>
+<pre>
+⊢ ∀x y z. y < z ⇒ x + y < x + z
+</pre>
+
+<DT><span class="strong">REAL_LT_LE</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇔ x ≤ y ∧ x ≠ y
+</pre>
+
+<DT><span class="strong">REAL_LT_MUL</span>
+<DD>
+<pre>
+⊢ ∀x y. real_0 < x ∧ real_0 < y ⇒ real_0 < x * y
+</pre>
+
+<DT><span class="strong">REAL_LT_MUL'</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ 0 < x * y
+</pre>
+
+<DT><span class="strong">REAL_LT_NEGTOTAL</span>
+<DD>
+<pre>
+⊢ ∀x. x = 0 ∨ 0 < x ∨ 0 < -x
+</pre>
+
+<DT><span class="strong">REAL_LT_NZ</span>
+<DD>
+<pre>
+⊢ ∀n. &n ≠ 0 ⇔ 0 < &n
+</pre>
+
+<DT><span class="strong">REAL_LT_RADD</span>
+<DD>
+<pre>
+⊢ ∀x y z. x + z < y + z ⇔ x < y
+</pre>
+
+<DT><span class="strong">REAL_LT_REFL</span>
+<DD>
+<pre>
+⊢ ∀x. ¬(x < x)
+</pre>
+
+<DT><span class="strong">REAL_LT_TOTAL</span>
+<DD>
+<pre>
+⊢ ∀x y. x = y ∨ x < y ∨ y < x
+</pre>
+
+<DT><span class="strong">REAL_LT_TRANS</span>
+<DD>
+<pre>
+⊢ ∀x y z. x < y ∧ y < z ⇒ x < z
+</pre>
+
+<DT><span class="strong">REAL_MUL</span>
+<DD>
+<pre>
+⊢ ∀m n. &m * &n = &(m * n)
+</pre>
+
+<DT><span class="strong">REAL_MUL_AC</span>
+<DD>
+<pre>
+⊢ m * n = n * m ∧ m * n * p = m * (n * p) ∧ m * (n * p) = n * (m * p)
+</pre>
+
+<DT><span class="strong">REAL_MUL_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀x y z. x * (y * z) = x * y * z
+</pre>
+
+<DT><span class="strong">REAL_MUL_LID</span>
+<DD>
+<pre>
+⊢ ∀x. real_1 * x = x
+</pre>
+
+<DT><span class="strong">REAL_MUL_LID'</span>
+<DD>
+<pre>
+⊢ ∀x. 1 * x = x
+</pre>
+
+<DT><span class="strong">REAL_MUL_LINV</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ real_0 ⇒ x⁻¹ * x = real_1
+</pre>
+
+<DT><span class="strong">REAL_MUL_LINV'</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ⇒ x⁻¹ * x = 1
+</pre>
+
+<DT><span class="strong">REAL_MUL_LNEG</span>
+<DD>
+<pre>
+⊢ ∀x y. -x * y = -(x * y)
+</pre>
+
+<DT><span class="strong">REAL_MUL_LZERO</span>
+<DD>
+<pre>
+⊢ ∀x. 0 * x = 0
+</pre>
+
+<DT><span class="strong">REAL_MUL_RID</span>
+<DD>
+<pre>
+⊢ ∀x. x * 1 = x
+</pre>
+
+<DT><span class="strong">REAL_MUL_RNEG</span>
+<DD>
+<pre>
+⊢ ∀x y. x * -y = -(x * y)
+</pre>
+
+<DT><span class="strong">REAL_MUL_RZERO</span>
+<DD>
+<pre>
+⊢ ∀x. x * 0 = 0
+</pre>
+
+<DT><span class="strong">REAL_MUL_SYM</span>
+<DD>
+<pre>
+⊢ ∀x y. x * y = y * x
+</pre>
+
+<DT><span class="strong">REAL_NEGATE_CANON_pth1</span>
+<DD>
+<pre>
+⊢ ((a ≤ b ⇔ 0 ≤ X) ⇔ (b < a ⇔ 0 < -X)) ∧ ((a < b ⇔ 0 < X) ⇔ (b ≤ a ⇔ 0 ≤ -X))
+</pre>
+
+<DT><span class="strong">REAL_NEGATE_CANON_pth2</span>
+<DD>
+<pre>
+⊢ -(-a * x + z) = a * x + -z
+</pre>
+
+<DT><span class="strong">REAL_NEGATE_CANON_pth3</span>
+<DD>
+<pre>
+⊢ -(a * x + z) = -a * x + -z
+</pre>
+
+<DT><span class="strong">REAL_NEGATE_CANON_pth4</span>
+<DD>
+<pre>
+⊢ -(-a * x) = a * x
+</pre>
+
+<DT><span class="strong">REAL_NEGATE_CANON_pth5</span>
+<DD>
+<pre>
+⊢ -(a * x) = -a * x
+</pre>
+
+<DT><span class="strong">REAL_NEG_0</span>
+<DD>
+<pre>
+⊢ -0 = 0
+</pre>
+
+<DT><span class="strong">REAL_NEG_ADD</span>
+<DD>
+<pre>
+⊢ ∀x y. -(x + y) = -x + -y
+</pre>
+
+<DT><span class="strong">REAL_NEG_LMUL</span>
+<DD>
+<pre>
+⊢ ∀x y. -(x * y) = -x * y
+</pre>
+
+<DT><span class="strong">REAL_NEG_LT0</span>
+<DD>
+<pre>
+⊢ ∀x. -x < 0 ⇔ 0 < x
+</pre>
+
+<DT><span class="strong">REAL_NEG_NEG</span>
+<DD>
+<pre>
+⊢ ∀x. - -x = x
+</pre>
+
+<DT><span class="strong">REAL_NEG_RMUL</span>
+<DD>
+<pre>
+⊢ ∀x y. -(x * y) = x * -y
+</pre>
+
+<DT><span class="strong">REAL_NEG_SUB</span>
+<DD>
+<pre>
+⊢ ∀x y. -(x − y) = y − x
+</pre>
+
+<DT><span class="strong">REAL_NOT_LE</span>
+<DD>
+<pre>
+⊢ ∀x y. ¬(x ≤ y) ⇔ y < x
+</pre>
+
+<DT><span class="strong">REAL_NOT_LT</span>
+<DD>
+<pre>
+⊢ ∀x y. ¬(x < y) ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_ADD</span>
+<DD>
+<pre>
+⊢ ∀m n. &m + &n = &(m + n)
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. &m = &n ⇔ m = n
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_LE</span>
+<DD>
+<pre>
+⊢ ∀m n. &m ≤ &n ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_MUL</span>
+<DD>
+<pre>
+⊢ ∀m n. &m * &n = &(m * n)
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_POW</span>
+<DD>
+<pre>
+⊢ ∀x n. &x pow n = &(x ** n)
+</pre>
+
+<DT><span class="strong">REAL_OF_NUM_SUB</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ &(n − m) = &n − &m
+</pre>
+
+<DT><span class="strong">REAL_POLY_CLAUSES</span>
+<DD>
+<pre>
+⊢ 1 * x = x ∧ a * m + b * m = (a + b) * m ∧ a * m + m = (a + 1) * m ∧
+  m + a * m = (a + 1) * m ∧ m + m = (1 + 1) * m ∧ 0 * m = 0 ∧ 0 + a = a ∧
+  a + 0 = a ∧ a * b = b * a ∧ (a + b) * c = a * c + b * c ∧ 0 * a = 0 ∧
+  a * 0 = 0 ∧ 1 * a = a ∧ a * 1 = a ∧
+  lx * ly * (rx * ry) = lx * rx * (ly * ry) ∧
+  lx * ly * (rx * ry) = lx * (ly * (rx * ry)) ∧
+  lx * ly * (rx * ry) = rx * (lx * ly * ry) ∧ lx * ly * rx = lx * rx * ly ∧
+  lx * ly * rx = lx * (ly * rx) ∧ lx * rx = rx * lx ∧
+  lx * (rx * ry) = lx * rx * ry ∧ lx * (rx * ry) = rx * (lx * ry) ∧
+  a + b + (c + d) = a + c + (b + d) ∧ a + b + c = a + (b + c) ∧
+  a + (c + d) = c + (a + d) ∧ a + b + c = a + c + b ∧ a + c = c + a ∧
+  a + (c + d) = a + c + d ∧ x pow p * x pow q = x pow (p + q) ∧
+  x * x pow q = x pow SUC q ∧ x pow q * x = x pow SUC q ∧ x * x = x² ∧
+  (x * y) pow q = x pow q * y pow q ∧ (x pow p) pow q = x pow (p * q) ∧
+  x pow 0 = 1 ∧ x pow 1 = x ∧ x * (y + z) = x * y + x * z ∧
+  x pow SUC q = x * x pow q
+</pre>
+
+<DT><span class="strong">REAL_POLY_NEG_CLAUSES</span>
+<DD>
+<pre>
+⊢ (∀x. -x = -1 * x) ∧ ∀x y. x − y = x + -1 * y
+</pre>
+
+<DT><span class="strong">REAL_POS</span>
+<DD>
+<pre>
+⊢ ∀n. 0 ≤ &n
+</pre>
+
+<DT><span class="strong">REAL_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < &SUC n
+</pre>
+
+<DT><span class="strong">REAL_POW_2</span>
+<DD>
+<pre>
+⊢ ∀x. x² = x * x
+</pre>
+
+<DT><span class="strong">REAL_POW_NEG</span>
+<DD>
+<pre>
+⊢ ∀x n. -x pow n = if EVEN n then x pow n else -(x pow n)
+</pre>
+
+<DT><span class="strong">REAL_PROD_NORM_CONV_pth1</span>
+<DD>
+<pre>
+⊢ x = x * 1
+</pre>
+
+<DT><span class="strong">REAL_PROD_NORM_CONV_pth2</span>
+<DD>
+<pre>
+⊢ x = 1 * x
+</pre>
+
+<DT><span class="strong">REAL_RDISTRIB</span>
+<DD>
+<pre>
+⊢ ∀x y z. (x + y) * z = x * z + y * z
+</pre>
+
+<DT><span class="strong">REAL_RNEG_UNIQ</span>
+<DD>
+<pre>
+⊢ ∀x y. x + y = 0 ⇔ y = -x
+</pre>
+
+<DT><span class="strong">REAL_SIMPLE_ARITH_REFUTER_trivthm</span>
+<DD>
+<pre>
+⊢ 0 < 0 ⇔ F
+</pre>
+
+<DT><span class="strong">REAL_SUB_0</span>
+<DD>
+<pre>
+⊢ ∀x y. x − y = 0 ⇔ x = y
+</pre>
+
+<DT><span class="strong">REAL_SUB_LE</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x − y ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">REAL_SUB_LT</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x − y ⇔ y < x
+</pre>
+
+<DT><span class="strong">REAL_SUM_NORM_CONV_pth1</span>
+<DD>
+<pre>
+⊢ -x = -1 * x
+</pre>
+
+<DT><span class="strong">REAL_SUM_NORM_CONV_pth2</span>
+<DD>
+<pre>
+⊢ x − y = x + -1 * y
+</pre>
+
+<DT><span class="strong">REAL_SUP_ALLPOS</span>
+<DD>
+<pre>
+⊢ ∀P. (∀x. P x ⇒ real_0 < x) ∧ (∃x. P x) ∧ (∃z. ∀x. P x ⇒ x < z) ⇒
+      ∃s. ∀y. (∃x. P x ∧ y < x) ⇔ y < s
+</pre>
+
+<DT><span class="strong">REAL_SUP_ALLPOS'</span>
+<DD>
+<pre>
+⊢ ∀P. (∀x. P x ⇒ 0 < x) ∧ (∃x. P x) ∧ (∃z. ∀x. P x ⇒ x < z) ⇒
+      ∃s. ∀y. (∃x. P x ∧ y < x) ⇔ y < s
+</pre>
+
+<DT><span class="strong">ZERO_LEFT_CONV_pth</span>
+<DD>
+<pre>
+⊢ (x = y ⇔ 0 = y + -x) ∧ (x ≤ y ⇔ 0 ≤ y + -x) ∧ (x < y ⇔ 0 < y + -x)
+</pre>
+
+<DT><span class="strong">atom_CONV_pth</span>
+<DD>
+<pre>
+⊢ (¬(x ≤ y) ⇔ y < x) ∧ (¬(x < y) ⇔ y ≤ x) ∧ (x ≠ y ⇔ x < y ∨ y < x)
+</pre>
+
+<DT><span class="strong">real_ABS_REP_CLASS</span>
+<DD>
+<pre>
+⊢ (∀a. real_ABS_CLASS (real_REP_CLASS a) = a) ∧
+  ∀c. (∃r. treal_eq r r ∧ c = treal_eq r) ⇔
+      real_REP_CLASS (real_ABS_CLASS c) = c
+</pre>
+
+<DT><span class="strong">real_QUOTIENT</span>
+<DD>
+<pre>
+⊢ QUOTIENT treal_eq real_ABS real_REP
+</pre>
+
+<DT><span class="strong">real_lt</span>
+<DD>
+<pre>
+⊢ ∀y x. x < y ⇔ ¬(y ≤ x)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

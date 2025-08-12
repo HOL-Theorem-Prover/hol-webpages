@@ -1,0 +1,387 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: gcdset</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "gcdset"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "pred_setTheory.html"><span class="strong">pred_set</span></a>&nbsp;&nbsp;
+    <a href = "gcdTheory.html"><span class="strong">gcd</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">big_gcd</span>
+    <td>
+    :(num -> bool) -> num
+    <tr><td> <span class="strong">big_lcm</span> <td> :(num -> bool) -> num
+    <tr><td> <span class="strong">coprimes</span> <td> :num -> num -> bool
+    <tr><td> <span class="strong">gcdset</span> <td> :(num -> bool) -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">big_gcd_def</span>
+<DD>
+<pre>
+⊢ ∀s. big_gcd s = ITSET gcd s 0
+</pre>
+
+<DT><span class="strong">big_lcm_def</span>
+<DD>
+<pre>
+⊢ ∀s. big_lcm s = ITSET lcm s 1
+</pre>
+
+<DT><span class="strong">coprimes_def</span>
+<DD>
+<pre>
+⊢ ∀n. coprimes n = {j | j ∈ natural n ∧ coprime j n}
+</pre>
+
+<DT><span class="strong">gcdset_def</span>
+<DD>
+<pre>
+⊢ ∀s. gcdset s =
+      if s = ∅ ∨ s = {0} then 0
+      else
+        MAX_SET
+          ({n | n ≤ MIN_SET (s DELETE 0)} ∩ {d | ∀e. e ∈ s ⇒ d divides e})
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">big_gcd_empty</span>
+<DD>
+<pre>
+⊢ big_gcd ∅ = 0
+</pre>
+
+<DT><span class="strong">big_gcd_insert</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀x. big_gcd (x INSERT s) = gcd x (big_gcd s)
+</pre>
+
+<DT><span class="strong">big_gcd_is_common_divisor</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀x. x ∈ s ⇒ big_gcd s divides x
+</pre>
+
+<DT><span class="strong">big_gcd_is_greatest_common_divisor</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀m. (∀x. x ∈ s ⇒ m divides x) ⇒ m divides big_gcd s
+</pre>
+
+<DT><span class="strong">big_gcd_map_times</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ⇒ ∀k. big_gcd (IMAGE ($* k) s) = k * big_gcd s
+</pre>
+
+<DT><span class="strong">big_gcd_positive</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ∧ (∀x. x ∈ s ⇒ 0 < x) ⇒ 0 < big_gcd s
+</pre>
+
+<DT><span class="strong">big_gcd_reduction</span>
+<DD>
+<pre>
+⊢ ∀s x. FINITE s ∧ x ∉ s ⇒ big_gcd (x INSERT s) = gcd x (big_gcd s)
+</pre>
+
+<DT><span class="strong">big_gcd_sing</span>
+<DD>
+<pre>
+⊢ ∀x. big_gcd {x} = x
+</pre>
+
+<DT><span class="strong">big_gcd_two</span>
+<DD>
+<pre>
+⊢ ∀x y. big_gcd {x; y} = gcd x y
+</pre>
+
+<DT><span class="strong">big_lcm_empty</span>
+<DD>
+<pre>
+⊢ big_lcm ∅ = 1
+</pre>
+
+<DT><span class="strong">big_lcm_insert</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀x. big_lcm (x INSERT s) = lcm x (big_lcm s)
+</pre>
+
+<DT><span class="strong">big_lcm_is_common_multiple</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀x. x ∈ s ⇒ x divides big_lcm s
+</pre>
+
+<DT><span class="strong">big_lcm_is_least_common_multiple</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀m. (∀x. x ∈ s ⇒ x divides m) ⇒ big_lcm s divides m
+</pre>
+
+<DT><span class="strong">big_lcm_map_times</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ⇒ ∀k. big_lcm (IMAGE ($* k) s) = k * big_lcm s
+</pre>
+
+<DT><span class="strong">big_lcm_positive</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ (∀x. x ∈ s ⇒ 0 < x) ⇒ 0 < big_lcm s
+</pre>
+
+<DT><span class="strong">big_lcm_reduction</span>
+<DD>
+<pre>
+⊢ ∀s x. FINITE s ∧ x ∉ s ⇒ big_lcm (x INSERT s) = lcm x (big_lcm s)
+</pre>
+
+<DT><span class="strong">big_lcm_sing</span>
+<DD>
+<pre>
+⊢ ∀x. big_lcm {x} = x
+</pre>
+
+<DT><span class="strong">big_lcm_two</span>
+<DD>
+<pre>
+⊢ ∀x y. big_lcm {x; y} = lcm x y
+</pre>
+
+<DT><span class="strong">coprimes_0</span>
+<DD>
+<pre>
+⊢ coprimes 0 = ∅
+</pre>
+
+<DT><span class="strong">coprimes_1</span>
+<DD>
+<pre>
+⊢ coprimes 1 = {1}
+</pre>
+
+<DT><span class="strong">coprimes_alt</span>
+<DD>
+<pre>
+⊢ ∀n. coprimes n = natural n ∩ {j | coprime j n}
+</pre>
+
+<DT><span class="strong">coprimes_element</span>
+<DD>
+<pre>
+⊢ ∀n j. j ∈ coprimes n ⇔ 0 < j ∧ j ≤ n ∧ coprime j n
+</pre>
+
+<DT><span class="strong">coprimes_element_alt</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ ∀j. j ∈ coprimes n ⇔ j < n ∧ coprime j n
+</pre>
+
+<DT><span class="strong">coprimes_element_less</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ ∀j. j ∈ coprimes n ⇒ j < n
+</pre>
+
+<DT><span class="strong">coprimes_eq_empty</span>
+<DD>
+<pre>
+⊢ ∀n. coprimes n = ∅ ⇔ n = 0
+</pre>
+
+<DT><span class="strong">coprimes_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (coprimes n)
+</pre>
+
+<DT><span class="strong">coprimes_has_1</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ 1 ∈ coprimes n
+</pre>
+
+<DT><span class="strong">coprimes_has_last_but_1</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ n − 1 ∈ coprimes n
+</pre>
+
+<DT><span class="strong">coprimes_max</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ MAX_SET (coprimes n) = n − 1
+</pre>
+
+<DT><span class="strong">coprimes_no_0</span>
+<DD>
+<pre>
+⊢ ∀n. 0 ∉ coprimes n
+</pre>
+
+<DT><span class="strong">coprimes_subset</span>
+<DD>
+<pre>
+⊢ ∀n. coprimes n ⊆ natural n
+</pre>
+
+<DT><span class="strong">coprimes_with_last</span>
+<DD>
+<pre>
+⊢ ∀n. n ∈ coprimes n ⇔ n = 1
+</pre>
+
+<DT><span class="strong">coprimes_without_last</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ n ∉ coprimes n
+</pre>
+
+<DT><span class="strong">gcdset_EMPTY</span>
+<DD>
+<pre>
+⊢ gcdset ∅ = 0
+</pre>
+
+<DT><span class="strong">gcdset_INSERT</span>
+<DD>
+<pre>
+⊢ gcdset (x INSERT s) = gcd x (gcdset s)
+</pre>
+
+<DT><span class="strong">gcdset_divides</span>
+<DD>
+<pre>
+⊢ ∀e. e ∈ s ⇒ gcdset s divides e
+</pre>
+
+<DT><span class="strong">gcdset_greatest</span>
+<DD>
+<pre>
+⊢ (∀e. e ∈ s ⇒ g divides e) ⇒ g divides gcdset s
+</pre>
+
+<DT><span class="strong">natural_0</span>
+<DD>
+<pre>
+⊢ natural 0 = ∅
+</pre>
+
+<DT><span class="strong">natural_1</span>
+<DD>
+<pre>
+⊢ natural 1 = {1}
+</pre>
+
+<DT><span class="strong">natural_card</span>
+<DD>
+<pre>
+⊢ ∀n. CARD (natural n) = n
+</pre>
+
+<DT><span class="strong">natural_cofactor_natural</span>
+<DD>
+<pre>
+⊢ ∀n a b. 0 < n ∧ 0 < a ∧ b ∈ natural n ∧ a divides b ⇒ b DIV a ∈ natural n
+</pre>
+
+<DT><span class="strong">natural_cofactor_natural_reduced</span>
+<DD>
+<pre>
+⊢ ∀n a b.
+    0 < n ∧ a divides n ∧ b ∈ natural n ∧ a divides b ⇒
+    b DIV a ∈ natural (n DIV a)
+</pre>
+
+<DT><span class="strong">natural_divisor_natural</span>
+<DD>
+<pre>
+⊢ ∀n a b. 0 < n ∧ a ∈ natural n ∧ b divides a ⇒ b ∈ natural n
+</pre>
+
+<DT><span class="strong">natural_element</span>
+<DD>
+<pre>
+⊢ ∀n j. j ∈ natural n ⇔ 0 < j ∧ j ≤ n
+</pre>
+
+<DT><span class="strong">natural_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (natural n)
+</pre>
+
+<DT><span class="strong">natural_has_1</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ 1 ∈ natural n
+</pre>
+
+<DT><span class="strong">natural_has_last</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ n ∈ natural n
+</pre>
+
+<DT><span class="strong">natural_not_0</span>
+<DD>
+<pre>
+⊢ ∀n. 0 ∉ natural n
+</pre>
+
+<DT><span class="strong">natural_property</span>
+<DD>
+<pre>
+⊢ ∀n. natural n = {j | 0 < j ∧ j ≤ n}
+</pre>
+
+<DT><span class="strong">natural_suc</span>
+<DD>
+<pre>
+⊢ ∀n. natural (SUC n) = SUC n INSERT natural n
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

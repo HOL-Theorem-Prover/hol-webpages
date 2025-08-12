@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Rewrite.GEN_REWRITE_TAC</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="gen_rewrite_tac"><code>GEN_REWRITE_TAC</code></h2>
+<pre class="hol4"><code>Rewrite.GEN_REWRITE_TAC : ((conv -&gt; conv) -&gt; rewrites -&gt; thm list -&gt; tactic)</code></pre>
+<hr />
+<p>Rewrites a goal, selecting terms according to a user-specified
+strategy.</p>
+<p>Distinct rewriting tactics differ in the search strategies used in
+finding subterms on which to apply substitutions, and the built-in
+theorems used in rewriting. In the case of <code>REWRITE_TAC</code>,
+this is a recursive traversal starting from the body of the goal’s
+conclusion part, while in the case of <code>ONCE_REWRITE_TAC</code>, for
+example, the search stops as soon as a term on which a substitution is
+possible is found. <code>GEN_REWRITE_TAC</code> allows a user to specify
+a more complex strategy for rewriting.</p>
+<p>The basis of pattern-matching for rewriting is the notion of
+conversions, through the application of <code>REWR_CONV</code>.
+Conversions are rules for mapping terms with theorems equating the given
+terms to other semantically equivalent ones.</p>
+<p>When attempting to rewrite subterms recursively, the use of
+conversions (and therefore rewrites) can be automated further by using
+functions which take a conversion and search for instances at which they
+are applicable. Examples of these functions are
+<code>ONCE_DEPTH_CONV</code> and <code>RAND_CONV</code>. The first
+argument to <code>GEN_REWRITE_TAC</code> is such a function, which
+specifies a search strategy; i.e. it specifies how subterms (on which
+substitutions are allowed) should be searched for.</p>
+<p>The second and third arguments are lists of theorems used for
+rewriting. The order in which these are used is not specified. The
+theorems need not be in equational form: negated terms, say
+<code>"~ t"</code>, are transformed into the equivalent equational form
+<code>"t = F"</code>, while other non-equational theorems with
+conclusion of form <code>"t"</code> are cast as the corresponding
+equations <code>"t = T"</code>. Conjunctions are separated into the
+individual components, which are used as distinct rewrites.</p>
+<h3 id="failure">Failure</h3>
+<p><code>GEN_REWRITE_TAC</code> fails if the search strategy fails. It
+may also cause a non-terminating sequence of rewrites, depending on the
+search strategy used. The resulting tactic is invalid when a theorem
+which matches the goal (and which is thus used for rewriting it with)
+has a hypothesis which is not alpha-convertible to any of the
+assumptions of the goal. Applying such an invalid tactic may result in a
+proof of a theorem which does not correspond to the original goal.</p>
+<p>Detailed control of rewriting strategy, allowing a user to specify a
+search strategy.</p>
+<h3 id="example">Example</h3>
+<p>Given a goal such as:</p>
+<pre class="hol4"><code>   ?- a - (b + c) = a - (c + b)</code></pre>
+<p>we may want to rewrite only one side of it with a theorem, say
+<code>ADD_SYM</code>. Rewriting tactics which operate recursively result
+in divergence; the tactic <code>ONCE_REWRITE_TAC [ADD_SYM]</code>
+rewrites on both sides to produce the following goal:</p>
+<pre class="hol4"><code>   ?- a - (c + b) = a - (b + c)</code></pre>
+<p>as <code>ADD_SYM</code> matches at two positions. To rewrite on only
+one side of the equation, the following tactic can be used:</p>
+<pre class="hol4"><code>   GEN_REWRITE_TAC (RAND_CONV o ONCE_DEPTH_CONV) empty_rewrites [ADD_SYM]</code></pre>
+<p>which produces the desired goal:</p>
+<pre class="hol4"><code>   ?- a - (c + b) = a - (c + b)</code></pre>
+<p>As another example, one can write a tactic which will behave
+similarly to <code>REWRITE_TAC</code> but will also include
+<code>ADD_CLAUSES</code> in the set of theorems to use always:</p>
+<pre class="hol4"><code>   val ADD_REWRITE_TAC = GEN_REWRITE_TAC TOP_DEPTH_CONV
+                             (add_rewrites (implicit_rewrites ())
+                                           [ADD_CLAUSES])</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Rewrite.ASM_REWRITE_TAC.html"><code>Rewrite.ASM_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.GEN_REWRITE_RULE.html"><code>Rewrite.GEN_REWRITE_RULE</code></a>,
+<a
+href="Rewrite.ONCE_REWRITE_TAC.html"><code>Rewrite.ONCE_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.PURE_REWRITE_TAC.html"><code>Rewrite.PURE_REWRITE_TAC</code></a>,
+<a href="Conv.REWR_CONV.html"><code>Conv.REWR_CONV</code></a>, <a
+href="Rewrite.REWRITE_TAC.html"><code>Rewrite.REWRITE_TAC</code></a></p>
+</body>
+</html>

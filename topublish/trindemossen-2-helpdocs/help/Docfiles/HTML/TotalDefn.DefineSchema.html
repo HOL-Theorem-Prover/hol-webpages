@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TotalDefn.DefineSchema</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="defineschema"><code>DefineSchema</code></h2>
+<pre class="hol4"><code>TotalDefn.DefineSchema : term quotation -&gt; thm</code></pre>
+<hr />
+<p>Defines a recursion schema.</p>
+<p><code>DefineSchema</code> may be used to declare so-called
+‘schematic’ definitions, or ‘recursion schemas’. These are just
+recursive functions with extra free variables (also called ‘parameters’)
+on the right-hand side of some clauses. Such schemas have been used as a
+basis for program transformation systems.</p>
+<p><code>DefineSchema</code> takes its input in exactly the same format
+as <code>Define</code>.</p>
+<p>The termination constraints of a schematic definition are collected
+on the hypotheses of the definition, and also on the hypotheses of the
+automatically proved induction theorem, but a termination proof is only
+attempted when the termination conditions have no occurrences of
+parameters. This is because, in general, termination can only be proved
+after some of the parameters of the schema have been instantiated.</p>
+<h3 id="failure">Failure</h3>
+<p><code>DefineSchema</code> fails in many of the same ways as
+<code>Define</code>. However, it will not fail if it cannot prove
+termination.</p>
+<h3 id="example">Example</h3>
+<p>The following defines a schema for binary recursion.</p>
+<pre class="hol4"><code>   - DefineSchema
+          `binRec (x:&#39;a) =
+              if atomic x then (A x:&#39;b)
+                          else join (binRec (left x))
+                                    (binRec (right x))`;
+
+   &lt;&lt;HOL message: Definition is schematic in the following variables:
+       &quot;A&quot;, &quot;atomic&quot;, &quot;join&quot;, &quot;left&quot;, &quot;right&quot;&gt;&gt;
+   Equations stored under &quot;binRec_def&quot;.
+   Induction stored under &quot;binRec_ind&quot;.
+
+   &gt; val it =
+        [!x. ~atomic x ==&gt; R (left x) x,
+         !x. ~atomic x ==&gt; R (right x) x, WF R]
+       |- binRec A atomic join left right x =
+           if atomic x then A x
+           else
+             join (binRec A atomic join left right (left x))
+                  (binRec A atomic join left right (right x)) : thm</code></pre>
+<p>The following defines a schema in which a termination proof is
+attempted successfully.</p>
+<pre class="hol4"><code>   - DefineSchema `(map [] = []) /\ (map (h::t) = f h :: map t)`;
+
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a, &#39;b&gt;&gt;
+   &lt;&lt;HOL message: Definition is schematic in the following variables:
+        &quot;f&quot;&gt;&gt;
+
+   Equations stored under &quot;map_def&quot;.
+   Induction stored under &quot;map_ind&quot;.
+
+   &gt; val it =  [] |- (map f [] = []) /\ (map f (h::t) = f h::map f t) : thm</code></pre>
+<p>The easy termination proof is attempted because the schematic
+variable <code>f</code> doesn’t occur in the termination conditions.</p>
+<h3 id="comments">Comments</h3>
+<p>The original recursion equations, in which parameters only occur on
+right hand sides, is transformed into one in which the parameters become
+arguments to the function being defined. This is the expected behaviour.
+If an argument intended as a parameter occurs on the left hand side in
+the original recursion equations, it becomes universally quantified in
+the termination conditions, which is not desirable for a schema.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="TotalDefn.Define.html"><code>TotalDefn.Define</code></a>, <a
+href="Defn.Hol_defn.html"><code>Defn.Hol_defn</code></a></p>
+</body>
+</html>

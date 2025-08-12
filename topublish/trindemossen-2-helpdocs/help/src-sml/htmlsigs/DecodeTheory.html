@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure DecodeTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure DecodeTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/Boolify/src/.hol/objs/DecodeScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature DecodeTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#dec2enc_def-val">dec2enc_def</a> : thm
+<a name="line7"></a>    val <a href="#dec_bnum_def-val">dec_bnum_def</a> : thm
+<a name="line8"></a>    val <a href="#decode_blist_def-val">decode_blist_def</a> : thm
+<a name="line9"></a>    val <a href="#decode_bnum_def-val">decode_bnum_def</a> : thm
+<a name="line10"></a>    val <a href="#decode_bool_def-val">decode_bool_def</a> : thm
+<a name="line11"></a>    val <a href="#decode_list_def-val">decode_list_def</a> : thm
+<a name="line12"></a>    val <a href="#decode_num_def-val">decode_num_def</a> : thm
+<a name="line13"></a>    val <a href="#decode_option_def-val">decode_option_def</a> : thm
+<a name="line14"></a>    val <a href="#decode_prod_def-val">decode_prod_def</a> : thm
+<a name="line15"></a>    val <a href="#decode_sum_def-val">decode_sum_def</a> : thm
+<a name="line16"></a>    val <a href="#decode_tree_def-val">decode_tree_def</a> : thm
+<a name="line17"></a>    val <a href="#decode_unit_def-val">decode_unit_def</a> : thm
+<a name="line18"></a>    val <a href="#enc2dec_def-val">enc2dec_def</a> : thm
+<a name="line19"></a>    val <a href="#wf_decoder_def-val">wf_decoder_def</a> : thm
+<a name="line20"></a>  
+<a name="line21"></a>  (*  Theorems  *)
+<a name="line22"></a>    val <a href="#dec2enc_decode_blist-val">dec2enc_decode_blist</a> : thm
+<a name="line23"></a>    val <a href="#dec2enc_decode_bnum-val">dec2enc_decode_bnum</a> : thm
+<a name="line24"></a>    val <a href="#dec2enc_decode_bool-val">dec2enc_decode_bool</a> : thm
+<a name="line25"></a>    val <a href="#dec2enc_decode_list-val">dec2enc_decode_list</a> : thm
+<a name="line26"></a>    val <a href="#dec2enc_decode_num-val">dec2enc_decode_num</a> : thm
+<a name="line27"></a>    val <a href="#dec2enc_decode_option-val">dec2enc_decode_option</a> : thm
+<a name="line28"></a>    val <a href="#dec2enc_decode_prod-val">dec2enc_decode_prod</a> : thm
+<a name="line29"></a>    val <a href="#dec2enc_decode_sum-val">dec2enc_decode_sum</a> : thm
+<a name="line30"></a>    val <a href="#dec2enc_decode_unit-val">dec2enc_decode_unit</a> : thm
+<a name="line31"></a>    val <a href="#dec2enc_enc2dec-val">dec2enc_enc2dec</a> : thm
+<a name="line32"></a>    val <a href="#dec2enc_some-val">dec2enc_some</a> : thm
+<a name="line33"></a>    val <a href="#dec_bnum_compute-val">dec_bnum_compute</a> : thm
+<a name="line34"></a>    val <a href="#dec_bnum_inj-val">dec_bnum_inj</a> : thm
+<a name="line35"></a>    val <a href="#dec_bnum_lt-val">dec_bnum_lt</a> : thm
+<a name="line36"></a>    val <a href="#decode_blist-val">decode_blist</a> : thm
+<a name="line37"></a>    val <a href="#decode_bnum-val">decode_bnum</a> : thm
+<a name="line38"></a>    val <a href="#decode_bool-val">decode_bool</a> : thm
+<a name="line39"></a>    val <a href="#decode_dec2enc-val">decode_dec2enc</a> : thm
+<a name="line40"></a>    val <a href="#decode_dec2enc_append-val">decode_dec2enc_append</a> : thm
+<a name="line41"></a>    val <a href="#decode_list-val">decode_list</a> : thm
+<a name="line42"></a>    val <a href="#decode_num-val">decode_num</a> : thm
+<a name="line43"></a>    val <a href="#decode_num_total-val">decode_num_total</a> : thm
+<a name="line44"></a>    val <a href="#decode_option-val">decode_option</a> : thm
+<a name="line45"></a>    val <a href="#decode_prod-val">decode_prod</a> : thm
+<a name="line46"></a>    val <a href="#decode_sum-val">decode_sum</a> : thm
+<a name="line47"></a>    val <a href="#decode_tree-val">decode_tree</a> : thm
+<a name="line48"></a>    val <a href="#decode_unit-val">decode_unit</a> : thm
+<a name="line49"></a>    val <a href="#enc2dec_dec2enc-val">enc2dec_dec2enc</a> : thm
+<a name="line50"></a>    val <a href="#enc2dec_none-val">enc2dec_none</a> : thm
+<a name="line51"></a>    val <a href="#enc2dec_some-val">enc2dec_some</a> : thm
+<a name="line52"></a>    val <a href="#enc2dec_some_alt-val">enc2dec_some_alt</a> : thm
+<a name="line53"></a>    val <a href="#encode_then_decode_blist-val">encode_then_decode_blist</a> : thm
+<a name="line54"></a>    val <a href="#encode_then_decode_list-val">encode_then_decode_list</a> : thm
+<a name="line55"></a>    val <a href="#encode_then_decode_option-val">encode_then_decode_option</a> : thm
+<a name="line56"></a>    val <a href="#encode_then_decode_prod-val">encode_then_decode_prod</a> : thm
+<a name="line57"></a>    val <a href="#encode_then_decode_sum-val">encode_then_decode_sum</a> : thm
+<a name="line58"></a>    val <a href="#wf_dec2enc-val">wf_dec2enc</a> : thm
+<a name="line59"></a>    val <a href="#wf_decode_blist-val">wf_decode_blist</a> : thm
+<a name="line60"></a>    val <a href="#wf_decode_bnum-val">wf_decode_bnum</a> : thm
+<a name="line61"></a>    val <a href="#wf_decode_bool-val">wf_decode_bool</a> : thm
+<a name="line62"></a>    val <a href="#wf_decode_list-val">wf_decode_list</a> : thm
+<a name="line63"></a>    val <a href="#wf_decode_num-val">wf_decode_num</a> : thm
+<a name="line64"></a>    val <a href="#wf_decode_option-val">wf_decode_option</a> : thm
+<a name="line65"></a>    val <a href="#wf_decode_prod-val">wf_decode_prod</a> : thm
+<a name="line66"></a>    val <a href="#wf_decode_sum-val">wf_decode_sum</a> : thm
+<a name="line67"></a>    val <a href="#wf_decode_tree-val">wf_decode_tree</a> : thm
+<a name="line68"></a>    val <a href="#wf_decode_unit-val">wf_decode_unit</a> : thm
+<a name="line69"></a>    val <a href="#wf_enc2dec-val">wf_enc2dec</a> : thm
+<a name="line70"></a>(*
+   [Encode] Parent theory of "Decode"
+   
+   [<a name="dec2enc_def-val"><b>dec2enc_def</b></a>]  Definition
+      
+      ⊢ ∀d x. dec2enc d x = @l. d l = SOME (x,[])
+   
+   [<a name="dec_bnum_def-val"><b>dec_bnum_def</b></a>]  Definition
+      
+      ⊢ (∀l. dec_bnum 0 l = SOME (0,l)) ∧
+        ∀m l.
+          dec_bnum (SUC m) l =
+          case l of
+            [] =&gt; NONE
+          | h::t =&gt;
+            case dec_bnum m t of
+              NONE =&gt; NONE
+            | SOME (n,t') =&gt; SOME (2 * n + if h then 1 else 0,t')
+   
+   [<a name="decode_blist_def-val"><b>decode_blist_def</b></a>]  Definition
+      
+      ⊢ ∀p m d. decode_blist p m d = enc2dec p (encode_blist m (dec2enc d))
+   
+   [<a name="decode_bnum_def-val"><b>decode_bnum_def</b></a>]  Definition
+      
+      ⊢ ∀m p. decode_bnum m p = enc2dec p (encode_bnum m)
+   
+   [<a name="decode_bool_def-val"><b>decode_bool_def</b></a>]  Definition
+      
+      ⊢ ∀p. decode_bool p = enc2dec p encode_bool
+   
+   [<a name="decode_list_def-val"><b>decode_list_def</b></a>]  Definition
+      
+      ⊢ ∀p d. decode_list p d = enc2dec p (encode_list (dec2enc d))
+   
+   [<a name="decode_num_def-val"><b>decode_num_def</b></a>]  Definition
+      
+      ⊢ ∀p. decode_num p = enc2dec p encode_num
+   
+   [<a name="decode_option_def-val"><b>decode_option_def</b></a>]  Definition
+      
+      ⊢ ∀p d. decode_option p d = enc2dec p (encode_option (dec2enc d))
+   
+   [<a name="decode_prod_def-val"><b>decode_prod_def</b></a>]  Definition
+      
+      ⊢ ∀p d1 d2.
+          decode_prod p d1 d2 =
+          enc2dec p (encode_prod (dec2enc d1) (dec2enc d2))
+   
+   [<a name="decode_sum_def-val"><b>decode_sum_def</b></a>]  Definition
+      
+      ⊢ ∀p d1 d2.
+          decode_sum p d1 d2 =
+          enc2dec p (encode_sum (dec2enc d1) (dec2enc d2))
+   
+   [<a name="decode_tree_def-val"><b>decode_tree_def</b></a>]  Definition
+      
+      ⊢ ∀p d. decode_tree p d = enc2dec p (encode_tree (dec2enc d))
+   
+   [<a name="decode_unit_def-val"><b>decode_unit_def</b></a>]  Definition
+      
+      ⊢ ∀p. decode_unit p = enc2dec p encode_unit
+   
+   [<a name="enc2dec_def-val"><b>enc2dec_def</b></a>]  Definition
+      
+      ⊢ ∀p e l.
+          enc2dec p e l =
+          if ∃x t. p x ∧ l = e x ⧺ t then SOME (@(x,t). p x ∧ l = e x ⧺ t)
+          else NONE
+   
+   [<a name="wf_decoder_def-val"><b>wf_decoder_def</b></a>]  Definition
+      
+      ⊢ ∀p d.
+          wf_decoder p d ⇔
+          ∀x. if p x then ∃a. ∀b c. d b = SOME (x,c) ⇔ b = a ⧺ c
+              else ∀a b. d a ≠ SOME (x,b)
+   
+   [<a name="dec2enc_decode_blist-val"><b>dec2enc_decode_blist</b></a>]  Theorem
+      
+      ⊢ ∀m p d l.
+          wf_decoder p d ∧ lift_blist m p l ⇒
+          dec2enc (decode_blist (lift_blist m p) m d) l =
+          encode_blist m (dec2enc d) l
+   
+   [<a name="dec2enc_decode_bnum-val"><b>dec2enc_decode_bnum</b></a>]  Theorem
+      
+      ⊢ ∀m p x.
+          wf_pred_bnum m p ∧ p x ⇒
+          dec2enc (decode_bnum m p) x = encode_bnum m x
+   
+   [<a name="dec2enc_decode_bool-val"><b>dec2enc_decode_bool</b></a>]  Theorem
+      
+      ⊢ ∀p x. p x ⇒ dec2enc (decode_bool p) x = encode_bool x
+   
+   [<a name="dec2enc_decode_list-val"><b>dec2enc_decode_list</b></a>]  Theorem
+      
+      ⊢ ∀p d x.
+          wf_decoder p d ∧ EVERY p x ⇒
+          dec2enc (decode_list (EVERY p) d) x = encode_list (dec2enc d) x
+   
+   [<a name="dec2enc_decode_num-val"><b>dec2enc_decode_num</b></a>]  Theorem
+      
+      ⊢ ∀p x. p x ⇒ dec2enc (decode_num p) x = encode_num x
+   
+   [<a name="dec2enc_decode_option-val"><b>dec2enc_decode_option</b></a>]  Theorem
+      
+      ⊢ ∀p d x.
+          wf_decoder p d ∧ lift_option p x ⇒
+          dec2enc (decode_option (lift_option p) d) x =
+          encode_option (dec2enc d) x
+   
+   [<a name="dec2enc_decode_prod-val"><b>dec2enc_decode_prod</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2 d1 d2 x.
+          wf_decoder p1 d1 ∧ wf_decoder p2 d2 ∧ lift_prod p1 p2 x ⇒
+          dec2enc (decode_prod (lift_prod p1 p2) d1 d2) x =
+          encode_prod (dec2enc d1) (dec2enc d2) x
+   
+   [<a name="dec2enc_decode_sum-val"><b>dec2enc_decode_sum</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2 d1 d2 x.
+          wf_decoder p1 d1 ∧ wf_decoder p2 d2 ∧ lift_sum p1 p2 x ⇒
+          dec2enc (decode_sum (lift_sum p1 p2) d1 d2) x =
+          encode_sum (dec2enc d1) (dec2enc d2) x
+   
+   [<a name="dec2enc_decode_unit-val"><b>dec2enc_decode_unit</b></a>]  Theorem
+      
+      ⊢ ∀p x. p x ⇒ dec2enc (decode_unit p) x = encode_unit x
+   
+   [<a name="dec2enc_enc2dec-val"><b>dec2enc_enc2dec</b></a>]  Theorem
+      
+      ⊢ ∀p e x. wf_encoder p e ∧ p x ⇒ dec2enc (enc2dec p e) x = e x
+   
+   [<a name="dec2enc_some-val"><b>dec2enc_some</b></a>]  Theorem
+      
+      ⊢ ∀p d x l.
+          wf_decoder p d ⇒ (dec2enc d x = l ∧ p x ⇔ d l = SOME (x,[]))
+   
+   [<a name="dec_bnum_compute-val"><b>dec_bnum_compute</b></a>]  Theorem
+      
+      ⊢ (∀l. dec_bnum 0 l = SOME (0,l)) ∧
+        (∀m l.
+           dec_bnum (NUMERAL (BIT1 m)) l =
+           case l of
+             [] =&gt; NONE
+           | h::t =&gt;
+             case dec_bnum (NUMERAL (BIT1 m) − 1) t of
+               NONE =&gt; NONE
+             | SOME (n,t') =&gt; SOME (2 * n + if h then 1 else 0,t')) ∧
+        ∀m l.
+          dec_bnum (NUMERAL (BIT2 m)) l =
+          case l of
+            [] =&gt; NONE
+          | h::t =&gt;
+            case dec_bnum (NUMERAL (BIT1 m)) t of
+              NONE =&gt; NONE
+            | SOME (n,t') =&gt; SOME (2 * n + if h then 1 else 0,t')
+   
+   [<a name="dec_bnum_inj-val"><b>dec_bnum_inj</b></a>]  Theorem
+      
+      ⊢ ∀m l n t. dec_bnum m l = SOME (n,t) ⇒ l = encode_bnum m n ⧺ t
+   
+   [<a name="dec_bnum_lt-val"><b>dec_bnum_lt</b></a>]  Theorem
+      
+      ⊢ ∀m l n t. dec_bnum m l = SOME (n,t) ⇒ n &lt; 2 ** m
+   
+   [<a name="decode_blist-val"><b>decode_blist</b></a>]  Theorem
+      
+      ⊢ wf_decoder p d ⇒
+        decode_blist (lift_blist m p) m d l =
+        case m of
+          0 =&gt; SOME ([],l)
+        | SUC n =&gt;
+          case d l of
+            NONE =&gt; NONE
+          | SOME (x,t) =&gt;
+            case decode_blist (lift_blist n p) n d t of
+              NONE =&gt; NONE
+            | SOME (xs,t') =&gt; SOME (x::xs,t')
+   
+   [<a name="decode_bnum-val"><b>decode_bnum</b></a>]  Theorem
+      
+      ⊢ wf_pred_bnum m p ⇒
+        decode_bnum m p l =
+        case dec_bnum m l of
+          NONE =&gt; NONE
+        | SOME (n,t) =&gt; if p n then SOME (n,t) else NONE
+   
+   [<a name="decode_bool-val"><b>decode_bool</b></a>]  Theorem
+      
+      ⊢ decode_bool p l =
+        case l of [] =&gt; NONE | h::t =&gt; if p h then SOME (h,t) else NONE
+   
+   [<a name="decode_dec2enc-val"><b>decode_dec2enc</b></a>]  Theorem
+      
+      ⊢ ∀p d x. wf_decoder p d ∧ p x ⇒ d (dec2enc d x) = SOME (x,[])
+   
+   [<a name="decode_dec2enc_append-val"><b>decode_dec2enc_append</b></a>]  Theorem
+      
+      ⊢ ∀p d x t. wf_decoder p d ∧ p x ⇒ d (dec2enc d x ⧺ t) = SOME (x,t)
+   
+   [<a name="decode_list-val"><b>decode_list</b></a>]  Theorem
+      
+      ⊢ wf_decoder p d ⇒
+        decode_list (EVERY p) d l =
+        case l of
+          [] =&gt; NONE
+        | T::t =&gt;
+          (case d t of
+             NONE =&gt; NONE
+           | SOME (x,t') =&gt;
+             case decode_list (EVERY p) d t' of
+               NONE =&gt; NONE
+             | SOME (xs,t'') =&gt; SOME (x::xs,t''))
+        | F::t =&gt; SOME ([],t)
+   
+   [<a name="decode_num-val"><b>decode_num</b></a>]  Theorem
+      
+      ⊢ decode_num p l =
+        case l of
+          [] =&gt; NONE
+        | [T] =&gt; NONE
+        | T::T::t =&gt; if p 0 then SOME (0,t) else NONE
+        | T::F::t =&gt;
+          (case decode_num (K T) t of
+             NONE =&gt; NONE
+           | SOME (v,t') =&gt;
+             if p (2 * v + 1) then SOME (2 * v + 1,t') else NONE)
+        | F::t' =&gt;
+          case decode_num (K T) t' of
+            NONE =&gt; NONE
+          | SOME (v,t') =&gt;
+            if p (2 * v + 2) then SOME (2 * v + 2,t') else NONE
+   
+   [<a name="decode_num_total-val"><b>decode_num_total</b></a>]  Theorem
+      
+      ⊢ decode_num (K T) l =
+        case l of
+          [] =&gt; NONE
+        | [T] =&gt; NONE
+        | T::T::t =&gt; SOME (0,t)
+        | T::F::t =&gt;
+          (case decode_num (K T) t of
+             NONE =&gt; NONE
+           | SOME (v,t') =&gt; SOME (2 * v + 1,t'))
+        | F::t' =&gt;
+          case decode_num (K T) t' of
+            NONE =&gt; NONE
+          | SOME (v,t') =&gt; SOME (2 * v + 2,t')
+   
+   [<a name="decode_option-val"><b>decode_option</b></a>]  Theorem
+      
+      ⊢ wf_decoder p d ⇒
+        decode_option (lift_option p) d l =
+        case l of
+          [] =&gt; NONE
+        | T::t =&gt;
+          (case d t of NONE =&gt; NONE | SOME (x,t') =&gt; SOME (SOME x,t'))
+        | F::t =&gt; SOME (NONE,t)
+   
+   [<a name="decode_prod-val"><b>decode_prod</b></a>]  Theorem
+      
+      ⊢ wf_decoder p1 d1 ∧ wf_decoder p2 d2 ⇒
+        decode_prod (lift_prod p1 p2) d1 d2 l =
+        case d1 l of
+          NONE =&gt; NONE
+        | SOME (x,t) =&gt;
+          case d2 t of NONE =&gt; NONE | SOME (y,t') =&gt; SOME ((x,y),t')
+   
+   [<a name="decode_sum-val"><b>decode_sum</b></a>]  Theorem
+      
+      ⊢ wf_decoder p1 d1 ∧ wf_decoder p2 d2 ⇒
+        decode_sum (lift_sum p1 p2) d1 d2 l =
+        case l of
+          [] =&gt; NONE
+        | T::t =&gt;
+          (case d1 t of NONE =&gt; NONE | SOME (x,t') =&gt; SOME (INL x,t'))
+        | F::t =&gt;
+          case d2 t of NONE =&gt; NONE | SOME (x,t') =&gt; SOME (INR x,t')
+   
+   [<a name="decode_tree-val"><b>decode_tree</b></a>]  Theorem
+      
+      ⊢ wf_decoder p d ⇒
+        decode_tree (lift_tree p) d l =
+        case d l of
+          NONE =&gt; NONE
+        | SOME (a,t) =&gt;
+          case
+            decode_list (EVERY (lift_tree p)) (decode_tree (lift_tree p) d)
+              t
+          of
+            NONE =&gt; NONE
+          | SOME (ts,t') =&gt; SOME (Node a ts,t')
+   
+   [<a name="decode_unit-val"><b>decode_unit</b></a>]  Theorem
+      
+      ⊢ decode_unit p l = if p () then SOME ((),l) else NONE
+   
+   [<a name="enc2dec_dec2enc-val"><b>enc2dec_dec2enc</b></a>]  Theorem
+      
+      ⊢ ∀p d. wf_decoder p d ⇒ enc2dec p (dec2enc d) = d
+   
+   [<a name="enc2dec_none-val"><b>enc2dec_none</b></a>]  Theorem
+      
+      ⊢ ∀p e l. enc2dec p e l = NONE ⇔ ∀x t. p x ⇒ l ≠ e x ⧺ t
+   
+   [<a name="enc2dec_some-val"><b>enc2dec_some</b></a>]  Theorem
+      
+      ⊢ ∀p e l x t.
+          wf_encoder p e ⇒ (enc2dec p e l = SOME (x,t) ⇔ p x ∧ l = e x ⧺ t)
+   
+   [<a name="enc2dec_some_alt-val"><b>enc2dec_some_alt</b></a>]  Theorem
+      
+      ⊢ ∀p e l x.
+          wf_encoder p e ⇒
+          (enc2dec p e l = SOME x ⇔ p (FST x) ∧ l = e (FST x) ⧺ SND x)
+   
+   [<a name="encode_then_decode_blist-val"><b>encode_then_decode_blist</b></a>]  Theorem
+      
+      ⊢ ∀m p e l t.
+          wf_encoder p e ∧ lift_blist m p l ⇒
+          decode_blist (lift_blist m p) m (enc2dec p e)
+            (encode_blist m e l ⧺ t) =
+          SOME (l,t)
+   
+   [<a name="encode_then_decode_list-val"><b>encode_then_decode_list</b></a>]  Theorem
+      
+      ⊢ ∀p e l t.
+          wf_encoder p e ∧ EVERY p l ⇒
+          decode_list (EVERY p) (enc2dec p e) (encode_list e l ⧺ t) =
+          SOME (l,t)
+   
+   [<a name="encode_then_decode_option-val"><b>encode_then_decode_option</b></a>]  Theorem
+      
+      ⊢ ∀p e l t.
+          wf_encoder p e ∧ lift_option p l ⇒
+          decode_option (lift_option p) (enc2dec p e)
+            (encode_option e l ⧺ t) =
+          SOME (l,t)
+   
+   [<a name="encode_then_decode_prod-val"><b>encode_then_decode_prod</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2 e1 e2 l t.
+          wf_encoder p1 e1 ∧ wf_encoder p2 e2 ∧ lift_prod p1 p2 l ⇒
+          decode_prod (lift_prod p1 p2) (enc2dec p1 e1) (enc2dec p2 e2)
+            (encode_prod e1 e2 l ⧺ t) =
+          SOME (l,t)
+   
+   [<a name="encode_then_decode_sum-val"><b>encode_then_decode_sum</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2 e1 e2 l t.
+          wf_encoder p1 e1 ∧ wf_encoder p2 e2 ∧ lift_sum p1 p2 l ⇒
+          decode_sum (lift_sum p1 p2) (enc2dec p1 e1) (enc2dec p2 e2)
+            (encode_sum e1 e2 l ⧺ t) =
+          SOME (l,t)
+   
+   [<a name="wf_dec2enc-val"><b>wf_dec2enc</b></a>]  Theorem
+      
+      ⊢ ∀p d. wf_decoder p d ⇒ wf_encoder p (dec2enc d)
+   
+   [<a name="wf_decode_blist-val"><b>wf_decode_blist</b></a>]  Theorem
+      
+      ⊢ ∀m p d.
+          wf_decoder p d ⇒
+          wf_decoder (lift_blist m p) (decode_blist (lift_blist m p) m d)
+   
+   [<a name="wf_decode_bnum-val"><b>wf_decode_bnum</b></a>]  Theorem
+      
+      ⊢ ∀m p. wf_pred_bnum m p ⇒ wf_decoder p (decode_bnum m p)
+   
+   [<a name="wf_decode_bool-val"><b>wf_decode_bool</b></a>]  Theorem
+      
+      ⊢ ∀p. wf_decoder p (decode_bool p)
+   
+   [<a name="wf_decode_list-val"><b>wf_decode_list</b></a>]  Theorem
+      
+      ⊢ ∀p d.
+          wf_decoder p d ⇒ wf_decoder (EVERY p) (decode_list (EVERY p) d)
+   
+   [<a name="wf_decode_num-val"><b>wf_decode_num</b></a>]  Theorem
+      
+      ⊢ ∀p. wf_decoder p (decode_num p)
+   
+   [<a name="wf_decode_option-val"><b>wf_decode_option</b></a>]  Theorem
+      
+      ⊢ ∀p d.
+          wf_decoder p d ⇒
+          wf_decoder (lift_option p) (decode_option (lift_option p) d)
+   
+   [<a name="wf_decode_prod-val"><b>wf_decode_prod</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2 d1 d2.
+          wf_decoder p1 d1 ∧ wf_decoder p2 d2 ⇒
+          wf_decoder (lift_prod p1 p2)
+            (decode_prod (lift_prod p1 p2) d1 d2)
+   
+   [<a name="wf_decode_sum-val"><b>wf_decode_sum</b></a>]  Theorem
+      
+      ⊢ ∀p1 p2 d1 d2.
+          wf_decoder p1 d1 ∧ wf_decoder p2 d2 ⇒
+          wf_decoder (lift_sum p1 p2) (decode_sum (lift_sum p1 p2) d1 d2)
+   
+   [<a name="wf_decode_tree-val"><b>wf_decode_tree</b></a>]  Theorem
+      
+      ⊢ ∀p d.
+          wf_decoder p d ⇒
+          wf_decoder (lift_tree p) (decode_tree (lift_tree p) d)
+   
+   [<a name="wf_decode_unit-val"><b>wf_decode_unit</b></a>]  Theorem
+      
+      ⊢ wf_decoder p (decode_unit p)
+   
+   [<a name="wf_enc2dec-val"><b>wf_enc2dec</b></a>]  Theorem
+      
+      ⊢ ∀p e. wf_encoder p e ⇒ wf_decoder p (enc2dec p e)
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/Boolify/src/.hol/objs/DecodeScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

@@ -1,0 +1,3250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: number</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "number"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "logrootTheory.html"><span class="strong">logroot</span></a>&nbsp;&nbsp;
+    <a href = "listRangeTheory.html"><span class="strong">listRange</span></a>&nbsp;&nbsp;
+    <a href = "gcdsetTheory.html"><span class="strong">gcdset</span></a>&nbsp;&nbsp;
+    <a href = "holTheory.html"><span class="strong">hol</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">Euler</span>
+    <td>
+    :num -> num -> bool
+    <tr><td>
+    <span class="strong">GCD_MOD_MUL_INV</span>
+    <td>
+    :num -> num -> num
+    <tr><td> <span class="strong">MOD_MULT_INV</span> <td> :num -> num -> num
+    <tr><td>
+    <span class="strong">fequiv</span>
+    <td>
+    :α -> α -> (α -> β) -> bool
+    <tr><td>
+    <span class="strong">preimage</span>
+    <td>
+    :(α -> β) -> (α -> bool) -> β -> α -> bool
+    <tr><td> <span class="strong">residue</span> <td> :num -> num -> bool
+    <tr><td> <span class="strong">totient</span> <td> :num -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">Euler_def</span>
+<DD>
+<pre>
+⊢ ∀n. Euler n = {i | 0 < i ∧ i < n ∧ coprime n i}
+</pre>
+
+<DT><span class="strong">GEN_MULT_INV_DEF</span>
+<DD>
+<pre>
+⊢ ∀n x.
+    1 < n ∧ 0 < x ∧ x < n ∧ coprime n x ⇒
+    0 < GCD_MOD_MUL_INV n x ∧ GCD_MOD_MUL_INV n x < n ∧
+    coprime n (GCD_MOD_MUL_INV n x) ∧ (GCD_MOD_MUL_INV n x * x) MOD n = 1
+</pre>
+
+<DT><span class="strong">MOD_MULT_INV_DEF</span>
+<DD>
+<pre>
+⊢ ∀p x.
+    prime p ∧ 0 < x ∧ x < p ⇒
+    0 < MOD_MULT_INV p x ∧ MOD_MULT_INV p x < p ∧
+    (MOD_MULT_INV p x * x) MOD p = 1
+</pre>
+
+<DT><span class="strong">fequiv_def</span>
+<DD>
+<pre>
+⊢ ∀x y f. (x == y) f ⇔ f x = f y
+</pre>
+
+<DT><span class="strong">preimage_def</span>
+<DD>
+<pre>
+⊢ ∀f s y. preimage f s y = {x | x ∈ s ∧ f x = y}
+</pre>
+
+<DT><span class="strong">residue_def</span>
+<DD>
+<pre>
+⊢ ∀n. residue n = {i | 0 < i ∧ i < n}
+</pre>
+
+<DT><span class="strong">totient_def</span>
+<DD>
+<pre>
+⊢ ∀n. totient n = CARD (Euler n)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ADD_EQ_2</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ 0 < n ∧ m + n = 2 ⇒ m = 1 ∧ n = 1
+</pre>
+
+<DT><span class="strong">ADD_SUB_SUB</span>
+<DD>
+<pre>
+⊢ ∀a b c. c ≤ a ⇒ a + b − (a − c) = c + b
+</pre>
+
+<DT><span class="strong">ALL_PRIME_FACTORS_MOD_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < m ∧ 1 < n ∧ (∀p. prime p ∧ p divides m ⇒ p MOD n = 1) ⇒ m MOD n = 1
+</pre>
+
+<DT><span class="strong">AND_IMP_IMP</span>
+<DD>
+<pre>
+⊢ ∀b c d. b ∧ (c ⇒ d) ⇒ (b ⇒ c) ⇒ d
+</pre>
+
+<DT><span class="strong">AND_IMP_OR_NEG</span>
+<DD>
+<pre>
+⊢ ∀p q. p ∧ q ⇒ p ∨ ¬q
+</pre>
+
+<DT><span class="strong">BIGUNION_ELEMENTS_SING</span>
+<DD>
+<pre>
+⊢ ∀s. BIGUNION (IMAGE (λx. {x}) s) = s
+</pre>
+
+<DT><span class="strong">BIJ_LINV_ELEMENT</span>
+<DD>
+<pre>
+⊢ ∀f s t. BIJ f s t ⇒ ∀x. x ∈ t ⇒ LINV f s x ∈ s
+</pre>
+
+<DT><span class="strong">BIJ_LINV_THM</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    BIJ f s t ⇒
+    (∀x. x ∈ s ⇒ LINV f s (f x) = x) ∧ ∀x. x ∈ t ⇒ f (LINV f s x) = x
+</pre>
+
+<DT><span class="strong">BIJ_RINV_BIJ</span>
+<DD>
+<pre>
+⊢ ∀f s t. BIJ f s t ∧ (∀y. y ∈ t ⇒ RINV f s y ∈ s) ⇒ BIJ (RINV f s) t s
+</pre>
+
+<DT><span class="strong">BIJ_RINV_INV</span>
+<DD>
+<pre>
+⊢ ∀f s t.
+    BIJ f s t ∧ (∀y. y ∈ t ⇒ RINV f s y ∈ s) ⇒ ∀x. x ∈ s ⇒ RINV f s (f x) = x
+</pre>
+
+<DT><span class="strong">BOOL_EQ</span>
+<DD>
+<pre>
+⊢ ∀b1 b2 f. (b1 ⇔ b2) ⇒ f b1 = f b2
+</pre>
+
+<DT><span class="strong">CARD_BIGUNION_PAIR_DISJOINT</span>
+<DD>
+<pre>
+⊢ ∀P. FINITE P ∧ EVERY_FINITE P ∧ PAIR_DISJOINT P ⇒
+      CARD (BIGUNION P) = ∑ CARD P
+</pre>
+
+<DT><span class="strong">CARD_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ (CARD s = 1 ⇔ SING s)
+</pre>
+
+<DT><span class="strong">CARD_PPOW</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ CARD (PPOW s) = PRE (2 ** CARD s)
+</pre>
+
+<DT><span class="strong">CARD_PPOW_EQN</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ CARD (PPOW s) = tops 2 (CARD s)
+</pre>
+
+<DT><span class="strong">CARD_UNION_3_DISJOINT</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    FINITE a ∧ FINITE b ∧ FINITE c ∧ DISJOINT a b ∧ DISJOINT b c ∧
+    DISJOINT a c ⇒
+    CARD (a ∪ b ∪ c) = CARD a + CARD b + CARD c
+</pre>
+
+<DT><span class="strong">CARD_UNION_3_EQN</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    FINITE a ∧ FINITE b ∧ FINITE c ⇒
+    CARD (a ∪ b ∪ c) =
+    CARD a + CARD b + CARD c + CARD (a ∩ b ∩ c) − CARD (a ∩ b) −
+    CARD (b ∩ c) − CARD (a ∩ c)
+</pre>
+
+<DT><span class="strong">COUNT_0</span>
+<DD>
+<pre>
+⊢ count 0 = ∅
+</pre>
+
+<DT><span class="strong">COUNT_1</span>
+<DD>
+<pre>
+⊢ count 1 = {0}
+</pre>
+
+<DT><span class="strong">COUNT_NOT_SELF</span>
+<DD>
+<pre>
+⊢ ∀n. n ∉ count n
+</pre>
+
+<DT><span class="strong">COUNT_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ count m ⊆ count n
+</pre>
+
+<DT><span class="strong">COUNT_SUC_BY_SUC</span>
+<DD>
+<pre>
+⊢ ∀n. upto n = 0 INSERT natural n
+</pre>
+
+<DT><span class="strong">COUNT_SUC_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀n t. upto n ⊆ t ⇔ count n ⊆ t ∧ n ∈ t
+</pre>
+
+<DT><span class="strong">DIFF_COUNT_SUC</span>
+<DD>
+<pre>
+⊢ ∀n t. t DIFF upto n = t DIFF count n DELETE n
+</pre>
+
+<DT><span class="strong">DIFF_DELETE</span>
+<DD>
+<pre>
+⊢ ∀s t x. s DIFF t DELETE x = s DIFF (x INSERT t)
+</pre>
+
+<DT><span class="strong">DIFF_DIFF_EQ_INTER</span>
+<DD>
+<pre>
+⊢ ∀s t. s DIFF (s DIFF t) = s ∩ t
+</pre>
+
+<DT><span class="strong">DISJOINT_DIFF</span>
+<DD>
+<pre>
+⊢ ∀s t. DISJOINT (s DIFF t) t ∧ DISJOINT t (s DIFF t)
+</pre>
+
+<DT><span class="strong">DISJOINT_DIFF_IFF</span>
+<DD>
+<pre>
+⊢ ∀s t. DISJOINT s t ⇔ s DIFF t = s
+</pre>
+
+<DT><span class="strong">DIVIDES_CANCEL</span>
+<DD>
+<pre>
+⊢ ∀k. 0 < k ⇒ ∀m n. m divides n ⇔ m * k divides n * k
+</pre>
+
+<DT><span class="strong">DIVIDES_CANCEL_COMM</span>
+<DD>
+<pre>
+⊢ ∀m n k. m divides n ⇒ k * m divides k * n
+</pre>
+
+<DT><span class="strong">DIVIDES_COFACTOR</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ n divides m ⇒ m DIV n divides m
+</pre>
+
+<DT><span class="strong">DIVIDES_FACTORS</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ n divides m ⇒ m = n * (m DIV n)
+</pre>
+
+<DT><span class="strong">DIVIDES_MOD_MOD</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ m divides n ⇒ ∀x. x MOD n MOD m = x MOD m
+</pre>
+
+<DT><span class="strong">DIVIDES_MULTIPLE_IFF</span>
+<DD>
+<pre>
+⊢ ∀m n k. k ≠ 0 ⇒ (m divides n ⇔ k * m divides k * n)
+</pre>
+
+<DT><span class="strong">DIV_COMMON_FACTOR</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ 0 < m ⇒ ∀x. n divides x ⇒ m * x DIV (m * n) = x DIV n
+</pre>
+
+<DT><span class="strong">DIV_DIV_MULT</span>
+<DD>
+<pre>
+⊢ ∀m n x.
+    0 < n ∧ 0 < m ∧ 0 < m DIV n ∧ n divides m ∧ m divides x ∧
+    m DIV n divides x ⇒
+    x DIV (m DIV n) = n * (x DIV m)
+</pre>
+
+<DT><span class="strong">DIV_LT_MONOTONE_REVERSE</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ∧ x < y ⇒ ∀n. 0 < n ∧ n MOD x = 0 ⇒ n DIV y < n DIV x
+</pre>
+
+<DT><span class="strong">DIV_LT_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ 0 < n ∧ n MOD m = 0 ⇒ n DIV SUC m < n DIV m
+</pre>
+
+<DT><span class="strong">DIV_MULT_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ⇒ m * (n DIV m) ≤ n ∧ n < m * SUC (n DIV m)
+</pre>
+
+<DT><span class="strong">EQ_IMP2_THM</span>
+<DD>
+<pre>
+⊢ ∀A B. (A ⇔ B) ⇔ (A ⇒ B) ∧ ((A ⇒ B) ⇒ B ⇒ A)
+</pre>
+
+<DT><span class="strong">EQ_PARITY</span>
+<DD>
+<pre>
+⊢ ∀a b. EVEN (2 * a + b) ⇔ EVEN b
+</pre>
+
+<DT><span class="strong">EVEN_0</span>
+<DD>
+<pre>
+⊢ EVEN 0
+</pre>
+
+<DT><span class="strong">EVEN_2</span>
+<DD>
+<pre>
+⊢ EVEN 2
+</pre>
+
+<DT><span class="strong">EVEN_HALF</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN n ⇒ n = 2 * (n DIV 2)
+</pre>
+
+<DT><span class="strong">EVEN_MOD_EVEN</span>
+<DD>
+<pre>
+⊢ ∀m. EVEN m ∧ m ≠ 0 ⇒ ∀n. EVEN n ⇔ EVEN (n MOD m)
+</pre>
+
+<DT><span class="strong">EVEN_MOD_ODD</span>
+<DD>
+<pre>
+⊢ ∀m. EVEN m ∧ m ≠ 0 ⇒ ∀n. ODD n ⇔ ODD (n MOD m)
+</pre>
+
+<DT><span class="strong">EVEN_ODD_PRE</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ (EVEN n ⇔ ODD (PRE n)) ∧ (ODD n ⇔ EVEN (PRE n))
+</pre>
+
+<DT><span class="strong">EVEN_ODD_SUC</span>
+<DD>
+<pre>
+⊢ ∀n. (EVEN n ⇔ ODD (SUC n)) ∧ (ODD n ⇔ EVEN (SUC n))
+</pre>
+
+<DT><span class="strong">EVEN_PARTNERS</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN (n * (n + 1))
+</pre>
+
+<DT><span class="strong">EVEN_PRIME</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN n ∧ prime n ⇔ n = 2
+</pre>
+
+<DT><span class="strong">EVEN_SQ</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN n² ⇔ EVEN n
+</pre>
+
+<DT><span class="strong">EVEN_SUC_HALF</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN n ⇒ SUC n DIV 2 = n DIV 2
+</pre>
+
+<DT><span class="strong">EXP_2_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n. n² = 0 ⇔ n = 0
+</pre>
+
+<DT><span class="strong">EXP_2_EVEN</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ EVEN (2 ** n)
+</pre>
+
+<DT><span class="strong">EXP_2_HALF</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ 2 ** n DIV 2 = 2 ** (n − 1)
+</pre>
+
+<DT><span class="strong">EXP_2_PRE_ODD</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ODD (tops 2 n)
+</pre>
+
+<DT><span class="strong">EXP_ALT_EQN</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    m ** n = if n = 0 then 1 else (if EVEN n then 1 else m) * m² ** (n DIV 2)
+</pre>
+
+<DT><span class="strong">EXP_BY_ADD_SUB_LE</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ ∀p. p ** n = p ** m * p ** (n − m)
+</pre>
+
+<DT><span class="strong">EXP_BY_ADD_SUB_LT</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ⇒ ∀p. p ** n = p ** m * p ** (n − m)
+</pre>
+
+<DT><span class="strong">EXP_EQN</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    m ** n =
+    if n = 0 then 1
+    else if EVEN n then (m * m) ** (n DIV 2)
+    else m * (m * m) ** (n DIV 2)
+</pre>
+
+<DT><span class="strong">EXP_EQN_ALT</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    m ** n =
+    if n = 0 then 1 else (if EVEN n then 1 else m) * (m * m) ** (n DIV 2)
+</pre>
+
+<DT><span class="strong">EXP_EVEN</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN n ⇒ ∀m. m ** n = (m * m) ** (n DIV 2)
+</pre>
+
+<DT><span class="strong">EXP_EXP_BASE_LE</span>
+<DD>
+<pre>
+⊢ ∀b c m n. m ≤ n ∧ 0 < c ⇒ b ** c ** m ≤ b ** c ** n
+</pre>
+
+<DT><span class="strong">EXP_EXP_LE_MONO_IMP</span>
+<DD>
+<pre>
+⊢ ∀a b n. a ≤ b ⇒ a ** n ≤ b ** n
+</pre>
+
+<DT><span class="strong">EXP_EXP_SUC</span>
+<DD>
+<pre>
+⊢ ∀x y n. x ** y ** SUC n = (x ** y) ** y ** n
+</pre>
+
+<DT><span class="strong">EXP_LOWER_LE_HIGH</span>
+<DD>
+<pre>
+⊢ ∀n m. n * m ** (n − 1) + m ** n ≤ (1 + m) ** n
+</pre>
+
+<DT><span class="strong">EXP_LOWER_LE_LOW</span>
+<DD>
+<pre>
+⊢ ∀n m. 1 + n * m ≤ (1 + m) ** n
+</pre>
+
+<DT><span class="strong">EXP_LOWER_LT_LOW</span>
+<DD>
+<pre>
+⊢ ∀n m. 0 < m ∧ 1 < n ⇒ 1 + n * m < (1 + m) ** n
+</pre>
+
+<DT><span class="strong">EXP_MOD_ALT</span>
+<DD>
+<pre>
+⊢ ∀b n m.
+    1 < m ⇒
+    b ** n MOD m =
+    if n = 0 then 1
+    else ((if EVEN n then 1 else b) * (b * b) ** (n DIV 2) MOD m) MOD m
+</pre>
+
+<DT><span class="strong">EXP_MOD_EQN</span>
+<DD>
+<pre>
+⊢ ∀b n m.
+    1 < m ⇒
+    b ** n MOD m =
+    if n = 0 then 1
+    else
+      (let
+         result = (b * b) ** (n DIV 2) MOD m
+       in
+         if EVEN n then result else (b * result) MOD m)
+</pre>
+
+<DT><span class="strong">EXP_ODD</span>
+<DD>
+<pre>
+⊢ ∀n. ODD n ⇒ ∀m. m ** n = m * (m * m) ** (n DIV 2)
+</pre>
+
+<DT><span class="strong">EXP_SUC_DIV</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ⇒ m ** SUC n DIV m = m ** n
+</pre>
+
+<DT><span class="strong">EXP_THM</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    m ** n =
+    if n = 0 then 1
+    else if n = 1 then m
+    else if EVEN n then (m * m) ** (n DIV 2)
+    else m * (m * m) ** (n DIV 2)
+</pre>
+
+<DT><span class="strong">Euler_0</span>
+<DD>
+<pre>
+⊢ Euler 0 = ∅
+</pre>
+
+<DT><span class="strong">Euler_1</span>
+<DD>
+<pre>
+⊢ Euler 1 = ∅
+</pre>
+
+<DT><span class="strong">Euler_card_bounds</span>
+<DD>
+<pre>
+⊢ ∀n. totient n ≤ n ∧ (1 < n ⇒ 0 < totient n ∧ totient n < n)
+</pre>
+
+<DT><span class="strong">Euler_card_prime</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ totient p = p − 1
+</pre>
+
+<DT><span class="strong">Euler_card_upper_le</span>
+<DD>
+<pre>
+⊢ ∀n. totient n ≤ n
+</pre>
+
+<DT><span class="strong">Euler_card_upper_lt</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ totient n < n
+</pre>
+
+<DT><span class="strong">Euler_element</span>
+<DD>
+<pre>
+⊢ ∀n x. x ∈ Euler n ⇔ 0 < x ∧ x < n ∧ coprime n x
+</pre>
+
+<DT><span class="strong">Euler_empty</span>
+<DD>
+<pre>
+⊢ ∀n. Euler n = ∅ ⇔ n = 0 ∨ n = 1
+</pre>
+
+<DT><span class="strong">Euler_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (Euler n)
+</pre>
+
+<DT><span class="strong">Euler_has_1</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ 1 ∈ Euler n
+</pre>
+
+<DT><span class="strong">Euler_nonempty</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ Euler n ≠ ∅
+</pre>
+
+<DT><span class="strong">Euler_prime</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ Euler p = residue p
+</pre>
+
+<DT><span class="strong">Euler_thm</span>
+<DD>
+<pre>
+⊢ ∀n. Euler n = residue n ∩ {j | coprime j n}
+</pre>
+
+<DT><span class="strong">FACTOR_OUT_POWER</span>
+<DD>
+<pre>
+⊢ ∀n p.
+    0 < n ∧ 1 < p ∧ p divides n ⇒
+    ∃m. p ** m divides n ∧ ¬(p divides n DIV p ** m)
+</pre>
+
+<DT><span class="strong">FACTOR_OUT_PRIME</span>
+<DD>
+<pre>
+⊢ ∀n p.
+    0 < n ∧ prime p ∧ p divides n ⇒
+    ∃m. 0 < m ∧ p ** m divides n ∧ ∀k. coprime (p ** k) (n DIV p ** m)
+</pre>
+
+<DT><span class="strong">FACT_EQ_PROD</span>
+<DD>
+<pre>
+⊢ ∀n. FACT n = PROD_SET (natural n)
+</pre>
+
+<DT><span class="strong">FACT_REDUCTION</span>
+<DD>
+<pre>
+⊢ ∀n m. m < n ⇒ FACT n = PROD_SET (IMAGE SUC (count n DIFF count m)) * FACT m
+</pre>
+
+<DT><span class="strong">FILTER_element_order</span>
+<DD>
+<pre>
+⊢ ∀P ls j h.
+    (let
+       fs = FILTER P ls
+     in
+       ALL_DISTINCT ls ∧ j < h ∧ h < LENGTH fs ⇒
+       findi (EL j fs) ls < findi (EL h fs) ls)
+</pre>
+
+<DT><span class="strong">FINITE_BIJ_COUNT_CARD</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ count (CARD s) =b= s
+</pre>
+
+<DT><span class="strong">FINITE_COUNT_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀P n. FINITE {P x | x < n}
+</pre>
+
+<DT><span class="strong">FINITE_INJ_AS_SURJ</span>
+<DD>
+<pre>
+⊢ ∀f s t. INJ f s t ∧ FINITE s ∧ FINITE t ∧ CARD s = CARD t ⇒ SURJ f s t
+</pre>
+
+<DT><span class="strong">FINITE_INJ_IS_BIJ</span>
+<DD>
+<pre>
+⊢ ∀f s t. FINITE s ∧ FINITE t ∧ CARD s = CARD t ∧ INJ f s t ⇒ BIJ f s t
+</pre>
+
+<DT><span class="strong">FINITE_INJ_IS_SURJ</span>
+<DD>
+<pre>
+⊢ ∀f s t. FINITE s ∧ FINITE t ∧ CARD s = CARD t ∧ INJ f s t ⇒ SURJ f s t
+</pre>
+
+<DT><span class="strong">FINITE_PPOW</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ FINITE (PPOW s)
+</pre>
+
+<DT><span class="strong">FINITE_SURJ_IS_INJ</span>
+<DD>
+<pre>
+⊢ ∀f s t. FINITE s ∧ CARD s = CARD t ∧ SURJ f s t ⇒ INJ f s t
+</pre>
+
+<DT><span class="strong">FIVE</span>
+<DD>
+<pre>
+⊢ 5 = SUC 4
+</pre>
+
+<DT><span class="strong">FOUR</span>
+<DD>
+<pre>
+⊢ 4 = SUC 3
+</pre>
+
+<DT><span class="strong">FUNPOW_ADD1</span>
+<DD>
+<pre>
+⊢ ∀m n. FUNPOW SUC n m = m + n
+</pre>
+
+<DT><span class="strong">FUNPOW_DIV</span>
+<DD>
+<pre>
+⊢ ∀b m n. 0 < b ⇒ FUNPOW (flip $DIV b) n m = m DIV b ** n
+</pre>
+
+<DT><span class="strong">FUNPOW_EQ_LINV</span>
+<DD>
+<pre>
+⊢ ∀f s x n. f PERMUTES s ∧ x ∈ s ⇒ FUNPOW (LINV f s) n (FUNPOW f n x) = x
+</pre>
+
+<DT><span class="strong">FUNPOW_GE_MONO</span>
+<DD>
+<pre>
+⊢ ∀f g. (∀x. f x ≤ g x) ∧ MONO f ⇒ ∀n x. FUNPOW f n x ≤ FUNPOW g n x
+</pre>
+
+<DT><span class="strong">FUNPOW_LE_FALLING</span>
+<DD>
+<pre>
+⊢ ∀f m n. (∀x. f x ≤ x) ∧ m ≤ n ⇒ ∀x. FUNPOW f n x ≤ FUNPOW f m x
+</pre>
+
+<DT><span class="strong">FUNPOW_LE_MONO</span>
+<DD>
+<pre>
+⊢ ∀f g. (∀x. f x ≤ g x) ∧ MONO g ⇒ ∀n x. FUNPOW f n x ≤ FUNPOW g n x
+</pre>
+
+<DT><span class="strong">FUNPOW_LE_RISING</span>
+<DD>
+<pre>
+⊢ ∀f m n. (∀x. x ≤ f x) ∧ m ≤ n ⇒ ∀x. FUNPOW f m x ≤ FUNPOW f n x
+</pre>
+
+<DT><span class="strong">FUNPOW_LINV_EQ</span>
+<DD>
+<pre>
+⊢ ∀f s x n. f PERMUTES s ∧ x ∈ s ⇒ FUNPOW f n (FUNPOW (LINV f s) n x) = x
+</pre>
+
+<DT><span class="strong">FUNPOW_LINV_INV</span>
+<DD>
+<pre>
+⊢ ∀f s x y n.
+    f PERMUTES s ∧ x ∈ s ∧ y ∈ s ⇒
+    (x = FUNPOW f n y ⇔ y = FUNPOW (LINV f s) n x)
+</pre>
+
+<DT><span class="strong">FUNPOW_LINV_SUB1</span>
+<DD>
+<pre>
+⊢ ∀f s x m n.
+    f PERMUTES s ∧ x ∈ s ∧ m ≤ n ⇒
+    FUNPOW (LINV f s) (n − m) x = FUNPOW (LINV f s) n (FUNPOW f m x)
+</pre>
+
+<DT><span class="strong">FUNPOW_LINV_SUB2</span>
+<DD>
+<pre>
+⊢ ∀f s x m n.
+    f PERMUTES s ∧ x ∈ s ∧ m ≤ n ⇒
+    FUNPOW (LINV f s) (n − m) x = FUNPOW f m (FUNPOW (LINV f s) n x)
+</pre>
+
+<DT><span class="strong">FUNPOW_LINV_closure</span>
+<DD>
+<pre>
+⊢ ∀f s x n. f PERMUTES s ∧ x ∈ s ⇒ FUNPOW (LINV f s) n x ∈ s
+</pre>
+
+<DT><span class="strong">FUNPOW_LINV_permutes</span>
+<DD>
+<pre>
+⊢ ∀f s n. f PERMUTES s ⇒ FUNPOW (LINV f s) n PERMUTES s
+</pre>
+
+<DT><span class="strong">FUNPOW_MAX</span>
+<DD>
+<pre>
+⊢ ∀m n k. 0 < n ⇒ FUNPOW (λx. MAX x m) n k = MAX k m
+</pre>
+
+<DT><span class="strong">FUNPOW_MIN</span>
+<DD>
+<pre>
+⊢ ∀m n k. 0 < n ⇒ FUNPOW (λx. MIN x m) n k = MIN k m
+</pre>
+
+<DT><span class="strong">FUNPOW_MOD</span>
+<DD>
+<pre>
+⊢ ∀f k e. 0 < k ∧ FUNPOW f k e = e ⇒ ∀n. FUNPOW f n e = FUNPOW f (n MOD k) e
+</pre>
+
+<DT><span class="strong">FUNPOW_MUL</span>
+<DD>
+<pre>
+⊢ ∀b m n. FUNPOW ($* b) n m = m * b ** n
+</pre>
+
+<DT><span class="strong">FUNPOW_MULTIPLE</span>
+<DD>
+<pre>
+⊢ ∀f k e. 0 < k ∧ FUNPOW f k e = e ⇒ ∀n. FUNPOW f (n * k) e = e
+</pre>
+
+<DT><span class="strong">FUNPOW_PAIR</span>
+<DD>
+<pre>
+⊢ ∀f g n x y. FUNPOW (λ(x,y). (f x,g y)) n (x,y) = (FUNPOW f n x,FUNPOW g n y)
+</pre>
+
+<DT><span class="strong">FUNPOW_SQ</span>
+<DD>
+<pre>
+⊢ ∀m n. FUNPOW (λn. n * n) n m = m ** 2 ** n
+</pre>
+
+<DT><span class="strong">FUNPOW_SQ_MOD</span>
+<DD>
+<pre>
+⊢ ∀m n k. 0 < m ∧ 0 < n ⇒ FUNPOW (λn. (n * n) MOD m) n k = k ** 2 ** n MOD m
+</pre>
+
+<DT><span class="strong">FUNPOW_SUB1</span>
+<DD>
+<pre>
+⊢ ∀m n. FUNPOW PRE n m = m − n
+</pre>
+
+<DT><span class="strong">FUNPOW_SUB_LINV1</span>
+<DD>
+<pre>
+⊢ ∀f s x m n.
+    f PERMUTES s ∧ x ∈ s ∧ m ≤ n ⇒
+    FUNPOW f (n − m) x = FUNPOW f n (FUNPOW (LINV f s) m x)
+</pre>
+
+<DT><span class="strong">FUNPOW_SUB_LINV2</span>
+<DD>
+<pre>
+⊢ ∀f s x m n.
+    f PERMUTES s ∧ x ∈ s ∧ m ≤ n ⇒
+    FUNPOW f (n − m) x = FUNPOW (LINV f s) m (FUNPOW f n x)
+</pre>
+
+<DT><span class="strong">FUNPOW_TRIPLE</span>
+<DD>
+<pre>
+⊢ ∀f g h n x y z.
+    FUNPOW (λ(x,y,z). (f x,g y,h z)) n (x,y,z) =
+    (FUNPOW f n x,FUNPOW g n y,FUNPOW h n z)
+</pre>
+
+<DT><span class="strong">FUNPOW_closure</span>
+<DD>
+<pre>
+⊢ ∀f s x n. f PERMUTES s ∧ x ∈ s ⇒ FUNPOW f n x ∈ s
+</pre>
+
+<DT><span class="strong">FUNPOW_permutes</span>
+<DD>
+<pre>
+⊢ ∀f s n. f PERMUTES s ⇒ FUNPOW f n PERMUTES s
+</pre>
+
+<DT><span class="strong">GCD_MOD_MULT_INV</span>
+<DD>
+<pre>
+⊢ ∀n x.
+    1 < n ∧ 0 < x ∧ x < n ∧ coprime n x ⇒
+    ∃y. 0 < y ∧ y < n ∧ coprime n y ∧ (y * x) MOD n = 1
+</pre>
+
+<DT><span class="strong">GCD_SUB_MULTIPLE</span>
+<DD>
+<pre>
+⊢ ∀a b k. k * a ≤ b ⇒ gcd a b = gcd a (b − k * a)
+</pre>
+
+<DT><span class="strong">GCD_SUB_MULTIPLE_COMM</span>
+<DD>
+<pre>
+⊢ ∀a b k. k * a ≤ b ⇒ gcd b a = gcd a (b − k * a)
+</pre>
+
+<DT><span class="strong">HALF_ADD1_LE</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ 1 + n DIV 2 ≤ n
+</pre>
+
+<DT><span class="strong">HALF_ADD1_LT</span>
+<DD>
+<pre>
+⊢ ∀n. 2 < n ⇒ 1 + n DIV 2 < n
+</pre>
+
+<DT><span class="strong">HALF_DIV_TWO_POWER</span>
+<DD>
+<pre>
+⊢ ∀m n. n DIV 2 DIV 2 ** m = n DIV 2 ** SUC m
+</pre>
+
+<DT><span class="strong">HALF_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n. n DIV 2 = 0 ⇔ n = 0 ∨ n = 1
+</pre>
+
+<DT><span class="strong">HALF_EQ_SELF</span>
+<DD>
+<pre>
+⊢ ∀n. n DIV 2 = n ⇔ n = 0
+</pre>
+
+<DT><span class="strong">HALF_EVEN_LE</span>
+<DD>
+<pre>
+⊢ ∀n m. 2 * n < m ⇒ n ≤ m DIV 2
+</pre>
+
+<DT><span class="strong">HALF_EXP_5</span>
+<DD>
+<pre>
+⊢ ∀n. n * ((n * n)² DIV 2) ≤ n ** 5 DIV 2
+</pre>
+
+<DT><span class="strong">HALF_LE</span>
+<DD>
+<pre>
+⊢ ∀n. n DIV 2 ≤ n
+</pre>
+
+<DT><span class="strong">HALF_LE_MONO</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ⇒ x DIV 2 ≤ y DIV 2
+</pre>
+
+<DT><span class="strong">HALF_LT</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ n DIV 2 < n
+</pre>
+
+<DT><span class="strong">HALF_MULT</span>
+<DD>
+<pre>
+⊢ ∀m n. n * (m DIV 2) ≤ n * m DIV 2
+</pre>
+
+<DT><span class="strong">HALF_MULT_EVEN</span>
+<DD>
+<pre>
+⊢ ∀m n. EVEN n ⇒ m * n DIV 2 = m * (n DIV 2)
+</pre>
+
+<DT><span class="strong">HALF_ODD_LT</span>
+<DD>
+<pre>
+⊢ ∀n m. 2 * n + 1 < m ⇒ n < m DIV 2
+</pre>
+
+<DT><span class="strong">HALF_SQ_LE</span>
+<DD>
+<pre>
+⊢ ∀n. (n DIV 2)² ≤ n² DIV 4
+</pre>
+
+<DT><span class="strong">HALF_SUC</span>
+<DD>
+<pre>
+⊢ ∀n. SUC n DIV 2 ≤ n
+</pre>
+
+<DT><span class="strong">HALF_SUC_LE</span>
+<DD>
+<pre>
+⊢ ∀n m. n < SUC m DIV 2 ⇒ 2 * n + 1 ≤ m
+</pre>
+
+<DT><span class="strong">HALF_SUC_SUC</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ SUC (SUC n) DIV 2 ≤ n
+</pre>
+
+<DT><span class="strong">HALF_TWICE</span>
+<DD>
+<pre>
+⊢ ∀n. 2 * n DIV 2 = n
+</pre>
+
+<DT><span class="strong">IMAGE_COUNT_SUC</span>
+<DD>
+<pre>
+⊢ ∀f n. IMAGE f (upto n) = f n INSERT IMAGE f (count n)
+</pre>
+
+<DT><span class="strong">IMAGE_COUNT_SUC_BY_SUC</span>
+<DD>
+<pre>
+⊢ ∀f n. IMAGE f (upto n) = f 0 INSERT IMAGE (f ∘ SUC) (count n)
+</pre>
+
+<DT><span class="strong">IMAGE_DIFF</span>
+<DD>
+<pre>
+⊢ ∀s t f.
+    s ⊆ t ∧ INJ f t 𝕌(:β) ⇒ IMAGE f (t DIFF s) = IMAGE f t DIFF IMAGE f s
+</pre>
+
+<DT><span class="strong">IMAGE_ELEMENT_CONDITION</span>
+<DD>
+<pre>
+⊢ ∀f. (∀x y. f x = f y ⇒ x = y) ⇒ ∀s e. e ∈ s ⇔ f e ∈ IMAGE f s
+</pre>
+
+<DT><span class="strong">IMAGE_K</span>
+<DD>
+<pre>
+⊢ ∀s. s ≠ ∅ ⇒ ∀e. IMAGE (K e) s = {e}
+</pre>
+
+<DT><span class="strong">IMAGE_SUBSET_TARGET</span>
+<DD>
+<pre>
+⊢ ∀f s t. (∀x. x ∈ s ⇒ f x ∈ t) ⇔ IMAGE f s ⊆ t
+</pre>
+
+<DT><span class="strong">INJ_CARD_IMAGE_EQN</span>
+<DD>
+<pre>
+⊢ ∀f s. INJ f s 𝕌(:β) ∧ FINITE s ⇒ CARD (IMAGE f s) = CARD s
+</pre>
+
+<DT><span class="strong">INJ_IMAGE_BIJ_ALT</span>
+<DD>
+<pre>
+⊢ ∀f s. INJ f s 𝕌(:β) ⇒ BIJ f s (IMAGE f s)
+</pre>
+
+<DT><span class="strong">INJ_UNIV</span>
+<DD>
+<pre>
+⊢ ∀f s t. INJ f s t ⇒ INJ f s 𝕌(:β)
+</pre>
+
+<DT><span class="strong">INSERT_DELETE_COMM</span>
+<DD>
+<pre>
+⊢ ∀s x y. x ≠ y ⇒ (x INSERT s) DELETE y = x INSERT s DELETE y
+</pre>
+
+<DT><span class="strong">INSERT_DELETE_NON_ELEMENT</span>
+<DD>
+<pre>
+⊢ ∀x s. x ∉ s ⇒ (x INSERT s) DELETE x = s
+</pre>
+
+<DT><span class="strong">INSERT_SUBSET_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s t x. x ∉ s ∧ x INSERT s ⊆ t ⇒ s ⊆ t DELETE x
+</pre>
+
+<DT><span class="strong">INTER_DIFF</span>
+<DD>
+<pre>
+⊢ ∀s t. s ∩ (t DIFF s) = ∅ ∧ (t DIFF s) ∩ s = ∅
+</pre>
+
+<DT><span class="strong">IN_PPOW</span>
+<DD>
+<pre>
+⊢ ∀s e. e ∈ PPOW s ⇒ e ⊂ s
+</pre>
+
+<DT><span class="strong">IN_SING_OR_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀b x y. x ∈ (if b then {y} else ∅) ⇒ x = y
+</pre>
+
+<DT><span class="strong">LCM_EXCHANGE</span>
+<DD>
+<pre>
+⊢ ∀a b c. a * b = c * (a − b) ⇒ lcm a b = lcm a c
+</pre>
+
+<DT><span class="strong">LESS_HALF_IFF</span>
+<DD>
+<pre>
+⊢ ∀n k. k < n DIV 2 ⇔ k + 1 < n − k
+</pre>
+
+<DT><span class="strong">LESS_SUC</span>
+<DD>
+<pre>
+⊢ ∀n. n < SUC n
+</pre>
+
+<DT><span class="strong">LE_IMP_REVERSE_LT</span>
+<DD>
+<pre>
+⊢ ∀a b c d. 0 < c ∧ 0 < d ∧ a * b ≤ c * d ∧ d < b ⇒ a < c
+</pre>
+
+<DT><span class="strong">LE_MONO_ADD2</span>
+<DD>
+<pre>
+⊢ ∀a b c d. a ≤ b ∧ c ≤ d ⇒ a + c ≤ b + d
+</pre>
+
+<DT><span class="strong">LE_MONO_MULT2</span>
+<DD>
+<pre>
+⊢ ∀a b c d. a ≤ b ∧ c ≤ d ⇒ a * c ≤ b * d
+</pre>
+
+<DT><span class="strong">LE_MULT_LCANCEL_IMP</span>
+<DD>
+<pre>
+⊢ ∀m n p. n ≤ p ⇒ m * n ≤ m * p
+</pre>
+
+<DT><span class="strong">LE_ONE</span>
+<DD>
+<pre>
+⊢ ∀n. n ≤ 1 ⇔ n = 0 ∨ n = 1
+</pre>
+
+<DT><span class="strong">LE_TWICE_ALT</span>
+<DD>
+<pre>
+⊢ ∀m n. n ≤ 2 * m ⇔ n ≠ 0 ⇒ (n − 1) DIV 2 < m
+</pre>
+
+<DT><span class="strong">LINV_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀f s t. INJ f t 𝕌(:β) ∧ s ⊆ t ⇒ ∀x. x ∈ s ⇒ LINV f t (f x) = x
+</pre>
+
+<DT><span class="strong">LINV_permutes</span>
+<DD>
+<pre>
+⊢ ∀f s. f PERMUTES s ⇒ LINV f s PERMUTES s
+</pre>
+
+<DT><span class="strong">LT_MONO_ADD2</span>
+<DD>
+<pre>
+⊢ ∀a b c d. a < b ∧ c < d ⇒ a + c < b + d
+</pre>
+
+<DT><span class="strong">LT_MONO_MULT2</span>
+<DD>
+<pre>
+⊢ ∀a b c d. a < b ∧ c < d ⇒ a * c < b * d
+</pre>
+
+<DT><span class="strong">MAX_1_EXP</span>
+<DD>
+<pre>
+⊢ ∀n m. MAX 1 (m ** n) = MAX 1 m ** n
+</pre>
+
+<DT><span class="strong">MAX_1_POS</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ MAX 1 n = n
+</pre>
+
+<DT><span class="strong">MAX_ADD</span>
+<DD>
+<pre>
+⊢ ∀a b c. MAX a (b + c) ≤ MAX a b + MAX a c
+</pre>
+
+<DT><span class="strong">MAX_ALT</span>
+<DD>
+<pre>
+⊢ ∀m n. MAX m n = if m ≤ n then n else m
+</pre>
+
+<DT><span class="strong">MAX_ID</span>
+<DD>
+<pre>
+⊢ ∀m n. MAX (MAX m n) n = MAX m n ∧ MAX m (MAX m n) = MAX m n
+</pre>
+
+<DT><span class="strong">MAX_IS_MAX</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ MAX m n ∧ n ≤ MAX m n
+</pre>
+
+<DT><span class="strong">MAX_LESS</span>
+<DD>
+<pre>
+⊢ ∀x y n. x < n ∧ y < n ⇒ MAX x y < n
+</pre>
+
+<DT><span class="strong">MAX_LE_PAIR</span>
+<DD>
+<pre>
+⊢ ∀a b c d. a ≤ b ∧ c ≤ d ⇒ MAX a c ≤ MAX b d
+</pre>
+
+<DT><span class="strong">MAX_LE_SUM</span>
+<DD>
+<pre>
+⊢ ∀m n. MAX m n ≤ m + n
+</pre>
+
+<DT><span class="strong">MAX_SET_DELETE</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ∧ s ≠ {MIN_SET s} ⇒
+      MAX_SET (s DELETE MIN_SET s) = MAX_SET s
+</pre>
+
+<DT><span class="strong">MAX_SET_IMAGE_SUC_COUNT</span>
+<DD>
+<pre>
+⊢ ∀n. MAX_SET (natural n) = n
+</pre>
+
+<DT><span class="strong">MAX_SET_IMAGE_with_DEC</span>
+<DD>
+<pre>
+⊢ ∀f b c x. x − b ≤ c ⇒ f x ≤ MAX_SET {f x | x − b ≤ c}
+</pre>
+
+<DT><span class="strong">MAX_SET_IMAGE_with_DIV</span>
+<DD>
+<pre>
+⊢ ∀f b c x. 0 < b ∧ x DIV b ≤ c ⇒ f x ≤ MAX_SET {f x | x DIV b ≤ c}
+</pre>
+
+<DT><span class="strong">MAX_SET_IMAGE_with_HALF</span>
+<DD>
+<pre>
+⊢ ∀f c x. x DIV 2 ≤ c ⇒ f x ≤ MAX_SET {f x | x DIV 2 ≤ c}
+</pre>
+
+<DT><span class="strong">MAX_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. MAX (SUC m) (SUC n) = SUC (MAX m n)
+</pre>
+
+<DT><span class="strong">MAX_SWAP</span>
+<DD>
+<pre>
+⊢ ∀f. MONO f ⇒ ∀x y. f (MAX x y) = MAX (f x) (f y)
+</pre>
+
+<DT><span class="strong">MIN_1_EXP</span>
+<DD>
+<pre>
+⊢ ∀n m. MIN 1 (m ** n) = MIN 1 m ** n
+</pre>
+
+<DT><span class="strong">MIN_1_POS</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ MIN 1 n = 1
+</pre>
+
+<DT><span class="strong">MIN_ADD</span>
+<DD>
+<pre>
+⊢ ∀a b c. MIN a (b + c) ≤ MIN a b + MIN a c
+</pre>
+
+<DT><span class="strong">MIN_ALT</span>
+<DD>
+<pre>
+⊢ ∀m n. MIN m n = if m ≤ n then m else n
+</pre>
+
+<DT><span class="strong">MIN_ID</span>
+<DD>
+<pre>
+⊢ ∀m n. MIN (MIN m n) n = MIN m n ∧ MIN m (MIN m n) = MIN m n
+</pre>
+
+<DT><span class="strong">MIN_IS_MIN</span>
+<DD>
+<pre>
+⊢ ∀m n. MIN m n ≤ m ∧ MIN m n ≤ n
+</pre>
+
+<DT><span class="strong">MIN_LE_PAIR</span>
+<DD>
+<pre>
+⊢ ∀a b c d. a ≤ b ∧ c ≤ d ⇒ MIN a c ≤ MIN b d
+</pre>
+
+<DT><span class="strong">MIN_LE_SUM</span>
+<DD>
+<pre>
+⊢ ∀m n. MIN m n ≤ m + n
+</pre>
+
+<DT><span class="strong">MIN_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. MIN (SUC m) (SUC n) = SUC (MIN m n)
+</pre>
+
+<DT><span class="strong">MIN_SWAP</span>
+<DD>
+<pre>
+⊢ ∀f. MONO f ⇒ ∀x y. f (MIN x y) = MIN (f x) (f y)
+</pre>
+
+<DT><span class="strong">MOD_MULT_INV_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀p x. prime p ∧ 0 < x ∧ x < p ⇒ ∃y. 0 < y ∧ y < p ∧ (y * x) MOD p = 1
+</pre>
+
+<DT><span class="strong">MOD_MULT_LCANCEL</span>
+<DD>
+<pre>
+⊢ ∀p x y z.
+    prime p ∧ (x * y) MOD p = (x * z) MOD p ∧ x MOD p ≠ 0 ⇒ y MOD p = z MOD p
+</pre>
+
+<DT><span class="strong">MOD_MULT_RCANCEL</span>
+<DD>
+<pre>
+⊢ ∀p x y z.
+    prime p ∧ (y * x) MOD p = (z * x) MOD p ∧ x MOD p ≠ 0 ⇒ y MOD p = z MOD p
+</pre>
+
+<DT><span class="strong">MOD_SUC_EQN</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ⇒ SUC (n MOD m) = SUC n MOD m + (SUC n DIV m − n DIV m) * m
+</pre>
+
+<DT><span class="strong">MONOTONE_MAX</span>
+<DD>
+<pre>
+⊢ ∀f m. (∀k. k < m ⇒ f k < f (k + 1)) ⇒ ∀k. k < m ⇒ f k < f m
+</pre>
+
+<DT><span class="strong">MORE_HALF_IMP</span>
+<DD>
+<pre>
+⊢ ∀n k. n DIV 2 < k ⇒ n − k ≤ n DIV 2
+</pre>
+
+<DT><span class="strong">MULT3_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀x y z. x * y * z = 0 ⇔ x = 0 ∨ y = 0 ∨ z = 0
+</pre>
+
+<DT><span class="strong">MULT3_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀x y z. x * y * z = 1 ⇔ x = 1 ∧ y = 1 ∧ z = 1
+</pre>
+
+<DT><span class="strong">MULTIPLE_INTERVAL</span>
+<DD>
+<pre>
+⊢ ∀n m. n divides m ⇒ ∀x. m − n < x ∧ x < m + n ∧ n divides x ⇒ x = m
+</pre>
+
+<DT><span class="strong">MULTIPLE_SUC_LE</span>
+<DD>
+<pre>
+⊢ ∀n k. 0 < n ⇒ k * n + 1 ≤ (k + 1) * n
+</pre>
+
+<DT><span class="strong">MULTIPLY_DIV</span>
+<DD>
+<pre>
+⊢ ∀n p q. 0 < n ∧ n divides q ⇒ p * (q DIV n) = p * q DIV n
+</pre>
+
+<DT><span class="strong">MULT_EQ_LESS_TO_MORE</span>
+<DD>
+<pre>
+⊢ ∀a b c d. 0 < a ∧ 0 < b ∧ a < c ∧ a * b = c * d ⇒ d < b
+</pre>
+
+<DT><span class="strong">MULT_EVEN</span>
+<DD>
+<pre>
+⊢ ∀n. EVEN n ⇒ ∀m. m * n = 2 * m * (n DIV 2)
+</pre>
+
+<DT><span class="strong">MULT_LE_IMP_LE</span>
+<DD>
+<pre>
+⊢ ∀m n k. 0 < k ∧ k * m ≤ n ⇒ m ≤ n
+</pre>
+
+<DT><span class="strong">MULT_LT_IMP_LT</span>
+<DD>
+<pre>
+⊢ ∀m n k. 0 < k ∧ k * m < n ⇒ m < n
+</pre>
+
+<DT><span class="strong">MULT_ODD</span>
+<DD>
+<pre>
+⊢ ∀n. ODD n ⇒ ∀m. m * n = m + 2 * m * (n DIV 2)
+</pre>
+
+<DT><span class="strong">NOT_LT_ONE</span>
+<DD>
+<pre>
+⊢ ∀n. ¬(1 < n) ⇔ n = 0 ∨ n = 1
+</pre>
+
+<DT><span class="strong">NOT_PRIME_4</span>
+<DD>
+<pre>
+⊢ ¬prime 4
+</pre>
+
+<DT><span class="strong">NOT_ZERO_GE_ONE</span>
+<DD>
+<pre>
+⊢ ∀n. n ≠ 0 ⇔ 1 ≤ n
+</pre>
+
+<DT><span class="strong">ODD_1</span>
+<DD>
+<pre>
+⊢ ODD 1
+</pre>
+
+<DT><span class="strong">ODD_EXP</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ ODD m ⇒ ODD (m ** n)
+</pre>
+
+<DT><span class="strong">ODD_HALF</span>
+<DD>
+<pre>
+⊢ ∀n. ODD n ⇒ n = 2 * (n DIV 2) + 1
+</pre>
+
+<DT><span class="strong">ODD_MOD2</span>
+<DD>
+<pre>
+⊢ ∀x. ODD x ⇔ x MOD 2 = 1
+</pre>
+
+<DT><span class="strong">ODD_PRIME</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ∧ n ≠ 2 ⇒ ODD n
+</pre>
+
+<DT><span class="strong">ODD_SQ</span>
+<DD>
+<pre>
+⊢ ∀n. ODD n² ⇔ ODD n
+</pre>
+
+<DT><span class="strong">ODD_SUC_HALF</span>
+<DD>
+<pre>
+⊢ ∀n. ODD n ⇒ SUC n DIV 2 = SUC (n DIV 2)
+</pre>
+
+<DT><span class="strong">ONE_LT_HALF_SQ</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ 1 < n² DIV 2
+</pre>
+
+<DT><span class="strong">ONE_LT_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ n ≠ 0
+</pre>
+
+<DT><span class="strong">ONE_LT_POS</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ 0 < n
+</pre>
+
+<DT><span class="strong">ONE_NOT_0</span>
+<DD>
+<pre>
+⊢ 1 ≠ 0
+</pre>
+
+<DT><span class="strong">ONE_NOT_ZERO</span>
+<DD>
+<pre>
+⊢ 1 ≠ 0
+</pre>
+
+<DT><span class="strong">OR_IMP_IMP</span>
+<DD>
+<pre>
+⊢ ∀p q r. (p ∨ q ⇒ r) ⇒ p ∧ ¬q ⇒ r
+</pre>
+
+<DT><span class="strong">POWER_EQ_SELF</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ ∀m. n ** m = n ⇔ m = 1
+</pre>
+
+<DT><span class="strong">PRE_LESS</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ PRE n < n
+</pre>
+
+<DT><span class="strong">PRIME_EXP_FACTOR</span>
+<DD>
+<pre>
+⊢ ∀p q n. prime p ∧ q divides p ** n ⇒ q = 1 ∨ p divides q
+</pre>
+
+<DT><span class="strong">PRIME_FACTOR_PROPER</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ∧ ¬prime n ⇒ ∃p. prime p ∧ p < n ∧ p divides n
+</pre>
+
+<DT><span class="strong">PROD_SET_DIVISORS</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀n x. x ∈ s ∧ n divides x ⇒ n divides PROD_SET s
+</pre>
+
+<DT><span class="strong">PROD_SET_ELEMENT_DIVIDES</span>
+<DD>
+<pre>
+⊢ ∀s x. FINITE s ∧ x ∈ s ⇒ x divides PROD_SET s
+</pre>
+
+<DT><span class="strong">PROD_SET_EUCLID</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀p. prime p ∧ p divides PROD_SET s ⇒ ∃b. b ∈ s ∧ p divides b
+</pre>
+
+<DT><span class="strong">PROD_SET_IMAGE_EQN</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀f. INJ f s 𝕌(:num) ⇒ PROD_SET (IMAGE f s) = ∏ f s
+</pre>
+
+<DT><span class="strong">PROD_SET_IMAGE_EXP</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒
+      ∀m. PROD_SET (IMAGE (λj. n ** j) (count m)) = n ** SUM_SET (count m)
+</pre>
+
+<DT><span class="strong">PROD_SET_IMAGE_EXP_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀n m.
+    PROD_SET (IMAGE (λj. n ** j) (count m)) =
+    PROD_SET (IMAGE (λj. n ** j) (residue m))
+</pre>
+
+<DT><span class="strong">PROD_SET_LESS</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ∧ 0 ∉ s ⇒
+      ∀f. INJ f s 𝕌(:num) ∧ (∀x. x < f x) ⇒ PROD_SET s < PROD_SET (IMAGE f s)
+</pre>
+
+<DT><span class="strong">PROD_SET_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒
+      ∀f g.
+        INJ f s 𝕌(:num) ∧ INJ g s 𝕌(:num) ∧ (∀x. x ∈ s ⇒ f x ≤ g x) ⇒
+        PROD_SET (IMAGE f s) ≤ PROD_SET (IMAGE g s)
+</pre>
+
+<DT><span class="strong">PROD_SET_LESS_SUC</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ s ≠ ∅ ∧ 0 ∉ s ⇒ PROD_SET s < PROD_SET (IMAGE SUC s)
+</pre>
+
+<DT><span class="strong">PROD_SET_LE_CONSTANT</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀n. (∀x. x ∈ s ⇒ x ≤ n) ⇒ PROD_SET s ≤ n ** CARD s
+</pre>
+
+<DT><span class="strong">PROD_SET_NONZERO</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ 0 ∉ s ⇒ 0 < PROD_SET s
+</pre>
+
+<DT><span class="strong">PROD_SET_PRODUCT_BY_PARTITION</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀u v. s =|= u # v ⇒ PROD_SET s = PROD_SET u * PROD_SET v
+</pre>
+
+<DT><span class="strong">PROD_SET_PRODUCT_GE_CONSTANT</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒
+      ∀n f g.
+        INJ f s 𝕌(:num) ∧ INJ g s 𝕌(:num) ∧ (∀x. x ∈ s ⇒ n ≤ f x * g x) ⇒
+        n ** CARD s ≤ PROD_SET (IMAGE f s) * PROD_SET (IMAGE g s)
+</pre>
+
+<DT><span class="strong">PROD_SET_SING</span>
+<DD>
+<pre>
+⊢ ∀x. PROD_SET {x} = x
+</pre>
+
+<DT><span class="strong">PUSH_IN_INTO_IF</span>
+<DD>
+<pre>
+⊢ ∀b x s t. x ∈ (if b then s else t) ⇔ if b then x ∈ s else x ∈ t
+</pre>
+
+<DT><span class="strong">SELF_LE_SQ</span>
+<DD>
+<pre>
+⊢ ∀n. n ≤ n²
+</pre>
+
+<DT><span class="strong">SET_EQ_BY_DIFF</span>
+<DD>
+<pre>
+⊢ ∀s t. s = t ⇔ s ⊆ t ∧ t DIFF s = ∅
+</pre>
+
+<DT><span class="strong">SIGMA_CARD_FACTOR</span>
+<DD>
+<pre>
+⊢ ∀n s. FINITE s ∧ (∀e. e ∈ s ⇒ n divides CARD e) ⇒ n divides ∑ CARD s
+</pre>
+
+<DT><span class="strong">SING_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s x. {x} ⊆ s ∧ SING s ⇔ s = {x}
+</pre>
+
+<DT><span class="strong">SPLIT_BY_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s u. u ⊆ s ⇒ (let v = s DIFF u in s =|= u # v)
+</pre>
+
+<DT><span class="strong">SPLIT_CARD</span>
+<DD>
+<pre>
+⊢ ∀s u v. FINITE s ∧ s =|= u # v ⇒ CARD s = CARD u + CARD v
+</pre>
+
+<DT><span class="strong">SPLIT_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀s t. s =|= ∅ # t ⇔ s = t
+</pre>
+
+<DT><span class="strong">SPLIT_EQ</span>
+<DD>
+<pre>
+⊢ ∀s u v. s =|= u # v ⇔ u ⊆ s ∧ v = s DIFF u
+</pre>
+
+<DT><span class="strong">SPLIT_EQ_DIFF</span>
+<DD>
+<pre>
+⊢ ∀s u v. s =|= u # v ⇔ u = s DIFF v ∧ v = s DIFF u
+</pre>
+
+<DT><span class="strong">SPLIT_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s u v. FINITE s ∧ s =|= u # v ⇒ FINITE u ∧ FINITE v
+</pre>
+
+<DT><span class="strong">SPLIT_SING</span>
+<DD>
+<pre>
+⊢ ∀s v x. s =|= {x} # v ⇔ x ∈ s ∧ v = s DELETE x
+</pre>
+
+<DT><span class="strong">SPLIT_SUBSETS</span>
+<DD>
+<pre>
+⊢ ∀s u v. s =|= u # v ⇒ u ⊆ s ∧ v ⊆ s
+</pre>
+
+<DT><span class="strong">SPLIT_SYM</span>
+<DD>
+<pre>
+⊢ ∀s u v. s =|= u # v ⇔ s =|= v # u
+</pre>
+
+<DT><span class="strong">SPLIT_SYM_IMP</span>
+<DD>
+<pre>
+⊢ ∀s u v. s =|= u # v ⇒ s =|= v # u
+</pre>
+
+<DT><span class="strong">SPLIT_UNION</span>
+<DD>
+<pre>
+⊢ ∀s u v a b. s =|= u # v ∧ v =|= a # b ⇒ s =|= u ∪ a # b ∧ u ∪ a =|= u # a
+</pre>
+
+<DT><span class="strong">SQ_0</span>
+<DD>
+<pre>
+⊢ 0² = 0
+</pre>
+
+<DT><span class="strong">SQ_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n. n * n = 0 ⇔ n = 0
+</pre>
+
+<DT><span class="strong">SQ_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀n. n * n = 1 ⇔ n = 1
+</pre>
+
+<DT><span class="strong">SQ_EQ_SELF</span>
+<DD>
+<pre>
+⊢ ∀n. n * n = n ⇔ n = 0 ∨ n = 1
+</pre>
+
+<DT><span class="strong">SQ_LE</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ m * m ≤ n * n
+</pre>
+
+<DT><span class="strong">SUBSET_CARD_EQ</span>
+<DD>
+<pre>
+⊢ ∀s t. FINITE t ∧ s ⊆ t ⇒ (CARD s = CARD t ⇔ s = t)
+</pre>
+
+<DT><span class="strong">SUBSET_DIFF_CARD</span>
+<DD>
+<pre>
+⊢ ∀a b. FINITE a ∧ b ⊆ a ⇒ CARD (a DIFF b) = CARD a − CARD b
+</pre>
+
+<DT><span class="strong">SUBSET_DIFF_DIFF</span>
+<DD>
+<pre>
+⊢ ∀s t. t ⊆ s ⇒ s DIFF (s DIFF t) = t
+</pre>
+
+<DT><span class="strong">SUBSET_DIFF_EQ</span>
+<DD>
+<pre>
+⊢ ∀s1 s2 t. s1 ⊆ t ∧ s2 ⊆ t ∧ t DIFF s1 = t DIFF s2 ⇒ s1 = s2
+</pre>
+
+<DT><span class="strong">SUBSET_INSERT_BOTH</span>
+<DD>
+<pre>
+⊢ ∀s1 s2 x. s1 ⊆ s2 ⇒ x INSERT s1 ⊆ x INSERT s2
+</pre>
+
+<DT><span class="strong">SUBSET_INTER_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀s t u. s ⊆ u ⇒ s ∩ t ⊆ u
+</pre>
+
+<DT><span class="strong">SUBSET_SING_IFF</span>
+<DD>
+<pre>
+⊢ ∀s x. s ⊆ {x} ⇔ s = ∅ ∨ s = {x}
+</pre>
+
+<DT><span class="strong">SUB_DIV_EQN</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ⇒ (m − n) DIV n = if m < n then 0 else m DIV n − 1
+</pre>
+
+<DT><span class="strong">SUB_EQ_ADD</span>
+<DD>
+<pre>
+⊢ ∀p. 0 < p ⇒ ∀m n. m − n = p ⇔ m = n + p
+</pre>
+
+<DT><span class="strong">SUB_MOD_EQN</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ⇒ (m − n) MOD n = if m < n then 0 else m MOD n
+</pre>
+
+<DT><span class="strong">SUB_SUB_SUB</span>
+<DD>
+<pre>
+⊢ ∀a b c. c ≤ a ⇒ a − b − (a − c) = c − b
+</pre>
+
+<DT><span class="strong">SUC_ADD_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC m + SUC n = m + n + 2
+</pre>
+
+<DT><span class="strong">SUC_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC m = SUC n ⇔ m = n
+</pre>
+
+<DT><span class="strong">SUC_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∃m. n = SUC m
+</pre>
+
+<DT><span class="strong">SUC_MAX</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC (MAX m n) = MAX (SUC m) (SUC n)
+</pre>
+
+<DT><span class="strong">SUC_MIN</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC (MIN m n) = MIN (SUC m) (SUC n)
+</pre>
+
+<DT><span class="strong">SUC_MULT_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n. SUC m * SUC n = m * n + m + n + 1
+</pre>
+
+<DT><span class="strong">SUC_SQ</span>
+<DD>
+<pre>
+⊢ ∀n. (SUC n)² = SUC n² + 2 * n
+</pre>
+
+<DT><span class="strong">SUC_X_LT_2_EXP_X</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ SUC n < 2 ** n
+</pre>
+
+<DT><span class="strong">SUM_IMAGE_AS_SUM_SET</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀f. (∀x y. f x = f y ⇒ x = y) ⇒ ∑ f s = SUM_SET (IMAGE f s)
+</pre>
+
+<DT><span class="strong">SUM_IMAGE_DOUBLET</span>
+<DD>
+<pre>
+⊢ ∀f x y. x ≠ y ⇒ ∑ f {x; y} = f x + f y
+</pre>
+
+<DT><span class="strong">SUM_IMAGE_PSUBSET_LT</span>
+<DD>
+<pre>
+⊢ ∀f s t. FINITE s ∧ t ⊂ s ∧ (∀x. x ∈ s ⇒ f x ≠ 0) ⇒ ∑ f t < ∑ f s
+</pre>
+
+<DT><span class="strong">SUM_IMAGE_TRIPLET</span>
+<DD>
+<pre>
+⊢ ∀f x y z. x ≠ y ∧ y ≠ z ∧ z ≠ x ⇒ ∑ f {x; y; z} = f x + f y + f z
+</pre>
+
+<DT><span class="strong">SUM_LE_PRODUCT</span>
+<DD>
+<pre>
+⊢ ∀m n. 1 < m ∧ 1 < n ⇒ m + n ≤ m * n
+</pre>
+
+<DT><span class="strong">SUM_SET_COUNT</span>
+<DD>
+<pre>
+⊢ ∀n. SUM_SET (count n) = n * (n − 1) DIV 2
+</pre>
+
+<DT><span class="strong">SUM_SET_IMAGE_EQN</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀f. INJ f s 𝕌(:num) ⇒ SUM_SET (IMAGE f s) = ∑ f s
+</pre>
+
+<DT><span class="strong">SURJ_CARD_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f s t. SURJ f s t ⇒ CARD (IMAGE f s) = CARD t
+</pre>
+
+<DT><span class="strong">THREE</span>
+<DD>
+<pre>
+⊢ 3 = SUC 2
+</pre>
+
+<DT><span class="strong">TWICE_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n. 2 * n = 0 ⇔ n = 0
+</pre>
+
+<DT><span class="strong">TWO_HALF_LE_THM</span>
+<DD>
+<pre>
+⊢ ∀n. 2 * (n DIV 2) ≤ n ∧ n ≤ SUC (2 * (n DIV 2))
+</pre>
+
+<DT><span class="strong">TWO_HALF_TIMES_LE</span>
+<DD>
+<pre>
+⊢ ∀m n. 2 * (n DIV 2 * m) ≤ n * m
+</pre>
+
+<DT><span class="strong">TWO_LE_PRIME</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ 2 ≤ p
+</pre>
+
+<DT><span class="strong">UNION_DIFF_EQ_UNION</span>
+<DD>
+<pre>
+⊢ ∀s t. s ∪ (t DIFF s) = s ∪ t
+</pre>
+
+<DT><span class="strong">ZERO_LE_ALL</span>
+<DD>
+<pre>
+⊢ ∀n. 0 ≤ n
+</pre>
+
+<DT><span class="strong">binomial_2</span>
+<DD>
+<pre>
+⊢ ∀m n. (m + n)² = m² + n² + 2 * m * n
+</pre>
+
+<DT><span class="strong">binomial_add</span>
+<DD>
+<pre>
+⊢ ∀a b. (a + b)² = a² + b² + 2 * a * b
+</pre>
+
+<DT><span class="strong">binomial_means</span>
+<DD>
+<pre>
+⊢ ∀a b. 2 * a * b ≤ a² + b²
+</pre>
+
+<DT><span class="strong">binomial_sub</span>
+<DD>
+<pre>
+⊢ ∀a b. b ≤ a ⇒ (a − b)² = a² + b² − 2 * a * b
+</pre>
+
+<DT><span class="strong">binomial_sub_add</span>
+<DD>
+<pre>
+⊢ ∀a b. b ≤ a ⇒ (a − b)² + 4 * a * b = (a + b)²
+</pre>
+
+<DT><span class="strong">binomial_sub_sum</span>
+<DD>
+<pre>
+⊢ ∀a b. b ≤ a ⇒ (a − b)² + 2 * a * b = a² + b²
+</pre>
+
+<DT><span class="strong">card_eq_sigma_card</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ (∀e. e ∈ s ⇒ CARD e ≠ 0) ∧ CARD s = ∑ CARD s ⇒
+      ∀e. e ∈ s ⇒ CARD e = 1
+</pre>
+
+<DT><span class="strong">card_le_sigma_card</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ (∀e. e ∈ s ⇒ CARD e ≠ 0) ⇒ CARD s ≤ ∑ CARD s
+</pre>
+
+<DT><span class="strong">card_mod_image</span>
+<DD>
+<pre>
+⊢ ∀s n. 0 < n ⇒ CARD (IMAGE (λx. x MOD n) s) ≤ n
+</pre>
+
+<DT><span class="strong">card_mod_image_nonzero</span>
+<DD>
+<pre>
+⊢ ∀s n. 0 < n ∧ 0 ∉ IMAGE (λx. x MOD n) s ⇒ CARD (IMAGE (λx. x MOD n) s) < n
+</pre>
+
+<DT><span class="strong">coprime_all_le_imp_lt</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ ∀m. (∀j. 0 < j ∧ j ≤ m ⇒ coprime n j) ⇒ m < n
+</pre>
+
+<DT><span class="strong">coprime_by_le_not_divides</span>
+<DD>
+<pre>
+⊢ ∀m n. 1 < m ∧ (∀j. 1 < j ∧ j ≤ m ⇒ ¬(j divides n)) ⇒ coprime m n
+</pre>
+
+<DT><span class="strong">coprime_condition</span>
+<DD>
+<pre>
+⊢ ∀m n. (∀j. 1 < j ∧ j ≤ m ⇒ ¬(j divides n)) ⇔ ∀j. 1 < j ∧ j ≤ m ⇒ coprime j n
+</pre>
+
+<DT><span class="strong">coprime_iff_coprime_exp</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀a b. coprime a b ⇔ coprime a (b ** n)
+</pre>
+
+<DT><span class="strong">coprime_linear_mod_prod</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    0 < a ∧ 0 < b ∧ coprime a b ⇒
+    ∃p q. (p * a + q * b) MOD (a * b) = 1 MOD (a * b)
+</pre>
+
+<DT><span class="strong">coprime_linear_mult</span>
+<DD>
+<pre>
+⊢ ∀a b p q.
+    coprime a b ∧ coprime p b ∧ coprime q a ⇒ coprime (p * a + q * b) (a * b)
+</pre>
+
+<DT><span class="strong">coprime_linear_mult_iff</span>
+<DD>
+<pre>
+⊢ ∀a b p q.
+    coprime a b ⇒
+    (coprime p b ∧ coprime q a ⇔ coprime (p * a + q * b) (a * b))
+</pre>
+
+<DT><span class="strong">coprime_mod_mod_prod_eq</span>
+<DD>
+<pre>
+⊢ ∀m n a b.
+    0 < m ∧ 0 < n ∧ coprime m n ∧ a MOD m = b MOD m ∧ a MOD n = b MOD n ⇒
+    a MOD (m * n) = b MOD (m * n)
+</pre>
+
+<DT><span class="strong">coprime_mod_mod_prod_eq_iff</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < m ∧ 0 < n ∧ coprime m n ⇒
+    ∀a b.
+      a MOD (m * n) = b MOD (m * n) ⇔ a MOD m = b MOD m ∧ a MOD n = b MOD n
+</pre>
+
+<DT><span class="strong">coprime_mod_mod_solve</span>
+<DD>
+<pre>
+⊢ ∀m n a b.
+    0 < m ∧ 0 < n ∧ coprime m n ⇒
+    ∃!x. x < m * n ∧ x MOD m = a MOD m ∧ x MOD n = b MOD n
+</pre>
+
+<DT><span class="strong">coprime_multiple_linear_mod_prod</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    0 < a ∧ 0 < b ∧ coprime a b ⇒
+    ∃p q. (p * a + q * b) MOD (a * b) = c MOD (a * b)
+</pre>
+
+<DT><span class="strong">coprime_not_divides</span>
+<DD>
+<pre>
+⊢ ∀m n. 1 < n ∧ coprime n m ⇒ ¬(n divides m)
+</pre>
+
+<DT><span class="strong">coprime_power_and_power_predecessor</span>
+<DD>
+<pre>
+⊢ ∀b m n. 0 < b ∧ 0 < m ⇒ coprime (b ** n) (tops b m)
+</pre>
+
+<DT><span class="strong">coprime_power_and_power_successor</span>
+<DD>
+<pre>
+⊢ ∀b m n. 0 < b ∧ 0 < m ⇒ coprime (b ** n) (b ** m + 1)
+</pre>
+
+<DT><span class="strong">coprime_prime_power</span>
+<DD>
+<pre>
+⊢ ∀p n. prime p ∧ 0 < n ⇒ ∀q. coprime q (p ** n) ⇔ ¬(p divides q)
+</pre>
+
+<DT><span class="strong">countFrom_0</span>
+<DD>
+<pre>
+⊢ ∀m. countFrom m 0 = ∅
+</pre>
+
+<DT><span class="strong">countFrom_SUC</span>
+<DD>
+<pre>
+⊢ ∀m n m n. countFrom m (SUC n) = m INSERT countFrom (m + 1) n
+</pre>
+
+<DT><span class="strong">countFrom_first</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ⇒ m ∈ countFrom m n
+</pre>
+
+<DT><span class="strong">countFrom_less</span>
+<DD>
+<pre>
+⊢ ∀m n x. x < m ⇒ x ∉ countFrom m n
+</pre>
+
+<DT><span class="strong">count_SUC_by_countFrom</span>
+<DD>
+<pre>
+⊢ ∀n. upto n = 0 INSERT countFrom 1 n
+</pre>
+
+<DT><span class="strong">count_by_countFrom</span>
+<DD>
+<pre>
+⊢ ∀n. count n = countFrom 0 n
+</pre>
+
+<DT><span class="strong">difference_of_squares</span>
+<DD>
+<pre>
+⊢ ∀a b. a² − b² = (a − b) * (a + b)
+</pre>
+
+<DT><span class="strong">difference_of_squares_alt</span>
+<DD>
+<pre>
+⊢ ∀a b. a * a − b * b = (a − b) * (a + b)
+</pre>
+
+<DT><span class="strong">disjoint_bigunion_add_fun</span>
+<DD>
+<pre>
+⊢ ∀P. FINITE P ∧ EVERY_FINITE P ∧ PAIR_DISJOINT P ⇒
+      ∀f. SET_ADDITIVE f ⇒ f (BIGUNION P) = ∑ f P
+</pre>
+
+<DT><span class="strong">disjoint_bigunion_card</span>
+<DD>
+<pre>
+⊢ ∀P. FINITE P ∧ EVERY_FINITE P ∧ PAIR_DISJOINT P ⇒
+      CARD (BIGUNION P) = ∑ CARD P
+</pre>
+
+<DT><span class="strong">disjoint_bigunion_mult_fun</span>
+<DD>
+<pre>
+⊢ ∀P. FINITE P ∧ EVERY_FINITE P ∧ PAIR_DISJOINT P ⇒
+      ∀f. SET_MULTIPLICATIVE f ⇒ f (BIGUNION P) = ∏ f P
+</pre>
+
+<DT><span class="strong">disjoint_bigunion_sigma</span>
+<DD>
+<pre>
+⊢ ∀P. FINITE P ∧ EVERY_FINITE P ∧ PAIR_DISJOINT P ⇒
+      ∀f. ∑ f (BIGUNION P) = ∑ (∑ f) P
+</pre>
+
+<DT><span class="strong">dividend_divides_divisor_multiple</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ n divides m ⇒ ∀t. m divides t * n ⇔ m DIV n divides t
+</pre>
+
+<DT><span class="strong">divides_eq_thm</span>
+<DD>
+<pre>
+⊢ ∀a b. a divides b ∧ 0 < b ∧ b < 2 * a ⇒ b = a
+</pre>
+
+<DT><span class="strong">divides_iff_equal</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ n < 2 * m ⇒ (m divides n ⇔ n = m)
+</pre>
+
+<DT><span class="strong">divides_self_power</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ 1 < p ⇒ p divides p ** n
+</pre>
+
+<DT><span class="strong">equal_partition_card</span>
+<DD>
+<pre>
+⊢ ∀R s n.
+    FINITE s ∧ R equiv_on s ∧ (∀e. e ∈ partition R s ⇒ CARD e = n) ⇒
+    CARD s = n * CARD (partition R s)
+</pre>
+
+<DT><span class="strong">equal_partition_factor</span>
+<DD>
+<pre>
+⊢ ∀R s n.
+    FINITE s ∧ R equiv_on s ∧ (∀e. e ∈ partition R s ⇒ CARD e = n) ⇒
+    n divides CARD s
+</pre>
+
+<DT><span class="strong">equiv_class_element</span>
+<DD>
+<pre>
+⊢ ∀R s x y. y ∈ equiv_class R s x ⇔ y ∈ s ∧ R x y
+</pre>
+
+<DT><span class="strong">equiv_class_not_empty</span>
+<DD>
+<pre>
+⊢ ∀R s x. R equiv_on s ∧ x ∈ s ⇒ equiv_class R s x ≠ ∅
+</pre>
+
+<DT><span class="strong">euclid_coprime</span>
+<DD>
+<pre>
+⊢ ∀a b c. coprime a b ∧ b divides a * c ⇒ b divides c
+</pre>
+
+<DT><span class="strong">euclid_prime</span>
+<DD>
+<pre>
+⊢ ∀p a b. prime p ∧ p divides a * b ⇒ p divides a ∨ p divides b
+</pre>
+
+<DT><span class="strong">every_coprime_prod_set_coprime</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒
+      ∀x. x ∉ s ∧ (∀z. z ∈ s ⇒ coprime x z) ⇒ coprime x (PROD_SET s)
+</pre>
+
+<DT><span class="strong">factor_eq_cofactor</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ m divides n ⇒ (m = n DIV m ⇔ n = m²)
+</pre>
+
+<DT><span class="strong">factor_partition_card</span>
+<DD>
+<pre>
+⊢ ∀R s n.
+    FINITE s ∧ R equiv_on s ∧ (∀e. e ∈ partition R s ⇒ n divides CARD e) ⇒
+    n divides CARD s
+</pre>
+
+<DT><span class="strong">feq_class_element</span>
+<DD>
+<pre>
+⊢ ∀f s x y. x ∈ preimage f s y ⇔ x ∈ s ∧ f x = y
+</pre>
+
+<DT><span class="strong">feq_class_fun</span>
+<DD>
+<pre>
+⊢ ∀f s. preimage f s ∘ f = (λx. equiv_class (feq f) s x)
+</pre>
+
+<DT><span class="strong">feq_class_property</span>
+<DD>
+<pre>
+⊢ ∀f s x. preimage f s (f x) = equiv_class (feq f) s x
+</pre>
+
+<DT><span class="strong">feq_equiv</span>
+<DD>
+<pre>
+⊢ ∀s f. feq f equiv_on s
+</pre>
+
+<DT><span class="strong">feq_partition</span>
+<DD>
+<pre>
+⊢ ∀s f. partition (feq f) s = IMAGE (preimage f s ∘ f) s
+</pre>
+
+<DT><span class="strong">feq_partition_element</span>
+<DD>
+<pre>
+⊢ ∀s f t. t ∈ partition (feq f) s ⇔ ∃z. z ∈ s ∧ ∀x. x ∈ t ⇔ x ∈ s ∧ f x = f z
+</pre>
+
+<DT><span class="strong">feq_partition_element_exists</span>
+<DD>
+<pre>
+⊢ ∀f s x. x ∈ s ⇔ ∃e. e ∈ partition (feq f) s ∧ x ∈ e
+</pre>
+
+<DT><span class="strong">feq_partition_element_not_empty</span>
+<DD>
+<pre>
+⊢ ∀f s e. e ∈ partition (feq f) s ⇒ e ≠ ∅
+</pre>
+
+<DT><span class="strong">feq_sum_over_partition</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀f g. ∑ g s = ∑ (∑ g) (partition (feq f) s)
+</pre>
+
+<DT><span class="strong">fequiv_equiv_class</span>
+<DD>
+<pre>
+⊢ ∀f. (λx y. (x == y) f) equiv_on 𝕌(:α)
+</pre>
+
+<DT><span class="strong">fequiv_refl</span>
+<DD>
+<pre>
+⊢ ∀f x. (x == x) f
+</pre>
+
+<DT><span class="strong">fequiv_sym</span>
+<DD>
+<pre>
+⊢ ∀f x y. (x == y) f ⇒ (y == x) f
+</pre>
+
+<DT><span class="strong">fequiv_trans</span>
+<DD>
+<pre>
+⊢ ∀f x y z. (x == y) f ∧ (y == z) f ⇒ (x == z) f
+</pre>
+
+<DT><span class="strong">finite_card_by_feq_partition</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀f. CARD s = ∑ CARD (partition (feq f) s)
+</pre>
+
+<DT><span class="strong">finite_card_by_image_preimage</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀f. CARD s = ∑ CARD (IMAGE (preimage f s ∘ f) s)
+</pre>
+
+<DT><span class="strong">finite_card_surj_by_image_preimage</span>
+<DD>
+<pre>
+⊢ ∀f s t. FINITE s ∧ SURJ f s t ⇒ CARD s = ∑ CARD (IMAGE (preimage f s) t)
+</pre>
+
+<DT><span class="strong">finite_partition_by_predicate</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒
+      ∀P. (let
+             u = {x | x ∈ s ∧ P x};
+             v = {x | x ∈ s ∧ ¬P x}
+           in
+             FINITE u ∧ FINITE v ∧ s =|= u # v)
+</pre>
+
+<DT><span class="strong">finite_partition_property</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀u v. s =|= u # v ⇒ (u = ∅ ⇔ v = s)
+</pre>
+
+<DT><span class="strong">fit_for_10</span>
+<DD>
+<pre>
+⊢ 1 + 2 + 3 + 4 = 10
+</pre>
+
+<DT><span class="strong">fit_for_100</span>
+<DD>
+<pre>
+⊢ 1 * 2 + 3 * 4 + 5 * 6 + 7 * 8 = 100
+</pre>
+
+<DT><span class="strong">gcd_divides_iff</span>
+<DD>
+<pre>
+⊢ ∀a b c. 0 < a ⇒ (gcd a b divides c ⇔ ∃p q. p * a = q * b + c)
+</pre>
+
+<DT><span class="strong">gcd_le</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ 0 < n ⇒ gcd m n ≤ m ∧ gcd m n ≤ n
+</pre>
+
+<DT><span class="strong">gcd_linear_mod_1</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 < a ⇒ ∃q. (q * b) MOD a = gcd a b MOD a
+</pre>
+
+<DT><span class="strong">gcd_linear_mod_2</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 < b ⇒ ∃p. (p * a) MOD b = gcd a b MOD b
+</pre>
+
+<DT><span class="strong">gcd_linear_mod_prod</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    0 < a ∧ 0 < b ⇒ ∃p q. (p * a + q * b) MOD (a * b) = gcd a b MOD (a * b)
+</pre>
+
+<DT><span class="strong">gcd_linear_mod_thm</span>
+<DD>
+<pre>
+⊢ ∀n a b. 0 < n ∧ 0 < a ⇒ ∃p q. (p * a + q * b) MOD n = gcd a b MOD n
+</pre>
+
+<DT><span class="strong">gcd_linear_thm</span>
+<DD>
+<pre>
+⊢ ∀a b c. 0 < a ⇒ (gcd a b divides c ⇔ ∃p q. p * a = q * b + c)
+</pre>
+
+<DT><span class="strong">gcd_multiple_linear_mod_prod</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    0 < a ∧ 0 < b ∧ gcd a b divides c ⇒
+    ∃p q. (p * a + q * b) MOD (a * b) = c MOD (a * b)
+</pre>
+
+<DT><span class="strong">gcd_multiple_linear_mod_thm</span>
+<DD>
+<pre>
+⊢ ∀n a b c.
+    0 < n ∧ 0 < a ∧ gcd a b divides c ⇒ ∃p q. (p * a + q * b) MOD n = c MOD n
+</pre>
+
+<DT><span class="strong">gcd_powers</span>
+<DD>
+<pre>
+⊢ ∀b m n. gcd (b ** m) (b ** n) = b ** MIN m n
+</pre>
+
+<DT><span class="strong">image_mod_subset_count</span>
+<DD>
+<pre>
+⊢ ∀s n. 0 < n ⇒ IMAGE (λx. x MOD n) s ⊆ count n
+</pre>
+
+<DT><span class="strong">in_preimage</span>
+<DD>
+<pre>
+⊢ ∀f s x y. x ∈ preimage f s y ⇔ x ∈ s ∧ f x = y
+</pre>
+
+<DT><span class="strong">in_prime</span>
+<DD>
+<pre>
+⊢ ∀p. p ∈ prime ⇔ prime p
+</pre>
+
+<DT><span class="strong">inj_iff_partition_element_card_1</span>
+<DD>
+<pre>
+⊢ ∀f s.
+    FINITE s ⇒
+    (INJ f s (IMAGE f s) ⇔ ∀e. e ∈ partition (feq f) s ⇒ CARD e = 1)
+</pre>
+
+<DT><span class="strong">inj_iff_partition_element_sing</span>
+<DD>
+<pre>
+⊢ ∀f s. INJ f s (IMAGE f s) ⇔ ∀e. e ∈ partition (feq f) s ⇒ SING e
+</pre>
+
+<DT><span class="strong">lcm_powers</span>
+<DD>
+<pre>
+⊢ ∀b m n. lcm (b ** m) (b ** n) = b ** MAX m n
+</pre>
+
+<DT><span class="strong">listRangeINC_sublist</span>
+<DD>
+<pre>
+⊢ ∀m n. m < n ⇒ sublist [m; n] [m .. n]
+</pre>
+
+<DT><span class="strong">listRangeLHI_sublist</span>
+<DD>
+<pre>
+⊢ ∀m n. m + 1 < n ⇒ sublist [m; n − 1] [m ..< n]
+</pre>
+
+<DT><span class="strong">mod_add_eq_sub</span>
+<DD>
+<pre>
+⊢ ∀n a b c d.
+    b < n ∧ c < n ⇒
+    ((a + b) MOD n = (c + d) MOD n ⇔ (a + (n − c)) MOD n = (d + (n − b)) MOD n)
+</pre>
+
+<DT><span class="strong">mod_add_eq_sub_eq</span>
+<DD>
+<pre>
+⊢ ∀n a b c d.
+    0 < n ⇒
+    ((a + b) MOD n = (c + d) MOD n ⇔
+     (a + (n − c MOD n)) MOD n = (d + (n − b MOD n)) MOD n)
+</pre>
+
+<DT><span class="strong">mod_divides</span>
+<DD>
+<pre>
+⊢ ∀n a b. 0 < n ∧ b divides n ∧ b divides a MOD n ⇒ b divides a
+</pre>
+
+<DT><span class="strong">mod_divides_divides</span>
+<DD>
+<pre>
+⊢ ∀n a b c. 0 < n ∧ a MOD n = b ∧ c divides n ∧ c divides a ⇒ c divides b
+</pre>
+
+<DT><span class="strong">mod_divides_divides_iff</span>
+<DD>
+<pre>
+⊢ ∀n a b c. 0 < n ∧ a MOD n = b ∧ c divides n ⇒ (c divides a ⇔ c divides b)
+</pre>
+
+<DT><span class="strong">mod_divides_iff</span>
+<DD>
+<pre>
+⊢ ∀n a b. 0 < n ∧ b divides n ⇒ (b divides a MOD n ⇔ b divides a)
+</pre>
+
+<DT><span class="strong">mod_eq_divides</span>
+<DD>
+<pre>
+⊢ ∀n a b c.
+    0 < n ∧ a MOD n = b MOD n ∧ c divides n ∧ c divides a ⇒ c divides b
+</pre>
+
+<DT><span class="strong">mod_eq_divides_iff</span>
+<DD>
+<pre>
+⊢ ∀n a b c.
+    0 < n ∧ a MOD n = b MOD n ∧ c divides n ⇒ (c divides a ⇔ c divides b)
+</pre>
+
+<DT><span class="strong">mod_mod_prod_eq</span>
+<DD>
+<pre>
+⊢ ∀m n a b.
+    0 < m ∧ 0 < n ∧ a MOD (m * n) = b MOD (m * n) ⇒
+    a MOD m = b MOD m ∧ a MOD n = b MOD n
+</pre>
+
+<DT><span class="strong">mod_mult_eq_mult</span>
+<DD>
+<pre>
+⊢ ∀m n a b.
+    coprime m n ∧ 0 < a ∧ a < 2 * n ∧ 0 < b ∧ b < 2 * m ∧
+    (m * a) MOD (m * n) = (n * b) MOD (m * n) ⇒
+    a = n ∧ b = m
+</pre>
+
+<DT><span class="strong">natural_by_upto</span>
+<DD>
+<pre>
+⊢ ∀n. natural n = upto n DELETE 0
+</pre>
+
+<DT><span class="strong">natural_thm</span>
+<DD>
+<pre>
+⊢ ∀n. natural n = LIST_TO_SET (GENLIST SUC n)
+</pre>
+
+<DT><span class="strong">nines_divisibility</span>
+<DD>
+<pre>
+⊢ ∀n m. nines n divides nines m ⇔ n divides m
+</pre>
+
+<DT><span class="strong">nines_division_alt</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ nines n − 10 ** (n − m) * nines m = nines (n − m)
+</pre>
+
+<DT><span class="strong">nines_division_eqn</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ nines n = 10 ** (n − m) * nines m + nines (n − m)
+</pre>
+
+<DT><span class="strong">nines_divisor</span>
+<DD>
+<pre>
+⊢ ∀n. 9 divides nines n
+</pre>
+
+<DT><span class="strong">nines_gcd_identity</span>
+<DD>
+<pre>
+⊢ ∀n m. gcd (nines n) (nines m) = nines (gcd n m)
+</pre>
+
+<DT><span class="strong">nines_gcd_reduction</span>
+<DD>
+<pre>
+⊢ ∀n m. m ≤ n ⇒ gcd (nines n) (nines m) = gcd (nines m) (nines (n − m))
+</pre>
+
+<DT><span class="strong">pair_disjoint_subset</span>
+<DD>
+<pre>
+⊢ ∀s t. t ⊆ s ∧ PAIR_DISJOINT s ⇒ PAIR_DISJOINT t
+</pre>
+
+<DT><span class="strong">pairwise_coprime_insert</span>
+<DD>
+<pre>
+⊢ ∀s e.
+    e ∉ s ∧ PAIRWISE_COPRIME (e INSERT s) ⇒
+    (∀x. x ∈ s ⇒ coprime e x) ∧ PAIRWISE_COPRIME s
+</pre>
+
+<DT><span class="strong">pairwise_coprime_partition_coprime</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ PAIRWISE_COPRIME s ⇒
+      ∀u v. s =|= u # v ⇒ coprime (PROD_SET u) (PROD_SET v)
+</pre>
+
+<DT><span class="strong">pairwise_coprime_prod_set_partition</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ PAIRWISE_COPRIME s ⇒
+      ∀u v.
+        s =|= u # v ⇒
+        PROD_SET s = PROD_SET u * PROD_SET v ∧
+        coprime (PROD_SET u) (PROD_SET v)
+</pre>
+
+<DT><span class="strong">pairwise_coprime_prod_set_subset_divides</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ∧ PAIRWISE_COPRIME s ⇒
+      ∀t. t ⊆ s ⇒ PROD_SET t divides PROD_SET s
+</pre>
+
+<DT><span class="strong">partition_as_image</span>
+<DD>
+<pre>
+⊢ ∀R s. partition R s = IMAGE (λx. equiv_class R s x) s
+</pre>
+
+<DT><span class="strong">partition_by_element</span>
+<DD>
+<pre>
+⊢ ∀s x. x ∈ s ⇒ s =|= {x} # s DELETE x
+</pre>
+
+<DT><span class="strong">partition_by_subset</span>
+<DD>
+<pre>
+⊢ ∀s u. u ⊆ s ⇒ (let v = s DIFF u in s =|= u # v)
+</pre>
+
+<DT><span class="strong">partition_cong</span>
+<DD>
+<pre>
+⊢ ∀R1 R2 s1 s2. R1 = R2 ∧ s1 = s2 ⇒ partition R1 s1 = partition R2 s2
+</pre>
+
+<DT><span class="strong">partition_element</span>
+<DD>
+<pre>
+⊢ ∀R s t. t ∈ partition R s ⇔ ∃x. x ∈ s ∧ t = equiv_class R s x
+</pre>
+
+<DT><span class="strong">partition_element_exists</span>
+<DD>
+<pre>
+⊢ ∀R s x. R equiv_on s ⇒ (x ∈ s ⇔ ∃e. e ∈ partition R s ∧ x ∈ e)
+</pre>
+
+<DT><span class="strong">partition_element_not_empty</span>
+<DD>
+<pre>
+⊢ ∀R s e. R equiv_on s ∧ e ∈ partition R s ⇒ e ≠ ∅
+</pre>
+
+<DT><span class="strong">partition_elements</span>
+<DD>
+<pre>
+⊢ ∀R s. partition R s = IMAGE (λx. equiv_class R s x) s
+</pre>
+
+<DT><span class="strong">partition_on_empty</span>
+<DD>
+<pre>
+⊢ ∀R. partition R ∅ = ∅
+</pre>
+
+<DT><span class="strong">power_divides_iff</span>
+<DD>
+<pre>
+⊢ ∀p. 1 < p ⇒ ∀m n. p ** m divides p ** n ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">power_eq_prime_power</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ ∀b n m. 0 < m ∧ b ** n = p ** m ⇒ ∃k. b = p ** k ∧ k * n = m
+</pre>
+
+<DT><span class="strong">power_parity</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀m. (EVEN m ⇔ EVEN (m ** n)) ∧ (ODD m ⇔ ODD (m ** n))
+</pre>
+
+<DT><span class="strong">power_predecessor_divisibility</span>
+<DD>
+<pre>
+⊢ ∀t n m. 1 < t ⇒ (tops t n divides tops t m ⇔ n divides m)
+</pre>
+
+<DT><span class="strong">power_predecessor_division_alt</span>
+<DD>
+<pre>
+⊢ ∀t m n. 0 < t ∧ m ≤ n ⇒ tops t n − t ** (n − m) * tops t m = tops t (n − m)
+</pre>
+
+<DT><span class="strong">power_predecessor_division_eqn</span>
+<DD>
+<pre>
+⊢ ∀t m n. 0 < t ∧ m ≤ n ⇒ tops t n = t ** (n − m) * tops t m + tops t (n − m)
+</pre>
+
+<DT><span class="strong">power_predecessor_divisor</span>
+<DD>
+<pre>
+⊢ ∀t n. t − 1 divides tops t n
+</pre>
+
+<DT><span class="strong">power_predecessor_gcd_identity</span>
+<DD>
+<pre>
+⊢ ∀t n m. gcd (tops t n) (tops t m) = tops t (gcd n m)
+</pre>
+
+<DT><span class="strong">power_predecessor_gcd_reduction</span>
+<DD>
+<pre>
+⊢ ∀t n m. m ≤ n ⇒ gcd (tops t n) (tops t m) = gcd (tops t m) (tops t (n − m))
+</pre>
+
+<DT><span class="strong">preimage_alt</span>
+<DD>
+<pre>
+⊢ ∀f s y. preimage f s y = PREIMAGE f {y} ∩ s
+</pre>
+
+<DT><span class="strong">preimage_choice_property</span>
+<DD>
+<pre>
+⊢ ∀f s y.
+    y ∈ IMAGE f s ⇒
+    CHOICE (preimage f s y) ∈ s ∧ f (CHOICE (preimage f s y)) = y
+</pre>
+
+<DT><span class="strong">preimage_element</span>
+<DD>
+<pre>
+⊢ ∀f s x y. x ∈ preimage f s y ⇔ x ∈ s ∧ f x = y
+</pre>
+
+<DT><span class="strong">preimage_finite</span>
+<DD>
+<pre>
+⊢ ∀f s y. FINITE s ⇒ FINITE (preimage f s y)
+</pre>
+
+<DT><span class="strong">preimage_image_bij</span>
+<DD>
+<pre>
+⊢ ∀f s. BIJ (preimage f s) (IMAGE f s) (partition (feq f) s)
+</pre>
+
+<DT><span class="strong">preimage_image_inj</span>
+<DD>
+<pre>
+⊢ ∀f s. INJ (preimage f s) (IMAGE f s) (POW s)
+</pre>
+
+<DT><span class="strong">preimage_inj</span>
+<DD>
+<pre>
+⊢ ∀f s. INJ f s 𝕌(:β) ⇒ ∀x. x ∈ s ⇒ preimage f s (f x) = {x}
+</pre>
+
+<DT><span class="strong">preimage_inj_choice</span>
+<DD>
+<pre>
+⊢ ∀f s. INJ f s 𝕌(:β) ⇒ ∀x. x ∈ s ⇒ CHOICE (preimage f s (f x)) = x
+</pre>
+
+<DT><span class="strong">preimage_of_image</span>
+<DD>
+<pre>
+⊢ ∀f s x. x ∈ s ⇒ x ∈ preimage f s (f x)
+</pre>
+
+<DT><span class="strong">preimage_property</span>
+<DD>
+<pre>
+⊢ ∀f s y x. x ∈ preimage f s y ⇒ f x = y
+</pre>
+
+<DT><span class="strong">preimage_subset</span>
+<DD>
+<pre>
+⊢ ∀f s y. preimage f s y ⊆ s
+</pre>
+
+<DT><span class="strong">prime_coprime_all_less</span>
+<DD>
+<pre>
+⊢ ∀m n. prime n ∧ m < n ⇒ ∀j. 0 < j ∧ j ≤ m ⇒ coprime n j
+</pre>
+
+<DT><span class="strong">prime_coprime_all_lt</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇒ ∀m. 0 < m ∧ m < n ⇒ coprime n m
+</pre>
+
+<DT><span class="strong">prime_divides_power</span>
+<DD>
+<pre>
+⊢ ∀p n. prime p ∧ 0 < n ⇒ ∀b. p divides b ** n ⇔ p divides b
+</pre>
+
+<DT><span class="strong">prime_divides_prime</span>
+<DD>
+<pre>
+⊢ ∀n m. prime n ∧ prime m ⇒ (n divides m ⇔ n = m)
+</pre>
+
+<DT><span class="strong">prime_divides_prime_power</span>
+<DD>
+<pre>
+⊢ ∀m n k. prime m ∧ prime n ∧ m divides n ** k ⇒ m = n
+</pre>
+
+<DT><span class="strong">prime_divides_self_power</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ ∀n. 0 < n ⇒ p divides p ** n
+</pre>
+
+<DT><span class="strong">prime_iff_coprime_all_lt</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇔ 1 < n ∧ ∀j. 0 < j ∧ j < n ⇒ coprime n j
+</pre>
+
+<DT><span class="strong">prime_iff_no_proper_factor</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇔ 1 < n ∧ ∀j. 1 < j ∧ j < n ⇒ ¬(j divides n)
+</pre>
+
+<DT><span class="strong">prime_power_divides_iff</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ ∀m n. p ** m divides p ** n ⇔ m ≤ n
+</pre>
+
+<DT><span class="strong">prime_power_divisor</span>
+<DD>
+<pre>
+⊢ ∀p n a. prime p ∧ a divides p ** n ⇒ ∃j. j ≤ n ∧ a = p ** j
+</pre>
+
+<DT><span class="strong">prime_power_factor</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ prime p ⇒ ∃q m. n = p ** m * q ∧ coprime p q
+</pre>
+
+<DT><span class="strong">prime_powers_coprime</span>
+<DD>
+<pre>
+⊢ ∀p q. prime p ∧ prime q ∧ p ≠ q ⇒ ∀m n. coprime (p ** m) (q ** n)
+</pre>
+
+<DT><span class="strong">prime_powers_divide</span>
+<DD>
+<pre>
+⊢ ∀p q.
+    prime p ∧ prime q ⇒ ∀m n. 0 < m ⇒ (p ** m divides q ** n ⇔ p = q ∧ m ≤ n)
+</pre>
+
+<DT><span class="strong">prime_powers_eq</span>
+<DD>
+<pre>
+⊢ ∀p q. prime p ∧ prime q ⇒ ∀m n. 0 < m ∧ p ** m = q ** n ⇒ p = q ∧ m = n
+</pre>
+
+<DT><span class="strong">prod_set_residue</span>
+<DD>
+<pre>
+⊢ ∀n. PROD_SET (residue n) = FACT (n − 1)
+</pre>
+
+<DT><span class="strong">residue_0</span>
+<DD>
+<pre>
+⊢ residue 0 = ∅
+</pre>
+
+<DT><span class="strong">residue_1</span>
+<DD>
+<pre>
+⊢ residue 1 = ∅
+</pre>
+
+<DT><span class="strong">residue_card</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ CARD (residue n) = n − 1
+</pre>
+
+<DT><span class="strong">residue_count</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ count n = 0 INSERT residue n
+</pre>
+
+<DT><span class="strong">residue_delete</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ residue n DELETE n = residue n
+</pre>
+
+<DT><span class="strong">residue_element</span>
+<DD>
+<pre>
+⊢ ∀n j. j ∈ residue n ⇒ 0 < j ∧ j < n
+</pre>
+
+<DT><span class="strong">residue_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (residue n)
+</pre>
+
+<DT><span class="strong">residue_insert</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ residue (SUC n) = n INSERT residue n
+</pre>
+
+<DT><span class="strong">residue_no_self</span>
+<DD>
+<pre>
+⊢ ∀n. n ∉ residue n
+</pre>
+
+<DT><span class="strong">residue_no_zero</span>
+<DD>
+<pre>
+⊢ ∀n. 0 ∉ residue n
+</pre>
+
+<DT><span class="strong">residue_nonempty</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ residue n ≠ ∅
+</pre>
+
+<DT><span class="strong">residue_prime_neq</span>
+<DD>
+<pre>
+⊢ ∀p a n.
+    prime p ∧ a ∈ residue p ∧ n ≤ p ⇒
+    ∀x. x ∈ residue n ⇒ (a * n) MOD p ≠ (a * x) MOD p
+</pre>
+
+<DT><span class="strong">residue_suc</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ residue (SUC n) = n INSERT residue n
+</pre>
+
+<DT><span class="strong">residue_thm</span>
+<DD>
+<pre>
+⊢ ∀n. residue n = count n DIFF {0}
+</pre>
+
+<DT><span class="strong">set_add_fun_by_partition</span>
+<DD>
+<pre>
+⊢ ∀R s.
+    R equiv_on s ∧ FINITE s ⇒ ∀f. SET_ADDITIVE f ⇒ f s = ∑ f (partition R s)
+</pre>
+
+<DT><span class="strong">set_additive_card</span>
+<DD>
+<pre>
+⊢ SET_ADDITIVE CARD
+</pre>
+
+<DT><span class="strong">set_additive_sigma</span>
+<DD>
+<pre>
+⊢ ∀f. SET_ADDITIVE (∑ f)
+</pre>
+
+<DT><span class="strong">set_card_by_partition</span>
+<DD>
+<pre>
+⊢ ∀R s. R equiv_on s ∧ FINITE s ⇒ CARD s = ∑ CARD (partition R s)
+</pre>
+
+<DT><span class="strong">set_mult_fun_by_partition</span>
+<DD>
+<pre>
+⊢ ∀R s.
+    R equiv_on s ∧ FINITE s ⇒
+    ∀f. SET_MULTIPLICATIVE f ⇒ f s = ∏ f (partition R s)
+</pre>
+
+<DT><span class="strong">set_sigma_by_partition</span>
+<DD>
+<pre>
+⊢ ∀R s. R equiv_on s ∧ FINITE s ⇒ ∀f. ∑ f s = ∑ (∑ f) (partition R s)
+</pre>
+
+<DT><span class="strong">sigma_geometric_natural</span>
+<DD>
+<pre>
+⊢ ∀p. 1 < p ⇒ ∀n. ∑ (λj. p ** j) (natural n) = p * tops p n DIV (p − 1)
+</pre>
+
+<DT><span class="strong">sigma_geometric_natural_eqn</span>
+<DD>
+<pre>
+⊢ ∀p. 0 < p ⇒ ∀n. (p − 1) * ∑ (λj. p ** j) (natural n) = p * tops p n
+</pre>
+
+<DT><span class="strong">sublist_element_order</span>
+<DD>
+<pre>
+⊢ ∀ls sl j h.
+    sublist sl ls ∧ ALL_DISTINCT ls ∧ j < h ∧ h < LENGTH sl ⇒
+    findi (EL j sl) ls < findi (EL h sl) ls
+</pre>
+
+<DT><span class="strong">sum_image_by_composition</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀g. INJ g s 𝕌(:α) ⇒ ∀f. ∑ f (IMAGE g s) = ∑ (f ∘ g) s
+</pre>
+
+<DT><span class="strong">sum_image_by_composition_with_partial_inj</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒
+      ∀f. f ∅ = 0 ⇒
+          ∀g. (∀t. FINITE t ∧ (∀x. x ∈ t ⇒ g x ≠ ∅) ⇒ INJ g t 𝕌(:β -> bool)) ⇒
+              ∑ f (IMAGE g s) = ∑ (f ∘ g) s
+</pre>
+
+<DT><span class="strong">sum_image_by_composition_without_inj</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒
+      ∀f g.
+        (∀x y. x ∈ s ∧ y ∈ s ∧ g x = g y ⇒ x = y ∨ f (g x) = 0) ⇒
+        ∑ f (IMAGE g s) = ∑ (f ∘ g) s
+</pre>
+
+<DT><span class="strong">sum_image_by_permutation</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ ∀g. g PERMUTES s ⇒ ∀f. ∑ (f ∘ g) s = ∑ f s
+</pre>
+
+<DT><span class="strong">upto_by_count</span>
+<DD>
+<pre>
+⊢ ∀n. upto n = n INSERT count n
+</pre>
+
+<DT><span class="strong">upto_by_natural</span>
+<DD>
+<pre>
+⊢ ∀n. upto n = 0 INSERT natural n
+</pre>
+
+<DT><span class="strong">upto_card</span>
+<DD>
+<pre>
+⊢ ∀n. CARD (upto n) = SUC n
+</pre>
+
+<DT><span class="strong">upto_delete</span>
+<DD>
+<pre>
+⊢ ∀n. upto n DELETE n = count n
+</pre>
+
+<DT><span class="strong">upto_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (upto n)
+</pre>
+
+<DT><span class="strong">upto_has_last</span>
+<DD>
+<pre>
+⊢ ∀n. n ∈ upto n
+</pre>
+
+<DT><span class="strong">upto_split_first</span>
+<DD>
+<pre>
+⊢ ∀n. upto n = {0} ∪ natural n
+</pre>
+
+<DT><span class="strong">upto_split_last</span>
+<DD>
+<pre>
+⊢ ∀n. upto n = count n ∪ {n}
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

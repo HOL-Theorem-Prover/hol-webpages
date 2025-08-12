@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Conv.REWR_CONV</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="rewr_conv"><code>REWR_CONV</code></h2>
+<pre class="hol4"><code>Conv.REWR_CONV : (thm -&gt; conv)</code></pre>
+<hr />
+<p>Uses an instance of a given equation to rewrite a term.</p>
+<p><code>REWR_CONV</code> is one of the basic building blocks for the
+implementation of rewriting in the HOL system. In particular, the term
+replacement or rewriting done by all the built-in rewriting rules and
+tactics is ultimately done by applications of <code>REWR_CONV</code> to
+appropriate subterms. The description given here for
+<code>REWR_CONV</code> may therefore be taken as a specification of the
+atomic action of replacing equals by equals that is used in all these
+higher level rewriting tools.</p>
+<p>The first argument to <code>REWR_CONV</code> is expected to be an
+equational theorem which is to be used as a left-to-right rewrite rule.
+The general form of this theorem is:</p>
+<pre class="hol4"><code>   A |- t[x1,...,xn] = u[x1,...,xn]</code></pre>
+<p>where <code>x1</code>, …, <code>xn</code> are all the variables that
+occur free in the left-hand side of the conclusion of the theorem but do
+not occur free in the assumptions. Any of these variables may also be
+universally quantified at the outermost level of the equation, as for
+example in:</p>
+<pre class="hol4"><code>   A |- !x1...xn. t[x1,...,xn] = u[x1,...,xn]</code></pre>
+<p>Note that <code>REWR_CONV</code> will also work, but will give a
+generally undesirable result (see below), if the right-hand side of the
+equation contains free variables that do not also occur free on the
+left-hand side, as for example in:</p>
+<pre class="hol4"><code>   A |- t[x1,...,xn] = u[x1,...,xn,y1,...,ym]</code></pre>
+<p>where the variables <code>y1</code>, …, <code>ym</code> do not occur
+free in <code>t[x1,...,xn]</code>.</p>
+<p>If <code>th</code> is an equational theorem of the kind shown above,
+then <code>REWR_CONV th</code> returns a conversion that maps terms of
+the form <code>t[e1,...,en/x1,...,xn]</code>, in which the terms
+<code>e1</code>, …, <code>en</code> are free for <code>x1</code>, …,
+<code>xn</code> in <code>t</code>, to theorems of the form:</p>
+<pre class="hol4"><code>   A |- t[e1,...,en/x1,...,xn] = u[e1,...,en/x1,...,xn]</code></pre>
+<p>That is, <code>REWR_CONV th tm</code> attempts to match the left-hand
+side of the rewrite rule <code>th</code> to the term <code>tm</code>. If
+such a match is possible, then <code>REWR_CONV</code> returns the
+corresponding substitution instance of <code>th</code>.</p>
+<p>If <code>REWR_CONV</code> is given a theorem <code>th</code>:</p>
+<pre class="hol4"><code>   A |- t[x1,...,xn] = u[x1,...,xn,y1,...,ym]</code></pre>
+<p>where the variables <code>y1</code>, …, <code>ym</code> do not occur
+free in the left-hand side, then the result of applying the conversion
+<code>REWR_CONV th</code> to a term <code>t[e1,...,en/x1,...,xn]</code>
+will be:</p>
+<pre class="hol4"><code>   A |- t[e1,...,en/x1,...,xn] = u[e1,...,en,v1,...,vm/x1,...,xn,y1,...,ym]</code></pre>
+<p>where <code>v1</code>, …, <code>vm</code> are variables chosen so as
+to be free nowhere in <code>th</code> or in the input term. The user has
+no control over the choice of the variables <code>v1</code>, …,
+<code>vm</code>, and the variables actually chosen may well be
+inconvenient for other purposes. This situation is, however, relatively
+rare; in most equations the free variables on the right-hand side are a
+subset of the free variables on the left-hand side.</p>
+<p>In addition to doing substitution for free variables in the supplied
+equational theorem (or ‘rewrite rule’), <code>REWR_CONV th tm</code>
+also does type instantiation, if this is necessary in order to match the
+left-hand side of the given rewrite rule <code>th</code> to the term
+argument <code>tm</code>. If, for example, <code>th</code> is the
+theorem:</p>
+<pre class="hol4"><code>   A |- t[x1,...,xn] = u[x1,...,xn]</code></pre>
+<p>and the input term <code>tm</code> is (a substitution instance of) an
+instance of <code>t[x1,...,xn]</code> in which the types
+<code>ty1</code>, …, <code>tyi</code> are substituted for the type
+variables <code>vty1</code>, …, <code>vtyi</code>, that is if:</p>
+<pre class="hol4"><code>   tm = t[ty1,...,tyn/vty1,...,vtyn][e1,...,en/x1,...,xn]</code></pre>
+<p>then <code>REWR_CONV th tm</code> returns:</p>
+<pre class="hol4"><code>   A |- (t = u)[ty1,...,tyn/vty1,...,vtyn][e1,...,en/x1,...,xn]</code></pre>
+<p>Note that, in this case, the type variables <code>vty1</code>, …,
+<code>vtyi</code> must not occur anywhere in the hypotheses
+<code>A</code>. Otherwise, the conversion will fail.</p>
+<h3 id="failure">Failure</h3>
+<p><code>REWR_CONV th</code> fails if <code>th</code> is not an equation
+or an equation universally quantified at the outermost level. If
+<code>th</code> is such an equation:</p>
+<pre class="hol4"><code>  th = A |- !v1....vi. t[x1,...,xn] = u[x1,...,xn,y1,...,yn]</code></pre>
+<p>then <code>REWR_CONV th tm</code> fails unless the term
+<code>tm</code> is alpha-equivalent to an instance of the left-hand side
+<code>t[x1,...,xn]</code> which can be obtained by instantiation of free
+type variables (i.e. type variables not occurring in the assumptions
+<code>A</code>) and substitution for the free variables <code>x1</code>,
+…, <code>xn</code>.</p>
+<p>As noted, <code>REWR_CONV th</code> will fail rather than substitute
+for variables or type variables which appear in the hypotheses
+<code>A</code>. To allow substitution in the hypotheses, use
+<code>REWR_CONV_A th</code>.</p>
+<h3 id="example">Example</h3>
+<p>The following example illustrates a straightforward use of
+<code>REWR_CONV</code>. The supplied rewrite rule is polymorphic, and
+both substitution for free variables and type instantiation may take
+place. <code>EQ_SYM_EQ</code> is the theorem:</p>
+<pre class="hol4"><code>   |- !x:&#39;a. !y. (x = y) = (y = x)</code></pre>
+<p>and <code>REWR_CONV EQ_SYM_EQ</code> behaves as follows:</p>
+<pre class="hol4"><code>   - REWR_CONV EQ_SYM_EQ (Term `1 = 2`);
+   &gt; val it = |- (1 = 2) = (2 = 1) : thm
+
+   - REWR_CONV EQ_SYM_EQ (Term `1 &lt; 2`);
+   ! Uncaught exception:
+   ! HOL_ERR</code></pre>
+<p>The second application fails because the left-hand side
+<code>x = y</code> of the rewrite rule does not match the term to be
+rewritten, namely <code>1 &lt; 2</code>.</p>
+<p>In the following example, one might expect the result to be the
+theorem <code>A |- f 2 = 2</code>, where <code>A</code> is the
+assumption of the supplied rewrite rule:</p>
+<pre class="hol4"><code>   - REWR_CONV (ASSUME (Term `!x:&#39;a. f x = x`)) (Term `f 2:num`);
+   ! Uncaught exception:
+   ! HOL_ERR</code></pre>
+<p>The application fails, however, because the type variable
+<code>'a</code> appears in the assumption of the theorem returned by
+<code>ASSUME (Term `!x:'a. f x = x`)</code>.</p>
+<p>Failure will also occur in situations like:</p>
+<pre class="hol4"><code>   - REWR_CONV (ASSUME (Term `f (n:num) = n`)) (Term `f 2:num`);
+   ! Uncaught exception:
+   ! HOL_ERR</code></pre>
+<p>where the left-hand side of the supplied equation contains a free
+variable (in this case <code>n</code>) which is also free in the
+assumptions, but which must be instantiated in order to match the input
+term.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Conv.REWR_CONV_A.html"><code>Conv.REWR_CONV_A</code></a>, <a
+href="Rewrite.REWRITE_CONV.html"><code>Rewrite.REWRITE_CONV</code></a></p>
+</body>
+</html>

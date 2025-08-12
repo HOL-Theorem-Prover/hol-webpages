@@ -1,0 +1,699 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: coalgAxioms</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "coalgAxioms"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "simpleSetCatTheory.html"><span class="strong">simpleSetCat</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">F</span> <td> 1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">Fpushout</span>
+    <td>
+    :α system ->
+    β system ->
+    γ system ->
+    (α -> β) -> (α -> γ) -> π system # (β -> π) # (γ -> π) -> δ itself -> bool
+    <tr><td> <span class="strong">Fset</span> <td> :(α -> bool) -> α F -> bool
+    <tr><td>
+    <span class="strong">bisim</span>
+    <td>
+    :(α -> β -> bool) -> α system -> β system -> bool
+    <tr><td>
+    <span class="strong">bisimilar</span>
+    <td>
+    :α system -> β system -> bool
+    <tr><td>
+    <span class="strong">bounded</span>
+    <td>
+    :α itself -> β itself -> bool
+    <tr><td>
+    <span class="strong">bquot</span>
+    <td>
+    :α system -> (α -> α -> bool) -> (α -> bool) system
+    <tr><td>
+    <span class="strong">coequalizer</span>
+    <td>
+    :α system ->
+    β system ->
+    (α -> β) -> (α -> β) -> γ system # (β -> γ) -> δ itself -> bool
+    <tr><td>
+    <span class="strong">epi</span>
+    <td>
+    :(α -> β) -> α system -> β system -> γ itself -> bool
+    <tr><td>
+    <span class="strong">gbisim</span>
+    <td>
+    :α system -> α -> α -> bool
+    <tr><td>
+    <span class="strong">genS</span>
+    <td>
+    :α system -> (α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">hom</span>
+    <td>
+    :(α -> β) -> α system -> β system -> bool
+    <tr><td>
+    <span class="strong">iso</span>
+    <td>
+    :α system -> β system -> bool
+    <tr><td> <span class="strong">mapF</span> <td> :(α -> β) -> α F -> β F
+    <tr><td>
+    <span class="strong">relF</span>
+    <td>
+    :(α -> β -> bool) -> α F -> β F -> bool
+    <tr><td> <span class="strong">setF</span> <td> :α F -> α -> bool
+    <tr><td> <span class="strong">simple</span> <td> :α system -> bool
+    <tr><td>
+    <span class="strong">subsystem</span>
+    <td>
+    :(α -> bool) -> α system -> bool
+    <tr><td> <span class="strong">system</span> <td> :α system -> bool
+    
+</table>
+</center>
+
+<h1>Axioms</h1>
+<DL>
+<DT><span class="strong">mapID</span>
+<DD>
+<pre>
+⊢ mapF (λx. x) = (λa. a)
+</pre>
+
+<DT><span class="strong">mapO</span>
+<DD>
+<pre>
+⊢ mapF f ∘ mapF g = mapF (f ∘ g)
+</pre>
+
+<DT><span class="strong">map_CONG</span>
+<DD>
+<pre>
+⊢ ∀f g y. (∀x. x ∈ setF y ⇒ f x = g x) ⇒ mapF f y = mapF g y
+</pre>
+
+<DT><span class="strong">relO</span>
+<DD>
+<pre>
+⊢ relF R ∘ᵣ relF S ⊆ᵣ relF (R ∘ᵣ S)
+</pre>
+
+<DT><span class="strong">set_map</span>
+<DD>
+<pre>
+⊢ setF ∘ mapF f = IMAGE f ∘ setF
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">Fset_def</span>
+<DD>
+<pre>
+⊢ ∀A. Fset A = {af | setF af ⊆ A}
+</pre>
+
+<DT><span class="strong">bisim_def</span>
+<DD>
+<pre>
+⊢ ∀R A af B bf.
+    bisim R (A,af) (B,bf) ⇔
+    system (A,af) ∧ system (B,bf) ∧
+    ∀a b. R a b ⇒ a ∈ A ∧ b ∈ B ∧ relF R (af a) (bf b)
+</pre>
+
+<DT><span class="strong">bisimilar_def</span>
+<DD>
+<pre>
+⊢ ∀As Bs. bisimilar As Bs ⇔ ∃R. bisim R As Bs
+</pre>
+
+<DT><span class="strong">bquot_def</span>
+<DD>
+<pre>
+⊢ ∀A af R.
+    bquot (A,af) R =
+    (partition R A,(λap. mapF (eps R A) (af (CHOICE ap)))⟨partition R A⟩)
+</pre>
+
+<DT><span class="strong">gbisim_def</span>
+<DD>
+<pre>
+⊢ ∀A af x y. gbisim (A,af) x y ⇔ ∃R. bisim R (A,af) (A,af) ∧ R x y
+</pre>
+
+<DT><span class="strong">genS_def</span>
+<DD>
+<pre>
+⊢ ∀As X. genS As X = BIGINTER {V | subsystem V As ∧ X ⊆ V}
+</pre>
+
+<DT><span class="strong">hom_def</span>
+<DD>
+<pre>
+⊢ ∀h A af B bf.
+    hom h (A,af) (B,bf) ⇔
+    system (A,af) ∧ system (B,bf) ∧
+    (∀a. a ∈ A ⇒ h a ∈ B ∧ bf (h a) = mapF h (af a)) ∧ ∀a. a ∉ A ⇒ h a = ARB
+</pre>
+
+<DT><span class="strong">iso_def</span>
+<DD>
+<pre>
+⊢ ∀A af B bf.
+    iso (A,af) (B,bf) ⇔
+    ∃f g.
+      hom f (A,af) (B,bf) ∧ hom g (B,bf) (A,af) ∧ (∀a. a ∈ A ⇒ g (f a) = a) ∧
+      ∀b. b ∈ B ⇒ f (g b) = b
+</pre>
+
+<DT><span class="strong">relF_def</span>
+<DD>
+<pre>
+⊢ ∀R x y. relF R x y ⇔ ∃z. setF z ⊆ Rᴾ ∧ mapF FST z = x ∧ mapF SND z = y
+</pre>
+
+<DT><span class="strong">simple_def</span>
+<DD>
+<pre>
+⊢ ∀A. simple A ⇔ ∀R. bisim R A A ⇒ ∀x y. R x y ⇒ x = y
+</pre>
+
+<DT><span class="strong">subsystem_def</span>
+<DD>
+<pre>
+⊢ ∀V A af.
+    subsystem V (A,af) ⇔
+    system (A,af) ∧ V ⊆ A ∧ ∃vf. hom (λx. x)⟨V⟩ (V,vf) (A,af)
+</pre>
+
+<DT><span class="strong">system_def</span>
+<DD>
+<pre>
+⊢ ∀A af. system (A,af) ⇔ (∀a. a ∈ A ⇒ af a ∈ Fset A) ∧ ∀a. a ∉ A ⇒ af a = ARB
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">BIJ_homs_iso</span>
+<DD>
+<pre>
+⊢ hom f (A,af) (B,bf) ∧ BIJ f A B ⇒ iso (A,af) (B,bf)
+</pre>
+
+<DT><span class="strong">Fpushout_def</span>
+<DD>
+<pre>
+⊢ Fpushout (A,af) (B,bf) (C',cf) f g ((P,pf),i1,i2) (:δ) ⇔
+  hom f (A,af) (B,bf) ∧ hom g (A,af) (C',cf) ∧ hom i1 (B,bf) (P,pf) ∧
+  hom i2 (C',cf) (P,pf) ∧ (i1 ∘ f)⟨A⟩ = (i2 ∘ g)⟨A⟩ ∧
+  ∀Q qf j1 j2.
+    hom j1 (B,bf) (Q,qf) ∧ hom j2 (C',cf) (Q,qf) ∧ (j1 ∘ f)⟨A⟩ = (j2 ∘ g)⟨A⟩ ⇒
+    ∃!u. hom u (P,pf) (Q,qf) ∧ (u ∘ i1)⟨B⟩ = j1 ∧ (u ∘ i2)⟨C'⟩ = j2
+</pre>
+
+<DT><span class="strong">Fpushout_ind</span>
+<DD>
+<pre>
+⊢ ∀P'.
+    (∀A af B bf C cf f g P pf i1 i2.
+       P' (A,af) (B,bf) (C,cf) f g ((P,pf),i1,i2) (:δ)) ⇒
+    ∀v v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12.
+      P' (v,v1) (v2,v3) (v4,v5) v6 v7 ((v8,v9),v10,v11) v12
+</pre>
+
+<DT><span class="strong">INJ_homs_mono</span>
+<DD>
+<pre>
+⊢ hom f (A,af) (B,bf) ∧ INJ f A B ⇒
+  ∀C cf g h. hom g (C,cf) (A,af) ∧ hom h (C,cf) (A,af) ∧ f ∘ g = f ∘ h ⇒ g = h
+</pre>
+
+<DT><span class="strong">SURJ_homs_epi</span>
+<DD>
+<pre>
+⊢ hom f (A,af) (B,bf) ∧ SURJ f A B ⇒ epi f (A,af) (B,bf) (:γ)
+</pre>
+
+<DT><span class="strong">UNIV_system</span>
+<DD>
+<pre>
+⊢ system (𝕌(:α),af)
+</pre>
+
+<DT><span class="strong">bisim_RUNION</span>
+<DD>
+<pre>
+⊢ bisim R1 As Bs ∧ bisim R2 As Bs ⇒ bisim (R1 ∪ᵣ R2) As Bs
+</pre>
+
+<DT><span class="strong">bisim_gbisim</span>
+<DD>
+<pre>
+⊢ system (A,af) ⇒ bisim (gbisim (A,af)) (A,af) (A,af)
+</pre>
+
+<DT><span class="strong">bisim_system</span>
+<DD>
+<pre>
+⊢ bisim R As Bs ⇒ system As ∧ system Bs
+</pre>
+
+<DT><span class="strong">bisimilar_equivalence</span>
+<DD>
+<pre>
+⊢ bisimilar equiv_on system
+</pre>
+
+<DT><span class="strong">bisimulations_compose</span>
+<DD>
+<pre>
+⊢ bisim R (A,af) (B,bf) ∧ bisim Q (B,bf) (C,cf) ⇒ bisim (Q ∘ᵣ R) (A,af) (C,cf)
+</pre>
+
+<DT><span class="strong">bounded_def</span>
+<DD>
+<pre>
+⊢ bounded (:α) (:β) ⇔
+  ∀a A af. system (A,af) ∧ a ∈ A ⇒ ∃f V. INJ f (genS (A,af) {a}) V
+</pre>
+
+<DT><span class="strong">bounded_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P (:α) (:β) ⇒ ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">bquot_coequalizer</span>
+<DD>
+<pre>
+⊢ system (A,af) ∧ bisim R (A,af) (A,af) ∧ R equiv_on A ⇒
+  ∃Rf.
+    coequalizer (Rᴾ,Rf) (A,af) FST⟨Rᴾ⟩ SND⟨Rᴾ⟩ (bquot (A,af) R,eps R A) (:δ)
+</pre>
+
+<DT><span class="strong">bquot_correct</span>
+<DD>
+<pre>
+⊢ system (A,af) ∧ bisim R (A,af) (A,af) ∧ R equiv_on A ⇒
+  system (bquot (A,af) R) ∧ hom (eps R A) (A,af) (bquot (A,af) R)
+</pre>
+
+<DT><span class="strong">coequalizer_def</span>
+<DD>
+<pre>
+⊢ coequalizer (A,af) (B,bf) f1 f2 ((C',cf),g) (:δ) ⇔
+  hom f1 (A,af) (B,bf) ∧ hom f2 (A,af) (B,bf) ∧ hom g (B,bf) (C',cf) ∧
+  (g ∘ f1)⟨A⟩ = (g ∘ f2)⟨A⟩ ∧
+  ∀h D df.
+    hom h (B,bf) (D,df) ∧ (h ∘ f1)⟨A⟩ = (h ∘ f2)⟨A⟩ ⇒
+    ∃!u. hom u (C',cf) (D,df) ∧ h = (u ∘ g)⟨B⟩
+</pre>
+
+<DT><span class="strong">coequalizer_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀A af B bf f1 f2 C cf g. P (A,af) (B,bf) f1 f2 ((C,cf),g) (:δ)) ⇒
+      ∀v v1 v2 v3 v4 v5 v6 v7 v8 v9. P (v,v1) (v2,v3) v4 v5 ((v6,v7),v8) v9
+</pre>
+
+<DT><span class="strong">coequalizer_thm</span>
+<DD>
+<pre>
+⊢ coequalizer (A,af) (B,bf) f1 f2 (Cs,g) (:δ) ⇔
+  hom f1 (A,af) (B,bf) ∧ hom f2 (A,af) (B,bf) ∧ hom g (B,bf) Cs ∧
+  (g ∘ f1)⟨A⟩ = (g ∘ f2)⟨A⟩ ∧
+  ∀h D df.
+    hom h (B,bf) (D,df) ∧ (h ∘ f1)⟨A⟩ = (h ∘ f2)⟨A⟩ ⇒
+    ∃!u. hom u Cs (D,df) ∧ h = (u ∘ g)⟨B⟩
+</pre>
+
+<DT><span class="strong">epi_Fpushout</span>
+<DD>
+<pre>
+⊢ epi f (A,af) (B,bf) (:γ) ⇔
+  Fpushout (A,af) (B,bf) (B,bf) f f ((B,bf),(λx. x)⟨B⟩,(λx. x)⟨B⟩) (:γ)
+</pre>
+
+<DT><span class="strong">epi_def</span>
+<DD>
+<pre>
+⊢ epi f (A,af) (B,bf) (:γ) ⇔
+  hom f (A,af) (B,bf) ∧
+  ∀C cf g h.
+    hom g (B,bf) (C,cf) ∧ hom h (B,bf) (C,cf) ∧ (g ∘ f)⟨A⟩ = (h ∘ f)⟨A⟩ ⇒
+    g = h
+</pre>
+
+<DT><span class="strong">epi_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀f A af B bf. P f (A,af) (B,bf) (:γ)) ⇒
+      ∀v v1 v2 v3 v4 v5. P v (v1,v2) (v3,v4) v5
+</pre>
+
+<DT><span class="strong">gbisim_equivalence</span>
+<DD>
+<pre>
+⊢ system (A,af) ⇒ gbisim (A,af) equiv_on A
+</pre>
+
+<DT><span class="strong">genS_correct</span>
+<DD>
+<pre>
+⊢ system (A,af) ∧ X ⊆ A ⇒ subsystem (genS (A,af) X) (A,af)
+</pre>
+
+<DT><span class="strong">hom_ID</span>
+<DD>
+<pre>
+⊢ system (A,af) ⇒ hom (λx. x)⟨A⟩ (A,af) (A,af)
+</pre>
+
+<DT><span class="strong">hom_implies_restr</span>
+<DD>
+<pre>
+⊢ hom f (A,af) Bs ⇒ f⟨A⟩ = f
+</pre>
+
+<DT><span class="strong">hom_shom</span>
+<DD>
+<pre>
+⊢ hom f (A,af) (B,bf) ⇒ shom f A B
+</pre>
+
+<DT><span class="strong">homs_compose</span>
+<DD>
+<pre>
+⊢ hom f As Bs ∧ hom g Bs Cs ⇒ hom (g ∘ f)⟨FST As⟩ As Cs
+</pre>
+
+<DT><span class="strong">iso_SYM</span>
+<DD>
+<pre>
+⊢ iso As Bs ⇔ iso Bs As
+</pre>
+
+<DT><span class="strong">iso_inj_hom</span>
+<DD>
+<pre>
+⊢ iso (A,af) (B,bf) ∧ hom h (A,af) (C,cf) ∧ INJ h A C ⇒
+  ∃j. hom j (B,bf) (C,cf) ∧ INJ j B C
+</pre>
+
+<DT><span class="strong">lemma2_4_1</span>
+<DD>
+<pre>
+⊢ hom (h ∘ g) (A,af) (C,cf) ∧ hom g (A,af) (B,bf) ∧ SURJ g A B ∧
+  (∀b. b ∉ B ⇒ h b = ARB) ⇒
+  hom h (B,bf) (C,cf)
+</pre>
+
+<DT><span class="strong">lemma2_4_2</span>
+<DD>
+<pre>
+⊢ hom (h ∘ g) (A,af) (C,cf) ∧ hom h (B,bf) (C,cf) ∧ (∀a. a ∈ A ⇒ g a ∈ B) ∧
+  (∀a. a ∉ A ⇒ g a = ARB) ∧ INJ h B C ⇒
+  hom g (A,af) (B,bf)
+</pre>
+
+<DT><span class="strong">lemma5_3</span>
+<DD>
+<pre>
+⊢ hom f (A,af) (B,bf) ∧ hom g (A,af) (C,cf) ⇒ bisim (span A f g) (B,bf) (C,cf)
+</pre>
+
+<DT><span class="strong">mapO'</span>
+<DD>
+<pre>
+⊢ ∀x. mapF f (mapF g x) = mapF (f ∘ g) x
+</pre>
+
+<DT><span class="strong">map_preserves_INJ</span>
+<DD>
+<pre>
+⊢ INJ f A B ⇒ INJ (mapF f) (Fset A) (Fset B)
+</pre>
+
+<DT><span class="strong">map_preserves_funs</span>
+<DD>
+<pre>
+⊢ (∀a. a ∈ A ⇒ f a ∈ B) ⇒ ∀af. af ∈ Fset A ⇒ mapF f af ∈ Fset B
+</pre>
+
+<DT><span class="strong">prop5_1</span>
+<DD>
+<pre>
+⊢ system (A,af) ⇒ bisim (Δ A) (A,af) (A,af)
+</pre>
+
+<DT><span class="strong">prop5_7</span>
+<DD>
+<pre>
+⊢ hom f (A,af) (B,bf) ⇒
+  bisim (kernel A f) (A,af) (A,af) ∧ kernel A f equiv_on A
+</pre>
+
+<DT><span class="strong">prop5_8</span>
+<DD>
+<pre>
+⊢ system (A,af) ∧ bisim R (A,af) (A,af) ∧ R equiv_on A ⇒
+  system (bquot (A,af) R) ∧ hom (eps R A) (A,af) (bquot (A,af) R)
+</pre>
+
+<DT><span class="strong">prop5_9_1</span>
+<DD>
+<pre>
+⊢ hom f⟨A⟩ (A,af) (B,bf) ∧ bisim R (A,af) (A,af) ⇒
+  bisim (RIMAGE f A R) (B,bf) (B,bf)
+</pre>
+
+<DT><span class="strong">prop5_9_2</span>
+<DD>
+<pre>
+⊢ hom f⟨A⟩ (A,af) (B,bf) ∧ bisim Q (B,bf) (B,bf) ⇒
+  bisim (RINV_IMAGE f A Q) (A,af) (A,af)
+</pre>
+
+<DT><span class="strong">prop6_1</span>
+<DD>
+<pre>
+⊢ V ⊆ A ∧ hom (λx. x)⟨V⟩ (V,kf) (A,af) ∧ hom (λx. x)⟨V⟩ (V,lf) (A,af) ⇒
+  kf = lf
+</pre>
+
+<DT><span class="strong">prop6_2</span>
+<DD>
+<pre>
+⊢ system (A,af) ⇒ (subsystem V (A,af) ⇔ V ⊆ A ∧ bisim (Δ V) (A,af) (A,af))
+</pre>
+
+<DT><span class="strong">relEQ</span>
+<DD>
+<pre>
+⊢ relF $= = $=
+</pre>
+
+<DT><span class="strong">relF_inv</span>
+<DD>
+<pre>
+⊢ relF Rᵀ x y ⇔ relF R y x
+</pre>
+
+<DT><span class="strong">relO_EQ</span>
+<DD>
+<pre>
+⊢ relF R ∘ᵣ relF S = relF (R ∘ᵣ S)
+</pre>
+
+<DT><span class="strong">rel_monotone</span>
+<DD>
+<pre>
+⊢ (∀a b. R a b ⇒ S a b) ⇒ ∀A B. relF R A B ⇒ relF S A B
+</pre>
+
+<DT><span class="strong">sbisimulation_projns_homo</span>
+<DD>
+<pre>
+⊢ bisim R (A,af) (B,bf) ⇔
+  ∃Rf. hom FST⟨Rᴾ⟩ (Rᴾ,Rf) (A,af) ∧ hom SND⟨Rᴾ⟩ (Rᴾ,Rf) (B,bf)
+</pre>
+
+<DT><span class="strong">set_map'</span>
+<DD>
+<pre>
+⊢ ∀x x'. x' ∈ setF (mapF f x) ⇔ ∃x''. x' = f x'' ∧ x'' ∈ setF x
+</pre>
+
+<DT><span class="strong">simple_eq3</span>
+<DD>
+<pre>
+⊢ simple As ⇔ ∀R. bisim R As As ∧ R equiv_on FST As ⇒ R = Δ (FST As)
+</pre>
+
+<DT><span class="strong">simple_imp4</span>
+<DD>
+<pre>
+⊢ simple As ⇒ ∀Bs f g. hom f Bs As ∧ hom g Bs As ⇒ f = g
+</pre>
+
+<DT><span class="strong">subsystem_ALT</span>
+<DD>
+<pre>
+⊢ subsystem V (A,af) ⇔ V ⊆ A ∧ system (A,af) ∧ hom (λx. x)⟨V⟩ (V,af⟨V⟩) (A,af)
+</pre>
+
+<DT><span class="strong">subsystem_INTER</span>
+<DD>
+<pre>
+⊢ system (A,af) ∧ (∀V. V ∈ VS ⇒ subsystem V (A,af)) ∧ VS ≠ ∅ ⇒
+  subsystem (BIGINTER VS) (A,af)
+</pre>
+
+<DT><span class="strong">subsystem_INTER2</span>
+<DD>
+<pre>
+⊢ system (A,af) ∧ subsystem V1 (A,af) ∧ subsystem V2 (A,af) ⇒
+  subsystem (V1 ∩ V2) (A,af)
+</pre>
+
+<DT><span class="strong">subsystem_UNION</span>
+<DD>
+<pre>
+⊢ system (A,af) ∧ (∀V. V ∈ VS ⇒ subsystem V (A,af)) ⇒
+  subsystem (BIGUNION VS) (A,af)
+</pre>
+
+<DT><span class="strong">subsystem_refl</span>
+<DD>
+<pre>
+⊢ system (A,af) ⇒ subsystem A (A,af)
+</pre>
+
+<DT><span class="strong">subsystem_system</span>
+<DD>
+<pre>
+⊢ subsystem V (A,af) ⇒ system (V,af⟨V⟩)
+</pre>
+
+<DT><span class="strong">system_members</span>
+<DD>
+<pre>
+⊢ system (A,af) ⇒ ∀a b. a ∈ A ∧ b ∈ setF (af a) ⇒ b ∈ A
+</pre>
+
+<DT><span class="strong">thm2_5</span>
+<DD>
+<pre>
+⊢ hom h (A,af) (B,bf) ⇔
+  (∀a. a ∈ A ⇒ h a ∈ B) ∧ (∀a. a ∉ A ⇒ h a = ARB) ∧
+  bisim (Gr h A) (A,af) (B,bf)
+</pre>
+
+<DT><span class="strong">thm5_2</span>
+<DD>
+<pre>
+⊢ bisim Rᵀ Bs As ⇔ bisim R As Bs
+</pre>
+
+<DT><span class="strong">thm5_4</span>
+<DD>
+<pre>
+⊢ bisim R (A,af) (B,bf) ∧ bisim Q (B,bf) (C,cf) ⇒ bisim (Q ∘ᵣ R) (A,af) (C,cf)
+</pre>
+
+<DT><span class="strong">thm5_5</span>
+<DD>
+<pre>
+⊢ (∀R. R ∈ Rs ⇒ bisim R As Bs) ∧ system As ∧ system Bs ⇒
+  bisim (λa b. ∃R. R ∈ Rs ∧ R a b) As Bs
+</pre>
+
+<DT><span class="strong">thm6_3_1</span>
+<DD>
+<pre>
+⊢ hom f (A,af) (B,bf) ∧ subsystem V (A,af) ⇒ subsystem (IMAGE f V) (B,bf)
+</pre>
+
+<DT><span class="strong">thm6_3_2</span>
+<DD>
+<pre>
+⊢ hom f (A,af) (B,bf) ∧ subsystem W (B,bf) ⇒
+  subsystem (PREIMAGE f W ∩ A) (A,af)
+</pre>
+
+<DT><span class="strong">thm7_1</span>
+<DD>
+<pre>
+⊢ hom f (A,af) (B,bf) ⇒
+  hom f (A,af) (IMAGE f A,bf⟨IMAGE f A⟩) ∧
+  (∀g h C cf.
+     hom g (IMAGE f A,bf⟨IMAGE f A⟩) (C,cf) ∧
+     hom h (IMAGE f A,bf⟨IMAGE f A⟩) (C,cf) ∧ (h ∘ f)⟨A⟩ = (g ∘ f)⟨A⟩ ⇒
+     h = g) ∧ hom (eps (kernel A f) A) (A,af) (bquot (A,af) (kernel A f)) ∧
+  hom (λx. x)⟨IMAGE f A⟩ (IMAGE f A,bf⟨IMAGE f A⟩) (B,bf) ∧
+  iso (IMAGE f A,bf⟨IMAGE f A⟩) (bquot (A,af) (kernel A f)) ∧
+  ∃mu.
+    hom mu (bquot (A,af) (kernel A f)) (B,bf) ∧
+    INJ mu (FST (bquot (A,af) (kernel A f))) B
+</pre>
+
+<DT><span class="strong">thm7_2</span>
+<DD>
+<pre>
+⊢ hom f (A,af) (B,bf) ∧ bisim R (A,af) (A,af) ∧ R ⊆ᵣ kernel A f ∧ R equiv_on A ⇒
+  ∃!fbar. hom fbar (bquot (A,af) R) (B,bf) ∧ f = (fbar ∘ eps R A)⟨A⟩
+</pre>
+
+<DT><span class="strong">thm7_3</span>
+<DD>
+<pre>
+⊢ system (A,af) ∧ subsystem B (A,af) ∧ bisim R (A,af) (A,af) ∧ R equiv_on A ∧
+  Abbrev (TR = {a | a ∈ A ∧ ∃b. b ∈ B ∧ R a b}) ⇒
+  subsystem TR (A,af) ∧
+  (let
+     Q = CURRY (Rᴾ ∩ B × B)
+   in
+     bisim Q (B,af⟨B⟩) (B,af⟨B⟩) ∧ Q equiv_on B ∧
+     iso (bquot (B,af⟨B⟩) Q) (bquot (TR,af⟨TR⟩) R))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

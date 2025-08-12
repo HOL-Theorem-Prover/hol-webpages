@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure HM_DepGraph</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure HM_DepGraph</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="file:///Users/michaeln/various-hols/mcandidate/tools/Holmake/HM_DepGraph.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature HM_DepGraph =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  type 'a t
+<a name="line5"></a>  type dep = Holmake_tools.dep
+<a name="line6"></a>  type dir = Holmake_tools.hmdir.t
+<a name="line7"></a>  exception NoSuchNode
+<a name="line8"></a>  exception DuplicateTarget
+<a name="line9"></a>  datatype target_status =
+<a name="line10"></a>           Pending of {needed:bool}
+<a name="line11"></a>         | Succeeded
+<a name="line12"></a>         | Failed of {needed:bool}
+<a name="line13"></a>         | Running
+<a name="line14"></a>  val is_pending : target_status -&gt; bool
+<a name="line15"></a>  val is_failed : target_status -&gt; bool
+<a name="line16"></a>  eqtype node
+<a name="line17"></a>  datatype builtincmd = BIC_BuildScript of string | BIC_Compile
+<a name="line18"></a>  val bic_toString : builtincmd -&gt; string
+<a name="line19"></a>
+<a name="line20"></a>  datatype command =
+<a name="line21"></a>           NoCmd
+<a name="line22"></a>         | SomeCmd of string
+<a name="line23"></a>         | BuiltInCmd of builtincmd * Holmake_tools.include_info
+<a name="line24"></a>  type 'a nodeInfo = { target : dep, status : target_status,
+<a name="line25"></a>                       phony : bool, dir : dir,
+<a name="line26"></a>                       command : command, seqnum : int, extra : 'a,
+<a name="line27"></a>                       dependencies : (node * dep) list }
+<a name="line28"></a>  val nodeInfo_toString : 'a nodeInfo -&gt; string
+<a name="line29"></a>  val node_toString : node -&gt; string
+<a name="line30"></a>  val setStatus : target_status -&gt; 'a nodeInfo -&gt; 'a nodeInfo
+<a name="line31"></a>  val node_compare : node * node -&gt; order
+<a name="line32"></a>
+<a name="line33"></a>  val empty : unit -&gt; 'a t
+<a name="line34"></a>  val add_node : 'a nodeInfo -&gt; 'a t -&gt; 'a t * node
+<a name="line35"></a>  val updnode : node * target_status -&gt; 'a t -&gt; 'a t
+<a name="line36"></a>  val nodeStatus : 'a t -&gt; node -&gt; target_status
+<a name="line37"></a>  val peeknode : 'a t -&gt; node -&gt; 'a nodeInfo option
+<a name="line38"></a>  val target_node : 'a t -&gt; dep -&gt; node option
+<a name="line39"></a>  val size : 'a t -&gt; int
+<a name="line40"></a>  val listNodes : 'a t -&gt; (node * 'a nodeInfo) list
+<a name="line41"></a>  val find_nodes_by_command : 'a t -&gt; dir * command -&gt; node list
+<a name="line42"></a>  val mkneeded : dep list -&gt; 'a t -&gt; 'a t
+<a name="line43"></a>  val mk_dirneeded : Holmake_tools.hmdir.t -&gt; 'a t -&gt; 'a t
+<a name="line44"></a>  val fold : (node * 'a nodeInfo -&gt; 'b -&gt; 'b) -&gt; 'a t -&gt; 'b -&gt; 'b
+<a name="line45"></a>  val topo_sort : 'a t -&gt; node list
+<a name="line46"></a>
+<a name="line47"></a>  val find_runnable : 'a t -&gt; (node * 'a nodeInfo) option
+<a name="line48"></a>
+<a name="line49"></a>  val toString : 'a t -&gt; string
+<a name="line50"></a>  val toJSONString : 'a t -&gt; string
+<a name="line51"></a>
+<a name="line52"></a>  (* first function is passed true iff build has been deemed successful *)
+<a name="line53"></a>  val postmortem : (bool -&gt; unit) -&gt;
+<a name="line54"></a>                   Holmake_tools.output_functions -&gt; OS.Process.status * 'a t -&gt;
+<a name="line55"></a>                   OS.Process.status
+<a name="line56"></a>
+<a name="line57"></a>
+<a name="line58"></a>
+<a name="line59"></a>end
+<a name="line60"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="file:///Users/michaeln/various-hols/mcandidate/tools/Holmake/HM_DepGraph.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

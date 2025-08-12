@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>bossLib.CONG_TAC</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="cong_tac"><code>CONG_TAC</code></h2>
+<pre class="hol4"><code>bossLib.CONG_TAC : int option -&gt; tactic</code></pre>
+<hr />
+<p>Applies congruence rules backwards repeatedly to attack an
+equality</p>
+<p>Applying <code>CONG_TAC dopt</code> to a goal <code>?- x = y</code>
+attempts to apply congruence rules backwards repeatedly, generating a
+number of further equality subgoals. The <code>dopt</code> parameter
+limits the number of times this will be done: when <code>dopt</code> is
+<code>NONE</code>, there is no limit: the base transformation will be
+tried on the initial and all subsequent goals. If <code>dopt</code> is
+<code>SOME i</code>, then <code>i</code> is the total number of
+transformations that will be made. (If <code>dopt</code> is
+<code>SOME 0</code> then <code>CONG_TAC dopt</code> is equivalent to
+<code>ALL_TAC</code>.)</p>
+<p>If at least one of the equality’s arguments is an abstraction
+(possibly paired), then the transformation rewrites with function
+extensionality, strips the universally quantified variables, and
+beta-reduces where necessary.</p>
+<p>If at least one of the equality’s arguments is a set comprehension,
+then the transformation rewrites with set-extensionality and applies the
+conversion that calculates what it is for a term to be a member of a
+comprehension to one or both sides of the equality. Unless both sides
+are set comprehensions, this is likely to be the last transformation
+possible.</p>
+<p>If the goal matches the conclusion of any of the theorems stored as
+congruences for the definition package (with attribute name
+<code>defncong</code> or <code>cong</code>), then this theorem is
+applied backwards to generate new sub-goals. If the new sub-goals
+include preconditions and universally quantified variables, these are
+stripped into the assumptions.</p>
+<p>Finally, the “base transformation” depends on the shape of the
+equality’s arguments. If both sides are combinations (<code>M e1</code>
+and <code>N e2</code>, say), then the base transformation will be
+similar to an application of <code>MK_COMB_TAC</code>, generating at
+least the goals <code>?- M = N</code> and <code>?- e1 = e2</code>. When
+the head terms of both applications are equal, then one step of the base
+transformation is taken to be the iteration of <code>MK_COMB_TAC</code>
+that strips all arguments, so that
+<code>?- f e1 .. en = f e1' .. en'</code> will turn into <code>n</code>
+subgoals, each of the form <code>?- ei = ei'</code>. (The
+<code>?- f = f</code> subgoal will be eliminated immediately, as
+below.)</p>
+<p>In all cases, new subgoals that are instances of reflexivity, or
+which occur in the goal’s assumptions (with either orientation) are
+immediately eliminated.</p>
+<h3 id="failure">Failure</h3>
+<p>Fails if the provided depth is either <code>NONE</code> or
+<code>SOME i</code> with <code>i</code> greater than zero, and the goal
+is not an equality at all, or cannot be changed by any of the
+transformations described above. For example, with
+<code>f : 'a -&gt; num</code> and <code>g : num -&gt; num</code>, the
+goal <code>?- f a = g n</code> cannot be reduced.</p>
+<h3 id="example">Example</h3>
+<p>The following involves a handling of abstractions:</p>
+<pre class="hol4"><code>   &gt; CONG_TAC NONE ([], “(∀x. f (z:&#39;a) &lt; x) ⇔ (∀y. c &lt; y)”);
+   val it = ([([], “f z = c”)], fn): goal list * validation</code></pre>
+<p>Slightly altering the goal, and keeping the depth as
+<code>NONE</code> turns something true into something unprovable:</p>
+<pre class="hol4"><code>   &gt; CONG_TAC NONE ([], “(∀x. f (z:&#39;a) &lt; x) ⇔ (∀y. y &lt; 6)”);
+   val it = ([([], “f z = x”), ([], “x = 6”)], fn): goal list * validation</code></pre>
+<p>where the <code>x</code> in each sub-goal is completely fresh.</p>
+<p>Finally, user-congruences can give richer contexts when proving
+functions equal:</p>
+<pre class="hol4"><code>   &gt; CONG_TAC NONE 
+       ([], “MAP (λa. f a + 1) (l1:&#39;a list) = MAP g (l2:&#39;a list)”);
+   val it = ([([“MEM x l2”], “f x + 1 = g x”), ([], “l1 = l2”)], fn):
+      goal list * validation</code></pre>
+<h3 id="comments">Comments</h3>
+<p>This is a powerful tool for taking apart two terms that share a
+skeleton and need only have their leaves shown to be equal. Equally, it
+is quite possible for this tactic to turn a solvable goal into an
+unsolvable one.</p>
+<p>An application of <code>CONG_TAC</code> will never break apart the
+function applications that lie within the representation of natural
+number numerals.</p>
+<p>The name <code>cong_tac</code> can be used as an alias for
+<code>CONG_TAC</code>.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Tactic.AP_TERM_TAC.html"><code>Tactic.AP_TERM_TAC</code></a>, <a
+href="Tactic.AP_THM_TAC.html"><code>Tactic.AP_THM_TAC</code></a>, <a
+href="Tactic.MK_COMB_TAC.html"><code>Tactic.MK_COMB_TAC</code></a></p>
+</body>
+</html>

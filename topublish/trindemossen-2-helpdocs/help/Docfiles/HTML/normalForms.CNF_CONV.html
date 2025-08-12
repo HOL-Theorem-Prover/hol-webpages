@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>normalForms.CNF_CONV</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="cnf_conv"><code>CNF_CONV</code></h2>
+<pre class="hol4"><code>normalForms.CNF_CONV : conv</code></pre>
+<hr />
+<p>Converts a formula into Conjunctive Normal Form (CNF).</p>
+<p>Given a formula consisting of truths, falsities, conjunctions,
+disjunctions, negations, equivalences, conditionals, and universal and
+existential quantifiers, <code>CNF_CONV</code> will convert it to the
+canonical form:</p>
+<pre class="hol4"><code>?a_1 ... a_k.
+  (!v_1 ... v_m1. P_1 \/ ... \/ P_n1) /\
+  ...                                 /\
+  (!v_1 ... v_mp. P_1 \/ ... \/ P_np)</code></pre>
+<p>The <code>P_ij</code> are literals: possibly-negated atoms. In
+first-order logic an atom is a formula consisting of a top-level
+relation symbol applied to first-order terms: function symbols and
+variables. In higher-order logic there is no distinction between
+formulas and terms, so the concept of atom is not well-formed. Note also
+that the <code>a_i</code> existentially bound variables may be
+functions, as a result of Skolemization.</p>
+<h3 id="failure">Failure</h3>
+<p><code>CNF_CONV</code> should never fail.</p>
+<h3 id="example">Example</h3>
+<pre class="hol4"><code>- CNF_CONV ``!x. P x ==&gt; ?y z. Q y \/ ~?z. P z /\ Q z``;
+&gt; val it =
+    |- (!x. P x ==&gt; ?y z. Q y \/ ~?z. P z /\ Q z) =
+       ?y. !x x&#39;. Q (y x) \/ ~P x&#39; \/ ~Q x&#39; \/ ~P x : thm</code></pre>
+<h3 id="example-1">Example</h3>
+<pre class="hol4"><code>- CNF_CONV ``~(~(x = y) = z) = ~(x = ~(y = z))``;
+&gt; val it = |- (~(~(x = y) = z) = ~(x = ~(y = z))) = T : thm</code></pre>
+</body>
+</html>

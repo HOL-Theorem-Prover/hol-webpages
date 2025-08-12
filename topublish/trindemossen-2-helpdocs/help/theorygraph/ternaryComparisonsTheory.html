@@ -1,0 +1,380 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: ternaryComparisons</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "ternaryComparisons"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "holTheory.html"><span class="strong">hol</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">ordering</span>
+    <td>
+    0
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">EQUAL</span>
+    <td>
+    :ordering
+    <tr><td> <span class="strong">GREATER</span> <td> :ordering
+    <tr><td> <span class="strong">LESS</span> <td> :ordering
+    <tr><td>
+    <span class="strong">bool_compare</span>
+    <td>
+    :bool -> bool -> ordering
+    <tr><td>
+    <span class="strong">invert_comparison</span>
+    <td>
+    :ordering -> ordering
+    <tr><td>
+    <span class="strong">list_compare</span>
+    <td>
+    :(α -> β -> ordering) -> α list -> β list -> ordering
+    <tr><td>
+    <span class="strong">list_merge</span>
+    <td>
+    :(α -> α -> bool) -> α list -> α list -> α list
+    <tr><td> <span class="strong">num2ordering</span> <td> :num -> ordering
+    <tr><td>
+    <span class="strong">num_compare</span>
+    <td>
+    :num -> num -> ordering
+    <tr><td>
+    <span class="strong">option_compare</span>
+    <td>
+    :(α -> β -> ordering) -> α option -> β option -> ordering
+    <tr><td> <span class="strong">ordering2num</span> <td> :ordering -> num
+    <tr><td>
+    <span class="strong">ordering_CASE</span>
+    <td>
+    :ordering -> α -> α -> α -> α
+    <tr><td> <span class="strong">ordering_size</span> <td> :ordering -> num
+    <tr><td>
+    <span class="strong">pair_compare</span>
+    <td>
+    :(α -> β -> ordering) ->
+    (γ -> δ -> ordering) -> α # γ -> β # δ -> ordering
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">@tempEQUAL_def</span>
+<DD>
+<pre>
+⊢ Equal = num2ordering 1
+</pre>
+
+<DT><span class="strong">@tempGREATER_def</span>
+<DD>
+<pre>
+⊢ Greater = num2ordering 2
+</pre>
+
+<DT><span class="strong">@tempLESS_def</span>
+<DD>
+<pre>
+⊢ Less = num2ordering 0
+</pre>
+
+<DT><span class="strong">invert_comparison_def</span>
+<DD>
+<pre>
+⊢ invert_comparison Greater = Less ∧ invert_comparison Less = Greater ∧
+  invert_comparison Equal = Equal
+</pre>
+
+<DT><span class="strong">num_compare_def</span>
+<DD>
+<pre>
+⊢ ∀n1 n2.
+    num_cmp n1 n2 =
+    if n1 = n2 then Equal else if n1 < n2 then Less else Greater
+</pre>
+
+<DT><span class="strong">ordering_BIJ</span>
+<DD>
+<pre>
+⊢ (∀a. num2ordering (ordering2num a) = a) ∧
+  ∀r. (λn. n < 3) r ⇔ ordering2num (num2ordering r) = r
+</pre>
+
+<DT><span class="strong">ordering_CASE</span>
+<DD>
+<pre>
+⊢ ∀x v0 v1 v2.
+    (case x of Less => v0 | Equal => v1 | Greater => v2) =
+    (λm. if m < 1 then v0 else if m = 1 then v1 else v2) (ordering2num x)
+</pre>
+
+<DT><span class="strong">ordering_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION (λn. n < 3) rep
+</pre>
+
+<DT><span class="strong">ordering_size_def</span>
+<DD>
+<pre>
+⊢ ∀x. ordering_size x = 0
+</pre>
+
+<DT><span class="strong">pair_compare_def</span>
+<DD>
+<pre>
+⊢ ∀c1 c2 a b x y.
+    pair_cmp c1 c2 (a,b) (x,y) =
+    case c1 a x of Less => Less | Equal => c2 b y | Greater => Greater
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">bool_compare_def</span>
+<DD>
+<pre>
+⊢ bool_cmp T T = Equal ∧ bool_cmp F F = Equal ∧ bool_cmp T F = Greater ∧
+  bool_cmp F T = Less
+</pre>
+
+<DT><span class="strong">bool_compare_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P T T ∧ P F F ∧ P T F ∧ P F T ⇒ ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">compare_equal</span>
+<DD>
+<pre>
+⊢ (∀x y. cmp x y = Equal ⇔ x = y) ⇒
+  ∀l1 l2. list_cmp cmp l1 l2 = Equal ⇔ l1 = l2
+</pre>
+
+<DT><span class="strong">datatype_ordering</span>
+<DD>
+<pre>
+⊢ DATATYPE (ordering Less Equal Greater)
+</pre>
+
+<DT><span class="strong">invert_eq_EQUAL</span>
+<DD>
+<pre>
+⊢ ∀x. invert_comparison x = Equal ⇔ x = Equal
+</pre>
+
+<DT><span class="strong">list_compare_def</span>
+<DD>
+<pre>
+⊢ (∀cmp. list_cmp cmp [] [] = Equal) ∧
+  (∀v9 v8 cmp. list_cmp cmp [] (v8::v9) = Less) ∧
+  (∀v5 v4 cmp. list_cmp cmp (v4::v5) [] = Greater) ∧
+  ∀y x l2 l1 cmp.
+    list_cmp cmp (x::l1) (y::l2) =
+    case cmp x y of
+      Less => Less
+    | Equal => list_cmp cmp l1 l2
+    | Greater => Greater
+</pre>
+
+<DT><span class="strong">list_compare_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀cmp. P cmp [] []) ∧ (∀cmp v8 v9. P cmp [] (v8::v9)) ∧
+      (∀cmp v4 v5. P cmp (v4::v5) []) ∧
+      (∀cmp x l1 y l2. (cmp x y = Equal ⇒ P cmp l1 l2) ⇒ P cmp (x::l1) (y::l2)) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">list_merge_def</span>
+<DD>
+<pre>
+⊢ (∀l1 a_lt. list_merge a_lt l1 [] = l1) ∧
+  (∀v5 v4 a_lt. list_merge a_lt [] (v4::v5) = v4::v5) ∧
+  ∀y x l2 l1 a_lt.
+    list_merge a_lt (x::l1) (y::l2) =
+    if a_lt x y then x::list_merge a_lt l1 (y::l2)
+    else y::list_merge a_lt (x::l1) l2
+</pre>
+
+<DT><span class="strong">list_merge_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a_lt l1. P a_lt l1 []) ∧ (∀a_lt v4 v5. P a_lt [] (v4::v5)) ∧
+      (∀a_lt x l1 y l2.
+         (¬a_lt x y ⇒ P a_lt (x::l1) l2) ∧ (a_lt x y ⇒ P a_lt l1 (y::l2)) ⇒
+         P a_lt (x::l1) (y::l2)) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">num2ordering_11</span>
+<DD>
+<pre>
+⊢ ∀r r'. r < 3 ⇒ r' < 3 ⇒ (num2ordering r = num2ordering r' ⇔ r = r')
+</pre>
+
+<DT><span class="strong">num2ordering_ONTO</span>
+<DD>
+<pre>
+⊢ ∀a. ∃r. a = num2ordering r ∧ r < 3
+</pre>
+
+<DT><span class="strong">num2ordering_ordering2num</span>
+<DD>
+<pre>
+⊢ ∀a. num2ordering (ordering2num a) = a
+</pre>
+
+<DT><span class="strong">num2ordering_thm</span>
+<DD>
+<pre>
+⊢ num2ordering 0 = Less ∧ num2ordering 1 = Equal ∧ num2ordering 2 = Greater
+</pre>
+
+<DT><span class="strong">option_compare_def</span>
+<DD>
+<pre>
+⊢ option_cmp c NONE NONE = Equal ∧ option_cmp c NONE (SOME v0) = Less ∧
+  option_cmp c (SOME v3) NONE = Greater ∧
+  option_cmp c (SOME v1) (SOME v2) = c v1 v2
+</pre>
+
+<DT><span class="strong">option_compare_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀c. P c NONE NONE) ∧ (∀c v0. P c NONE (SOME v0)) ∧
+      (∀c v3. P c (SOME v3) NONE) ∧ (∀c v1 v2. P c (SOME v1) (SOME v2)) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">ordering2num_11</span>
+<DD>
+<pre>
+⊢ ∀a a'. ordering2num a = ordering2num a' ⇔ a = a'
+</pre>
+
+<DT><span class="strong">ordering2num_ONTO</span>
+<DD>
+<pre>
+⊢ ∀r. r < 3 ⇔ ∃a. r = ordering2num a
+</pre>
+
+<DT><span class="strong">ordering2num_num2ordering</span>
+<DD>
+<pre>
+⊢ ∀r. r < 3 ⇔ ordering2num (num2ordering r) = r
+</pre>
+
+<DT><span class="strong">ordering2num_thm</span>
+<DD>
+<pre>
+⊢ ordering2num Less = 0 ∧ ordering2num Equal = 1 ∧ ordering2num Greater = 2
+</pre>
+
+<DT><span class="strong">ordering_Axiom</span>
+<DD>
+<pre>
+⊢ ∀x0 x1 x2. ∃f. f Less = x0 ∧ f Equal = x1 ∧ f Greater = x2
+</pre>
+
+<DT><span class="strong">ordering_EQ_ordering</span>
+<DD>
+<pre>
+⊢ ∀a a'. a = a' ⇔ ordering2num a = ordering2num a'
+</pre>
+
+<DT><span class="strong">ordering_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' v0 v1 v2.
+    M = M' ∧ (M' = Less ⇒ v0 = v0') ∧ (M' = Equal ⇒ v1 = v1') ∧
+    (M' = Greater ⇒ v2 = v2') ⇒
+    (case M of Less => v0 | Equal => v1 | Greater => v2) =
+    case M' of Less => v0' | Equal => v1' | Greater => v2'
+</pre>
+
+<DT><span class="strong">ordering_case_def</span>
+<DD>
+<pre>
+⊢ (∀v0 v1 v2. (case Less of Less => v0 | Equal => v1 | Greater => v2) = v0) ∧
+  (∀v0 v1 v2. (case Equal of Less => v0 | Equal => v1 | Greater => v2) = v1) ∧
+  ∀v0 v1 v2. (case Greater of Less => v0 | Equal => v1 | Greater => v2) = v2
+</pre>
+
+<DT><span class="strong">ordering_case_eq</span>
+<DD>
+<pre>
+⊢ (case x of Less => v0 | Equal => v1 | Greater => v2) = v ⇔
+  x = Less ∧ v0 = v ∨ x = Equal ∧ v1 = v ∨ x = Greater ∧ v2 = v
+</pre>
+
+<DT><span class="strong">ordering_distinct</span>
+<DD>
+<pre>
+⊢ Less ≠ Equal ∧ Less ≠ Greater ∧ Equal ≠ Greater
+</pre>
+
+<DT><span class="strong">ordering_distinct1</span>
+<DD>
+<pre>
+⊢ Equal ≠ Less
+</pre>
+
+<DT><span class="strong">ordering_distinct2</span>
+<DD>
+<pre>
+⊢ Greater ≠ Equal
+</pre>
+
+<DT><span class="strong">ordering_eq_dec</span>
+<DD>
+<pre>
+⊢ (∀x. x = x ⇔ T) ∧ (Less = Equal ⇔ F) ∧ (Less = Greater ⇔ F) ∧
+  (Equal = Greater ⇔ F) ∧ (Equal = Less ⇔ F) ∧ (Greater = Less ⇔ F) ∧
+  (Greater = Equal ⇔ F) ∧ (∀x. ordering_size x = 0) ∧
+  (ordering2num Less = 0 ∧ ordering2num Equal = 1 ∧ ordering2num Greater = 2) ∧
+  num2ordering 0 = Less ∧ num2ordering 1 = Equal ∧ num2ordering 2 = Greater
+</pre>
+
+<DT><span class="strong">ordering_induction</span>
+<DD>
+<pre>
+⊢ ∀P. P Equal ∧ P Greater ∧ P Less ⇒ ∀a. P a
+</pre>
+
+<DT><span class="strong">ordering_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀a. a = Less ∨ a = Equal ∨ a = Greater
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

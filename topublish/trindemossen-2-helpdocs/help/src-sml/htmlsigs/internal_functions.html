@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure internal_functions</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure internal_functions</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="file:///Users/michaeln/various-hols/mcandidate/tools/Holmake/internal_functions.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature internal_functions =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  val <a href="#subst-val">subst</a> : (string * string * string) -&gt; string
+<a name="line5"></a>  val <a href="#pcsubst-val">pcsubst</a> : (string * string) -&gt; string
+<a name="line6"></a>  val <a href="#patsubst-val">patsubst</a> : (string * string * string) -&gt; string
+<a name="line7"></a>  val <a href="#pattern_match-val">pattern_match</a> : string -&gt; string -&gt; string option
+<a name="line8"></a>  val <a href="#tokenize-val">tokenize</a> : string -&gt; string list
+<a name="line9"></a>  val <a href="#find_unescaped-val">find_unescaped</a> : char list -&gt; Substring.substring -&gt; int option
+<a name="line10"></a>  val tee : string * string -&gt; string
+<a name="line11"></a>  val <a href="#wildcard-val">wildcard</a> : string -&gt; string list
+<a name="line12"></a>  val which : string -&gt; string
+<a name="line13"></a>  val <a href="#function_call-val">function_call</a> : (string *
+<a name="line14"></a>                       Substring.substring list *
+<a name="line15"></a>                       (Substring.substring -&gt; string)) -&gt; string
+<a name="line16"></a>  val <a href="#hol2fs-val">hol2fs</a> : string -&gt; string
+<a name="line17"></a>
+<a name="line18"></a>end
+<a name="line19"></a>
+<a name="line20"></a>(*
+   [<a name="subst-val"><b>subst</b></a> (from,to,on)] substitutes to for from in on, replacing all
+   occurrences found during a left-to-right scan, and doing the replacements
+   as they are found.  (I.e., subst("aa", "b", "aaa") returns "ba", despite
+   the fact that "aaa" arguably contains two occurrences of "aa".
+
+   [<a name="pcsubst-val"><b>pcsubst</b></a>(s,pat)] replaces every unescaped occurrence of "%" in pat with
+   s.
+
+   [<a name="pattern_match-val"><b>pattern_match</b></a> pat obj] attempts to match the pattern pat against
+   obj.  A pattern is any string containing at most one unescaped %
+   character.  (% and backslash characters can be escaped by preceding
+   them with a back-slash character.  Other &lt;back-slash character&gt;
+   pairs are left as they are.  This treatment of quoting is not the
+   same as GNU make's; it would leave trailing \\ alone.)  %
+   characters match any non-empty substring.  The result is NONE, if
+   there is no match, or SOME s, where performing pcsubst(s,pat) gives
+   back obj.
+
+   If pat doesn't contain a % character, return SOME "", which is otherwise
+   impossible, because of the requirement that matches be over non-empty
+   strings.
+
+   [<a name="patsubst-val"><b>patsubst</b></a>(from,to,on)] tokenizes argument on into a list of
+   strings, and then attempts to match pattern from against each.
+   Where the pattern matches with SOME stem, that element of the list
+   is replaced with pcsubst(stem,to).  Those elements that don't match
+   are left alone.  The resulting list is sewn back together with
+   single spaces.
+
+   [<a name="tokenize-val"><b>tokenize</b></a> s] returns the list of white-space separated components
+   in s, but taking heed not to treat back-slash quoted spaces as
+   white-space.  It preserves all quoting within the "tokens", meaning
+   that spacify (tokenize sl) = sl, except that multiple spaces or
+   TABs between tokens in sl will have been compressed into just one
+   space on the LHS.
+
+   [<a name="find_unescaped-val"><b>find_unescaped</b></a> clist ss] searches ss for an unescaped occurrence of one
+   of the elements clist.  If it returns SOME i, then sub(ss, i) is the
+   first such character.  If it returns NONE, then there is no such
+   character.
+
+   [<a name="wildcard-val"><b>wildcard</b></a> s] treats s as a "shell glob" pattern and matches it
+   against files in the current hierarchy (i.e., relative file names
+   are assessed against the current directory). The list of all files
+   that match are returned. If the pattern doesn't match any files,
+   the string is returned as is.
+
+   [<a name="function_call-val"><b>function_call</b></a>(fnname, args, eval)] evaluates the internal function
+   fnname when applied to arguments args.  These args are not
+   evaluated to strings to allow for functions (like if) that don't
+   necessarily look at all of their arguments.  Evaluation is provided
+   by the eval function.
+
+   [<a name="hol2fs-val"><b>hol2fs</b></a> s] converts "HOL filename" s to a filename that will actually
+   work on the machine.
+
+*)
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="file:///Users/michaeln/various-hols/mcandidate/tools/Holmake/internal_functions.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

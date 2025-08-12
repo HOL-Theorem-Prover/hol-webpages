@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ringLib.declare_ring</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="declare_ring"><code>declare_ring</code></h2>
+<pre class="hol4"><code>ringLib.declare_ring :
+  { Name : string, Theory : thm, Const : term-&gt;bool, Rewrites : thm list } -&gt;
+  { NormConv : conv, EqConv : conv,
+    Reify : term list -&gt; {Metamap : term, Poly : term list} }</code></pre>
+<hr />
+<p>Simplification and conversion in an arbitrary ring or semi-ring
+theory.</p>
+<p>Given a record gathering information about a ring structure,
+<code>declare_ring</code> returns two conversions <code>NormConv</code>
+and <code>EqConv</code>. The former does simplifications on any ring
+expression. Ring expressions are HOL terms built on the ring operations
+and the constants (or values) of that ring. Other subterms are
+abstracted and considered as variables.</p>
+<p>The simplification of the expression (that can be seen as a
+polynomial) consists in developing, reordering monomials and grouping
+terms of same degree. <code>EqConv</code> solves an equality by
+simplifying both sides, and then using reflexivity. This cannot exactly
+be achieved by applying <code>NormConv</code> on both hand sides, since
+the variable ordering is not necessarily the same for both sides, and
+then applying reflexivity may not be enough.</p>
+<p>The input structure contains various information about the ring:
+field <code>Name</code> is a prefix that will be used when declaring new
+constants for internal use of the conversions. <code>Theory</code> is a
+proof that a given structure is a ring or a semi-ring.
+<code>Const</code> is a predicate on HOL terms that defines the
+constants of the ring. <code>Rewrites</code> is a bunch of rewrites that
+should allow to compute the ring operations and also decide equality
+upon constants. If (Const c1) and (Const c2) then (c1 + c2) and (c1 *
+c2) should simplify to terms c and c’ such that (Const c) and (Const
+c’), and also (c1 = c2) should simplify to either T or F.</p>
+<h3 id="example">Example</h3>
+<p>Assuming we have proved that the integers form a ring, and gathered
+all required information in <code>int_ring_infos</code>, we can build
+the conversions and simplify or solve symbolic equations on
+integers:</p>
+<pre class="hol4"><code>- val {EqConv=INT_RING_CONV, NormConv=INT_NORM_CONV,...} =
+    ringLib.declare_ring int_ring_infos
+&gt; val INT_RING_CONV = fn : Term.term -&gt; Thm.thm
+  val INT_NORM_CONV = fn : Term.term -&gt; Thm.thm
+- INT_NORM_CONV “(a+b)*(a+b):int”;
+&gt; val it = |- (a + b) * (a + b) = a * a + (2 * (a * b) + b * b) : Thm.thm
+- INT_RING_CONV “(a+b)*(a+b) = (b+a)*(b+a):int”;
+&gt; val it = |- ((a + b) * (a + b) = (b + a) * (b + a)) = T : Thm.thm</code></pre>
+<p>These conversions can also be used like reduceLib, but will evaluate
+only sums, products and unary negation:</p>
+<pre class="hol4"><code>- INT_NORM_CONV “ ~(3 * (9 + ~7)) ”;
+&gt; val it = |- ~(3 * (9 + ~7)) = ~6 : Thm.thm
+- INT_NORM_CONV “ ~(3 * (10 - 1 + ~7)) ”;
+&gt; val it = |- ~(3 * (10 - 1 + ~7)) = 21 + ~3 * (10 - 1) : Thm.thm</code></pre>
+<h3 id="failure">Failure</h3>
+<p>If the Theory theorem is not of the form |- is_ring r or |-
+is_semi_ring r or if Name is not allowed to start a constant
+identifier.</p>
+<p>The returned conversions fail on terms that do not belong to the type
+of the ring, but does not fail if no rewrite has been done.</p>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: cv_rep</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "cv_rep"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "cv_typeTheory.html"><span class="strong">cv_type</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">cv_proj</span>
+    <td>
+    :bool list -> cv -> cv
+    <tr><td>
+    <span class="strong">cv_rep</span>
+    <td>
+    :bool -> cv -> (α -> cv) -> α -> bool
+    <tr><td> <span class="strong">implies</span> <td> :bool -> bool -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">cv_rep_def</span>
+<DD>
+<pre>
+⊢ ∀pre_cond cv_tm from_fun hol_tm.
+    cv_rep pre_cond cv_tm from_fun hol_tm ⇔ pre_cond ⇒ from_fun hol_tm = cv_tm
+</pre>
+
+<DT><span class="strong">implies_def</span>
+<DD>
+<pre>
+⊢ ∀x y. implies x y ⇔ x ⇒ y
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">IMP_CANCEL</span>
+<DD>
+<pre>
+⊢ b ⇒ b ⇒ c ⇔ b ⇒ c
+</pre>
+
+<DT><span class="strong">IMP_COMM</span>
+<DD>
+<pre>
+⊢ b1 ⇒ b2 ⇒ c ⇔ b2 ⇒ b1 ⇒ c
+</pre>
+
+<DT><span class="strong">UNCURRY_pair_case</span>
+<DD>
+<pre>
+⊢ ∀f. fᴾ = (λx'. case x' of (x,y) => f x y)
+</pre>
+
+<DT><span class="strong">cv_eval</span>
+<DD>
+<pre>
+⊢ cv$c2n (cv$Num n) = n ∧ cv$c2n (cv$Pair x y) = 0 ∧
+  (cv$c2b (cv$Num n) ⇔ n ≠ 0) ∧ (cv$c2b (cv$Pair x y) ⇔ F)
+</pre>
+
+<DT><span class="strong">cv_postprocess</span>
+<DD>
+<pre>
+⊢ cv_if c x x = x
+</pre>
+
+<DT><span class="strong">cv_proj_def</span>
+<DD>
+<pre>
+⊢ (∀v. cv_proj [] v = v) ∧
+  (∀xs v. cv_proj (T::xs) v = cv_fst (cv_proj xs v)) ∧
+  ∀xs v. cv_proj (F::xs) v = cv_snd (cv_proj xs v)
+</pre>
+
+<DT><span class="strong">cv_proj_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀v. P [] v) ∧ (∀xs v. P xs v ⇒ P (T::xs) v) ∧
+      (∀xs v. P xs v ⇒ P (F::xs) v) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">cv_proj_less_eq</span>
+<DD>
+<pre>
+⊢ ∀v xs. cv_size (cv_proj xs v) ≤ cv_size v
+</pre>
+
+<DT><span class="strong">cv_rep_assum</span>
+<DD>
+<pre>
+⊢ cv_rep p (cv (g a)) f x ⇒
+  ∀cv_a p_a. cv_rep p_a cv_a g a ⇒ cv_rep (p_a ∧ p) (cv cv_a) f x
+</pre>
+
+<DT><span class="strong">cv_rep_eval</span>
+<DD>
+<pre>
+⊢ cv_rep p y f x ⇒ from_to f t ⇒ p ⇒ x = t y
+</pre>
+
+<DT><span class="strong">cv_rep_move</span>
+<DD>
+<pre>
+⊢ b ⇒ cv_rep p x y z ⇔ cv_rep (b ∧ p) x y z
+</pre>
+
+<DT><span class="strong">cv_rep_trivial</span>
+<DD>
+<pre>
+⊢ ∀f n. cv_rep T (f n) f n
+</pre>
+
+<DT><span class="strong">cv_termination_simp</span>
+<DD>
+<pre>
+⊢ (cv$c2b (cv_ispair cv_v) ⇔ ∃x1 x2. cv_v = cv$Pair x1 x2) ∧
+  (cv$c2b (cv_lt (cv$Num 0) cv_v) ⇔ ∃k. cv_v = cv$Num (SUC k)) ∧
+  (cv$c2b (cv_lt (cv$Num <..num comp'n..> ) (cv_fst cv_v)) ⇔
+   ∃k z. cv_v = cv$Pair (cv$Num k) z ∧ <..num comp'n..> < k) ∧
+  (cv$c2b (cv_lt (cv$Num <..num comp'n..> ) (cv_fst cv_v)) ⇔
+   ∃k z. cv_v = cv$Pair (cv$Num k) z ∧ <..num comp'n..> < k) ∧
+  (cv_fst cv_v = cv$Pair x y ⇔ ∃z. cv_v = cv$Pair (cv$Pair x y) z) ∧
+  (cv_snd cv_v = cv$Pair x y ⇔ ∃z. cv_v = cv$Pair z (cv$Pair x y)) ∧
+  (cv_fst cv_v = cv$Num (SUC k) ⇔ ∃z. cv_v = cv$Pair (cv$Num (SUC k)) z) ∧
+  (cv_snd cv_v = cv$Num (SUC k) ⇔ ∃z. cv_v = cv$Pair z (cv$Num (SUC k)))
+</pre>
+
+<DT><span class="strong">if_eq_zero</span>
+<DD>
+<pre>
+⊢ (if n = 0 then x else y) = if 0 < n then y else x
+</pre>
+
+<DT><span class="strong">lt_zero</span>
+<DD>
+<pre>
+⊢ 0 < n ⇔ n ≠ 0
+</pre>
+
+<DT><span class="strong">to_cv_proj</span>
+<DD>
+<pre>
+⊢ cv_fst = cv_proj [T] ∧ cv_snd = cv_proj [F] ∧
+  cv_proj xs (cv_proj ys b) = cv_proj (xs ++ ys) b
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

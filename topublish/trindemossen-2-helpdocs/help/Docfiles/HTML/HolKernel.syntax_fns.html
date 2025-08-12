@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>HolKernel.syntax_fns</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="syntax_fns"><code>syntax_fns</code></h2>
+<pre class="hol4"><code>HolKernel.syntax_fns : {dest: term -&gt; exn -&gt; term -&gt; &#39;a, make: term -&gt; &#39;b -&gt; term, n: int} -&gt; string -&gt; string -&gt;
+             term * (&#39;b -&gt; term) * (term -&gt; &#39;a) * (term -&gt; bool)</code></pre>
+<hr />
+<p>Helps in providing syntax support for theory constants.</p>
+<p><code>syntax_fns syntax thy name</code> returns a 4-tuple, consisting
+of: a term, a term destructor function, a term constructor function and
+a term recogniser function. These provide syntax support for operation
+<code>name</code> from theory <code>thy</code>. The record argument
+<code>syntax</code> consists of
+<code>dest: term -&gt; exn -&gt; term -&gt; 'a</code> and
+<code>make: term -&gt; 'b -&gt; term</code> functions, together with an
+“expected arity” value <code>n</code>. Through a sequence of
+instantiations, the <code>syntax_fns</code> function can be used to
+quickly and reliably write a <code>thySyntax.sml</code> file.</p>
+<h3 id="example">Example</h3>
+<p>To provide syntax support for unary operations from the theory
+<code>num</code>, one can use the following function:</p>
+<pre class="hol4"><code>&gt; val num1 = HolKernel.syntax_fns {n = 1, make = HolKernel.mk_monop, dest = HolKernel.dest_monop} &quot;num&quot;;
+val num1 = fn:
+   string -&gt; term * (term -&gt; term) * (term -&gt; term) * (term -&gt; bool)</code></pre>
+<p>The following call then provides support for the <code>SUC</code>
+constant:</p>
+<pre class="hol4"><code>&gt; val (suc_tm, mk_suc, dest_suc, is_suc) = num1 &quot;SUC&quot;;
+val dest_suc = fn: term -&gt; term
+val is_suc = fn: term -&gt; bool
+val mk_suc = fn: term -&gt; term
+val suc_tm = ``SUC``: term</code></pre>
+<p>A <code>SUC</code> term can be constructed with</p>
+<pre class="hol4"><code>&gt; val tm = mk_suc ``4n``;
+val tm = ``SUC 4``: term</code></pre>
+<p>The resulting term <code>tm</code> can be identified and destructed
+as follows:</p>
+<pre class="hol4"><code>&gt; is_suc tm;
+val it = true: bool
+&gt; val v = dest_suc tm;
+val v = ``4``: term</code></pre>
+<p>A standard error message is raised when <code>dest_suc</code> fails,
+e.g.</p>
+<pre class="hol4"><code>&gt; is_suc ``SUC``;
+val it = false: bool
+&gt; val v = dest_suc ``SUC``;
+Exception-
+   HOL_ERR
+     {message = &quot;&quot;, origin_function = &quot;dest_SUC&quot;, origin_structure =
+     &quot;numSyntax&quot;} raised</code></pre>
+<p>The value <code>n</code> in the call to <code>syntax_fns</code> acts
+purely as a sanity check. For example, the following fails because
+<code>SUC</code> is not a binary operation:</p>
+<pre class="hol4"><code>&gt; HolKernel.syntax_fns {n = 2, make = HolKernel.mk_binop, dest = HolKernel.dest_binop} &quot;num&quot; &quot;SUC&quot;;
+Exception-
+   HOL_ERR
+     {message = &quot;bad number of arguments&quot;, origin_function = &quot;systax_fns&quot;,
+       origin_structure = &quot;numSyntax&quot;} raised</code></pre>
+<p>Typically, the <code>dest</code> and <code>make</code> functions will
+be complementary (with type variables <code>'a</code> and
+<code>'b</code> being the same), however this need not be the case.
+Advanced uses of <code>syntax_fns</code> can take types into
+consideration. For example, the constant <code>bitstring$v2w</code> with
+type <code>bitstring-&gt;'a word</code> is supported as follows:</p>
+<pre class="hol4"><code>&gt; val tm = bitstringSyntax.mk_v2w (``l:bitstring``, ``:32``);
+val tm = ``v2w l``: term
+&gt; type_of tm;
+val it = ``:word32``: hol_type
+&gt; bitstringSyntax.dest_v2w tm;
+val it = (``l``, ``:32``): term * hol_type</code></pre>
+<p>This is implemented as follows:</p>
+<pre class="hol4"><code>val (v2w_tm, mk_v2w, dest_v2w, is_v2w) =
+   HolKernel.syntax_fns
+     {n = 1,
+      dest = fn tm1 =&gt; fn e =&gt; fn w =&gt; (HolKernel.dest_monop tm1 e w, wordsSyntax.dim_of w),
+      make = fn tm =&gt; fn (v, ty) =&gt; Term.mk_comb (Term.inst [Type.alpha |-&gt; ty] tm, v)}
+     &quot;bitstring&quot; &quot;v2w&quot;</code></pre>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure JSONUtil</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure JSONUtil</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/json/JSONUtil.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature JSONUtil =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>    (* exceptions used as errors; note that most of these come from the
+<a name="line5"></a>     * JSONUtil module.  The standard practice is to raise `JSONError(ex, v)`
+<a name="line6"></a>     * for an error on JSON value `v`, where `ex` specifies more detail about
+<a name="line7"></a>     * the actual error.
+<a name="line8"></a>     *)
+<a name="line9"></a>    exception JSONError of exn * JSON.value
+<a name="line10"></a>
+<a name="line11"></a>    (* exceptions for conversion functions *)
+<a name="line12"></a>    exception NotBool
+<a name="line13"></a>    exception NotInt
+<a name="line14"></a>    exception NotNumber
+<a name="line15"></a>    exception NotString
+<a name="line16"></a>
+<a name="line17"></a>    (* exception that is raised when trying to process a non-object
+<a name="line18"></a>       value as an object *)
+<a name="line19"></a>    exception NotObject
+<a name="line20"></a>
+<a name="line21"></a>    (* exception that is raised when the given field is not found in an
+<a name="line22"></a>       object *)
+<a name="line23"></a>    exception FieldNotFound of string
+<a name="line24"></a>
+<a name="line25"></a>    (* exception that is raised when trying to process a non-array value as an
+<a name="line26"></a>       array *)
+<a name="line27"></a>    exception NotArray
+<a name="line28"></a>
+<a name="line29"></a>    (* exception that is raised when access to an array value is out
+<a name="line30"></a>       of bounds *)
+<a name="line31"></a>    exception ArrayBounds of int
+<a name="line32"></a>
+<a name="line33"></a>    (* exception that is raised when a `FIND` edge does not match any array
+<a name="line34"></a>       element *)
+<a name="line35"></a>    exception ElemNotFound
+<a name="line36"></a>
+<a name="line37"></a>    (* map the above exceptions to a message string; we use General.exnMessage
+<a name="line38"></a>     * for other exceptions.
+<a name="line39"></a>     *)
+<a name="line40"></a>    val exnMessage : exn -&gt; string
+<a name="line41"></a>
+<a name="line42"></a>    (* conversion functions for atomic values.  These raise the JSONError
+<a name="line43"></a>       exception wrapped around the corresponding "NotXXX" exceptions when
+<a name="line44"></a>       their argument has the wrong shape.  Also note that asNumber will
+<a name="line45"></a>       accept both integers and floats and asInt may raise
+<a name="line46"></a>       `JSONError(Overflow, ...)` if the number is too large.
+<a name="line47"></a>     *)
+<a name="line48"></a>    val asBool : JSON.value -&gt; bool
+<a name="line49"></a>    val asInt : JSON.value -&gt; Int.int
+<a name="line50"></a>    val asIntInf : JSON.value -&gt; IntInf.int
+<a name="line51"></a>    val asNumber : JSON.value -&gt; Real.real
+<a name="line52"></a>    val asString : JSON.value -&gt; string
+<a name="line53"></a>
+<a name="line54"></a>    (* find a field in an object; this function raises the NotObject exception
+<a name="line55"></a>       when the supplied value is not an object.
+<a name="line56"></a>     *)
+<a name="line57"></a>    val findField : JSON.value -&gt; string -&gt; JSON.value option
+<a name="line58"></a>
+<a name="line59"></a>    (* lookup a field in an object; this function raises the NotObject exception
+<a name="line60"></a>       when the supplied value is not an object and raises FieldNotFound if the
+<a name="line61"></a>       value is an object, but does not have the specified field.
+<a name="line62"></a>     *)
+<a name="line63"></a>    val lookupField : JSON.value -&gt; string -&gt; JSON.value
+<a name="line64"></a>
+<a name="line65"></a>    (* does a JSON object have a given field?  This function returns false
+<a name="line66"></a>       if called on a non-object value.
+<a name="line67"></a>     *)
+<a name="line68"></a>    val hasField : string -&gt; JSON.value -&gt; bool
+<a name="line69"></a>
+<a name="line70"></a>    (* does the specified field of an object satisfy the given predicate?
+<a name="line71"></a>       This function returns false if called on a non-object value.
+<a name="line72"></a>     *)
+<a name="line73"></a>    val testField : string -&gt; (JSON.value -&gt; bool) -&gt; JSON.value -&gt; bool
+<a name="line74"></a>
+<a name="line75"></a>    (* convert a JSON array to an SML vector *)
+<a name="line76"></a>    val asArray : JSON.value -&gt; JSON.value vector
+<a name="line77"></a>
+<a name="line78"></a>    (* map a conversion function over a JSON array to produce a list;
+<a name="line79"></a>       this function raises the NotArray exception if the second argument is
+<a name="line80"></a>       not an array.
+<a name="line81"></a>     *)
+<a name="line82"></a>    val arrayMap : (JSON.value -&gt; 'a) -&gt; JSON.value -&gt; 'a list
+<a name="line83"></a>
+<a name="line84"></a>    (* path specification for indexing into JSON values *)
+<a name="line85"></a>    datatype edge
+<a name="line86"></a>      = SEL of string   (* select field of object *)
+<a name="line87"></a>      | SUB of int      (* index into array component *)
+<a name="line88"></a>      | FIND of JSON.value -&gt; bool
+<a name="line89"></a>                        (* first array component that satisfies the predicate *)
+<a name="line90"></a>
+<a name="line91"></a>    type path = edge list
+<a name="line92"></a>
+<a name="line93"></a>    (* `get (jv, path)` returns the component of `jv` named by `path`.  It
+<a name="line94"></a>       raises the NotObject, NotArray, FieldNotFound, and ArrayBounds
+<a name="line95"></a>       exceptions if there is an inconsistency between the path and the
+<a name="line96"></a>       structure of `jv`.
+<a name="line97"></a>     *)
+<a name="line98"></a>    val get : JSON.value * path -&gt; JSON.value
+<a name="line99"></a>
+<a name="line100"></a>    (* `replace (jv, path, v)` replaces the component of `jv` named by `path`
+<a name="line101"></a>     * with the value `v`.
+<a name="line102"></a>     *)
+<a name="line103"></a>    val replace : JSON.value * path * JSON.value -&gt; JSON.value
+<a name="line104"></a>
+<a name="line105"></a>    (* `insert (jv, path, lab, v)` inserts `lab : v` into the object named by
+<a name="line106"></a>       `path` in `jv`
+<a name="line107"></a>     *)
+<a name="line108"></a>    val insert : JSON.value * path * string * JSON.value -&gt; JSON.value
+<a name="line109"></a>
+<a name="line110"></a>    (* `append (jv, path, vs)` appends the list of values `vs` onto the array
+<a name="line111"></a>       named by `path` in `jv`
+<a name="line112"></a>     *)
+<a name="line113"></a>    val append : JSON.value * path * JSON.value list -&gt; JSON.value
+<a name="line114"></a>
+<a name="line115"></a>  end
+<a name="line116"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/json/JSONUtil.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

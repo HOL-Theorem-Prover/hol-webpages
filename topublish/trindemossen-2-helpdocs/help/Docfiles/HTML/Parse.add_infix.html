@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Parse.add_infix</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="add_infix"><code>add_infix</code></h2>
+<pre class="hol4"><code>Parse.add_infix : string * int * HOLgrammars.associativity -&gt; unit</code></pre>
+<hr />
+<p>Adds a string as an infix with the given precedence and associativity
+to the term grammar.</p>
+<p>This function adds the given string to the global term grammar such
+that the string</p>
+<pre class="hol4"><code>   &lt;str1&gt; s &lt;str2&gt;</code></pre>
+<p>will be parsed as</p>
+<pre class="hol4"><code>   s &lt;t1&gt; &lt;t2&gt;</code></pre>
+<p>where <code>&lt;str1&gt;</code> and <code>&lt;str2&gt;</code> have
+been parsed to two terms <code>&lt;t1&gt;</code> and
+<code>&lt;t2&gt;</code>. The parsing process does not pay any attention
+to whether or not <code>s</code> corresponds to a constant or not. This
+resolution happens later in the parse, and will result in either a
+constant or a variable with name <code>s</code>. In fact, if this name
+is overloaded, the eventual term generated may have a constant of quite
+a different name again; the resolution of overloading comes as a
+separate phase (see the entry for <code>overload_on</code>).</p>
+<h3 id="failure">Failure</h3>
+<p><code>add_infix</code> fails if the precedence level chosen for the
+new infix is the same as a different type of grammar rule (e.g., suffix
+or binder), or if the specified precedence level has infixes already but
+of a different associativity.</p>
+<p>It is also possible that the choice of string <code>s</code> will
+result in an ambiguous grammar. This will be marked with a warning. The
+parser may behave in strange ways if it encounters ambiguous phrases,
+but will work normally otherwise.</p>
+<h3 id="example">Example</h3>
+<p>Though we may not have <code>+</code> defined as a constant, we can
+still define it as an infix for the purposes of printing and
+parsing:</p>
+<pre class="hol4"><code>   - add_infix (&quot;+&quot;, 500, HOLgrammars.LEFT);
+   &gt; val it = () : unit
+
+   - val t = Term`x + y`;
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a, &#39;b, &#39;c.&gt;&gt;
+   &gt; val t = `x + y` : term</code></pre>
+<p>We can confirm that this new infix has indeed been parsed that way by
+taking the resulting term apart:</p>
+<pre class="hol4"><code>   - dest_comb t;
+   &gt; val it = (`$+ x`, `y`) : term * term</code></pre>
+<p>With its new status, <code>+</code> has to be “quoted” with a
+dollar-sign if we wish to use it in a position where it is not an infix,
+as in the binding list of an abstraction:</p>
+<pre class="hol4"><code>   - Term`\$+. x + y`;
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a, &#39;b, &#39;c.&gt;&gt;
+   &gt; val it = `\$+. x + y` : term
+   - dest_abs it;
+   &gt; val it = (`$+`,`x + y`) : term * term</code></pre>
+<p>The generation of three new type variables in the examples above
+emphasises the fact that the terms in the first example and the body of
+the second are really no different from <code>f x y</code> (where
+<code>f</code> is a variable), and don’t have anything to do with the
+constant for addition from <code>arithmeticTheory</code>. The new
+<code>+</code> infix is left associative:</p>
+<pre class="hol4"><code>   - Term`x + y + z`;
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a, &#39;b.&gt;&gt;
+   &gt; val it = `x + y + z` : term
+
+   - dest_comb it;
+   &gt; val it = (`$+ (x + y)`, `z`) : term * term</code></pre>
+<p>It is also more tightly binding than <code>/\</code> (which has
+precedence 400 by default):</p>
+<pre class="hol4"><code>   - Term`p /\ q + r`;
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a, &#39;b.&gt;&gt;
+   &gt; val it = `p /\ q + r` : term
+
+   - dest_comb it;
+   &gt; val it = (`$/\ p`, `q + r`) : term * term</code></pre>
+<p>An attempt to define a right associative operator at the same level
+fails:</p>
+<pre class="hol4"><code>   Lib.try add_infix(&quot;-&quot;, 500, HOLgrammars.RIGHT);
+
+   Exception raised at Parse.add_infix:
+   Grammar Error: Attempt to have differently associated infixes
+                  (RIGHT and LEFT) at same level</code></pre>
+<p>Similarly we can’t define an infix at level 900, because this is
+where the (true prefix) rule for logical negation (<code>~</code>)
+is.</p>
+<pre class="hol4"><code>   - Lib.try add_infix(&quot;-&quot;, 900, HOLgrammars.RIGHT);
+
+   Exception raised at Parse.add_infix:
+   Grammar Error: Attempt to have different forms at same level</code></pre>
+<p>Finally, an attempt to have a second <code>+</code> infix at a
+different precedence level causes grief when we later attempt to use the
+parser:</p>
+<pre class="hol4"><code>   - add_infix(&quot;+&quot;, 400, HOLgrammars.RIGHT);
+   &gt; val it = () : unit
+
+   - Term`p + q`;
+   &lt;&lt;HOL warning: Parse.Term: Grammar ambiguous on token pair + and +,
+                  and probably others too&gt;&gt;
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a, &#39;b, &#39;c&gt;&gt;
+   &gt; val it = ``p + q`` : term</code></pre>
+<p>In this situation, the behaviour of the parser will become quite
+unpredictable whenever the <code>+</code> token is encountered. In
+particular, <code>+</code> may parse with either fixity.</p>
+<p>Most use of infixes will want to have them associated with a
+particular constant in which case the definitional principles
+(<code>new_infixl_definition</code> etc) are more likely to be
+appropriate. However, a development of a theory of abstract algebra may
+well want to have infix variables such as <code>+</code> above.</p>
+<h3 id="comments">Comments</h3>
+<p>As with other functions in the <code>Parse</code> structure, there is
+a companion <code>temp_add_infix</code> function, which has the same
+effect on the global grammar, but which does not cause this effect to
+persist when the current theory is exported.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Parse.add_rule.html"><code>Parse.add_rule</code></a>, <a
+href="Parse.add_listform.html"><code>Parse.add_listform</code></a>, <a
+href="Parse.Term.html"><code>Parse.Term</code></a></p>
+</body>
+</html>

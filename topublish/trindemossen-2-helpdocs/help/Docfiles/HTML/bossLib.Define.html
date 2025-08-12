@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>bossLib.Define</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="define"><code>Define</code></h2>
+<pre class="hol4"><code>bossLib.Define : term quotation -&gt; thm</code></pre>
+<hr />
+<p>General-purpose function definition facility.</p>
+<p><code>Define</code> takes a high-level specification of a HOL
+function, and attempts to define the function in the logic. If this
+attempt is successful, the specification is derived from the definition.
+The derived specification is returned to the user, and also stored in
+the current theory. <code>Define</code> may be used to define
+abbreviations, recursive functions, and mutually recursive functions. An
+induction theorem may be stored in the current theory as a by-product of
+<code>Define</code>’s activity. This induction theorem follows the
+recursion structure of the function, and may be useful when proving
+properties of the function.</p>
+<p><code>Define</code> takes as input a quotation representing a
+conjunction of equations. The specified function(s) may be phrased using
+ML-style pattern-matching. A call <code>Define `&lt;spec&gt;`</code>
+should conform with the following grammar:</p>
+<pre class="hol4"><code>       spec ::= &lt;eqn&gt;
+            |   (&lt;eqn&gt;) /\ &lt;spec&gt;
+
+        eqn ::= &lt;alphanumeric&gt; &lt;pat&gt; ... &lt;pat&gt; = &lt;term&gt;
+
+
+        pat ::= &lt;variable&gt;
+            |   &lt;wildcard&gt;
+            |   &lt;cname&gt;                          (* 0-ary constructor *)
+            |   (&lt;cname&gt;_n &lt;pat&gt;_1 ... &lt;pat&gt;_n)  (* constructor appl. *)
+
+      cname ::= &lt;alphanumeric&gt; | &lt;symbolic&gt;
+
+   wildcard ::= _
+            |   _&lt;wildcard&gt;</code></pre>
+<p>When processing the specification of a recursive function,
+<code>Define</code> must perform a termination proof. It automatically
+constructs termination conditions for the function, and invokes a
+termination prover in an attempt to prove the termination
+conditions.</p>
+<p>If the function is primitive recursive, in the sense that it exactly
+follows the recursion pattern of a previously declared HOL datatype,
+then this proof always succeeds, and <code>Define</code> stores the
+derived equations in the current theory segment. Otherwise, the function
+is not an instance of primitive recursion, and the termination prover
+may succeed or fail.</p>
+<p>If it succeeds, then <code>Define</code> stores the specified
+equations in the current theory segment. An induction theorem customized
+for the defined function is also stored in the current segment. Note,
+however, that an induction theorem is not stored for primitive recursive
+functions, since that theorem would be identical to the induction
+theorem resulting from the declaration of the datatype.</p>
+<p>If the termination proof fails, then <code>Define</code> fails.</p>
+<p>In general, <code>Define</code> attempts to derive exactly the
+specified conjunction of equations. However, the rich syntax of patterns
+allows some ambiguity. For example, the input</p>
+<pre class="hol4"><code>    Define `(f 0 _ = 1)
+      /\    (f _ 0 = 2)`</code></pre>
+<p>is ambiguous at <code>f 0 0</code>: should the result be
+<code>1</code> or <code>2</code>? The system attempts to resolve this
+ambiguity in the same way as compilers and interpreters for functional
+languages. Namely, a conjunction of equations is treated as being
+processed left-conjunct first, followed by processing the right
+conjunct. Therefore, in the example above, the right-hand side of the
+first clause is taken as the value of <code>f 0 0</code>. In the
+implementation, ambiguities arising from such overlapping patterns are
+systematically translated away in a pre-processing step.</p>
+<p>Another case of vagueness in patterns is shown above: the
+specification is ‘incomplete’ since it does not tell us how
+<code>f</code> should behave when applied to two non-zero arguments:
+e.g., <code>f (SUC m) (SUC n)</code>. In the implementation, such
+missing clauses are filled in, and have the value <code>ARB</code>. This
+‘pattern-completion’ step is a way of turning descriptions of partial
+functions into total functions suitable for HOL. However, since the user
+has not completely specified the function, the system takes that as a
+hint that the user is not interested in using the function at the
+missing-but-filled-in clauses, and so such clauses are dropped from the
+final theorem.</p>
+<p>In summary, <code>Define</code> will derive the unambiguous and
+complete equations</p>
+<pre class="hol4"><code>     |- (f 0 (SUC v4) = 1) /\
+        (f 0 0 = 1) /\
+        (f (SUC v2) 0 = 2)
+        (f (SUC v2) (SUC v4) = ARB)</code></pre>
+<p>from the above ambiguous and incomplete equations. The odd-looking
+variable names are due to the pre-processing steps described above. The
+above result is only an intermediate value: in the final result returned
+by <code>Define</code>, the last equation is droppped:</p>
+<pre class="hol4"><code>     |- (f 0 (SUC v4) = 1) /\
+        (f 0 0 = 1) /\
+        (f (SUC v2) 0 = 2)</code></pre>
+<p><code>Define</code> automatically generates names with which to store
+the definition and, (if it exists) the associated induction theorem, in
+the current theory. The name for storing the definition is built by
+concatenating the name of the function with the value of the reference
+variable <code>Defn.def_suffix</code>. The name for storing the
+induction theorem is built by concatenating the name of the function
+with the value of the reference variable <code>Defn.ind_suffix</code>.
+For mutually recursive functions, where there is a choice of names, the
+name of the function in the first clause is taken.</p>
+<p>Since the names used to store elements in the current theory segment
+are transformed into ML bindings after the theory is exported, it is
+required that every invocation of <code>Define</code> generates names
+that will be valid ML identifiers. For this reason, <code>Define</code>
+requires alphanumeric function names. If one wishes to define symbolic
+identifiers, the ML function <code>xDefine</code> should be used.</p>
+<h3 id="failure">Failure</h3>
+<p><code>Define</code> fails if its input fails to parse and
+typecheck.</p>
+<p><code>Define</code> fails if the name of the function being defined
+is not alphanumeric.</p>
+<p><code>Define</code> fails if there are more free variables on the
+right hand sides of the recursion equations than the left.</p>
+<p><code>Define</code> fails if it cannot prove the termination of the
+specified recursive function. In that case, one has to embark on the
+following multi-step process in order to get the same effect as if
+<code>Define</code> had succeeded: (1) construct the function and
+synthesize its termination conditions with <code>Hol_defn</code>; (2)
+set up a goal to prove the termination conditions with
+<code>tgoal</code>; (3) interactively prove the termination conditions,
+starting with an invocation of <code>WF_REL_TAC</code>; and (4) package
+everything up with an invocation of <code>tDefine</code>.</p>
+<h3 id="example">Example</h3>
+<p>We will give a number of examples that display the range of functions
+that may be defined with <code>Define</code>. First, we have a recursive
+function that uses “destructors” in the recursive call. Since
+<code>fact</code> is not primitive recursive, an induction theorem for
+<code>fact</code> is generated and stored in the current theory.</p>
+<pre class="hol4"><code>   Define `fact x = if x = 0 then 1 else x * fact(x-1)`;
+
+   Equations stored under &quot;fact_def&quot;.
+   Induction stored under &quot;fact_ind&quot;.
+   &gt; val it = |- fact x = (if x = 0 then 1 else x * fact (x - 1)) : thm
+
+   - DB.fetch &quot;-&quot; &quot;fact_ind&quot;;
+
+   &gt; val it =
+     |- !P. (!x. (~(x = 0) ==&gt; P (x - 1)) ==&gt; P x) ==&gt; !v. P v : thm</code></pre>
+<p>Next we have a recursive function with relatively complex
+pattern-matching. We omit to examine the generated induction
+theorem.</p>
+<pre class="hol4"><code>   Define `(flatten  []           = [])
+      /\   (flatten ([]::rst)     = flatten rst)
+      /\   (flatten ((h::t)::rst) = h::flatten(t::rst))`
+
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a&gt;&gt;
+
+   Equations stored under &quot;flatten_def&quot;.
+   Induction stored under &quot;flatten_ind&quot;.
+
+   &gt; val it =
+       |- (flatten [] = []) /\
+          (flatten ([]::rst) = flatten rst) /\
+          (flatten ((h::t)::rst) = h::flatten (t::rst)) : thm</code></pre>
+<p>Next we define a curried recursive function, which uses wildcard
+expansion and pattern-matching pre-processing.</p>
+<pre class="hol4"><code>   Define `(min (SUC x) (SUC y) = min x y + 1)
+      /\   (min  ____    ____   = 0)`;
+
+   Equations stored under &quot;min_def&quot;.
+   Induction stored under &quot;min_ind&quot;.
+
+   &gt; val it =
+       |- (min (SUC x) (SUC y) = min x y + 1) /\
+          (min (SUC v2) 0 = 0) /\
+          (min 0 v1 = 0) : thm</code></pre>
+<p>Next we make a primitive recursive definition. Note that no induction
+theorem is generated in this case.</p>
+<pre class="hol4"><code>   Define `(filter P [] = [])
+     /\    (filter P (h::t) = if P h then h::filter P t else filter P t)`;
+
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a&gt;&gt;
+   Definition has been stored under &quot;filter_def&quot;.
+
+   &gt; val it =
+      |- (!P. filter P [] = []) /\
+         !P h t. filter P (h::t) =
+                  (if P h then h::filter P t else filter P t) : thm</code></pre>
+<p><code>Define</code> may also be used to define mutually recursive
+functions. For example, we can define a datatype of propositions and a
+function for putting a proposition into negation normal form as follows.
+First we define a datatype for boolean formulae (<code>prop</code>):</p>
+<pre class="hol4"><code>   - Hol_datatype
+       `prop = VAR of &#39;a
+             | NOT of prop
+             | AND of prop =&gt; prop
+             | OR  of prop =&gt; prop`;
+
+   &gt; val it = () : unit</code></pre>
+<p>Then two mutually recursive functions <code>nnfpos</code> and
+<code>nnfneg</code> are defined:</p>
+<pre class="hol4"><code>   - Define
+        `(nnfpos (VAR x)   = VAR x)
+    /\   (nnfpos (NOT p)   = nnfneg p)
+    /\   (nnfpos (AND p q) = AND (nnfpos p) (nnfpos q))
+    /\   (nnfpos (OR p q)  = OR  (nnfpos p) (nnfpos q))
+
+    /\   (nnfneg (VAR x)   = NOT (VAR x))
+    /\   (nnfneg (NOT p)   = nnfpos p)
+    /\   (nnfneg (AND p q) = OR  (nnfneg p) (nnfneg q))
+    /\   (nnfneg (OR p q)  = AND (nnfneg p) (nnfneg q))`;</code></pre>
+<p>The system returns:</p>
+<pre class="hol4"><code>   &lt;&lt;HOL message: inventing new type variable names: &#39;a&gt;&gt;
+
+   Equations stored under &quot;nnfpos_def&quot;.
+   Induction stored under &quot;nnfpos_ind&quot;.
+
+   &gt; val it =
+       |- (nnfpos (VAR x) = VAR x) /\
+          (nnfpos (NOT p) = nnfneg p) /\
+          (nnfpos (AND p q) = AND (nnfpos p) (nnfpos q)) /\
+          (nnfpos (OR p q) = OR (nnfpos p) (nnfpos q)) /\
+          (nnfneg (VAR x) = NOT (VAR x)) /\
+          (nnfneg (NOT p) = nnfpos p) /\
+          (nnfneg (AND p q) = OR (nnfneg p) (nnfneg q)) /\
+          (nnfneg (OR p q) = AND (nnfneg p) (nnfneg q)) : thm</code></pre>
+<p><code>Define</code> may also be used to define non-recursive
+functions.</p>
+<pre class="hol4"><code>   Define `f x (y,z) = (x + 1 = y DIV z)`;
+
+   Definition has been stored under &quot;f_def&quot;.
+
+   &gt; val it = |- !x y z. f x (y,z) = (x + 1 = y DIV z) : thm</code></pre>
+<p><code>Define</code> may also be used to define non-recursive
+functions with complex pattern-matching. The pattern-matching
+pre-processing of <code>Define</code> can be convenient for this
+purpose, but can also generate a large number of equations. For
+example:</p>
+<pre class="hol4"><code>   Define `(g (0,_,_,_,_) = 1) /\
+           (g (_,0,_,_,_) = 2) /\
+           (g (_,_,0,_,_) = 3) /\
+           (g (_,_,_,0,_) = 4) /\
+           (g (_,_,_,_,0) = 5)`</code></pre>
+<p>yields a definition with thirty-one clauses.</p>
+<h3 id="comments">Comments</h3>
+<p>In an <code>eqn</code>, no variable can occur more than once on the
+left hand side of the equation.</p>
+<p>In HOL, constructors are curried functions, unlike in ML. When used
+in a pattern, a constructor must be fully applied to its arguments.</p>
+<p>Also unlike ML, a pattern variable in a clause of a definition is not
+distinct from occurrences of that variable in other clauses.</p>
+<p><code>Define</code> translates a wildcard into a new variable, which
+is named to be different from any other variable in the function
+definition. As in ML, wildcards are not allowed to occur on the right
+hand side of any clause in the definition.</p>
+<p>An induction theorem generated in the course of processing an
+invocation of <code>Define</code> can be applied by
+<code>recInduct</code>.</p>
+<p>Invoking <code>Define</code> on a conjunction of non-recursive
+clauses having complex pattern-matching will result in an induction
+theorem being stored. This theorem may be useful for case analysis, and
+can be applied by <code>recInduct</code>.</p>
+<p><code>Define</code> takes a ‘quotation’ as an argument. Some might
+think that the input to <code>Define</code> should instead be a term.
+However, some important pre-processing happens in <code>Define</code>
+that would not be possible if the input was a term.</p>
+<p><code>Define</code> is a mechanization of a well-founded recursion
+theorem (<code>relationTheory.WFREC_COROLLARY</code>).</p>
+<p><code>Define</code> currently has a rather weak termination prover.
+For example, it always fails to prove the termination of nested
+recursive functions.</p>
+<p><code>bossLib.Define</code> is most commonly used.
+<code>TotalDefn.Define</code> is identical to
+<code>bossLib.Define</code>, except that the <code>TotalDefn</code>
+structure comes with less baggage—it depends only on <code>numLib</code>
+and <code>pairLib</code>.</p>
+<p><code>Define</code> automatically adds the definition it makes into
+the hidden ‘compset’ accessed by <code>EVAL</code> and
+<code>EVAL_TAC</code>.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="bossLib.tDefine.html"><code>bossLib.tDefine</code></a>, <a
+href="bossLib.xDefine.html"><code>bossLib.xDefine</code></a>, <a
+href="TotalDefn.DefineSchema.html"><code>TotalDefn.DefineSchema</code></a>,
+<a href="bossLib.Hol_defn.html"><code>bossLib.Hol_defn</code></a>, <a
+href="Defn.tgoal.html"><code>Defn.tgoal</code></a>, <a
+href="Defn.tprove.html"><code>Defn.tprove</code></a>, <a
+href="bossLib.WF_REL_TAC.html"><code>bossLib.WF_REL_TAC</code></a>, <a
+href="bossLib.recInduct.html"><code>bossLib.recInduct</code></a>, <a
+href="bossLib.EVAL.html"><code>bossLib.EVAL</code></a>, <a
+href="bossLib.EVAL_TAC.html"><code>bossLib.EVAL_TAC</code></a></p>
+</body>
+</html>

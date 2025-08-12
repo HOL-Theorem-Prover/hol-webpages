@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>listLib.LIST_CONV</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="list_conv"><code>LIST_CONV</code></h2>
+<pre class="hol4"><code>listLib.LIST_CONV : conv</code></pre>
+<hr />
+<p>Proves theorems about list constants applied to <code>NIL</code>,
+<code>CONS</code>, <code>SNOC</code>, <code>APPEND</code>,
+<code>FLAT</code> and <code>REVERSE</code>.</p>
+<p><code>LIST_CONV</code> takes a term of the form:</p>
+<pre class="hol4"><code>   CONST1 ... (CONST2 ...) ...</code></pre>
+<p>where <code>CONST1</code> and <code>CONST2</code> are operators on
+lists and <code>CONST2</code> returns a list result. It can be one of
+<code>NIL</code>, <code>CONS</code>, <code>SNOC</code>,
+<code>APPEND</code>, <code>FLAT</code> or <code>REVERSE</code>. The form
+of the resulting theorem depends on <code>CONST1</code> and
+<code>CONST2</code>. Some auxiliary information must be provided about
+<code>CONST1</code>. <code>LIST_CONV</code> maintains a database of such
+auxiliary information. It initially holds information about the
+constants in the system. However, additional information can be supplied
+by the user as new constants are defined. The main information that is
+needed is a theorem defining the constant in terms of <code>FOLDR</code>
+or <code>FOLDL</code>. The definition should have the form:</p>
+<pre class="hol4"><code>   |- CONST1 ...l... = fold f e l</code></pre>
+<p>where <code>fold</code> is either <code>FOLDR</code> or
+<code>FOLDL</code>, <code>f</code> is a function, <code>e</code> a base
+element and <code>l</code> a list variable. For example, a suitable
+theorem for <code>SUM</code> is</p>
+<pre class="hol4"><code>   |- SUM l = FOLDR $+ 0 l</code></pre>
+<p>Knowing this theorem and given the term
+<code>“SUM (CONS x l)”</code>, <code>LIST_CONV</code> returns the
+theorem:</p>
+<pre class="hol4"><code>   |- SUM (CONS x l) = x + (SUM l)</code></pre>
+<p>Other auxiliary theorems that are needed concern the terms
+<code>f</code> and <code>e</code> found in the definition with respect
+to <code>FOLDR</code> or <code>FOLDL</code>. For example, knowing the
+theorem:</p>
+<pre class="hol4"><code>   |- MONOID $+ 0</code></pre>
+<p>and given the term <code>“SUM (APPEND l1 l2)”</code>,
+<code>LIST_CONV</code> returns the theorem</p>
+<pre class="hol4"><code>   |- SUM (APPEND l1 l2) = (SUM l1) + (SUM l2)</code></pre>
+<p>The following table shows the form of the theorem returned and the
+auxiliary theorems needed if <code>CONST1</code> is defined in terms of
+<code>FOLDR</code>.</p>
+<pre class="hol4"><code>    CONST2       |  side conditions               | tm2 in result |- tm1 = tm2
+   ==============|================================|===========================
+   []            | NONE                           | e
+   [x]           | NONE                           | f x e
+   CONS x l      | NONE                           | f x (CONST1 l)
+   SNOC x l      | e is a list variable           | CONST1 (f x e) l
+   APPEND l1 l2  | e is a list variable           | CONST1 (CONST1 l1) l2
+   APPEND l1 l2  | |- FCOMM g f, |- LEFT_ID g e   | g (CONST1 l1) (CONST2 l2)
+   FLAT l1       | |- FCOMM g f, |- LEFT_ID g e,  |
+                 | |- CONST3 l = FOLDR g e l      | CONST3 (MAP CONST1 l)
+   REVERSE l     | |- COMM f, |- ASSOC f          | CONST1 l
+   REVERSE l     | f == (\x l. h (g x) l)         |
+                 | |- COMM h, |- ASSOC h          | CONST1 l</code></pre>
+<p>The following table shows the form of the theorem returned and the
+auxiliary theorems needed if <code>CONST1</code> is defined in terms of
+<code>FOLDL</code>.</p>
+<pre class="hol4"><code>    CONST2       |  side conditions               | tm2 in result |- tm1 = tm2
+   ==============|================================|===========================
+   []            | NONE                           | e
+   [x]           | NONE                           | f x e
+   SNOC x l      | NONE                           | f x (CONST1 l)
+   CONS x l      | e is a list variable           | CONST1 (f x e) l
+   APPEND l1 l2  | e is a list variable           | CONST1 (CONST1 l1) l2
+   APPEND l1 l2  | |- FCOMM f g, |- RIGHT_ID g e  | g (CONST1 l1) (CONST2 l2)
+   FLAT l1       | |- FCOMM f g, |- RIGHT_ID g e, |
+                 | |- CONST3 l = FOLDR g e l      | CONST3 (MAP CONST1 l)
+   REVERSE l     | |- COMM f, |- ASSOC f          | CONST1 l
+   REVERSE l     | f == (\l x. h l (g x))         |
+                 | |- COMM h, |- ASSOC h          | CONST1 l</code></pre>
+<p><code>|- MONOID f e</code> can be used instead of
+<code>|- FCOMM f f</code>, <code>|- LEFT_ID f</code> or
+<code>|- RIGHT_ID f</code>. <code>|- ASSOC f</code> can also be used in
+place of <code>|- FCOMM f f</code>.</p>
+<p>Auxiliary theorems are held in a user-updatable database. In
+particular, definitions of constants in terms of <code>FOLDR</code> and
+<code>FOLDL</code>, and monoid, commutativity, associativity, left
+identity, right identity and binary function commutativity theorems are
+stored. The database can be updated by the user to allow
+<code>LIST_CONV</code> to prove theorems about new constants. This is
+done by calling <code>set_list_thm_database</code>. The database can be
+inspected by calling <code>list_thm_database</code>. The database
+initially holds <code>FOLDR/L</code> theorems for the following system
+constants: <code>APPEND</code>, <code>FLAT</code>, <code>LENGTH</code>,
+<code>NULL</code>, <code>REVERSE</code>, <code>MAP</code>,
+<code>FILTER</code>, <code>ALL_EL</code>, <code>SUM</code>,
+<code>SOME_EL</code>, <code>IS_EL</code>, <code>AND_EL</code>,
+<code>OR_EL</code>, <code>PREFIX</code>, <code>SUFFIX</code>,
+<code>SNOC</code> and <code>FLAT</code> combined with
+<code>REVERSE</code>. It also holds auxiliary theorems about their step
+functions and base elements.</p>
+<h3 id="example">Example</h3>
+<pre class="hol4"><code>- LIST_CONV “LENGTH ([]:&#39;a list)”;
+|- LENGTH [] = 0
+
+
+- LIST_CONV “APPEND (CONS h t) (l1:&#39;a list)”;
+|- APPEND (CONS h t) l1 = CONS h (APPEND t l1)
+
+
+- LIST_CONV “APPEND (l1:&#39;a list) (CONS h t)”;
+|- APPEND l1 (CONS h t) = APPEND (SNOC h l1) t
+
+
+- LIST_CONV “MAP (P:&#39;a list -&gt; &#39;a) (SNOC h t)”;
+|- MAP P (SNOC h t) = SNOC (P h) (MAP P t)
+
+
+- LIST_CONV “SUM (FLAT l)”;
+|- SUM (FLAT l) = SUM (MAP SUM l)
+
+
+- LIST_CONV “NULL (REVERSE (l:bool list))”;
+|- NULL (REVERSE l) = NULL l</code></pre>
+<h3 id="failure">Failure</h3>
+<p><code>LIST_CONV tm</code> fails if <code>tm</code> is not of the form
+described above. It also fails if no fold definition for
+<code>CONST1</code> is held in the databases, or if the required
+auxiliary theorems, as described above, are not held in the
+databases.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="listLib.list_thm_database.html"><code>listLib.list_thm_database</code></a>,
+<a
+href="listLib.PURE_LIST_CONV.html"><code>listLib.PURE_LIST_CONV</code></a>,
+<a
+href="listLib.set_list_thm_database.html"><code>listLib.set_list_thm_database</code></a>,
+<a
+href="listLib.X_LIST_CONV.html"><code>listLib.X_LIST_CONV</code></a></p>
+</body>
+</html>

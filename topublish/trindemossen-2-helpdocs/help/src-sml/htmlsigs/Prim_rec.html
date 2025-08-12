@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure Prim_rec</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Prim_rec</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/Prim_rec.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Prim_rec =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>   include Abbrev
+<a name="line5"></a>
+<a name="line6"></a>   (*------------------------------------------------------------------------
+<a name="line7"></a>      Returns the types defined by an axiom. Does not return type
+<a name="line8"></a>      operators that are applied to other types that are defined in
+<a name="line9"></a>      the axiom.  This is a test for detecting nested recursion, where
+<a name="line10"></a>      the operator must already have an axiom elsewhere.
+<a name="line11"></a>    -------------------------------------------------------------------------*)
+<a name="line12"></a>
+<a name="line13"></a>   val doms_of_tyaxiom : thm -&gt; hol_type list
+<a name="line14"></a>
+<a name="line15"></a>   (*------------------------------------------------------------------------
+<a name="line16"></a>      Given a type axiom and the type name, returns the constructors
+<a name="line17"></a>      associated with that type in the axiom.
+<a name="line18"></a>    -------------------------------------------------------------------------*)
+<a name="line19"></a>
+<a name="line20"></a>   val type_constructors : thm -&gt; string -&gt; term list
+<a name="line21"></a>   val type_constructors_with_args : thm -&gt; string -&gt; term list
+<a name="line22"></a>
+<a name="line23"></a>   val <a href="../../Docfiles/HTML/Prim_rec.new_recursive_definition.html">new_recursive_definition</a> : {name:string, rec_axiom:thm, def:term} -&gt; thm
+<a name="line24"></a>
+<a name="line25"></a>   (*------------------------------------------------------------------------
+<a name="line26"></a>      Because a type axiom can be for multiple (mutually recursive) types at
+<a name="line27"></a>      once, this function returns the definitions of the case constants for
+<a name="line28"></a>      each type introduced by an axiom.
+<a name="line29"></a>    -------------------------------------------------------------------------*)
+<a name="line30"></a>
+<a name="line31"></a>   val define_case_constant : thm -&gt; thm list
+<a name="line32"></a>   val case_constant_name : {type_name:string} -&gt; string
+<a name="line33"></a>   val case_constant_defn_name : {type_name:string} -&gt; string
+<a name="line34"></a>
+<a name="line35"></a>   val <a href="../../Docfiles/HTML/Prim_rec.INDUCT_THEN.html">INDUCT_THEN</a>                 : thm -&gt; thm_tactic -&gt; tactic
+<a name="line36"></a>   val <a href="../../Docfiles/HTML/Prim_rec.prove_rec_fn_exists.html">prove_rec_fn_exists</a>         : thm -&gt; term -&gt; thm
+<a name="line37"></a>   val <a href="../../Docfiles/HTML/Prim_rec.prove_induction_thm.html">prove_induction_thm</a>         : thm -&gt; thm
+<a name="line38"></a>
+<a name="line39"></a>   (*-------------------------------------------------------------------------
+<a name="line40"></a>      Similarly, this function returns a list of theorems where each theorem
+<a name="line41"></a>      in the list is the cases theorem for a type characterised in the axiom.
+<a name="line42"></a>    -------------------------------------------------------------------------*)
+<a name="line43"></a>
+<a name="line44"></a>   val <a href="../../Docfiles/HTML/Prim_rec.prove_cases_thm.html">prove_cases_thm</a>             : thm -&gt; thm list
+<a name="line45"></a>   val case_cong_thm               : thm -&gt; thm -&gt; thm
+<a name="line46"></a>   val <a href="../../Docfiles/HTML/Prim_rec.prove_constructors_distinct.html">prove_constructors_distinct</a> : thm -&gt; thm option list
+<a name="line47"></a>   val <a href="../../Docfiles/HTML/Prim_rec.prove_constructors_one_one.html">prove_constructors_one_one</a>  : thm -&gt; thm option list
+<a name="line48"></a>
+<a name="line49"></a>   (*-------------------------------------------------------------------------
+<a name="line50"></a>      Prove various equalities on case distinction terms.
+<a name="line51"></a>    -------------------------------------------------------------------------*)
+<a name="line52"></a>
+<a name="line53"></a>   val <a href="../../Docfiles/HTML/Prim_rec.prove_case_rand_thm.html">prove_case_rand_thm</a>         : {case_def : thm, nchotomy : thm} -&gt; thm
+<a name="line54"></a>   val <a href="../../Docfiles/HTML/Prim_rec.prove_case_elim_thm.html">prove_case_elim_thm</a>         : {case_def : thm, nchotomy : thm} -&gt; thm
+<a name="line55"></a>   val <a href="../../Docfiles/HTML/Prim_rec.prove_case_eq_thm.html">prove_case_eq_thm</a>           : {case_def : thm, nchotomy : thm} -&gt; thm
+<a name="line56"></a>   val prove_case_ho_elim_thm      : {case_def : thm, nchotomy : thm} -&gt; thm
+<a name="line57"></a>   val prove_case_ho_imp_thm       : {case_def : thm, nchotomy : thm} -&gt; thm
+<a name="line58"></a>   val prove_case_const_thm        : {case_def : thm, nchotomy : thm} -&gt; thm
+<a name="line59"></a>
+<a name="line60"></a>   (* A utility function *)
+<a name="line61"></a>   val EXISTS_EQUATION             : term -&gt; thm -&gt; thm
+<a name="line62"></a>
+<a name="line63"></a>   (* ----------------------------------------------------------------------
+<a name="line64"></a>       Generate custom induction principles given recursive definitions.
+<a name="line65"></a>       The list of knames corresponds to the constants of the definition but
+<a name="line66"></a>       given in the order that corresponds to the generalised "P" variables
+<a name="line67"></a>       in the theorem result.
+<a name="line68"></a>      ---------------------------------------------------------------------- *)
+<a name="line69"></a>   val gen_indthm : {lookup_ind : hol_type -&gt; thm} -&gt; thm -&gt;
+<a name="line70"></a>                    (thm * KernelSig.kernelname list)
+<a name="line71"></a>
+<a name="line72"></a>end
+<a name="line73"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/Prim_rec.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure DArray</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure DArray</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/DArray.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature DArray = sig
+<a name="line2"></a>
+<a name="line3"></a>type 'a darray
+<a name="line4"></a>
+<a name="line5"></a>(* `new (n, a)` constructs a new array with capacity `n` and default value `a`
+<a name="line6"></a>   (the value `a` will not be visible) *)
+<a name="line7"></a>val new: int * 'a -&gt; 'a darray
+<a name="line8"></a>
+<a name="line9"></a>(* Returns the underlying array, the size, and the default element *)
+<a name="line10"></a>val base: 'a darray -&gt; 'a array * int * 'a
+<a name="line11"></a>
+<a name="line12"></a>(* Empty the array without deallocating *)
+<a name="line13"></a>val clear: 'a darray -&gt; unit
+<a name="line14"></a>
+<a name="line15"></a>(* a[i] *)
+<a name="line16"></a>val sub: 'a darray * int -&gt; 'a
+<a name="line17"></a>
+<a name="line18"></a>(* a[i] := v *)
+<a name="line19"></a>val update: 'a darray * int * 'a -&gt; unit
+<a name="line20"></a>
+<a name="line21"></a>(* `clone (a, n)` creates a copy of `a` with capacity `n` *)
+<a name="line22"></a>val clone: 'a darray * int -&gt; 'a darray
+<a name="line23"></a>
+<a name="line24"></a>(* `push (a, v)` adds an element at the end of the array, growing if needed *)
+<a name="line25"></a>val push: 'a darray * 'a -&gt; unit
+<a name="line26"></a>
+<a name="line27"></a>(* `size a` returns the number of stored elements *)
+<a name="line28"></a>val size: 'a darray -&gt; int
+<a name="line29"></a>
+<a name="line30"></a>(* `capacity a` returns the size of the underlying allocation *)
+<a name="line31"></a>val capacity: 'a darray -&gt; int
+<a name="line32"></a>
+<a name="line33"></a>(* returns `size a = 0` *)
+<a name="line34"></a>val isEmpty: 'a darray -&gt; bool
+<a name="line35"></a>
+<a name="line36"></a>(* `last a` returns the last element, or NONE if empty *)
+<a name="line37"></a>val last: 'a darray -&gt; 'a option
+<a name="line38"></a>
+<a name="line39"></a>(* `setLast (a, v)` sets the last element (raises Subscript on empty) *)
+<a name="line40"></a>val setLast: 'a darray * 'a -&gt; unit
+<a name="line41"></a>
+<a name="line42"></a>type 'a slice = 'a ArraySlice.slice
+<a name="line43"></a>(* Constructs an array slice out of a darray *)
+<a name="line44"></a>val slice: 'a darray * int * int option -&gt; 'a slice
+<a name="line45"></a>
+<a name="line46"></a>(* Constructs an array slice out of a darray *)
+<a name="line47"></a>val full: 'a darray -&gt; 'a slice
+<a name="line48"></a>
+<a name="line49"></a>(* Block copy of an array slice into `dst` starting at position `di` *)
+<a name="line50"></a>val copy: {src: 'a slice, dst: 'a darray, di: int} -&gt; unit
+<a name="line51"></a>
+<a name="line52"></a>(* Block copy of a vector slice into `dst` starting at position `di` *)
+<a name="line53"></a>val copyVec: {src: 'a VectorSlice.slice, dst: 'a darray, di: int} -&gt; unit
+<a name="line54"></a>
+<a name="line55"></a>(* Append a slice to the end of a darray *)
+<a name="line56"></a>val append: 'a darray * 'a slice -&gt; unit
+<a name="line57"></a>
+<a name="line58"></a>(* `replace (a, a')` sets `a` to be an alias of `a'`, i.e. `a := !a'`. *)
+<a name="line59"></a>val replace: 'a darray * 'a darray -&gt; unit
+<a name="line60"></a>
+<a name="line61"></a>(* runs `f(a[i])` for each `i` *)
+<a name="line62"></a>val app: ('a -&gt; unit) -&gt; 'a darray -&gt; unit
+<a name="line63"></a>
+<a name="line64"></a>(* runs `f(i, a[i])` for each `i` *)
+<a name="line65"></a>val appi: (int * 'a -&gt; unit) -&gt; 'a darray -&gt; unit
+<a name="line66"></a>
+<a name="line67"></a>(* True if all elements in the darray are true *)
+<a name="line68"></a>val all: ('a -&gt; bool) -&gt; 'a darray -&gt; bool
+<a name="line69"></a>
+<a name="line70"></a>(* True if any element in the darray is true *)
+<a name="line71"></a>val exists: ('a -&gt; bool) -&gt; 'a darray -&gt; bool
+<a name="line72"></a>
+<a name="line73"></a>(* compare two arrays *)
+<a name="line74"></a>val collate: ('a * 'a -&gt; order) -&gt; 'a darray * 'a darray -&gt; order
+<a name="line75"></a>
+<a name="line76"></a>(* returns the first `a[i]` for which `f a[i]` is true *)
+<a name="line77"></a>val find: ('a -&gt; bool) -&gt; 'a darray -&gt; 'a option
+<a name="line78"></a>
+<a name="line79"></a>(* returns the first `(i, a[i])` for which `f (i, a[i])` is true *)
+<a name="line80"></a>val findi: (int * 'a -&gt; bool) -&gt; 'a darray -&gt; (int * 'a) option
+<a name="line81"></a>
+<a name="line82"></a>(* returns `f(a[n-1], ..., f(a[0], b))` *)
+<a name="line83"></a>val foldl: ('a * 'b -&gt; 'b) -&gt; 'b -&gt; 'a darray -&gt; 'b
+<a name="line84"></a>
+<a name="line85"></a>(* returns `f(n-1, a[n-1], ..., f(0, a[0], b))` *)
+<a name="line86"></a>val foldli: (int * 'a * 'b -&gt; 'b) -&gt; 'b -&gt; 'a darray -&gt; 'b
+<a name="line87"></a>
+<a name="line88"></a>(* returns `f(a[0], ..., f(a[n-1], b))` *)
+<a name="line89"></a>val foldr: ('a * 'b -&gt; 'b) -&gt; 'b -&gt; 'a darray -&gt; 'b
+<a name="line90"></a>
+<a name="line91"></a>(* returns `f(0, a[0], ..., f(n-1, a[n-1], b))` *)
+<a name="line92"></a>val foldri: (int * 'a * 'b -&gt; 'b) -&gt; 'b -&gt; 'a darray -&gt; 'b
+<a name="line93"></a>
+<a name="line94"></a>(* applies `f` to every element of the array *)
+<a name="line95"></a>val modify: ('a -&gt; 'a) -&gt; 'a darray -&gt; unit
+<a name="line96"></a>
+<a name="line97"></a>(* applies `f` to every element of the array *)
+<a name="line98"></a>val modifyi: (int * 'a -&gt; 'a) -&gt; 'a darray -&gt; unit
+<a name="line99"></a>
+<a name="line100"></a>(* copies the darray into a new array *)
+<a name="line101"></a>val array: 'a darray -&gt; 'a array
+<a name="line102"></a>
+<a name="line103"></a>(* copies the darray into a new vector *)
+<a name="line104"></a>val vector: 'a darray -&gt; 'a vector
+<a name="line105"></a>
+<a name="line106"></a>(* Constructs a new darray wrapping the given array without copying (with given default element) *)
+<a name="line107"></a>val fromArray: 'a array * 'a -&gt; 'a darray
+<a name="line108"></a>
+<a name="line109"></a>(* Constructs a new darray wrapping the given array without copying. Fails if the array is empty *)
+<a name="line110"></a>val fromArray1: 'a array -&gt; 'a darray
+<a name="line111"></a>
+<a name="line112"></a>(* Constructs a darray from a list (with given default element) *)
+<a name="line113"></a>val fromList: 'a list * 'a -&gt; 'a darray
+<a name="line114"></a>
+<a name="line115"></a>(* Constructs a darray from a nonempty list *)
+<a name="line116"></a>val fromList1: 'a list -&gt; 'a darray
+<a name="line117"></a>
+<a name="line118"></a>(* Make a list from a darray *)
+<a name="line119"></a>val toList: 'a darray -&gt; 'a list
+<a name="line120"></a>
+<a name="line121"></a>(* Constructs a darray of length `n` with `a[i] = f i` (with given default element) *)
+<a name="line122"></a>val tabulate: 'a * int * (int -&gt; 'a) -&gt; 'a darray
+<a name="line123"></a>
+<a name="line124"></a>end
+<a name="line125"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/DArray.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

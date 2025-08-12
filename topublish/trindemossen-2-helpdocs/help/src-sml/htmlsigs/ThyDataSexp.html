@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure ThyDataSexp</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure ThyDataSexp</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/postkernel/ThyDataSexp.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature ThyDataSexp =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>datatype t =
+<a name="line5"></a>         Int of int
+<a name="line6"></a>       | String of string
+<a name="line7"></a>       | SharedString of string
+<a name="line8"></a>       | List of t list
+<a name="line9"></a>       | Term of Term.term
+<a name="line10"></a>       | Type of Type.hol_type
+<a name="line11"></a>       | Thm of Thm.thm
+<a name="line12"></a>       | Sym of string
+<a name="line13"></a>       | Bool of bool
+<a name="line14"></a>       | Char of char
+<a name="line15"></a>       | Option of t option
+<a name="line16"></a>       | KName of KernelSig.kernelname
+<a name="line17"></a>
+<a name="line18"></a>val uptodate : t -&gt; bool
+<a name="line19"></a>val compare : t * t -&gt; order
+<a name="line20"></a>
+<a name="line21"></a>(* note that merge functions must take identical "types" on both sides.
+<a name="line22"></a>   Thus, if the theory data is a list of values, both old and new should be
+<a name="line23"></a>   lists and the merge will effectively be an append.  If there's just one
+<a name="line24"></a>   value being "merged", it should still be a singleton list.
+<a name="line25"></a>
+<a name="line26"></a>   Similarly, if the data is a dictionary, represented as an alist, then the
+<a name="line27"></a>   new data (representing a single key-value maplet) should be a singleton
+<a name="line28"></a>   alist
+<a name="line29"></a>*)
+<a name="line30"></a>val alist_merge : {old: t, new : t} -&gt; t
+<a name="line31"></a>val append_merge : {old : t, new : t} -&gt; t
+<a name="line32"></a>
+<a name="line33"></a>val new : {thydataty : string,
+<a name="line34"></a>           merge : {old : t, new : t} -&gt; t,
+<a name="line35"></a>           load : {thyname : string, data : t option} -&gt; unit,
+<a name="line36"></a>           other_tds : t * TheoryDelta.t -&gt; t option} -&gt;
+<a name="line37"></a>          {export : t -&gt; unit, segment_data : {thyname : string} -&gt; t option,
+<a name="line38"></a>           set : t -&gt; unit}
+<a name="line39"></a>
+<a name="line40"></a>val pp_sexp : Type.hol_type PP.pprinter -&gt; Term.term PP.pprinter -&gt;
+<a name="line41"></a>              Thm.thm PP.pprinter -&gt; t PP.pprinter
+<a name="line42"></a>
+<a name="line43"></a>type 'a dec = t -&gt; 'a option
+<a name="line44"></a>type 'a enc = 'a -&gt; t
+<a name="line45"></a>
+<a name="line46"></a>val string_decode : string dec
+<a name="line47"></a>val int_decode    : int dec
+<a name="line48"></a>val type_decode   : Type.hol_type dec
+<a name="line49"></a>val term_decode   : Term.term dec
+<a name="line50"></a>val thm_decode    : Thm.thm dec
+<a name="line51"></a>val char_decode   : char dec
+<a name="line52"></a>val list_decode   : 'a dec -&gt; 'a list dec
+<a name="line53"></a>val kname_decode  : KernelSig.kernelname dec
+<a name="line54"></a>val bool_decode   : bool dec
+<a name="line55"></a>
+<a name="line56"></a>val mk_list : 'a enc -&gt; 'a list enc
+<a name="line57"></a>
+<a name="line58"></a>val option_encode : 'a enc -&gt; 'a option enc
+<a name="line59"></a>val option_decode : 'a dec -&gt; 'a option dec
+<a name="line60"></a>
+<a name="line61"></a>val pair_encode : 'a enc * 'b enc -&gt; ('a * 'b) enc
+<a name="line62"></a>val pair_decode : 'a dec * 'b dec -&gt; ('a * 'b) dec
+<a name="line63"></a>
+<a name="line64"></a>val pair3_encode : 'a enc * 'b enc * 'c enc -&gt; ('a * 'b * 'c) enc
+<a name="line65"></a>val pair3_decode : 'a dec * 'b dec * 'c dec -&gt; ('a * 'b * 'c) dec
+<a name="line66"></a>
+<a name="line67"></a>val pair4_encode : 'a enc * 'b enc * 'c enc * 'd enc -&gt; ('a * 'b * 'c * 'd) enc
+<a name="line68"></a>val pair4_decode : 'a dec * 'b dec * 'c dec * 'd dec -&gt; ('a * 'b * 'c * 'd) dec
+<a name="line69"></a>
+<a name="line70"></a>val require_tag : string -&gt; unit dec
+<a name="line71"></a>val tag_encode : string -&gt; ('a -&gt; t) -&gt; ('a -&gt; t)
+<a name="line72"></a>val tag_decode : string -&gt; 'a dec -&gt; 'a dec
+<a name="line73"></a>
+<a name="line74"></a>val || : 'a dec * 'a dec -&gt; 'a dec
+<a name="line75"></a>val >> : 'a dec * ('a -&gt; 'b) -&gt; 'b dec
+<a name="line76"></a>val first : 'a dec list -&gt; 'a dec
+<a name="line77"></a>
+<a name="line78"></a>(* encoder/decoder pairs *)
+<a name="line79"></a>type 'a ed = ('a enc * 'a dec)
+<a name="line80"></a>val string_ed : string ed
+<a name="line81"></a>val int_ed : int ed
+<a name="line82"></a>val type_ed : Type.hol_type ed
+<a name="line83"></a>val term_ed : Term.term ed
+<a name="line84"></a>val thm_ed : Thm.thm ed
+<a name="line85"></a>val char_ed : char ed
+<a name="line86"></a>val kname_ed : KernelSig.kernelname ed
+<a name="line87"></a>val bool_ed : bool ed
+<a name="line88"></a>
+<a name="line89"></a>val list_ed : 'a ed -&gt; 'a list ed
+<a name="line90"></a>val option_ed : 'a ed -&gt; 'a option ed
+<a name="line91"></a>val pair_ed : 'a ed * 'b ed -&gt; ('a * 'b) ed
+<a name="line92"></a>val pair3_ed : 'a ed * 'b ed * 'c ed -&gt; ('a * 'b * 'c) ed
+<a name="line93"></a>val pair4_ed : 'a ed * 'b ed * 'c ed * 'd ed -&gt; ('a * 'b * 'c * 'd) ed
+<a name="line94"></a>
+<a name="line95"></a>val bij_ed : ('a -&gt; 'b) * ('b -&gt; 'a) -&gt; 'b ed -&gt; 'a ed
+<a name="line96"></a>val inj_ed : ('a -&gt; 'b) * ('b -&gt; 'a option) -&gt; 'b ed -&gt; 'a ed
+<a name="line97"></a>
+<a name="line98"></a>end
+<a name="line99"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/postkernel/ThyDataSexp.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

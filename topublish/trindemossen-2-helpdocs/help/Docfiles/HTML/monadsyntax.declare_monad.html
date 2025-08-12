@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>monadsyntax.declare_monad</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="declare_monad"><code>declare_monad</code></h2>
+<pre class="hol4"><code>monadsyntax.declare_monad :
+  string * { bind : term, unit : term, ignorebind : term option,
+             choice : term option, fail : term option, guard : term option }
+    -&gt;
+  unit</code></pre>
+<hr />
+<p>Declares a monad type for which the do/od syntax can be used.</p>
+<p>A call to <code>declare_monad(mname, minfo)</code> alters the
+internal “monad database” so that a subsequent call to
+<code>enable_monad mname</code> will cause do/od syntax to try to use
+the terms in <code>minfo</code> as interpretations of that syntax. The
+only compulsory values are the <code>unit</code> and <code>bind</code>
+values, which should have types conforming to the pattern
+<code>:α M</code> and <code>:α -&gt; β M</code> respectively. For
+example, the list monad would have <code>M</code> instantiated by the
+pattern <code>:_ list</code>, while the reader monad would have
+<code>M</code> instantiated by the pattern
+<code>:'env -&gt; _</code>.</p>
+<p>The <code>ignorebind</code> field allows the user to provide a
+specific constant to interpret a <code>bind</code> where the second
+argument ignores the value. If this is not provided, then syntax such as
+<code>do M1; M2; od</code> will be interpreted as
+<code>bind M1 (K M2)</code>, where <code>K</code> is the constant
+combinator.</p>
+<p>The remaining fields are used when the monad has a notion of failure.
+For example, the option monad uses <code>NONE</code> as the appropriate
+value for <code>fail</code>. The <code>choice</code> term should be of
+type <code>:α M -&gt; α M -&gt; α M</code>, and should return the first
+value if it is not a failure, or otherwise use the second argument. The
+supported syntax for <code>choice</code> is <code>++</code>.</p>
+<p>Finally, the <code>guard</code> field should be a term of type
+<code>:bool -&gt; unit M</code>. It is rendered as <code>assert b</code>
+with <code>b</code> a boolean value. If <code>b</code> is true, the
+monad “returns” the unit value; if <code>b</code> is false the monad
+fails.</p>
+<p>The information declared with a call to <code>declare_monad</code> is
+exported with the current theory and is thus available to descendent
+theories.</p>
+<h3 id="failure">Failure</h3>
+<p>Never fails. However, the terms present in the monad-information
+record must have appropriate types if strange type-checking errors on
+subsequent uses of the do/od syntax are to be avoided.</p>
+<h3 id="example">Example</h3>
+<p>A set monad could be declared:</p>
+<pre class="hol4"><code>&gt; declare_monad(&quot;set&quot;, {
+    unit = “λa. {a}”, bind = “λs f. BIGUNION (IMAGE f s)”,
+    ignorebind = NONE,
+    fail = SOME “{}”, guard = SOME “λb. if b then {()} else {}”,
+    choice = SOME “$UNION”
+  });</code></pre>
+<h3 id="comments">Comments</h3>
+<p>This function does not even care if the constants have the right
+respective types; it certainly doesn’t care if the constants satisfy the
+monadic axioms.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="monadsyntax.all_monads.html"><code>monadsyntax.all_monads</code></a>,
+<a
+href="monadsyntax.enable_monad.html"><code>monadsyntax.enable_monad</code></a></p>
+</body>
+</html>

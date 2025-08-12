@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>HolKernel.bvk_find_term</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="bvk_find_term"><code>bvk_find_term</code></h2>
+<pre class="hol4"><code>HolKernel.bvk_find_term : (term list * term -&gt; bool) -&gt; (term -&gt; &#39;a) -&gt; term -&gt; &#39;a option</code></pre>
+<hr />
+<p>Finds a sub-term satisfying predicate argument; applies a
+continuation.</p>
+<p>A call to <code>bvk_find_term P k tm</code> searches <code>tm</code>
+for a sub-term satisfying <code>P</code> and calls the continuation
+<code>k</code> on the first that it finds. If <code>k</code> succeeds on
+this sub-term, the result is wrapped in <code>SOME</code> and returned
+to the caller. If <code>k</code> raises a <code>HOL_ERR</code> exception
+on the sub-term, control returns to <code>bvk_find_term</code>, which
+continues to look for a sub-term satisfying <code>P</code>. Other
+exceptions are returned to the caller. If there is no sub-term that both
+satisfies <code>P</code> and on which <code>k</code> operates
+successfully, the result is <code>NONE</code>.</p>
+<p>The search order is top-down, left-to-right (i.e., rators of combs
+are examined before rands).</p>
+<p>As with <code>find_term</code>, <code>P</code> should be total. In
+addition, <code>P</code> is given not just the sub-term of interest, but
+also the stack of bound variables that have scope over the sub-term,
+with the innermost bound variables appearing earlier in the list.</p>
+<h3 id="failure">Failure</h3>
+<p>Fails if the predicate argument fails (i.e., raises an exception;
+returning false is acceptable) on a sub-term, or if the contination
+argument raises a non-<code>HOL_ERR</code> exception on a sub-term on
+which the predicate has returned true.</p>
+<h3 id="example">Example</h3>
+<p>The <code>RED_CONV</code> function from <code>reduceLib</code>
+reduces a ground arithmetic term over the natural numbers, failing if
+the term is not of the right shape.</p>
+<pre class="hol4"><code>   - val find = bvk_find_term (equal ``:num`` o type_of o #2)
+                              reduceLib.RED_CONV;
+   &gt; val find = fn : term -&gt; thm option
+
+   - find ``SUC n``;
+   &gt; val it = NONE : thm option
+
+   - find ``2 * 3 + SUC n``;
+   &gt; val it = SOME |- 2 * 3 = 6 : thm option
+
+   - find ``SUC n + 2 * 3``;
+   &gt; val it = SOME |- 2 * 3 = 6 : thm option
+
+   - find ``2 + 1 + SUC n + 2 * 3``;
+   &gt; val it = SOME |- 2 + 1 = 3 : thm option</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a
+href="HolKernel.find_term.html"><code>HolKernel.find_term</code></a>, <a
+href="HolKernel.find_terms.html"><code>HolKernel.find_terms</code></a></p>
+</body>
+</html>

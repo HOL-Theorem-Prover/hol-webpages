@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure ThmSetData</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure ThmSetData</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/ThmSetData.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature ThmSetData =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  type data = Theory.LoadableThyData.t
+<a name="line5"></a>  type thm = Thm.thm
+<a name="line6"></a>  type thname = KernelSig.kernelname
+<a name="line7"></a>  val toKName : string -&gt; thname
+<a name="line8"></a>  datatype setdelta = ADD of thname * thm | REMOVE of string
+<a name="line9"></a>  type exportfns =
+<a name="line10"></a>       { add : {thy : string, named_thm : thname * thm} -&gt; unit,
+<a name="line11"></a>         remove : {thy : string, remove : string} -&gt; unit}
+<a name="line12"></a>  val added_thms : setdelta list -&gt; thm list
+<a name="line13"></a>  val mk_add : string -&gt; setdelta
+<a name="line14"></a>
+<a name="line15"></a>  val new_exporter :
+<a name="line16"></a>      {settype : string, efns : exportfns} -&gt;
+<a name="line17"></a>      {export : string -&gt; unit, delete : string -&gt; unit}
+<a name="line18"></a>
+<a name="line19"></a>  val current_data : {settype:string} -&gt; setdelta list
+<a name="line20"></a>  val theory_data : {settype : string, thy: string} -&gt; setdelta list
+<a name="line21"></a>  val all_data : {settype:string} -&gt; (string * setdelta list) list
+<a name="line22"></a>  val data_exportfns : {settype:string} -&gt; exportfns option
+<a name="line23"></a>
+<a name="line24"></a>  val all_set_types : unit -&gt; string list
+<a name="line25"></a>
+<a name="line26"></a>  type 'value ops = {apply_to_global : setdelta -&gt; 'value -&gt; 'value,
+<a name="line27"></a>                     thy_finaliser : ({thyname:string} -&gt; setdelta list -&gt;
+<a name="line28"></a>                                      'value -&gt; 'value) option,
+<a name="line29"></a>                     uptodate_delta : setdelta -&gt; bool, initial_value : 'value,
+<a name="line30"></a>                     apply_delta : setdelta -&gt; 'value -&gt; 'value}
+<a name="line31"></a>  val export_with_ancestry:
+<a name="line32"></a>      {settype : string, delta_ops : 'value ops} -&gt;
+<a name="line33"></a>      (setdelta,'value) AncestryData.fullresult
+<a name="line34"></a>
+<a name="line35"></a>  type simple_dictionary = (string,thm) Binarymap.dict
+<a name="line36"></a>  val simple_dictionary_ops : simple_dictionary -&gt; simple_dictionary ops
+<a name="line37"></a>  val export_simple_dictionary :
+<a name="line38"></a>      {settype : string, initial : (string * thm) list} -&gt;
+<a name="line39"></a>      {merge : string list -&gt; simple_dictionary option,
+<a name="line40"></a>       DB : {thyname:string} -&gt; simple_dictionary option,
+<a name="line41"></a>       temp_exclude : string -&gt; unit, exclude : string -&gt; unit,
+<a name="line42"></a>       export : string -&gt; unit, temp_export : string -&gt; unit,
+<a name="line43"></a>       getDB : unit -&gt; simple_dictionary,
+<a name="line44"></a>       get_thms : unit -&gt; thm list,
+<a name="line45"></a>       temp_setDB : simple_dictionary -&gt; unit}
+<a name="line46"></a>  (* creates a dictionary that names theorems "0", "1", etc *)
+<a name="line47"></a>  val sdict_withflag_thms : {getDB : unit -&gt; simple_dictionary,
+<a name="line48"></a>                             temp_setDB : simple_dictionary -&gt; unit} *
+<a name="line49"></a>                            thm list -&gt; ('a -&gt; 'b) -&gt; ('a -&gt; 'b)
+<a name="line50"></a>
+<a name="line51"></a>  type alist = (string * thm) list
+<a name="line52"></a>  val alist_ops : alist -&gt; alist ops
+<a name="line53"></a>  val export_alist :
+<a name="line54"></a>      {settype : string, initial : (string * thm) list} -&gt;
+<a name="line55"></a>      {merge : string list -&gt; alist option,
+<a name="line56"></a>       DB : {thyname:string} -&gt; alist option,
+<a name="line57"></a>       temp_exclude : string -&gt; unit, exclude : string -&gt; unit,
+<a name="line58"></a>       export : string -&gt; unit, temp_export : string -&gt; unit,
+<a name="line59"></a>       getDB : unit -&gt; alist,
+<a name="line60"></a>       get_thms : unit -&gt; thm list,
+<a name="line61"></a>       temp_setDB : alist -&gt; unit}
+<a name="line62"></a>  (* creates alist that names theorems "0", "1", etc *)
+<a name="line63"></a>  val alist_withflag_thms : {getDB : unit -&gt; alist,
+<a name="line64"></a>                             temp_setDB : alist -&gt; unit} *
+<a name="line65"></a>                            thm list -&gt; ('a -&gt; 'b) -&gt; ('a -&gt; 'b)
+<a name="line66"></a>
+<a name="line67"></a>  val list_ops : thm list -&gt; thm list ops
+<a name="line68"></a>  val export_list :
+<a name="line69"></a>      {settype : string, initial : thm list} -&gt;
+<a name="line70"></a>      {merge : string list -&gt; thm list option,
+<a name="line71"></a>       DB : {thyname:string} -&gt; thm list option,
+<a name="line72"></a>       export : string -&gt; unit, temp_export : string -&gt; unit,
+<a name="line73"></a>       temp_exclude : thm -&gt; unit, (* checks list with thm-concl-equality *)
+<a name="line74"></a>       getDB : unit -&gt; thm list,
+<a name="line75"></a>       temp_setDB : thm list -&gt; unit}
+<a name="line76"></a>
+<a name="line77"></a>
+<a name="line78"></a>
+<a name="line79"></a>end
+<a name="line80"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/1/ThmSetData.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

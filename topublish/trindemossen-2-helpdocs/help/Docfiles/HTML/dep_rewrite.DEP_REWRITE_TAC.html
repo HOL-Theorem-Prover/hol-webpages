@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>dep_rewrite.DEP_REWRITE_TAC</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="dep_rewrite_tac"><code>DEP_REWRITE_TAC</code></h2>
+<pre class="hol4"><code>dep_rewrite.DEP_REWRITE_TAC : thm list -&gt; tactic</code></pre>
+<hr />
+<p>Rewrites a goal using implications of equalites, adding proof
+obligations as required.</p>
+<p>In a call <code>DEP_REWRITE_TAC [thm1,...]</code>, the argument
+theorems <code>thm1,...</code> are typically implications. The tactic
+identifies the consequents of the argument theorems, and attempt to
+match these against the current goal. If a match is found, the goal is
+rewritten according to the matched instance of the consequent, after
+which the corresponding hypotheses of the argument theorems are added to
+the goal as new conjuncts on the left.</p>
+<p>Care needs to be taken that the implications will match the goal
+properly, that is, instances where the hypotheses in fact can be proven.
+Also, even more commonly than with <code>REWRITE_TAC</code>, the
+rewriting process may diverge.</p>
+<p>Each implication theorem for rewriting may have a number of layers of
+universal quantification and implications. At the bottom of these layers
+is the base, which will either be an equality, a negation, or a general
+term. The pattern for matching will be the left-hand-side of an
+equality, the term negated of a negation, or the term itself in the
+third case. The search is top-to-bottom left-to-right, depending on the
+quantifications of variables.</p>
+<p>To assist in focusing the matching to useful cases, the goal is
+searched for a subterm matching the pattern. The matching of the pattern
+to subterms is performed by higher-order matching, so for example,
+<code>!x. P x</code> will match the term
+<code>!n. (n+m) &lt; 4*n</code>.</p>
+<p>The argument theorems may each be either an implication or not. For
+those which are implications, the hypotheses of the instance of each
+theorem which matched the goal are added to the goal as conjuncts on the
+left side. For those argument theorems which are not implications, the
+goal is simply rewritten with them. This rewriting is also higher
+order.</p>
+<h3 id="comments">Comments</h3>
+<p>Deep inner universal quantifications of consequents are supported.
+Thus, an argument theorem like <code>EQ_LIST</code>:</p>
+<pre class="hol4"><code>|- !h1 h2. (h1 = h2) ==&gt; (!l1 l2. (l1 = l2) ==&gt;
+                 (CONS h1 l1 = CONS h2 l2))</code></pre>
+<p>before it is used, is internally converted to appear as</p>
+<pre class="hol4"><code>|- !h1 h2 l1 l2. (h1 = h2) /\ (l1 = l2) ==&gt;
+                 (CONS h1 l1 = CONS h2 l2)</code></pre>
+<p>As much as possible, the newly added hypotheses are analyzed to
+remove duplicates; thus, several theorems with the same hypothesis, or
+several uses of the same theorem, will generate a minimal additional
+proof burden.</p>
+<p>The new hypotheses are added as conjuncts rather than as a separate
+subgoal to reduce the user’s burden of subgoal splits when creating
+tactics to prove theorems. If a separate subgoal is desired, simply use
+<code>CONJ_TAC</code> after the dependent rewriting to split the goal
+into two, where the first contains the hypotheses and the second
+contains the rewritten version of the original goal.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="dep_rewrite.DEP_PURE_ONCE_REWRITE_TAC.html"><code>dep_rewrite.DEP_PURE_ONCE_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_ONCE_REWRITE_TAC.html"><code>dep_rewrite.DEP_ONCE_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_PURE_ONCE_ASM_REWRITE_TAC.html"><code>dep_rewrite.DEP_PURE_ONCE_ASM_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_ONCE_ASM_REWRITE_TAC.html"><code>dep_rewrite.DEP_ONCE_ASM_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_PURE_ONCE_SUBST_TAC.html"><code>dep_rewrite.DEP_PURE_ONCE_SUBST_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_ONCE_SUBST_TAC.html"><code>dep_rewrite.DEP_ONCE_SUBST_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_PURE_ONCE_ASM_SUBST_TAC.html"><code>dep_rewrite.DEP_PURE_ONCE_ASM_SUBST_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_ONCE_ASM_SUBST_TAC.html"><code>dep_rewrite.DEP_ONCE_ASM_SUBST_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_PURE_LIST_REWRITE_TAC.html"><code>dep_rewrite.DEP_PURE_LIST_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_LIST_REWRITE_TAC.html"><code>dep_rewrite.DEP_LIST_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_PURE_LIST_ASM_REWRITE_TAC.html"><code>dep_rewrite.DEP_PURE_LIST_ASM_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_LIST_ASM_REWRITE_TAC.html"><code>dep_rewrite.DEP_LIST_ASM_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_PURE_REWRITE_TAC.html"><code>dep_rewrite.DEP_PURE_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_REWRITE_TAC.html"><code>dep_rewrite.DEP_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_PURE_ASM_REWRITE_TAC.html"><code>dep_rewrite.DEP_PURE_ASM_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_ASM_REWRITE_TAC.html"><code>dep_rewrite.DEP_ASM_REWRITE_TAC</code></a>,
+<a
+href="dep_rewrite.DEP_FIND_THEN.html"><code>dep_rewrite.DEP_FIND_THEN</code></a>,
+<a
+href="dep_rewrite.DEP_LIST_FIND_THEN.html"><code>dep_rewrite.DEP_LIST_FIND_THEN</code></a>,
+<a
+href="dep_rewrite.DEP_ONCE_FIND_THEN.html"><code>dep_rewrite.DEP_ONCE_FIND_THEN</code></a></p>
+</body>
+</html>

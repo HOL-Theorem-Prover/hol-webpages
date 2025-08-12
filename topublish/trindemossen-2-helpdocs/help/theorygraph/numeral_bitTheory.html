@@ -1,0 +1,413 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: numeral_bit</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "numeral_bit"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "bitTheory.html"><span class="strong">bit</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">BIT_MODF</span>
+    <td>
+    :num -> (num -> bool -> bool) -> num -> num -> num -> num -> num
+    <tr><td>
+    <span class="strong">BIT_REV</span>
+    <td>
+    :num -> num -> num -> num
+    <tr><td> <span class="strong">FDUB</span> <td> :(num -> num) -> num -> num
+    <tr><td>
+    <span class="strong">SFUNPOW</span>
+    <td>
+    :(num -> num) -> num -> num -> num
+    <tr><td>
+    <span class="strong">iBITWISE</span>
+    <td>
+    :num -> (bool -> bool -> bool) -> num -> num -> num
+    <tr><td> <span class="strong">iDIV2</span> <td> :num -> num
+    <tr><td> <span class="strong">iLOG2</span> <td> :num -> num
+    <tr><td> <span class="strong">iMOD_2EXP</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">iSUC</span> <td> :num -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">BIT_MODF_def</span>
+<DD>
+<pre>
+⊢ (∀f x b e y. BIT_MODF 0 f x b e y = y) ∧
+  ∀n f x b e y.
+    BIT_MODF (SUC n) f x b e y =
+    BIT_MODF n f (x DIV 2) (b + 1) (2 * e) (if f b (ODD x) then e + y else y)
+</pre>
+
+<DT><span class="strong">BIT_REV_def</span>
+<DD>
+<pre>
+⊢ (∀x y. BIT_REV 0 x y = y) ∧
+  ∀n x y. BIT_REV (SUC n) x y = BIT_REV n (x DIV 2) (2 * y + SBIT (ODD x) 0)
+</pre>
+
+<DT><span class="strong">FDUB_def</span>
+<DD>
+<pre>
+⊢ (∀f. FDUB f 0 = 0) ∧ ∀f n. FDUB f (SUC n) = f (f (SUC n))
+</pre>
+
+<DT><span class="strong">SFUNPOW_def</span>
+<DD>
+<pre>
+⊢ (∀f x. SFUNPOW f 0 x = x) ∧
+  ∀f n x. SFUNPOW f (SUC n) x = if x = 0 then 0 else SFUNPOW f n (f x)
+</pre>
+
+<DT><span class="strong">iBITWISE_def</span>
+<DD>
+<pre>
+⊢ numeral_bit$iBITWISE = BITWISE
+</pre>
+
+<DT><span class="strong">iDIV2</span>
+<DD>
+<pre>
+⊢ numeral_bit$iDIV2 = DIV2
+</pre>
+
+<DT><span class="strong">iLOG2_def</span>
+<DD>
+<pre>
+⊢ ∀n. numeral_bit$iLOG2 n = LOG2 (n + 1)
+</pre>
+
+<DT><span class="strong">iMOD_2EXP</span>
+<DD>
+<pre>
+⊢ numeral_bit$iMOD_2EXP = MOD_2EXP
+</pre>
+
+<DT><span class="strong">iSUC</span>
+<DD>
+<pre>
+⊢ numeral_bit$iSUC = SUC
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">BIT_MODIFY_EVAL</span>
+<DD>
+<pre>
+⊢ ∀m f n. BIT_MODIFY m f n = BIT_MODF m f n 0 1 0
+</pre>
+
+<DT><span class="strong">BIT_REVERSE_EVAL</span>
+<DD>
+<pre>
+⊢ ∀m n. BIT_REVERSE m n = BIT_REV m n 0
+</pre>
+
+<DT><span class="strong">DIV_2EXP</span>
+<DD>
+<pre>
+⊢ ∀n x. DIV_2EXP n x = FUNPOW DIV2 n x
+</pre>
+
+<DT><span class="strong">FDUB_FDUB</span>
+<DD>
+<pre>
+⊢ FDUB (FDUB f) ZERO = ZERO ∧
+  (∀x. FDUB (FDUB f) (numeral_bit$iSUC x) =
+       FDUB f (FDUB f (numeral_bit$iSUC x))) ∧
+  (∀x. FDUB (FDUB f) <..num comp'n..> = FDUB f (FDUB f <..num comp'n..> )) ∧
+  ∀x. FDUB (FDUB f) <..num comp'n..> = FDUB f (FDUB f <..num comp'n..> )
+</pre>
+
+<DT><span class="strong">FDUB_iDIV2</span>
+<DD>
+<pre>
+⊢ ∀x. FDUB numeral_bit$iDIV2 x = numeral_bit$iDIV2 (numeral_bit$iDIV2 x)
+</pre>
+
+<DT><span class="strong">FDUB_iDUB</span>
+<DD>
+<pre>
+⊢ ∀x. FDUB numeral$iDUB x = <..num comp'n..>
+</pre>
+
+<DT><span class="strong">LOG_compute</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    LOG m n =
+    if m < 2 ∨ n = 0 then FAIL LOG $var$(base < 2 or n = 0) m n
+    else if n < m then 0
+    else SUC (LOG m (n DIV m))
+</pre>
+
+<DT><span class="strong">LOWEST_SET_BIT</span>
+<DD>
+<pre>
+⊢ ∀n. n ≠ 0 ⇒
+      LOWEST_SET_BIT n = if ODD n then 0 else 1 + LOWEST_SET_BIT (DIV2 n)
+</pre>
+
+<DT><span class="strong">LOWEST_SET_BIT_compute</span>
+<DD>
+<pre>
+⊢ (∀n. LOWEST_SET_BIT <..num comp'n..> =
+       SUC (LOWEST_SET_BIT <..num comp'n..> )) ∧
+  ∀n. LOWEST_SET_BIT <..num comp'n..> = 0
+</pre>
+
+<DT><span class="strong">MOD_2EXP</span>
+<DD>
+<pre>
+⊢ (∀x. MOD_2EXP x 0 = 0) ∧
+  ∀x n. MOD_2EXP x <..num comp'n..> = <..num comp'n..>
+</pre>
+
+<DT><span class="strong">MOD_2EXP_EQ</span>
+<DD>
+<pre>
+⊢ (∀a b. MOD_2EXP_EQ 0 a b ⇔ T) ∧
+  (∀n a b.
+     MOD_2EXP_EQ (SUC n) a b ⇔
+     (ODD a ⇔ ODD b) ∧ MOD_2EXP_EQ n (DIV2 a) (DIV2 b)) ∧
+  ∀n a. MOD_2EXP_EQ n a a ⇔ T
+</pre>
+
+<DT><span class="strong">MOD_2EXP_MAX</span>
+<DD>
+<pre>
+⊢ (∀a. MOD_2EXP_MAX 0 a ⇔ T) ∧
+  ∀n a. MOD_2EXP_MAX (SUC n) a ⇔ ODD a ∧ MOD_2EXP_MAX n (DIV2 a)
+</pre>
+
+<DT><span class="strong">NUMERAL_BITWISE</span>
+<DD>
+<pre>
+⊢ (∀x f a. BITWISE x f 0 0 = <..num comp'n..> ) ∧
+  (∀x f a. BITWISE x f <..num comp'n..> 0 = <..num comp'n..> ) ∧
+  (∀x f b. BITWISE x f 0 <..num comp'n..> = <..num comp'n..> ) ∧
+  ∀x f a b. BITWISE x f <..num comp'n..> <..num comp'n..> = <..num comp'n..>
+</pre>
+
+<DT><span class="strong">NUMERAL_BIT_MODF</span>
+<DD>
+<pre>
+⊢ (∀f x b e y. BIT_MODF 0 f x b e y = y) ∧
+  (∀n f b e y.
+     BIT_MODF <..num comp'n..> f 0 b <..num comp'n..> y =
+     BIT_MODF (<..num comp'n..> − 1) f 0 (b + 1) <..num comp'n..>
+       (if f b F then <..num comp'n..> + y else y)) ∧
+  (∀n f b e y.
+     BIT_MODF <..num comp'n..> f 0 b <..num comp'n..> y =
+     BIT_MODF <..num comp'n..> f 0 (b + 1) <..num comp'n..>
+       (if f b F then <..num comp'n..> + y else y)) ∧
+  (∀n f x b e y.
+     BIT_MODF <..num comp'n..> f <..num comp'n..> b <..num comp'n..> y =
+     BIT_MODF (<..num comp'n..> − 1) f (DIV2 <..num comp'n..> ) (b + 1)
+       <..num comp'n..> (if f b (ODD x) then <..num comp'n..> + y else y)) ∧
+  ∀n f x b e y.
+    BIT_MODF <..num comp'n..> f <..num comp'n..> b <..num comp'n..> y =
+    BIT_MODF <..num comp'n..> f (DIV2 <..num comp'n..> ) (b + 1)
+      <..num comp'n..> (if f b (ODD x) then <..num comp'n..> + y else y)
+</pre>
+
+<DT><span class="strong">NUMERAL_BIT_MODIFY</span>
+<DD>
+<pre>
+⊢ (∀m f. BIT_MODIFY <..num comp'n..> f 0 = BIT_MODF <..num comp'n..> f 0 0 1 0) ∧
+  ∀m f n.
+    BIT_MODIFY <..num comp'n..> f <..num comp'n..> =
+    BIT_MODF <..num comp'n..> f <..num comp'n..> 0 1 0
+</pre>
+
+<DT><span class="strong">NUMERAL_BIT_REV</span>
+<DD>
+<pre>
+⊢ (∀x y. BIT_REV 0 x y = y) ∧
+  (∀n y.
+     BIT_REV <..num comp'n..> 0 y =
+     BIT_REV (<..num comp'n..> − 1) 0 <..num comp'n..> ) ∧
+  (∀n y.
+     BIT_REV <..num comp'n..> 0 y =
+     BIT_REV <..num comp'n..> 0 <..num comp'n..> ) ∧
+  (∀n x y.
+     BIT_REV <..num comp'n..> <..num comp'n..> y =
+     BIT_REV (<..num comp'n..> − 1) (DIV2 <..num comp'n..> )
+       (if ODD x then <..num comp'n..> else <..num comp'n..> )) ∧
+  ∀n x y.
+    BIT_REV <..num comp'n..> <..num comp'n..> y =
+    BIT_REV <..num comp'n..> (DIV2 <..num comp'n..> )
+      (if ODD x then <..num comp'n..> else <..num comp'n..> )
+</pre>
+
+<DT><span class="strong">NUMERAL_BIT_REVERSE</span>
+<DD>
+<pre>
+⊢ (∀m. BIT_REVERSE <..num comp'n..> 0 = <..num comp'n..> ) ∧
+  ∀n m. BIT_REVERSE <..num comp'n..> <..num comp'n..> = <..num comp'n..>
+</pre>
+
+<DT><span class="strong">NUMERAL_DIV_2EXP</span>
+<DD>
+<pre>
+⊢ (∀n. DIV_2EXP n 0 = 0) ∧
+  ∀n x. DIV_2EXP n <..num comp'n..> = <..num comp'n..>
+</pre>
+
+<DT><span class="strong">NUMERAL_SFUNPOW_FDUB</span>
+<DD>
+<pre>
+⊢ ∀f. (∀x. SFUNPOW (FDUB f) 0 x = x) ∧ (∀y. SFUNPOW (FDUB f) y 0 = 0) ∧
+      (∀n x.
+         SFUNPOW (FDUB f) <..num comp'n..> x =
+         SFUNPOW (FDUB (FDUB f)) <..num comp'n..> (FDUB f x)) ∧
+      ∀n x.
+        SFUNPOW (FDUB f) <..num comp'n..> x =
+        SFUNPOW (FDUB (FDUB f)) <..num comp'n..> (FDUB f (FDUB f x))
+</pre>
+
+<DT><span class="strong">NUMERAL_SFUNPOW_iDIV2</span>
+<DD>
+<pre>
+⊢ (∀x. SFUNPOW numeral_bit$iDIV2 0 x = x) ∧
+  (∀y. SFUNPOW numeral_bit$iDIV2 y 0 = 0) ∧
+  (∀n x.
+     SFUNPOW numeral_bit$iDIV2 <..num comp'n..> x =
+     SFUNPOW (FDUB numeral_bit$iDIV2) <..num comp'n..> (numeral_bit$iDIV2 x)) ∧
+  ∀n x.
+    SFUNPOW numeral_bit$iDIV2 <..num comp'n..> x =
+    SFUNPOW (FDUB numeral_bit$iDIV2) <..num comp'n..>
+      (numeral_bit$iDIV2 (numeral_bit$iDIV2 x))
+</pre>
+
+<DT><span class="strong">NUMERAL_SFUNPOW_iDUB</span>
+<DD>
+<pre>
+⊢ (∀x. SFUNPOW numeral$iDUB 0 x = x) ∧ (∀y. SFUNPOW numeral$iDUB y 0 = 0) ∧
+  (∀n x.
+     SFUNPOW numeral$iDUB <..num comp'n..> x =
+     SFUNPOW (FDUB numeral$iDUB) <..num comp'n..> <..num comp'n..> ) ∧
+  ∀n x.
+    SFUNPOW numeral$iDUB <..num comp'n..> x =
+    SFUNPOW (FDUB numeral$iDUB) <..num comp'n..> <..num comp'n..>
+</pre>
+
+<DT><span class="strong">NUMERAL_TIMES_2EXP</span>
+<DD>
+<pre>
+⊢ (∀n. TIMES_2EXP n 0 = 0) ∧
+  ∀n x. TIMES_2EXP n <..num comp'n..> = <..num comp'n..>
+</pre>
+
+<DT><span class="strong">NUMERAL_iDIV2</span>
+<DD>
+<pre>
+⊢ numeral_bit$iDIV2 ZERO = ZERO ∧
+  numeral_bit$iDIV2 (numeral_bit$iSUC ZERO) = ZERO ∧
+  numeral_bit$iDIV2 <..num comp'n..> = n ∧
+  numeral_bit$iDIV2 (numeral_bit$iSUC <..num comp'n..> ) = numeral_bit$iSUC n ∧
+  numeral_bit$iDIV2 <..num comp'n..> = numeral_bit$iSUC n ∧
+  numeral_bit$iDIV2 (numeral_bit$iSUC <..num comp'n..> ) = numeral_bit$iSUC n ∧
+  <..num comp'n..> = <..num comp'n..>
+</pre>
+
+<DT><span class="strong">iBITWISE</span>
+<DD>
+<pre>
+⊢ (∀opr a b. numeral_bit$iBITWISE 0 opr a b = ZERO) ∧
+  (∀x opr a b.
+     numeral_bit$iBITWISE <..num comp'n..> opr a b =
+     (let
+        w = numeral_bit$iBITWISE (<..num comp'n..> − 1) opr (DIV2 a) (DIV2 b)
+      in
+        if opr (ODD a) (ODD b) then <..num comp'n..> else <..num comp'n..> )) ∧
+  ∀x opr a b.
+    numeral_bit$iBITWISE <..num comp'n..> opr a b =
+    (let
+       w = numeral_bit$iBITWISE <..num comp'n..> opr (DIV2 a) (DIV2 b)
+     in
+       if opr (ODD a) (ODD b) then <..num comp'n..> else <..num comp'n..> )
+</pre>
+
+<DT><span class="strong">iDUB_NUMERAL</span>
+<DD>
+<pre>
+⊢ <..num comp'n..> = <..num comp'n..>
+</pre>
+
+<DT><span class="strong">numeral_ilog2</span>
+<DD>
+<pre>
+⊢ numeral_bit$iLOG2 ZERO = 0 ∧
+  (∀n. numeral_bit$iLOG2 <..num comp'n..> = 1 + numeral_bit$iLOG2 n) ∧
+  ∀n. numeral_bit$iLOG2 <..num comp'n..> = 1 + numeral_bit$iLOG2 n
+</pre>
+
+<DT><span class="strong">numeral_imod_2exp</span>
+<DD>
+<pre>
+⊢ (∀n. numeral_bit$iMOD_2EXP 0 n = ZERO) ∧
+  (∀x n. numeral_bit$iMOD_2EXP x ZERO = ZERO) ∧
+  (∀x n.
+     numeral_bit$iMOD_2EXP <..num comp'n..> <..num comp'n..> =
+     <..num comp'n..> ) ∧
+  (∀x n.
+     numeral_bit$iMOD_2EXP <..num comp'n..> <..num comp'n..> =
+     <..num comp'n..> ) ∧
+  (∀x n.
+     numeral_bit$iMOD_2EXP <..num comp'n..> <..num comp'n..> =
+     <..num comp'n..> ) ∧
+  ∀x n.
+    numeral_bit$iMOD_2EXP <..num comp'n..> <..num comp'n..> = <..num comp'n..>
+</pre>
+
+<DT><span class="strong">numeral_log2</span>
+<DD>
+<pre>
+⊢ (∀n. LOG2 <..num comp'n..> = numeral_bit$iLOG2 <..num comp'n..> ) ∧
+  ∀n. LOG2 <..num comp'n..> = numeral_bit$iLOG2 <..num comp'n..>
+</pre>
+
+<DT><span class="strong">numeral_mod2</span>
+<DD>
+<pre>
+⊢ 0 MOD 2 = 0 ∧ (∀n. <..num comp'n..> MOD 2 = 1) ∧
+  ∀n. <..num comp'n..> MOD 2 = 0
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>bossLib.wlog_tac</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="wlog_tac"><code>wlog_tac</code></h2>
+<pre class="hol4"><code>bossLib.wlog_tac : term quotation -&gt; term quotation list -&gt; tactic</code></pre>
+<hr />
+<p>Enrich the hypotheses with a proposition that can be assumed without
+loss of generality.</p>
+<p>The user provides term quotations that parse to a proposition
+<code>P</code> and a list of variables. Typically there are 2 subgoals.
+The first subgoal is to prove that the general case of the original goal
+follows from the specific case where <code>P</code> holds; the second
+subgoal is the original goal with <code>P</code> added to the
+assumptions. The first subgoal is always present, and the subgoals (if
+any) produced by <code>strip_assume_tac P |- P</code> follows.</p>
+<p>If the goal is <code>hyp ?- t</code> then the first subgoal is
+<code>hyp, !vars. ant ==&gt; t, ~P ?- t</code> where <code>ant</code> is
+the conjunction of <code>P</code> and those hypotheses of the original
+subgoal where any variable in the user-provided list occurs free. The
+universal quantification is over the variables in the user-provided list
+plus any variable that appears free in <code>P</code> or <code>t</code>
+and is not a local constant. For convenience <code>~P</code> is always
+added to the assumptions in the first subgoal because the case for
+<code>P</code> follows immediately from the hypothesis. Passing a
+non-empty list of variables allows to quantify over local constants in
+the hypothesis <code>!vars. ant ==&gt; t</code>.</p>
+<p>Detailed description: Given <code>wlog_tac q vars_q</code> let
+<code>asm ?- c</code> be the the goal. <code>q</code> is parsed in the
+goal context to a proposition <code>P</code>. <code>vars_q</code> are
+parsed to variables in the goal context. Let <code>efv</code>
+(effectively free variables) be the free variables of <code>P</code> and
+<code>c</code> that are not free in the assumptions and are not in
+<code>vars</code> from left to right and first <code>P</code>, then
+<code>c</code>. Let <code>gen_vars</code> be <code>vars @ efv</code>.
+Let <code>asm'</code> be the elements of <code>asm</code> in which any
+of <code>vars</code> is a free variable. Let <code>ant</code> be the
+result of splicing <code>p :: asm'</code>. The first subgoal is
+<code>asm, (!(gen_vars). ant ==&gt; c), ~P ?- c</code>. The proposition
+<code>P</code> is added to the assumptions with
+<code>strip_assume_tac</code>. If this generates subgoals (as is usually
+the case), then those subgoals follow.</p>
+<p>A typical use case is to continue the proof assuming one case where
+all cases are symmetric. The first subgoal is a good candidate to be
+solved by a first order prover like <code>PROVE_TAC</code> or
+<code>METIS_TAC</code> providing to it the appropriate symmetry
+theorems.</p>
+<h3 id="example">Example</h3>
+<p>In the following examples assume <code>arithmeticTheory</code> is
+open.</p>
+<pre class="hol4"><code>&gt; g(`ABS_DIFF x y + ABS_DIFF y z &lt;= ABS_DIFF x z`);
+...
+&gt; e(wlog_tac `x &lt;= z` []);
+val it =
+   ABS_DIFF x y + ABS_DIFF y z &lt;= ABS_DIFF x z
+   ------------------------------------
+    x &lt;= z
+
+   ABS_DIFF x y + ABS_DIFF y z &lt;= ABS_DIFF x z
+   ------------------------------------
+     0.  !x z y. x &lt;= z ==&gt; ABS_DIFF x y + ABS_DIFF y z &lt;= ABS_DIFF x z
+     1.  ~(x &lt;= z)
+2 subgoals : proof</code></pre>
+<p>The first subgoal can be solved by
+<code>prove_tac [ABS_DIFF_SYM, LESS_EQ_CASES, ADD_COMM]</code>.</p>
+<pre class="hol4"><code>&gt; g`MAX x y &lt;= z &lt;=&gt; x &lt;= z /\ y &lt;= z`
+...
+&gt; e(wlog_tac `x &lt;= y` []);
+val it =
+   MAX x y &lt;= z &lt;=&gt; x &lt;= z /\ y &lt;= z
+   ------------------------------------
+    x &lt;= y
+
+   MAX x y &lt;= z &lt;=&gt; x &lt;= z /\ y &lt;= z
+   ------------------------------------
+     0.  !x y z. x &lt;= y ==&gt; (MAX x y &lt;= z &lt;=&gt; x &lt;= z /\ y &lt;= z)
+     1.  ~(x &lt;= y)
+2 subgoals : proof</code></pre>
+<p>The first subgoal can be solved by
+<code>prove_tac [LESS_EQ_CASES, MAX_COMM]</code>;</p>
+<h3 id="failure">Failure</h3>
+<p>Never fails.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="bossLib.wlog_then.html"><code>bossLib.wlog_then</code></a></p>
+</body>
+</html>

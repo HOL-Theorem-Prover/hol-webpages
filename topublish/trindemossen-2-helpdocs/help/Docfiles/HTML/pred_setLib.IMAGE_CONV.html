@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>pred_setLib.IMAGE_CONV</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="image_conv"><code>IMAGE_CONV</code></h2>
+<pre class="hol4"><code>pred_setLib.IMAGE_CONV : conv -&gt; conv -&gt; conv</code></pre>
+<hr />
+<p>Compute the image of a function on a finite set.</p>
+<p>The function <code>IMAGE_CONV</code> is a parameterized conversion
+for computing the image of a function <code>f:ty1-&gt;ty2</code> on a
+finite set <code>{t1;...;tn}</code> of type <code>ty1-&gt;bool</code>.
+The first argument to <code>IMAGE_CONV</code> is expected to be a
+conversion that computes the result of applying the function
+<code>f</code> to each element of this set. When applied to a term
+<code>f ti</code>, this conversion should return a theorem of the form
+<code>|- (f ti) = ri</code>, where <code>ri</code> is the result of
+applying the function <code>f</code> to the element <code>ti</code>.
+This conversion is used by <code>IMAGE_CONV</code> to compute a theorem
+of the form</p>
+<pre class="hol4"><code>   |- IMAGE f {t1;...;tn} = {r1;...;rn}</code></pre>
+<p>The second argument to <code>IMAGE_CONV</code> is used (optionally)
+to simplify the resulting image set <code>{r1;...;rn}</code> by removing
+redundant occurrences of values. This conversion expected to decide
+equality of values of the result type <code>ty2</code>; given an
+equation <code>e1 = e2</code>, where <code>e1</code> and <code>e2</code>
+are terms of type <code>ty2</code>, the conversion should return either
+<code>|- (e1 = e2) = T</code> or <code>|- (e1 = e2) = F</code>, as
+appropriate.</p>
+<p>Given appropriate conversions <code>conv1</code> and
+<code>conv2</code>, the function <code>IMAGE_CONV</code> returns a
+conversion that maps a term of the form <code>IMAGE f {t1;...;tn}</code>
+to the theorem</p>
+<pre class="hol4"><code>   |- IMAGE f {t1;...;tn} = {rj;...;rk}</code></pre>
+<p>where <code>conv1</code> proves a theorem of the form
+<code>|- (f ti) = ri</code> for each element <code>ti</code> of the set
+<code>{t1;...;tn}</code>, and where the set <code>{rj;...;rk}</code> is
+the smallest subset of <code>{r1;...;rn}</code> such no two elements are
+alpha-equivalent and <code>conv2</code> does not map
+<code>rl = rm</code> to the theorem <code>|- (rl = rm) = T</code> for
+any pair of values <code>rl</code> and <code>rm</code> in
+<code>{rj;...;rk}</code>. That is, <code>{rj;...;rk}</code> is the set
+obtained by removing multiple occurrences of values from the set
+<code>{r1;...;rn}</code>, where the equality conversion
+<code>conv2</code> (or alpha-equivalence) is used to determine which
+pairs of terms in <code>{r1;...;rn}</code> are equal.</p>
+<h3 id="example">Example</h3>
+<p>The following is a very simple example in which <code>REFL</code> is
+used to construct the result of applying the function <code>f</code> to
+each element of the set <code>{1; 2; 1; 4}</code>, and
+<code>NO_CONV</code> is the supplied ‘equality conversion’.</p>
+<pre class="hol4"><code>   - IMAGE_CONV REFL NO_CONV ``IMAGE (f:num-&gt;num) {1; 2; 1; 4}``;
+   &gt; val it = |- IMAGE f {1; 2; 1; 4} = {f 2; f 1; f 4} : thm</code></pre>
+<p>The result contains only one occurrence of <code>f 1</code>, even
+though <code>NO_CONV</code> always fails, since <code>IMAGE_CONV</code>
+simplifies the resulting set by removing elements that are redundant up
+to alpha-equivalence.</p>
+<p>For the next example, we construct a conversion that maps
+<code>SUC n</code> for any numeral <code>n</code> to the numeral
+standing for the successor of <code>n</code>.</p>
+<pre class="hol4"><code>   - fun SUC_CONV tm =
+      let open numLib Arbnum
+          val n = dest_numeral (rand tm)
+          val sucn = mk_numeral (n + one)
+      in
+        SYM (num_CONV sucn)
+      end;
+
+   &gt; val SUC_CONV = fn : term -&gt; thm</code></pre>
+<p>The result is a conversion that inverts <code>num_CONV</code>:</p>
+<pre class="hol4"><code>   - numLib.num_CONV ``4``;
+   &gt; val it = |- 4 = SUC 3 : thm
+
+   - SUC_CONV ``SUC 3``;
+   &gt; val it = |- SUC 3 = 4 : thm</code></pre>
+<p>The conversion <code>SUC_CONV</code> can then be used to compute the
+image of the successor function on a finite set:</p>
+<pre class="hol4"><code>   - IMAGE_CONV SUC_CONV NO_CONV ``IMAGE SUC {1; 2; 1; 4}``;
+   &gt; val it = |- IMAGE SUC {1; 2; 1; 4} = {3; 2; 5} : thm</code></pre>
+<p>Note that <code>2</code> (= <code>SUC 1</code>) appears only once in
+the resulting set.</p>
+<p>Finally, here is an example of using <code>IMAGE_CONV</code> to
+compute the image of a paired addition function on a set of pairs of
+numbers:</p>
+<pre class="hol4"><code>   - IMAGE_CONV (pairLib.PAIRED_BETA_CONV THENC reduceLib.ADD_CONV)
+                numLib.REDUCE_CONV
+            ``IMAGE (\(n,m).n+m) {{(1,2), (3,4), (0,3), (1,3)}}``;
+   &gt; val it = |- IMAGE (\(n,m). n + m) {(1,2); (3,4); (0,3); (1,3)} = {7; 3; 4}</code></pre>
+<h3 id="failure">Failure</h3>
+<p><code>IMAGE_CONV conv1 conv2</code> fails if applied to a term not of
+the form <code>IMAGE f {t1;...;tn}</code>. An application of
+<code>IMAGE_CONV conv1 conv2</code> to a term
+<code>IMAGE f {t1;...;tn}</code> fails unless for all <code>ti</code> in
+the set <code>{t1;...;tn}</code>, evaluating <code>conv1 ``f ti``</code>
+returns <code>|- (f ti) = ri</code> for some <code>ri</code>.</p>
+</body>
+</html>

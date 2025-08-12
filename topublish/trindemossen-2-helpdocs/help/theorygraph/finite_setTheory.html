@@ -1,0 +1,1140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: finite_set</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "finite_set"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "liftingTheory.html"><span class="strong">lifting</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">fset</span> <td> 1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">FSET</span>
+    <td>
+    :(α -> β -> bool) -> α list -> β fset -> bool
+    <tr><td> <span class="strong">fBIGUNION</span> <td> :α fset fset -> α fset
+    <tr><td> <span class="strong">fCARD</span> <td> :α fset -> num
+    <tr><td> <span class="strong">fDELETE</span> <td> :α -> α fset -> α fset
+    <tr><td>
+    <span class="strong">fDIFF</span>
+    <td>
+    :α fset -> α fset -> α fset
+    <tr><td> <span class="strong">fEMPTY</span> <td> :α fset
+    <tr><td>
+    <span class="strong">fIMAGE</span>
+    <td>
+    :(α -> β) -> α fset -> β fset
+    <tr><td> <span class="strong">fIN</span> <td> :α -> α fset -> bool
+    <tr><td> <span class="strong">fINSERT</span> <td> :α -> α fset -> α fset
+    <tr><td>
+    <span class="strong">fINTER</span>
+    <td>
+    :α fset -> α fset -> α fset
+    <tr><td>
+    <span class="strong">fITSET</span>
+    <td>
+    :(β -> α -> α) -> β fset -> α -> α
+    <tr><td>
+    <span class="strong">fITSETr</span>
+    <td>
+    :(α -> β -> β) -> α fset -> β -> β -> bool
+    <tr><td> <span class="strong">fMAX_SET</span> <td> :num fset -> num
+    <tr><td>
+    <span class="strong">fSUM_IMAGE</span>
+    <td>
+    :(α -> num) -> α fset -> num
+    <tr><td>
+    <span class="strong">fUNION</span>
+    <td>
+    :α fset -> α fset -> α fset
+    <tr><td> <span class="strong">fromSet</span> <td> :(α -> bool) -> α fset
+    <tr><td>
+    <span class="strong">fsequiv</span>
+    <td>
+    :α list -> α list -> bool
+    <tr><td> <span class="strong">fset_ABS</span> <td> :α list -> α fset
+    <tr><td>
+    <span class="strong">fset_ABS_CLASS</span>
+    <td>
+    :(α list -> bool) -> α fset
+    <tr><td>
+    <span class="strong">fset_REL</span>
+    <td>
+    :(α -> β -> bool) -> α fset -> β fset -> bool
+    <tr><td> <span class="strong">fset_REP</span> <td> :α fset -> α list
+    <tr><td>
+    <span class="strong">fset_REP_CLASS</span>
+    <td>
+    :α fset -> α list -> bool
+    <tr><td>
+    <span class="strong">rel_set</span>
+    <td>
+    :(α -> β -> bool) -> (α -> bool) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">sfSETREL</span>
+    <td>
+    :(α -> β -> bool) -> (α -> bool) -> β fset -> bool
+    <tr><td> <span class="strong">toSet</span> <td> :α fset -> α -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">@tempfITSETr_def</span>
+<DD>
+<pre>
+⊢ fITSETr =
+  (λf a0 a1 a2.
+       ∀fITSETr'.
+         (∀a0 a1 a2.
+            a0 = fEMPTY ∧ a2 = a1 ∨
+            (∃e s A1.
+               a0 = fINSERT e s ∧ a2 = f e A1 ∧ fITSETr' s a1 A1 ∧ ¬fIN e s) ⇒
+            fITSETr' a0 a1 a2) ⇒
+         fITSETr' a0 a1 a2)
+</pre>
+
+<DT><span class="strong">FSET_def</span>
+<DD>
+<pre>
+⊢ ∀AB al bfs. FSET AB al bfs ⇔ ∃bl. LIST_REL AB al bl ∧ bfs = fset_ABS bl
+</pre>
+
+<DT><span class="strong">fBIGUNION_def</span>
+<DD>
+<pre>
+⊢ fBIGUNION = (MAP fset_REP ∘ fset_REP ---> fset_ABS) FLAT
+</pre>
+
+<DT><span class="strong">fCARD_def</span>
+<DD>
+<pre>
+⊢ fCARD = (fset_REP ---> I) (LENGTH ∘ nub)
+</pre>
+
+<DT><span class="strong">fDELETE_def</span>
+<DD>
+<pre>
+⊢ fDELETE = (I ---> fset_REP ---> fset_ABS) (λe. FILTER ($¬ ∘ $= e))
+</pre>
+
+<DT><span class="strong">fDIFF_def</span>
+<DD>
+<pre>
+⊢ fDIFF =
+  (fset_REP ---> fset_REP ---> fset_ABS) (λl1 l2. FILTER (λx. ¬MEM x l2) l1)
+</pre>
+
+<DT><span class="strong">fEMPTY_def</span>
+<DD>
+<pre>
+⊢ fEMPTY = fset_ABS []
+</pre>
+
+<DT><span class="strong">fIMAGE_def</span>
+<DD>
+<pre>
+⊢ fIMAGE = ((I ---> I) ---> fset_REP ---> fset_ABS) MAP
+</pre>
+
+<DT><span class="strong">fINSERT_def</span>
+<DD>
+<pre>
+⊢ fINSERT = (I ---> fset_REP ---> fset_ABS) CONS
+</pre>
+
+<DT><span class="strong">fINTER_def</span>
+<DD>
+<pre>
+⊢ fINTER =
+  (fset_REP ---> fset_REP ---> fset_ABS) (FILTER ∘ flip $IN ∘ LIST_TO_SET)
+</pre>
+
+<DT><span class="strong">fIN_def</span>
+<DD>
+<pre>
+⊢ fIN = (I ---> fset_REP ---> I) (λx l. MEM x l)
+</pre>
+
+<DT><span class="strong">fITSET_def</span>
+<DD>
+<pre>
+⊢ ∀f s a0. fITSET f s a0 = @a. fITSETr f s a0 a
+</pre>
+
+<DT><span class="strong">fMAX_SET_def</span>
+<DD>
+<pre>
+⊢ ∀s. fMAX_SET s = fITSET MAX s 0
+</pre>
+
+<DT><span class="strong">fSUM_IMAGE_def</span>
+<DD>
+<pre>
+⊢ ∀f s. fSUM_IMAGE f s = fITSET (λe a. f e + a) s 0
+</pre>
+
+<DT><span class="strong">fUNION_def</span>
+<DD>
+<pre>
+⊢ fUNION = (fset_REP ---> fset_REP ---> fset_ABS) $++
+</pre>
+
+<DT><span class="strong">fromSet_def</span>
+<DD>
+<pre>
+⊢ ∀s. fromSet s = ITSET fINSERT s fEMPTY
+</pre>
+
+<DT><span class="strong">fsequiv_def</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. fsequiv l1 l2 ⇔ LIST_TO_SET l1 = LIST_TO_SET l2
+</pre>
+
+<DT><span class="strong">fset_ABS_def</span>
+<DD>
+<pre>
+⊢ ∀r. fset_ABS r = fset_ABS_CLASS (fsequiv r)
+</pre>
+
+<DT><span class="strong">fset_REL_def</span>
+<DD>
+<pre>
+⊢ ∀AB fs1 fs2. fset_REL AB fs1 fs2 ⇔ ∀a b. AB a b ⇒ (fIN a fs1 ⇔ fIN b fs2)
+</pre>
+
+<DT><span class="strong">fset_REP_def</span>
+<DD>
+<pre>
+⊢ ∀a. fset_REP a = $@ (fset_REP_CLASS a)
+</pre>
+
+<DT><span class="strong">fset_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION (λc. ∃r. fsequiv r r ∧ c = fsequiv r) rep
+</pre>
+
+<DT><span class="strong">fset_bijections</span>
+<DD>
+<pre>
+⊢ (∀a. fset_ABS_CLASS (fset_REP_CLASS a) = a) ∧
+  ∀r. (λc. ∃r. fsequiv r r ∧ c = fsequiv r) r ⇔
+      fset_REP_CLASS (fset_ABS_CLASS r) = r
+</pre>
+
+<DT><span class="strong">rel_set_def</span>
+<DD>
+<pre>
+⊢ ∀AB A B.
+    rel_set AB A B ⇔
+    (∀a. a ∈ A ⇒ ∃b. b ∈ B ∧ AB a b) ∧ ∀b. b ∈ B ⇒ ∃a. a ∈ A ∧ AB a b
+</pre>
+
+<DT><span class="strong">sfSETREL_def</span>
+<DD>
+<pre>
+⊢ ∀AB s fs.
+    sfSETREL AB s fs ⇔
+    (∀a. a ∈ s ⇒ ∃b. fIN b fs ∧ AB a b) ∧ ∀b. fIN b fs ⇒ ∃a. a ∈ s ∧ AB a b
+</pre>
+
+<DT><span class="strong">toSet_def</span>
+<DD>
+<pre>
+⊢ ∀fs. toSet fs = {x | fIN x fs}
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ABS_CLASS_onto</span>
+<DD>
+<pre>
+⊢ ∀fs. ∃r. fs = fset_ABS_CLASS (fsequiv r)
+</pre>
+
+<DT><span class="strong">BIGUNION_relates</span>
+<DD>
+<pre>
+⊢ (rel_set (rel_set AB) |==> rel_set AB) BIGUNION BIGUNION
+</pre>
+
+<DT><span class="strong">CARD_toSet</span>
+<DD>
+<pre>
+⊢ CARD (toSet s) = fCARD s
+</pre>
+
+<DT><span class="strong">DECOMPOSITION</span>
+<DD>
+<pre>
+⊢ fIN e s ⇔ ∃s0. s = fINSERT e s0 ∧ ¬fIN e s0
+</pre>
+
+<DT><span class="strong">DELETE_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀e. fDELETE e fEMPTY = fEMPTY
+</pre>
+
+<DT><span class="strong">EXTENSION</span>
+<DD>
+<pre>
+⊢ ∀s1 s2. s1 = s2 ⇔ ∀e. fIN e s1 ⇔ fIN e s2
+</pre>
+
+<DT><span class="strong">FINITE_toSet</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE (toSet s)
+</pre>
+
+<DT><span class="strong">FLAT_relates</span>
+<DD>
+<pre>
+⊢ (LIST_REL (LIST_REL AB) |==> LIST_REL AB) FLAT FLAT
+</pre>
+
+<DT><span class="strong">FSETEQ</span>
+<DD>
+<pre>
+⊢ (FSET $= |==> FSET $= |==> $<=>) fsequiv $=
+</pre>
+
+<DT><span class="strong">FSET_AB_eqn</span>
+<DD>
+<pre>
+⊢ FSET AB = FSET $= ∘ᵣ LIST_REL AB
+</pre>
+
+<DT><span class="strong">FSET_right_unique</span>
+<DD>
+<pre>
+⊢ right_unique AB ⇒ right_unique (FSET AB)
+</pre>
+
+<DT><span class="strong">FSET_surj</span>
+<DD>
+<pre>
+⊢ surj AB ⇒ surj (FSET AB)
+</pre>
+
+<DT><span class="strong">FUN_REL_O</span>
+<DD>
+<pre>
+⊢ (D1 |==> R1) ∘ᵣ (D2 |==> R2) ⊆ᵣ D1 ∘ᵣ D2 |==> R1 ∘ᵣ R2
+</pre>
+
+<DT><span class="strong">FUN_REL_RSUBSET</span>
+<DD>
+<pre>
+⊢ D2 ⊆ᵣ D1 ∧ R1 ⊆ᵣ R2 ⇒ D1 |==> R1 ⊆ᵣ D2 |==> R2
+</pre>
+
+<DT><span class="strong">INSERT_DELETE</span>
+<DD>
+<pre>
+⊢ ∀e s. fINSERT e (fDELETE e s) = fINSERT e s
+</pre>
+
+<DT><span class="strong">IN_BIGUNION</span>
+<DD>
+<pre>
+⊢ fIN e (fBIGUNION fss) ⇔ ∃fs. fIN fs fss ∧ fIN e fs
+</pre>
+
+<DT><span class="strong">IN_DELETE</span>
+<DD>
+<pre>
+⊢ ∀a b s. fIN a (fDELETE b s) ⇔ a ≠ b ∧ fIN a s
+</pre>
+
+<DT><span class="strong">IN_DIFF</span>
+<DD>
+<pre>
+⊢ ∀e s1 s2. fIN e (fDIFF s1 s2) ⇔ fIN e s1 ∧ ¬fIN e s2
+</pre>
+
+<DT><span class="strong">IN_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f x s. fIN x (fIMAGE f s) ⇔ ∃y. fIN y s ∧ x = f y
+</pre>
+
+<DT><span class="strong">IN_INSERT</span>
+<DD>
+<pre>
+⊢ ∀e1 e2 s. fIN e1 (fINSERT e2 s) ⇔ e1 = e2 ∨ fIN e1 s
+</pre>
+
+<DT><span class="strong">IN_INTER</span>
+<DD>
+<pre>
+⊢ ∀e s1 s2. fIN e (fINTER s1 s2) ⇔ fIN e s1 ∧ fIN e s2
+</pre>
+
+<DT><span class="strong">IN_UNION</span>
+<DD>
+<pre>
+⊢ ∀e s1 s2. fIN e (fUNION s1 s2) ⇔ fIN e s1 ∨ fIN e s2
+</pre>
+
+<DT><span class="strong">IN_fromSet</span>
+<DD>
+<pre>
+⊢ FINITE s ⇒ (fIN e (fromSet s) ⇔ e ∈ s)
+</pre>
+
+<DT><span class="strong">IN_toSet_fINSERT</span>
+<DD>
+<pre>
+⊢ x ∈ toSet (fINSERT a s) ⇔ x = a ∨ x ∈ toSet s
+</pre>
+
+<DT><span class="strong">LIST_REL_FSET0</span>
+<DD>
+<pre>
+⊢ Qt (LIST_REL fsequiv) (MAP fset_ABS) (MAP fset_REP) (LIST_REL (FSET $=))
+</pre>
+
+<DT><span class="strong">LIST_REL_FSET0_Abs</span>
+<DD>
+<pre>
+⊢ LIST_REL (FSET $=) ll lfs ⇒ lfs = MAP fset_ABS ll
+</pre>
+
+<DT><span class="strong">LIST_TO_SET_rel_set</span>
+<DD>
+<pre>
+⊢ (LIST_REL AB |==> rel_set AB) LIST_TO_SET LIST_TO_SET
+</pre>
+
+<DT><span class="strong">LIST_TO_SET_transfer</span>
+<DD>
+<pre>
+⊢ (LIST_REL AB |==> rel_set AB) LIST_TO_SET LIST_TO_SET
+</pre>
+
+<DT><span class="strong">MAP_relates</span>
+<DD>
+<pre>
+⊢ ((AB |==> CD) |==> LIST_REL AB |==> LIST_REL CD) MAP MAP
+</pre>
+
+<DT><span class="strong">MEM_FSET0</span>
+<DD>
+<pre>
+⊢ FSET $= l fs ⇒ ∀a. MEM a l ⇔ fIN a fs
+</pre>
+
+<DT><span class="strong">MEM_fset_REP</span>
+<DD>
+<pre>
+⊢ MEM x (fset_REP fs) ⇔ fIN x fs
+</pre>
+
+<DT><span class="strong">MEM_transfers</span>
+<DD>
+<pre>
+⊢ bi_unique AB ⇒
+  (AB |==> LIST_REL AB |==> $<=>) (λx l. MEM x l) (λx l. MEM x l)
+</pre>
+
+<DT><span class="strong">NOT_EMPTY_INSERT</span>
+<DD>
+<pre>
+⊢ ∀h t. fEMPTY ≠ fINSERT h t
+</pre>
+
+<DT><span class="strong">NOT_IN_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀e. ¬fIN e fEMPTY
+</pre>
+
+<DT><span class="strong">Qt_composes</span>
+<DD>
+<pre>
+⊢ Qt R1 Abs1 Rep1 Tf1 ∧ Qt R2 Abs2 Rep2 Tf2 ⇒
+  Qt (Tf1ᵀ ∘ᵣ R2 ∘ᵣ Tf1) (Abs2 ∘ Abs1) (Rep1 ∘ Rep2) (Tf2 ∘ᵣ Tf1)
+</pre>
+
+<DT><span class="strong">RDOM_FSET0</span>
+<DD>
+<pre>
+⊢ RDOM (FSET AB) = (λal. ∀x. MEM x al ⇒ RDOM AB x)
+</pre>
+
+<DT><span class="strong">RDOM_FSET0set</span>
+<DD>
+<pre>
+⊢ RDOM (FSET $= |==> $<=>) = (λlP. ∀l1 l2. lP l1 ∧ fsequiv l1 l2 ⇒ lP l2)
+</pre>
+
+<DT><span class="strong">REP_ABS_equiv</span>
+<DD>
+<pre>
+⊢ fset_REP_CLASS (fset_ABS_CLASS (fsequiv r)) = fsequiv r
+</pre>
+
+<DT><span class="strong">REP_CLASS_11</span>
+<DD>
+<pre>
+⊢ fset_REP_CLASS fs1 = fset_REP_CLASS fs2 ⇔ fs1 = fs2
+</pre>
+
+<DT><span class="strong">REP_CLASS_NONEMPTY</span>
+<DD>
+<pre>
+⊢ ∀fs. ∃x. fset_REP_CLASS fs x
+</pre>
+
+<DT><span class="strong">RSUBSET_I</span>
+<DD>
+<pre>
+⊢ R1 ⊆ᵣ R2 ⇒ R1 x y ⇒ R2 x y
+</pre>
+
+<DT><span class="strong">RSUBSET_REFL</span>
+<DD>
+<pre>
+⊢ R ⊆ᵣ R
+</pre>
+
+<DT><span class="strong">RSUBSET_rel_set</span>
+<DD>
+<pre>
+⊢ bitotal AB ⇒ AB |==> $<=> ⊆ᵣ rel_set AB
+</pre>
+
+<DT><span class="strong">bijection2</span>
+<DD>
+<pre>
+⊢ ∀r. fset_REP_CLASS (fset_ABS_CLASS (fsequiv r)) = fsequiv r
+</pre>
+
+<DT><span class="strong">equalityp_relset</span>
+<DD>
+<pre>
+⊢ equalityp AB ⇒ equalityp (rel_set AB)
+</pre>
+
+<DT><span class="strong">fABSORPTION</span>
+<DD>
+<pre>
+⊢ ∀a A. fIN a A ⇔ fINSERT a A = A
+</pre>
+
+<DT><span class="strong">fBIGUNION_fset_ABS_FOLDL</span>
+<DD>
+<pre>
+⊢ fBIGUNION (fset_ABS l) = FOLDL fUNION fEMPTY l
+</pre>
+
+<DT><span class="strong">fBIGUNION_relates</span>
+<DD>
+<pre>
+⊢ (FSET (FSET AB) |==> FSET AB) FLAT fBIGUNION
+</pre>
+
+<DT><span class="strong">fCARD_EQ0</span>
+<DD>
+<pre>
+⊢ ∀s. fCARD s = 0 ⇔ s = fEMPTY
+</pre>
+
+<DT><span class="strong">fCARD_THM</span>
+<DD>
+<pre>
+⊢ fCARD fEMPTY = 0 ∧ ∀e s. fCARD (fINSERT e s) = 1 + fCARD (fDELETE e s)
+</pre>
+
+<DT><span class="strong">fCARD_relates</span>
+<DD>
+<pre>
+⊢ (FSET $= |==> $=) (LENGTH ∘ nub) fCARD
+</pre>
+
+<DT><span class="strong">fDELETE_INSERT</span>
+<DD>
+<pre>
+⊢ fDELETE a (fINSERT a A) = fDELETE a A
+</pre>
+
+<DT><span class="strong">fDELETE_UNION</span>
+<DD>
+<pre>
+⊢ fDELETE e (fUNION A B) = fUNION (fDELETE e A) (fDELETE e B)
+</pre>
+
+<DT><span class="strong">fDELETE_nonelement</span>
+<DD>
+<pre>
+⊢ ∀e s. ¬fIN e s ⇒ fDELETE e s = s
+</pre>
+
+<DT><span class="strong">fDELETE_relates</span>
+<DD>
+<pre>
+⊢ ($= |==> FSET $= |==> FSET $=) (λe. FILTER ($¬ ∘ $= e)) fDELETE
+</pre>
+
+<DT><span class="strong">fDIFF_relates</span>
+<DD>
+<pre>
+⊢ (FSET $= |==> FSET $= |==> FSET $=) (λl1 l2. FILTER (λx. ¬MEM x l2) l1)
+    fDIFF
+</pre>
+
+<DT><span class="strong">fEMPTY_relates</span>
+<DD>
+<pre>
+⊢ FSET $= [] fEMPTY
+</pre>
+
+<DT><span class="strong">fIMAGE_11</span>
+<DD>
+<pre>
+⊢ (∀x y. f x = f y ⇔ x = y) ⇒ (fIMAGE f x = fIMAGE f y ⇔ x = y)
+</pre>
+
+<DT><span class="strong">fIMAGE_COMPOSE</span>
+<DD>
+<pre>
+⊢ fIMAGE (f ∘ g) s = fIMAGE f (fIMAGE g s)
+</pre>
+
+<DT><span class="strong">fIMAGE_ID</span>
+<DD>
+<pre>
+⊢ fIMAGE (λx. x) s = s ∧ fIMAGE I s = s
+</pre>
+
+<DT><span class="strong">fIMAGE_fUNION</span>
+<DD>
+<pre>
+⊢ fIMAGE f (fUNION s1 s2) = fUNION (fIMAGE f s1) (fIMAGE f s2)
+</pre>
+
+<DT><span class="strong">fIMAGE_relates</span>
+<DD>
+<pre>
+⊢ ((AB |==> CD) |==> FSET AB |==> FSET CD) MAP fIMAGE
+</pre>
+
+<DT><span class="strong">fIMAGE_thm</span>
+<DD>
+<pre>
+⊢ (∀f. fIMAGE f fEMPTY = fEMPTY) ∧
+  ∀f e s. fIMAGE f (fINSERT e s) = fINSERT (f e) (fIMAGE f s)
+</pre>
+
+<DT><span class="strong">fINSERT_commutes</span>
+<DD>
+<pre>
+⊢ ∀e1 e2 s. fINSERT e1 (fINSERT e2 s) = fINSERT e2 (fINSERT e1 s)
+</pre>
+
+<DT><span class="strong">fINSERT_duplicates</span>
+<DD>
+<pre>
+⊢ ∀e s. fINSERT e (fINSERT e s) = fINSERT e s
+</pre>
+
+<DT><span class="strong">fINSERT_relates</span>
+<DD>
+<pre>
+⊢ ($= |==> FSET $= |==> FSET $=) CONS fINSERT
+</pre>
+
+<DT><span class="strong">fINSERT_sfSETREL</span>
+<DD>
+<pre>
+⊢ (AB |==> sfSETREL AB |==> sfSETREL AB) $INSERT fINSERT
+</pre>
+
+<DT><span class="strong">fINTER_COMM</span>
+<DD>
+<pre>
+⊢ fINTER a b = fINTER b a
+</pre>
+
+<DT><span class="strong">fINTER_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀x. fINTER x fEMPTY = fEMPTY ∧ fINTER fEMPTY x = fEMPTY
+</pre>
+
+<DT><span class="strong">fINTER_IDEMPOT</span>
+<DD>
+<pre>
+⊢ ∀x. fINTER x x = x
+</pre>
+
+<DT><span class="strong">fINTER_INSERT</span>
+<DD>
+<pre>
+⊢ fINTER (fINSERT a A) B =
+  (if fIN a B then fINSERT a (fINTER A B) else fINTER A B) ∧
+  fINTER A (fINSERT b B) =
+  if fIN b A then fINSERT b (fINTER A B) else fINTER A B
+</pre>
+
+<DT><span class="strong">fINTER_relates</span>
+<DD>
+<pre>
+⊢ (FSET $= |==> FSET $= |==> FSET $=) (FILTER ∘ flip $IN ∘ LIST_TO_SET) fINTER
+</pre>
+
+<DT><span class="strong">fIN_IN</span>
+<DD>
+<pre>
+⊢ ∀e fs. fIN e fs ⇔ e ∈ toSet fs
+</pre>
+
+<DT><span class="strong">fIN_fMAX_SET</span>
+<DD>
+<pre>
+⊢ ∀A e. fIN e A ⇒ e ≤ fMAX_SET A
+</pre>
+
+<DT><span class="strong">fIN_fset_ABS</span>
+<DD>
+<pre>
+⊢ fIN x (fset_ABS l) ⇔ MEM x l
+</pre>
+
+<DT><span class="strong">fIN_relates</span>
+<DD>
+<pre>
+⊢ bi_unique AB ⇒ (AB |==> FSET AB |==> $<=>) (λx l. MEM x l) fIN
+</pre>
+
+<DT><span class="strong">fIN_sfSETREL</span>
+<DD>
+<pre>
+⊢ bi_unique AB ⇒ (AB |==> sfSETREL AB |==> $<=>) $IN fIN
+</pre>
+
+<DT><span class="strong">fITSET_EMPTY</span>
+<DD>
+<pre>
+⊢ fITSET f fEMPTY a = a
+</pre>
+
+<DT><span class="strong">fITSET_INSERT</span>
+<DD>
+<pre>
+⊢ (∀x y a. f x (f y a) = f y (f x a)) ⇒
+  ∀e s a. fITSET f (fINSERT e s) a = f e (fITSET f (fDELETE e s) a)
+</pre>
+
+<DT><span class="strong">fITSET_INSERT_tail</span>
+<DD>
+<pre>
+⊢ (∀x y a. f x (f y a) = f y (f x a)) ⇒
+  ∀e s a. fITSET f (fINSERT e s) a = fITSET f (fDELETE e s) (f e a)
+</pre>
+
+<DT><span class="strong">fITSETr_cases</span>
+<DD>
+<pre>
+⊢ ∀f a0 a1 a2.
+    fITSETr f a0 a1 a2 ⇔
+    a0 = fEMPTY ∧ a2 = a1 ∨
+    ∃e s A1. a0 = fINSERT e s ∧ a2 = f e A1 ∧ fITSETr f s a1 A1 ∧ ¬fIN e s
+</pre>
+
+<DT><span class="strong">fITSETr_functional</span>
+<DD>
+<pre>
+⊢ (∀x y a. f x (f y a) = f y (f x a)) ⇒
+  ∀s a0 a1 a2. fITSETr f s a0 a1 ∧ fITSETr f s a0 a2 ⇒ a1 = a2
+</pre>
+
+<DT><span class="strong">fITSETr_ind</span>
+<DD>
+<pre>
+⊢ ∀f fITSETr'.
+    (∀A. fITSETr' fEMPTY A A) ∧
+    (∀e s A0 A1.
+       fITSETr' s A0 A1 ∧ ¬fIN e s ⇒ fITSETr' (fINSERT e s) A0 (f e A1)) ⇒
+    ∀a0 a1 a2. fITSETr f a0 a1 a2 ⇒ fITSETr' a0 a1 a2
+</pre>
+
+<DT><span class="strong">fITSETr_rules</span>
+<DD>
+<pre>
+⊢ ∀f. (∀A. fITSETr f fEMPTY A A) ∧
+      ∀e s A0 A1.
+        fITSETr f s A0 A1 ∧ ¬fIN e s ⇒ fITSETr f (fINSERT e s) A0 (f e A1)
+</pre>
+
+<DT><span class="strong">fITSETr_strongind</span>
+<DD>
+<pre>
+⊢ ∀f fITSETr'.
+    (∀A. fITSETr' fEMPTY A A) ∧
+    (∀e s A0 A1.
+       fITSETr f s A0 A1 ∧ fITSETr' s A0 A1 ∧ ¬fIN e s ⇒
+       fITSETr' (fINSERT e s) A0 (f e A1)) ⇒
+    ∀a0 a1 a2. fITSETr f a0 a1 a2 ⇒ fITSETr' a0 a1 a2
+</pre>
+
+<DT><span class="strong">fITSETr_total</span>
+<DD>
+<pre>
+⊢ ∀s f a0. ∃a. fITSETr f s a0 a
+</pre>
+
+<DT><span class="strong">fMAX_SET_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀A B. (∀e. fIN e A ⇒ fIN e B) ⇒ fMAX_SET A ≤ fMAX_SET B
+</pre>
+
+<DT><span class="strong">fMAX_SET_THM</span>
+<DD>
+<pre>
+⊢ fMAX_SET fEMPTY = 0 ∧ fMAX_SET (fINSERT e A) = MAX e (fMAX_SET A)
+</pre>
+
+<DT><span class="strong">fMAX_SET_fIN</span>
+<DD>
+<pre>
+⊢ A ≠ fEMPTY ⇒ fIN (fMAX_SET A) A
+</pre>
+
+<DT><span class="strong">fSUM_IMAGE_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀A B. (∀a. fIN a A ⇒ fIN a B) ⇒ fSUM_IMAGE f A ≤ fSUM_IMAGE f B
+</pre>
+
+<DT><span class="strong">fSUM_IMAGE_THM</span>
+<DD>
+<pre>
+⊢ fSUM_IMAGE f fEMPTY = 0 ∧
+  fSUM_IMAGE f (fINSERT e A) = f e + fSUM_IMAGE f (fDELETE e A)
+</pre>
+
+<DT><span class="strong">fSUM_IMAGE_UNION</span>
+<DD>
+<pre>
+⊢ ∀A B.
+    fSUM_IMAGE f (fUNION A B) =
+    fSUM_IMAGE f A + fSUM_IMAGE f B − fSUM_IMAGE f (fINTER A B)
+</pre>
+
+<DT><span class="strong">fUNION_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀s1 s2 s3. fUNION s1 (fUNION s2 s3) = fUNION (fUNION s1 s2) s3
+</pre>
+
+<DT><span class="strong">fUNION_COMM</span>
+<DD>
+<pre>
+⊢ ∀s1 s2. fUNION s1 s2 = fUNION s2 s1
+</pre>
+
+<DT><span class="strong">fUNION_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀s. fUNION fEMPTY s = s ∧ fUNION s fEMPTY = s
+</pre>
+
+<DT><span class="strong">fUNION_EQ_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀s1 s2. fUNION s1 s2 = fEMPTY ⇔ s1 = fEMPTY ∧ s2 = fEMPTY
+</pre>
+
+<DT><span class="strong">fUNION_IDEMPOT</span>
+<DD>
+<pre>
+⊢ ∀s. fUNION s s = s
+</pre>
+
+<DT><span class="strong">fUNION_INSERT</span>
+<DD>
+<pre>
+⊢ fUNION (fINSERT a A) B = fINSERT a (fUNION A B)
+</pre>
+
+<DT><span class="strong">fUNION_relates</span>
+<DD>
+<pre>
+⊢ (FSET $= |==> FSET $= |==> FSET $=) $++ fUNION
+</pre>
+
+<DT><span class="strong">fUNION_sfSETREL</span>
+<DD>
+<pre>
+⊢ (sfSETREL AB |==> sfSETREL AB |==> sfSETREL AB) $UNION fUNION
+</pre>
+
+<DT><span class="strong">fromSet_EMPTY</span>
+<DD>
+<pre>
+⊢ fromSet ∅ = fEMPTY
+</pre>
+
+<DT><span class="strong">fromSet_INSERT</span>
+<DD>
+<pre>
+⊢ FINITE s ⇒ fromSet (e INSERT s) = fINSERT e (fromSet s)
+</pre>
+
+<DT><span class="strong">fromSet_set</span>
+<DD>
+<pre>
+⊢ ∀l. fromSet (LIST_TO_SET l) = fset_ABS l
+</pre>
+
+<DT><span class="strong">fromSet_toSet</span>
+<DD>
+<pre>
+⊢ fromSet (toSet s) = s
+</pre>
+
+<DT><span class="strong">fsequiv_equiv</span>
+<DD>
+<pre>
+⊢ EQUIV fsequiv
+</pre>
+
+<DT><span class="strong">fsequiv_refl</span>
+<DD>
+<pre>
+⊢ fsequiv l l
+</pre>
+
+<DT><span class="strong">fset0Q</span>
+<DD>
+<pre>
+⊢ Qt fsequiv fset_ABS fset_REP (FSET $=)
+</pre>
+
+<DT><span class="strong">fset_ABS_11</span>
+<DD>
+<pre>
+⊢ fset_ABS l1 = fset_ABS l2 ⇔ fsequiv l1 l2
+</pre>
+
+<DT><span class="strong">fset_ABS_MAP</span>
+<DD>
+<pre>
+⊢ fset_ABS (MAP f l) = fIMAGE f (fset_ABS l)
+</pre>
+
+<DT><span class="strong">fset_ABS_REP</span>
+<DD>
+<pre>
+⊢ fset_ABS (fset_REP s) = s
+</pre>
+
+<DT><span class="strong">fset_ABS_REP_CLASS</span>
+<DD>
+<pre>
+⊢ (∀a. fset_ABS_CLASS (fset_REP_CLASS a) = a) ∧
+  ∀c. (∃r. fsequiv r r ∧ c = fsequiv r) ⇔
+      fset_REP_CLASS (fset_ABS_CLASS c) = c
+</pre>
+
+<DT><span class="strong">fset_ABS_onto</span>
+<DD>
+<pre>
+⊢ ∀fs. ∃l. fset_ABS l = fs
+</pre>
+
+<DT><span class="strong">fset_QUOTIENT</span>
+<DD>
+<pre>
+⊢ QUOTIENT fsequiv fset_ABS fset_REP
+</pre>
+
+<DT><span class="strong">fset_REP_11</span>
+<DD>
+<pre>
+⊢ fset_REP fs1 = fset_REP fs2 ⇔ fs1 = fs2
+</pre>
+
+<DT><span class="strong">fset_REP_fEMPTY</span>
+<DD>
+<pre>
+⊢ fset_REP fEMPTY = []
+</pre>
+
+<DT><span class="strong">fset_cases</span>
+<DD>
+<pre>
+⊢ ∀s. s = fEMPTY ∨ ∃e s0. s = fINSERT e s0 ∧ ¬fIN e s0
+</pre>
+
+<DT><span class="strong">fset_induction</span>
+<DD>
+<pre>
+⊢ ∀P. P fEMPTY ∧ (∀e s. P s ∧ ¬fIN e s ⇒ P (fINSERT e s)) ⇒ ∀s. P s
+</pre>
+
+<DT><span class="strong">left_unique_rel_set</span>
+<DD>
+<pre>
+⊢ left_unique AB ⇒ left_unique (rel_set AB)
+</pre>
+
+<DT><span class="strong">rel_setEQ</span>
+<DD>
+<pre>
+⊢ rel_set $= = $=
+</pre>
+
+<DT><span class="strong">rel_set_RSUBSET</span>
+<DD>
+<pre>
+⊢ bi_unique AB ⇒ rel_set AB ⊆ᵣ AB |==> $<=>
+</pre>
+
+<DT><span class="strong">rel_set_empty</span>
+<DD>
+<pre>
+⊢ rel_set AB ∅ ∅
+</pre>
+
+<DT><span class="strong">right_unique_FSET0</span>
+<DD>
+<pre>
+⊢ right_unique (FSET $=)
+</pre>
+
+<DT><span class="strong">right_unique_rel_set</span>
+<DD>
+<pre>
+⊢ right_unique AB ⇒ right_unique (rel_set AB)
+</pre>
+
+<DT><span class="strong">set_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀fss. toSet (fBIGUNION fss) = BIGUNION (toSet (fIMAGE toSet fss))
+</pre>
+
+<DT><span class="strong">set_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀f fs. toSet (fIMAGE f fs) = IMAGE f (toSet fs)
+</pre>
+
+<DT><span class="strong">surj_FSET0</span>
+<DD>
+<pre>
+⊢ surj (FSET $=)
+</pre>
+
+<DT><span class="strong">surjfns</span>
+<DD>
+<pre>
+⊢ surj AB ∧ right_unique AB ∧ surj CD ⇒ surj (AB |==> CD)
+</pre>
+
+<DT><span class="strong">toSet_11</span>
+<DD>
+<pre>
+⊢ ∀fs1 fs2. toSet fs1 = toSet fs2 ⇔ fs1 = fs2
+</pre>
+
+<DT><span class="strong">toSet_Qt</span>
+<DD>
+<pre>
+⊢ Qt (λx y. FINITE x ∧ x = y) fromSet toSet (λs fs. s = toSet fs)
+</pre>
+
+<DT><span class="strong">toSet_fEMPTY</span>
+<DD>
+<pre>
+⊢ toSet fEMPTY = ∅
+</pre>
+
+<DT><span class="strong">toSet_fIMAGE</span>
+<DD>
+<pre>
+⊢ toSet (fIMAGE f s) = IMAGE f (toSet s)
+</pre>
+
+<DT><span class="strong">toSet_fINSERT</span>
+<DD>
+<pre>
+⊢ toSet (fINSERT x s) = x INSERT toSet s
+</pre>
+
+<DT><span class="strong">toSet_fUNION</span>
+<DD>
+<pre>
+⊢ toSet (fUNION s1 s2) = toSet s1 ∪ toSet s2
+</pre>
+
+<DT><span class="strong">toSet_fromSet</span>
+<DD>
+<pre>
+⊢ FINITE s ⇒ toSet (fromSet s) = s
+</pre>
+
+<DT><span class="strong">toSet_fset_ABS</span>
+<DD>
+<pre>
+⊢ ∀l. toSet (fset_ABS l) = LIST_TO_SET l
+</pre>
+
+<DT><span class="strong">toSet_rel_set_relates</span>
+<DD>
+<pre>
+⊢ (FSET AB |==> rel_set AB) LIST_TO_SET toSet
+</pre>
+
+<DT><span class="strong">toSet_relates</span>
+<DD>
+<pre>
+⊢ bi_unique AB ⇒ (FSET AB |==> AB |==> $<=>) LIST_TO_SET toSet
+</pre>
+
+<DT><span class="strong">total_FSET</span>
+<DD>
+<pre>
+⊢ total AB ⇒ total (FSET AB)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Theory.new_theory</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="new_theory"><code>new_theory</code></h2>
+<pre class="hol4"><code>Theory.new_theory : string -&gt; unit</code></pre>
+<hr />
+<p>Creates a new theory segment.</p>
+<p>A theory consists of a hierarchy of named parts called ‘theory
+segments’. All theory segments have a ‘theory’ of the same name
+associated with them consisting of the theory segment itself together
+with the contents of all its ancestors. Each axiom, definition,
+specification and theorem belongs to a particular theory segment.</p>
+<p>Calling <code>new_theory thy</code> creates a new, and empty, theory
+segment having name <code>thy</code>. The theory segment which was
+current before the call becomes a parent of the new theory segment. The
+new theory therefore consists of the current theory extended with the
+new theory segment. The new theory segment replaces its parent as the
+current theory segment. The parent segment is exported to disk.</p>
+<p>In the interests of interactive usability, the behaviour of
+<code>new_theory</code> has some special cases. First, if
+<code>new_theory thy</code> is called in a situation where the current
+theory segment is already called <code>thy</code>, then this is
+interpreted as the user wanting to restart the current segment. In that
+case, the current segment is wiped clean (types and constants declared
+in it are removed from the signature, and all definitions, theorems and
+axioms are deleted) but is otherwise unchanged (it keeps the same
+parents, for example).</p>
+<p>Second, if the current theory segment is empty and named
+<code>"scratch"</code>, then <code>new_theory thy</code> creates a new
+theory segment the parents of which are the parents of
+<code>"scratch"</code>. (This situation is almost never visible to
+users.)</p>
+<h3 id="failure">Failure</h3>
+<p>A call <code>new_theory thy</code> fails if the name <code>thy</code>
+is unsuitable for use as a filename. In particular, it should be an
+alphanumeric identifier.</p>
+<p>Failure also occurs if <code>thy</code> is the name of a currently
+loaded theory segment. In general, all theory names, whether loaded or
+not, should be distinct. Moreover, the names should be distinct even
+when case distinctions are ignored.</p>
+<h3 id="example">Example</h3>
+<p>In the following, we follow a standard progression: start HOL up and
+declare a new theory segment.</p>
+<pre class="hol4"><code>   - current_theory();
+   &gt; val it = &quot;scratch&quot; : string
+
+   - parents &quot;-&quot;;
+   &gt; val it = [&quot;list&quot;, &quot;option&quot;] : string list
+
+   - new_theory &quot;foo&quot;;
+   &lt;&lt;HOL message: Created theory &quot;foo&quot;&gt;&gt;
+   &gt; val it = () : unit
+
+   - parents &quot;-&quot;;
+   &gt; val it = [&quot;list&quot;, &quot;option&quot;] : string list</code></pre>
+<p>Next we make a definition, prove and store a theorem, and then change
+our mind about the name of the defined constant. Restarting the current
+theory keeps the static theory context fixed but clears the current
+segment so that we have a clean slate to work from.</p>
+<pre class="hol4"><code>   - val def = new_definition(&quot;foo&quot;, Term `foo x = x + x`);
+   &gt; val def = |- !x. foo x = x + x : thm
+
+   val thm = Q.store_thm(&quot;foo_thm&quot;, `foo x = 2 * x`,
+                                    RW_TAC arith_ss [def]);
+   &gt; val thm = |- foo x = 2 * x : thm
+
+   - new_theory &quot;foo&quot;;
+   &lt;&lt;HOL message: Restarting theory &quot;foo&quot;&gt;&gt;
+   &gt; val it = () : unit
+
+   val def = new_definition(&quot;twice&quot;, Term `twice x = x + x`);
+   &gt; val def = |- !x. twice x = x + x : thm
+
+   - curr_defs();
+   &gt; val it = [(&quot;twice&quot;, |- !x. twice x = x + x)]
+              : (string * thm) list</code></pre>
+<h3 id="comments">Comments</h3>
+<p>The theory file in which the data of the new theory segment is
+ultimately stored will have name <code>thyTheory</code> in the directory
+in which <code>export_theory</code> is called.</p>
+<p>Modularizing large formalizations. By splitting a formalization
+effort into theory segments by use of <code>new_theory</code>, the work
+required if definitions, etc., need to be changed is minimized. Only the
+associated segment and its descendants need be redefined.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Theory.current_theory.html"><code>Theory.current_theory</code></a>,
+<a href="Theory.new_axiom.html"><code>Theory.new_axiom</code></a>, <a
+href="Theory.parents.html"><code>Theory.parents</code></a>, <a
+href="boolSyntax.new_binder.html"><code>boolSyntax.new_binder</code></a>,
+<a href="Theory.new_constant.html"><code>Theory.new_constant</code></a>,
+<a
+href="Definition.new_definition.html"><code>Definition.new_definition</code></a>,
+<a
+href="boolSyntax.new_infix.html"><code>boolSyntax.new_infix</code></a>,
+<a
+href="Definition.new_specification.html"><code>Definition.new_specification</code></a>,
+<a href="Theory.new_type.html"><code>Theory.new_type</code></a>, <a
+href="Theory.save_thm.html"><code>Theory.save_thm</code></a>, <a
+href="Theory.export_theory.html"><code>Theory.export_theory</code></a>,
+<a
+href="Hol_pp.print_theory.html"><code>Hol_pp.print_theory</code></a></p>
+</body>
+</html>

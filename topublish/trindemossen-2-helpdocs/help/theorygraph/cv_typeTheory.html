@@ -1,0 +1,434 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: cv_type</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "cv_type"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "ratTheory.html"><span class="strong">rat</span></a>&nbsp;&nbsp;
+    <a href = "wordsTheory.html"><span class="strong">words</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">cv_has_shape</span>
+    <td>
+    :num option list -> cv -> bool
+    <tr><td> <span class="strong">from_char</span> <td> :char -> cv
+    <tr><td> <span class="strong">from_int</span> <td> :int -> cv
+    <tr><td>
+    <span class="strong">from_list</span>
+    <td>
+    :(α -> cv) -> α list -> cv
+    <tr><td>
+    <span class="strong">from_option</span>
+    <td>
+    :(α -> cv) -> α option -> cv
+    <tr><td>
+    <span class="strong">from_pair</span>
+    <td>
+    :(α -> cv) -> (β -> cv) -> α # β -> cv
+    <tr><td> <span class="strong">from_rat</span> <td> :rat -> cv
+    <tr><td>
+    <span class="strong">from_sum</span>
+    <td>
+    :(α -> cv) -> (β -> cv) -> α + β -> cv
+    <tr><td>
+    <span class="strong">from_to</span>
+    <td>
+    :(α -> cv) -> (cv -> α) -> bool
+    <tr><td> <span class="strong">from_unit</span> <td> :unit -> cv
+    <tr><td> <span class="strong">from_word</span> <td> :α word -> cv
+    <tr><td> <span class="strong">to_char</span> <td> :cv -> char
+    <tr><td> <span class="strong">to_int</span> <td> :cv -> int
+    <tr><td>
+    <span class="strong">to_list</span>
+    <td>
+    :(cv -> α) -> cv -> α list
+    <tr><td>
+    <span class="strong">to_list_tr</span>
+    <td>
+    :(cv -> α) -> cv -> α list -> α list
+    <tr><td>
+    <span class="strong">to_option</span>
+    <td>
+    :(cv -> α) -> cv -> α option
+    <tr><td>
+    <span class="strong">to_pair</span>
+    <td>
+    :(cv -> α) -> (cv -> β) -> cv -> α # β
+    <tr><td> <span class="strong">to_rat</span> <td> :cv -> rat
+    <tr><td>
+    <span class="strong">to_sum</span>
+    <td>
+    :(cv -> α) -> (cv -> β) -> cv -> α + β
+    <tr><td> <span class="strong">to_unit</span> <td> :cv -> unit
+    <tr><td> <span class="strong">to_word</span> <td> :cv -> α word
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">from_char_def</span>
+<DD>
+<pre>
+⊢ ∀c. from_char c = cv$Num (ORD c)
+</pre>
+
+<DT><span class="strong">from_int_def</span>
+<DD>
+<pre>
+⊢ ∀i. from_int i =
+      if i < 0 then cv$Pair (cv$Num (Num i)) (cv$Num 0) else cv$Num (Num i)
+</pre>
+
+<DT><span class="strong">from_list_def</span>
+<DD>
+<pre>
+⊢ (∀f. from_list f [] = cv$Num 0) ∧
+  ∀f x xs. from_list f (x::xs) = cv$Pair (f x) (from_list f xs)
+</pre>
+
+<DT><span class="strong">from_option_def</span>
+<DD>
+<pre>
+⊢ (∀f. from_option f NONE = cv$Num 0) ∧
+  ∀f x. from_option f (SOME x) = cv$Pair (cv$Num 1) (f x)
+</pre>
+
+<DT><span class="strong">from_pair_def</span>
+<DD>
+<pre>
+⊢ ∀f1 f2 x y. from_pair f1 f2 (x,y) = cv$Pair (f1 x) (f2 y)
+</pre>
+
+<DT><span class="strong">from_rat_def</span>
+<DD>
+<pre>
+⊢ ∀r. from_rat r = cv$Pair (from_int (RATN r)) (cv$Num (RATD r))
+</pre>
+
+<DT><span class="strong">from_sum_def</span>
+<DD>
+<pre>
+⊢ (∀f1 f2 x. from_sum f1 f2 (INL x) = cv$Pair (cv$Num 0) (f1 x)) ∧
+  ∀f1 f2 y. from_sum f1 f2 (INR y) = cv$Pair (cv$Num 1) (f2 y)
+</pre>
+
+<DT><span class="strong">from_to_def</span>
+<DD>
+<pre>
+⊢ ∀f t. from_to f t ⇔ ∀x. t (f x) = x
+</pre>
+
+<DT><span class="strong">from_unit_def</span>
+<DD>
+<pre>
+⊢ from_unit () = cv$Num 0
+</pre>
+
+<DT><span class="strong">from_word_def</span>
+<DD>
+<pre>
+⊢ ∀w. from_word w = cv$Num (w2n w)
+</pre>
+
+<DT><span class="strong">to_char_def</span>
+<DD>
+<pre>
+⊢ ∀x. to_char x = CHR (cv$c2n x)
+</pre>
+
+<DT><span class="strong">to_int_def</span>
+<DD>
+<pre>
+⊢ (∀n. to_int (cv$Num n) = &n) ∧ ∀x y. to_int (cv$Pair x y) = -&cv$c2n x
+</pre>
+
+<DT><span class="strong">to_list_def</span>
+<DD>
+<pre>
+⊢ (∀f n. to_list f (cv$Num n) = []) ∧
+  ∀f x y. to_list f (cv$Pair x y) = f x::to_list f y
+</pre>
+
+<DT><span class="strong">to_list_tr_def</span>
+<DD>
+<pre>
+⊢ (∀f n acc. to_list_tr f (cv$Num n) acc = REVERSE acc) ∧
+  ∀f x y acc. to_list_tr f (cv$Pair x y) acc = to_list_tr f y (f x::acc)
+</pre>
+
+<DT><span class="strong">to_option_def</span>
+<DD>
+<pre>
+⊢ (∀t n. to_option t (cv$Num n) = NONE) ∧
+  ∀t x y. to_option t (cv$Pair x y) = SOME (t y)
+</pre>
+
+<DT><span class="strong">to_rat_def</span>
+<DD>
+<pre>
+⊢ (∀n. to_rat (cv$Num n) = 0) ∧
+  ∀x y. to_rat (cv$Pair x y) = rat_of_int (to_int x) / &cv$c2n y
+</pre>
+
+<DT><span class="strong">to_sum_def</span>
+<DD>
+<pre>
+⊢ (∀t1 t2 n. to_sum t1 t2 (cv$Num n) = ARB) ∧
+  ∀t1 t2 x y.
+    to_sum t1 t2 (cv$Pair x y) =
+    if x = cv$Num 0 then INL (t1 y) else INR (t2 y)
+</pre>
+
+<DT><span class="strong">to_unit_def</span>
+<DD>
+<pre>
+⊢ ∀x. to_unit x = ()
+</pre>
+
+<DT><span class="strong">to_word_def</span>
+<DD>
+<pre>
+⊢ ∀n. to_word n = n2w (cv$c2n n)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">IMP_from_option_eq</span>
+<DD>
+<pre>
+⊢ f1 (THE x) = y1 ∧ IS_SOME x ⇒ from_option f1 x = cv$Pair (cv$Num 1) y1
+</pre>
+
+<DT><span class="strong">IMP_from_pair_eq</span>
+<DD>
+<pre>
+⊢ f1 (FST x) = y1 ∧ f2 (SND x) = y2 ⇒ from_pair f1 f2 x = cv$Pair y1 y2
+</pre>
+
+<DT><span class="strong">IMP_to_option</span>
+<DD>
+<pre>
+⊢ THE x = y1 ∧ IS_SOME x ⇒ x = SOME y1
+</pre>
+
+<DT><span class="strong">IMP_to_pair</span>
+<DD>
+<pre>
+⊢ FST x = y1 ∧ SND x = y2 ⇒ x = (y1,y2)
+</pre>
+
+<DT><span class="strong">cv_has_shape_def</span>
+<DD>
+<pre>
+⊢ (∀y xs x n.
+     cv_has_shape (SOME n::xs) (cv$Pair x y) ⇔
+     x = cv$Num n ∧ cv_has_shape xs y) ∧
+  (∀y xs x. cv_has_shape (NONE::xs) (cv$Pair x y) ⇔ cv_has_shape xs y) ∧
+  (∀xs v1 v0. cv_has_shape (v0::xs) (cv$Num v1) ⇔ F) ∧
+  ∀c. cv_has_shape [] c ⇔ T
+</pre>
+
+<DT><span class="strong">cv_has_shape_expand</span>
+<DD>
+<pre>
+⊢ (cv_has_shape [] cv ⇔ T) ∧
+  (cv_has_shape (NONE::xs) cv ⇔ ∃x y. cv = cv$Pair x y ∧ cv_has_shape xs y) ∧
+  (cv_has_shape (SOME n::xs) cv ⇔
+   ∃y. cv = cv$Pair (cv$Num n) y ∧ cv_has_shape xs y)
+</pre>
+
+<DT><span class="strong">cv_has_shape_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n xs x y. P xs y ⇒ P (SOME n::xs) (cv$Pair x y)) ∧
+      (∀xs x y. P xs y ⇒ P (NONE::xs) (cv$Pair x y)) ∧
+      (∀v0 xs v1. P (v0::xs) (cv$Num v1)) ∧ (∀c. P [] c) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">from_option_eq_IMP</span>
+<DD>
+<pre>
+⊢ from_option f1 x = cv$Pair (cv$Num 1) y1 ⇒ f1 (THE x) = y1 ∧ IS_SOME x
+</pre>
+
+<DT><span class="strong">from_pair_eq_IMP</span>
+<DD>
+<pre>
+⊢ from_pair f1 f2 x = cv$Pair y1 y2 ⇒ f1 (FST x) = y1 ∧ f2 (SND x) = y2
+</pre>
+
+<DT><span class="strong">from_to_bool</span>
+<DD>
+<pre>
+⊢ from_to b2c cv$c2b
+</pre>
+
+<DT><span class="strong">from_to_char</span>
+<DD>
+<pre>
+⊢ from_to from_char to_char
+</pre>
+
+<DT><span class="strong">from_to_int</span>
+<DD>
+<pre>
+⊢ from_to from_int to_int
+</pre>
+
+<DT><span class="strong">from_to_list</span>
+<DD>
+<pre>
+⊢ from_to f t ⇒ from_to (from_list f) (to_list t)
+</pre>
+
+<DT><span class="strong">from_to_num</span>
+<DD>
+<pre>
+⊢ from_to cv$Num cv$c2n
+</pre>
+
+<DT><span class="strong">from_to_option</span>
+<DD>
+<pre>
+⊢ from_to f t ⇒ from_to (from_option f) (to_option t)
+</pre>
+
+<DT><span class="strong">from_to_pair</span>
+<DD>
+<pre>
+⊢ from_to f1 t1 ∧ from_to f2 t2 ⇒ from_to (from_pair f1 f2) (to_pair t1 t2)
+</pre>
+
+<DT><span class="strong">from_to_rat</span>
+<DD>
+<pre>
+⊢ from_to from_rat to_rat
+</pre>
+
+<DT><span class="strong">from_to_sum</span>
+<DD>
+<pre>
+⊢ from_to f1 t1 ∧ from_to f2 t2 ⇒ from_to (from_sum f1 f2) (to_sum t1 t2)
+</pre>
+
+<DT><span class="strong">from_to_unit</span>
+<DD>
+<pre>
+⊢ from_to from_unit to_unit
+</pre>
+
+<DT><span class="strong">from_to_word</span>
+<DD>
+<pre>
+⊢ from_to from_word to_word
+</pre>
+
+<DT><span class="strong">get_from_option</span>
+<DD>
+<pre>
+⊢ (case v of NONE => cv$Num 0 | SOME x => cv$Pair (cv$Num 1) (f x)) =
+  from_option f v
+</pre>
+
+<DT><span class="strong">get_from_pair</span>
+<DD>
+<pre>
+⊢ (case v of (v0,v1) => cv$Pair (f0 v0) (f1 v1)) = from_pair f0 f1 v
+</pre>
+
+<DT><span class="strong">get_from_sum</span>
+<DD>
+<pre>
+⊢ (case v of
+     INL x => cv$Pair (cv$Num 0) (f0 x)
+   | INR y => cv$Pair (cv$Num 1) (f1 y)) = from_sum f0 f1 v
+</pre>
+
+<DT><span class="strong">get_to_option</span>
+<DD>
+<pre>
+⊢ (if cv_has_shape [NONE] v then SOME (t (cv_snd v)) else NONE) =
+  to_option t v
+</pre>
+
+<DT><span class="strong">get_to_pair</span>
+<DD>
+<pre>
+⊢ (if cv_has_shape [NONE] v then (t1 (cv_fst v),t2 (cv_snd v)) else ARB) =
+  to_pair t1 t2 v
+</pre>
+
+<DT><span class="strong">get_to_sum</span>
+<DD>
+<pre>
+⊢ (if cv_has_shape [SOME 0] v then INL (t1 (cv_snd v))
+   else if cv_has_shape [NONE] v then INR (t2 (cv_snd v))
+   else ARB) = to_sum t1 t2 v
+</pre>
+
+<DT><span class="strong">to_list_tr_eq</span>
+<DD>
+<pre>
+⊢ to_list f v = to_list_tr f v []
+</pre>
+
+<DT><span class="strong">to_option_IMP</span>
+<DD>
+<pre>
+⊢ x = to_option t1 (cv$Pair x1 x2) ⇒ THE x = t1 x2 ∧ IS_SOME x
+</pre>
+
+<DT><span class="strong">to_pair_IMP</span>
+<DD>
+<pre>
+⊢ x = to_pair t1 t2 (cv$Pair x1 x2) ⇒ FST x = t1 x1 ∧ SND x = t2 x2
+</pre>
+
+<DT><span class="strong">to_pair_def</span>
+<DD>
+<pre>
+⊢ to_pair t1 t2 (cv$Pair x y) = (t1 x,t2 y) ∧ to_pair t1 t2 (cv$Num v4) = ARB
+</pre>
+
+<DT><span class="strong">to_pair_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀t1 t2 x y. P t1 t2 (cv$Pair x y)) ∧ (∀t1 t2 v4. P t1 t2 (cv$Num v4)) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

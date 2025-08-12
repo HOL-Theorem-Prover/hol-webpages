@@ -1,0 +1,516 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: cv</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "cv"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "numeralTheory.html"><span class="strong">numeral</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">cv</span> <td> 0
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">Num</span>
+    <td>
+    :num -> cv
+    <tr><td> <span class="strong">Pair</span> <td> :cv -> cv -> cv
+    <tr><td> <span class="strong">b2c</span> <td> :bool -> cv
+    <tr><td> <span class="strong">c2b</span> <td> :cv -> bool
+    <tr><td> <span class="strong">c2n</span> <td> :cv -> num
+    <tr><td>
+    <span class="strong">cv_CASE</span>
+    <td>
+    :cv -> (num -> α) -> (cv -> cv -> α) -> α
+    <tr><td> <span class="strong">cv_add</span> <td> :cv -> cv -> cv
+    <tr><td> <span class="strong">cv_div</span> <td> :cv -> cv -> cv
+    <tr><td> <span class="strong">cv_eq</span> <td> :cv -> cv -> cv
+    <tr><td> <span class="strong">cv_exp</span> <td> :cv -> cv -> cv
+    <tr><td> <span class="strong">cv_fst</span> <td> :cv -> cv
+    <tr><td> <span class="strong">cv_if</span> <td> :cv -> cv -> cv -> cv
+    <tr><td> <span class="strong">cv_ispair</span> <td> :cv -> cv
+    <tr><td> <span class="strong">cv_lt</span> <td> :cv -> cv -> cv
+    <tr><td> <span class="strong">cv_mod</span> <td> :cv -> cv -> cv
+    <tr><td> <span class="strong">cv_mul</span> <td> :cv -> cv -> cv
+    <tr><td> <span class="strong">cv_size</span> <td> :cv -> num
+    <tr><td> <span class="strong">cv_snd</span> <td> :cv -> cv
+    <tr><td> <span class="strong">cv_sub</span> <td> :cv -> cv -> cv
+    <tr><td> <span class="strong">isnseq</span> <td> :cv -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">@tempisnseq_def</span>
+<DD>
+<pre>
+⊢ isnseq =
+  (λa0.
+       ∀isnseq'.
+         (∀a0.
+            a0 = cv$Num 0 ∨ (∃n c. a0 = cv$Pair n c ∧ isnseq' c) ⇒ isnseq' a0) ⇒
+         isnseq' a0)
+</pre>
+
+<DT><span class="strong">b2c_def</span>
+<DD>
+<pre>
+⊢ b2c T = cv$Num (SUC 0) ∧ b2c F = cv$Num 0
+</pre>
+
+<DT><span class="strong">c2b_def</span>
+<DD>
+<pre>
+⊢ ∀x. cv$c2b x ⇔ ∃k. x = cv$Num (SUC k)
+</pre>
+
+<DT><span class="strong">cv_case_def</span>
+<DD>
+<pre>
+⊢ (∀n nmf prf. cv_CASE (cv$Num n) nmf prf = nmf n) ∧
+  ∀c d nmf prf. cv_CASE (cv$Pair c d) nmf prf = prf c d
+</pre>
+
+<DT><span class="strong">cv_eq_def0</span>
+<DD>
+<pre>
+⊢ ∀c d. cv_eq c d = b2c (c = d)
+</pre>
+
+<DT><span class="strong">cv_exp_def</span>
+<DD>
+<pre>
+⊢ ∀m n. cv_exp m n = cv$Num (cv$c2n m ** cv$c2n n)
+</pre>
+
+<DT><span class="strong">cv_fst_def</span>
+<DD>
+<pre>
+⊢ (∀p q. cv_fst (cv$Pair p q) = p) ∧ ∀m. cv_fst (cv$Num m) = cv$Num 0
+</pre>
+
+<DT><span class="strong">cv_if_def0</span>
+<DD>
+<pre>
+⊢ ∀p q r. cv_if p q r = if cv$c2b p then q else r
+</pre>
+
+<DT><span class="strong">cv_ispair_def</span>
+<DD>
+<pre>
+⊢ (∀p q. cv_ispair (cv$Pair p q) = cv$Num (SUC 0)) ∧
+  ∀m. cv_ispair (cv$Num m) = cv$Num 0
+</pre>
+
+<DT><span class="strong">cv_lt_def0</span>
+<DD>
+<pre>
+⊢ (∀m c.
+     cv_lt (cv$Num m) c =
+     case c of cv$Num n => b2c (m < n) | cv$Pair v4 v5 => cv$Num 0) ∧
+  ∀c d e. cv_lt (cv$Pair c d) e = cv$Num 0
+</pre>
+
+<DT><span class="strong">cv_size_def</span>
+<DD>
+<pre>
+⊢ (∀n. cv_size (cv$Num n) = n) ∧
+  ∀c d. cv_size (cv$Pair c d) = 1 + (cv_size c + cv_size d)
+</pre>
+
+<DT><span class="strong">cv_snd_def</span>
+<DD>
+<pre>
+⊢ (∀p q. cv_snd (cv$Pair p q) = q) ∧ ∀m. cv_snd (cv$Num m) = cv$Num 0
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">CV_EQ</span>
+<DD>
+<pre>
+⊢ (cv$Pair p q = cv$Pair r s ⇔ if p = r then q = s else F) ∧
+  (cv$Pair p q = cv$Num n ⇔ F) ∧ (cv$Num m = cv$Num n ⇔ m = n)
+</pre>
+
+<DT><span class="strong">DIV_RECURSIVE</span>
+<DD>
+<pre>
+⊢ m DIV n = if n = 0 then 0 else if m < n then 0 else SUC ((m − n) DIV n)
+</pre>
+
+<DT><span class="strong">EVEN_to_cv</span>
+<DD>
+<pre>
+⊢ EVEN n ⇔ ¬cv$c2b (cv_mod (cv$Num n) (cv$Num 2))
+</pre>
+
+<DT><span class="strong">LT_RECURSIVE</span>
+<DD>
+<pre>
+⊢ (m < 0 ⇔ F) ∧ (m < SUC n ⇔ if m = n then T else m < n)
+</pre>
+
+<DT><span class="strong">MOD_RECURSIVE</span>
+<DD>
+<pre>
+⊢ m MOD n = if n = 0 then m else if m < n then m else (m − n) MOD n
+</pre>
+
+<DT><span class="strong">Num_11</span>
+<DD>
+<pre>
+⊢ cv$Num m = cv$Num n ⇔ m = n
+</pre>
+
+<DT><span class="strong">ODD_to_cv</span>
+<DD>
+<pre>
+⊢ ODD n ⇔ cv$c2b (cv_mod (cv$Num n) (cv$Num 2))
+</pre>
+
+<DT><span class="strong">Pair_11</span>
+<DD>
+<pre>
+⊢ cv$Pair c d = cv$Pair e f ⇔ c = e ∧ d = f
+</pre>
+
+<DT><span class="strong">SUC_EQ</span>
+<DD>
+<pre>
+⊢ (SUC m = 0 ⇔ F) ∧ (SUC m = SUC n ⇔ m = n)
+</pre>
+
+<DT><span class="strong">add_to_cv</span>
+<DD>
+<pre>
+⊢ m + n = cv$c2n (cv_add (cv$Num m) (cv$Num n))
+</pre>
+
+<DT><span class="strong">b2c</span>
+<DD>
+<pre>
+⊢ (b2c x = cv$Num 1 ⇔ x) ∧ (b2c x = cv$Num (SUC 0) ⇔ x)
+</pre>
+
+<DT><span class="strong">b2c_if</span>
+<DD>
+<pre>
+⊢ b2c g = if g then cv$Num (SUC 0) else cv$Num 0
+</pre>
+
+<DT><span class="strong">c2b_thm</span>
+<DD>
+<pre>
+⊢ (cv$c2b (cv$Num (SUC n)) ⇔ T) ∧ (cv$c2b (cv$Num 1) ⇔ T) ∧
+  (cv$c2b (cv$Num 0) ⇔ F) ∧ (cv$c2b (cv$Num 0) ⇔ F) ∧
+  (cv$c2b (cv$Pair x y) ⇔ F)
+</pre>
+
+<DT><span class="strong">c2n_cv_add</span>
+<DD>
+<pre>
+⊢ cv$c2n (cv_add v1 v2) = cv$c2n v1 + cv$c2n v2
+</pre>
+
+<DT><span class="strong">c2n_cv_mul</span>
+<DD>
+<pre>
+⊢ cv$c2n (cv_mul v1 v2) = cv$c2n v1 * cv$c2n v2
+</pre>
+
+<DT><span class="strong">c2n_def</span>
+<DD>
+<pre>
+⊢ (∀n. cv$c2n (cv$Num n) = n) ∧ ∀c d. cv$c2n (cv$Pair c d) = 0
+</pre>
+
+<DT><span class="strong">cv_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f g. ∃h.
+    (∀n. h (cv$Num n) = f n) ∧ ∀c d. h (cv$Pair c d) = g c d (h c) (h d)
+</pre>
+
+<DT><span class="strong">cv_add_def</span>
+<DD>
+<pre>
+⊢ cv_add (cv$Num m) (cv$Num n) = cv$Num (m + n) ∧
+  cv_add (cv$Num m) (cv$Pair p q) = cv$Num m ∧
+  cv_add (cv$Pair p q) (cv$Num n) = cv$Num n ∧
+  cv_add (cv$Pair p q) (cv$Pair r s) = cv$Num 0
+</pre>
+
+<DT><span class="strong">cv_distinct</span>
+<DD>
+<pre>
+⊢ cv$Num n ≠ cv$Pair c d
+</pre>
+
+<DT><span class="strong">cv_div_def</span>
+<DD>
+<pre>
+⊢ cv_div (cv$Num m) (cv$Num n) = cv$Num (m DIV n) ∧
+  cv_div (cv$Num m) (cv$Pair p q) = cv$Num 0 ∧
+  cv_div (cv$Pair p q) (cv$Num n) = cv$Num 0 ∧
+  cv_div (cv$Pair p q) (cv$Pair r s) = cv$Num 0
+</pre>
+
+<DT><span class="strong">cv_eq</span>
+<DD>
+<pre>
+⊢ cv_eq (cv$Pair x y) (cv$Pair x' y') = b2c (x = x' ∧ y = y') ∧
+  cv_eq (cv$Num m) (cv$Num n) = b2c (m = n) ∧
+  cv_eq (cv$Pair x y) (cv$Num n) = b2c F ∧
+  cv_eq (cv$Num n) (cv$Pair x y) = b2c F
+</pre>
+
+<DT><span class="strong">cv_eq_def</span>
+<DD>
+<pre>
+⊢ cv_eq p q = cv$Num (if p = q then SUC 0 else 0)
+</pre>
+
+<DT><span class="strong">cv_exp_eq</span>
+<DD>
+<pre>
+⊢ cv_exp b e =
+  cv_if e
+    (cv_if (cv_mod e (cv$Num 2)) (cv_mul b (cv_exp b (cv_sub e (cv$Num 1))))
+       (let x = cv_exp b (cv_div e (cv$Num 2)) in cv_mul x x)) (cv$Num 1)
+</pre>
+
+<DT><span class="strong">cv_extras</span>
+<DD>
+<pre>
+⊢ cv_lt v (cv$Pair x y) = cv$Num 0 ∧ cv_lt (cv$Pair x y) v = cv$Num 0 ∧
+  cv_add (cv$Pair x y) v =
+  (case v of cv$Num v4 => v | cv$Pair a b => cv$Num 0) ∧
+  cv_add v (cv$Pair x y) =
+  (case v of cv$Num v4 => v | cv$Pair a b => cv$Num 0) ∧
+  cv_sub (cv$Pair x y) v = cv$Num 0 ∧
+  cv_sub v (cv$Pair x y) =
+  (case v of cv$Num v4 => v | cv$Pair a b => cv$Num 0) ∧
+  cv_mul (cv$Pair x y) v = cv$Num 0 ∧ cv_mul v (cv$Pair x y) = cv$Num 0 ∧
+  cv_div (cv$Pair x y) v = cv$Num 0 ∧ cv_div v (cv$Pair x y) = cv$Num 0 ∧
+  cv_mod (cv$Pair x y) v = cv$Num 0 ∧
+  cv_mod v (cv$Pair x y) = case v of cv$Num v4 => v | cv$Pair a b => cv$Num 0
+</pre>
+
+<DT><span class="strong">cv_if</span>
+<DD>
+<pre>
+⊢ cv_if x y z = if cv$c2b x then y else z
+</pre>
+
+<DT><span class="strong">cv_if_cong</span>
+<DD>
+<pre>
+⊢ (cv$c2b P ⇔ cv$c2b Q) ∧ (cv$c2b Q ⇒ x = x') ∧ (¬cv$c2b Q ⇒ y = y') ⇒
+  cv_if P x y = cv_if Q x' y'
+</pre>
+
+<DT><span class="strong">cv_if_def</span>
+<DD>
+<pre>
+⊢ cv_if (cv$Num (SUC m)) p q = p ∧ cv_if (cv$Num 0) p q = q ∧
+  cv_if (cv$Pair r s) p q = q
+</pre>
+
+<DT><span class="strong">cv_induction</span>
+<DD>
+<pre>
+⊢ ∀P. (∀m. P (cv$Num m)) ∧ (∀g g'. P g ∧ P g' ⇒ P (cv$Pair g g')) ⇒ ∀g. P g
+</pre>
+
+<DT><span class="strong">cv_ispair_cv_add</span>
+<DD>
+<pre>
+⊢ cv_ispair (cv_add x y) = cv$Num 0
+</pre>
+
+<DT><span class="strong">cv_lt_Num_0</span>
+<DD>
+<pre>
+⊢ cv$c2b (cv_lt (cv$Num 0) x) ⇔ ∃n. x = cv$Num (SUC n)
+</pre>
+
+<DT><span class="strong">cv_lt_def</span>
+<DD>
+<pre>
+⊢ cv_lt (cv$Num m) (cv$Num n) = cv$Num (if m < n then SUC 0 else 0) ∧
+  cv_lt (cv$Num m) (cv$Pair p q) = cv$Num 0 ∧
+  cv_lt (cv$Pair p q) (cv$Num n) = cv$Num 0 ∧
+  cv_lt (cv$Pair p q) (cv$Pair r s) = cv$Num 0
+</pre>
+
+<DT><span class="strong">cv_mod_def</span>
+<DD>
+<pre>
+⊢ cv_mod (cv$Num m) (cv$Num n) = cv$Num (m MOD n) ∧
+  cv_mod (cv$Num m) (cv$Pair p q) = cv$Num m ∧
+  cv_mod (cv$Pair p q) (cv$Num n) = cv$Num 0 ∧
+  cv_mod (cv$Pair p q) (cv$Pair r s) = cv$Num 0
+</pre>
+
+<DT><span class="strong">cv_mul_def</span>
+<DD>
+<pre>
+⊢ cv_mul (cv$Num m) (cv$Num n) = cv$Num (m * n) ∧
+  cv_mul (cv$Num m) (cv$Pair p q) = cv$Num 0 ∧
+  cv_mul (cv$Pair p q) (cv$Num n) = cv$Num 0 ∧
+  cv_mul (cv$Pair p q) (cv$Pair r s) = cv$Num 0
+</pre>
+
+<DT><span class="strong">cv_sub_def</span>
+<DD>
+<pre>
+⊢ cv_sub (cv$Num m) (cv$Num n) = cv$Num (m − n) ∧
+  cv_sub (cv$Num m) (cv$Pair p q) = cv$Num m ∧
+  cv_sub (cv$Pair p q) (cv$Num n) = cv$Num 0 ∧
+  cv_sub (cv$Pair p q) (cv$Pair r s) = cv$Num 0
+</pre>
+
+<DT><span class="strong">div_to_cv</span>
+<DD>
+<pre>
+⊢ m DIV n = cv$c2n (cv_div (cv$Num m) (cv$Num n))
+</pre>
+
+<DT><span class="strong">exp_to_cv</span>
+<DD>
+<pre>
+⊢ m ** n = cv$c2n (cv_exp (cv$Num m) (cv$Num n))
+</pre>
+
+<DT><span class="strong">ge_to_cv</span>
+<DD>
+<pre>
+⊢ n ≥ m ⇔ ¬cv$c2b (cv_lt (cv$Num n) (cv$Num m))
+</pre>
+
+<DT><span class="strong">gt_to_cv</span>
+<DD>
+<pre>
+⊢ m > n ⇔ cv$c2b (cv_lt (cv$Num n) (cv$Num m))
+</pre>
+
+<DT><span class="strong">isnseq_cases</span>
+<DD>
+<pre>
+⊢ ∀a0. isnseq a0 ⇔ a0 = cv$Num 0 ∨ ∃n c. a0 = cv$Pair n c ∧ isnseq c
+</pre>
+
+<DT><span class="strong">isnseq_cons</span>
+<DD>
+<pre>
+⊢ ∀n c. isnseq c ⇒ isnseq (cv$Pair n c)
+</pre>
+
+<DT><span class="strong">isnseq_ind</span>
+<DD>
+<pre>
+⊢ ∀isnseq'.
+    isnseq' (cv$Num 0) ∧ (∀n c. isnseq' c ⇒ isnseq' (cv$Pair n c)) ⇒
+    ∀a0. isnseq a0 ⇒ isnseq' a0
+</pre>
+
+<DT><span class="strong">isnseq_nil</span>
+<DD>
+<pre>
+⊢ isnseq (cv$Num 0)
+</pre>
+
+<DT><span class="strong">isnseq_rules</span>
+<DD>
+<pre>
+⊢ isnseq (cv$Num 0) ∧ ∀n c. isnseq c ⇒ isnseq (cv$Pair n c)
+</pre>
+
+<DT><span class="strong">isnseq_strongind</span>
+<DD>
+<pre>
+⊢ ∀isnseq'.
+    isnseq' (cv$Num 0) ∧ (∀n c. isnseq c ∧ isnseq' c ⇒ isnseq' (cv$Pair n c)) ⇒
+    ∀a0. isnseq a0 ⇒ isnseq' a0
+</pre>
+
+<DT><span class="strong">le_to_cv</span>
+<DD>
+<pre>
+⊢ m ≤ n ⇔ ¬cv$c2b (cv_lt (cv$Num n) (cv$Num m))
+</pre>
+
+<DT><span class="strong">lt_to_cv</span>
+<DD>
+<pre>
+⊢ m < n ⇔ cv$c2b (cv_lt (cv$Num m) (cv$Num n))
+</pre>
+
+<DT><span class="strong">mod_to_cv</span>
+<DD>
+<pre>
+⊢ m MOD n = cv$c2n (cv_mod (cv$Num m) (cv$Num n))
+</pre>
+
+<DT><span class="strong">mul_to_cv</span>
+<DD>
+<pre>
+⊢ m * n = cv$c2n (cv_mul (cv$Num m) (cv$Num n))
+</pre>
+
+<DT><span class="strong">neq_to_cv</span>
+<DD>
+<pre>
+⊢ ∀m n. m = n ⇔ cv$c2b (cv_eq (cv$Num m) (cv$Num n))
+</pre>
+
+<DT><span class="strong">pre_to_cv</span>
+<DD>
+<pre>
+⊢ PRE m = cv$c2n (cv_sub (cv$Num m) (cv$Num 1))
+</pre>
+
+<DT><span class="strong">sub_to_cv</span>
+<DD>
+<pre>
+⊢ m − n = cv$c2n (cv_sub (cv$Num m) (cv$Num n))
+</pre>
+
+<DT><span class="strong">suc_to_cv</span>
+<DD>
+<pre>
+⊢ SUC m = cv$c2n (cv_add (cv$Num m) (cv$Num 1))
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

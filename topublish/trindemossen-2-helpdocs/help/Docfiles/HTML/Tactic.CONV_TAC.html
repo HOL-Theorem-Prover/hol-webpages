@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tactic.CONV_TAC</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="conv_tac"><code>CONV_TAC</code></h2>
+<pre class="hol4"><code>Tactic.CONV_TAC : (conv -&gt; tactic)</code></pre>
+<hr />
+<p>Makes a tactic from a conversion.</p>
+<p>If <code>c</code> is a conversion, then <code>CONV_TAC c</code> is a
+tactic that applies <code>c</code> to the goal. That is, if
+<code>c</code> maps a term <code>"g"</code> to the theorem
+<code>|- g = g'</code>, then the tactic <code>CONV_TAC c</code> reduces
+a goal <code>g</code> to the subgoal <code>g'</code>. More precisely, if
+<code>c "g"</code> returns <code>A' |- g = g'</code>, then:</p>
+<pre class="hol4"><code>         A ?- g
+     ===============  CONV_TAC c
+         A ?- g&#39;</code></pre>
+<p>If <code>c</code> raises <code>UNCHANGED</code> then
+<code>CONV_TAC c</code> reduces a goal to itself.</p>
+<p>Note that the conversion <code>c</code> should return a theorem whose
+assumptions are also among the assumptions of the goal (normally, the
+conversion will returns a theorem with no assumptions).
+<code>CONV_TAC</code> does not fail if this is not the case, but the
+resulting tactic will be invalid, so the theorem ultimately proved using
+this tactic will have more assumptions than those of the original
+goal.</p>
+<h3 id="failure">Failure</h3>
+<p><code>CONV_TAC c</code> applied to a goal <code>A ?- g</code> fails
+if <code>c</code> fails (other than by raising <code>UNCHANGED</code>)
+when applied to the term <code>g</code>. The function returned by
+<code>CONV_TAC c</code> will also fail if the ML function
+<code>c:term-&gt;thm</code> is not, in fact, a conversion (i.e. a
+function that maps a term <code>t</code> to a theorem
+<code>|- t = t'</code>).</p>
+<p><code>CONV_TAC</code> is used to apply simplifications that can’t be
+expressed as equations (rewrite rules). For example, a goal can be
+simplified by beta-reduction, which is not expressible as a single
+equation, using the tactic</p>
+<pre class="hol4"><code>   CONV_TAC(DEPTH_CONV BETA_CONV)</code></pre>
+<p>The conversion <code>BETA_CONV</code> maps a beta-redex
+<code>"(\x.u)v"</code> to the theorem</p>
+<pre class="hol4"><code>   |- (\x.u)v = u[v/x]</code></pre>
+<p>and the ML expression <code>(DEPTH_CONV BETA_CONV)</code> evaluates
+to a conversion that maps a term <code>"t"</code> to the theorem
+<code>|- t=t'</code> where <code>t'</code> is obtained from
+<code>t</code> by beta-reducing all beta-redexes in <code>t</code>. Thus
+<code>CONV_TAC(DEPTH_CONV BETA_CONV)</code> is a tactic which reduces
+beta-redexes anywhere in a goal.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Abbrev.conv.html"><code>Abbrev.conv</code></a>, <a
+href="Conv.UNCHANGED.html"><code>Conv.UNCHANGED</code></a>, <a
+href="Conv.CONV_RULE.html"><code>Conv.CONV_RULE</code></a></p>
+</body>
+</html>

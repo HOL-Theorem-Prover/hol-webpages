@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure LSPExtension</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure LSPExtension</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/LSPExtension.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature LSPExtension = sig
+<a name="line2"></a>
+<a name="line3"></a>val markServerStarted: unit -&gt; unit
+<a name="line4"></a>val serverRunning: unit -&gt; bool
+<a name="line5"></a>
+<a name="line6"></a>type posLC = int * int
+<a name="line7"></a>type rangeLC = posLC * posLC
+<a name="line8"></a>type range = int * int
+<a name="line9"></a>
+<a name="line10"></a>type lines
+<a name="line11"></a>val mkLineCounter: string -&gt; lines
+<a name="line12"></a>val getLineCol: lines -&gt; int -&gt; posLC
+<a name="line13"></a>val fromLineCol: lines -&gt; posLC -&gt; int
+<a name="line14"></a>
+<a name="line15"></a>type 'a tag
+<a name="line16"></a>type plugin_data
+<a name="line17"></a>val emptyPluginData: plugin_data
+<a name="line18"></a>val getPluginData: plugin_data * 'a tag -&gt; 'a option
+<a name="line19"></a>val setPluginData: plugin_data * 'a tag * 'a option -&gt; plugin_data
+<a name="line20"></a>
+<a name="line21"></a>type 'a plugin = {
+<a name="line22"></a>  name: string,
+<a name="line23"></a>  init: 'a tag -&gt; unit,
+<a name="line24"></a>  beforeCompile: unit -&gt; unit,
+<a name="line25"></a>  afterCompile: range * 'a option -&gt; 'a option }
+<a name="line26"></a>
+<a name="line27"></a>type uplugin = {
+<a name="line28"></a>  name: string,
+<a name="line29"></a>  init: unit -&gt; unit,
+<a name="line30"></a>  beforeCompile: unit -&gt; unit,
+<a name="line31"></a>  afterCompile: range * plugin_data -&gt; plugin_data }
+<a name="line32"></a>
+<a name="line33"></a>exception DuplicatePlugin
+<a name="line34"></a>val registerPlugin: bool -&gt; 'a plugin -&gt; 'a tag
+<a name="line35"></a>val getPlugins: unit -&gt; uplugin list
+<a name="line36"></a>val registerInit: bool -&gt; string -&gt; (unit -&gt; unit) -&gt; unit
+<a name="line37"></a>
+<a name="line38"></a>type location_link = {
+<a name="line39"></a>  origin: rangeLC option,
+<a name="line40"></a>  range: rangeLC,
+<a name="line41"></a>  selRange: rangeLC,
+<a name="line42"></a>  uri: string option }
+<a name="line43"></a>
+<a name="line44"></a>type goto_def_context = {
+<a name="line45"></a>  uri: string, lines: lines, plugins: plugin_data,
+<a name="line46"></a>  fromFileLine: {file: string, line: int, origin: rangeLC option} -&gt; location_link }
+<a name="line47"></a>
+<a name="line48"></a>val gotoDefinition: (goto_def_context * int -&gt; location_link list) ref
+<a name="line49"></a>
+<a name="line50"></a>type hover = {markdown: string, range: rangeLC option}
+<a name="line51"></a>
+<a name="line52"></a>type hover_context = {
+<a name="line53"></a>  uri: string, lines: lines, plugins: plugin_data,
+<a name="line54"></a>  ppToString: PrettyImpl.pretty -&gt; string }
+<a name="line55"></a>
+<a name="line56"></a>val hover: (hover_context * (int * int) -&gt; hover list) ref
+<a name="line57"></a>
+<a name="line58"></a>val fixupTheoremLink:
+<a name="line59"></a>  ({start: int, stop: int, text: string, uri: string} -&gt;
+<a name="line60"></a>   {file: string, line: int} option) ref
+<a name="line61"></a>
+<a name="line62"></a>val helpLookup: (string * (string -&gt; bool) -&gt; string list) ref
+<a name="line63"></a>
+<a name="line64"></a>end;
+<a name="line65"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/LSPExtension.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

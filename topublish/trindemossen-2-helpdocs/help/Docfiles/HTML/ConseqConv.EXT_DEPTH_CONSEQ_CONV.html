@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ConseqConv.EXT_DEPTH_CONSEQ_CONV</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="ext_depth_conseq_conv"><code>EXT_DEPTH_CONSEQ_CONV</code></h2>
+<pre class="hol4"><code>ConseqConv.EXT_DEPTH_CONSEQ_CONV : conseq_conv_congruence list -&gt;
+                        depth_conseq_conv_cache_opt -&gt; int option -&gt;
+                        bool -&gt;
+                        (bool * int option * (thm list -&gt; directed_conseq_conv)) list -&gt;
+                        thm list -&gt;
+                        directed_conseq_conv</code></pre>
+<hr />
+<p>The general depth consequence conversion of which
+<code>DEPTH_CONSEQ_CONV</code>, <code>REDEPTH_CONSEQ_CONV</code>,
+<code>ONCE_DEPTH_CONSEQ_CONV</code> etc are just instantiations.</p>
+<p><code>DEPTH_CONSEQ_CONV</code> and similar conversions are able to
+apply a consequence conversion by breaking down the structure of a term
+using lemmata about <code>/\</code>, <code>\/</code>, <code>~</code>,
+<code>==&gt;</code>, <code>if-then-else</code> and quantification. While
+doing so, these conversions collect various amounts of context
+information. <code>EXT_DEPTH_CONSEQ_CONV</code>
+<code>congruence_list</code> <code>cache_opt</code>
+<code>step_opt</code> <code>redepth</code> <code>convL</code>
+<code>context</code> is the function used by these other depth
+conversions. For this purpose, the</p>
+<p><code>cache_opt</code> determines which cache to use:
+<code>NONE</code> means no caching; a standard cache that stores
+everything is configured by
+<code>CONSEQ_CONV_default_cache_opt</code>.</p>
+<p>The number of steps taken is determined by <code>step_opt</code>.
+<code>NONE</code> means arbitrarily many; <code>SOME n</code> means at
+most n. <code>ONCE_DEPTH_CONSEQ_CONV</code> for example uses
+<code>SOME 1</code>. The parameter <code>redepth</code> determines
+whether modified terms should be revisited and <code>convL</code> is a
+basically a list of directed consequence conversions of the conversions
+that should be applied at subpositions. Its entries consist of a flag,
+whether to apply the conversion before or after descending into
+subterms; the weight (i.e. the number of counted steps) for the
+conversion, and a function from the context (a list of theorems) to the
+conversion. <code>context</code> provides additional context that might
+be used.</p>
+<p>The first parameter <code>congruence_list</code> is a list of
+congruence functions that determine how to break down terms. Each
+element of this list has to be a function
+<code>congruence context sys dir t</code> which returns a pair of the
+number of performed steps and a resulting theorem. <code>sys</code> is a
+callback that allows to apply the depth conversion recursively to
+subterms. <code>context</code> represents the context that can be used.
+If you ignore the slightly different return type, the congruence is
+otherwise a directed consequence conversion. If the congruence can’t be
+applied, it should either fail or raise an <code>UNCHANGED</code>
+exception. The callback <code>sys</code> gets the number of already
+performed steps, a direction and a term. It then returns a accumulated
+number of steps and a thm option. It never fails. The number of steps is
+used to abort if the maximum number of globally allowed steps has been
+reached. The first call of <code>sys</code> should get <code>0</code>,
+then the accumulated number has to be passed. The congruence should
+return the finally accumulated number of steps.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="ConseqConv.DEPTH_CONSEQ_CONV.html"><code>ConseqConv.DEPTH_CONSEQ_CONV</code></a>,
+<a
+href="ConseqConv.REDEPTH_CONSEQ_CONV.html"><code>ConseqConv.REDEPTH_CONSEQ_CONV</code></a>,
+<a
+href="ConseqConv.ONCE_DEPTH_CONSEQ_CONV.html"><code>ConseqConv.ONCE_DEPTH_CONSEQ_CONV</code></a>,
+<a
+href="ConseqConv.NUM_DEPTH_CONSEQ_CONV.html"><code>ConseqConv.NUM_DEPTH_CONSEQ_CONV</code></a></p>
+</body>
+</html>

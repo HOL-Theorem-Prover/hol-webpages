@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>bossLib.arith_ss</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="arith_ss"><code>arith_ss</code></h2>
+<pre class="hol4"><code>bossLib.arith_ss : simpset</code></pre>
+<hr />
+<p>Simplification set for arithmetic.</p>
+<p>The simplification set <code>arith_ss</code> is a version of
+<code>std_ss</code> enhanced for arithmetic. It includes many arithmetic
+rewrites, an evaluation mechanism for ground arithmetic terms, and a
+decision procedure for linear arithmetic. It also incorporates a cache
+of successfully solved conditions proved when conditional rewrite rules
+are successfully applied.</p>
+<p>The following rewrites are currently used to augment those already
+present from <code>std_ss</code>:</p>
+<pre class="hol4"><code>   |- !m n. (m * n = 0) = (m = 0) \/ (n = 0)
+   |- !m n. (0 = m * n) = (m = 0) \/ (n = 0)
+   |- !m n. (m + n = 0) = (m = 0) /\ (n = 0)
+   |- !m n. (0 = m + n) = (m = 0) /\ (n = 0)
+   |- !x y. (x * y = 1) = (x = 1) /\ (y = 1)
+   |- !x y. (1 = x * y) = (x = 1) /\ (y = 1)
+   |- !m. m * 0 = 0
+   |- !m. 0 * m = 0
+   |- !x y. (x * y = SUC 0) = (x = SUC 0) /\ (y = SUC 0)
+   |- !x y. (SUC 0 = x * y) = (x = SUC 0) /\ (y = SUC 0)
+   |- !m. m * 1 = m
+   |- !m. 1 * m = m
+   |- !x.((SUC x = 1) = (x = 0)) /\ ((1 = SUC x) = (x = 0))
+   |- !x.((SUC x = 2) = (x = 1)) /\ ((2 = SUC x) = (x = 1))
+   |- !m n. (m + n = m) = (n = 0)
+   |- !m n. (n + m = m) = (n = 0)
+   |- !c. c - c = 0
+   |- !m. SUC m - 1 = m
+   |- !m. (0 - m = 0) /\ (m - 0 = m)
+   |- !a c. a + c - c = a
+   |- !m n. (m - n = 0) = m &lt;= n
+   |- !m n. (0 = m - n) = m &lt;= n
+   |- !n m. n - m &lt;= n
+   |- !n m. SUC n - SUC m = n - m
+   |- !m n p. m - n &gt; p = m &gt; n + p
+   |- !m n p. m - n &lt; p = m &lt; n + p /\ 0 &lt; p
+   |- !m n p. m - n &gt;= p = m &gt;= n + p \/ 0 &gt;= p
+   |- !m n p. m - n &lt;= p = m &lt;= n + p
+   |- !n. n &lt;= 0 = (n = 0)
+   |- !m n p. m + p &lt; n + p = m &lt; n
+   |- !m n p. p + m &lt; p + n = m &lt; n
+   |- !m n p. m + n &lt;= m + p = n &lt;= p
+   |- !m n p. n + m &lt;= p + m = n &lt;= p
+   |- !m n p. (m + p = n + p) = (m = n)
+   |- !m n p. (p + m = p + n) = (m = n)
+   |- !x y w. x + y &lt; w + x = y &lt; w
+   |- !x y w. y + x &lt; x + w = y &lt; w
+   |- !m n. (SUC m = SUC n) = (m = n)
+   |- !m n. SUC m &lt; SUC n = m &lt; n
+   |- !n m. SUC n &lt;= SUC m = n &lt;= m
+   |- !m i n. SUC n * m &lt; SUC n * i = m &lt; i
+   |- !p m n. (n * SUC p = m * SUC p) = (n = m)
+   |- !m i n. (SUC n * m = SUC n * i) = (m = i)
+   |- !n m. ~(SUC n &lt;= m) = m &lt;= n
+   |- !p q n m. (n * SUC q ** p = m * SUC q ** p) = (n = m)
+   |- !m n. ~(SUC n ** m = 0)
+   |- !n m. ~(SUC (n + n) = m + m)
+   |- !m n. ~(SUC (m + n) &lt;= m)
+   |- !n. ~(SUC n &lt;= 0)
+   |- !n. ~(n &lt; 0)
+   |- !n. (MIN n 0 = 0) /\ (MIN 0 n = 0)
+   |- !n. (MAX n 0 = n) /\ (MAX 0 n = n)
+   |- !n. MIN n n = n
+   |- !n. MAX n n = n
+   |- !n m. MIN m n &lt;= m /\ MIN m n &lt;= n
+   |- !n m. m &lt;= MAX m n /\ n &lt;= MAX m n
+   |- !n m. (MIN m n &lt; m = ~(m = n) /\ (MIN m n = n)) /\
+            (MIN m n &lt; n = ~(m = n) /\ (MIN m n = m)) /\
+            (m &lt; MIN m n = F) /\ (n &lt; MIN m n = F)
+   |- !n m. (m &lt; MAX m n = ~(m = n) /\ (MAX m n = n)) /\
+            (n &lt; MAX m n = ~(m = n) /\ (MAX m n = m)) /\
+            (MAX m n &lt; m = F) /\ (MAX m n &lt; n = F)
+   |- !m n. (MIN m n = MAX m n) = (m = n)
+   |- !m n. MIN m n &lt; MAX m n = ~(m = n)</code></pre>
+<p>The decision procedure proves valid purely univeral formulas
+constructed using variables and the operators
+<code>SUC,PRE,+,-,&lt;,&gt;,&lt;=,&gt;=</code>. Multiplication by
+constants is accomodated by translation to repeated addition. An attempt
+is made to generalize sub-formulas of type <code>num</code> not fitting
+into this syntax.</p>
+<h3 id="comments">Comments</h3>
+<p>The philosophy behind this simpset is fairly conservative. For
+example, some potential rewrite rules, e.g., the recursive clauses for
+addition and multiplication, are not included, since it was felt that
+their incorporation too often resulted in formulas becoming more complex
+rather than simpler. Also, transitivity theorems are avoided because
+they tend to make simplification diverge.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="BasicProvers.RW_TAC.html"><code>BasicProvers.RW_TAC</code></a>, <a
+href="BasicProvers.SRW_TAC.html"><code>BasicProvers.SRW_TAC</code></a>,
+<a href="simpLib.SIMP_TAC.html"><code>simpLib.SIMP_TAC</code></a>, <a
+href="simpLib.SIMP_CONV.html"><code>simpLib.SIMP_CONV</code></a>, <a
+href="simpLib.SIMP_RULE.html"><code>simpLib.SIMP_RULE</code></a>, <a
+href="BasicProvers.bool_ss.html"><code>BasicProvers.bool_ss</code></a>,
+<a href="bossLib.std_ss.html"><code>bossLib.std_ss</code></a>, <a
+href="bossLib.list_ss.html"><code>bossLib.list_ss</code></a></p>
+</body>
+</html>

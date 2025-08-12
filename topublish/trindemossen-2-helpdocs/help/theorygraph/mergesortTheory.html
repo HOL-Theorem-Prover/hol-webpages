@@ -1,0 +1,481 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: mergesort</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "mergesort"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "sortingTheory.html"><span class="strong">sorting</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">merge</span>
+    <td>
+    :(α -> α -> bool) -> α list -> α list -> α list
+    <tr><td>
+    <span class="strong">merge_tail</span>
+    <td>
+    :bool -> (α -> α -> bool) -> α list -> α list -> α list -> α list
+    <tr><td>
+    <span class="strong">mergesort</span>
+    <td>
+    :(α -> α -> bool) -> α list -> α list
+    <tr><td>
+    <span class="strong">mergesortN</span>
+    <td>
+    :(α -> α -> bool) -> num -> α list -> α list
+    <tr><td>
+    <span class="strong">mergesortN_tail</span>
+    <td>
+    :bool -> (α -> α -> bool) -> num -> α list -> α list
+    <tr><td>
+    <span class="strong">mergesort_tail</span>
+    <td>
+    :(α -> α -> bool) -> α list -> α list
+    <tr><td>
+    <span class="strong">sort2</span>
+    <td>
+    :(α -> α -> bool) -> α -> α -> α list
+    <tr><td>
+    <span class="strong">sort2_tail</span>
+    <td>
+    :bool -> (α -> α -> bool) -> α -> α -> α list
+    <tr><td>
+    <span class="strong">sort3</span>
+    <td>
+    :(α -> α -> bool) -> α -> α -> α -> α list
+    <tr><td>
+    <span class="strong">sort3_tail</span>
+    <td>
+    :bool -> (α -> α -> bool) -> α -> α -> α -> α list
+    <tr><td>
+    <span class="strong">stable</span>
+    <td>
+    :(α -> α -> bool) -> α list -> α list -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">mergesort_def</span>
+<DD>
+<pre>
+⊢ ∀R l. mergesort R l = mergesortN R (LENGTH l) l
+</pre>
+
+<DT><span class="strong">mergesort_tail_def</span>
+<DD>
+<pre>
+⊢ ∀R l. mergesort_tail R l = mergesortN_tail F R (LENGTH l) l
+</pre>
+
+<DT><span class="strong">sort2_def</span>
+<DD>
+<pre>
+⊢ ∀R x y. sort2 R x y = if R x y then [x; y] else [y; x]
+</pre>
+
+<DT><span class="strong">sort2_tail_def</span>
+<DD>
+<pre>
+⊢ ∀neg R x y. sort2_tail neg R x y = if R x y ⇎ neg then [x; y] else [y; x]
+</pre>
+
+<DT><span class="strong">sort3_def</span>
+<DD>
+<pre>
+⊢ ∀R x y z.
+    sort3 R x y z =
+    if R x y then
+      if R y z then [x; y; z] else if R x z then [x; z; y] else [z; x; y]
+    else if R y z then if R x z then [y; x; z] else [y; z; x]
+    else [z; y; x]
+</pre>
+
+<DT><span class="strong">sort3_tail_def</span>
+<DD>
+<pre>
+⊢ ∀neg R x y z.
+    sort3_tail neg R x y z =
+    if R x y ⇎ neg then
+      if R y z ⇎ neg then [x; y; z]
+      else if R x z ⇎ neg then [x; z; y]
+      else [z; x; y]
+    else if R y z ⇎ neg then if R x z ⇎ neg then [y; x; z] else [y; z; x]
+    else [z; y; x]
+</pre>
+
+<DT><span class="strong">stable_def</span>
+<DD>
+<pre>
+⊢ ∀R l1 l2.
+    stable R l1 l2 ⇔ ∀p. (∀x y. p x ∧ p y ⇒ R x y) ⇒ FILTER p l1 = FILTER p l2
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">filter_merge</span>
+<DD>
+<pre>
+⊢ ∀P R l1 l2.
+    transitive R ∧ (∀x y. P x ∧ P y ⇒ R x y) ∧ SORTED R l1 ⇒
+    FILTER P (merge R l1 l2) = FILTER P (l1 ++ l2)
+</pre>
+
+<DT><span class="strong">merge_def</span>
+<DD>
+<pre>
+⊢ (∀R. merge R [] [] = []) ∧ (∀v9 v8 R. merge R (v8::v9) [] = v8::v9) ∧
+  (∀v5 v4 R. merge R [] (v4::v5) = v4::v5) ∧
+  ∀y x l2 l1 R.
+    merge R (x::l1) (y::l2) =
+    if R x y then x::merge R l1 (y::l2) else y::merge R (x::l1) l2
+</pre>
+
+<DT><span class="strong">merge_empty</span>
+<DD>
+<pre>
+⊢ ∀R l acc. merge R l [] = l ∧ merge R [] l = l
+</pre>
+
+<DT><span class="strong">merge_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀R. P R [] []) ∧ (∀R v8 v9. P R (v8::v9) []) ∧
+      (∀R v4 v5. P R [] (v4::v5)) ∧
+      (∀R x l1 y l2.
+         (¬R x y ⇒ P R (x::l1) l2) ∧ (R x y ⇒ P R l1 (y::l2)) ⇒
+         P R (x::l1) (y::l2)) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">merge_perm</span>
+<DD>
+<pre>
+⊢ ∀R l1 l2. PERM (l1 ++ l2) (merge R l1 l2)
+</pre>
+
+<DT><span class="strong">merge_sorted</span>
+<DD>
+<pre>
+⊢ ∀R l1 l2.
+    transitive R ∧ total R ∧ SORTED R l1 ∧ SORTED R l2 ⇒
+    SORTED R (merge R l1 l2)
+</pre>
+
+<DT><span class="strong">merge_stable</span>
+<DD>
+<pre>
+⊢ ∀R l1 l2. transitive R ∧ SORTED R l1 ⇒ stable R (l1 ++ l2) (merge R l1 l2)
+</pre>
+
+<DT><span class="strong">merge_tail_correct1</span>
+<DD>
+<pre>
+⊢ ∀neg R l1 l2 acc.
+    (neg ⇔ F) ⇒ merge_tail neg R l1 l2 acc = REVERSE (merge R l1 l2) ++ acc
+</pre>
+
+<DT><span class="strong">merge_tail_correct2</span>
+<DD>
+<pre>
+⊢ ∀neg R l1 l2 acc.
+    (neg ⇔ T) ∧ transitive R ∧ SORTED R (REVERSE l1) ∧ SORTED R (REVERSE l2) ⇒
+    merge_tail neg R l1 l2 acc = merge R (REVERSE l1) (REVERSE l2) ++ acc
+</pre>
+
+<DT><span class="strong">merge_tail_def</span>
+<DD>
+<pre>
+⊢ (∀negate acc R. merge_tail negate R [] [] acc = acc) ∧
+  (∀v13 v12 negate acc R.
+     merge_tail negate R (v12::v13) [] acc = REV (v12::v13) acc) ∧
+  (∀v9 v8 negate acc R. merge_tail negate R [] (v8::v9) acc = REV (v8::v9) acc) ∧
+  ∀y x negate l2 l1 acc R.
+    merge_tail negate R (x::l1) (y::l2) acc =
+    if R x y ⇎ negate then merge_tail negate R l1 (y::l2) (x::acc)
+    else merge_tail negate R (x::l1) l2 (y::acc)
+</pre>
+
+<DT><span class="strong">merge_tail_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀negate R acc. P negate R [] [] acc) ∧
+      (∀negate R v12 v13 acc. P negate R (v12::v13) [] acc) ∧
+      (∀negate R v8 v9 acc. P negate R [] (v8::v9) acc) ∧
+      (∀negate R x l1 y l2 acc.
+         (¬(R x y ⇎ negate) ⇒ P negate R (x::l1) l2 (y::acc)) ∧
+         ((R x y ⇎ negate) ⇒ P negate R l1 (y::l2) (x::acc)) ⇒
+         P negate R (x::l1) (y::l2) acc) ⇒
+      ∀v v1 v2 v3 v4. P v v1 v2 v3 v4
+</pre>
+
+<DT><span class="strong">mergesortN_correct</span>
+<DD>
+<pre>
+⊢ ∀negate R n l.
+    total R ∧ transitive R ⇒
+    mergesortN_tail negate R n l =
+    if negate then REVERSE (mergesortN R n l) else mergesortN R n l
+</pre>
+
+<DT><span class="strong">mergesortN_def</span>
+<DD>
+<pre>
+⊢ (∀l R. mergesortN R 0 l = []) ∧ (∀x l R. mergesortN R 1 (x::l) = [x]) ∧
+  (∀R. mergesortN R 1 [] = []) ∧
+  (∀y x l R. mergesortN R 2 (x::y::l) = sort2 R x y) ∧
+  (∀x R. mergesortN R 2 [x] = [x]) ∧ (∀R. mergesortN R 2 [] = []) ∧
+  (∀z y x l R. mergesortN R 3 (x::y::z::l) = sort3 R x y z) ∧
+  (∀y x R. mergesortN R 3 [x; y] = sort2 R x y) ∧
+  (∀x R. mergesortN R 3 [x] = [x]) ∧ (∀R. mergesortN R 3 [] = []) ∧
+  ∀v4 l R.
+    mergesortN R v4 l =
+    if v4 = 0 then []
+    else if v4 = 1 then case l of [] => [] | x::l' => [x]
+    else if v4 = 2 then
+      case l of [] => [] | [x'] => [x'] | x'::y::l'' => sort2 R x' y
+    else if v4 = 3 then
+      case l of
+        [] => []
+      | [x''] => [x'']
+      | [x''; y'] => sort2 R x'' y'
+      | x''::y'::z::l'³' => sort3 R x'' y' z
+    else
+      (let
+         len1 = DIV2 v4
+       in
+         merge R (mergesortN R (DIV2 v4) l)
+           (mergesortN R (v4 − len1) (DROP len1 l)))
+</pre>
+
+<DT><span class="strong">mergesortN_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀R l. P R 0 l) ∧ (∀R x l. P R 1 (x::l)) ∧ (∀R. P R 1 []) ∧
+      (∀R x y l. P R 2 (x::y::l)) ∧ (∀R x. P R 2 [x]) ∧ (∀R. P R 2 []) ∧
+      (∀R x y z l. P R 3 (x::y::z::l)) ∧ (∀R x y. P R 3 [x; y]) ∧
+      (∀R x. P R 3 [x]) ∧ (∀R. P R 3 []) ∧
+      (∀R v4 l.
+         (∀len1.
+            v4 ≠ 0 ∧ v4 ≠ 1 ∧ v4 ≠ 2 ∧ v4 ≠ 3 ∧ len1 = DIV2 v4 ⇒
+            P R (DIV2 v4) l) ∧
+         (∀len1.
+            v4 ≠ 0 ∧ v4 ≠ 1 ∧ v4 ≠ 2 ∧ v4 ≠ 3 ∧ len1 = DIV2 v4 ⇒
+            P R (v4 − len1) (DROP len1 l)) ⇒
+         P R v4 l) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">mergesortN_perm</span>
+<DD>
+<pre>
+⊢ ∀R n l. PERM (TAKE n l) (mergesortN R n l)
+</pre>
+
+<DT><span class="strong">mergesortN_sorted</span>
+<DD>
+<pre>
+⊢ ∀R n l. total R ∧ transitive R ⇒ SORTED R (mergesortN R n l)
+</pre>
+
+<DT><span class="strong">mergesortN_stable</span>
+<DD>
+<pre>
+⊢ ∀R n l. total R ∧ transitive R ⇒ stable R (TAKE n l) (mergesortN R n l)
+</pre>
+
+<DT><span class="strong">mergesortN_tail_def</span>
+<DD>
+<pre>
+⊢ (∀negate l R. mergesortN_tail negate R 0 l = []) ∧
+  (∀x negate l R. mergesortN_tail negate R 1 (x::l) = [x]) ∧
+  (∀negate R. mergesortN_tail negate R 1 [] = []) ∧
+  (∀y x negate l R.
+     mergesortN_tail negate R 2 (x::y::l) = sort2_tail negate R x y) ∧
+  (∀x negate R. mergesortN_tail negate R 2 [x] = [x]) ∧
+  (∀negate R. mergesortN_tail negate R 2 [] = []) ∧
+  (∀z y x negate l R.
+     mergesortN_tail negate R 3 (x::y::z::l) = sort3_tail negate R x y z) ∧
+  (∀y x negate R. mergesortN_tail negate R 3 [x; y] = sort2_tail negate R x y) ∧
+  (∀x negate R. mergesortN_tail negate R 3 [x] = [x]) ∧
+  (∀negate R. mergesortN_tail negate R 3 [] = []) ∧
+  ∀v6 negate l R.
+    mergesortN_tail negate R v6 l =
+    if v6 = 0 then []
+    else if v6 = 1 then case l of [] => [] | x::l' => [x]
+    else if v6 = 2 then
+      case l of
+        [] => []
+      | [x'] => [x']
+      | x'::y::l'' => sort2_tail negate R x' y
+    else if v6 = 3 then
+      case l of
+        [] => []
+      | [x''] => [x'']
+      | [x''; y'] => sort2_tail negate R x'' y'
+      | x''::y'::z::l'³' => sort3_tail negate R x'' y' z
+    else
+      (let
+         len1 = DIV2 v6;
+         neg = ¬negate
+       in
+         merge_tail neg R (mergesortN_tail neg R (DIV2 v6) l)
+           (mergesortN_tail neg R (v6 − len1) (DROP len1 l)) [])
+</pre>
+
+<DT><span class="strong">mergesortN_tail_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀negate R l. P negate R 0 l) ∧ (∀negate R x l. P negate R 1 (x::l)) ∧
+      (∀negate R. P negate R 1 []) ∧
+      (∀negate R x y l. P negate R 2 (x::y::l)) ∧
+      (∀negate R x. P negate R 2 [x]) ∧ (∀negate R. P negate R 2 []) ∧
+      (∀negate R x y z l. P negate R 3 (x::y::z::l)) ∧
+      (∀negate R x y. P negate R 3 [x; y]) ∧ (∀negate R x. P negate R 3 [x]) ∧
+      (∀negate R. P negate R 3 []) ∧
+      (∀negate R v6 l.
+         (∀len1 neg.
+            v6 ≠ 0 ∧ v6 ≠ 1 ∧ v6 ≠ 2 ∧ v6 ≠ 3 ∧ len1 = DIV2 v6 ∧
+            (neg ⇔ ¬negate) ⇒
+            P neg R (DIV2 v6) l) ∧
+         (∀len1 neg.
+            v6 ≠ 0 ∧ v6 ≠ 1 ∧ v6 ≠ 2 ∧ v6 ≠ 3 ∧ len1 = DIV2 v6 ∧
+            (neg ⇔ ¬negate) ⇒
+            P neg R (v6 − len1) (DROP len1 l)) ⇒
+         P negate R v6 l) ⇒
+      ∀v v1 v2 v3. P v v1 v2 v3
+</pre>
+
+<DT><span class="strong">mergesort_STABLE_SORT</span>
+<DD>
+<pre>
+⊢ ∀R. transitive R ∧ total R ⇒ STABLE mergesort R
+</pre>
+
+<DT><span class="strong">mergesort_mem</span>
+<DD>
+<pre>
+⊢ ∀R L x. MEM x (mergesort R L) ⇔ MEM x L
+</pre>
+
+<DT><span class="strong">mergesort_perm</span>
+<DD>
+<pre>
+⊢ ∀R l. PERM l (mergesort R l)
+</pre>
+
+<DT><span class="strong">mergesort_sorted</span>
+<DD>
+<pre>
+⊢ ∀R l. transitive R ∧ total R ⇒ SORTED R (mergesort R l)
+</pre>
+
+<DT><span class="strong">mergesort_stable</span>
+<DD>
+<pre>
+⊢ ∀R l. transitive R ∧ total R ⇒ stable R l (mergesort R l)
+</pre>
+
+<DT><span class="strong">mergesort_tail_correct</span>
+<DD>
+<pre>
+⊢ ∀R l. total R ∧ transitive R ⇒ mergesort_tail R l = mergesort R l
+</pre>
+
+<DT><span class="strong">sort2_perm</span>
+<DD>
+<pre>
+⊢ ∀R x y. PERM [x; y] (sort2 R x y)
+</pre>
+
+<DT><span class="strong">sort2_sorted</span>
+<DD>
+<pre>
+⊢ ∀R x y. total R ⇒ SORTED R (sort2 R x y)
+</pre>
+
+<DT><span class="strong">sort2_stable</span>
+<DD>
+<pre>
+⊢ ∀R x y. stable R [x; y] (sort2 R x y)
+</pre>
+
+<DT><span class="strong">sort2_tail_correct</span>
+<DD>
+<pre>
+⊢ ∀neg R x y.
+    sort2_tail neg R x y = if neg then REVERSE (sort2 R x y) else sort2 R x y
+</pre>
+
+<DT><span class="strong">sort3_perm</span>
+<DD>
+<pre>
+⊢ ∀R x y z. PERM [x; y; z] (sort3 R x y z)
+</pre>
+
+<DT><span class="strong">sort3_sorted</span>
+<DD>
+<pre>
+⊢ ∀R x y z. total R ⇒ SORTED R (sort3 R x y z)
+</pre>
+
+<DT><span class="strong">sort3_stable</span>
+<DD>
+<pre>
+⊢ ∀R x y z. total R ∧ transitive R ⇒ stable R [x; y; z] (sort3 R x y z)
+</pre>
+
+<DT><span class="strong">sort3_tail_correct</span>
+<DD>
+<pre>
+⊢ ∀neg R x y z.
+    sort3_tail neg R x y z =
+    if neg then REVERSE (sort3 R x y z) else sort3 R x y z
+</pre>
+
+<DT><span class="strong">stable_cong</span>
+<DD>
+<pre>
+⊢ ∀R l1 l2 l3 l4.
+    stable R l1 l2 ∧ stable R l3 l4 ⇒ stable R (l1 ++ l3) (l2 ++ l4)
+</pre>
+
+<DT><span class="strong">stable_trans</span>
+<DD>
+<pre>
+⊢ ∀R l1 l2 l3. stable R l1 l2 ∧ stable R l2 l3 ⇒ stable R l1 l3
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure normalizerTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure normalizerTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/reduce/src/normalizerScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature normalizerTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Theorems  *)
+<a name="line6"></a>    val <a href="#DIVMOD_ELIM_THM''-val">DIVMOD_ELIM_THM''</a> : thm
+<a name="line7"></a>    val <a href="#NOT_EVEN-val">NOT_EVEN</a> : thm
+<a name="line8"></a>    val <a href="#NOT_ODD-val">NOT_ODD</a> : thm
+<a name="line9"></a>    val <a href="#NUM_INTEGRAL-val">NUM_INTEGRAL</a> : thm
+<a name="line10"></a>    val <a href="#NUM_INTEGRAL_LEMMA-val">NUM_INTEGRAL_LEMMA</a> : thm
+<a name="line11"></a>    val <a href="#NUM_NORMALIZE_CONV_sth-val">NUM_NORMALIZE_CONV_sth</a> : thm
+<a name="line12"></a>    val <a href="#NUM_SIMPLIFY_CONV_pth_evenodd-val">NUM_SIMPLIFY_CONV_pth_evenodd</a> : thm
+<a name="line13"></a>    val <a href="#PRE_ELIM_THM''-val">PRE_ELIM_THM''</a> : thm
+<a name="line14"></a>    val <a href="#RING_FINAL_pth-val">RING_FINAL_pth</a> : thm
+<a name="line15"></a>    val <a href="#RING_pth_step-val">RING_pth_step</a> : thm
+<a name="line16"></a>    val <a href="#SEMIRING_PTHS-val">SEMIRING_PTHS</a> : thm
+<a name="line17"></a>    val <a href="#SUB_ELIM_THM''-val">SUB_ELIM_THM''</a> : thm
+<a name="line18"></a>(*
+   [arithmetic] Parent theory of "normalizer"
+   
+   [<a name="DIVMOD_ELIM_THM''-val"><b>DIVMOD_ELIM_THM''</b></a>]  Theorem
+      
+      ⊢ 0 &lt; n ⇒
+        P (m DIV n) (m MOD n) ∧ (∀q r. (m ≠ q * n + r ∨ ¬(r &lt; n)) ∨ P q r) ∨
+        ¬P (m DIV n) (m MOD n) ∧ ∃q r. (m = q * n + r ∧ r &lt; n) ∧ ¬P q r
+   
+   [<a name="NOT_EVEN-val"><b>NOT_EVEN</b></a>]  Theorem
+      
+      ⊢ ∀n. ¬EVEN n ⇔ ODD n
+   
+   [<a name="NOT_ODD-val"><b>NOT_ODD</b></a>]  Theorem
+      
+      ⊢ ∀n. ¬ODD n ⇔ EVEN n
+   
+   [<a name="NUM_INTEGRAL-val"><b>NUM_INTEGRAL</b></a>]  Theorem
+      
+      ⊢ (∀x. 0 * x = 0) ∧ (∀x y z. x + y = x + z ⇔ y = z) ∧
+        ∀w x y z. w * y + x * z = w * z + x * y ⇔ w = x ∨ y = z
+   
+   [<a name="NUM_INTEGRAL_LEMMA-val"><b>NUM_INTEGRAL_LEMMA</b></a>]  Theorem
+      
+      ⊢ w = x + d ∧ y = z + e ⇒
+        (w * y + x * z = w * z + x * y ⇔ w = x ∨ y = z)
+   
+   [<a name="NUM_NORMALIZE_CONV_sth-val"><b>NUM_NORMALIZE_CONV_sth</b></a>]  Theorem
+      
+      ⊢ 1 * x = x ∧ a * m + b * m = (a + b) * m ∧ a * m + m = (a + 1) * m ∧
+        m + a * m = (a + 1) * m ∧ m + m = (1 + 1) * m ∧ 0 * m = 0 ∧
+        0 + a = a ∧ a + 0 = a ∧ a * b = b * a ∧
+        (a + b) * c = a * c + b * c ∧ 0 * a = 0 ∧ a * 0 = 0 ∧ 1 * a = a ∧
+        a * 1 = a ∧ lx * ly * (rx * ry) = lx * rx * (ly * ry) ∧
+        lx * ly * (rx * ry) = lx * (ly * (rx * ry)) ∧
+        lx * ly * (rx * ry) = rx * (lx * ly * ry) ∧
+        lx * ly * rx = lx * rx * ly ∧ lx * ly * rx = lx * (ly * rx) ∧
+        lx * rx = rx * lx ∧ lx * (rx * ry) = lx * rx * ry ∧
+        lx * (rx * ry) = rx * (lx * ry) ∧
+        a + b + (c + d) = a + c + (b + d) ∧ a + b + c = a + (b + c) ∧
+        a + (c + d) = c + (a + d) ∧ a + b + c = a + c + b ∧ a + c = c + a ∧
+        a + (c + d) = a + c + d ∧ x ** p * x ** q = x ** (p + q) ∧
+        x * x ** q = x ** SUC q ∧ x ** q * x = x ** SUC q ∧ x * x = x² ∧
+        (x * y) ** q = x ** q * y ** q ∧ (x ** p) ** q = x ** (p * q) ∧
+        x ** 0 = 1 ∧ x ** 1 = x ∧ x * (y + z) = x * y + x * z ∧
+        x ** SUC q = x * x ** q
+   
+   [<a name="NUM_SIMPLIFY_CONV_pth_evenodd-val"><b>NUM_SIMPLIFY_CONV_pth_evenodd</b></a>]  Theorem
+      
+      ⊢ (EVEN x ⇔ ∀y. x ≠ SUC (2 * y)) ∧ (ODD x ⇔ ∀y. x ≠ 2 * y) ∧
+        (¬EVEN x ⇔ ∀y. x ≠ 2 * y) ∧ (¬ODD x ⇔ ∀y. x ≠ SUC (2 * y))
+   
+   [<a name="PRE_ELIM_THM''-val"><b>PRE_ELIM_THM''</b></a>]  Theorem
+      
+      ⊢ P (PRE n) ⇔ ∀m. n ≠ SUC m ∧ (m ≠ 0 ∨ n ≠ 0) ∨ P m
+   
+   [<a name="RING_FINAL_pth-val"><b>RING_FINAL_pth</b></a>]  Theorem
+      
+      ⊢ (p ⇒ F) ⇒ (¬q ⇔ p) ⇒ q
+   
+   [<a name="RING_pth_step-val"><b>RING_pth_step</b></a>]  Theorem
+      
+      ⊢ ∀add mul n0.
+          (∀x. mul n0 x = n0) ∧ (∀x y z. add x y = add x z ⇔ y = z) ∧
+          (∀w x y z.
+             add (mul w y) (mul x z) = add (mul w z) (mul x y) ⇔
+             w = x ∨ y = z) ⇒
+          (∀a b c d.
+             a ≠ b ∧ c ≠ d ⇔
+             add (mul a c) (mul b d) ≠ add (mul a d) (mul b c)) ∧
+          ∀n a b c d.
+            n ≠ n0 ⇒ a = b ∧ c ≠ d ⇒ add a (mul n c) ≠ add b (mul n d)
+   
+   [<a name="SEMIRING_PTHS-val"><b>SEMIRING_PTHS</b></a>]  Theorem
+      
+      ⊢ (∀x y z. add x (add y z) = add (add x y) z) ∧
+        (∀x y. add x y = add y x) ∧ (∀x. add r0 x = x) ∧
+        (∀x y z. mul x (mul y z) = mul (mul x y) z) ∧
+        (∀x y. mul x y = mul y x) ∧ (∀x. mul r1 x = x) ∧
+        (∀x. mul r0 x = r0) ∧
+        (∀x y z. mul x (add y z) = add (mul x y) (mul x z)) ∧
+        (∀x. pwr x 0 = r1) ∧ (∀x n. pwr x (SUC n) = mul x (pwr x n)) ⇒
+        mul r1 x = x ∧ add (mul a m) (mul b m) = mul (add a b) m ∧
+        add (mul a m) m = mul (add a r1) m ∧
+        add m (mul a m) = mul (add a r1) m ∧ add m m = mul (add r1 r1) m ∧
+        mul r0 m = r0 ∧ add r0 a = a ∧ add a r0 = a ∧ mul a b = mul b a ∧
+        mul (add a b) c = add (mul a c) (mul b c) ∧ mul r0 a = r0 ∧
+        mul a r0 = r0 ∧ mul r1 a = a ∧ mul a r1 = a ∧
+        mul (mul lx ly) (mul rx ry) = mul (mul lx rx) (mul ly ry) ∧
+        mul (mul lx ly) (mul rx ry) = mul lx (mul ly (mul rx ry)) ∧
+        mul (mul lx ly) (mul rx ry) = mul rx (mul (mul lx ly) ry) ∧
+        mul (mul lx ly) rx = mul (mul lx rx) ly ∧
+        mul (mul lx ly) rx = mul lx (mul ly rx) ∧ mul lx rx = mul rx lx ∧
+        mul lx (mul rx ry) = mul (mul lx rx) ry ∧
+        mul lx (mul rx ry) = mul rx (mul lx ry) ∧
+        add (add a b) (add c d) = add (add a c) (add b d) ∧
+        add (add a b) c = add a (add b c) ∧
+        add a (add c d) = add c (add a d) ∧
+        add (add a b) c = add (add a c) b ∧ add a c = add c a ∧
+        add a (add c d) = add (add a c) d ∧
+        mul (pwr x p) (pwr x q) = pwr x (p + q) ∧
+        mul x (pwr x q) = pwr x (SUC q) ∧ mul (pwr x q) x = pwr x (SUC q) ∧
+        mul x x = pwr x 2 ∧ pwr (mul x y) q = mul (pwr x q) (pwr y q) ∧
+        pwr (pwr x p) q = pwr x (p * q) ∧ pwr x 0 = r1 ∧ pwr x 1 = x ∧
+        mul x (add y z) = add (mul x y) (mul x z) ∧
+        pwr x (SUC q) = mul x (pwr x q)
+   
+   [<a name="SUB_ELIM_THM''-val"><b>SUB_ELIM_THM''</b></a>]  Theorem
+      
+      ⊢ P (a − b) ⇔ ∀d. a ≠ b + d ∧ (¬(a &lt; b) ∨ d ≠ 0) ∨ P d
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/num/reduce/src/normalizerScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

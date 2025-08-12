@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: EVAL_quote</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "EVAL_quote"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "ternaryComparisonsTheory.html"><span class="strong">ternaryComparisons</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">index</span> <td> 0
+    <tr><td> <span class="strong">varmap</span> <td> 1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">Empty_vm</span>
+    <td>
+    :α varmap
+    <tr><td> <span class="strong">End_idx</span> <td> :index
+    <tr><td> <span class="strong">Left_idx</span> <td> :index -> index
+    <tr><td>
+    <span class="strong">Node_vm</span>
+    <td>
+    :α -> α varmap -> α varmap -> α varmap
+    <tr><td> <span class="strong">Right_idx</span> <td> :index -> index
+    <tr><td>
+    <span class="strong">index_CASE</span>
+    <td>
+    :index -> (index -> α) -> (index -> α) -> α -> α
+    <tr><td>
+    <span class="strong">index_compare</span>
+    <td>
+    :index -> index -> ordering
+    <tr><td> <span class="strong">index_lt</span> <td> :index -> index -> bool
+    <tr><td> <span class="strong">index_size</span> <td> :index -> num
+    <tr><td>
+    <span class="strong">varmap_CASE</span>
+    <td>
+    :α varmap -> β -> (α -> α varmap -> α varmap -> β) -> β
+    <tr><td>
+    <span class="strong">varmap_find</span>
+    <td>
+    :index -> α varmap -> α
+    <tr><td>
+    <span class="strong">varmap_size</span>
+    <td>
+    :(α -> num) -> α varmap -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">index_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep.
+    TYPE_DEFINITION
+      (λa0.
+           ∀ $var$('index').
+             (∀a0.
+                (∃a. a0 =
+                     (λa.
+                          ind_type$CONSTR 0 ARB
+                            (ind_type$FCONS a (λn. ind_type$BOTTOM))) a ∧
+                     $var$('index') a) ∨
+                (∃a. a0 =
+                     (λa.
+                          ind_type$CONSTR (SUC 0) ARB
+                            (ind_type$FCONS a (λn. ind_type$BOTTOM))) a ∧
+                     $var$('index') a) ∨
+                a0 = ind_type$CONSTR (SUC (SUC 0)) ARB (λn. ind_type$BOTTOM) ⇒
+                $var$('index') a0) ⇒
+             $var$('index') a0) rep
+</pre>
+
+<DT><span class="strong">index_case_def</span>
+<DD>
+<pre>
+⊢ (∀a f f1 v. index_CASE (Left_idx a) f f1 v = f a) ∧
+  (∀a f f1 v. index_CASE (Right_idx a) f f1 v = f1 a) ∧
+  ∀f f1 v. index_CASE End_idx f f1 v = v
+</pre>
+
+<DT><span class="strong">index_lt_def</span>
+<DD>
+<pre>
+⊢ ∀i1 i2. index_lt i1 i2 ⇔ index_compare i1 i2 = Less
+</pre>
+
+<DT><span class="strong">index_size_def</span>
+<DD>
+<pre>
+⊢ (∀a. index_size (Left_idx a) = 1 + index_size a) ∧
+  (∀a. index_size (Right_idx a) = 1 + index_size a) ∧ index_size End_idx = 0
+</pre>
+
+<DT><span class="strong">varmap_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep.
+    TYPE_DEFINITION
+      (λa0'.
+           ∀ $var$('varmap').
+             (∀a0'.
+                a0' = ind_type$CONSTR 0 ARB (λn. ind_type$BOTTOM) ∨
+                (∃a0 a1 a2.
+                   a0' =
+                   (λa0 a1 a2.
+                        ind_type$CONSTR (SUC 0) a0
+                          (ind_type$FCONS a1
+                             (ind_type$FCONS a2 (λn. ind_type$BOTTOM)))) a0 a1
+                     a2 ∧ $var$('varmap') a1 ∧ $var$('varmap') a2) ⇒
+                $var$('varmap') a0') ⇒
+             $var$('varmap') a0') rep
+</pre>
+
+<DT><span class="strong">varmap_case_def</span>
+<DD>
+<pre>
+⊢ (∀v f. varmap_CASE Empty_vm v f = v) ∧
+  ∀a0 a1 a2 v f. varmap_CASE (Node_vm a0 a1 a2) v f = f a0 a1 a2
+</pre>
+
+<DT><span class="strong">varmap_size_def</span>
+<DD>
+<pre>
+⊢ (∀f. varmap_size f Empty_vm = 0) ∧
+  ∀f a0 a1 a2.
+    varmap_size f (Node_vm a0 a1 a2) =
+    1 + (f a0 + (varmap_size f a1 + varmap_size f a2))
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">compare_index_equal</span>
+<DD>
+<pre>
+⊢ ∀i1 i2. index_compare i1 i2 = Equal ⇔ i1 = i2
+</pre>
+
+<DT><span class="strong">compare_list_index</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. list_cmp index_compare l1 l2 = Equal ⇔ l1 = l2
+</pre>
+
+<DT><span class="strong">datatype_index</span>
+<DD>
+<pre>
+⊢ DATATYPE (index Left_idx Right_idx End_idx)
+</pre>
+
+<DT><span class="strong">datatype_varmap</span>
+<DD>
+<pre>
+⊢ DATATYPE (varmap Empty_vm Node_vm)
+</pre>
+
+<DT><span class="strong">index_11</span>
+<DD>
+<pre>
+⊢ (∀a a'. Left_idx a = Left_idx a' ⇔ a = a') ∧
+  ∀a a'. Right_idx a = Right_idx a' ⇔ a = a'
+</pre>
+
+<DT><span class="strong">index_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f0 f1 f2. ∃fn.
+    (∀a. fn (Left_idx a) = f0 a (fn a)) ∧
+    (∀a. fn (Right_idx a) = f1 a (fn a)) ∧ fn End_idx = f2
+</pre>
+
+<DT><span class="strong">index_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' f f1 v.
+    M = M' ∧ (∀a. M' = Left_idx a ⇒ f a = f' a) ∧
+    (∀a. M' = Right_idx a ⇒ f1 a = f1' a) ∧ (M' = End_idx ⇒ v = v') ⇒
+    index_CASE M f f1 v = index_CASE M' f' f1' v'
+</pre>
+
+<DT><span class="strong">index_case_eq</span>
+<DD>
+<pre>
+⊢ index_CASE x f f1 v = v' ⇔
+  (∃i. x = Left_idx i ∧ f i = v') ∨ (∃i. x = Right_idx i ∧ f1 i = v') ∨
+  x = End_idx ∧ v = v'
+</pre>
+
+<DT><span class="strong">index_compare_def</span>
+<DD>
+<pre>
+⊢ index_compare End_idx End_idx = Equal ∧
+  (∀v10. index_compare End_idx (Left_idx v10) = Less) ∧
+  (∀v11. index_compare End_idx (Right_idx v11) = Less) ∧
+  (∀v2. index_compare (Left_idx v2) End_idx = Greater) ∧
+  (∀v3. index_compare (Right_idx v3) End_idx = Greater) ∧
+  (∀n' m'. index_compare (Left_idx n') (Left_idx m') = index_compare n' m') ∧
+  (∀n' m'. index_compare (Left_idx n') (Right_idx m') = Less) ∧
+  (∀n' m'. index_compare (Right_idx n') (Right_idx m') = index_compare n' m') ∧
+  ∀n' m'. index_compare (Right_idx n') (Left_idx m') = Greater
+</pre>
+
+<DT><span class="strong">index_compare_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P End_idx End_idx ∧ (∀v10. P End_idx (Left_idx v10)) ∧
+      (∀v11. P End_idx (Right_idx v11)) ∧ (∀v2. P (Left_idx v2) End_idx) ∧
+      (∀v3. P (Right_idx v3) End_idx) ∧
+      (∀n' m'. P n' m' ⇒ P (Left_idx n') (Left_idx m')) ∧
+      (∀n' m'. P (Left_idx n') (Right_idx m')) ∧
+      (∀n' m'. P n' m' ⇒ P (Right_idx n') (Right_idx m')) ∧
+      (∀n' m'. P (Right_idx n') (Left_idx m')) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">index_distinct</span>
+<DD>
+<pre>
+⊢ (∀a' a. Left_idx a ≠ Right_idx a') ∧ (∀a. Left_idx a ≠ End_idx) ∧
+  ∀a. Right_idx a ≠ End_idx
+</pre>
+
+<DT><span class="strong">index_induction</span>
+<DD>
+<pre>
+⊢ ∀P. (∀i. P i ⇒ P (Left_idx i)) ∧ (∀i. P i ⇒ P (Right_idx i)) ∧ P End_idx ⇒
+      ∀i. P i
+</pre>
+
+<DT><span class="strong">index_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀ii. (∃i. ii = Left_idx i) ∨ (∃i. ii = Right_idx i) ∨ ii = End_idx
+</pre>
+
+<DT><span class="strong">varmap_11</span>
+<DD>
+<pre>
+⊢ ∀a0 a1 a2 a0' a1' a2'.
+    Node_vm a0 a1 a2 = Node_vm a0' a1' a2' ⇔ a0 = a0' ∧ a1 = a1' ∧ a2 = a2'
+</pre>
+
+<DT><span class="strong">varmap_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f0 f1. ∃fn.
+    fn Empty_vm = f0 ∧
+    ∀a0 a1 a2. fn (Node_vm a0 a1 a2) = f1 a0 a1 a2 (fn a1) (fn a2)
+</pre>
+
+<DT><span class="strong">varmap_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' v f.
+    M = M' ∧ (M' = Empty_vm ⇒ v = v') ∧
+    (∀a0 a1 a2. M' = Node_vm a0 a1 a2 ⇒ f a0 a1 a2 = f' a0 a1 a2) ⇒
+    varmap_CASE M v f = varmap_CASE M' v' f'
+</pre>
+
+<DT><span class="strong">varmap_case_eq</span>
+<DD>
+<pre>
+⊢ varmap_CASE x v f = v' ⇔
+  x = Empty_vm ∧ v = v' ∨ ∃a v'' v0. x = Node_vm a v'' v0 ∧ f a v'' v0 = v'
+</pre>
+
+<DT><span class="strong">varmap_distinct</span>
+<DD>
+<pre>
+⊢ ∀a2 a1 a0. Empty_vm ≠ Node_vm a0 a1 a2
+</pre>
+
+<DT><span class="strong">varmap_find_def</span>
+<DD>
+<pre>
+⊢ (∀x v2 v1. varmap_find End_idx (Node_vm x v1 v2) = x) ∧
+  (∀x v2 v1 i1.
+     varmap_find (Right_idx i1) (Node_vm x v1 v2) = varmap_find i1 v2) ∧
+  (∀x v2 v1 i1.
+     varmap_find (Left_idx i1) (Node_vm x v1 v2) = varmap_find i1 v1) ∧
+  ∀i. varmap_find i Empty_vm = @x. T
+</pre>
+
+<DT><span class="strong">varmap_find_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀x v1 v2. P End_idx (Node_vm x v1 v2)) ∧
+      (∀i1 x v1 v2. P i1 v2 ⇒ P (Right_idx i1) (Node_vm x v1 v2)) ∧
+      (∀i1 x v1 v2. P i1 v1 ⇒ P (Left_idx i1) (Node_vm x v1 v2)) ∧
+      (∀i. P i Empty_vm) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">varmap_induction</span>
+<DD>
+<pre>
+⊢ ∀P. P Empty_vm ∧ (∀v v0. P v ∧ P v0 ⇒ ∀a. P (Node_vm a v v0)) ⇒ ∀v. P v
+</pre>
+
+<DT><span class="strong">varmap_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀vv. vv = Empty_vm ∨ ∃a v v0. vv = Node_vm a v v0
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

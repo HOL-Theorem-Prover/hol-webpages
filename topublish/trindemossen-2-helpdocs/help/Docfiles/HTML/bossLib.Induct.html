@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>bossLib.Induct</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="induct"><code>Induct</code></h2>
+<pre class="hol4"><code>bossLib.Induct : tactic</code></pre>
+<hr />
+<p>Performs structural induction over the type of the goal’s outermost
+universally quantified variable.</p>
+<p>Given a universally quantified goal, <code>Induct</code> attempts to
+perform an induction based on the type of the leading universally
+quantified variable. The induction theorem to be used is looked up in
+the <code>TypeBase</code> database, which holds useful facts about the
+system’s defined types. <code>Induct</code> may also be used to reason
+about mutually recursive types.</p>
+<h3 id="failure">Failure</h3>
+<p><code>Induct</code> fails if the goal is not universally quantified,
+or if the type of the variable universally quantified does not have an
+induction theorem in the <code>TypeBase</code> database.</p>
+<h3 id="example">Example</h3>
+<p>If attempting to prove</p>
+<pre class="hol4"><code>   !list. LENGTH (REVERSE list) = LENGTH list</code></pre>
+<p>one can apply <code>Induct</code> to begin a proof by induction on
+<code>list</code>.</p>
+<pre class="hol4"><code>   - e Induct;</code></pre>
+<p>This results in the base and step cases of the induction as new
+goals.</p>
+<pre class="hol4"><code>   ?- LENGTH (REVERSE []) = LENGTH []
+
+   LENGTH (REVERSE list) = LENGTH list
+   ?- !h. LENGTH (REVERSE (h::list)) = LENGTH (h::list)</code></pre>
+<p>The same tactic can be used for induction over numbers. For example
+expanding the goal</p>
+<pre class="hol4"><code>   ?- !n. n &gt; 2 ==&gt; !x y z. ~(x EXP n + y EXP n = z EXP n)</code></pre>
+<p>with <code>Induct</code> yields the two goals</p>
+<pre class="hol4"><code>   ?- 0 &gt; 2 ==&gt; !x y z. ~(x EXP 0 + y EXP 0 = z EXP 0)
+
+   n &gt; 2 ==&gt; !x y z. ~(x EXP n + y EXP n = z EXP n)
+   ?- SUC n &gt; 2 ==&gt; !x y z. ~(x EXP SUC n + y EXP SUC n = z EXP SUC n)</code></pre>
+<p><code>Induct</code> can also be used to perform induction on mutually
+recursive types. For example, given the datatype</p>
+<pre class="hol4"><code>   Hol_datatype
+       `exp = VAR of string                (* variables *)
+            | IF  of bexp =&gt; exp =&gt; exp    (* conditional *)
+            | APP of string =&gt; exp list    (* function application *)
+         ;
+       bexp = EQ  of exp =&gt; exp            (* boolean expressions *)
+            | LEQ of exp =&gt; exp
+            | AND of bexp =&gt; bexp
+            | OR  of bexp =&gt; bexp
+            | NOT of bexp`</code></pre>
+<p>one can use <code>Induct</code> to prove that all objects of type
+<code>exp</code> and <code>bexp</code> are of a non-zero size. (Recall
+that size definitions are automatically defined for datatypes.)
+Typically, mutually recursive types lead to mutually recursive induction
+schemes having multiple predicates. The scheme for the above definition
+has 3 predicates: <code>P0</code>, <code>P1</code>, and <code>P2</code>,
+which respectively range over expressions, boolean expressions, and
+lists of expressions.</p>
+<pre class="hol4"><code>   |- !P0 P1 P2.
+        (!a. P0 (VAR a)) /\
+        (!b e e0. P1 b /\ P0 e /\ P0 e0 ==&gt; P0 (IF b e e0)) /\
+        (!l. P2 l ==&gt; !b. P0 (APP b l)) /\
+        (!e e0. P0 e /\ P0 e0 ==&gt; P1 (EQ e e0)) /\
+        (!e e0. P0 e /\ P0 e0 ==&gt; P1 (LEQ e e0)) /\
+        (!b b0. P1 b /\ P1 b0 ==&gt; P1 (AND b b0)) /\
+        (!b b0. P1 b /\ P1 b0 ==&gt; P1 (OR b b0)) /\
+        (!b. P1 b ==&gt; P1 (NOT b)) /\
+        P2 [] /\
+        (!e l. P0 e /\ P2 l ==&gt; P2 (e::l))
+          ==&gt;
+        (!e. P0 e) /\ (!b. P1 b) /\ !l. P2 l</code></pre>
+<p>Invoking <code>Induct</code> on a goal such as</p>
+<pre class="hol4"><code>   !e. 0 &lt; exp_size e</code></pre>
+<p>yields the three subgoals</p>
+<pre class="hol4"><code>   ?- !s. 0 &lt; exp_size (APP s l)
+
+
+   [ 0 &lt; exp_size e, 0 &lt; exp_size e&#39; ] ?- 0 &lt; exp_size (IF b e e&#39;)
+
+   ?- !s. 0 &lt; exp_size (VAR s)</code></pre>
+<p>In this case, <code>P1</code> and <code>P2</code> have been vacuously
+instantiated in the application of <code>Induct</code>, since it detects
+that only <code>P0</code> is needed. However, it is also possible to use
+<code>Induct</code> to start the proofs of</p>
+<pre class="hol4"><code>    (!e. 0 &lt; exp_size e) /\ (!b. 0 &lt; bexp_size b)</code></pre>
+<p>and</p>
+<pre class="hol4"><code>    (!e. 0 &lt; exp_size e) /\
+    (!b. 0 &lt; bexp_size b) /\
+    (!list. 0 &lt; exp1_size list)</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a href="bossLib.Induct_on.html"><code>bossLib.Induct_on</code></a>,
+<a
+href="bossLib.completeInduct_on.html"><code>bossLib.completeInduct_on</code></a>,
+<a
+href="bossLib.measureInduct_on.html"><code>bossLib.measureInduct_on</code></a>,
+<a
+href="Prim_rec.INDUCT_THEN.html"><code>Prim_rec.INDUCT_THEN</code></a>,
+<a href="bossLib.Cases.html"><code>bossLib.Cases</code></a>, <a
+href="bossLib.Hol_datatype.html"><code>bossLib.Hol_datatype</code></a>,
+<a href="proofManagerLib.g.html"><code>proofManagerLib.g</code></a>, <a
+href="proofManagerLib.e.html"><code>proofManagerLib.e</code></a></p>
+</body>
+</html>

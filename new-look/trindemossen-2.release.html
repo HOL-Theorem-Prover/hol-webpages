@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release notes for HOL4, Trindemossen-2</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Release notes for HOL4, Trindemossen-2</h1>
+</header>
+<!-- search and replace ?????? strings corresponding to release name -->
+<!-- indent code within bulleted lists to column 11 -->
+<p>(Released: 12 August 2025)</p>
+<p>We are pleased to announce the Trindemossen-2 release of HOL4.</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><a href="#new-features">New features</a></li>
+<li><a href="#bugs-fixed">Bugs fixed</a></li>
+<li><a href="#new-theories">New theories</a></li>
+<li><a href="#new-tools">New tools</a></li>
+<li><a href="#new-examples">New examples</a></li>
+<li><a href="#incompatibilities">Incompatibilities</a></li>
+</ul>
+<h2 id="new-features">New features:</h2>
+<ul>
+<li><p>We now support (and recommend) a new header syntax for
+<code>Script.sml</code> files. Instead of the existing boilerplate
+(<code>open HolKernel … val _ = new_theory…</code>), users write
+something like</p>
+<pre><code>   Theory foo
+   Ancestors real_topology …
+   Libs realLib</code></pre>
+<p>to begin their files. This syntax and its options are documented in a
+new chapter of the DESCRIPTION manual. Thanks to Mario Carneiro and
+Daniel Nezamabadi for the work done implementing this, and then
+converting all the script files in <code>src</code> to use this
+syntax.</p></li>
+<li><p>The simplifier now supports <code>NoAsms</code> and
+<code>IgnAsm</code> special forms that allow all assumptions (or those
+matching the provided pattern, in the case of <code>IgnAsm</code>) to be
+excluded. See the DESCRIPTION and REFERENCE manuals for details. (<a
+href="https://github.com/HOL-Theorem-Prover/HOL/issues/1220">GitHub
+issue</a>)</p></li>
+<li><p>The automatic termination-finding technology behind
+<code>Definition</code> (and lower-level APIs) is now rather stronger,
+especially when dealing with higher order recursions using list
+operators. This should reduce the number of times you need to introduce
+explicit <code>Termination</code>-argument blocks to accompany your
+definitions. Termination condition extraction and termination relation
+guessing now have traces (“Definition.TC extraction” and
+“Definition.termination candidates”) that can be examined for
+illumination. See
+<code>src/tfl/examples/termination_proverScript.sml</code> for
+examples.</p></li>
+<li><p>All of HOL’s internal files are now stored in/under one
+sub-directory of the source directory where user
+<code>*Script.sml</code> files are found. Previously, HOL used
+<code>.HOLMK</code>, <code>.holobjs</code>, and <code>.hollogs</code>.
+Now everything is stored in/under the sub-directory
+<code>.hol</code>.</p>
+<p>To get rid of old directories, which are now just going to be useless
+clutter, shell command-lines such as</p>
+<pre><code>   find . -path &#39;*/.hollogs/*&#39; -delete
+   find . -name &#39;.hollogs&#39; -delete</code></pre>
+<p>might be used from the root of your HOL development. Alternatively,
+use <code>Holmake -r cleanAll</code> with your old HOL version, and then
+switch.</p></li>
+<li><p>Under Poly/ML, the <code>hol</code> and <code>hol.bare</code>
+executables can be passed the <code>–-noconfig</code> command-line flag
+to stop them consulting user config files in the user’s home directory
+(these have names like <code>hol-config.sml</code>). Under both Moscow
+ML and Poly/ML, configuration files are also ignored if there is a
+<code>HOL_NOCONFIG</code> environment variable set.</p></li>
+<li><p><code>oneline</code> from <code>bossLib</code> now supports
+one-line-ification of mutually recrusive functions. Each function
+becomes an equation of its own in the theorem returned by
+<code>oneline</code>.</p></li>
+<li><p>The Poly/ML implementation now offers a <code>-z</code> (or
+<code>--zero</code>) command-line option to make the NUL byte be the
+end-marker for strings being sent to the compiler. Otherwise, the
+compiler makes a best effort guess about when it should interact based
+on the presence of semi-colons.</p></li>
+</ul>
+<h2 id="bugs-fixed">Bugs fixed:</h2>
+<ul>
+<li><code>EVERY_CASE_TAC</code> would loop if the “split-upon” subterm
+was already an assumption, but no longer.</li>
+</ul>
+<h2 id="new-theories">New theories:</h2>
+<ul>
+<li><p><code>number</code>, <code>combinatorics</code> and
+<code>prime</code>: These theories combine material from
+<code>examples/algebra/lib</code>, etc. They contain some more advanced
+results from number theory (in particular properties of prime numbers)
+and combinatorics.</p></li>
+<li><p><code>monoid</code>, <code>group</code>, <code>ring</code> and
+<code>real_algebra</code>: These theories combine material previously
+held in <code>examples/algebra</code>. A monoid is an algebraic
+structure: with a carrier set, a binary operation and an identity
+element. A group is an algebraic structure: a monoid with all its
+elements invertible. A ring takes into account the interplay between its
+additive group and multiplicative monoid.</p></li>
+</ul>
+<h2 id="new-tools">New tools:</h2>
+<ul>
+<li><p><code>Tactic.TRANS_TAC</code> (ported from HOL-Light) applies
+transitivity theorem to goal with chosen intermediate term. See its DOC
+for more details.</p></li>
+<li><p><code>intLib.INTEGER_TAC</code> and
+<code>intLib.INTEGER_RULE</code> (ported from HOL-Light): simple
+decision procedures for equations of multivariate polynomials of
+integers, and simple equations about divisibility of integers.</p></li>
+<li><p><code>last_assume_tac</code> has been added. It is the same as
+<code>assume_tac</code> except it adds the new assumption to the top of
+the list of assumptions instead of the bottom.</p></li>
+</ul>
+<h2 id="new-examples">New examples:</h2>
+<ul>
+<li>Dijkstra’s algorithm for computing shortest paths:
+<code>examples/algorithms/dijkstraScript.sml</code></li>
+</ul>
+<h2 id="incompatibilities">Incompatibilities:</h2>
+<ul>
+<li><p><code>numLib.prefer_num</code> has been renamed to
+<code>numLib.temp_prefer_num</code>, which name better describes its
+semantics. The <code>prefer_num</code> entry-point is now used to make a
+change “permanent” (again following the naming convention used by many
+parsing-related entry-points), which is to say that the overloads made
+by this function will be exported to child theories.</p></li>
+<li><p>The cv translator’s entry points with <code>_pre</code> now take
+a new string argument, e.g., what used to be
+<code>cv_trans_pre foo_def</code> is now
+<code>cv_trans_pre "foo_pre" foo_def</code>. Mutually recursive
+functions require a name for each functions. In the string argument,
+multiple names are given either with spaces separating them, e.g.,
+<code>"foo_pre foo_list_pre"</code>, or commas separating them, e.g.,
+<code>"foo_pre,foo_list_pre"</code> or
+<code>"foo_pre, foo_list_pre"</code>. The old behaviour (inventing
+names) is supported by passing the empty string <code>""</code> as the
+name, i.e., <code>cv_trans_pre "" foo_def</code>.</p></li>
+<li><p>Editor mode implementations have moved in the HOL sources to
+<code>tools/editor-modes/{editor-name}</code>. This may affect editor
+initialisations/configurations, particularly if they hard-code a
+reference to a particular path. For example, in the recommended setup
+for <code>emacs</code>, users will need to change</p>
+<pre><code>   (load &quot;&lt;path&gt;/HOL/tools/hol-mode&quot;)
+   (load &quot;&lt;path&gt;/HOL/tools/hol-unicode&quot;)</code></pre>
+<p>to</p>
+<pre><code>   (load &quot;&lt;path&gt;/HOL/tools/editor-modes/emacs/hol-mode&quot;)
+   (load &quot;&lt;path&gt;/HOL/tools/editor-modes/emacs/hol-unicode&quot;)</code></pre></li>
+<li><p>The types of <code>DB.find</code> and <code>DB.match</code> have
+changed so that instead of returning</p>
+<pre><code>   (string * string) * (thm * class)</code></pre>
+<p>they now return</p>
+<pre><code>   (string * string) * (thm * class * thm_src_location)</code></pre>
+<p>Using the <code>#1 o #2</code> selector should be future-proof
+here.</p></li>
+<li><p><code>util_probTheory</code> has been merged into
+<code>sigma_algebraTheory</code>.</p></li>
+<li><p>In <code>set_relationTheory</code>, the constant <code>tc</code>
+has been renamed to <code>transitive_closure</code>.</p></li>
+<li><p>Various <code>adjoin_to…</code> entry-points in
+<code>Theory</code> have been removed. The biggest incompatibility this
+causes is the removal of the <code>&lt;thy&gt;_grammars</code> binding
+from all <code>&lt;thy&gt;Theory</code> structures. To access the
+grammars specific to a particular theory (<code>foo</code>, say), one
+must now write</p>
+<pre><code>   valOf $ Parse.grammarDB {thyname=&quot;foo&quot;}</code></pre>
+<p>where the call may fail if the theory is not present in the
+hierarchy.</p></li>
+<li><p><code>ASSUME_NAMED_TAC</code> now puts the new named assumption
+at the top of the assumption list, but below the other named
+assumptions. Previously, named assumptions were added to the bottom of
+the assumption list (where they might get in the way).</p></li>
+<li><p>Selecting numbered options in the Moscow ML HOL help system now
+requires the number choice to be followed by semicolon-newline instead
+of just a newline character.</p></li>
+</ul>
+<hr />
+<div class="footer">
+<p><em><a href="http://hol-theorem-prover.org">HOL4,
+Trindemossen-2</a></em></p>
+<p><a href="trindemossen-1.release.html">Release notes for the previous
+version</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cond_rewrite.search_top_down</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="search_top_down"><code>search_top_down</code></h2>
+<pre class="hol4"><code>Cond_rewrite.search_top_down
+ : (term -&gt; term -&gt; ((term # term) list # (type # type) list) list)</code></pre>
+<hr />
+<p>Search a term in a top-down fashion to find matches to another
+term.</p>
+<p><code>search_top_down tm1 tm2</code> returns a list of instantiations
+which make the whole or part of <code>tm2</code> match <code>tm1</code>.
+The first term should not have a quantifier at the outer most level.
+<code>search_top_down</code> first attempts to match the whole second
+term to <code>tm1</code>. If this fails, it recursively descend into the
+subterms of <code>tm2</code> to find all matches.</p>
+<p>The length of the returned list indicates the number of matches
+found. An empty list means no match can be found between
+<code>tm1</code> and <code>tm2</code> or any subterms of
+<code>tm2</code>. The instantiations returned in the list are in the
+same format as for the function <code>match</code>. Each instantiation
+is a pair of lists: the first is a list of term pairs and the second is
+a list of type pairs. Either of these lists may be empty. The situation
+in which both lists are empty indicates that there is an exact match
+between the two terms, i.e., no instantiation is required to make the
+entire <code>tm2</code> or a part of <code>tm2</code> the same as
+<code>tm1</code>.</p>
+<h3 id="failure">Failure</h3>
+<p>Never fails.</p>
+<h3 id="example">Example</h3>
+<pre class="hol4"><code>   #search_top_down &quot;x = y:*&quot; &quot;3 = 5&quot;;;
+   [([(&quot;5&quot;, &quot;y&quot;); (&quot;3&quot;, &quot;x&quot;)], [(&quot;:num&quot;, &quot;:*&quot;)])]
+   : ((term # term) list # (type # type) list) list
+
+   #search_top_down &quot;x = y:*&quot; &quot;x =y:*&quot;;;
+   [([], [])] : ((term # term) list # (type # type) list) list
+
+   #search_top_down &quot;x = y:*&quot; &quot;0 &lt; p ==&gt; (x &lt;= p = y &lt;= p)&quot;;;
+   [([(&quot;y &lt;= p&quot;, &quot;y&quot;); (&quot;x &lt;= p&quot;, &quot;x&quot;)], [(&quot;:bool&quot;, &quot;:*&quot;)])]
+   : ((term # term) list # (type # type) list) list</code></pre>
+<p>The first example above shows the entire <code>tm2</code> matching
+<code>tm1</code>. The second example shows the two terms match exactly.
+No instantiation is required. The last example shows that a subterm of
+<code>tm2</code> can be instantiated to match <code>tm1</code>.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Db.match.html"><code>Db.match</code></a></p>
+</body>
+</html>

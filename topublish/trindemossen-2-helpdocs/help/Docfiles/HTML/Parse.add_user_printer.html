@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Parse.add_user_printer</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="add_user_printer"><code>add_user_printer</code></h2>
+<pre class="hol4"><code>Parse.add_user_printer : (string * term) -&gt; unit</code></pre>
+<hr />
+<p>Adds a user specified pretty-printer for a specified type.</p>
+<p>The function <code>add_user_printer</code> is used to add a special
+purpose term pretty-printer to the interactive system. The
+pretty-printer is called whenever the term to be printed matches (with
+<code>match_term</code>) the term provided as the second parameter. If
+multiple calls to <code>add_user_printer</code> are made with the same
+string parameter, the older functions are replaced entirely. If multiple
+printers match, the more specific match will be chosen. If two matches
+are equally specific, the match chosen is unspecified.</p>
+<p>The function that performs the printing is not given directly, but is
+instead referred to by name (the first parameter to
+<code>add_user_printer</code>). This name must be linked to the desired
+code with a call to
+<code>term_grammar.userSyntaxFns.register_userPP</code>, which function
+should be called within another ML file (i.e., not the “Script’’ file of
+the theory). The name passed to the <code>register_userPP</code>
+function is then the name that must also be passed to
+<code>add_user_printer</code>. The term argument is the desired
+pattern.</p>
+<p>Alternatively, if the name specified is the empty string
+(<code>""</code>), the behaviour is to ensure that terms matching this
+pattern are not handled by the user-printing machinery. The expectation
+is that a more general pattern has already been registered, but that in
+this specified scenario the general term-printing machinery should be
+used.</p>
+<p>The user-supplied function may choose not to print anything for the
+given term and hand back control to the standard printer by raising the
+exception <code>term_pp_types.UserPP_Failed</code>. All other exceptions
+will propagate to the top-level. If the system printer receives the
+<code>UserPP_Failed</code> exception, it prints out the term using its
+standard algorithm, but will again attempt to call the user function on
+any sub-terms that match the pattern.</p>
+<p>The type <code>userprinter</code> is an abbreviation defined in
+<code>term_grammar</code> to be</p>
+<pre class="hol4"><code>   type userprinter =
+     type_grammar.grammar * term_grammar.grammar -&gt;
+     PPBackend.t -&gt;
+     sysprinter -&gt;
+     term_pp_types.ppstream_funs -&gt;
+     (grav * grav * grav) -&gt; int -&gt;
+     term -&gt; uprinter</code></pre>
+<p>where the type <code>grav</code> (from <code>term_pp_types</code>)
+is</p>
+<pre class="hol4"><code>   datatype grav = Top | RealTop | Prec of (int * string)</code></pre>
+<p>The type <code>uprinter</code> (standing for “unit printer’’) is a
+special monadic printing type based on the <code>smpp</code> module
+(explained further in the example below). The type
+<code>sysprinter</code> is another abbreviation</p>
+<pre class="hol4"><code>   type sysprinter =
+     { gravs : (grav * grav * grav), binderp : bool,
+       depth : int } -&gt; term -&gt; uprinter</code></pre>
+<p>Thus, when the user’s printing function is called, it is passed ten
+parameters, including three “gravity’’ values in a triple, and two
+grammars. The fourth parameter is the system’s own printer. The fifth
+parameter is a record of functions to call for adding a string to the
+output, adding a break, adding new lines, defining some styles for
+printing like the color, etc. The availability of the system’s printer
+allows the user function to use the default printer on sub-terms that it
+is not interested in. The user function must not call the
+<code>sysprinter</code> on the term that it is handed initially as the
+<code>sysprinter</code> will immediately call the user printing function
+all over again. If the user printer wants to give the whole term back to
+the system printer, then it must use the <code>UserPP_Failed</code>
+exception described above.</p>
+<p>Though there are existing functions <code>add_string</code>,
+<code>add_break</code> etc. that can be used to create pretty-printing
+values, users should prefer instead to use the functions that are
+provided in the triple with the <code>sysprinter</code>. This then gives
+them access to functions that can prevent inadvertent symbol merges.</p>
+<p>The <code>grav</code> type is used to let pretty-printers know a
+little about the context in which a term is to be printed out. The
+triple of gravities is given in the order “parent”, “left” and “right”.
+The left and right gravities specify the precedence of any operator that
+might be attempting to “grab” arguments from the left and right. For
+example, the term</p>
+<pre class="hol4"><code>   (p /\ (if q then r else s)) ==&gt; t</code></pre>
+<p>should be pretty-printed as</p>
+<pre class="hol4"><code>   p /\ (if q then r else s) ==&gt; t</code></pre>
+<p>The system figures this out when it comes to print the conditional
+expression because it knows both that the operator to the left has the
+appropriate precedence for conjunction but also that there is an
+operator with implication’s precedence to the right. The issue arises
+because conjunction is tighter than implication in precedence, leading
+the printer to decide that parentheses aren’t necessary around the
+conjunction. Similarly, considered on its own, the conjunction doesn’t
+require parentheses around the conditional expression because there is
+no competition between them for arguments.</p>
+<p>The <code>grav</code> constructors <code>Top</code> and
+<code>RealTop</code> indicate a context analogous to the top of the
+term, where there is no binding competition. The constructor
+<code>RealTop</code> is reserved for situations where the term really is
+the top of the tree; <code>Top</code> is used for analogous situations
+such when the term is enclosed in parentheses. (In the conditional
+expression above, the printing of <code>q</code> will have
+<code>Top</code> gravities to the left and right.)</p>
+<p>The <code>Prec</code> constructor for gravity values takes both a
+number indicating precedence level and a string corresponding to the
+token that has this precedence level. This string parameter is of most
+importance in the parent gravity (the first component of the triple)
+where it can be useful in deciding whether or not to print parentheses
+and whether or not to begin fresh pretty-printing blocks. For example,
+tuples in the logic look better if they have parentheses around the
+topmost instance of the comma-operator, regardless of whether or not
+this is required according to precedence considerations. By examining
+the parent gravity, a printer can determine more about the term’s
+context. (Note that the parent gravity will also be one or other of the
+left and right gravities; but it is not possible to tell which.)</p>
+<p>The integer parameter to both the system printing function and the
+user printing function is the depth of the term. The system printer will
+stop printing a term if the depth ever reaches exactly zero. Each time
+it calls itself recursively, the depth parameter is reduced by one. It
+starts out at the value stored in <code>Globals.max_print_depth</code>.
+Setting the latter to <code>~1</code> will ensure that all of a term is
+always printed.</p>
+<p>The <code>binderp</code> parameter to the system-printer is true when
+the term to be printed should be considered as a binder. This makes a
+difference when the printer comes to print type annotations: annotations
+will occur with variables if the variable is in a binding position, and
+not elsewhere. This logic ensures that a term like <code>\x. x</code>
+prints as <code>\x:'a. x</code>. The first, binding occurrence of the
+variable gets an annotation; subsequent occurrences do not.</p>
+<h3 id="failure">Failure</h3>
+<p>Fails if the string parameter does not correspond to a name used to
+register a function with
+<code>term_grammar.userSyntaxFns.register_userPP</code>. In addition, if
+the function parameter fails to print all terms of the registered type
+in any other way than raising the <code>UserPP_Failed</code> exception,
+then the pretty-printer will also fail.</p>
+<h3 id="example">Example</h3>
+<p>In the examples that follow, the companion
+<code>temp_add_userprinter</code> function is used: this function takes
+a value of type <code>userprinter</code> directly, and so is a more
+direct demonstration of how user-printers can behave. The boilerplate
+required for preserved-across-<code>export_theory</code> functionality
+starts with the external module. For a theory
+<code>fooScript.sml</code>, one might write the file
+<code>fooPP.sml</code>:</p>
+<pre class="hol4"><code>   structure fooPP =
+   struct
+
+     fun term_printer_code ... = ...
+     val _ = term_grammar.userSyntaxFns.register_userPP {
+               name = &quot;foo.term_printer&quot;, code = term_printer_code
+             }
+   end</code></pre>
+<p>where <code>term_printer_code</code> has type
+<code>userprinter</code>. Note that the code for the printer has to be
+written so that it can be compiled before the theory <code>foo</code> is
+in context. In particular, top-level calls to <code>mk_thy_const</code>
+and the like will fail if they attempt to bind constants declared in
+theory <code>foo</code>.</p>
+<p>In <code>fooScript.sml</code>, the following is the idiom
+required:</p>
+<pre class="hol4"><code>   local open fooPP in end;
+   val _ = add_ML_dependency &quot;fooPP&quot;
+   val _ = add_user_printer (&quot;foo.term_printer&quot;, ``term pattern``)</code></pre>
+<p>As discussed, the remaining examples use
+<code>temp_add_user_printer</code>. The first example uses the system
+printer to print sub-terms, and concerns itself only with printing
+conjunctions. Note how the actions that make up the pretty-printer
+(combinations of <code>add_string</code> and <code>add_break</code> are
+combined with the infix <code>&gt;&gt;</code> operator (from the
+<code>smpp</code> module).</p>
+<pre class="hol4"><code>  &gt; fun myprint Gs B sys (ppfns:term_pp_types.ppstream_funs) gravs d t =
+    let
+      open Portable term_pp_types smpp
+      val (str,brk) = (#add_string ppfns, #add_break ppfns);
+      val (l,r) = dest_conj t
+      fun syspr gravs =
+        sys {gravs = gravs, depth = d - 1, binderp = false}
+    in
+      str &quot;CONJ:&quot; &gt;&gt;
+      brk (1,0) &gt;&gt;
+      syspr (Top, Top, Top) l &gt;&gt;
+      brk (1,0) &gt;&gt; str &quot;and then&quot; &gt;&gt; brk(1,0) &gt;&gt;
+      sys (Top, Top, Top) r &gt;&gt;
+      str &quot;ENDCONJ&quot;
+    end handle HOL_ERR _ =&gt; raise term_pp_types.UserPP_Failed;
+  val myprint = fn :
+     &#39;a -&gt; &#39;b -&gt;
+     (grav * grav * grav -&gt; int -&gt; term -&gt;
+       (term_pp_types.printing_info,&#39;c)smpp.t) -&gt;
+     term_pp_types.ppstream_funs -&gt; &#39;d -&gt; int -&gt; term -&gt;
+     (term_pp_types.printing_info,unit)smpp.t
+
+  &gt; temp_add_user_printer (&quot;myprint&quot;, ``p /\ q``, myprint);
+  val it = () : unit
+
+  &gt; ``p ==&gt; q /\ r``;
+  val it = ``p ==&gt; CONJ: q and then r ENDCONJ`` : term</code></pre>
+<p>The variables <code>p</code>, <code>q</code> and <code>r</code> as
+well as the implication are all of boolean type, but are handled by the
+system printer. The user printer handles just the special form of the
+conjunction. Note that this example actually falls within the scope of
+the <code>add_rule</code> functionality.</p>
+<p>The next approach to printing conjunctions is not possible with
+<code>add_rule</code>. This example uses the styling and blocking
+functions to create part of its effect. These functions
+(<code>ustyle</code> and <code>ublock</code> respectively) are
+higher-order functions that take printers as arguments and cause the
+arguments to be printed with a particular governing style
+(<code>ustyle</code>), or indented to reveal block structure
+(<code>ublock</code>).</p>
+<pre class="hol4"><code>  - fun myprint2 Gs B sys (ppfns:term_pp_types.ppstream_funs) (pg,lg,rg) d t =
+    let
+      open Portable term_pp_types PPBackEnd smpp
+      val {add_string,add_break,ublock,ustyle,...} = ppfns
+      val (l,r) = dest_conj t
+      fun delim wrap body =
+        case pg of
+          Prec(_, &quot;CONJ&quot;) =&gt; body
+        | _ =&gt; wrap body
+      fun syspr t =
+        sys {gravs = (Prec(0,&quot;CONJ&quot;), Top, Top), depth = d - 1,
+             binderp = false} t
+    in
+      delim (fn bod =&gt; ublock CONSISTENT 0
+                         (ustyle [Bold] (add_string &quot;CONJ&quot;) &gt;&gt;
+                          add_break (1,2) &gt;&gt;
+                          ublock INCONSISTENT 0 bod &gt;&gt;
+                          add_break (1,0) &gt;&gt;
+                          ustyle [Bold] (add_string &quot;ENDCONJ&quot;)))
+         (syspr l &gt;&gt; add_string &quot;,&quot; &gt;&gt; add_break (1,0) &gt;&gt; syspr r)
+    end handle HOL_ERR _ =&gt; raise term_pp_types.UserPP_Failed;
+
+  - temp_add_user_printer (&quot;myprint2&quot;, ``p /\ q``, myprint2);
+
+  - ``p /\ q /\ r /\ s /\ t /\ u /\ p /\ p /\ p /\ p /\ p /\ p /\
+      p /\ p /\ p /\ p/\ p /\ p /\ q /\ r /\ s /\ t /\ u /\ v /\
+      (w /\ x) /\ (p \/ q) /\ r``;
+
+  &gt; val it =
+      ``CONJ
+          p, q, r, s, t, u, p, p, p, p, p, p, p, p, p, p, p, p, q,
+          r, s, t, u, v, w, x, p \/ q, r
+        ENDCONJ`` : term</code></pre>
+<p>This example also demonstrates using parent gravities to print out a
+big term. The function passed as an argument to delim is only called
+when the parent gravity is not <code>"CONJ"</code>. This ensures that
+the special delimiters only get printed when the first conjunction is
+encountered. Subsequent, internal conjunctions get passed the
+<code>"CONJ"</code> gravity in the calls to <code>sys</code>.</p>
+<p>A better approach (and certainly a more direct one) would probably be
+to call <code>strip_conj</code> and print all of the conjuncts in one
+fell swoop. Additionally, this example demonstrates how easy it is to
+conceal genuine syntactic structure with a pretty-printer. Finally, it
+shows how styles can be used.</p>
+<p>For extending the pretty-printer in ways not possible to encompass
+with the built-in grammar rules for concrete syntax.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Parse.add_rule.html"><code>Parse.add_rule</code></a>, <a
+href="Term.match_term.html"><code>Term.match_term</code></a>, <a
+href="Parse.remove_user_printer.html"><code>Parse.remove_user_printer</code></a></p>
+</body>
+</html>

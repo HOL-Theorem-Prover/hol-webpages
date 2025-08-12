@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure TacticParse</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure TacticParse</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/TacticParse.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature TacticParse =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>type 'a delim = int * int * 'a
+<a name="line5"></a>datatype expr
+<a name="line6"></a>  = EmptyE
+<a name="line7"></a>  | ParenE of expr delim * bool
+<a name="line8"></a>  | TupleE of expr delim list * bool
+<a name="line9"></a>  | ListE of expr delim list * bool
+<a name="line10"></a>  | IdentE of string
+<a name="line11"></a>  | OpaqueE
+<a name="line12"></a>  | InfixE of expr delim * string delim * expr delim
+<a name="line13"></a>  | AppE of expr delim list
+<a name="line14"></a>
+<a name="line15"></a>val getPrec: expr -&gt; int
+<a name="line16"></a>
+<a name="line17"></a>val parseSMLSimple: string -&gt; int * int * expr
+<a name="line18"></a>
+<a name="line19"></a>datatype 'a tac_expr
+<a name="line20"></a>  = Then of 'a tac_expr list
+<a name="line21"></a>  | ThenLT of 'a tac_expr * 'a tac_expr list
+<a name="line22"></a>  | Subgoal of 'a
+<a name="line23"></a>  | First of 'a tac_expr list
+<a name="line24"></a>  | Try of 'a tac_expr
+<a name="line25"></a>  | Repeat of 'a tac_expr
+<a name="line26"></a>  | MapEvery of 'a * 'a tac_expr list
+<a name="line27"></a>  | MapFirst of 'a * 'a tac_expr list
+<a name="line28"></a>  | Rename of 'a
+<a name="line29"></a>  | Opaque of int * 'a
+<a name="line30"></a>
+<a name="line31"></a>  | LThen of 'a tac_expr * 'a tac_expr list
+<a name="line32"></a>  | LThenLT of 'a tac_expr list
+<a name="line33"></a>  | LThen1 of 'a tac_expr
+<a name="line34"></a>  | LTacsToLT of 'a tac_expr
+<a name="line35"></a>  | LNullOk of 'a tac_expr
+<a name="line36"></a>  | LFirst of 'a tac_expr list
+<a name="line37"></a>  | LFirstLT of 'a tac_expr
+<a name="line38"></a>  | LSelectGoal of 'a
+<a name="line39"></a>  | LSelectGoals of 'a
+<a name="line40"></a>  | LAllGoals of 'a tac_expr
+<a name="line41"></a>  | LNthGoal of 'a tac_expr * 'a
+<a name="line42"></a>  | LLastGoal of 'a tac_expr
+<a name="line43"></a>  | LHeadGoal of 'a tac_expr
+<a name="line44"></a>  | LSplit of 'a * 'a tac_expr * 'a tac_expr
+<a name="line45"></a>  | LReverse
+<a name="line46"></a>  | LTry of 'a tac_expr
+<a name="line47"></a>  | LRepeat of 'a tac_expr
+<a name="line48"></a>  | LSelectThen of 'a tac_expr * 'a tac_expr
+<a name="line49"></a>  | LOpaque of int * 'a
+<a name="line50"></a>
+<a name="line51"></a>  | List of 'a * 'a tac_expr list
+<a name="line52"></a>  | Group of bool * 'a * 'a tac_expr
+<a name="line53"></a>  | RepairEmpty of bool * 'a * string
+<a name="line54"></a>  | RepairGroup of 'a * string * 'a tac_expr * string
+<a name="line55"></a>  | OOpaque of int * 'a
+<a name="line56"></a>
+<a name="line57"></a>val isTac: 'a tac_expr -&gt; bool
+<a name="line58"></a>val topSpan: 'a tac_expr -&gt; 'a option
+<a name="line59"></a>
+<a name="line60"></a>val parseTacticBlock: string -&gt; (int * int) tac_expr
+<a name="line61"></a>
+<a name="line62"></a>val mapTacExpr:
+<a name="line63"></a>  { start: bool -&gt; 'a -&gt; 'b, stop: bool -&gt; 'b -&gt; 'c,
+<a name="line64"></a>    repair: 'a -&gt; string -&gt; unit } -&gt;
+<a name="line65"></a>  'a tac_expr -&gt; 'c tac_expr
+<a name="line66"></a>
+<a name="line67"></a>val printTacsAsE: string -&gt; (int * int) tac_expr list -&gt; string
+<a name="line68"></a>
+<a name="line69"></a>datatype tac_frag_open
+<a name="line70"></a>  = FOpen
+<a name="line71"></a>  | FOpenThen1
+<a name="line72"></a>  | FOpenFirst
+<a name="line73"></a>  | FOpenRepeat
+<a name="line74"></a>  | FOpenTacsToLT
+<a name="line75"></a>  | FOpenNullOk
+<a name="line76"></a>  | FOpenNthGoal of int * int
+<a name="line77"></a>  | FOpenLastGoal
+<a name="line78"></a>  | FOpenHeadGoal
+<a name="line79"></a>  | FOpenSplit of int * int
+<a name="line80"></a>  | FOpenSelect
+<a name="line81"></a>  | FOpenFirstLT
+<a name="line82"></a>
+<a name="line83"></a>datatype tac_frag_mid
+<a name="line84"></a>  = FNextFirst
+<a name="line85"></a>  | FNextTacsToLT
+<a name="line86"></a>  | FNextSplit
+<a name="line87"></a>  | FNextSelect
+<a name="line88"></a>
+<a name="line89"></a>datatype tac_frag_close
+<a name="line90"></a>  = FClose
+<a name="line91"></a>  | FCloseFirst
+<a name="line92"></a>  | FCloseRepeat
+<a name="line93"></a>  | FCloseFirstLT
+<a name="line94"></a>
+<a name="line95"></a>datatype tac_frag
+<a name="line96"></a>  = FFOpen of tac_frag_open
+<a name="line97"></a>  | FFMid of tac_frag_mid
+<a name="line98"></a>  | FFClose of tac_frag_close
+<a name="line99"></a>  | FAtom of (int * int) tac_expr
+<a name="line100"></a>  | FGroup of (int * int) * tac_frag list
+<a name="line101"></a>  | FBracket of
+<a name="line102"></a>    tac_frag_open * tac_frag list * tac_frag_close * (int * int) tac_expr
+<a name="line103"></a>  | FMBracket of
+<a name="line104"></a>    tac_frag_open * tac_frag_mid * tac_frag_close *
+<a name="line105"></a>    tac_frag list list * (int * int) tac_expr
+<a name="line106"></a>
+<a name="line107"></a>val linearize: ((int * int) tac_expr -&gt; bool) -&gt;
+<a name="line108"></a>  (int * int) tac_expr -&gt; tac_frag list
+<a name="line109"></a>
+<a name="line110"></a>val unlinearize: tac_frag list -&gt; (int * int) tac_expr
+<a name="line111"></a>
+<a name="line112"></a>val printFragsAsE: string -&gt; tac_frag list list -&gt; string
+<a name="line113"></a>
+<a name="line114"></a>val sliceTacticBlock:
+<a name="line115"></a>  int -&gt; int -&gt; bool -&gt; int * int -&gt; (int * int) tac_expr -&gt; tac_frag list list
+<a name="line116"></a>
+<a name="line117"></a>end
+<a name="line118"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/TacticParse.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

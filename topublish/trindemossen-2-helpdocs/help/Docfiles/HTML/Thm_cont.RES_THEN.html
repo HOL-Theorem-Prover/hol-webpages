@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Thm_cont.RES_THEN</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="res_then"><code>RES_THEN</code></h2>
+<pre class="hol4"><code>Thm_cont.RES_THEN : (thm_tactic -&gt; tactic)</code></pre>
+<hr />
+<p>Resolves all implicative assumptions against the rest.</p>
+<p>Like the basic resolution function <code>IMP_RES_THEN</code>, the
+resolution tactic <code>RES_THEN</code> performs a single-step
+resolution of an implication and the assumptions of a goal.
+<code>RES_THEN</code> differs from <code>IMP_RES_THEN</code> only in
+that the implications used for resolution are taken from the assumptions
+of the goal itself, rather than supplied as an argument.</p>
+<p>When applied to a goal <code>A ?- g</code>, the tactic
+<code>RES_THEN ttac</code> uses <code>RES_CANON</code> to obtain a set
+of implicative theorems in canonical form from the assumptions
+<code>A</code> of the goal. Each of the resulting theorems (if there are
+any) will have the form:</p>
+<pre class="hol4"><code>   ai |- !x1...xn. ui ==&gt; vi</code></pre>
+<p>where <code>ai</code> is one of the assumptions of the goal. Having
+obtained these implications, <code>RES_THEN</code> then attempts to
+match each antecedent <code>ui</code> to each assumption
+<code>aj |- aj</code> in the assumptions <code>A</code>. If the
+antecedent <code>ui</code> of any implication matches the conclusion
+<code>aj</code> of any assumption, then an instance of the theorem
+<code>ai, aj |- vi</code>, called a ‘resolvent’, is obtained by
+specialization of the variables <code>x1</code>, …, <code>xn</code> and
+type instantiation, followed by an application of modus ponens. There
+may be more than one canonical implication derivable from the
+assumptions of the goal and each such implication is tried against every
+assumption, so there may be several resolvents (or, indeed, none).</p>
+<p>Tactics are produced using the theorem-tactic <code>ttac</code> from
+all these resolvents (failures of <code>ttac</code> at this stage are
+filtered out) and these tactics are then applied in an unspecified
+sequence to the goal. That is,</p>
+<pre class="hol4"><code>   RES_THEN ttac (A ?- g)</code></pre>
+<p>has the effect of:</p>
+<pre class="hol4"><code>   MAP_EVERY (mapfilter ttac [... ; (ai,aj |- vi) ; ...]) (A ?- g)</code></pre>
+<p>where the theorems <code>ai,aj |- vi</code> are all the consequences
+that can be drawn by a (single) matching modus-ponens inference from the
+assumptions <code>A</code> and the implications derived using
+<code>RES_CANON</code> from the assumptions. The sequence in which the
+theorems <code>ai,aj |- vi</code> are generated and the corresponding
+tactics applied is unspecified.</p>
+<h3 id="failure">Failure</h3>
+<p>Evaluating <code>RES_THEN ttac th</code> fails with
+‘<code>no implication</code>’ if no implication(s) can be derived from
+the assumptions of the goal by the transformation process described
+under the entry for <code>RES_CANON</code>. Evaluating
+<code>RES_THEN ttac (A ?- g)</code> fails with
+‘<code>no resolvents</code>’ if no assumption of the goal
+<code>A ?- g</code> can be resolved with the derived implication or
+implications. Evaluation also fails, with ‘<code>no tactics</code>’, if
+there are resolvents, but for every resolvent <code>ai,aj |- vi</code>
+evaluating the application <code>ttac (ai,aj |- vi)</code> fails—that
+is, if for every resolvent <code>ttac</code> fails to produce a tactic.
+Finally, failure is propagated if any of the tactics that are produced
+from the resolvents by <code>ttac</code> fails when applied in sequence
+to the goal.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Tactic.IMP_RES_TAC.html"><code>Tactic.IMP_RES_TAC</code></a>, <a
+href="Thm_cont.IMP_RES_THEN.html"><code>Thm_cont.IMP_RES_THEN</code></a>,
+<a href="Drule.MATCH_MP.html"><code>Drule.MATCH_MP</code></a>, <a
+href="Drule.RES_CANON.html"><code>Drule.RES_CANON</code></a>, <a
+href="Tactic.RES_TAC.html"><code>Tactic.RES_TAC</code></a></p>
+</body>
+</html>

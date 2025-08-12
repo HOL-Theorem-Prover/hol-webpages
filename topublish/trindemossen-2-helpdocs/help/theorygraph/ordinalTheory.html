@@ -1,0 +1,1769 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: ordinal</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "ordinal"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "topologyTheory.html"><span class="strong">topology</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">ordinal</span>
+    <td>
+    1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">allOrds</span>
+    <td>
+    :α ordinal wellorder
+    <tr><td>
+    <span class="strong">cardSUC</span>
+    <td>
+    :(α -> bool) -> (α + num -> bool) ordinal -> bool
+    <tr><td>
+    <span class="strong">csuc</span>
+    <td>
+    :α ordinal -> (α + num -> bool) ordinal
+    <tr><td>
+    <span class="strong">dclose</span>
+    <td>
+    :(α ordinal -> bool) -> α ordinal -> bool
+    <tr><td>
+    <span class="strong">downward_closed</span>
+    <td>
+    :(α ordinal -> bool) -> bool
+    <tr><td> <span class="strong">epsilon0</span> <td> :α ordinal
+    <tr><td>
+    <span class="strong">eval_poly</span>
+    <td>
+    :α ordinal -> (α ordinal # α ordinal) list -> α ordinal
+    <tr><td> <span class="strong">fromNat</span> <td> :num -> α ordinal
+    <tr><td>
+    <span class="strong">is_polyform</span>
+    <td>
+    :α ordinal -> (α ordinal # β ordinal) list -> bool
+    <tr><td>
+    <span class="strong">ival</span>
+    <td>
+    :α ordinal -> α ordinal -> α ordinal -> bool
+    <tr><td>
+    <span class="strong">oleast</span>
+    <td>
+    :(α ordinal -> bool) -> α ordinal
+    <tr><td>
+    <span class="strong">omax</span>
+    <td>
+    :(α ordinal -> bool) -> α ordinal option
+    <tr><td> <span class="strong">omega</span> <td> :α ordinal
+    <tr><td>
+    <span class="strong">omega1</span>
+    <td>
+    :(α + num -> bool) ordinal
+    <tr><td>
+    <span class="strong">ordADD</span>
+    <td>
+    :α ordinal -> α ordinal -> α ordinal
+    <tr><td>
+    <span class="strong">ordDIV</span>
+    <td>
+    :α ordinal -> α ordinal -> α ordinal
+    <tr><td>
+    <span class="strong">ordDIVMOD</span>
+    <td>
+    :α ordinal -> α ordinal -> α ordinal # α ordinal
+    <tr><td>
+    <span class="strong">ordEXP</span>
+    <td>
+    :α ordinal -> α ordinal -> α ordinal
+    <tr><td>
+    <span class="strong">ordMOD</span>
+    <td>
+    :α ordinal -> α ordinal -> α ordinal
+    <tr><td>
+    <span class="strong">ordMULT</span>
+    <td>
+    :α ordinal -> α ordinal -> α ordinal
+    <tr><td> <span class="strong">ordSUC</span> <td> :α ordinal -> α ordinal
+    <tr><td>
+    <span class="strong">ordinal_ABS</span>
+    <td>
+    :(num + α) wellorder -> α ordinal
+    <tr><td>
+    <span class="strong">ordinal_ABS_CLASS</span>
+    <td>
+    :((num + α) wellorder -> bool) -> α ordinal
+    <tr><td>
+    <span class="strong">ordinal_REP</span>
+    <td>
+    :α ordinal -> (num + α) wellorder
+    <tr><td>
+    <span class="strong">ordinal_REP_CLASS</span>
+    <td>
+    :α ordinal -> (num + α) wellorder -> bool
+    <tr><td>
+    <span class="strong">ordlt</span>
+    <td>
+    :α ordinal -> α ordinal -> bool
+    <tr><td> <span class="strong">ordlt_top</span> <td> :α ordinal topology
+    <tr><td>
+    <span class="strong">polyform</span>
+    <td>
+    :α ordinal -> α ordinal -> (α ordinal # α ordinal) list
+    <tr><td>
+    <span class="strong">preds</span>
+    <td>
+    :α ordinal -> α ordinal -> bool
+    <tr><td>
+    <span class="strong">sup</span>
+    <td>
+    :(α ordinal -> bool) -> α ordinal
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">allOrds_def</span>
+<DD>
+<pre>
+⊢ allOrds = mkWO {(x,y) | x = y ∨ x < y}
+</pre>
+
+<DT><span class="strong">cardSUC_def</span>
+<DD>
+<pre>
+⊢ ∀s. cardSUC s = preds (csuc (oleast a. preds a =~ s))
+</pre>
+
+<DT><span class="strong">csuc_def</span>
+<DD>
+<pre>
+⊢ ∀a. csuc a = oleast b. preds a ≺ preds b
+</pre>
+
+<DT><span class="strong">dclose_def</span>
+<DD>
+<pre>
+⊢ ∀s. dclose s = {x | ∃y. y ∈ s ∧ x < y}
+</pre>
+
+<DT><span class="strong">downward_closed_def</span>
+<DD>
+<pre>
+⊢ ∀s. downward_closed s ⇔ ∀a b. a ∈ s ∧ b < a ⇒ b ∈ s
+</pre>
+
+<DT><span class="strong">epsilon0_def</span>
+<DD>
+<pre>
+⊢ ε₀ = oleast x. ω ** x = x
+</pre>
+
+<DT><span class="strong">fromNat_def</span>
+<DD>
+<pre>
+⊢ 0 = (oleast a. T) ∧ ∀n. &SUC n = (&n)⁺
+</pre>
+
+<DT><span class="strong">ival_def</span>
+<DD>
+<pre>
+⊢ ∀a b. ival a b = {e | a < e ∧ e < b}
+</pre>
+
+<DT><span class="strong">oleast_def</span>
+<DD>
+<pre>
+⊢ ∀P. $oleast P = @x. P x ∧ ∀y. y < x ⇒ ¬P y
+</pre>
+
+<DT><span class="strong">omax_def</span>
+<DD>
+<pre>
+⊢ ∀s. omax s = some a. maximal_elements s {(x,y) | x ≤ y} = {a}
+</pre>
+
+<DT><span class="strong">omega1_def</span>
+<DD>
+<pre>
+⊢ ω₁ = sup {a | countableOrd a}
+</pre>
+
+<DT><span class="strong">omega_def</span>
+<DD>
+<pre>
+⊢ ω = sup {(&i) | T}
+</pre>
+
+<DT><span class="strong">ordADD_def</span>
+<DD>
+<pre>
+⊢ ∀b. b + 0 = b ∧ (∀a. b + a⁺ = (b + a)⁺) ∧
+      ∀a. 0 < a ∧ islimit a ⇒ b + a = sup (IMAGE ($+ b) (preds a))
+</pre>
+
+<DT><span class="strong">ordDIV</span>
+<DD>
+<pre>
+⊢ ∀a b. a / b = FST (ordDIVMOD a b)
+</pre>
+
+<DT><span class="strong">ordDIVMOD</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    0 < b ⇒
+    a = b * FST (ordDIVMOD a b) + SND (ordDIVMOD a b) ∧
+    SND (ordDIVMOD a b) < b
+</pre>
+
+<DT><span class="strong">ordEXP_def</span>
+<DD>
+<pre>
+⊢ (∀a. a ** 0 = 1) ∧ (∀a a'. a ** a'⁺ = a ** a' * a) ∧
+  ∀a a'. 0 < a' ∧ islimit a' ⇒ a ** a' = sup (IMAGE ($** a) (preds a'))
+</pre>
+
+<DT><span class="strong">ordMOD</span>
+<DD>
+<pre>
+⊢ ∀a b. a % b = SND (ordDIVMOD a b)
+</pre>
+
+<DT><span class="strong">ordMULT_def</span>
+<DD>
+<pre>
+⊢ ∀b. b * 0 = 0 ∧ (∀a. b * a⁺ = b * a + b) ∧
+      ∀a. 0 < a ∧ islimit a ⇒ b * a = sup (IMAGE ($* b) (preds a))
+</pre>
+
+<DT><span class="strong">ordSUC_def</span>
+<DD>
+<pre>
+⊢ ∀a. a⁺ = oleast b. a < b
+</pre>
+
+<DT><span class="strong">ordinal_ABS_def</span>
+<DD>
+<pre>
+⊢ ∀r. mkOrdinal r = ordinal_ABS_CLASS (orderiso r)
+</pre>
+
+<DT><span class="strong">ordinal_REP_def</span>
+<DD>
+<pre>
+⊢ ∀a. ordinal_REP a = $@ (ordinal_REP_CLASS a)
+</pre>
+
+<DT><span class="strong">ordinal_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION (λc. ∃r. orderiso r r ∧ c = orderiso r) rep
+</pre>
+
+<DT><span class="strong">ordinal_bijections</span>
+<DD>
+<pre>
+⊢ (∀a. ordinal_ABS_CLASS (ordinal_REP_CLASS a) = a) ∧
+  ∀r. (λc. ∃r. orderiso r r ∧ c = orderiso r) r ⇔
+      ordinal_REP_CLASS (ordinal_ABS_CLASS r) = r
+</pre>
+
+<DT><span class="strong">ordlt_def</span>
+<DD>
+<pre>
+⊢ ∀T1 T2. T1 < T2 ⇔ orderlt (ordinal_REP T1) (ordinal_REP T2)
+</pre>
+
+<DT><span class="strong">ordlt_top_def</span>
+<DD>
+<pre>
+⊢ ordlt_top =
+  topology
+    {s |
+     (∀e. e ∈ s ⇒
+          (∃a b. e ∈ ival a b ∧ ival a b ⊆ s) ∨ ∃b. e < b ∧ ∀d. d < b ⇒ d ∈ s)}
+</pre>
+
+<DT><span class="strong">polyform_def</span>
+<DD>
+<pre>
+⊢ ∀a b. 1 < a ⇒ is_polyform a (polyform a b) ∧ b = eval_poly a (polyform a b)
+</pre>
+
+<DT><span class="strong">preds_def</span>
+<DD>
+<pre>
+⊢ ∀w. preds w = {w0 | w0 < w}
+</pre>
+
+<DT><span class="strong">sup_def</span>
+<DD>
+<pre>
+⊢ ∀ordset. sup ordset = oleast a. a ∉ BIGUNION (IMAGE preds ordset)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ADD1R</span>
+<DD>
+<pre>
+⊢ a + 1 = a⁺
+</pre>
+
+<DT><span class="strong">CARD_FINITE_preds</span>
+<DD>
+<pre>
+⊢ CARD (preds (&n)) = CARD (preds (&n))
+</pre>
+
+<DT><span class="strong">CNF_nat</span>
+<DD>
+<pre>
+⊢ CNF (&n) = if n = 0 then [] else [(&n,0)]
+</pre>
+
+<DT><span class="strong">CNF_thm</span>
+<DD>
+<pre>
+⊢ ∀b. is_polyform ω (CNF b) ∧ b = eval_poly ω (CNF b)
+</pre>
+
+<DT><span class="strong">FINITE_cardSUC</span>
+<DD>
+<pre>
+⊢ FINITE (cardSUC A) ⇔ FINITE A
+</pre>
+
+<DT><span class="strong">FINITE_omax_IS_SOME</span>
+<DD>
+<pre>
+⊢ s ≠ ∅ ∧ FINITE s ⇒ ∃a. omax s = SOME a
+</pre>
+
+<DT><span class="strong">FINITE_preds</span>
+<DD>
+<pre>
+⊢ FINITE (preds a) ⇔ ∃n. a = &n
+</pre>
+
+<DT><span class="strong">IFF_ZERO_lt</span>
+<DD>
+<pre>
+⊢ (x ≠ 0 ⇔ 0 < x) ∧ (1 ≤ x ⇔ 0 < x)
+</pre>
+
+<DT><span class="strong">IMAGE_EQ_SING</span>
+<DD>
+<pre>
+⊢ IMAGE f s = {x} ⇔ (∃y. y ∈ s) ∧ ∀y. y ∈ s ⇒ f y = x
+</pre>
+
+<DT><span class="strong">INFINITE_eqpreds</span>
+<DD>
+<pre>
+⊢ ω ≤ x ⇒ INFINITE {y | preds y =~ preds x}
+</pre>
+
+<DT><span class="strong">IN_preds</span>
+<DD>
+<pre>
+⊢ x ∈ preds w ⇔ x < w
+</pre>
+
+<DT><span class="strong">ORD_ONE</span>
+<DD>
+<pre>
+⊢ 0⁺ = 1
+</pre>
+
+<DT><span class="strong">Unum_cardle_ucinf</span>
+<DD>
+<pre>
+⊢ 𝕌(:num) ≼ 𝕌(:num + (α + num -> bool))
+</pre>
+
+<DT><span class="strong">Unum_cardlt_ucinf</span>
+<DD>
+<pre>
+⊢ 𝕌(:num) ≺ 𝕌(:num + (α + num -> bool))
+</pre>
+
+<DT><span class="strong">Unum_cle_Uinf</span>
+<DD>
+<pre>
+⊢ 𝕌(:num) ≼ 𝕌(:num + α)
+</pre>
+
+<DT><span class="strong">WIN_allOrds</span>
+<DD>
+<pre>
+⊢ (x,y) WIN allOrds ⇔ x < y
+</pre>
+
+<DT><span class="strong">ZERO_LT_csuc</span>
+<DD>
+<pre>
+⊢ 0o < csuc a ∧ csuc a ≠ 0o
+</pre>
+
+<DT><span class="strong">ZERO_lt_ordEXP</span>
+<DD>
+<pre>
+⊢ 0 < a ** x ⇔ 0 < a ∨ islimit x
+</pre>
+
+<DT><span class="strong">ZERO_lt_ordEXP_I</span>
+<DD>
+<pre>
+⊢ ∀a x. 0 < a ⇒ 0 < a ** x
+</pre>
+
+<DT><span class="strong">addL_fixpoint_iff</span>
+<DD>
+<pre>
+⊢ a + b = b ⇔ a * ω ≤ b
+</pre>
+
+<DT><span class="strong">add_nat_islimit</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ (islimit (a + &n) ⇔ F)
+</pre>
+
+<DT><span class="strong">add_omega_islimit</span>
+<DD>
+<pre>
+⊢ islimit (a + ω)
+</pre>
+
+<DT><span class="strong">bumpUNIV_cardlt</span>
+<DD>
+<pre>
+⊢ 𝕌(:num + α) ≺ 𝕌(:num + (α + num -> bool))
+</pre>
+
+<DT><span class="strong">cardSUC_EQ0</span>
+<DD>
+<pre>
+⊢ cardSUC A ≠ ∅
+</pre>
+
+<DT><span class="strong">cardeq_ordinals_exist</span>
+<DD>
+<pre>
+⊢ s ≼ 𝕌(:num + α) ⇒ ∃a. preds a =~ s
+</pre>
+
+<DT><span class="strong">cardinality_bump_exists</span>
+<DD>
+<pre>
+⊢ ∀x. ∃y. preds x ≺ preds y
+</pre>
+
+<DT><span class="strong">cardle_preds_EQ_cardeq_preds</span>
+<DD>
+<pre>
+⊢ ω ≤ x ⇒ {y | preds y ≼ preds x} =~ {y | preds y =~ preds x}
+</pre>
+
+<DT><span class="strong">cardleq_preds_csuc</span>
+<DD>
+<pre>
+⊢ preds a ≼ preds b ⇒ preds (csuc a) ≼ preds (csuc b)
+</pre>
+
+<DT><span class="strong">cardlt_eqpreds</span>
+<DD>
+<pre>
+⊢ ω ≤ x ⇒ preds x ≺ {y | preds y =~ preds x}
+</pre>
+
+<DT><span class="strong">cardlt_lepreds</span>
+<DD>
+<pre>
+⊢ preds x ≺ {y | preds y ≼ preds x}
+</pre>
+
+<DT><span class="strong">cardlt_preds</span>
+<DD>
+<pre>
+⊢ preds x ≺ preds y ⇒ x < y
+</pre>
+
+<DT><span class="strong">closed_sing</span>
+<DD>
+<pre>
+⊢ closed_in ordlt_top {x}
+</pre>
+
+<DT><span class="strong">cord_countable_preds</span>
+<DD>
+<pre>
+⊢ countableOrd ord
+</pre>
+
+<DT><span class="strong">countableOrds_dclosed</span>
+<DD>
+<pre>
+⊢ a < b ∧ countableOrd b ⇒ countableOrd a
+</pre>
+
+<DT><span class="strong">countableOrds_uncountable</span>
+<DD>
+<pre>
+⊢ uncountable {a | countableOrd a}
+</pre>
+
+<DT><span class="strong">csuc_EQ_N</span>
+<DD>
+<pre>
+⊢ csuc a = &n ⇔ ∃m. n = SUC m ∧ a = &m
+</pre>
+
+<DT><span class="strong">csuc_is_nonzero_limit</span>
+<DD>
+<pre>
+⊢ ω ≤ a ⇒ islimit (csuc a) ∧ 0o < csuc a
+</pre>
+
+<DT><span class="strong">csuc_nat</span>
+<DD>
+<pre>
+⊢ csuc (&n) = (&n)⁺
+</pre>
+
+<DT><span class="strong">csuc_omega</span>
+<DD>
+<pre>
+⊢ csuc ω = ω₁
+</pre>
+
+<DT><span class="strong">csup_lesup</span>
+<DD>
+<pre>
+⊢ countable s ⇒ ∀d. d ∈ s ⇒ d ≤ sup s
+</pre>
+
+<DT><span class="strong">csup_suple</span>
+<DD>
+<pre>
+⊢ countable s ⇒ (sup s ≤ b ⇔ ∀d. d ∈ s ⇒ d ≤ b)
+</pre>
+
+<DT><span class="strong">csup_thm</span>
+<DD>
+<pre>
+⊢ countable s ⇒ ∀b. b < sup s ⇔ ∃d. d ∈ s ∧ b < d
+</pre>
+
+<DT><span class="strong">cx_lt_x</span>
+<DD>
+<pre>
+⊢ x * c < x ⇔ 0 < x ∧ c = 0
+</pre>
+
+<DT><span class="strong">dclose_BIGUNION</span>
+<DD>
+<pre>
+⊢ dclose s = BIGUNION (IMAGE preds s)
+</pre>
+
+<DT><span class="strong">dclose_cardleq_univinf</span>
+<DD>
+<pre>
+⊢ s ≼ 𝕌(:num + α) ⇒ dclose s ≼ 𝕌(:num + α)
+</pre>
+
+<DT><span class="strong">elsOf_allOrds</span>
+<DD>
+<pre>
+⊢ elsOf allOrds = 𝕌(:α ordinal)
+</pre>
+
+<DT><span class="strong">epsilon0_fixpoint</span>
+<DD>
+<pre>
+⊢ ω ** ε₀ = ε₀
+</pre>
+
+<DT><span class="strong">epsilon0_least_fixpoint</span>
+<DD>
+<pre>
+⊢ ∀a. a < ε₀ ⇒ a < ω ** a ∧ ω ** a < ε₀
+</pre>
+
+<DT><span class="strong">eval_poly_def</span>
+<DD>
+<pre>
+⊢ (∀a. eval_poly a [] = 0) ∧
+  ∀t e c a. eval_poly a ((c,e)::t) = a ** e * c + eval_poly a t
+</pre>
+
+<DT><span class="strong">eval_poly_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a. P a []) ∧ (∀a c e t. P a t ⇒ P a ((c,e)::t)) ⇒ ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">expbound_add</span>
+<DD>
+<pre>
+⊢ ∀a x y. x < ω ** a ∧ y < ω ** a ⇒ x + y < ω ** a
+</pre>
+
+<DT><span class="strong">fixpoints_exist</span>
+<DD>
+<pre>
+⊢ (∀s. s ≠ ∅ ∧ s ≼ 𝕌(:num + α) ⇒ f (sup s) = sup (IMAGE f s)) ∧ (∀x. x ≤ f x) ⇒
+  ∀a. ∃b. a ≤ b ∧ f b = b
+</pre>
+
+<DT><span class="strong">fromNat_11</span>
+<DD>
+<pre>
+⊢ ∀x y. &x = &y ⇔ x = y
+</pre>
+
+<DT><span class="strong">fromNat_SUC</span>
+<DD>
+<pre>
+⊢ ∀n. &SUC n = (&n)⁺
+</pre>
+
+<DT><span class="strong">fromNat_compute</span>
+<DD>
+<pre>
+⊢ 0 = (oleast a. T) ∧ (∀n. & <..num comp'n..> = (&(<..num comp'n..> − 1))⁺) ∧
+  ∀n. & <..num comp'n..> = (& <..num comp'n..> )⁺
+</pre>
+
+<DT><span class="strong">fromNat_eq_omega</span>
+<DD>
+<pre>
+⊢ ∀n. &n ≠ ω
+</pre>
+
+<DT><span class="strong">fromNat_lt_epsilon0</span>
+<DD>
+<pre>
+⊢ &n < ε₀
+</pre>
+
+<DT><span class="strong">fromNat_lt_omega</span>
+<DD>
+<pre>
+⊢ ∀n. &n < ω
+</pre>
+
+<DT><span class="strong">fromNat_ordlt</span>
+<DD>
+<pre>
+⊢ &n < &m ⇔ n < m
+</pre>
+
+<DT><span class="strong">generic_continuity</span>
+<DD>
+<pre>
+⊢ (∀a. 0 < a ∧ islimit a ⇒ f a = sup (IMAGE f (preds a))) ∧
+  (∀x y. x ≤ y ⇒ f x ≤ f y) ⇒
+  ∀s. s ≼ 𝕌(:num + α) ∧ s ≠ ∅ ⇒ f (sup s) = sup (IMAGE f s)
+</pre>
+
+<DT><span class="strong">is_polyform_CONS_E</span>
+<DD>
+<pre>
+⊢ is_polyform a ((c,e)::t) ⇒ 0 < c ∧ c < a ∧ is_polyform a t
+</pre>
+
+<DT><span class="strong">is_polyform_ELthm</span>
+<DD>
+<pre>
+⊢ is_polyform a ces ⇔
+  (∀i j. i < j ∧ j < LENGTH ces ⇒ SND (EL j ces) < SND (EL i ces)) ∧
+  ∀c e. MEM (c,e) ces ⇒ 0 < c ∧ c < a
+</pre>
+
+<DT><span class="strong">is_polyform_def</span>
+<DD>
+<pre>
+⊢ (∀a. is_polyform a [] ⇔ T) ∧
+  (∀e c a. is_polyform a [(c,e)] ⇔ 0 < c ∧ c < a) ∧
+  ∀t e2 e1 c2 c1 a.
+    is_polyform a ((c1,e1)::(c2,e2)::t) ⇔
+    0 < c1 ∧ c1 < a ∧ e2 < e1 ∧ is_polyform a ((c2,e2)::t)
+</pre>
+
+<DT><span class="strong">is_polyform_head_dominates_tail</span>
+<DD>
+<pre>
+⊢ 1 < a ∧ is_polyform a ((c,e)::t) ⇒ eval_poly a t < a ** e
+</pre>
+
+<DT><span class="strong">is_polyform_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a. P a []) ∧ (∀a c e. P a [(c,e)]) ∧
+      (∀a c1 e1 c2 e2 t. P a ((c2,e2)::t) ⇒ P a ((c1,e1)::(c2,e2)::t)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">islimit_0</span>
+<DD>
+<pre>
+⊢ islimit 0
+</pre>
+
+<DT><span class="strong">islimit_SUC</span>
+<DD>
+<pre>
+⊢ islimit x⁺ ⇔ F
+</pre>
+
+<DT><span class="strong">islimit_SUC_lt</span>
+<DD>
+<pre>
+⊢ islimit b ∧ a < b ⇒ a⁺ < b
+</pre>
+
+<DT><span class="strong">islimit_fromNat</span>
+<DD>
+<pre>
+⊢ islimit (&x) ⇔ x = 0
+</pre>
+
+<DT><span class="strong">islimit_mul_R</span>
+<DD>
+<pre>
+⊢ ∀a. islimit a ⇒ islimit (b * a)
+</pre>
+
+<DT><span class="strong">le_cardSUC</span>
+<DD>
+<pre>
+⊢ A ≼ cardSUC A
+</pre>
+
+<DT><span class="strong">leqLEFT_CANCEL</span>
+<DD>
+<pre>
+⊢ ∀x a. x ≤ a + x
+</pre>
+
+<DT><span class="strong">limpt_islimit</span>
+<DD>
+<pre>
+⊢ limpt ordlt_top a (preds a) ⇔ islimit a ∧ a ≠ 0
+</pre>
+
+<DT><span class="strong">lt_cardSUC</span>
+<DD>
+<pre>
+⊢ A ≺ cardSUC A
+</pre>
+
+<DT><span class="strong">lt_csuc</span>
+<DD>
+<pre>
+⊢ x < csuc y ⇔ preds x ≼ preds y
+</pre>
+
+<DT><span class="strong">lt_omega</span>
+<DD>
+<pre>
+⊢ ∀a. a < ω ⇔ ∃m. a = &m
+</pre>
+
+<DT><span class="strong">lt_suppreds</span>
+<DD>
+<pre>
+⊢ ∀b. b < sup (preds a) ⇔ ∃d. d < a ∧ b < d
+</pre>
+
+<DT><span class="strong">mul_omega_islimit</span>
+<DD>
+<pre>
+⊢ islimit (ω * a)
+</pre>
+
+<DT><span class="strong">no_maximal_ordinal</span>
+<DD>
+<pre>
+⊢ ∀a. ∃b. a < b
+</pre>
+
+<DT><span class="strong">oleast_intro</span>
+<DD>
+<pre>
+⊢ ∀Q P. (∃a. P a) ∧ (∀a. (∀b. b < a ⇒ ¬P b) ∧ P a ⇒ Q a) ⇒ Q ($oleast P)
+</pre>
+
+<DT><span class="strong">olog_correct</span>
+<DD>
+<pre>
+⊢ 0 < x ⇒ ω ** olog x ≤ x ∧ ∀a. olog x < a ⇒ x < ω ** a
+</pre>
+
+<DT><span class="strong">omax_EMPTY</span>
+<DD>
+<pre>
+⊢ omax ∅ = NONE
+</pre>
+
+<DT><span class="strong">omax_INSERT</span>
+<DD>
+<pre>
+⊢ omax (x INSERT y) = if ∀e. e ∈ y ⇒ e ≤ x then SOME x else omax y
+</pre>
+
+<DT><span class="strong">omax_NONE</span>
+<DD>
+<pre>
+⊢ omax s = NONE ⇔ ∀a. a ∈ s ⇒ ∃b. b ∈ s ∧ a < b
+</pre>
+
+<DT><span class="strong">omax_SOME</span>
+<DD>
+<pre>
+⊢ omax s = SOME a ⇔ a ∈ s ∧ ∀b. b ∈ s ⇒ b ≤ a
+</pre>
+
+<DT><span class="strong">omax_preds_SUC</span>
+<DD>
+<pre>
+⊢ omax (preds a⁺) = SOME a
+</pre>
+
+<DT><span class="strong">omax_preds_omega</span>
+<DD>
+<pre>
+⊢ islimit ω
+</pre>
+
+<DT><span class="strong">omax_sup</span>
+<DD>
+<pre>
+⊢ omax s = SOME a ⇒ sup s = a
+</pre>
+
+<DT><span class="strong">omega1_not_countable</span>
+<DD>
+<pre>
+⊢ uncountable (preds ω₁)
+</pre>
+
+<DT><span class="strong">omega_LEQ_INFINITE_preds</span>
+<DD>
+<pre>
+⊢ INFINITE (preds a) ⇒ ω ≤ a
+</pre>
+
+<DT><span class="strong">omega_MUL_fromNat</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ &n * ω = ω
+</pre>
+
+<DT><span class="strong">omega_exp_islimit</span>
+<DD>
+<pre>
+⊢ 0 < a ⇒ islimit (ω ** a)
+</pre>
+
+<DT><span class="strong">omega_islimit</span>
+<DD>
+<pre>
+⊢ islimit ω
+</pre>
+
+<DT><span class="strong">omega_lt_epsilon0</span>
+<DD>
+<pre>
+⊢ ω < ε₀
+</pre>
+
+<DT><span class="strong">open_in_ordlt</span>
+<DD>
+<pre>
+⊢ open_in ordlt_top s ⇔
+  ∀e. e ∈ s ⇒
+      (∃a b. e ∈ ival a b ∧ ival a b ⊆ s) ∨ ∃b. e < b ∧ ∀d. d < b ⇒ d ∈ s
+</pre>
+
+<DT><span class="strong">open_sing_nonlimit</span>
+<DD>
+<pre>
+⊢ open_in ordlt_top {x} ⇔ omax (preds x) ≠ NONE ∨ x = 0
+</pre>
+
+<DT><span class="strong">ordADD_0L</span>
+<DD>
+<pre>
+⊢ ∀a. 0 + a = a
+</pre>
+
+<DT><span class="strong">ordADD_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀a b c. a + (b + c) = a + b + c
+</pre>
+
+<DT><span class="strong">ordADD_CANCEL1</span>
+<DD>
+<pre>
+⊢ (∀c a. a = a + c ⇔ c = 0) ∧ ∀c a. a + c = a ⇔ c = 0
+</pre>
+
+<DT><span class="strong">ordADD_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀y x. x + y = 0 ⇔ x = 0 ∧ y = 0
+</pre>
+
+<DT><span class="strong">ordADD_MONO</span>
+<DD>
+<pre>
+⊢ ∀b a c. a < b ⇒ c + a < c + b
+</pre>
+
+<DT><span class="strong">ordADD_RIGHT_CANCEL</span>
+<DD>
+<pre>
+⊢ ∀b a c. a + b = a + c ⇔ b = c
+</pre>
+
+<DT><span class="strong">ordADD_continuous</span>
+<DD>
+<pre>
+⊢ ∀s. s ≼ 𝕌(:num + α) ∧ s ≠ ∅ ⇒ a + sup s = sup (IMAGE ($+ a) s)
+</pre>
+
+<DT><span class="strong">ordADD_fromNat</span>
+<DD>
+<pre>
+⊢ &n + &m = &(n + m)
+</pre>
+
+<DT><span class="strong">ordADD_fromNat_omega</span>
+<DD>
+<pre>
+⊢ &n + ω = ω
+</pre>
+
+<DT><span class="strong">ordADD_le_MONO_L</span>
+<DD>
+<pre>
+⊢ x ≤ y ⇒ x + z ≤ y + z
+</pre>
+
+<DT><span class="strong">ordADD_under_epsilon0</span>
+<DD>
+<pre>
+⊢ x < ε₀ ∧ y < ε₀ ⇒ x + y < ε₀
+</pre>
+
+<DT><span class="strong">ordADD_weak_MONO</span>
+<DD>
+<pre>
+⊢ ∀c a b. a < b ⇒ a + c ≤ b + c
+</pre>
+
+<DT><span class="strong">ordDIVISION</span>
+<DD>
+<pre>
+⊢ ∀a b. 0 < b ⇒ a = b * (a / b) + a % b ∧ a % b < b
+</pre>
+
+<DT><span class="strong">ordDIV_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀a b q r. 0 < b ∧ a = b * q + r ∧ r < b ⇒ a / b = q
+</pre>
+
+<DT><span class="strong">ordEXP_1L</span>
+<DD>
+<pre>
+⊢ ∀a. 1 ** a = 1
+</pre>
+
+<DT><span class="strong">ordEXP_1R</span>
+<DD>
+<pre>
+⊢ a ** 1 = a
+</pre>
+
+<DT><span class="strong">ordEXP_2R</span>
+<DD>
+<pre>
+⊢ a ** 2 = a * a
+</pre>
+
+<DT><span class="strong">ordEXP_ADD</span>
+<DD>
+<pre>
+⊢ 0 < x ⇒ x ** (y + z) = x ** y * x ** z
+</pre>
+
+<DT><span class="strong">ordEXP_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀y x. x ** y = 0 ⇔ x = 0 ∧ omax (preds y) ≠ NONE
+</pre>
+
+<DT><span class="strong">ordEXP_MUL</span>
+<DD>
+<pre>
+⊢ 0 < x ⇒ x ** (y * z) = (x ** y) ** z
+</pre>
+
+<DT><span class="strong">ordEXP_ZERO_limit</span>
+<DD>
+<pre>
+⊢ ∀x. islimit x ⇒ 0 ** x = 1
+</pre>
+
+<DT><span class="strong">ordEXP_ZERO_nonlimit</span>
+<DD>
+<pre>
+⊢ omax (preds x) ≠ NONE ⇒ 0 ** x = 0
+</pre>
+
+<DT><span class="strong">ordEXP_continuous</span>
+<DD>
+<pre>
+⊢ ∀a s. 0 < a ∧ s ≼ 𝕌(:num + α) ∧ s ≠ ∅ ⇒ a ** sup s = sup (IMAGE ($** a) s)
+</pre>
+
+<DT><span class="strong">ordEXP_fromNat</span>
+<DD>
+<pre>
+⊢ &x ** &n = &(x ** n)
+</pre>
+
+<DT><span class="strong">ordEXP_le_MONO_L</span>
+<DD>
+<pre>
+⊢ ∀x a b. a ≤ b ⇒ a ** x ≤ b ** x
+</pre>
+
+<DT><span class="strong">ordEXP_le_MONO_R</span>
+<DD>
+<pre>
+⊢ ∀x y a. 0 < a ∧ x ≤ y ⇒ a ** x ≤ a ** y
+</pre>
+
+<DT><span class="strong">ordEXP_lt_IFF</span>
+<DD>
+<pre>
+⊢ ∀x y a. 1 < a ⇒ (a ** x < a ** y ⇔ x < y)
+</pre>
+
+<DT><span class="strong">ordEXP_lt_MONO_R</span>
+<DD>
+<pre>
+⊢ ∀y x a. 1 < a ∧ x < y ⇒ a ** x < a ** y
+</pre>
+
+<DT><span class="strong">ordEXP_under_epsilon0</span>
+<DD>
+<pre>
+⊢ a < ε₀ ∧ b < ε₀ ⇒ a ** b < ε₀
+</pre>
+
+<DT><span class="strong">ordLOG_correct</span>
+<DD>
+<pre>
+⊢ 1 < b ∧ 0 < x ⇒ b ** ordLOG b x ≤ x ∧ ∀a. ordLOG b x < a ⇒ x < b ** a
+</pre>
+
+<DT><span class="strong">ordMOD_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀a b q r. 0 < b ∧ a = b * q + r ∧ r < b ⇒ a % b = r
+</pre>
+
+<DT><span class="strong">ordMULT_0L</span>
+<DD>
+<pre>
+⊢ ∀a. 0 * a = 0
+</pre>
+
+<DT><span class="strong">ordMULT_0R</span>
+<DD>
+<pre>
+⊢ ∀a. a * 0 = 0
+</pre>
+
+<DT><span class="strong">ordMULT_1L</span>
+<DD>
+<pre>
+⊢ ∀a. 1 * a = a
+</pre>
+
+<DT><span class="strong">ordMULT_1R</span>
+<DD>
+<pre>
+⊢ ∀a. a * 1 = a
+</pre>
+
+<DT><span class="strong">ordMULT_2R</span>
+<DD>
+<pre>
+⊢ a * 2 = a + a
+</pre>
+
+<DT><span class="strong">ordMULT_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀a b c. a * (b * c) = a * b * c
+</pre>
+
+<DT><span class="strong">ordMULT_CANCEL_R</span>
+<DD>
+<pre>
+⊢ z * x = z * y ⇔ z = 0 ∨ x = y
+</pre>
+
+<DT><span class="strong">ordMULT_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀x y. x * y = 0 ⇔ x = 0 ∨ y = 0
+</pre>
+
+<DT><span class="strong">ordMULT_LDISTRIB</span>
+<DD>
+<pre>
+⊢ ∀a b c. c * (a + b) = c * a + c * b
+</pre>
+
+<DT><span class="strong">ordMULT_continuous</span>
+<DD>
+<pre>
+⊢ ∀s. s ≼ 𝕌(:num + α) ⇒ a * sup s = sup (IMAGE ($* a) s)
+</pre>
+
+<DT><span class="strong">ordMULT_fromNat</span>
+<DD>
+<pre>
+⊢ &n * &m = &(n * m)
+</pre>
+
+<DT><span class="strong">ordMULT_le_MONO_L</span>
+<DD>
+<pre>
+⊢ ∀a b c. a ≤ b ⇒ a * c ≤ b * c
+</pre>
+
+<DT><span class="strong">ordMULT_le_MONO_R</span>
+<DD>
+<pre>
+⊢ ∀a b c. a ≤ b ⇒ c * a ≤ c * b
+</pre>
+
+<DT><span class="strong">ordMULT_lt_MONO_R</span>
+<DD>
+<pre>
+⊢ ∀a b c. a < b ∧ 0 < c ⇒ c * a < c * b
+</pre>
+
+<DT><span class="strong">ordMULT_lt_MONO_R_EQN</span>
+<DD>
+<pre>
+⊢ c * a < c * b ⇔ a < b ∧ 0 < c
+</pre>
+
+<DT><span class="strong">ordMUL_under_epsilon0</span>
+<DD>
+<pre>
+⊢ x < ε₀ ∧ y < ε₀ ⇒ x * y < ε₀
+</pre>
+
+<DT><span class="strong">ordSUC_11</span>
+<DD>
+<pre>
+⊢ a⁺ = b⁺ ⇔ a = b
+</pre>
+
+<DT><span class="strong">ordSUC_MONO</span>
+<DD>
+<pre>
+⊢ a⁺ < b⁺ ⇔ a < b
+</pre>
+
+<DT><span class="strong">ordSUC_NUMERAL</span>
+<DD>
+<pre>
+⊢ (& <..num comp'n..> )⁺ = &(<..num comp'n..> + 1)
+</pre>
+
+<DT><span class="strong">ordSUC_ZERO</span>
+<DD>
+<pre>
+⊢ a⁺ ≠ 0
+</pre>
+
+<DT><span class="strong">ordZERO_ltSUC</span>
+<DD>
+<pre>
+⊢ 0 < x⁺
+</pre>
+
+<DT><span class="strong">ord_CASES</span>
+<DD>
+<pre>
+⊢ ∀a. a = 0 ∨ (∃a0. a = a0⁺) ∨ 0 < a ∧ islimit a
+</pre>
+
+<DT><span class="strong">ord_RECURSION</span>
+<DD>
+<pre>
+⊢ ∀z sf lf. ∃h.
+    h 0 = z ∧ (∀a. h a⁺ = sf a (h a)) ∧
+    ∀a. 0 < a ∧ islimit a ⇒ h a = lf a (IMAGE h (preds a))
+</pre>
+
+<DT><span class="strong">ord_induction</span>
+<DD>
+<pre>
+⊢ (∀min. (∀b. b < min ⇒ P b) ⇒ P min) ⇒ ∀a. P a
+</pre>
+
+<DT><span class="strong">order_topology_exists</span>
+<DD>
+<pre>
+⊢ istopology
+    {s |
+     (∀e. e ∈ s ⇒
+          (∃a b. e ∈ ival a b ∧ ival a b ⊆ s) ∨ ∃b. e < b ∧ ∀d. d < b ⇒ d ∈ s)}
+</pre>
+
+<DT><span class="strong">orderiso_cardeq_elsOf</span>
+<DD>
+<pre>
+⊢ orderiso w1 w2 ⇒ elsOf w1 =~ elsOf w2
+</pre>
+
+<DT><span class="strong">orderiso_wobound2</span>
+<DD>
+<pre>
+⊢ orderiso (wobound x w) (wobound y w) ⇒ (x,y) ∉ strict (destWO w)
+</pre>
+
+<DT><span class="strong">orderlt_iso_REFL</span>
+<DD>
+<pre>
+⊢ orderiso w1 w2 ⇒ ¬orderlt w1 w2
+</pre>
+
+<DT><span class="strong">ordinal_ABS_REP_CLASS</span>
+<DD>
+<pre>
+⊢ (∀a. ordinal_ABS_CLASS (ordinal_REP_CLASS a) = a) ∧
+  ∀c. (∃r. orderiso r r ∧ c = orderiso r) ⇔
+      ordinal_REP_CLASS (ordinal_ABS_CLASS c) = c
+</pre>
+
+<DT><span class="strong">ordinal_IVT</span>
+<DD>
+<pre>
+⊢ (∀a. 0 < a ∧ islimit a ⇒ f a = sup (IMAGE f (preds a))) ∧
+  (∀x y. x ≤ y ⇒ f x ≤ f y) ∧ a1 < a2 ∧ f a1 ≤ c ∧ c < f a2 ⇒
+  ∃b. a1 ≤ b ∧ b < a2 ∧ f b ≤ c ∧ c < f b⁺
+</pre>
+
+<DT><span class="strong">ordinal_QUOTIENT</span>
+<DD>
+<pre>
+⊢ QUOTIENT orderiso mkOrdinal ordinal_REP
+</pre>
+
+<DT><span class="strong">ordle_ANTISYM</span>
+<DD>
+<pre>
+⊢ a ≤ b ∧ b ≤ a ⇒ a = b
+</pre>
+
+<DT><span class="strong">ordle_CANCEL_ADDR</span>
+<DD>
+<pre>
+⊢ x ≤ x + a
+</pre>
+
+<DT><span class="strong">ordle_EXISTS_ADD</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇔ ∃c. b = a + c
+</pre>
+
+<DT><span class="strong">ordle_TRANS</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≤ y ∧ y ≤ z ⇒ x ≤ z
+</pre>
+
+<DT><span class="strong">ordle_lteq</span>
+<DD>
+<pre>
+⊢ a ≤ b ⇔ a < b ∨ a = b
+</pre>
+
+<DT><span class="strong">ordleq0</span>
+<DD>
+<pre>
+⊢ x ≤ 0 ⇔ x = 0
+</pre>
+
+<DT><span class="strong">ordlet_TRANS</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≤ y ∧ y < z ⇒ x < z
+</pre>
+
+<DT><span class="strong">ordlt_CANCEL</span>
+<DD>
+<pre>
+⊢ ∀b a c. c + a < c + b ⇔ a < b
+</pre>
+
+<DT><span class="strong">ordlt_CANCEL_ADDL</span>
+<DD>
+<pre>
+⊢ a + b < a ⇔ F
+</pre>
+
+<DT><span class="strong">ordlt_CANCEL_ADDR</span>
+<DD>
+<pre>
+⊢ ∀b a. a < a + b ⇔ 0 < b
+</pre>
+
+<DT><span class="strong">ordlt_DISCRETE1</span>
+<DD>
+<pre>
+⊢ ¬(a < b ∧ b < a⁺)
+</pre>
+
+<DT><span class="strong">ordlt_EXISTS_ADD</span>
+<DD>
+<pre>
+⊢ ∀a b. a < b ⇔ ∃c. c ≠ 0 ∧ b = a + c
+</pre>
+
+<DT><span class="strong">ordlt_REFL</span>
+<DD>
+<pre>
+⊢ ∀w. w ≤ w
+</pre>
+
+<DT><span class="strong">ordlt_SUC</span>
+<DD>
+<pre>
+⊢ a < a⁺
+</pre>
+
+<DT><span class="strong">ordlt_SUC_DISCRETE</span>
+<DD>
+<pre>
+⊢ a < b⁺ ⇔ a < b ∨ a = b
+</pre>
+
+<DT><span class="strong">ordlt_TRANS</span>
+<DD>
+<pre>
+⊢ ∀w1 w2 w3. w1 < w2 ∧ w2 < w3 ⇒ w1 < w3
+</pre>
+
+<DT><span class="strong">ordlt_WF</span>
+<DD>
+<pre>
+⊢ WF $<
+</pre>
+
+<DT><span class="strong">ordlt_ZERO</span>
+<DD>
+<pre>
+⊢ 0 ≤ a
+</pre>
+
+<DT><span class="strong">ordlt_fromNat</span>
+<DD>
+<pre>
+⊢ ∀n x. x < &n ⇔ ∃m. x = &m ∧ m < n
+</pre>
+
+<DT><span class="strong">ordlt_mkOrdinal</span>
+<DD>
+<pre>
+⊢ o1 < o2 ⇔ ∀w1 w2. mkOrdinal w1 = o1 ∧ mkOrdinal w2 = o2 ⇒ orderlt w1 w2
+</pre>
+
+<DT><span class="strong">ordlt_preds_mono</span>
+<DD>
+<pre>
+⊢ a < b ⇒ preds a ≼ preds b
+</pre>
+
+<DT><span class="strong">ordlt_trichotomy</span>
+<DD>
+<pre>
+⊢ ∀w2 w1. w1 < w2 ∨ w1 = w2 ∨ w2 < w1
+</pre>
+
+<DT><span class="strong">ordlte_TRANS</span>
+<DD>
+<pre>
+⊢ ∀x y z. x < y ∧ y ≤ z ⇒ x < z
+</pre>
+
+<DT><span class="strong">polyform_0</span>
+<DD>
+<pre>
+⊢ 1 < a ⇒ polyform a 0 = []
+</pre>
+
+<DT><span class="strong">polyform_EQ_NIL</span>
+<DD>
+<pre>
+⊢ 1 < a ⇒ (polyform a x = [] ⇔ x = 0)
+</pre>
+
+<DT><span class="strong">polyform_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀a b ces.
+    1 < a ∧ is_polyform a ces ∧ b = eval_poly a ces ⇒ polyform a b = ces
+</pre>
+
+<DT><span class="strong">polyform_eval_poly</span>
+<DD>
+<pre>
+⊢ 1 < a ∧ is_polyform a b ⇒ polyform a (eval_poly a b) = b
+</pre>
+
+<DT><span class="strong">polyform_exists</span>
+<DD>
+<pre>
+⊢ ∀a b. 1 < a ⇒ ∃ces. is_polyform a ces ∧ b = eval_poly a ces
+</pre>
+
+<DT><span class="strong">predimage_sup_thm</span>
+<DD>
+<pre>
+⊢ ∀b. b < sup (IMAGE f (preds a)) ⇔ ∃d. d < a ∧ b < f d
+</pre>
+
+<DT><span class="strong">predimage_suplt_ELIM</span>
+<DD>
+<pre>
+⊢ sup (IMAGE f (preds a)) < b ⇒ ∀d. d < a ⇒ f d ≤ b
+</pre>
+
+<DT><span class="strong">preds_0</span>
+<DD>
+<pre>
+⊢ preds 0 = ∅
+</pre>
+
+<DT><span class="strong">preds_11</span>
+<DD>
+<pre>
+⊢ preds w1 = preds w2 ⇔ w1 = w2
+</pre>
+
+<DT><span class="strong">preds_EQ_EMPTY</span>
+<DD>
+<pre>
+⊢ preds x = ∅ ⇔ x = 0
+</pre>
+
+<DT><span class="strong">preds_bij</span>
+<DD>
+<pre>
+⊢ BIJ preds 𝕌(:α ordinal) (downward_closed DELETE 𝕌(:α ordinal))
+</pre>
+
+<DT><span class="strong">preds_downward_closed</span>
+<DD>
+<pre>
+⊢ downward_closed (preds w)
+</pre>
+
+<DT><span class="strong">preds_inj_univ</span>
+<DD>
+<pre>
+⊢ preds ord ≼ 𝕌(:num + α)
+</pre>
+
+<DT><span class="strong">preds_lesup</span>
+<DD>
+<pre>
+⊢ downward_closed s ∧ s ≠ 𝕌(:α ordinal) ⇒ ∀d. d ∈ s ⇒ d ≤ sup s
+</pre>
+
+<DT><span class="strong">preds_lt_PSUBSET</span>
+<DD>
+<pre>
+⊢ w1 < w2 ⇔ preds w1 ⊂ preds w2
+</pre>
+
+<DT><span class="strong">preds_nat</span>
+<DD>
+<pre>
+⊢ preds (&n) = IMAGE $& (count n)
+</pre>
+
+<DT><span class="strong">preds_omax_SOME_SUC</span>
+<DD>
+<pre>
+⊢ omax (preds a) = SOME b ⇔ a = b⁺
+</pre>
+
+<DT><span class="strong">preds_omega_UNIV</span>
+<DD>
+<pre>
+⊢ preds ω =~ 𝕌(:num)
+</pre>
+
+<DT><span class="strong">preds_omega_lt_preds_omega1</span>
+<DD>
+<pre>
+⊢ preds ω ≺ preds ω₁
+</pre>
+
+<DT><span class="strong">preds_ordSUC</span>
+<DD>
+<pre>
+⊢ preds a⁺ = a INSERT preds a
+</pre>
+
+<DT><span class="strong">preds_sup</span>
+<DD>
+<pre>
+⊢ s ≼ 𝕌(:num + α) ⇒ preds (sup s) = dclose s
+</pre>
+
+<DT><span class="strong">preds_sup_thm</span>
+<DD>
+<pre>
+⊢ downward_closed s ∧ s ≠ 𝕌(:α ordinal) ⇒ ∀b. b < sup s ⇔ ∃d. d ∈ s ∧ b < d
+</pre>
+
+<DT><span class="strong">preds_suple</span>
+<DD>
+<pre>
+⊢ downward_closed s ∧ s ≠ 𝕌(:α ordinal) ⇒ (sup s ≤ b ⇔ ∀d. d ∈ s ⇒ d ≤ b)
+</pre>
+
+<DT><span class="strong">preds_surj</span>
+<DD>
+<pre>
+⊢ ∀x. downward_closed x ∧ x ≠ 𝕌(:α ordinal) ⇒ ∃y. preds y = x
+</pre>
+
+<DT><span class="strong">preds_wobound</span>
+<DD>
+<pre>
+⊢ preds ord = elsOf (wobound ord allOrds)
+</pre>
+
+<DT><span class="strong">rays_open</span>
+<DD>
+<pre>
+⊢ open_in ordlt_top {x | x < a} ∧ open_in ordlt_top {x | a < x}
+</pre>
+
+<DT><span class="strong">simple_ord_induction</span>
+<DD>
+<pre>
+⊢ ∀P. P 0 ∧ (∀a. P a ⇒ P a⁺) ∧
+      (∀a. islimit a ∧ 0 < a ∧ (∀b. b < a ⇒ P b) ⇒ P a) ⇒
+      ∀a. P a
+</pre>
+
+<DT><span class="strong">strict_continuity_preserves_islimit</span>
+<DD>
+<pre>
+⊢ (∀s. s ≼ 𝕌(:num + α) ∧ s ≠ ∅ ⇒ f (sup s) = sup (IMAGE f s)) ∧
+  (∀x y. x < y ⇒ f x < f y) ∧ islimit a ∧ a ≠ 0 ⇒
+  islimit (f a)
+</pre>
+
+<DT><span class="strong">sup_EMPTY</span>
+<DD>
+<pre>
+⊢ sup ∅ = 0
+</pre>
+
+<DT><span class="strong">sup_EQ_0</span>
+<DD>
+<pre>
+⊢ s ≼ 𝕌(:num + α) ⇒ (sup s = 0 ⇔ s = ∅ ∨ s = {0})
+</pre>
+
+<DT><span class="strong">sup_SING</span>
+<DD>
+<pre>
+⊢ sup {a} = a
+</pre>
+
+<DT><span class="strong">sup_eq_SUC</span>
+<DD>
+<pre>
+⊢ s ≼ 𝕌(:num + α) ∧ sup s = a⁺ ⇒ a⁺ ∈ s
+</pre>
+
+<DT><span class="strong">sup_eq_max</span>
+<DD>
+<pre>
+⊢ (∀b. b ∈ s ⇒ b ≤ a) ∧ a ∈ s ⇒ sup s = a
+</pre>
+
+<DT><span class="strong">sup_eq_sup</span>
+<DD>
+<pre>
+⊢ s1 ≼ 𝕌(:num + α) ∧ s2 ≼ 𝕌(:num + α) ∧ (∀a. a ∈ s1 ⇒ ∃b. b ∈ s2 ∧ a ≤ b) ∧
+  (∀b. b ∈ s2 ⇒ ∃a. a ∈ s1 ∧ b ≤ a) ⇒
+  sup s1 = sup s2
+</pre>
+
+<DT><span class="strong">sup_lt_implies</span>
+<DD>
+<pre>
+⊢ s ≼ 𝕌(:num + α) ∧ sup s < a ∧ b ∈ s ⇒ b < a
+</pre>
+
+<DT><span class="strong">sup_preds_SUC</span>
+<DD>
+<pre>
+⊢ sup (preds a⁺) = a
+</pre>
+
+<DT><span class="strong">sup_preds_omax_NONE</span>
+<DD>
+<pre>
+⊢ islimit a ⇔ sup (preds a) = a
+</pre>
+
+<DT><span class="strong">sup_thm</span>
+<DD>
+<pre>
+⊢ s ≼ 𝕌(:num + α) ⇒ ∀a. a < sup s ⇔ ∃b. b ∈ s ∧ a < b
+</pre>
+
+<DT><span class="strong">suple_thm</span>
+<DD>
+<pre>
+⊢ ∀b s. s ≼ 𝕌(:num + α) ∧ b ∈ s ⇒ b ≤ sup s
+</pre>
+
+<DT><span class="strong">suppred_suplt_ELIM</span>
+<DD>
+<pre>
+⊢ sup (preds a) < b ⇒ ∀d. d < a ⇒ d ≤ b
+</pre>
+
+<DT><span class="strong">topspace_ordlt_top</span>
+<DD>
+<pre>
+⊢ topspace ordlt_top = 𝕌(:α ordinal)
+</pre>
+
+<DT><span class="strong">transfer_ordinals</span>
+<DD>
+<pre>
+⊢ ∀a. preds a ≼ 𝕌(:num + β) ⇒
+      ∃b. orderiso (wobound a allOrds) (wobound b allOrds) ∧
+          preds a =~ preds b
+</pre>
+
+<DT><span class="strong">ubsup_thm</span>
+<DD>
+<pre>
+⊢ (∀a. a ∈ s ⇒ a < b) ⇒ ∀c. c < sup s ⇔ ∃d. d ∈ s ∧ c < d
+</pre>
+
+<DT><span class="strong">ucinf_uncountable</span>
+<DD>
+<pre>
+⊢ uncountable 𝕌(:num + (α + num -> bool))
+</pre>
+
+<DT><span class="strong">ucord_sup_exists_lemma</span>
+<DD>
+<pre>
+⊢ {a | countableOrd a} ≼ 𝕌(:num + (α + num -> bool))
+</pre>
+
+<DT><span class="strong">unitinf_univnum</span>
+<DD>
+<pre>
+⊢ 𝕌(:num + unit) =~ 𝕌(:num)
+</pre>
+
+<DT><span class="strong">univ_cord_uncountable</span>
+<DD>
+<pre>
+⊢ uncountable 𝕌(:unit ordinal)
+</pre>
+
+<DT><span class="strong">univ_ord_greater_cardinal</span>
+<DD>
+<pre>
+⊢ 𝕌(:num + α) ≺ 𝕌(:α ordinal)
+</pre>
+
+<DT><span class="strong">wellorder_allOrds</span>
+<DD>
+<pre>
+⊢ wellorder {(x,y) | x = y ∨ x < y}
+</pre>
+
+<DT><span class="strong">wellorder_ordinal_isomorphism</span>
+<DD>
+<pre>
+⊢ ∀w. orderiso w (wobound (mkOrdinal w) allOrds)
+</pre>
+
+<DT><span class="strong">x_le_ordEXP_x</span>
+<DD>
+<pre>
+⊢ ∀a x. 1 < a ⇒ x ≤ a ** x
+</pre>
+
+<DT><span class="strong">x_lt_omega1_countable</span>
+<DD>
+<pre>
+⊢ x < ω₁ ⇔ countableOrd x
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

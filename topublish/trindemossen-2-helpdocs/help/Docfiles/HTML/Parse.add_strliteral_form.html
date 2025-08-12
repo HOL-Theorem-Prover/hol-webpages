@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Parse.add_strliteral_form</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="add_strliteral_form"><code>add_strliteral_form</code></h2>
+<pre class="hol4"><code>Parse.add_strliteral_form : {inj:term, ldelim:string} -&gt; unit</code></pre>
+<hr />
+<p>Adds interpretation for string literal syntaxes</p>
+<p>If <code>ld</code> is a valid left delimiter, with corresponding
+right delimiter <code>rd</code>, then a call to
+<code>add_strliteral_form{inj=t,ldelim=ld}</code> causes the parser and
+pretty-printer to treat string literals delimited by <code>ld</code> and
+<code>rd</code> as occurrences of the term <code>inj</code> applied to
+the given HOL value (which will be of <code>string</code> type).</p>
+<p>If the given <code>ld</code>-<code>rd</code> pair is already
+associated with an injector, then the parsing process will resolve the
+ambiguity with the standard overloading resolution method. In
+particular, note that the standard double quotation mark (ASCII
+character 34, <code>"</code>) is associated with the “null” injector,
+which takes string literals into the <code>string</code> type. Other
+injectors can be associated with this delimiter pair.</p>
+<p>The other valid delimiter pairs are double guillemets
+(<code>«...»</code>, U+00AB and U+00BB) and single guillemets
+(<code>‹...›</code>, U+2039 and U+203A).</p>
+<h3 id="failure">Failure</h3>
+<p>Fails if the <code>ldelim</code> field does not correspond to a valid
+left delimiter, or if the HOL type of the <code>inj</code> field is not
+<code>:string-&gt;X</code> for some type <code>X</code>.</p>
+<h3 id="example">Example</h3>
+<p>If we have established a new type of deeply embedded terms with
+variables, constants and binary applications:</p>
+<pre class="hol4"><code>   Datatype`tm = V string | Cst string | App tm tm`;</code></pre>
+<p>then we can overload the usual double-quoted string literals to also
+be applications of the <code>V</code> constructor:</p>
+<pre class="hol4"><code>   &gt; add_strliteral_form {inj=``V``, ldelim=&quot;\&quot;&quot;};
+   &gt; ``App (V &quot;foo&quot;) (App &quot;bar&quot; &quot;baz&quot;)``;
+   val it = “App &quot;foo&quot; (App &quot;bar&quot; &quot;baz&quot;)”: term</code></pre>
+<p>where all the string literals in the output are actually applications
+of <code>V</code> to a real literal.</p>
+<p>We can further choose to have constants printed with enclosing
+<code>«...»</code> by:</p>
+<pre class="hol4"><code>   &gt; add_strliteral_form {inj=``Cst``, ldelim=&quot;«&quot;};
+   &gt; ``App &quot;foo&quot; (Cst &quot;bar&quot;)``;
+   val it = “App &quot;foo&quot; «bar»”: term</code></pre>
+<p>Note that in this situation, use of the double guillemets is
+unambiguous, but a bare string literal is strictly ambiguous (the
+default is to prefer the core string type):</p>
+<pre class="hol4"><code>   &gt; type_of “«foo»”;
+   val it = “:tm”: hol_type
+
+   &gt; type_of “&quot;foo&quot;”;
+   &lt;&lt;HOL message: more than one resolution of overloading was possible&gt;&gt;
+   val it = “:string”: hol_type</code></pre>
+<h3 id="comments">Comments</h3>
+<p>This facility is analogous to the way in which numerals can be seen
+to inhabit types other than just <code>:num</code>. As with other
+parsing facilities there is a temporary form
+<code>temp_add_strliteral_form</code>, which does not cause the change
+to the grammar to persist to descendant theories.</p>
+<p>The effect of adding a new string literal form can be reversed by
+parallel <code>remove_string_literal_form</code> and
+<code>temp_remove_string_literal_form</code> functions.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Parse.add_numeral_form.html"><code>Parse.add_numeral_form</code></a></p>
+</body>
+</html>

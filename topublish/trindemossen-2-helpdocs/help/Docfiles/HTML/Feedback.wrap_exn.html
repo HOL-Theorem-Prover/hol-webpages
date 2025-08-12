@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Feedback.wrap_exn</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="wrap_exn"><code>wrap_exn</code></h2>
+<pre class="hol4"><code>Feedback.wrap_exn : string -&gt; string -&gt; exn -&gt; exn</code></pre>
+<hr />
+<p>Adds supplementary information to an application of
+<code>HOL_ERR</code>.</p>
+<p><code>wrap_exn s1 s2 (HOL_ERR{origin_structure,origin_function,source_location,message})</code>
+where <code>s1</code> typically denotes a structure and <code>s2</code>
+typically denotes a function, returns</p>
+<p><code>HOL_ERR{origin_structure=s1,origin_function=s2,source_location,message}</code></p>
+<p>where <code>origin_structure</code> and <code>origin_function</code>
+have been added to the <code>message</code> field. This can be used to
+achieve a kind of backtrace when an error occurs.</p>
+<p>In MoscowML, the <code>interrupt</code> signal in Unix is mapped into
+the <code>Interrupt</code> exception. If <code>wrap_exn</code> were to
+translate an interrupt into a <code>HOL_ERR</code> exception, crucial
+information might be lost. For this reason,
+<code>wrap_exn s1 s2 Interrupt</code> raises the <code>Interrupt</code>
+exception.</p>
+<p>Every other exception is mapped into an application of
+<code>HOL_ERR</code> by <code>wrap_exn</code>.</p>
+<h3 id="failure">Failure</h3>
+<p>Never fails.</p>
+<h3 id="example">Example</h3>
+<p>In the following example, the original <code>HOL_ERR</code> is from
+<code>Foo.bar</code>. After <code>wrap_exn</code> is called, the
+<code>HOL_ERR</code> is from <code>Fred.barney</code> and its message
+field has been augmented to reflect the original source of the
+exception.</p>
+<pre class="hol4"><code>    - val test_exn = mk_HOL_ERR &quot;Foo&quot; &quot;bar&quot; &quot;incomprehensible input&quot;;
+    &gt; val test_exn = HOL_ERR : exn
+
+    - wrap_exn &quot;Fred&quot; &quot;barney&quot; test_exn;
+    &gt; val it = HOL_ERR : exn
+
+    - print(exn_to_string it);
+
+    Exception raised at Fred.barney:
+    Foo.bar - incomprehensible input</code></pre>
+<p>The following example shows how <code>wrap_exn</code> treats the
+<code>Interrupt</code> exception.</p>
+<pre class="hol4"><code>    - wrap_exn &quot;Fred&quot; &quot;barney&quot; Interrupt;
+    &gt; Interrupted.</code></pre>
+<p>The following example shows how <code>wrap_exn</code> translates all
+exceptions that aren’t either <code>HOL_ERR</code> or
+<code>Interrupt</code> into applications of <code>HOL_ERR</code>.</p>
+<pre class="hol4"><code>    - wrap_exn &quot;Fred&quot; &quot;barney&quot; Div;
+    &gt; val it = HOL_ERR : exn
+
+    - print(exn_to_string it);
+
+    Exception raised at Fred.barney:
+    Div</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a href="Feedback.html"><code>Feedback</code></a>, <a
+href="Feedback.HOL_ERR.html"><code>Feedback.HOL_ERR</code></a></p>
+</body>
+</html>

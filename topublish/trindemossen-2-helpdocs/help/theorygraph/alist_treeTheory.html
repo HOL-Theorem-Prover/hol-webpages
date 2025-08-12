@@ -1,0 +1,387 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: alist_tree</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "alist_tree"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "alistTheory.html"><span class="strong">alist</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">count_append</span>
+    <td>
+    :num -> α list -> α list -> α list
+    <tr><td>
+    <span class="strong">is_insert</span>
+    <td>
+    :bool ->
+    bool -> (α -> α -> bool) -> α -> β -> (α # β) list -> (α # β) list -> bool
+    <tr><td>
+    <span class="strong">is_lookup</span>
+    <td>
+    :bool -> bool -> (α -> α -> bool) -> (α # β) list -> α -> β option -> bool
+    <tr><td>
+    <span class="strong">option_choice_f</span>
+    <td>
+    :(α -> β option) -> (α -> β option) -> α -> β option
+    <tr><td>
+    <span class="strong">sorted_alist_repr</span>
+    <td>
+    :(α -> α -> bool) -> (α # β) list -> (α -> β option) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">count_append_def</span>
+<DD>
+<pre>
+⊢ ∀n xs ys. count_append n xs ys = xs ++ ys
+</pre>
+
+<DT><span class="strong">is_insert_def</span>
+<DD>
+<pre>
+⊢ ∀frame_l frame_r R k x al al'.
+    is_insert frame_l frame_r R k x al al' ⇔
+    irreflexive R ∧ transitive R ⇒
+    SORTED R (MAP FST al) ⇒
+    ALOOKUP al' = ALOOKUP ((k,x)::al) ∧
+    (frame_l ⇒ al ≠ [] ∧ FST (HD al') = FST (HD al)) ∧
+    (frame_r ⇒ al ≠ [] ∧ FST (LAST al') = FST (LAST al)) ∧
+    SORTED R (MAP FST al')
+</pre>
+
+<DT><span class="strong">is_lookup_def</span>
+<DD>
+<pre>
+⊢ ∀fl fr R al x r.
+    is_lookup fl fr R al x r ⇔
+    ∀xs ys.
+      fl ∨ xs = [] ⇒
+      fr ∨ ys = [] ⇒
+      irreflexive R ∧ transitive R ⇒
+      SORTED R (MAP FST (xs ++ al ++ ys)) ⇒
+      ALOOKUP (xs ++ al ++ ys) x = r
+</pre>
+
+<DT><span class="strong">option_choice_f_def</span>
+<DD>
+<pre>
+⊢ ∀f g. option_choice_f f g = (λx. f x ++ g x)
+</pre>
+
+<DT><span class="strong">sorted_alist_repr_def</span>
+<DD>
+<pre>
+⊢ ∀R al f.
+    sorted_alist_repr R al f ⇔
+    SORTED R (MAP FST al) ∧ irreflexive R ∧ transitive R ∧ f = ALOOKUP al
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">DISJ_EQ_IMP</span>
+<DD>
+<pre>
+⊢ P ∨ Q ⇔ ¬P ⇒ Q
+</pre>
+
+<DT><span class="strong">HD_APPEND</span>
+<DD>
+<pre>
+⊢ HD (xs ++ ys) = if xs = [] then HD ys else HD xs
+</pre>
+
+<DT><span class="strong">HD_MAP</span>
+<DD>
+<pre>
+⊢ xs ≠ [] ⇒ HD (MAP f xs) = f (HD xs)
+</pre>
+
+<DT><span class="strong">HD_MEM</span>
+<DD>
+<pre>
+⊢ xs ≠ [] ⇒ MEM (HD xs) xs
+</pre>
+
+<DT><span class="strong">LAST_APPEND</span>
+<DD>
+<pre>
+⊢ LAST (xs ++ ys) = if ys = [] then LAST xs else LAST ys
+</pre>
+
+<DT><span class="strong">alist_repr_choice_trans_left</span>
+<DD>
+<pre>
+⊢ sorted_alist_repr R al f ∧
+  sorted_alist_repr R al' (option_choice_f (ALOOKUP al) g) ⇒
+  sorted_alist_repr R al' (option_choice_f f g)
+</pre>
+
+<DT><span class="strong">alist_repr_refl</span>
+<DD>
+<pre>
+⊢ ∀al.
+    irreflexive R ∧ transitive R ⇒
+    SORTED R (MAP FST al) ⇒
+    sorted_alist_repr R al (ALOOKUP al)
+</pre>
+
+<DT><span class="strong">alookup_append_option_choice_f</span>
+<DD>
+<pre>
+⊢ ALOOKUP (xs ++ ys) = option_choice_f (ALOOKUP xs) (ALOOKUP ys)
+</pre>
+
+<DT><span class="strong">alookup_empty_option_choice_f</span>
+<DD>
+<pre>
+⊢ option_choice_f (ALOOKUP []) f = f ∧ option_choice_f f (ALOOKUP []) = f
+</pre>
+
+<DT><span class="strong">alookup_to_option_choice</span>
+<DD>
+<pre>
+⊢ ALOOKUP (x::y::zs) = option_choice_f (ALOOKUP [x]) (ALOOKUP (y::zs)) ∧
+  option_choice_f (ALOOKUP []) g = g
+</pre>
+
+<DT><span class="strong">balance_l</span>
+<DD>
+<pre>
+⊢ count_append i xs (count_append j ys zs) =
+  count_append ARB (count_append ARB xs ys) zs
+</pre>
+
+<DT><span class="strong">balance_r</span>
+<DD>
+<pre>
+⊢ count_append i (count_append j xs ys) zs =
+  count_append ARB xs (count_append ARB ys zs)
+</pre>
+
+<DT><span class="strong">count_append_HD_LAST</span>
+<DD>
+<pre>
+⊢ HD (count_append i (count_append j xs ys) zs) =
+  HD (count_append 0 xs (count_append 0 ys zs)) ∧
+  HD (count_append i (x::xs) ys) = x ∧ HD (count_append i [] ys) = HD ys ∧
+  LAST (count_append i xs (count_append j ys zs)) =
+  LAST (count_append 0 (count_append 0 xs ys) zs) ∧
+  LAST (count_append i xs (y::ys)) = LAST (y::ys) ∧
+  LAST (count_append i xs []) = LAST xs ∧ HD (x::xs) = x ∧
+  LAST (x::y::zs) = LAST (y::zs) ∧ LAST [x] = x ∧
+  (count_append i (count_append j xs ys) zs = [] ⇔
+   count_append 0 xs (count_append 0 ys zs) = []) ∧
+  (count_append i [] ys = [] ⇔ ys = []) ∧
+  (count_append i (x::xs) ys = [] ⇔ F) ∧ (x::xs = [] ⇔ F)
+</pre>
+
+<DT><span class="strong">empty_is_ALOOKUP</span>
+<DD>
+<pre>
+⊢ (λx. NONE) = ALOOKUP []
+</pre>
+
+<DT><span class="strong">insert_fl_R</span>
+<DD>
+<pre>
+⊢ is_insert fl fr R k x al al' ⇒
+  fl ⇒
+  SORTED R (MAP FST al) ⇒
+  irreflexive R ∧ transitive R ⇒
+  k = FST (HD al) ∨ R (HD (MAP FST al)) k
+</pre>
+
+<DT><span class="strong">insert_fl_R_append</span>
+<DD>
+<pre>
+⊢ is_insert T fr R k x r r' ⇒
+  SORTED R (MAP FST (l ++ r)) ⇒
+  irreflexive R ∧ transitive R ⇒
+  ¬MEM k (MAP FST l)
+</pre>
+
+<DT><span class="strong">is_insert_centre</span>
+<DD>
+<pre>
+⊢ ∀R n k x.
+    l ≠ [] ⇒
+    R (FST (LAST l)) k ⇒
+    r ≠ [] ⇒
+    R k (FST (HD r)) ⇒
+    is_insert T T R k x (count_append n l r)
+      (count_append ARB l (count_append ARB [(k,x)] r))
+</pre>
+
+<DT><span class="strong">is_insert_centre_rule</span>
+<DD>
+<pre>
+⊢ (fl ⇒ l ≠ []) ⇒
+  (l ≠ [] ⇒ R (FST (LAST l)) k) ⇒
+  (fr ⇒ r ≠ []) ⇒
+  (r ≠ [] ⇒ R k (FST (HD r))) ⇒
+  is_insert fl fr R k x (count_append n l r)
+    (count_append ARB l (count_append ARB [(k,x)] r))
+</pre>
+
+<DT><span class="strong">is_insert_far_left</span>
+<DD>
+<pre>
+⊢ ∀R k x xs.
+    xs ≠ [] ⇒
+    R k (FST (HD xs)) ⇒
+    is_insert F T R k x xs (count_append ARB [(k,x)] xs)
+</pre>
+
+<DT><span class="strong">is_insert_far_right</span>
+<DD>
+<pre>
+⊢ ∀R k x xs.
+    xs ≠ [] ⇒
+    R (FST (LAST xs)) k ⇒
+    is_insert T F R k x xs (count_append ARB xs [(k,x)])
+</pre>
+
+<DT><span class="strong">is_insert_l</span>
+<DD>
+<pre>
+⊢ ∀n. is_insert fl T R k x l l' ⇒
+      is_insert fl T R k x (count_append n l r) (count_append ARB l' r)
+</pre>
+
+<DT><span class="strong">is_insert_overwrite</span>
+<DD>
+<pre>
+⊢ ∀R k x v. FST v = k ⇒ is_insert T T R k x [v] [(k,x)]
+</pre>
+
+<DT><span class="strong">is_insert_r</span>
+<DD>
+<pre>
+⊢ ∀n. is_insert T fr R k x r r' ⇒
+      is_insert T fr R k x (count_append n l r) (count_append ARB l r')
+</pre>
+
+<DT><span class="strong">is_insert_to_empty</span>
+<DD>
+<pre>
+⊢ ∀R k x. is_insert F F R k x [] [(k,x)]
+</pre>
+
+<DT><span class="strong">is_lookup_centre</span>
+<DD>
+<pre>
+⊢ ∀R n l r k.
+    l ≠ [] ⇒
+    R (FST (LAST l)) k ⇒
+    r ≠ [] ⇒
+    R k (FST (HD r)) ⇒
+    is_lookup T T R (count_append n l r) k NONE
+</pre>
+
+<DT><span class="strong">is_lookup_empty</span>
+<DD>
+<pre>
+⊢ ∀R k al. al = [] ⇒ is_lookup F F R al k NONE
+</pre>
+
+<DT><span class="strong">is_lookup_far_left</span>
+<DD>
+<pre>
+⊢ ∀R k k' v. R k k' ⇒ is_lookup F T R [(k',v)] k NONE
+</pre>
+
+<DT><span class="strong">is_lookup_far_right</span>
+<DD>
+<pre>
+⊢ ∀R k k' v. R k' k ⇒ is_lookup T F R [(k',v)] k NONE
+</pre>
+
+<DT><span class="strong">is_lookup_hit</span>
+<DD>
+<pre>
+⊢ ∀R k k' v. k' = k ⇒ is_lookup T T R [(k',v)] k (SOME v)
+</pre>
+
+<DT><span class="strong">is_lookup_l</span>
+<DD>
+<pre>
+⊢ ∀n. is_lookup fl T R l x res ⇒ is_lookup fl T R (count_append n l r) x res
+</pre>
+
+<DT><span class="strong">is_lookup_r</span>
+<DD>
+<pre>
+⊢ ∀n. is_lookup T fr R r x res ⇒ is_lookup T fr R (count_append n l r) x res
+</pre>
+
+<DT><span class="strong">lookup_repr</span>
+<DD>
+<pre>
+⊢ sorted_alist_repr R al f ∧ is_lookup fl fr R al x r ⇒ f x = r
+</pre>
+
+<DT><span class="strong">option_choice_f_assoc</span>
+<DD>
+<pre>
+⊢ option_choice_f (option_choice_f f g) h =
+  option_choice_f f (option_choice_f g h)
+</pre>
+
+<DT><span class="strong">repr_insert</span>
+<DD>
+<pre>
+⊢ sorted_alist_repr R al f ∧ is_insert fl fr R k x al al' ⇒
+  sorted_alist_repr R al' (option_choice_f (ALOOKUP [(k,x)]) f)
+</pre>
+
+<DT><span class="strong">set_count</span>
+<DD>
+<pre>
+⊢ ∀j. count_append i xs ys = count_append j xs ys
+</pre>
+
+<DT><span class="strong">sorted_fst_insert_centre</span>
+<DD>
+<pre>
+⊢ ∀k. SORTED R (MAP FST l ++ MAP FST r) ⇒
+      (l ≠ [] ⇒ R (FST (LAST l)) k) ⇒
+      (r ≠ [] ⇒ R k (FST (HD r))) ⇒
+      SORTED R (MAP FST l ++ k::MAP FST r)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

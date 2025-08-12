@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>PairedLambda.PAIRED_BETA_CONV</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="paired_beta_conv"><code>PAIRED_BETA_CONV</code></h2>
+<pre class="hol4"><code>PairedLambda.PAIRED_BETA_CONV : conv</code></pre>
+<hr />
+<p>Performs generalized beta conversion for tupled beta-redexes.</p>
+<p>The conversion <code>PAIRED_BETA_CONV</code> implements
+beta-reduction for certain applications of tupled lambda abstractions
+called ‘tupled beta-redexes’. Tupled lambda abstractions have the form
+<code>\&lt;vs&gt;.tm</code>, where <code>&lt;vs&gt;</code> is an
+arbitrarily-nested tuple of variables called a ‘varstruct’. For the
+purposes of <code>PAIRED_BETA_CONV</code>, the syntax of varstructs is
+given by:</p>
+<pre class="hol4"><code>   &lt;vs&gt;  ::=   (v1,v2)  |  (&lt;vs&gt;,v)  |  (v,&lt;vs&gt;)  |  (&lt;vs&gt;,&lt;vs&gt;)</code></pre>
+<p>where <code>v</code>, <code>v1</code>, and <code>v2</code> range over
+variables. A tupled beta-redex is an application of the form
+<code>(\&lt;vs&gt;.tm) t</code>, where the term <code>t</code> is a
+nested tuple of values having the same structure as the varstruct
+<code>&lt;vs&gt;</code>. For example, the term:</p>
+<pre class="hol4"><code>   (\((a,b),(c,d)). a + b + c + d)  ((1,2),(3,4))</code></pre>
+<p>is a tupled beta-redex, but the term:</p>
+<pre class="hol4"><code>   (\((a,b),(c,d)). a + b + c + d)  ((1,2),p)</code></pre>
+<p>is not, since <code>p</code> is not a pair of terms.</p>
+<p>Given a tupled beta-redex <code>(\&lt;vs&gt;.tm) t</code>, the
+conversion <code>PAIRED_BETA_CONV</code> performs generalized
+beta-reduction and returns the theorem</p>
+<pre class="hol4"><code>   |-  (\&lt;vs&gt;.tm) t = t[t1,...,tn/v1,...,vn]</code></pre>
+<p>where <code>ti</code> is the subterm of the tuple <code>t</code> that
+corresponds to the variable <code>vi</code> in the varstruct
+<code>&lt;vs&gt;</code>. In the simplest case, the varstruct
+<code>&lt;vs&gt;</code> is flat, as in the term:</p>
+<pre class="hol4"><code>   (\(v1,...,vn).t) (t1,...,tn)</code></pre>
+<p>When applied to a term of this form, <code>PAIRED_BETA_CONV</code>
+returns:</p>
+<pre class="hol4"><code>   |- (\(v1, ... ,vn).t) (t1, ... ,tn) = t[t1,...,tn/v1,...,vn]</code></pre>
+<p>As with ordinary beta-conversion, bound variables may be renamed to
+prevent free variable capture. That is, the term
+<code>t[t1,...,tn/v1,...,vn]</code> in this theorem is the result of
+substituting <code>ti</code> for <code>vi</code> in parallel in
+<code>t</code>, with suitable renaming of variables to prevent free
+variables in <code>t1</code>, …, <code>tn</code> becoming bound in the
+result.</p>
+<h3 id="failure">Failure</h3>
+<p><code>PAIRED_BETA_CONV tm</code> fails if <code>tm</code> is not a
+tupled beta-redex, as described above. Note that ordinary beta-redexes
+are specifically excluded: <code>PAIRED_BETA_CONV</code> fails when
+applied to <code>(\v.t)u</code>. For these beta-redexes, use
+<code>BETA_CONV</code>, or <code>GEN_BETA_CONV</code>.</p>
+<h3 id="example">Example</h3>
+<p>The following is a typical use of the conversion:</p>
+<pre class="hol4"><code>   - PairedLambda.PAIRED_BETA_CONV
+        (Term `(\((a,b),(c,d)). a + b + c + d)  ((1,2),(3,4))`);
+   &gt; val it = |- (\((a,b),c,d). a+b+c+d) ((1,2),3,4) = 1+2+3+4 : thm</code></pre>
+<p>Note that the term to which the tupled lambda abstraction is applied
+must have the same structure as the varstruct. For example, the
+following succeeds:</p>
+<pre class="hol4"><code>   - PairedLambda.PAIRED_BETA_CONV
+         (Term `(\((a,b),p). a + b)  ((1,2),(3+5,4))`);
+   &gt; val it = |- (\((a,b),p). a + b)((1,2),3 + 5,4) = 1 + 2 : thm</code></pre>
+<p>but the following call fails:</p>
+<pre class="hol4"><code>   - PairedLambda.PAIRED_BETA_CONV
+       (Term `(\((a,b),(c,d)). a + b + c + d)  ((1,2),p)`);
+   ! Uncaught exception:
+   ! HOL_ERR</code></pre>
+<p>because <code>p</code> is not a pair.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Thm.BETA_CONV.html"><code>Thm.BETA_CONV</code></a>, <a
+href="Conv.BETA_RULE.html"><code>Conv.BETA_RULE</code></a>, <a
+href="Tactic.BETA_TAC.html"><code>Tactic.BETA_TAC</code></a>, <a
+href="Drule.LIST_BETA_CONV.html"><code>Drule.LIST_BETA_CONV</code></a>,
+<a href="Drule.RIGHT_BETA.html"><code>Drule.RIGHT_BETA</code></a>, <a
+href="Drule.RIGHT_LIST_BETA.html"><code>Drule.RIGHT_LIST_BETA</code></a></p>
+</body>
+</html>

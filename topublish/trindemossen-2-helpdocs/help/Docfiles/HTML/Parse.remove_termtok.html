@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Parse.remove_termtok</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="remove_termtok"><code>remove_termtok</code></h2>
+<pre class="hol4"><code>Parse.remove_termtok : {term_name : string, tok : string} -&gt; unit</code></pre>
+<hr />
+<p>Removes a rule from the global grammar.</p>
+<p>The <code>remove_termtok</code> removes parsing/printing rules from
+the global grammar. Rules to be removed are those that are for the term
+with the given name (<code>term_name</code>) and which include the
+string <code>tok</code> as part of their concrete representation. If
+multiple rules satisfy this criterion, they are all removed. If none
+match, the grammar is not changed.</p>
+<h3 id="failure">Failure</h3>
+<p>Never fails.</p>
+<h3 id="example">Example</h3>
+<p>If one wished to revert to the traditional HOL syntax for conditional
+expressions, this would be achievable as follows:</p>
+<pre class="hol4"><code>   - remove_termtok {term_name = &quot;COND&quot;, tok = &quot;if&quot;};
+   &gt; val it = () : unit
+
+   - Term`if p then q else r`;
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a, &#39;b, &#39;c, &#39;d, &#39;e, &#39;f.&gt;&gt;
+   &gt; val it = `if p then q else r` : term
+
+   - Term`p =&gt; q | r`;
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a.&gt;&gt;
+   &gt; val it = `COND p q r` : term</code></pre>
+<p>The first invocation of the parser above demonstrates that once the
+rule for the <code>if-then-else</code> syntax has been removed, a string
+that used to parse as a conditional expression then parses as a big
+function application (the function <code>if</code> applied to five
+arguments).</p>
+<p>The fact that the pretty-printer does not print the term using the
+old-style syntax, even after the <code>if-then-else</code> rule has been
+removed, is due to the fact that the corresponding rule in the grammar
+does not have its preferred flag set. This can be accomplished with
+<code>prefer_form_with_tok</code> as follows:</p>
+<pre class="hol4"><code>   - prefer_form_with_tok {term_name = &quot;COND&quot;, tok = &quot;=&gt;&quot;};
+   &gt; val it = () : unit
+
+   - Term`p =&gt; q | r`;
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a.&gt;&gt;
+   &gt; val it = `p =&gt; q | r` : term</code></pre>
+<p>Used to modify the global parsing/pretty-printing grammar by removing
+a rule, possibly as a prelude to adding another rule which would
+otherwise clash.</p>
+<h3 id="comments">Comments</h3>
+<p>As with other functions in the <code>Parse</code> structure, there is
+a companion <code>temp_remove_termtok</code> function, which has the
+same effect on the global grammar, but which does not cause this effect
+to persist when the current theory is exported.</p>
+<p>The specification of a rule by <code>term_name</code> and one of its
+tokens is not perfect, but seems adequate in practice.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Parse.remove_rules_for_term.html"><code>Parse.remove_rules_for_term</code></a>,
+<a
+href="Parse.prefer_form_with_tok.html"><code>Parse.prefer_form_with_tok</code></a></p>
+</body>
+</html>

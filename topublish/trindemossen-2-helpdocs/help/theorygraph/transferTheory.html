@@ -1,0 +1,622 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: transfer</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "transfer"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "holTheory.html"><span class="strong">hol</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">PAIRU</span>
+    <td>
+    :(β -> γ -> α) -> β # unit -> γ -> α
+    <tr><td>
+    <span class="strong">UPAIR</span>
+    <td>
+    :(β -> γ -> α) -> unit # β -> γ -> α
+    <tr><td>
+    <span class="strong">bi_unique</span>
+    <td>
+    :(α -> β -> bool) -> bool
+    <tr><td>
+    <span class="strong">bitotal</span>
+    <td>
+    :(α -> β -> bool) -> bool
+    <tr><td>
+    <span class="strong">equalityp</span>
+    <td>
+    :(α -> α -> bool) -> bool
+    <tr><td>
+    <span class="strong">left_unique</span>
+    <td>
+    :(α -> β -> bool) -> bool
+    <tr><td>
+    <span class="strong">right_unique</span>
+    <td>
+    :(α -> β -> bool) -> bool
+    <tr><td> <span class="strong">surj</span> <td> :(α -> β -> bool) -> bool
+    <tr><td> <span class="strong">total</span> <td> :(α -> β -> bool) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">bi_unique_def</span>
+<DD>
+<pre>
+⊢ ∀R. bi_unique R ⇔ left_unique R ∧ right_unique R
+</pre>
+
+<DT><span class="strong">bitotal_def</span>
+<DD>
+<pre>
+⊢ ∀R. bitotal R ⇔ total R ∧ surj R
+</pre>
+
+<DT><span class="strong">equalityp_def</span>
+<DD>
+<pre>
+⊢ ∀A. equalityp A ⇔ A = $=
+</pre>
+
+<DT><span class="strong">left_unique_def</span>
+<DD>
+<pre>
+⊢ ∀R. left_unique R ⇔ ∀a1 a2 b. R a1 b ∧ R a2 b ⇒ a1 = a2
+</pre>
+
+<DT><span class="strong">right_unique_def</span>
+<DD>
+<pre>
+⊢ ∀R. right_unique R ⇔ ∀a b1 b2. R a b1 ∧ R a b2 ⇒ b1 = b2
+</pre>
+
+<DT><span class="strong">surj_def</span>
+<DD>
+<pre>
+⊢ ∀R. surj R ⇔ ∀y. ∃x. R x y
+</pre>
+
+<DT><span class="strong">total_def</span>
+<DD>
+<pre>
+⊢ ∀R. total R ⇔ ∀x. ∃y. R x y
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">ALL_DISTINCT_rule</span>
+<DD>
+<pre>
+⊢ left_unique AB ⇒
+  right_unique AB ⇒
+  (LIST_REL AB |==> $<=>) ALL_DISTINCT ALL_DISTINCT
+</pre>
+
+<DT><span class="strong">ALL_IFF</span>
+<DD>
+<pre>
+⊢ bitotal AB ⇒ ((AB |==> $<=>) |==> $<=>) $! $!
+</pre>
+
+<DT><span class="strong">ALL_surj_RDOM</span>
+<DD>
+<pre>
+⊢ surj AB ⇒ ((AB |==> $<=>) |==> $<=>) (RES_FORALL (RDOM AB)) $!
+</pre>
+
+<DT><span class="strong">ALL_surj_iff_imp</span>
+<DD>
+<pre>
+⊢ surj AB ⇒ ((AB |==> $<=>) |==> $==>) $! $!
+</pre>
+
+<DT><span class="strong">ALL_surj_imp_imp</span>
+<DD>
+<pre>
+⊢ surj AB ⇒ ((AB |==> $==>) |==> $==>) $! $!
+</pre>
+
+<DT><span class="strong">ALL_total_RRANGE</span>
+<DD>
+<pre>
+⊢ total AB ⇒ ((AB |==> $<=>) |==> $<=>) $! (RES_FORALL (RRANGE AB))
+</pre>
+
+<DT><span class="strong">ALL_total_cimp_cimp</span>
+<DD>
+<pre>
+⊢ total AB ⇒ ((AB |==> flip $==>) |==> flip $==>) $! $!
+</pre>
+
+<DT><span class="strong">ALL_total_iff_cimp</span>
+<DD>
+<pre>
+⊢ total AB ⇒ ((AB |==> $<=>) |==> flip $==>) $! $!
+</pre>
+
+<DT><span class="strong">ALL_total_iff_imp_RRANGE</span>
+<DD>
+<pre>
+⊢ total AB ⇒ ((AB |==> $<=>) |==> $==>) $! (RES_FORALL (RRANGE AB))
+</pre>
+
+<DT><span class="strong">COMMA_CORRECT</span>
+<DD>
+<pre>
+⊢ (AB |==> CD |==> AB ### CD) $, $,
+</pre>
+
+<DT><span class="strong">COND_rule</span>
+<DD>
+<pre>
+⊢ ($<=> |==> AB |==> AB |==> AB) COND COND
+</pre>
+
+<DT><span class="strong">CONS_rule</span>
+<DD>
+<pre>
+⊢ (AB |==> LIST_REL AB |==> LIST_REL AB) CONS CONS
+</pre>
+
+<DT><span class="strong">EQ_bi_unique</span>
+<DD>
+<pre>
+⊢ bi_unique AB ⇒ (AB |==> AB |==> $<=>) $= $=
+</pre>
+
+<DT><span class="strong">EXISTS_IFF_RDOM</span>
+<DD>
+<pre>
+⊢ surj AB ⇒ ((AB |==> $<=>) |==> $<=>) (RES_EXISTS (RDOM AB)) $?
+</pre>
+
+<DT><span class="strong">EXISTS_IFF_RRANGE</span>
+<DD>
+<pre>
+⊢ total AB ⇒ ((AB |==> $<=>) |==> $<=>) $? (RES_EXISTS (RRANGE AB))
+</pre>
+
+<DT><span class="strong">EXISTS_bitotal</span>
+<DD>
+<pre>
+⊢ bitotal AB ⇒ ((AB |==> $<=>) |==> $<=>) $? $?
+</pre>
+
+<DT><span class="strong">EXISTS_surj_cimp_cimp</span>
+<DD>
+<pre>
+⊢ surj AB ⇒ ((AB |==> flip $==>) |==> flip $==>) $? $?
+</pre>
+
+<DT><span class="strong">EXISTS_surj_iff_cimp</span>
+<DD>
+<pre>
+⊢ surj AB ⇒ ((AB |==> $<=>) |==> flip $==>) $? $?
+</pre>
+
+<DT><span class="strong">EXISTS_total_iff_imp</span>
+<DD>
+<pre>
+⊢ total AB ⇒ ((AB |==> $<=>) |==> $==>) $? $?
+</pre>
+
+<DT><span class="strong">EXISTS_total_imp_imp</span>
+<DD>
+<pre>
+⊢ total AB ⇒ ((AB |==> $==>) |==> $==>) $? $?
+</pre>
+
+<DT><span class="strong">FOLDL_rule</span>
+<DD>
+<pre>
+⊢ ((CD |==> AB |==> CD) |==> CD |==> LIST_REL AB |==> CD) FOLDL FOLDL
+</pre>
+
+<DT><span class="strong">FOLDR_rule</span>
+<DD>
+<pre>
+⊢ ((AB |==> CD |==> CD) |==> CD |==> LIST_REL AB |==> CD) FOLDR FOLDR
+</pre>
+
+<DT><span class="strong">FST_CORRECT</span>
+<DD>
+<pre>
+⊢ ((AB ### CD) |==> AB) FST FST
+</pre>
+
+<DT><span class="strong">FUNPOW_rule</span>
+<DD>
+<pre>
+⊢ ((AB |==> AB) |==> $= |==> AB |==> AB) FUNPOW FUNPOW
+</pre>
+
+<DT><span class="strong">FUN_REL_COMB</span>
+<DD>
+<pre>
+⊢ (AB |==> CD) f g ∧ AB a b ⇒ CD (f a) (g b)
+</pre>
+
+<DT><span class="strong">FUN_REL_COMB_EQ</span>
+<DD>
+<pre>
+⊢ (AB1 |==> CD) f g ∧ AB2 a b ⇒ AB1 = AB2 ⇒ CD (f a) (g b)
+</pre>
+
+<DT><span class="strong">FUN_REL_IFF_IMP</span>
+<DD>
+<pre>
+⊢ (AB |==> $<=>) P Q ⇒ (AB |==> $==>) P Q ∧ (AB |==> flip $==>) P Q
+</pre>
+
+<DT><span class="strong">FUN_REL_def</span>
+<DD>
+<pre>
+⊢ ∀R1 R2 f g. (R1 |==> R2) f g ⇔ ∀a b. R1 a b ⇒ R2 (f a) (g b)
+</pre>
+
+<DT><span class="strong">FUN_REL_iff_cimp_strengthen</span>
+<DD>
+<pre>
+⊢ (AB |==> $<=>) P Q ⇒ (AB |==> flip $==>) P Q
+</pre>
+
+<DT><span class="strong">FUN_REL_iff_imp_strengthen</span>
+<DD>
+<pre>
+⊢ (AB |==> $<=>) P Q ⇒ (AB |==> $==>) P Q
+</pre>
+
+<DT><span class="strong">LENGTH_rule</span>
+<DD>
+<pre>
+⊢ (LIST_REL AB |==> $=) LENGTH LENGTH
+</pre>
+
+<DT><span class="strong">LET_rule</span>
+<DD>
+<pre>
+⊢ ((AB |==> CD) |==> AB |==> CD) LET LET
+</pre>
+
+<DT><span class="strong">LIST_REL_left_unique</span>
+<DD>
+<pre>
+⊢ left_unique AB ⇒ left_unique (LIST_REL AB)
+</pre>
+
+<DT><span class="strong">LIST_REL_right_unique</span>
+<DD>
+<pre>
+⊢ right_unique AB ⇒ right_unique (LIST_REL AB)
+</pre>
+
+<DT><span class="strong">LIST_REL_surj</span>
+<DD>
+<pre>
+⊢ surj AB ⇒ surj (LIST_REL AB)
+</pre>
+
+<DT><span class="strong">LIST_REL_total</span>
+<DD>
+<pre>
+⊢ total AB ⇒ total (LIST_REL AB)
+</pre>
+
+<DT><span class="strong">MAP_rule</span>
+<DD>
+<pre>
+⊢ ((AB |==> CD) |==> LIST_REL AB |==> LIST_REL CD) MAP MAP
+</pre>
+
+<DT><span class="strong">NIL_rule</span>
+<DD>
+<pre>
+⊢ LIST_REL AB [] []
+</pre>
+
+<DT><span class="strong">NONE_rule</span>
+<DD>
+<pre>
+⊢ OPTREL AB NONE NONE
+</pre>
+
+<DT><span class="strong">OPTION_BIND_rule</span>
+<DD>
+<pre>
+⊢ (OPTREL AB |==> (AB |==> OPTREL CD) |==> OPTREL CD) monad_bind monad_bind
+</pre>
+
+<DT><span class="strong">OPTREL_MAP</span>
+<DD>
+<pre>
+⊢ ((AB |==> CD) |==> OPTREL AB |==> OPTREL CD) OPTION_MAP OPTION_MAP
+</pre>
+
+<DT><span class="strong">OPTREL_left_unique</span>
+<DD>
+<pre>
+⊢ left_unique AB ⇒ left_unique (OPTREL AB)
+</pre>
+
+<DT><span class="strong">OPTREL_right_unique</span>
+<DD>
+<pre>
+⊢ right_unique AB ⇒ right_unique (OPTREL AB)
+</pre>
+
+<DT><span class="strong">OPTREL_surj</span>
+<DD>
+<pre>
+⊢ surj AB ⇒ surj (OPTREL AB)
+</pre>
+
+<DT><span class="strong">OPTREL_total</span>
+<DD>
+<pre>
+⊢ total AB ⇒ total (OPTREL AB)
+</pre>
+
+<DT><span class="strong">PAIRU_COMMA</span>
+<DD>
+<pre>
+⊢ (AB |==> $= |==> PAIRU AB) $, K
+</pre>
+
+<DT><span class="strong">PAIRU_def</span>
+<DD>
+<pre>
+⊢ PAIRU AB (a,()) b = AB a b
+</pre>
+
+<DT><span class="strong">PAIRU_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀AB a b. P AB (a,()) b) ⇒ ∀v v1 v2 v3. P v (v1,v2) v3
+</pre>
+
+<DT><span class="strong">PAIR_REL_def</span>
+<DD>
+<pre>
+⊢ ∀R1 R2. R1 ### R2 = (λ(s,t) (u,v). R1 s u ∧ R2 t v)
+</pre>
+
+<DT><span class="strong">RDOM_EQ</span>
+<DD>
+<pre>
+⊢ RDOM $= = K T
+</pre>
+
+<DT><span class="strong">RRANGE_EQ</span>
+<DD>
+<pre>
+⊢ RRANGE $= = K T
+</pre>
+
+<DT><span class="strong">SND_CORRECT</span>
+<DD>
+<pre>
+⊢ ((AB ### CD) |==> CD) SND SND
+</pre>
+
+<DT><span class="strong">SOME_rule</span>
+<DD>
+<pre>
+⊢ (AB |==> OPTREL AB) SOME SOME
+</pre>
+
+<DT><span class="strong">TL_rule</span>
+<DD>
+<pre>
+⊢ (LIST_REL AB |==> LIST_REL AB) TL TL
+</pre>
+
+<DT><span class="strong">UPAIR_COMMA</span>
+<DD>
+<pre>
+⊢ ($= |==> AB |==> UPAIR AB) $, (K I)
+</pre>
+
+<DT><span class="strong">UPAIR_def</span>
+<DD>
+<pre>
+⊢ UPAIR AB ((),a) b = AB a b
+</pre>
+
+<DT><span class="strong">UPAIR_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀AB a b. P AB ((),a) b) ⇒ ∀v v1 v2 v3. P v (v1,v2) v3
+</pre>
+
+<DT><span class="strong">UREL_EQ</span>
+<DD>
+<pre>
+⊢ () = ()
+</pre>
+
+<DT><span class="strong">bi_unique_EQ</span>
+<DD>
+<pre>
+⊢ bi_unique $=
+</pre>
+
+<DT><span class="strong">bi_unique_implied</span>
+<DD>
+<pre>
+⊢ left_unique r ∧ right_unique r ⇒ bi_unique r
+</pre>
+
+<DT><span class="strong">bitotal_EQ</span>
+<DD>
+<pre>
+⊢ bitotal $=
+</pre>
+
+<DT><span class="strong">bitotal_implied</span>
+<DD>
+<pre>
+⊢ total r ∧ surj r ⇒ bitotal r
+</pre>
+
+<DT><span class="strong">cimp_disj</span>
+<DD>
+<pre>
+⊢ (flip $==> |==> flip $==> |==> flip $==>) $\/ $\/
+</pre>
+
+<DT><span class="strong">cimp_imp</span>
+<DD>
+<pre>
+⊢ ($==> |==> flip $==> |==> flip $==>) $==> $==>
+</pre>
+
+<DT><span class="strong">eq_equalityp</span>
+<DD>
+<pre>
+⊢ equalityp $=
+</pre>
+
+<DT><span class="strong">eq_imp</span>
+<DD>
+<pre>
+⊢ ($<=> |==> $<=> |==> $<=>) $==> $==>
+</pre>
+
+<DT><span class="strong">equalityp_FUN_REL</span>
+<DD>
+<pre>
+⊢ equalityp AB ∧ equalityp CD ⇒ equalityp (AB |==> CD)
+</pre>
+
+<DT><span class="strong">equalityp_LIST_REL</span>
+<DD>
+<pre>
+⊢ equalityp AB ⇒ equalityp (LIST_REL AB)
+</pre>
+
+<DT><span class="strong">equalityp_OPTREL</span>
+<DD>
+<pre>
+⊢ equalityp AB ⇒ equalityp (OPTREL AB)
+</pre>
+
+<DT><span class="strong">equalityp_PAIR_REL</span>
+<DD>
+<pre>
+⊢ equalityp AB ∧ equalityp CD ⇒ equalityp (AB ### CD)
+</pre>
+
+<DT><span class="strong">equalityp_applied</span>
+<DD>
+<pre>
+⊢ equalityp A ⇒ A x x
+</pre>
+
+<DT><span class="strong">imp_conj</span>
+<DD>
+<pre>
+⊢ ($==> |==> $==> |==> $==>) $/\ $/\
+</pre>
+
+<DT><span class="strong">imp_disj</span>
+<DD>
+<pre>
+⊢ ($==> |==> $==> |==> $==>) $\/ $\/
+</pre>
+
+<DT><span class="strong">left_unique_EQ</span>
+<DD>
+<pre>
+⊢ left_unique $=
+</pre>
+
+<DT><span class="strong">list_CASE_CONG</span>
+<DD>
+<pre>
+⊢ (LIST_REL AB |==> CD |==> (AB |==> LIST_REL AB |==> CD) |==> CD) list_CASE
+    list_CASE
+</pre>
+
+<DT><span class="strong">option_CASE_CONG</span>
+<DD>
+<pre>
+⊢ (OPTREL AB |==> CD |==> (AB |==> CD) |==> CD) option_CASE option_CASE
+</pre>
+
+<DT><span class="strong">pair_CASE_CONG</span>
+<DD>
+<pre>
+⊢ ((AB ### CD) |==> (AB |==> CD |==> EF) |==> EF) pair_CASE pair_CASE
+</pre>
+
+<DT><span class="strong">right_unique_EQ</span>
+<DD>
+<pre>
+⊢ right_unique $=
+</pre>
+
+<DT><span class="strong">surj_EQ</span>
+<DD>
+<pre>
+⊢ surj $=
+</pre>
+
+<DT><span class="strong">surj_eqeq</span>
+<DD>
+<pre>
+⊢ surj ($= |==> $=)
+</pre>
+
+<DT><span class="strong">surj_sets</span>
+<DD>
+<pre>
+⊢ surj AB ∧ right_unique AB ⇒ surj (AB |==> $<=>)
+</pre>
+
+<DT><span class="strong">total_EQ</span>
+<DD>
+<pre>
+⊢ total $=
+</pre>
+
+<DT><span class="strong">total_total_sets</span>
+<DD>
+<pre>
+⊢ total AB ∧ left_unique AB ⇒ total (AB |==> $<=>)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

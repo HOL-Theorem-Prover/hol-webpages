@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>numLib.LEAST_ELIM_TAC</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="least_elim_tac"><code>LEAST_ELIM_TAC</code></h2>
+<pre class="hol4"><code>numLib.LEAST_ELIM_TAC : tactic</code></pre>
+<hr />
+<p>Eliminates a <code>LEAST</code> term from the current goal.</p>
+<p><code>LEAST_ELIM_TAC</code> searches the goal it is applied to for
+free sub-terms involving the <code>LEAST</code> operator, of the form
+<code>$LEAST P</code> (<code>P</code> will usually be an abstraction).
+If such a term is found, the tactic produces a new goal where instances
+of the <code>LEAST</code>-term have disappeared. The resulting goal will
+require the proof that there exists a value satisfying <code>P</code>,
+and that a minimal value satisfies the original goal.</p>
+<p>Thus, <code>LEAST_ELIM_TAC</code> can be seen as a higher-order match
+against the theorem</p>
+<pre class="hol4"><code>   |- !P Q.
+         (?n. P x) /\ (!n. (!m. m &lt; n ==&gt; ~P m) /\ P n ==&gt; Q n) ==&gt;
+         Q ($LEAST P)</code></pre>
+<p>where the new goal is the antecdent of the implication. (This theorem
+is <code>LEAST_ELIM</code>, from theory <code>while</code>.)</p>
+<h3 id="failure">Failure</h3>
+<p>The tactic fails if there is no free <code>LEAST</code>-term in the
+goal.</p>
+<h3 id="example">Example</h3>
+<p>When applied to the goal</p>
+<pre class="hol4"><code>   ?- (LEAST n. 4 &lt; n) = 5</code></pre>
+<p>the tactic <code>LEAST_ELIM_TAC</code> produces</p>
+<pre class="hol4"><code>   ?- (?n. 4 &lt; n) /\ !n. (!m. m &lt; n ==&gt; ~(4 &lt; m)) /\ 4 &lt; n ==&gt; (n = 5)</code></pre>
+<h3 id="comments">Comments</h3>
+<p>This tactic assumes that there is indeed a least number satisfying
+the given predicate. If there is not, then the <code>LEAST</code>-term
+will have an arbitrary value, and the proof should proceed by showing
+that the enclosing predicate <code>Q</code> holds for all possible
+numbers.</p>
+<p>If there are multiple different <code>LEAST</code>-terms in the goal,
+then <code>LEAST_ELIM_TAC</code> will pick the first free
+<code>LEAST</code>-term returned by the standard <code>find_terms</code>
+function.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Tactic.DEEP_INTRO_TAC.html"><code>Tactic.DEEP_INTRO_TAC</code></a>,
+<a
+href="Tactic.SELECT_ELIM_TAC.html"><code>Tactic.SELECT_ELIM_TAC</code></a></p>
+</body>
+</html>

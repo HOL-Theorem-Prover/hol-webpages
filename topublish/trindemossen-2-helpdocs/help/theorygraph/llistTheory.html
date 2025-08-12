@@ -1,0 +1,2620 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: llist</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "llist"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "set_relationTheory.html"><span class="strong">set_relation</span></a>&nbsp;&nbsp;
+    <a href = "holTheory.html"><span class="strong">hol</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">llist</span> <td> 1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">LAPPEND</span>
+    <td>
+    :α llist -> α llist -> α llist
+    <tr><td> <span class="strong">LCONS</span> <td> :α -> α llist -> α llist
+    <tr><td>
+    <span class="strong">LDROP</span>
+    <td>
+    :num -> α llist -> α llist option
+    <tr><td>
+    <span class="strong">LDROP_WHILE</span>
+    <td>
+    :(α -> bool) -> α llist -> α llist
+    <tr><td>
+    <span class="strong">LFILTER</span>
+    <td>
+    :(α -> bool) -> α llist -> α llist
+    <tr><td> <span class="strong">LFINITE</span> <td> :α llist -> bool
+    <tr><td>
+    <span class="strong">LFLATTEN</span>
+    <td>
+    :α llist llist -> α llist
+    <tr><td>
+    <span class="strong">LGENLIST</span>
+    <td>
+    :(num -> α) -> num option -> α llist
+    <tr><td> <span class="strong">LHD</span> <td> :α llist -> α option
+    <tr><td> <span class="strong">LLENGTH</span> <td> :α llist -> num option
+    <tr><td>
+    <span class="strong">LMAP</span>
+    <td>
+    :(α -> β) -> α llist -> β llist
+    <tr><td> <span class="strong">LNIL</span> <td> :α llist
+    <tr><td> <span class="strong">LNTH</span> <td> :num -> α llist -> α option
+    <tr><td>
+    <span class="strong">LPREFIX</span>
+    <td>
+    :α llist -> α llist -> bool
+    <tr><td> <span class="strong">LREPEAT</span> <td> :α list -> α llist
+    <tr><td> <span class="strong">LSET</span> <td> :α llist -> α -> bool
+    <tr><td>
+    <span class="strong">LSUFFIX</span>
+    <td>
+    :α llist -> α llist -> bool
+    <tr><td>
+    <span class="strong">LTAKE</span>
+    <td>
+    :num -> α llist -> α list option
+    <tr><td>
+    <span class="strong">LTAKE_WHILE</span>
+    <td>
+    :(α -> bool) -> α llist -> α llist
+    <tr><td> <span class="strong">LTL</span> <td> :α llist -> α llist option
+    <tr><td>
+    <span class="strong">LTL_HD</span>
+    <td>
+    :α llist -> (α llist # α) option
+    <tr><td>
+    <span class="strong">LUNFOLD</span>
+    <td>
+    :(β -> (β # α) option) -> β -> α llist
+    <tr><td>
+    <span class="strong">LUNZIP</span>
+    <td>
+    :(α # β) llist -> α llist # β llist
+    <tr><td>
+    <span class="strong">LZIP</span>
+    <td>
+    :α llist # β llist -> (α # β) llist
+    <tr><td>
+    <span class="strong">always</span>
+    <td>
+    :(α llist -> bool) -> α llist -> bool
+    <tr><td>
+    <span class="strong">eventually</span>
+    <td>
+    :(α llist -> bool) -> α llist -> bool
+    <tr><td>
+    <span class="strong">every</span>
+    <td>
+    :(α -> bool) -> α llist -> bool
+    <tr><td>
+    <span class="strong">exists</span>
+    <td>
+    :(α -> bool) -> α llist -> bool
+    <tr><td> <span class="strong">fromList</span> <td> :α list -> α llist
+    <tr><td> <span class="strong">fromSeq</span> <td> :(num -> α) -> α llist
+    <tr><td>
+    <span class="strong">lbind</span>
+    <td>
+    :β llist -> (β -> α llist) -> α llist
+    <tr><td>
+    <span class="strong">linear_order_to_list_f</span>
+    <td>
+    :(α # α -> bool) -> ((α # α -> bool) # α) option
+    <tr><td>
+    <span class="strong">llength_rel</span>
+    <td>
+    :α llist -> num -> bool
+    <tr><td>
+    <span class="strong">llist_CASE</span>
+    <td>
+    :β llist -> α -> (β -> β llist -> α) -> α
+    <tr><td>
+    <span class="strong">llist_abs</span>
+    <td>
+    :(num -> α option) -> α llist
+    <tr><td>
+    <span class="strong">llist_rel</span>
+    <td>
+    :(α -> β -> bool) -> α llist -> β llist -> bool
+    <tr><td>
+    <span class="strong">llist_rep</span>
+    <td>
+    :α llist -> num -> α option
+    <tr><td>
+    <span class="strong">llist_upto</span>
+    <td>
+    :(α llist -> α llist -> bool) -> α llist -> α llist -> bool
+    <tr><td>
+    <span class="strong">lrep_ok</span>
+    <td>
+    :(num -> α option) -> bool
+    <tr><td> <span class="strong">toList</span> <td> :α llist -> α list option
+    <tr><td>
+    <span class="strong">until</span>
+    <td>
+    :(α llist -> bool) -> (α llist -> bool) -> α llist -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">@tempLFINITE_def</span>
+<DD>
+<pre>
+⊢ LFINITE =
+  (λa0.
+       ∀LFINITE'.
+         (∀a0. a0 = [||] ∨ (∃h t. a0 = h:::t ∧ LFINITE' t) ⇒ LFINITE' a0) ⇒
+         LFINITE' a0)
+</pre>
+
+<DT><span class="strong">@tempalways_def</span>
+<DD>
+<pre>
+⊢ always =
+  (λP a0.
+       ∃always'.
+         always' a0 ∧
+         ∀a0. always' a0 ⇒ ∃h t. a0 = h:::t ∧ P (h:::t) ∧ always' t)
+</pre>
+
+<DT><span class="strong">@tempeventually_def</span>
+<DD>
+<pre>
+⊢ eventually =
+  (λP a0.
+       ∀eventually'.
+         (∀a0. P a0 ∨ (∃h t. a0 = h:::t ∧ eventually' t) ⇒ eventually' a0) ⇒
+         eventually' a0)
+</pre>
+
+<DT><span class="strong">@tempexists_def</span>
+<DD>
+<pre>
+⊢ exists =
+  (λP a0.
+       ∀exists'.
+         (∀a0.
+            (∃h t. a0 = h:::t ∧ P h) ∨ (∃h t. a0 = h:::t ∧ exists' t) ⇒
+            exists' a0) ⇒
+         exists' a0)
+</pre>
+
+<DT><span class="strong">@templlength_rel_def</span>
+<DD>
+<pre>
+⊢ llength_rel =
+  (λa0 a1.
+       ∀llength_rel'.
+         (∀a0 a1.
+            a0 = [||] ∧ a1 = 0 ∨
+            (∃h n t. a0 = h:::t ∧ a1 = SUC n ∧ llength_rel' t n) ⇒
+            llength_rel' a0 a1) ⇒
+         llength_rel' a0 a1)
+</pre>
+
+<DT><span class="strong">@templlist_upto_def</span>
+<DD>
+<pre>
+⊢ llist_upto =
+  (λR a0 a1.
+       ∀llist_upto'.
+         (∀a0 a1.
+            a1 = a0 ∨ R a0 a1 ∨ (∃y. llist_upto' a0 y ∧ llist_upto' y a1) ∨
+            (∃x y z. a0 = z ++ₗ x ∧ a1 = z ++ₗ y ∧ llist_upto' x y) ⇒
+            llist_upto' a0 a1) ⇒
+         llist_upto' a0 a1)
+</pre>
+
+<DT><span class="strong">@templrep_ok_def</span>
+<DD>
+<pre>
+⊢ lrep_ok =
+  (λa0.
+       ∃lrep_ok'.
+         lrep_ok' a0 ∧
+         ∀a0.
+           lrep_ok' a0 ⇒
+           a0 = (λn. NONE) ∨
+           ∃h t. a0 = (λn. if n = 0 then SOME h else t (n − 1)) ∧ lrep_ok' t)
+</pre>
+
+<DT><span class="strong">@tempuntil_def</span>
+<DD>
+<pre>
+⊢ until =
+  (λP Q a0.
+       ∀until'.
+         (∀a0. Q a0 ∨ (∃h t. a0 = h:::t ∧ P (h:::t) ∧ until' t) ⇒ until' a0) ⇒
+         until' a0)
+</pre>
+
+<DT><span class="strong">LAPPEND</span>
+<DD>
+<pre>
+⊢ (∀x. [||] ++ₗ x = x) ∧ ∀h t x. h:::t ++ₗ x = h:::(t ++ₗ x)
+</pre>
+
+<DT><span class="strong">LCONS</span>
+<DD>
+<pre>
+⊢ ∀h t. h:::t = llist_abs (λn. if n = 0 then SOME h else llist_rep t (n − 1))
+</pre>
+
+<DT><span class="strong">LDROP</span>
+<DD>
+<pre>
+⊢ (∀ll. LDROP 0 ll = SOME ll) ∧
+  ∀n ll. LDROP (SUC n) ll = OPTION_JOIN (OPTION_MAP (LDROP n) (LTL ll))
+</pre>
+
+<DT><span class="strong">LDROP_WHILE</span>
+<DD>
+<pre>
+⊢ (∀P. LDROP_WHILE P [||] = [||]) ∧
+  (∀P x xs. LDROP_WHILE P (x:::xs) = if P x then LDROP_WHILE P xs else x:::xs) ∧
+  ∀P l. every P l ⇒ LDROP_WHILE P l = [||]
+</pre>
+
+<DT><span class="strong">LFILTER</span>
+<DD>
+<pre>
+⊢ ∀P ll.
+    LFILTER P ll =
+    if ¬exists P ll then [||]
+    else if P (THE (LHD ll)) then THE (LHD ll):::LFILTER P (THE (LTL ll))
+    else LFILTER P (THE (LTL ll))
+</pre>
+
+<DT><span class="strong">LFLATTEN</span>
+<DD>
+<pre>
+⊢ ∀ll.
+    LFLATTEN ll =
+    if every ($= [||]) ll then [||]
+    else if THE (LHD ll) = [||] then LFLATTEN (THE (LTL ll))
+    else
+      THE (LHD (THE (LHD ll))):::
+          LFLATTEN (THE (LTL (THE (LHD ll))):::THE (LTL ll))
+</pre>
+
+<DT><span class="strong">LGENLIST_def</span>
+<DD>
+<pre>
+⊢ (∀f. LGENLIST f NONE = LUNFOLD (λn. SOME (n + 1,f n)) 0) ∧
+  ∀f lim.
+    LGENLIST f (SOME lim) =
+    LUNFOLD (λn. if n < lim then SOME (n + 1,f n) else NONE) 0
+</pre>
+
+<DT><span class="strong">LHD</span>
+<DD>
+<pre>
+⊢ ∀ll. LHD ll = llist_rep ll 0
+</pre>
+
+<DT><span class="strong">LLENGTH</span>
+<DD>
+<pre>
+⊢ ∀ll. LLENGTH ll = if LFINITE ll then SOME (@n. llength_rel ll n) else NONE
+</pre>
+
+<DT><span class="strong">LMAP</span>
+<DD>
+<pre>
+⊢ (∀f. LMAP f [||] = [||]) ∧ ∀f h t. LMAP f (h:::t) = f h:::LMAP f t
+</pre>
+
+<DT><span class="strong">LNIL</span>
+<DD>
+<pre>
+⊢ [||] = llist_abs (λn. NONE)
+</pre>
+
+<DT><span class="strong">LNTH</span>
+<DD>
+<pre>
+⊢ (∀ll. LNTH 0 ll = LHD ll) ∧
+  ∀n ll. LNTH (SUC n) ll = OPTION_JOIN (OPTION_MAP (LNTH n) (LTL ll))
+</pre>
+
+<DT><span class="strong">LPREFIX_def</span>
+<DD>
+<pre>
+⊢ ∀l1 l2.
+    LPREFIX l1 l2 ⇔
+    case toList l1 of
+      NONE => l1 = l2
+    | SOME xs =>
+      case toList l2 of
+        NONE => LTAKE (LENGTH xs) l2 = SOME xs
+      | SOME ys => xs ≼ ys
+</pre>
+
+<DT><span class="strong">LREPEAT_def</span>
+<DD>
+<pre>
+⊢ ∀l. LREPEAT l =
+      if NULL l then [||] else LGENLIST (λn. EL (n MOD LENGTH l) l) NONE
+</pre>
+
+<DT><span class="strong">LSET_def</span>
+<DD>
+<pre>
+⊢ ∀l x. LSET l x ⇔ ∃n. LNTH n l = SOME x
+</pre>
+
+<DT><span class="strong">LSUFFIX_def</span>
+<DD>
+<pre>
+⊢ ∀xs zs. LSUFFIX xs zs ⇔ ∃ys. xs = fromList ys ++ₗ zs ∨ zs = [||]
+</pre>
+
+<DT><span class="strong">LTAKE</span>
+<DD>
+<pre>
+⊢ (∀ll. LTAKE 0 ll = SOME []) ∧
+  ∀n ll.
+    LTAKE (SUC n) ll =
+    case LHD ll of
+      NONE => NONE
+    | SOME hd =>
+      case LTAKE n (THE (LTL ll)) of NONE => NONE | SOME tl => SOME (hd::tl)
+</pre>
+
+<DT><span class="strong">LTAKE_WHILE</span>
+<DD>
+<pre>
+⊢ (∀P. LTAKE_WHILE P [||] = [||]) ∧
+  (∀P x xs.
+     LTAKE_WHILE P (x:::xs) = if P x then x:::LTAKE_WHILE P xs else [||]) ∧
+  ∀P l. every P l ⇒ LTAKE_WHILE P l = l
+</pre>
+
+<DT><span class="strong">LTL</span>
+<DD>
+<pre>
+⊢ ∀ll.
+    LTL ll =
+    case LHD ll of
+      NONE => NONE
+    | SOME v => SOME (llist_abs (λn. llist_rep ll (n + 1)))
+</pre>
+
+<DT><span class="strong">LTL_HD_def</span>
+<DD>
+<pre>
+⊢ ∀ll.
+    LTL_HD ll =
+    case llist_rep ll 0 of
+      NONE => NONE
+    | SOME h => SOME (llist_abs (llist_rep ll ∘ SUC),h)
+</pre>
+
+<DT><span class="strong">LUNFOLD_def</span>
+<DD>
+<pre>
+⊢ ∀f z.
+    LUNFOLD f z =
+    llist_abs
+      (λn. OPTION_MAP SND (FUNPOW (λm. monad_bind m (K ∘ f)ᴾ) n (f z)))
+</pre>
+
+<DT><span class="strong">LUNZIP_THM</span>
+<DD>
+<pre>
+⊢ LUNZIP [||] = ([||],[||]) ∧
+  ∀x y t. LUNZIP ((x,y):::t) = (let (ll1,ll2) = LUNZIP t in (x:::ll1,y:::ll2))
+</pre>
+
+<DT><span class="strong">LZIP_THM</span>
+<DD>
+<pre>
+⊢ (∀l1. LZIP (l1,[||]) = [||]) ∧ (∀l2. LZIP ([||],l2) = [||]) ∧
+  ∀h1 h2 t1 t2. LZIP (h1:::t1,h2:::t2) = (h1,h2):::LZIP (t1,t2)
+</pre>
+
+<DT><span class="strong">every_def</span>
+<DD>
+<pre>
+⊢ ∀P ll. every P ll ⇔ ¬exists ($¬ ∘ P) ll
+</pre>
+
+<DT><span class="strong">fromList_def</span>
+<DD>
+<pre>
+⊢ fromList [] = [||] ∧ ∀h t. fromList (h::t) = h:::fromList t
+</pre>
+
+<DT><span class="strong">fromSeq_def</span>
+<DD>
+<pre>
+⊢ ∀f. fromSeq f = LUNFOLD (λx. SOME (SUC x,f x)) 0
+</pre>
+
+<DT><span class="strong">lbind_def</span>
+<DD>
+<pre>
+⊢ ∀ll f. lbind ll f = LFLATTEN (LMAP f ll)
+</pre>
+
+<DT><span class="strong">linear_order_to_list_f_def</span>
+<DD>
+<pre>
+⊢ ∀lo.
+    linear_order_to_list_f lo =
+    (let
+       min = minimal_elements (domain lo ∪ range lo) lo
+     in
+       if min = ∅ then NONE
+       else SOME (rrestrict lo (domain lo ∪ range lo DIFF min),CHOICE min))
+</pre>
+
+<DT><span class="strong">llist_CASE_def</span>
+<DD>
+<pre>
+⊢ ∀ll b f.
+    llist_CASE ll b f =
+    case LTL_HD ll of NONE => b | SOME (ltl,lhd) => f lhd ltl
+</pre>
+
+<DT><span class="strong">llist_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION lrep_ok rep
+</pre>
+
+<DT><span class="strong">llist_absrep</span>
+<DD>
+<pre>
+⊢ (∀a. llist_abs (llist_rep a) = a) ∧
+  ∀r. lrep_ok r ⇔ llist_rep (llist_abs r) = r
+</pre>
+
+<DT><span class="strong">llist_rel_def</span>
+<DD>
+<pre>
+⊢ ∀R l1 l2.
+    llist_rel R l1 l2 ⇔
+    LLENGTH l1 = LLENGTH l2 ∧
+    ∀i x y. LNTH i l1 = SOME x ∧ LNTH i l2 = SOME y ⇒ R x y
+</pre>
+
+<DT><span class="strong">toList</span>
+<DD>
+<pre>
+⊢ ∀ll. toList ll = if LFINITE ll then LTAKE (THE (LLENGTH ll)) ll else NONE
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">GENLIST_EQ_CONS</span>
+<DD>
+<pre>
+⊢ GENLIST f n = h::t ⇔ 0 < n ∧ f 0 = h ∧ t = GENLIST (f ∘ SUC) (n − 1)
+</pre>
+
+<DT><span class="strong">IN_LSET</span>
+<DD>
+<pre>
+⊢ ∀x l. x ∈ LSET l ⇔ ∃n. LNTH n l = SOME x
+</pre>
+
+<DT><span class="strong">LAPPEND11_FINITE1</span>
+<DD>
+<pre>
+⊢ ∀l1 l2 l3. LFINITE l1 ⇒ (l1 ++ₗ l2 = l1 ++ₗ l3 ⇔ l2 = l3)
+</pre>
+
+<DT><span class="strong">LAPPEND_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀ll1 ll2 ll3. ll1 ++ₗ ll2 ++ₗ ll3 = ll1 ++ₗ (ll2 ++ₗ ll3)
+</pre>
+
+<DT><span class="strong">LAPPEND_EQ_LNIL</span>
+<DD>
+<pre>
+⊢ l1 ++ₗ l2 = [||] ⇔ l1 = [||] ∧ l2 = [||]
+</pre>
+
+<DT><span class="strong">LAPPEND_NIL_2ND</span>
+<DD>
+<pre>
+⊢ ∀ll. ll ++ₗ [||] = ll
+</pre>
+
+<DT><span class="strong">LAPPEND_fromList</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. fromList l1 ++ₗ fromList l2 = fromList (l1 ++ l2)
+</pre>
+
+<DT><span class="strong">LAPPEND_fromSeq</span>
+<DD>
+<pre>
+⊢ (∀f ll. fromSeq f ++ₗ ll = fromSeq f) ∧
+  ∀l f.
+    fromList l ++ₗ fromSeq f =
+    fromSeq (λn. if n < LENGTH l then EL n l else f (n − LENGTH l))
+</pre>
+
+<DT><span class="strong">LCONS_11</span>
+<DD>
+<pre>
+⊢ ∀h1 t1 h2 t2. h1:::t1 = h2:::t2 ⇔ h1 = h2 ∧ t1 = t2
+</pre>
+
+<DT><span class="strong">LCONS_NOT_NIL</span>
+<DD>
+<pre>
+⊢ ∀h t. h:::t ≠ [||] ∧ [||] ≠ h:::t
+</pre>
+
+<DT><span class="strong">LDROP1_THM</span>
+<DD>
+<pre>
+⊢ LDROP 1 = LTL
+</pre>
+
+<DT><span class="strong">LDROP_1</span>
+<DD>
+<pre>
+⊢ LDROP 1 (h:::t) = SOME t
+</pre>
+
+<DT><span class="strong">LDROP_ADD</span>
+<DD>
+<pre>
+⊢ ∀k1 k2 x.
+    LDROP (k1 + k2) x =
+    case LDROP k1 x of NONE => NONE | SOME ll => LDROP k2 ll
+</pre>
+
+<DT><span class="strong">LDROP_APPEND1</span>
+<DD>
+<pre>
+⊢ LDROP n l1 = SOME l ⇒ LDROP n (l1 ++ₗ l2) = SOME (l ++ₗ l2)
+</pre>
+
+<DT><span class="strong">LDROP_EQ_LNIL</span>
+<DD>
+<pre>
+⊢ LDROP n ll = SOME [||] ⇔ LLENGTH ll = SOME n
+</pre>
+
+<DT><span class="strong">LDROP_FUNPOW</span>
+<DD>
+<pre>
+⊢ ∀n ll. LDROP n ll = FUNPOW (λm. monad_bind m LTL) n (SOME ll)
+</pre>
+
+<DT><span class="strong">LDROP_LCONS_LNTH</span>
+<DD>
+<pre>
+⊢ ∀n xs a t. LDROP n xs = SOME (a:::t) ⇒ LNTH n xs = SOME a
+</pre>
+
+<DT><span class="strong">LDROP_LDROP</span>
+<DD>
+<pre>
+⊢ ∀ll k1 k2.
+    ¬LFINITE ll ⇒
+    THE (LDROP k2 (THE (LDROP k1 ll))) = THE (LDROP k1 (THE (LDROP k2 ll)))
+</pre>
+
+<DT><span class="strong">LDROP_NONE_LFINITE</span>
+<DD>
+<pre>
+⊢ LDROP k l = NONE ⇒ LFINITE l
+</pre>
+
+<DT><span class="strong">LDROP_SOME_LLENGTH</span>
+<DD>
+<pre>
+⊢ LDROP n ll = SOME l ∧ LLENGTH ll = SOME m ⇒ n ≤ m ∧ LLENGTH l = SOME (m − n)
+</pre>
+
+<DT><span class="strong">LDROP_SUC</span>
+<DD>
+<pre>
+⊢ LDROP (SUC n) ls = monad_bind (LDROP n ls) LTL
+</pre>
+
+<DT><span class="strong">LDROP_THM</span>
+<DD>
+<pre>
+⊢ (∀ll. LDROP 0 ll = SOME ll) ∧ (∀n. LDROP (SUC n) [||] = NONE) ∧
+  ∀n h t. LDROP (SUC n) (h:::t) = LDROP n t
+</pre>
+
+<DT><span class="strong">LDROP_fromList</span>
+<DD>
+<pre>
+⊢ ∀ls n.
+    LDROP n (fromList ls) =
+    if n ≤ LENGTH ls then SOME (fromList (DROP n ls)) else NONE
+</pre>
+
+<DT><span class="strong">LDROP_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀n f. LDROP n (fromSeq f) = SOME (fromSeq (f ∘ $+ n))
+</pre>
+
+<DT><span class="strong">LFILTER_APPEND</span>
+<DD>
+<pre>
+⊢ ∀P ll1 ll2.
+    LFINITE ll1 ⇒ LFILTER P (ll1 ++ₗ ll2) = LFILTER P ll1 ++ₗ LFILTER P ll2
+</pre>
+
+<DT><span class="strong">LFILTER_EQ_CONS</span>
+<DD>
+<pre>
+⊢ LFILTER P ll = h:::t ⇒
+  ∃l ll'.
+    ll = fromList l ++ₗ h:::ll' ∧ EVERY ($¬ ∘ P) l ∧ P h ∧ LFILTER P ll' = t
+</pre>
+
+<DT><span class="strong">LFILTER_EQ_NIL</span>
+<DD>
+<pre>
+⊢ ∀ll. LFILTER P ll = [||] ⇔ every ($¬ ∘ P) ll
+</pre>
+
+<DT><span class="strong">LFILTER_NIL</span>
+<DD>
+<pre>
+⊢ ∀P ll. every ($¬ ∘ P) ll ⇒ LFILTER P ll = [||]
+</pre>
+
+<DT><span class="strong">LFILTER_THM</span>
+<DD>
+<pre>
+⊢ (∀P. LFILTER P [||] = [||]) ∧
+  ∀P h t. LFILTER P (h:::t) = if P h then h:::LFILTER P t else LFILTER P t
+</pre>
+
+<DT><span class="strong">LFILTER_fromList</span>
+<DD>
+<pre>
+⊢ ∀p l. LFILTER p (fromList l) = fromList (FILTER p l)
+</pre>
+
+<DT><span class="strong">LFILTER_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀p f.
+    LFILTER p (fromSeq f) =
+    if ∀i. ¬p (f i) then [||]
+    else if p (f 0) then f 0:::LFILTER p (fromSeq (f ∘ SUC))
+    else LFILTER p (fromSeq (f ∘ SUC))
+</pre>
+
+<DT><span class="strong">LFINITE</span>
+<DD>
+<pre>
+⊢ LFINITE ll ⇔ ∃n. LTAKE n ll = NONE
+</pre>
+
+<DT><span class="strong">LFINITE_APPEND</span>
+<DD>
+<pre>
+⊢ ∀ll1 ll2. LFINITE (ll1 ++ₗ ll2) ⇔ LFINITE ll1 ∧ LFINITE ll2
+</pre>
+
+<DT><span class="strong">LFINITE_DROP</span>
+<DD>
+<pre>
+⊢ ∀n ll. LFINITE ll ∧ n ≤ THE (LLENGTH ll) ⇒ ∃y. LDROP n ll = SOME y
+</pre>
+
+<DT><span class="strong">LFINITE_HAS_LENGTH</span>
+<DD>
+<pre>
+⊢ ∀ll. LFINITE ll ⇒ ∃n. LLENGTH ll = SOME n
+</pre>
+
+<DT><span class="strong">LFINITE_IMP_fromList</span>
+<DD>
+<pre>
+⊢ ∀ll. LFINITE ll ⇒ ∃l. ll = fromList l
+</pre>
+
+<DT><span class="strong">LFINITE_INDUCTION</span>
+<DD>
+<pre>
+⊢ ∀P. P [||] ∧ (∀h t. P t ⇒ P (h:::t)) ⇒ ∀a0. LFINITE a0 ⇒ P a0
+</pre>
+
+<DT><span class="strong">LFINITE_LAPPEND_IMP_NIL</span>
+<DD>
+<pre>
+⊢ ∀ll. LFINITE ll ⇒ ∀l2. ll ++ₗ l2 = ll ⇒ l2 = [||]
+</pre>
+
+<DT><span class="strong">LFINITE_LFILTER</span>
+<DD>
+<pre>
+⊢ ∀ll. LFINITE ll ⇒ LFINITE (LFILTER P ll)
+</pre>
+
+<DT><span class="strong">LFINITE_LFLATTEN</span>
+<DD>
+<pre>
+⊢ LFINITE (LFLATTEN ll) ⇔
+  LFINITE (LFILTER ($¬ ∘ $= [||]) ll) ∧ every LFINITE ll
+</pre>
+
+<DT><span class="strong">LFINITE_LFLATTEN_EQN</span>
+<DD>
+<pre>
+⊢ ∀lll.
+    every (λll. LFINITE ll ∧ ll ≠ [||]) lll ⇒
+    (LFINITE (LFLATTEN lll) ⇔ LFINITE lll)
+</pre>
+
+<DT><span class="strong">LFINITE_LGENLIST</span>
+<DD>
+<pre>
+⊢ LFINITE (LGENLIST f n) ⇔ n ≠ NONE
+</pre>
+
+<DT><span class="strong">LFINITE_LLENGTH</span>
+<DD>
+<pre>
+⊢ LFINITE ll ⇔ ∃n. LLENGTH ll = SOME n
+</pre>
+
+<DT><span class="strong">LFINITE_LNTH_IS_SOME</span>
+<DD>
+<pre>
+⊢ ∀n ll. LFINITE ll ⇒ (IS_SOME (LNTH n ll) ⇔ n < THE (LLENGTH ll))
+</pre>
+
+<DT><span class="strong">LFINITE_LNTH_NONE</span>
+<DD>
+<pre>
+⊢ LFINITE ll ⇔ ∃n. LNTH n ll = NONE
+</pre>
+
+<DT><span class="strong">LFINITE_MAP</span>
+<DD>
+<pre>
+⊢ ∀f ll. LFINITE (LMAP f ll) ⇔ LFINITE ll
+</pre>
+
+<DT><span class="strong">LFINITE_STRONG_INDUCTION</span>
+<DD>
+<pre>
+⊢ P [||] ∧ (∀h t. LFINITE t ∧ P t ⇒ P (h:::t)) ⇒ ∀a0. LFINITE a0 ⇒ P a0
+</pre>
+
+<DT><span class="strong">LFINITE_TAKE</span>
+<DD>
+<pre>
+⊢ ∀n ll. LFINITE ll ∧ n ≤ THE (LLENGTH ll) ⇒ ∃y. LTAKE n ll = SOME y
+</pre>
+
+<DT><span class="strong">LFINITE_THM</span>
+<DD>
+<pre>
+⊢ (LFINITE [||] ⇔ T) ∧ ∀h t. LFINITE (h:::t) ⇔ LFINITE t
+</pre>
+
+<DT><span class="strong">LFINITE_cases</span>
+<DD>
+<pre>
+⊢ ∀a0. LFINITE a0 ⇔ a0 = [||] ∨ ∃h t. a0 = h:::t ∧ LFINITE t
+</pre>
+
+<DT><span class="strong">LFINITE_fromList</span>
+<DD>
+<pre>
+⊢ ∀l. LFINITE (fromList l)
+</pre>
+
+<DT><span class="strong">LFINITE_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀f. ¬LFINITE (fromSeq f)
+</pre>
+
+<DT><span class="strong">LFINITE_ind</span>
+<DD>
+<pre>
+⊢ ∀LFINITE'.
+    LFINITE' [||] ∧ (∀h t. LFINITE' t ⇒ LFINITE' (h:::t)) ⇒
+    ∀a0. LFINITE a0 ⇒ LFINITE' a0
+</pre>
+
+<DT><span class="strong">LFINITE_rules</span>
+<DD>
+<pre>
+⊢ LFINITE [||] ∧ ∀h t. LFINITE t ⇒ LFINITE (h:::t)
+</pre>
+
+<DT><span class="strong">LFINITE_strongind</span>
+<DD>
+<pre>
+⊢ ∀LFINITE'.
+    LFINITE' [||] ∧ (∀h t. LFINITE t ∧ LFINITE' t ⇒ LFINITE' (h:::t)) ⇒
+    ∀a0. LFINITE a0 ⇒ LFINITE' a0
+</pre>
+
+<DT><span class="strong">LFINITE_toList</span>
+<DD>
+<pre>
+⊢ ∀ll. LFINITE ll ⇒ ∃l. toList ll = SOME l
+</pre>
+
+<DT><span class="strong">LFINITE_toList_SOME</span>
+<DD>
+<pre>
+⊢ LFINITE ll ⇔ IS_SOME (toList ll)
+</pre>
+
+<DT><span class="strong">LFLATTEN_APPEND</span>
+<DD>
+<pre>
+⊢ ∀h t. LFLATTEN (h:::t) = h ++ₗ LFLATTEN t
+</pre>
+
+<DT><span class="strong">LFLATTEN_APPEND_FINITE1</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. LFINITE l1 ⇒ LFLATTEN (l1 ++ₗ l2) = LFLATTEN l1 ++ₗ LFLATTEN l2
+</pre>
+
+<DT><span class="strong">LFLATTEN_EQ_CONS</span>
+<DD>
+<pre>
+⊢ LFLATTEN ll = h:::t ⇔
+  ∃p e t1 t2.
+    ll = p ++ₗ (h:::t1):::t2 ∧ LFINITE p ∧ every ($= [||]) p ∧
+    t = t1 ++ₗ LFLATTEN t2
+</pre>
+
+<DT><span class="strong">LFLATTEN_EQ_NIL</span>
+<DD>
+<pre>
+⊢ ∀ll. LFLATTEN ll = [||] ⇔ every ($= [||]) ll
+</pre>
+
+<DT><span class="strong">LFLATTEN_SINGLETON</span>
+<DD>
+<pre>
+⊢ ∀h. LFLATTEN [|h|] = h
+</pre>
+
+<DT><span class="strong">LFLATTEN_THM</span>
+<DD>
+<pre>
+⊢ LFLATTEN [||] = [||] ∧ (∀tl. LFLATTEN ([||]:::t) = LFLATTEN t) ∧
+  ∀h t tl. LFLATTEN ((h:::t):::tl) = h:::LFLATTEN (t:::tl)
+</pre>
+
+<DT><span class="strong">LFLATTEN_fromList</span>
+<DD>
+<pre>
+⊢ ∀l. LFLATTEN (fromList (MAP fromList l)) = fromList (FLAT l)
+</pre>
+
+<DT><span class="strong">LFLATTEN_fromList_of_NILs</span>
+<DD>
+<pre>
+⊢ EVERY ($= [||]) l ⇒ LFLATTEN (fromList l) = [||]
+</pre>
+
+<DT><span class="strong">LGENLIST_CHUNK_GENLIST</span>
+<DD>
+<pre>
+⊢ LGENLIST f NONE = fromList (GENLIST f n) ++ₗ LGENLIST (f ∘ $+ n) NONE
+</pre>
+
+<DT><span class="strong">LGENLIST_EQ_CONS</span>
+<DD>
+<pre>
+⊢ LGENLIST f NONE = h:::t ⇔ h = f 0 ∧ t = LGENLIST (f ∘ $+ 1) NONE
+</pre>
+
+<DT><span class="strong">LGENLIST_EQ_LNIL</span>
+<DD>
+<pre>
+⊢ (LGENLIST f n = [||] ⇔ n = SOME 0) ∧ ([||] = LGENLIST f n ⇔ n = SOME 0)
+</pre>
+
+<DT><span class="strong">LGENLIST_EQ_fromList</span>
+<DD>
+<pre>
+⊢ ∀f k. LGENLIST f (SOME k) = fromList (GENLIST f k)
+</pre>
+
+<DT><span class="strong">LGENLIST_EQ_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀f. LGENLIST f NONE = fromSeq f
+</pre>
+
+<DT><span class="strong">LGENLIST_SOME</span>
+<DD>
+<pre>
+⊢ LGENLIST f (SOME 0) = [||] ∧
+  ∀n. LGENLIST f (SOME (SUC n)) = f 0:::LGENLIST (f ∘ SUC) (SOME n)
+</pre>
+
+<DT><span class="strong">LGENLIST_SOME_EQ_CONS</span>
+<DD>
+<pre>
+⊢ LGENLIST f (SOME n) = h:::t ⇔
+  0 < n ∧ f 0 = h ∧ t = LGENLIST (f ∘ SUC) (SOME (n − 1))
+</pre>
+
+<DT><span class="strong">LGENLIST_SOME_compute</span>
+<DD>
+<pre>
+⊢ LGENLIST f (SOME 0) = [||] ∧
+  (∀n. LGENLIST f (SOME <..num comp'n..> ) =
+       f 0:::LGENLIST (f ∘ SUC) (SOME (<..num comp'n..> − 1))) ∧
+  ∀n. LGENLIST f (SOME <..num comp'n..> ) =
+      f 0:::LGENLIST (f ∘ SUC) (SOME <..num comp'n..> )
+</pre>
+
+<DT><span class="strong">LHDTL_CONS_THM</span>
+<DD>
+<pre>
+⊢ ∀h t. LHD (h:::t) = SOME h ∧ LTL (h:::t) = SOME t
+</pre>
+
+<DT><span class="strong">LHDTL_EQ_SOME</span>
+<DD>
+<pre>
+⊢ ∀h t ll. ll = h:::t ⇔ LHD ll = SOME h ∧ LTL ll = SOME t
+</pre>
+
+<DT><span class="strong">LHD_EQ_NONE</span>
+<DD>
+<pre>
+⊢ ∀ll. (LHD ll = NONE ⇔ ll = [||]) ∧ (NONE = LHD ll ⇔ ll = [||])
+</pre>
+
+<DT><span class="strong">LHD_LAPPEND</span>
+<DD>
+<pre>
+⊢ LHD (l1 ++ₗ l2) = if l1 = [||] then LHD l2 else LHD l1
+</pre>
+
+<DT><span class="strong">LHD_LCONS</span>
+<DD>
+<pre>
+⊢ LHD (h:::t) = SOME h
+</pre>
+
+<DT><span class="strong">LHD_LGENLIST</span>
+<DD>
+<pre>
+⊢ LHD (LGENLIST f limopt) = if limopt = SOME 0 then NONE else SOME (f 0)
+</pre>
+
+<DT><span class="strong">LHD_LREPEAT</span>
+<DD>
+<pre>
+⊢ LHD (LREPEAT l) = LHD (fromList l)
+</pre>
+
+<DT><span class="strong">LHD_LUNFOLD</span>
+<DD>
+<pre>
+⊢ LHD (LUNFOLD f x) = OPTION_MAP SND (f x)
+</pre>
+
+<DT><span class="strong">LHD_THM</span>
+<DD>
+<pre>
+⊢ LHD [||] = NONE ∧ ∀h t. LHD (h:::t) = SOME h
+</pre>
+
+<DT><span class="strong">LHD_fromList</span>
+<DD>
+<pre>
+⊢ LHD (fromList l) = if NULL l then NONE else SOME (HD l)
+</pre>
+
+<DT><span class="strong">LHD_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀f. LHD (fromSeq f) = SOME (f 0)
+</pre>
+
+<DT><span class="strong">LLENGTH_0</span>
+<DD>
+<pre>
+⊢ LLENGTH x = SOME 0 ⇔ x = [||]
+</pre>
+
+<DT><span class="strong">LLENGTH_APPEND</span>
+<DD>
+<pre>
+⊢ ∀ll1 ll2.
+    LLENGTH (ll1 ++ₗ ll2) =
+    if LFINITE ll1 ∧ LFINITE ll2 then
+      SOME (THE (LLENGTH ll1) + THE (LLENGTH ll2))
+    else NONE
+</pre>
+
+<DT><span class="strong">LLENGTH_LGENLIST</span>
+<DD>
+<pre>
+⊢ ∀f. LLENGTH (LGENLIST f limopt) = limopt
+</pre>
+
+<DT><span class="strong">LLENGTH_LREPEAT</span>
+<DD>
+<pre>
+⊢ LLENGTH (LREPEAT l) = if NULL l then SOME 0 else NONE
+</pre>
+
+<DT><span class="strong">LLENGTH_MAP</span>
+<DD>
+<pre>
+⊢ ∀ll f. LLENGTH (LMAP f ll) = LLENGTH ll
+</pre>
+
+<DT><span class="strong">LLENGTH_THM</span>
+<DD>
+<pre>
+⊢ LLENGTH [||] = SOME 0 ∧ ∀h t. LLENGTH (h:::t) = OPTION_MAP SUC (LLENGTH t)
+</pre>
+
+<DT><span class="strong">LLENGTH_fromList</span>
+<DD>
+<pre>
+⊢ ∀l. LLENGTH (fromList l) = SOME (LENGTH l)
+</pre>
+
+<DT><span class="strong">LLENGTH_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀f. LLENGTH (fromSeq f) = NONE
+</pre>
+
+<DT><span class="strong">LLIST_BISIMULATION</span>
+<DD>
+<pre>
+⊢ ∀ll1 ll2.
+    ll1 = ll2 ⇔
+    ∃R. R ll1 ll2 ∧
+        ∀ll3 ll4.
+          R ll3 ll4 ⇒
+          ll3 = [||] ∧ ll4 = [||] ∨
+          LHD ll3 = LHD ll4 ∧ R (THE (LTL ll3)) (THE (LTL ll4))
+</pre>
+
+<DT><span class="strong">LLIST_BISIMULATION0</span>
+<DD>
+<pre>
+⊢ ∀ll1 ll2.
+    ll1 = ll2 ⇔
+    ∃R. R ll1 ll2 ∧
+        ∀ll3 ll4.
+          R ll3 ll4 ⇒
+          ll3 = [||] ∧ ll4 = [||] ∨
+          ∃h t1 t2. ll3 = h:::t1 ∧ ll4 = h:::t2 ∧ R t1 t2
+</pre>
+
+<DT><span class="strong">LLIST_BISIMULATION_I</span>
+<DD>
+<pre>
+⊢ ∀ll2 ll1.
+    (∃R. R ll1 ll2 ∧
+         ∀ll3 ll4.
+           R ll3 ll4 ⇒
+           ll3 = [||] ∧ ll4 = [||] ∨
+           LHD ll3 = LHD ll4 ∧ R (THE (LTL ll3)) (THE (LTL ll4))) ⇒
+    ll1 = ll2
+</pre>
+
+<DT><span class="strong">LLIST_BISIM_UPTO</span>
+<DD>
+<pre>
+⊢ ∀ll1 ll2 R.
+    R ll1 ll2 ∧
+    (∀ll3 ll4.
+       R ll3 ll4 ⇒
+       ll3 = [||] ∧ ll4 = [||] ∨
+       LHD ll3 = LHD ll4 ∧ llist_upto R (THE (LTL ll3)) (THE (LTL ll4))) ⇒
+    ll1 = ll2
+</pre>
+
+<DT><span class="strong">LLIST_CASE_CONG</span>
+<DD>
+<pre>
+⊢ ∀M M' v f.
+    M = M' ∧ (M' = [||] ⇒ v = v') ∧
+    (∀a0 a1. M' = a0:::a1 ⇒ f a0 a1 = f' a0 a1) ⇒
+    llist_CASE M v f = llist_CASE M' v' f'
+</pre>
+
+<DT><span class="strong">LLIST_CASE_ELIM</span>
+<DD>
+<pre>
+⊢ ∀f'. f' (llist_CASE x v f) ⇔ x = [||] ∧ f' v ∨ ∃a l. x = a:::l ∧ f' (f a l)
+</pre>
+
+<DT><span class="strong">LLIST_CASE_EQ</span>
+<DD>
+<pre>
+⊢ llist_CASE x v f = v' ⇔ x = [||] ∧ v = v' ∨ ∃a l. x = a:::l ∧ f a l = v'
+</pre>
+
+<DT><span class="strong">LLIST_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀a1 a0. [||] ≠ a0:::a1
+</pre>
+
+<DT><span class="strong">LLIST_EQ</span>
+<DD>
+<pre>
+⊢ ∀f g.
+    (∀x. f x = [||] ∧ g x = [||] ∨ ∃h y. f x = h:::f y ∧ g x = h:::g y) ⇒
+    ∀x. f x = g x
+</pre>
+
+<DT><span class="strong">LLIST_STRONG_BISIMULATION</span>
+<DD>
+<pre>
+⊢ ∀ll1 ll2.
+    ll1 = ll2 ⇔
+    ∃R. R ll1 ll2 ∧
+        ∀ll3 ll4.
+          R ll3 ll4 ⇒
+          ll3 = ll4 ∨ ∃h t1 t2. ll3 = h:::t1 ∧ ll4 = h:::t2 ∧ R t1 t2
+</pre>
+
+<DT><span class="strong">LL_ALL_THM</span>
+<DD>
+<pre>
+⊢ (every P [||] ⇔ T) ∧ (every P (h:::t) ⇔ P h ∧ every P t)
+</pre>
+
+<DT><span class="strong">LMAP_APPEND</span>
+<DD>
+<pre>
+⊢ ∀f ll1 ll2. LMAP f (ll1 ++ₗ ll2) = LMAP f ll1 ++ₗ LMAP f ll2
+</pre>
+
+<DT><span class="strong">LMAP_EQ_APPEND_FINITE1</span>
+<DD>
+<pre>
+⊢ ∀ll ll1 ll2.
+    LFINITE ll1 ⇒
+    (LMAP f ll = ll1 ++ₗ ll2 ⇔
+     ∃ll10 ll20. ll = ll10 ++ₗ ll20 ∧ LMAP f ll10 = ll1 ∧ LMAP f ll20 = ll2)
+</pre>
+
+<DT><span class="strong">LMAP_EQ_CONS</span>
+<DD>
+<pre>
+⊢ LMAP f l = h:::t ⇔ ∃h0 t0. l = h0:::t0 ∧ h = f h0 ∧ t = LMAP f t0
+</pre>
+
+<DT><span class="strong">LMAP_EQ_NIL</span>
+<DD>
+<pre>
+⊢ (LMAP f l = [||] ⇔ l = [||]) ∧ ([||] = LMAP f l ⇔ l = [||])
+</pre>
+
+<DT><span class="strong">LMAP_LGENLIST</span>
+<DD>
+<pre>
+⊢ LMAP f (LGENLIST g limopt) = LGENLIST (f ∘ g) limopt
+</pre>
+
+<DT><span class="strong">LMAP_LUNFOLD</span>
+<DD>
+<pre>
+⊢ ∀f g s.
+    LMAP f (LUNFOLD g s) = LUNFOLD (λs. OPTION_MAP (λ(x,y). (x,f y)) (g s)) s
+</pre>
+
+<DT><span class="strong">LMAP_MAP</span>
+<DD>
+<pre>
+⊢ ∀f g ll. LMAP f (LMAP g ll) = LMAP (f ∘ g) ll
+</pre>
+
+<DT><span class="strong">LMAP_fromList</span>
+<DD>
+<pre>
+⊢ LMAP f (fromList l) = fromList (MAP f l)
+</pre>
+
+<DT><span class="strong">LMAP_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀f g. LMAP f (fromSeq g) = fromSeq (f ∘ g)
+</pre>
+
+<DT><span class="strong">LNTH_ADD</span>
+<DD>
+<pre>
+⊢ ∀a b ll. LNTH (a + b) ll = monad_bind (LDROP a ll) (LNTH b)
+</pre>
+
+<DT><span class="strong">LNTH_EQ</span>
+<DD>
+<pre>
+⊢ ∀ll1 ll2. ll1 = ll2 ⇔ ∀n. LNTH n ll1 = LNTH n ll2
+</pre>
+
+<DT><span class="strong">LNTH_HD_LDROP</span>
+<DD>
+<pre>
+⊢ ∀n ll. LNTH n ll = monad_bind (LDROP n ll) LHD
+</pre>
+
+<DT><span class="strong">LNTH_IS_SOME</span>
+<DD>
+<pre>
+⊢ ∀n ll. IS_SOME (LNTH n ll) ⇔ LFINITE ll ⇒ n < THE (LLENGTH ll)
+</pre>
+
+<DT><span class="strong">LNTH_IS_SOME_MONO</span>
+<DD>
+<pre>
+⊢ ∀m n l. IS_SOME (LNTH n l) ∧ m ≤ n ⇒ IS_SOME (LNTH m l)
+</pre>
+
+<DT><span class="strong">LNTH_LAPPEND</span>
+<DD>
+<pre>
+⊢ LNTH n (l1 ++ₗ l2) =
+  case LLENGTH l1 of
+    NONE => LNTH n l1
+  | SOME m => if n < m then LNTH n l1 else LNTH (n − m) l2
+</pre>
+
+<DT><span class="strong">LNTH_LDROP</span>
+<DD>
+<pre>
+⊢ ∀n l x. LNTH n l = SOME x ⇒ LHD (THE (LDROP n l)) = SOME x
+</pre>
+
+<DT><span class="strong">LNTH_LGENLIST</span>
+<DD>
+<pre>
+⊢ ∀n f lim.
+    LNTH n (LGENLIST f lim) =
+    case lim of
+      NONE => SOME (f n)
+    | SOME lim0 => if n < lim0 then SOME (f n) else NONE
+</pre>
+
+<DT><span class="strong">LNTH_LLENGTH_NONE</span>
+<DD>
+<pre>
+⊢ ∀x n l. LLENGTH l = SOME x ∧ x ≤ n ⇒ LNTH n l = NONE
+</pre>
+
+<DT><span class="strong">LNTH_LMAP</span>
+<DD>
+<pre>
+⊢ ∀n f l. LNTH n (LMAP f l) = OPTION_MAP f (LNTH n l)
+</pre>
+
+<DT><span class="strong">LNTH_LUNFOLD</span>
+<DD>
+<pre>
+⊢ LNTH 0 (LUNFOLD f x) = OPTION_MAP SND (f x) ∧
+  LNTH (SUC n) (LUNFOLD f x) =
+  case f x of NONE => NONE | SOME (tx,hx) => LNTH n (LUNFOLD f tx)
+</pre>
+
+<DT><span class="strong">LNTH_LUNFOLD_compute</span>
+<DD>
+<pre>
+⊢ LNTH 0 (LUNFOLD f x) = OPTION_MAP SND (f x) ∧
+  (∀n. LNTH <..num comp'n..> (LUNFOLD f x) =
+       case f x of
+         NONE => NONE
+       | SOME (tx,hx) => LNTH (<..num comp'n..> − 1) (LUNFOLD f tx)) ∧
+  ∀n. LNTH <..num comp'n..> (LUNFOLD f x) =
+      case f x of
+        NONE => NONE
+      | SOME (tx,hx) => LNTH <..num comp'n..> (LUNFOLD f tx)
+</pre>
+
+<DT><span class="strong">LNTH_NONE_MONO</span>
+<DD>
+<pre>
+⊢ ∀m n l. LNTH m l = NONE ∧ m ≤ n ⇒ LNTH n l = NONE
+</pre>
+
+<DT><span class="strong">LNTH_THM</span>
+<DD>
+<pre>
+⊢ (∀n. LNTH n [||] = NONE) ∧ (∀h t. LNTH 0 (h:::t) = SOME h) ∧
+  ∀n h t. LNTH (SUC n) (h:::t) = LNTH n t
+</pre>
+
+<DT><span class="strong">LNTH_fromList</span>
+<DD>
+<pre>
+⊢ LNTH n (fromList l) = if n < LENGTH l then SOME (EL n l) else NONE
+</pre>
+
+<DT><span class="strong">LNTH_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀n f. LNTH n (fromSeq f) = SOME (f n)
+</pre>
+
+<DT><span class="strong">LNTH_rep</span>
+<DD>
+<pre>
+⊢ ∀i ll. LNTH i ll = llist_rep ll i
+</pre>
+
+<DT><span class="strong">LPREFIX_ANTISYM</span>
+<DD>
+<pre>
+⊢ LPREFIX l1 l2 ∧ LPREFIX l2 l1 ⇒ l1 = l2
+</pre>
+
+<DT><span class="strong">LPREFIX_APPEND</span>
+<DD>
+<pre>
+⊢ LPREFIX l1 l2 ⇔ ∃ll. l2 = l1 ++ₗ ll
+</pre>
+
+<DT><span class="strong">LPREFIX_LAPPEND_fromList</span>
+<DD>
+<pre>
+⊢ LPREFIX (fromList l ++ₗ l1) (fromList l ++ₗ l2) ⇔ LPREFIX l1 l2
+</pre>
+
+<DT><span class="strong">LPREFIX_LCONS</span>
+<DD>
+<pre>
+⊢ (∀ll h t. LPREFIX ll (h:::t) ⇔ ll = [||] ∨ ∃l. ll = h:::l ∧ LPREFIX l t) ∧
+  ∀h t ll. LPREFIX (h:::t) ll ⇔ ∃l. ll = h:::l ∧ LPREFIX t l
+</pre>
+
+<DT><span class="strong">LPREFIX_LNIL</span>
+<DD>
+<pre>
+⊢ LPREFIX [||] ll ∧ (LPREFIX ll [||] ⇔ ll = [||])
+</pre>
+
+<DT><span class="strong">LPREFIX_LUNFOLD</span>
+<DD>
+<pre>
+⊢ LPREFIX ll (LUNFOLD f n) ⇔
+  case f n of
+    NONE => ll = [||]
+  | SOME (n,x) => ∀h t. ll = h:::t ⇒ h = x ∧ LPREFIX t (LUNFOLD f n)
+</pre>
+
+<DT><span class="strong">LPREFIX_NTH</span>
+<DD>
+<pre>
+⊢ LPREFIX l1 l2 ⇔ ∀i v. LNTH i l1 = SOME v ⇒ LNTH i l2 = SOME v
+</pre>
+
+<DT><span class="strong">LPREFIX_REFL</span>
+<DD>
+<pre>
+⊢ LPREFIX ll ll
+</pre>
+
+<DT><span class="strong">LPREFIX_TRANS</span>
+<DD>
+<pre>
+⊢ LPREFIX l1 l2 ∧ LPREFIX l2 l3 ⇒ LPREFIX l1 l3
+</pre>
+
+<DT><span class="strong">LPREFIX_fromList</span>
+<DD>
+<pre>
+⊢ ∀l ll.
+    LPREFIX (fromList l) ll ⇔
+    case toList ll of NONE => LTAKE (LENGTH l) ll = SOME l | SOME ys => l ≼ ys
+</pre>
+
+<DT><span class="strong">LREPEAT_EQ_LNIL</span>
+<DD>
+<pre>
+⊢ (LREPEAT l = [||] ⇔ l = []) ∧ ([||] = LREPEAT l ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LREPEAT_NIL</span>
+<DD>
+<pre>
+⊢ LREPEAT [] = [||]
+</pre>
+
+<DT><span class="strong">LREPEAT_thm</span>
+<DD>
+<pre>
+⊢ LREPEAT l = fromList l ++ₗ LREPEAT l
+</pre>
+
+<DT><span class="strong">LSET</span>
+<DD>
+<pre>
+⊢ LSET [||] = ∅ ∧ LSET (x:::xs) = x INSERT LSET xs
+</pre>
+
+<DT><span class="strong">LSET_APPEND</span>
+<DD>
+<pre>
+⊢ LSET (l1 ++ₗ l2) = LSET l1 ∪ if LFINITE l1 then LSET l2 else ∅
+</pre>
+
+<DT><span class="strong">LSET_FINITE_pfx</span>
+<DD>
+<pre>
+⊢ x ∈ LSET ll ⇔ ∃p s. ll = p ++ₗ x:::s ∧ LFINITE p
+</pre>
+
+<DT><span class="strong">LSET_FLATTEN</span>
+<DD>
+<pre>
+⊢ LSET (LFLATTEN ll) =
+  {e | ∃p e0 s. ll = p ++ₗ e0:::s ∧ e ∈ LSET e0 ∧ LFINITE p ∧ every LFINITE p}
+</pre>
+
+<DT><span class="strong">LSET_exists</span>
+<DD>
+<pre>
+⊢ x ∈ LSET ll ⇔ exists ($= x) ll
+</pre>
+
+<DT><span class="strong">LSET_fromList</span>
+<DD>
+<pre>
+⊢ LSET (fromList l) = LIST_TO_SET l
+</pre>
+
+<DT><span class="strong">LSET_lbind</span>
+<DD>
+<pre>
+⊢ LSET (lbind ll f) =
+  {e |
+   ∃p e0 s.
+     ll = p ++ₗ e0:::s ∧ LFINITE p ∧ every (LFINITE ∘ f) p ∧ e ∈ LSET (f e0)}
+</pre>
+
+<DT><span class="strong">LSUFFIX</span>
+<DD>
+<pre>
+⊢ (LSUFFIX l [||] ⇔ T) ∧ (LSUFFIX [||] (y:::ys) ⇔ F) ∧
+  (LSUFFIX (x:::xs) l ⇔ x:::xs = l ∨ LSUFFIX xs l)
+</pre>
+
+<DT><span class="strong">LSUFFIX_ANTISYM</span>
+<DD>
+<pre>
+⊢ ∀x y. LSUFFIX x y ∧ LSUFFIX y x ∧ LFINITE x ⇒ x = y
+</pre>
+
+<DT><span class="strong">LSUFFIX_REFL</span>
+<DD>
+<pre>
+⊢ ∀s. LSUFFIX s s
+</pre>
+
+<DT><span class="strong">LSUFFIX_TRANS</span>
+<DD>
+<pre>
+⊢ ∀x y z. LSUFFIX x y ∧ LSUFFIX y z ⇒ LSUFFIX x z
+</pre>
+
+<DT><span class="strong">LSUFFIX_fromList</span>
+<DD>
+<pre>
+⊢ ∀xs ys. LSUFFIX (fromList xs) (fromList ys) ⇔ IS_SUFFIX xs ys
+</pre>
+
+<DT><span class="strong">LTAKE_CONS_EQ_NONE</span>
+<DD>
+<pre>
+⊢ ∀m h t. LTAKE m (h:::t) = NONE ⇔ ∃n. m = SUC n ∧ LTAKE n t = NONE
+</pre>
+
+<DT><span class="strong">LTAKE_CONS_EQ_SOME</span>
+<DD>
+<pre>
+⊢ ∀m h t l.
+    LTAKE m (h:::t) = SOME l ⇔
+    m = 0 ∧ l = [] ∨ ∃n l'. m = SUC n ∧ LTAKE n t = SOME l' ∧ l = h::l'
+</pre>
+
+<DT><span class="strong">LTAKE_DROP</span>
+<DD>
+<pre>
+⊢ (∀n ll. ¬LFINITE ll ⇒ fromList (THE (LTAKE n ll)) ++ₗ THE (LDROP n ll) = ll) ∧
+  ∀n ll.
+    LFINITE ll ∧ n ≤ THE (LLENGTH ll) ⇒
+    fromList (THE (LTAKE n ll)) ++ₗ THE (LDROP n ll) = ll
+</pre>
+
+<DT><span class="strong">LTAKE_EQ</span>
+<DD>
+<pre>
+⊢ ∀ll1 ll2. ll1 = ll2 ⇔ ∀n. LTAKE n ll1 = LTAKE n ll2
+</pre>
+
+<DT><span class="strong">LTAKE_EQ_NONE_LNTH</span>
+<DD>
+<pre>
+⊢ ∀n ll. LTAKE n ll = NONE ⇒ LNTH n ll = NONE
+</pre>
+
+<DT><span class="strong">LTAKE_EQ_SOME_CONS</span>
+<DD>
+<pre>
+⊢ ∀n l x. LTAKE n l = SOME x ⇒ ∀h. ∃y. LTAKE n (h:::l) = SOME y
+</pre>
+
+<DT><span class="strong">LTAKE_IMP_LDROP</span>
+<DD>
+<pre>
+⊢ ∀n ll l1.
+    LTAKE n ll = SOME l1 ⇒ ∃l2. LDROP n ll = SOME l2 ∧ fromList l1 ++ₗ l2 = ll
+</pre>
+
+<DT><span class="strong">LTAKE_LAPPEND1</span>
+<DD>
+<pre>
+⊢ ∀n l1 l2. IS_SOME (LTAKE n l1) ⇒ LTAKE n (l1 ++ₗ l2) = LTAKE n l1
+</pre>
+
+<DT><span class="strong">LTAKE_LAPPEND2</span>
+<DD>
+<pre>
+⊢ ∀n l1 l2.
+    LTAKE n l1 = NONE ⇒
+    LTAKE n (l1 ++ₗ l2) =
+    OPTION_MAP ($++ (THE (toList l1))) (LTAKE (n − THE (LLENGTH l1)) l2)
+</pre>
+
+<DT><span class="strong">LTAKE_LAPPEND_fromList</span>
+<DD>
+<pre>
+⊢ ∀ll l n.
+    LTAKE (n + LENGTH l) (fromList l ++ₗ ll) = OPTION_MAP ($++ l) (LTAKE n ll)
+</pre>
+
+<DT><span class="strong">LTAKE_LENGTH</span>
+<DD>
+<pre>
+⊢ ∀n ll l. LTAKE n ll = SOME l ⇒ n = LENGTH l
+</pre>
+
+<DT><span class="strong">LTAKE_LLENGTH_NONE</span>
+<DD>
+<pre>
+⊢ LLENGTH ll = SOME n ∧ n < m ⇒ LTAKE m ll = NONE
+</pre>
+
+<DT><span class="strong">LTAKE_LLENGTH_SOME</span>
+<DD>
+<pre>
+⊢ LLENGTH ll = SOME n ⇒ ∃l. LTAKE n ll = SOME l ∧ toList ll = SOME l
+</pre>
+
+<DT><span class="strong">LTAKE_LMAP</span>
+<DD>
+<pre>
+⊢ ∀n f ll. LTAKE n (LMAP f ll) = OPTION_MAP (MAP f) (LTAKE n ll)
+</pre>
+
+<DT><span class="strong">LTAKE_LNTH_EL</span>
+<DD>
+<pre>
+⊢ ∀n ll m l. LTAKE n ll = SOME l ∧ m < n ⇒ LNTH m ll = SOME (EL m l)
+</pre>
+
+<DT><span class="strong">LTAKE_LPREFIX</span>
+<DD>
+<pre>
+⊢ ∀x ll. ¬LFINITE ll ⇒ ∃l. LTAKE x ll = SOME l ∧ LPREFIX (fromList l) ll
+</pre>
+
+<DT><span class="strong">LTAKE_LUNFOLD</span>
+<DD>
+<pre>
+⊢ LTAKE 0 (LUNFOLD f x) = SOME [] ∧
+  LTAKE (SUC n) (LUNFOLD f x) =
+  case f x of
+    NONE => NONE
+  | SOME (tx,hx) => OPTION_MAP (CONS hx) (LTAKE n (LUNFOLD f tx))
+</pre>
+
+<DT><span class="strong">LTAKE_NIL_EQ_NONE</span>
+<DD>
+<pre>
+⊢ ∀m. LTAKE m [||] = NONE ⇔ 0 < m
+</pre>
+
+<DT><span class="strong">LTAKE_NIL_EQ_SOME</span>
+<DD>
+<pre>
+⊢ ∀l m. LTAKE m [||] = SOME l ⇔ m = 0 ∧ l = []
+</pre>
+
+<DT><span class="strong">LTAKE_SNOC_LNTH</span>
+<DD>
+<pre>
+⊢ ∀n ll.
+    LTAKE (SUC n) ll =
+    case LTAKE n ll of
+      NONE => NONE
+    | SOME l => case LNTH n ll of NONE => NONE | SOME e => SOME (l ++ [e])
+</pre>
+
+<DT><span class="strong">LTAKE_TAKE_LESS</span>
+<DD>
+<pre>
+⊢ LTAKE n ll = SOME l ∧ m ≤ n ⇒ LTAKE m ll = SOME (TAKE m l)
+</pre>
+
+<DT><span class="strong">LTAKE_THM</span>
+<DD>
+<pre>
+⊢ (∀l. LTAKE 0 l = SOME []) ∧ (∀n. LTAKE (SUC n) [||] = NONE) ∧
+  ∀n h t. LTAKE (SUC n) (h:::t) = OPTION_MAP (CONS h) (LTAKE n t)
+</pre>
+
+<DT><span class="strong">LTAKE_WHILE_LDROP_WHILE</span>
+<DD>
+<pre>
+⊢ ∀P l. LTAKE_WHILE P l ++ₗ LDROP_WHILE P l = l
+</pre>
+
+<DT><span class="strong">LTAKE_fromList</span>
+<DD>
+<pre>
+⊢ ∀l. LTAKE (LENGTH l) (fromList l) = SOME l
+</pre>
+
+<DT><span class="strong">LTAKE_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀n f. LTAKE n (fromSeq f) = SOME (GENLIST f n)
+</pre>
+
+<DT><span class="strong">LTL_EQ_NONE</span>
+<DD>
+<pre>
+⊢ ∀ll. (LTL ll = NONE ⇔ ll = [||]) ∧ (NONE = LTL ll ⇔ ll = [||])
+</pre>
+
+<DT><span class="strong">LTL_HD_11</span>
+<DD>
+<pre>
+⊢ LTL_HD ll1 = LTL_HD ll2 ⇔ ll1 = ll2
+</pre>
+
+<DT><span class="strong">LTL_HD_HD</span>
+<DD>
+<pre>
+⊢ LHD ll = OPTION_MAP SND (LTL_HD ll)
+</pre>
+
+<DT><span class="strong">LTL_HD_LCONS</span>
+<DD>
+<pre>
+⊢ LTL_HD (h:::t) = SOME (t,h)
+</pre>
+
+<DT><span class="strong">LTL_HD_LNIL</span>
+<DD>
+<pre>
+⊢ LTL_HD [||] = NONE
+</pre>
+
+<DT><span class="strong">LTL_HD_LTL_LHD</span>
+<DD>
+<pre>
+⊢ LTL_HD l = do h <- LHD l; t <- LTL l; SOME (t,h) od
+</pre>
+
+<DT><span class="strong">LTL_HD_LUNFOLD</span>
+<DD>
+<pre>
+⊢ LTL_HD (LUNFOLD f x) = OPTION_MAP (LUNFOLD f ## I) (f x)
+</pre>
+
+<DT><span class="strong">LTL_HD_TL</span>
+<DD>
+<pre>
+⊢ LTL ll = OPTION_MAP FST (LTL_HD ll)
+</pre>
+
+<DT><span class="strong">LTL_HD_iff</span>
+<DD>
+<pre>
+⊢ (LTL_HD x = SOME (t,h) ⇔ x = h:::t) ∧ (LTL_HD x = NONE ⇔ x = [||])
+</pre>
+
+<DT><span class="strong">LTL_LAPPEND</span>
+<DD>
+<pre>
+⊢ LTL (l1 ++ₗ l2) = if l1 = [||] then LTL l2 else SOME (THE (LTL l1) ++ₗ l2)
+</pre>
+
+<DT><span class="strong">LTL_LCONS</span>
+<DD>
+<pre>
+⊢ LTL (h:::t) = SOME t
+</pre>
+
+<DT><span class="strong">LTL_LGENLIST</span>
+<DD>
+<pre>
+⊢ LTL (LGENLIST f limopt) =
+  if limopt = SOME 0 then NONE
+  else SOME (LGENLIST (f ∘ SUC) (OPTION_MAP PRE limopt))
+</pre>
+
+<DT><span class="strong">LTL_LREPEAT</span>
+<DD>
+<pre>
+⊢ LTL (LREPEAT l) = OPTION_MAP (λt. t ++ₗ LREPEAT l) (LTL (fromList l))
+</pre>
+
+<DT><span class="strong">LTL_LUNFOLD</span>
+<DD>
+<pre>
+⊢ LTL (LUNFOLD f x) = OPTION_MAP (LUNFOLD f ∘ FST) (f x)
+</pre>
+
+<DT><span class="strong">LTL_THM</span>
+<DD>
+<pre>
+⊢ LTL [||] = NONE ∧ ∀h t. LTL (h:::t) = SOME t
+</pre>
+
+<DT><span class="strong">LTL_fromList</span>
+<DD>
+<pre>
+⊢ LTL (fromList l) = if NULL l then NONE else SOME (fromList (TL l))
+</pre>
+
+<DT><span class="strong">LTL_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀f. LTL (fromSeq f) = SOME (fromSeq (f ∘ SUC))
+</pre>
+
+<DT><span class="strong">LUNFOLD</span>
+<DD>
+<pre>
+⊢ ∀f x.
+    LUNFOLD f x = case f x of NONE => [||] | SOME (v1,v2) => v2:::LUNFOLD f v1
+</pre>
+
+<DT><span class="strong">LUNFOLD_BISIMULATION</span>
+<DD>
+<pre>
+⊢ ∀f1 f2 x1 x2.
+    LUNFOLD f1 x1 = LUNFOLD f2 x2 ⇔
+    ∃R. R x1 x2 ∧
+        ∀y1 y2.
+          R y1 y2 ⇒
+          f1 y1 = NONE ∧ f2 y2 = NONE ∨
+          ∃h t1 t2. f1 y1 = SOME (t1,h) ∧ f2 y2 = SOME (t2,h) ∧ R t1 t2
+</pre>
+
+<DT><span class="strong">LUNFOLD_EQ</span>
+<DD>
+<pre>
+⊢ ∀R f s ll.
+    R s ll ∧
+    (∀s ll.
+       R s ll ⇒
+       f s = NONE ∧ ll = [||] ∨
+       ∃s' x ll'.
+         f s = SOME (s',x) ∧ LHD ll = SOME x ∧ LTL ll = SOME ll' ∧ R s' ll') ⇒
+    LUNFOLD f s = ll
+</pre>
+
+<DT><span class="strong">LUNFOLD_LTL_HD</span>
+<DD>
+<pre>
+⊢ LUNFOLD LTL_HD ll = ll
+</pre>
+
+<DT><span class="strong">LUNFOLD_THM</span>
+<DD>
+<pre>
+⊢ ∀f x v1 v2.
+    (f x = NONE ⇒ LUNFOLD f x = [||]) ∧
+    (f x = SOME (v1,v2) ⇒ LUNFOLD f x = v2:::LUNFOLD f v1)
+</pre>
+
+<DT><span class="strong">LUNFOLD_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀f g.
+    (∀x. g x = case f x of NONE => [||] | SOME (v1,v2) => v2:::g v1) ⇒
+    ∀y. g y = LUNFOLD f y
+</pre>
+
+<DT><span class="strong">LZIP_LUNZIP</span>
+<DD>
+<pre>
+⊢ ∀ll. LZIP (LUNZIP ll) = ll
+</pre>
+
+<DT><span class="strong">MAP_toList</span>
+<DD>
+<pre>
+⊢ ∀ll f. LFINITE ll ⇒ MAP f (THE (toList ll)) = THE (toList (LMAP f ll))
+</pre>
+
+<DT><span class="strong">MONO_every</span>
+<DD>
+<pre>
+⊢ (∀x. P x ⇒ Q x) ⇒ every P l ⇒ every Q l
+</pre>
+
+<DT><span class="strong">MONO_exists</span>
+<DD>
+<pre>
+⊢ (∀x. P x ⇒ Q x) ⇒ exists P l ⇒ exists Q l
+</pre>
+
+<DT><span class="strong">NOT_LFINITE_APPEND</span>
+<DD>
+<pre>
+⊢ ∀ll1 ll2. ¬LFINITE ll1 ⇒ ll1 ++ₗ ll2 = ll1
+</pre>
+
+<DT><span class="strong">NOT_LFINITE_DROP</span>
+<DD>
+<pre>
+⊢ ∀ll. ¬LFINITE ll ⇒ ∀n. ∃y. LDROP n ll = SOME y
+</pre>
+
+<DT><span class="strong">NOT_LFINITE_DROP_LFINITE</span>
+<DD>
+<pre>
+⊢ ∀n l t. ¬LFINITE l ∧ LDROP n l = SOME t ⇒ ¬LFINITE t
+</pre>
+
+<DT><span class="strong">NOT_LFINITE_IMP_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀ll. ¬LFINITE ll ⇒ ∃f. ll = fromSeq f
+</pre>
+
+<DT><span class="strong">NOT_LFINITE_NO_LENGTH</span>
+<DD>
+<pre>
+⊢ ∀ll. ¬LFINITE ll ⇒ LLENGTH ll = NONE
+</pre>
+
+<DT><span class="strong">NOT_LFINITE_TAKE</span>
+<DD>
+<pre>
+⊢ ∀ll. ¬LFINITE ll ⇒ ∀n. ∃y. LTAKE n ll = SOME y
+</pre>
+
+<DT><span class="strong">always_DROP</span>
+<DD>
+<pre>
+⊢ ∀ll. always P ll ⇒ always P (THE (LDROP k ll))
+</pre>
+
+<DT><span class="strong">always_cases</span>
+<DD>
+<pre>
+⊢ ∀P a0. always P a0 ⇔ ∃h t. a0 = h:::t ∧ P (h:::t) ∧ always P t
+</pre>
+
+<DT><span class="strong">always_coind</span>
+<DD>
+<pre>
+⊢ ∀P always'.
+    (∀a0. always' a0 ⇒ ∃h t. a0 = h:::t ∧ P (h:::t) ∧ always' t) ⇒
+    ∀a0. always' a0 ⇒ always P a0
+</pre>
+
+<DT><span class="strong">always_conj_l</span>
+<DD>
+<pre>
+⊢ ∀ll. always (λx. P x ∧ Q x) ll ⇒ always P ll
+</pre>
+
+<DT><span class="strong">always_eventually_ind</span>
+<DD>
+<pre>
+⊢ (∀ll. P ll ∨ ¬P ll ∧ Q (THE (LTL ll)) ⇒ Q ll) ⇒
+  ∀ll. ll ≠ [||] ⇒ always (eventually P) ll ⇒ Q ll
+</pre>
+
+<DT><span class="strong">always_rules</span>
+<DD>
+<pre>
+⊢ ∀P h t. P (h:::t) ∧ always P t ⇒ always P (h:::t)
+</pre>
+
+<DT><span class="strong">always_thm</span>
+<DD>
+<pre>
+⊢ (always P [||] ⇔ F) ∧ ∀h t. always P (h:::t) ⇔ P (h:::t) ∧ always P t
+</pre>
+
+<DT><span class="strong">eventually_cases</span>
+<DD>
+<pre>
+⊢ ∀P a0. eventually P a0 ⇔ P a0 ∨ ∃h t. a0 = h:::t ∧ eventually P t
+</pre>
+
+<DT><span class="strong">eventually_ind</span>
+<DD>
+<pre>
+⊢ ∀P eventually'.
+    (∀ll. P ll ⇒ eventually' ll) ∧ (∀h t. eventually' t ⇒ eventually' (h:::t)) ⇒
+    ∀a0. eventually P a0 ⇒ eventually' a0
+</pre>
+
+<DT><span class="strong">eventually_rules</span>
+<DD>
+<pre>
+⊢ ∀P. (∀ll. P ll ⇒ eventually P ll) ∧
+      ∀h t. eventually P t ⇒ eventually P (h:::t)
+</pre>
+
+<DT><span class="strong">eventually_strongind</span>
+<DD>
+<pre>
+⊢ ∀P eventually'.
+    (∀ll. P ll ⇒ eventually' ll) ∧
+    (∀h t. eventually P t ∧ eventually' t ⇒ eventually' (h:::t)) ⇒
+    ∀a0. eventually P a0 ⇒ eventually' a0
+</pre>
+
+<DT><span class="strong">eventually_thm</span>
+<DD>
+<pre>
+⊢ (eventually P [||] ⇔ P [||]) ∧
+  (eventually P (h:::t) ⇔ P (h:::t) ∨ eventually P t)
+</pre>
+
+<DT><span class="strong">eventually_until_EQN</span>
+<DD>
+<pre>
+⊢ eventually P = until (K T) P
+</pre>
+
+<DT><span class="strong">every_APPEND_EQN</span>
+<DD>
+<pre>
+⊢ every P (l1 ++ₗ l2) ⇔ every P l1 ∧ (LFINITE l1 ⇒ every P l2)
+</pre>
+
+<DT><span class="strong">every_LAPPEND1</span>
+<DD>
+<pre>
+⊢ ∀P ll1 ll2. every P (ll1 ++ₗ ll2) ⇒ every P ll1
+</pre>
+
+<DT><span class="strong">every_LAPPEND2_LFINITE</span>
+<DD>
+<pre>
+⊢ ∀l P ll. LFINITE l ∧ every P (l ++ₗ ll) ⇒ every P ll
+</pre>
+
+<DT><span class="strong">every_LDROP</span>
+<DD>
+<pre>
+⊢ ∀f i ll1 ll2. every f ll1 ∧ LDROP i ll1 = SOME ll2 ⇒ every f ll2
+</pre>
+
+<DT><span class="strong">every_LFILTER</span>
+<DD>
+<pre>
+⊢ ∀ll P. every P (LFILTER P ll)
+</pre>
+
+<DT><span class="strong">every_LFILTER_imp</span>
+<DD>
+<pre>
+⊢ ∀Q P ll. every Q ll ⇒ every Q (LFILTER P ll)
+</pre>
+
+<DT><span class="strong">every_LGENLIST</span>
+<DD>
+<pre>
+⊢ (every P (LGENLIST f (SOME n)) ⇔ ∀m. m < n ⇒ P (f m)) ∧
+  (every P (LGENLIST f NONE) ⇔ ∀m. P (f m))
+</pre>
+
+<DT><span class="strong">every_LMAP</span>
+<DD>
+<pre>
+⊢ every P (LMAP f l) ⇔ every (P ∘ f) l
+</pre>
+
+<DT><span class="strong">every_LNTH</span>
+<DD>
+<pre>
+⊢ ∀P ll. every P ll ⇔ ∀n e. LNTH n ll = SOME e ⇒ P e
+</pre>
+
+<DT><span class="strong">every_coind</span>
+<DD>
+<pre>
+⊢ ∀P Q. (∀h t. Q (h:::t) ⇒ P h ∧ Q t) ⇒ ∀ll. Q ll ⇒ every P ll
+</pre>
+
+<DT><span class="strong">every_fromList_EVERY</span>
+<DD>
+<pre>
+⊢ ∀l P. every P (fromList l) ⇔ EVERY P l
+</pre>
+
+<DT><span class="strong">every_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀p f. every p (fromSeq f) ⇔ ∀i. p (f i)
+</pre>
+
+<DT><span class="strong">every_strong_coind</span>
+<DD>
+<pre>
+⊢ ∀P Q.
+    (∀h t. Q (h:::t) ⇒ P h) ∧ (∀h t. Q (h:::t) ⇒ Q t ∨ every P t) ⇒
+    ∀ll. Q ll ⇒ every P ll
+</pre>
+
+<DT><span class="strong">every_thm</span>
+<DD>
+<pre>
+⊢ (every P [||] ⇔ T) ∧ (every P (h:::t) ⇔ P h ∧ every P t)
+</pre>
+
+<DT><span class="strong">exists_APPEND</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. exists P (l1 ++ₗ l2) ⇔ exists P l1 ∨ LFINITE l1 ∧ exists P l2
+</pre>
+
+<DT><span class="strong">exists_FLATTEN</span>
+<DD>
+<pre>
+⊢ exists P (LFLATTEN ll) ⇔
+  ∃p e0 s. LFINITE p ∧ every LFINITE p ∧ ll = p ++ₗ e0:::s ∧ exists P e0
+</pre>
+
+<DT><span class="strong">exists_LDROP</span>
+<DD>
+<pre>
+⊢ exists P ll ⇔ ∃n a t. LDROP n ll = SOME (a:::t) ∧ P a
+</pre>
+
+<DT><span class="strong">exists_LNTH</span>
+<DD>
+<pre>
+⊢ ∀l. exists P l ⇔ ∃n e. SOME e = LNTH n l ∧ P e
+</pre>
+
+<DT><span class="strong">exists_cases</span>
+<DD>
+<pre>
+⊢ ∀P a0.
+    exists P a0 ⇔ (∃h t. a0 = h:::t ∧ P h) ∨ ∃h t. a0 = h:::t ∧ exists P t
+</pre>
+
+<DT><span class="strong">exists_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀p f. exists p (fromSeq f) ⇔ ∃i. p (f i)
+</pre>
+
+<DT><span class="strong">exists_ind</span>
+<DD>
+<pre>
+⊢ ∀P exists'.
+    (∀h t. P h ⇒ exists' (h:::t)) ∧ (∀h t. exists' t ⇒ exists' (h:::t)) ⇒
+    ∀a0. exists P a0 ⇒ exists' a0
+</pre>
+
+<DT><span class="strong">exists_rules</span>
+<DD>
+<pre>
+⊢ ∀P. (∀h t. P h ⇒ exists P (h:::t)) ∧ ∀h t. exists P t ⇒ exists P (h:::t)
+</pre>
+
+<DT><span class="strong">exists_strong_ind</span>
+<DD>
+<pre>
+⊢ ∀P Q.
+    (∀h t. P h ⇒ Q (h:::t)) ∧ (∀h t. Q t ∧ exists P t ⇒ Q (h:::t)) ⇒
+    ∀a0. exists P a0 ⇒ Q a0
+</pre>
+
+<DT><span class="strong">exists_strongind</span>
+<DD>
+<pre>
+⊢ ∀P exists'.
+    (∀h t. P h ⇒ exists' (h:::t)) ∧
+    (∀h t. exists P t ∧ exists' t ⇒ exists' (h:::t)) ⇒
+    ∀a0. exists P a0 ⇒ exists' a0
+</pre>
+
+<DT><span class="strong">exists_thm</span>
+<DD>
+<pre>
+⊢ (exists P [||] ⇔ F) ∧ (exists P (h:::t) ⇔ P h ∨ exists P t)
+</pre>
+
+<DT><span class="strong">exists_thm_strong</span>
+<DD>
+<pre>
+⊢ exists P ll ⇔
+  ∃n a t l.
+    LDROP n ll = SOME (a:::t) ∧ P a ∧ LTAKE n ll = SOME l ∧ EVERY ($¬ ∘ P) l
+</pre>
+
+<DT><span class="strong">fromList_11</span>
+<DD>
+<pre>
+⊢ ∀xs ys. fromList xs = fromList ys ⇔ xs = ys
+</pre>
+
+<DT><span class="strong">fromList_EQ_CONS</span>
+<DD>
+<pre>
+⊢ fromList l = h:::t ⇔ ∃t0. l = h::t0 ∧ t = fromList t0
+</pre>
+
+<DT><span class="strong">fromList_EQ_LNIL</span>
+<DD>
+<pre>
+⊢ fromList l = [||] ⇔ l = []
+</pre>
+
+<DT><span class="strong">fromList_NEQ_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀l f. fromList l ≠ fromSeq f
+</pre>
+
+<DT><span class="strong">fromList_fromSeq</span>
+<DD>
+<pre>
+⊢ ∀ll. (∃l. ll = fromList l) ∨ ∃f. ll = fromSeq f
+</pre>
+
+<DT><span class="strong">fromSeq_11</span>
+<DD>
+<pre>
+⊢ ∀f g. fromSeq f = fromSeq g ⇔ f = g
+</pre>
+
+<DT><span class="strong">fromSeq_LCONS</span>
+<DD>
+<pre>
+⊢ fromSeq f = f 0:::fromSeq (f ∘ SUC)
+</pre>
+
+<DT><span class="strong">from_toList</span>
+<DD>
+<pre>
+⊢ ∀l. toList (fromList l) = SOME l
+</pre>
+
+<DT><span class="strong">infinite_lnth_some</span>
+<DD>
+<pre>
+⊢ ∀ll. ¬LFINITE ll ⇔ ∀n. ∃x. LNTH n ll = SOME x
+</pre>
+
+<DT><span class="strong">lbind_APPEND</span>
+<DD>
+<pre>
+⊢ LFINITE l1 ⇒ lbind (l1 ++ₗ l2) f = lbind l1 f ++ₗ lbind l2 f
+</pre>
+
+<DT><span class="strong">lbind_CONS</span>
+<DD>
+<pre>
+⊢ lbind (h:::t) f = f h ++ₗ lbind t f
+</pre>
+
+<DT><span class="strong">lbind_EQ_CONS</span>
+<DD>
+<pre>
+⊢ lbind ll f = h:::t ⇔
+  ∃p e s t1 t2.
+    ll = p ++ₗ e:::s ∧ LFINITE p ∧ (∀e0. e0 ∈ LSET p ⇒ f e0 = [||]) ∧
+    t = t1 ++ₗ t2 ∧ f e = h:::t1 ∧ lbind s f = t2
+</pre>
+
+<DT><span class="strong">lbind_EQ_NIL</span>
+<DD>
+<pre>
+⊢ lbind ll f = [||] ⇔ ∀e. e ∈ LSET ll ⇒ f e = [||]
+</pre>
+
+<DT><span class="strong">lbind_notASSOC</span>
+<DD>
+<pre>
+⊢ let
+    f b = if b then rpt_el T else [|F|];
+    g b = if b then [||] else [|1|];
+    bs = [|T; F|]
+  in
+    lbind bs (λb. lbind (f b) g) ≠ lbind (lbind bs f) g
+</pre>
+
+<DT><span class="strong">lbind_thm</span>
+<DD>
+<pre>
+⊢ lbind [||] f = [||] ∧ lbind (h:::t) f = f h ++ₗ lbind t f
+</pre>
+
+<DT><span class="strong">linear_order_to_llist</span>
+<DD>
+<pre>
+⊢ ∀lo X.
+    linear_order lo X ∧ finite_prefixes lo X ⇒
+    ∃ll.
+      X = {x | ∃i. LNTH i ll = SOME x} ∧
+      lo ⊆ {(x,y) | ∃i j. i ≤ j ∧ LNTH i ll = SOME x ∧ LNTH j ll = SOME y} ∧
+      ∀i j x. LNTH i ll = SOME x ∧ LNTH j ll = SOME x ⇒ i = j
+</pre>
+
+<DT><span class="strong">linear_order_to_llist_eq</span>
+<DD>
+<pre>
+⊢ ∀lo X.
+    linear_order lo X ∧ finite_prefixes lo X ⇒
+    ∃ll.
+      X = {x | ∃i. LNTH i ll = SOME x} ∧
+      lo = {(x,y) | ∃i j. i ≤ j ∧ LNTH i ll = SOME x ∧ LNTH j ll = SOME y} ∧
+      ∀i j x. LNTH i ll = SOME x ∧ LNTH j ll = SOME x ⇒ i = j
+</pre>
+
+<DT><span class="strong">llength_rel_cases</span>
+<DD>
+<pre>
+⊢ ∀a0 a1.
+    llength_rel a0 a1 ⇔
+    a0 = [||] ∧ a1 = 0 ∨ ∃h n t. a0 = h:::t ∧ a1 = SUC n ∧ llength_rel t n
+</pre>
+
+<DT><span class="strong">llength_rel_ind</span>
+<DD>
+<pre>
+⊢ ∀llength_rel'.
+    llength_rel' [||] 0 ∧
+    (∀h n t. llength_rel' t n ⇒ llength_rel' (h:::t) (SUC n)) ⇒
+    ∀a0 a1. llength_rel a0 a1 ⇒ llength_rel' a0 a1
+</pre>
+
+<DT><span class="strong">llength_rel_rules</span>
+<DD>
+<pre>
+⊢ llength_rel [||] 0 ∧ ∀h n t. llength_rel t n ⇒ llength_rel (h:::t) (SUC n)
+</pre>
+
+<DT><span class="strong">llength_rel_strongind</span>
+<DD>
+<pre>
+⊢ ∀llength_rel'.
+    llength_rel' [||] 0 ∧
+    (∀h n t. llength_rel t n ∧ llength_rel' t n ⇒ llength_rel' (h:::t) (SUC n)) ⇒
+    ∀a0 a1. llength_rel a0 a1 ⇒ llength_rel' a0 a1
+</pre>
+
+<DT><span class="strong">llist_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f. ∃g.
+    (∀x. LHD (g x) = OPTION_MAP SND (f x)) ∧
+    ∀x. LTL (g x) = OPTION_MAP (g ∘ FST) (f x)
+</pre>
+
+<DT><span class="strong">llist_Axiom_1</span>
+<DD>
+<pre>
+⊢ ∀f. ∃g. ∀x. g x = case f x of NONE => [||] | SOME (a,b) => b:::g a
+</pre>
+
+<DT><span class="strong">llist_Axiom_1ue</span>
+<DD>
+<pre>
+⊢ ∀f. ∃!g. ∀x. g x = case f x of NONE => [||] | SOME (a,b) => b:::g a
+</pre>
+
+<DT><span class="strong">llist_CASES</span>
+<DD>
+<pre>
+⊢ ∀l. l = [||] ∨ ∃h t. l = h:::t
+</pre>
+
+<DT><span class="strong">llist_CASE_compute</span>
+<DD>
+<pre>
+⊢ llist_CASE [||] b f = b ∧ llist_CASE (x:::ll) b f = f x ll
+</pre>
+
+<DT><span class="strong">llist_forall_split</span>
+<DD>
+<pre>
+⊢ ∀P. (∀ll. P ll) ⇔ (∀l. P (fromList l)) ∧ ∀f. P (fromSeq f)
+</pre>
+
+<DT><span class="strong">llist_rep_LCONS</span>
+<DD>
+<pre>
+⊢ llist_rep (h:::t) = (λn. if n = 0 then SOME h else llist_rep t (n − 1))
+</pre>
+
+<DT><span class="strong">llist_rep_LNIL</span>
+<DD>
+<pre>
+⊢ llist_rep [||] = (λn. NONE)
+</pre>
+
+<DT><span class="strong">llist_ue_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f. ∃!g.
+    (∀x. LHD (g x) = OPTION_MAP SND (f x)) ∧
+    ∀x. LTL (g x) = OPTION_MAP (g ∘ FST) (f x)
+</pre>
+
+<DT><span class="strong">llist_upto_cases</span>
+<DD>
+<pre>
+⊢ ∀R a0 a1.
+    llist_upto R a0 a1 ⇔
+    a1 = a0 ∨ R a0 a1 ∨ (∃y. llist_upto R a0 y ∧ llist_upto R y a1) ∨
+    ∃x y z. a0 = z ++ₗ x ∧ a1 = z ++ₗ y ∧ llist_upto R x y
+</pre>
+
+<DT><span class="strong">llist_upto_context</span>
+<DD>
+<pre>
+⊢ ∀R x y z. llist_upto R x y ⇒ llist_upto R (z ++ₗ x) (z ++ₗ y)
+</pre>
+
+<DT><span class="strong">llist_upto_eq</span>
+<DD>
+<pre>
+⊢ ∀R x. llist_upto R x x
+</pre>
+
+<DT><span class="strong">llist_upto_ind</span>
+<DD>
+<pre>
+⊢ ∀R llist_upto'.
+    (∀x. llist_upto' x x) ∧ (∀x y. R x y ⇒ llist_upto' x y) ∧
+    (∀x y z. llist_upto' x y ∧ llist_upto' y z ⇒ llist_upto' x z) ∧
+    (∀x y z. llist_upto' x y ⇒ llist_upto' (z ++ₗ x) (z ++ₗ y)) ⇒
+    ∀a0 a1. llist_upto R a0 a1 ⇒ llist_upto' a0 a1
+</pre>
+
+<DT><span class="strong">llist_upto_rel</span>
+<DD>
+<pre>
+⊢ ∀R x y. R x y ⇒ llist_upto R x y
+</pre>
+
+<DT><span class="strong">llist_upto_rules</span>
+<DD>
+<pre>
+⊢ ∀R. (∀x. llist_upto R x x) ∧ (∀x y. R x y ⇒ llist_upto R x y) ∧
+      (∀x y z. llist_upto R x y ∧ llist_upto R y z ⇒ llist_upto R x z) ∧
+      ∀x y z. llist_upto R x y ⇒ llist_upto R (z ++ₗ x) (z ++ₗ y)
+</pre>
+
+<DT><span class="strong">llist_upto_strongind</span>
+<DD>
+<pre>
+⊢ ∀R llist_upto'.
+    (∀x. llist_upto' x x) ∧ (∀x y. R x y ⇒ llist_upto' x y) ∧
+    (∀x y z.
+       llist_upto R x y ∧ llist_upto' x y ∧ llist_upto R y z ∧ llist_upto' y z ⇒
+       llist_upto' x z) ∧
+    (∀x y z.
+       llist_upto R x y ∧ llist_upto' x y ⇒ llist_upto' (z ++ₗ x) (z ++ₗ y)) ⇒
+    ∀a0 a1. llist_upto R a0 a1 ⇒ llist_upto' a0 a1
+</pre>
+
+<DT><span class="strong">llist_upto_trans</span>
+<DD>
+<pre>
+⊢ ∀R x y z. llist_upto R x y ∧ llist_upto R y z ⇒ llist_upto R x z
+</pre>
+
+<DT><span class="strong">lnth_fromList_some</span>
+<DD>
+<pre>
+⊢ ∀n l. n < LENGTH l ⇔ LNTH n (fromList l) = SOME (EL n l)
+</pre>
+
+<DT><span class="strong">lnth_some_down_closed</span>
+<DD>
+<pre>
+⊢ ∀ll x n1 n2. LNTH n1 ll = SOME x ∧ n2 ≤ n1 ⇒ ∃y. LNTH n2 ll = SOME y
+</pre>
+
+<DT><span class="strong">lrep_ok_FUNPOW_BIND</span>
+<DD>
+<pre>
+⊢ lrep_ok (λn. FUNPOW (λm. monad_bind m g) n fz)
+</pre>
+
+<DT><span class="strong">lrep_ok_MAP</span>
+<DD>
+<pre>
+⊢ lrep_ok (λn. OPTION_MAP f (g n)) ⇔ lrep_ok g
+</pre>
+
+<DT><span class="strong">lrep_ok_alt</span>
+<DD>
+<pre>
+⊢ lrep_ok f ⇔ ∀n. IS_SOME (f (SUC n)) ⇒ IS_SOME (f n)
+</pre>
+
+<DT><span class="strong">lrep_ok_cases</span>
+<DD>
+<pre>
+⊢ ∀a0.
+    lrep_ok a0 ⇔
+    a0 = (λn. NONE) ∨
+    ∃h t. a0 = (λn. if n = 0 then SOME h else t (n − 1)) ∧ lrep_ok t
+</pre>
+
+<DT><span class="strong">lrep_ok_coind</span>
+<DD>
+<pre>
+⊢ ∀lrep_ok'.
+    (∀a0.
+       lrep_ok' a0 ⇒
+       a0 = (λn. NONE) ∨
+       ∃h t. a0 = (λn. if n = 0 then SOME h else t (n − 1)) ∧ lrep_ok' t) ⇒
+    ∀a0. lrep_ok' a0 ⇒ lrep_ok a0
+</pre>
+
+<DT><span class="strong">lrep_ok_rules</span>
+<DD>
+<pre>
+⊢ lrep_ok (λn. NONE) ∧
+  ∀h t. lrep_ok t ⇒ lrep_ok (λn. if n = 0 then SOME h else t (n − 1))
+</pre>
+
+<DT><span class="strong">not_compose</span>
+<DD>
+<pre>
+⊢ $¬ ∘ $¬ ∘ f = f ∧ $¬ ∘ $¬ = I
+</pre>
+
+<DT><span class="strong">numopt_BISIMULATION</span>
+<DD>
+<pre>
+⊢ ∀mopt nopt.
+    mopt = nopt ⇔
+    ∃R. R mopt nopt ∧
+        ∀m n.
+          R m n ⇒
+          m = SOME 0 ∧ n = SOME 0 ∨
+          m ≠ SOME 0 ∧ n ≠ SOME 0 ∧ R (OPTION_MAP PRE m) (OPTION_MAP PRE n)
+</pre>
+
+<DT><span class="strong">prefixes_lprefix_total</span>
+<DD>
+<pre>
+⊢ ∀ll l1 l2. LPREFIX l1 ll ∧ LPREFIX l2 ll ⇒ LPREFIX l1 l2 ∨ LPREFIX l2 l1
+</pre>
+
+<DT><span class="strong">rpt_el_CONS'</span>
+<DD>
+<pre>
+⊢ e:::rpt_el e = rpt_el e
+</pre>
+
+<DT><span class="strong">rpt_el_EQ_APPEND</span>
+<DD>
+<pre>
+⊢ rpt_el e = l1 ++ₗ l2 ⇔
+  if LFINITE l1 then every ($= e) l1 ∧ l2 = rpt_el e else l1 = rpt_el e
+</pre>
+
+<DT><span class="strong">toList_LAPPEND_APPEND</span>
+<DD>
+<pre>
+⊢ toList (l1 ++ₗ l2) = SOME x ⇒ x = THE (toList l1) ++ THE (toList l2)
+</pre>
+
+<DT><span class="strong">toList_THM</span>
+<DD>
+<pre>
+⊢ toList [||] = SOME [] ∧
+  ∀h t. toList (h:::t) = OPTION_MAP (CONS h) (toList t)
+</pre>
+
+<DT><span class="strong">to_fromList</span>
+<DD>
+<pre>
+⊢ ∀ll. LFINITE ll ⇒ fromList (THE (toList ll)) = ll
+</pre>
+
+<DT><span class="strong">until_cases</span>
+<DD>
+<pre>
+⊢ ∀P Q a0. until P Q a0 ⇔ Q a0 ∨ ∃h t. a0 = h:::t ∧ P (h:::t) ∧ until P Q t
+</pre>
+
+<DT><span class="strong">until_ind</span>
+<DD>
+<pre>
+⊢ ∀P Q until'.
+    (∀ll. Q ll ⇒ until' ll) ∧ (∀h t. P (h:::t) ∧ until' t ⇒ until' (h:::t)) ⇒
+    ∀a0. until P Q a0 ⇒ until' a0
+</pre>
+
+<DT><span class="strong">until_rules</span>
+<DD>
+<pre>
+⊢ ∀P Q.
+    (∀ll. Q ll ⇒ until P Q ll) ∧
+    ∀h t. P (h:::t) ∧ until P Q t ⇒ until P Q (h:::t)
+</pre>
+
+<DT><span class="strong">until_strongind</span>
+<DD>
+<pre>
+⊢ ∀P Q until'.
+    (∀ll. Q ll ⇒ until' ll) ∧
+    (∀h t. P (h:::t) ∧ until P Q t ∧ until' t ⇒ until' (h:::t)) ⇒
+    ∀a0. until P Q a0 ⇒ until' a0
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

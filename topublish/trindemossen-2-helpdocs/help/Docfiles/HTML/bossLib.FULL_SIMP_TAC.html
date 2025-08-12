@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>bossLib.FULL_SIMP_TAC</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="full_simp_tac"><code>FULL_SIMP_TAC</code></h2>
+<pre class="hol4"><code>bossLib.FULL_SIMP_TAC : simpset -&gt; thm list -&gt; tactic</code></pre>
+<hr />
+<p>Simplifies the goal (assumptions as well as conclusion) with the
+given simpset.</p>
+<p><code>FULL_SIMP_TAC</code> is a powerful simplification tactic that
+simplifies all of a goal. It proceeds by applying simplification to each
+assumption of the goal in turn, accumulating simplified assumptions as
+it goes. These simplified assumptions are used to simplify further
+assumptions, and all of the simplified assumptions are used as
+additional rewrites when the conclusion of the goal is simplified.</p>
+<p>In addition, simplified assumptions are added back onto the goal
+using the equivalent of <code>STRIP_ASSUME_TAC</code> and this causes
+automatic skolemization of existential assumptions, case splits on
+disjunctions, and the separate assumption of conjunctions. If an
+assumption is simplified to <code>TRUTH</code>, then this is left on the
+assumption list. If an assumption is simplified to falsity, this proves
+the goal.</p>
+<h3 id="failure">Failure</h3>
+<p><code>FULL_SIMP_TAC</code> never fails, but it may diverge.</p>
+<h3 id="example">Example</h3>
+<p>Here <code>FULL_SIMP_TAC</code> is used to prove a goal:</p>
+<pre class="hol4"><code>   &gt; FULL_SIMP_TAC arith_ss [] (map Term [`x = 3`, `x &lt; 2`],
+                              Term `?y. x * y = 51`)
+   - val it = ([], fn) : tactic_result</code></pre>
+<p>Using <code>LESS_OR_EQ</code>
+<code>|- !m n. m &lt;= n = m &lt; n \/ (m = n)</code>, a useful case
+split can be induced in the next goal:</p>
+<pre class="hol4"><code>   &gt; FULL_SIMP_TAC bool_ss [LESS_OR_EQ] (map Term [`x &lt;= y`, `x &lt; z`],
+                                         Term `x + y &lt; z`);
+   - val it =
+       ([([`x &lt; y`, `x &lt; z`], `x + y &lt; z`),
+         ([`x = y`, `x &lt; z`], `y + y &lt; z`)], fn)
+       : tactic_result</code></pre>
+<p>Note that the equality <code>x = y</code> is not used to simplify the
+subsequent assumptions, but is used to simplify the conclusion of the
+goal.</p>
+<h3 id="comments">Comments</h3>
+<p>The application of <code>STRIP_ASSUME_TAC</code> to simplified
+assumptions means that <code>FULL_SIMP_TAC</code> can cause unwanted
+case-splits and other undesirable transformations to occur in one’s
+assumption list. If one wants to apply the simplifier to assumptions
+without this occurring, the best approach seems to be the use of
+<code>RULE_ASSUM_TAC</code> and <code>SIMP_RULE</code>.</p>
+<p>Each assumption is used to rewrite lower-numbered assumptions. To get
+the opposite effect, where each assumption is used to rewrite
+higher-numbered assumptions, use <code>REV_FULL_SIMP_TAC</code>.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="bossLib.REV_FULL_SIMP_TAC.html"><code>bossLib.REV_FULL_SIMP_TAC</code></a>,
+<a
+href="bossLib.ASM_SIMP_TAC.html"><code>bossLib.ASM_SIMP_TAC</code></a>,
+<a href="bossLib.SIMP_CONV.html"><code>bossLib.SIMP_CONV</code></a>, <a
+href="bossLib.SIMP_RULE.html"><code>bossLib.SIMP_RULE</code></a>, <a
+href="bossLib.SIMP_TAC.html"><code>bossLib.SIMP_TAC</code></a>, <a
+href="BasicProvers.VAR_EQ_TAC.html"><code>BasicProvers.VAR_EQ_TAC</code></a></p>
+</body>
+</html>

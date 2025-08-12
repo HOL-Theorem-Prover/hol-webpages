@@ -1,0 +1,496 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: byte</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "byte"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "blastTheory.html"><span class="strong">blast</span></a>&nbsp;&nbsp;
+    <a href = "bitstringTheory.html"><span class="strong">bitstring</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">byte_index</span>
+    <td>
+    :α word -> bool -> num
+    <tr><td> <span class="strong">bytes_in_word</span> <td> :α word
+    <tr><td>
+    <span class="strong">bytes_to_word</span>
+    <td>
+    :num -> α word -> word8 list -> α word -> bool -> α word
+    <tr><td>
+    <span class="strong">get_byte</span>
+    <td>
+    :α word -> α word -> bool -> word8
+    <tr><td>
+    <span class="strong">set_byte</span>
+    <td>
+    :α word -> word8 -> α word -> bool -> α word
+    <tr><td>
+    <span class="strong">word_of_bytes</span>
+    <td>
+    :bool -> α word -> word8 list -> α word
+    <tr><td>
+    <span class="strong">word_slice_alt</span>
+    <td>
+    :num -> num -> α word -> α word
+    <tr><td>
+    <span class="strong">word_to_bytes</span>
+    <td>
+    :α word -> bool -> word8 list
+    <tr><td>
+    <span class="strong">word_to_bytes_aux</span>
+    <td>
+    :num -> α word -> bool -> word8 list
+    <tr><td>
+    <span class="strong">words_of_bytes</span>
+    <td>
+    :bool -> word8 list -> α word list
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">byte_index_def</span>
+<DD>
+<pre>
+⊢ ∀a is_bigendian.
+    byte_index a is_bigendian =
+    (let
+       d = dimindex (:α) DIV 8
+     in
+       if is_bigendian then 8 * (d − 1 − w2n a MOD d) else 8 * w2n a MOD d)
+</pre>
+
+<DT><span class="strong">bytes_in_word_def</span>
+<DD>
+<pre>
+⊢ bytes_in_word = n2w (dimindex (:α) DIV 8)
+</pre>
+
+<DT><span class="strong">get_byte_def</span>
+<DD>
+<pre>
+⊢ ∀a w is_bigendian.
+    get_byte a w is_bigendian = w2w (w ⋙ byte_index a is_bigendian)
+</pre>
+
+<DT><span class="strong">set_byte_def</span>
+<DD>
+<pre>
+⊢ ∀a b w is_bigendian.
+    set_byte a b w is_bigendian =
+    (let
+       i = byte_index a is_bigendian
+     in
+       word_slice_alt (dimindex (:α)) (i + 8) w ‖ w2w b << i ‖
+       word_slice_alt i 0 w)
+</pre>
+
+<DT><span class="strong">word_of_bytes_def</span>
+<DD>
+<pre>
+⊢ (∀be a. word_of_bytes be a [] = 0w) ∧
+  ∀be a b bs.
+    word_of_bytes be a (b::bs) =
+    set_byte a b (word_of_bytes be (a + 1w) bs) be
+</pre>
+
+<DT><span class="strong">word_slice_alt_def</span>
+<DD>
+<pre>
+⊢ ∀h l w. word_slice_alt h l w = FCP i. l ≤ i ∧ i < h ∧ w ' i
+</pre>
+
+<DT><span class="strong">word_to_bytes_aux_def</span>
+<DD>
+<pre>
+⊢ (∀w be. word_to_bytes_aux 0 w be = []) ∧
+  ∀n w be.
+    word_to_bytes_aux (SUC n) w be =
+    word_to_bytes_aux n w be ++ [get_byte (n2w n) w be]
+</pre>
+
+<DT><span class="strong">word_to_bytes_def</span>
+<DD>
+<pre>
+⊢ ∀w be. word_to_bytes w be = word_to_bytes_aux (dimindex (:α) DIV 8) w be
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">DIV_not_0</span>
+<DD>
+<pre>
+⊢ 1 < d ⇒ (d ≤ n ⇔ 0 < n DIV d)
+</pre>
+
+<DT><span class="strong">LENGTH_word_to_bytes</span>
+<DD>
+<pre>
+⊢ LENGTH (word_to_bytes w be) = dimindex (:α) DIV 8
+</pre>
+
+<DT><span class="strong">LENGTH_word_to_bytes_aux</span>
+<DD>
+<pre>
+⊢ LENGTH (word_to_bytes_aux n w b) = n
+</pre>
+
+<DT><span class="strong">LENGTH_words_of_bytes</span>
+<DD>
+<pre>
+⊢ 8 ≤ dimindex (:α) ⇒
+  ∀be ls.
+    LENGTH (words_of_bytes be ls) =
+    LENGTH ls DIV w2n bytes_in_word + MIN 1 (LENGTH ls MOD w2n bytes_in_word)
+</pre>
+
+<DT><span class="strong">bit_field_insert_self_word_slice_alt</span>
+<DD>
+<pre>
+⊢ l1 ≤ h2 ∧ l2 ≤ SUC h1 ⇒
+  bit_field_insert h1 l1 (w ⋙ l1) (word_slice_alt h2 l2 w) =
+  word_slice_alt (MAX (SUC h1) h2) (MIN l1 l2) w
+</pre>
+
+<DT><span class="strong">byte_index_cycle</span>
+<DD>
+<pre>
+⊢ 8 ≤ dimindex (:α) ⇒
+  byte_index (n2w (w2n a MOD (dimindex (:α) DIV 8))) be = byte_index a be
+</pre>
+
+<DT><span class="strong">byte_index_lt_or_gt</span>
+<DD>
+<pre>
+⊢ w2n n MOD (dimindex (:α) DIV 8) ≠ w2n m MOD (dimindex (:α) DIV 8) ∧
+  8 ≤ dimindex (:α) ⇒
+  byte_index n be + 8 ≤ byte_index m be ∨
+  byte_index m be + 8 ≤ byte_index n be
+</pre>
+
+<DT><span class="strong">byte_index_offset</span>
+<DD>
+<pre>
+⊢ 8 ≤ dimindex (:α) ⇒ byte_index a be + 8 ≤ dimindex (:α)
+</pre>
+
+<DT><span class="strong">bytes_to_word_def</span>
+<DD>
+<pre>
+⊢ ∀w k bs be a.
+    bytes_to_word k a bs w be =
+    if k = 0 then w
+    else
+      case bs of
+        [] => w
+      | b::bs' => set_byte a b (bytes_to_word (k − 1) (a + 1w) bs' w be) be
+</pre>
+
+<DT><span class="strong">bytes_to_word_eq</span>
+<DD>
+<pre>
+⊢ bytes_to_word 0 a bs w be = w ∧ bytes_to_word k a [] w be = w ∧
+  bytes_to_word (SUC k) a (b::bs) w be =
+  set_byte a b (bytes_to_word k (a + 1w) bs w be) be
+</pre>
+
+<DT><span class="strong">bytes_to_word_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀k a bs w be.
+         (∀b bs'. k ≠ 0 ∧ bs = b::bs' ⇒ P (k − 1) (a + 1w) bs' w be) ⇒
+         P k a bs w be) ⇒
+      ∀v v1 v2 v3 v4. P v v1 v2 v3 v4
+</pre>
+
+<DT><span class="strong">bytes_to_word_same</span>
+<DD>
+<pre>
+⊢ ∀bw k b1 w be b2.
+    (∀n. n < bw ⇒ n < LENGTH b1 ∧ n < LENGTH b2 ∧ EL n b1 = EL n b2) ⇒
+    bytes_to_word bw k b1 w be = bytes_to_word bw k b2 w be
+</pre>
+
+<DT><span class="strong">get_byte_cycle</span>
+<DD>
+<pre>
+⊢ 8 ≤ dimindex (:α) ⇒
+  get_byte (n2w (w2n a MOD (dimindex (:α) DIV 8))) w be = get_byte a w be
+</pre>
+
+<DT><span class="strong">get_byte_set_byte</span>
+<DD>
+<pre>
+⊢ 8 ≤ dimindex (:α) ⇒ get_byte a (set_byte a b w be) be = b
+</pre>
+
+<DT><span class="strong">get_byte_set_byte_irrelevant</span>
+<DD>
+<pre>
+⊢ 16 ≤ dimindex (:α) ∧
+  w2n a MOD (dimindex (:α) DIV 8) ≠ w2n a' MOD (dimindex (:α) DIV 8) ⇒
+  get_byte a' (set_byte a b w be) be = get_byte a' w be
+</pre>
+
+<DT><span class="strong">set_byte_32</span>
+<DD>
+<pre>
+⊢ set_byte a b w be =
+  (let
+     i = byte_index a be
+   in
+     if i = 0 then w2w b ‖ w && 0xFFFFFF00w
+     else if i = 8 then w2w b << 8 ‖ w && 0xFFFF00FFw
+     else if i = 16 then w2w b << 16 ‖ w && 0xFF00FFFFw
+     else w2w b << 24 ‖ w && 0xFFFFFFw)
+</pre>
+
+<DT><span class="strong">set_byte_64</span>
+<DD>
+<pre>
+⊢ set_byte a b w be =
+  (let
+     i = byte_index a be
+   in
+     if i = 0 then w2w b ‖ w && 0xFFFFFFFFFFFFFF00w
+     else if i = 8 then w2w b << 8 ‖ w && 0xFFFFFFFFFFFF00FFw
+     else if i = 16 then w2w b << 16 ‖ w && 0xFFFFFFFFFF00FFFFw
+     else if i = 24 then w2w b << 24 ‖ w && 0xFFFFFFFF00FFFFFFw
+     else if i = 32 then w2w b << 32 ‖ w && 0xFFFFFF00FFFFFFFFw
+     else if i = 40 then w2w b << 40 ‖ w && 0xFFFF00FFFFFFFFFFw
+     else if i = 48 then w2w b << 48 ‖ w && 0xFF00FFFFFFFFFFFFw
+     else w2w b << 56 ‖ w && 0xFFFFFFFFFFFFFFw)
+</pre>
+
+<DT><span class="strong">set_byte_bit_field_insert</span>
+<DD>
+<pre>
+⊢ set_byte a b w be =
+  bit_field_insert (byte_index a be + 7) (byte_index a be) b w
+</pre>
+
+<DT><span class="strong">set_byte_change_a</span>
+<DD>
+<pre>
+⊢ w2n a MOD (dimindex (:α) DIV 8) = w2n a' MOD (dimindex (:α) DIV 8) ⇒
+  set_byte a b w be = set_byte a' b w be
+</pre>
+
+<DT><span class="strong">set_byte_cycle</span>
+<DD>
+<pre>
+⊢ 8 ≤ dimindex (:α) ⇒
+  set_byte (n2w (w2n a MOD (dimindex (:α) DIV 8))) b w be = set_byte a b w be
+</pre>
+
+<DT><span class="strong">set_byte_get_byte</span>
+<DD>
+<pre>
+⊢ 8 ≤ dimindex (:α) ⇒ set_byte a (get_byte a w be) w be = w
+</pre>
+
+<DT><span class="strong">set_byte_get_byte'</span>
+<DD>
+<pre>
+⊢ 8 ≤ dimindex (:α) ⇒ set_byte a (get_byte a w be) w be = w
+</pre>
+
+<DT><span class="strong">set_byte_get_byte_copy</span>
+<DD>
+<pre>
+⊢ 8 ≤ dimindex (:α) ⇒
+  set_byte a (get_byte a w be) w' be =
+  (byte_index a be + 7 '' byte_index a be) w ‖
+  (if byte_index a be + 8 = dimindex (:α) then 0w
+   else (dimindex (:α) − 1 '' byte_index a be + 8) w') ‖
+  if byte_index a be = 0 then 0w else (byte_index a be − 1 '' 0) w'
+</pre>
+
+<DT><span class="strong">set_byte_transpose</span>
+<DD>
+<pre>
+⊢ w2n n MOD (dimindex (:α) DIV 8) ≠ w2n m MOD (dimindex (:α) DIV 8) ∧
+  8 ≤ dimindex (:α) ⇒
+  set_byte n x (set_byte m y w be) be = set_byte m y (set_byte n x w be) be
+</pre>
+
+<DT><span class="strong">word_of_bytes_SNOC</span>
+<DD>
+<pre>
+⊢ LENGTH bs < dimindex (:α) DIV 8 ∧ w2n n + LENGTH bs < dimword (:α) ⇒
+  word_of_bytes be n (SNOC b bs) =
+  set_byte (n + n2w (LENGTH bs)) b (word_of_bytes be n bs) be
+</pre>
+
+<DT><span class="strong">word_of_bytes_bytes_to_word</span>
+<DD>
+<pre>
+⊢ ∀be a bs k.
+    LENGTH bs ≤ k ⇒ word_of_bytes be a bs = bytes_to_word k a bs 0w be
+</pre>
+
+<DT><span class="strong">word_of_bytes_word_to_bytes</span>
+<DD>
+<pre>
+⊢ 8 ≤ dimindex (:α) ∧ 8 divides dimindex (:α) ⇒
+  word_of_bytes be 0w (word_to_bytes w be) = w
+</pre>
+
+<DT><span class="strong">word_of_bytes_word_to_bytes_aux_be</span>
+<DD>
+<pre>
+⊢ n ≤ dimindex (:α) DIV 8 ∧ 8 ≤ dimindex (:α) ⇒
+  word_of_bytes T 0w (word_to_bytes_aux n w T) =
+  word_slice_alt (8 * (dimindex (:α) DIV 8)) (8 * (dimindex (:α) DIV 8 − n)) w
+</pre>
+
+<DT><span class="strong">word_of_bytes_word_to_bytes_aux_le</span>
+<DD>
+<pre>
+⊢ n ≤ dimindex (:α) DIV 8 ∧ 8 ≤ dimindex (:α) ⇒
+  word_of_bytes F 0w (word_to_bytes_aux n w F) = word_slice_alt (8 * n) 0 w
+</pre>
+
+<DT><span class="strong">word_slice_alt_empty</span>
+<DD>
+<pre>
+⊢ h ≤ l ⇒ word_slice_alt h l w = 0w
+</pre>
+
+<DT><span class="strong">word_slice_alt_full</span>
+<DD>
+<pre>
+⊢ dimindex (:α) ≤ h ⇒ word_slice_alt h 0 w = w
+</pre>
+
+<DT><span class="strong">word_slice_alt_shift</span>
+<DD>
+<pre>
+⊢ h ≤ dimindex (:α) ⇒
+  word_slice_alt h l w =
+  (w ⋙ l << l << (dimindex (:α) − h)) ⋙ (dimindex (:α) − h)
+</pre>
+
+<DT><span class="strong">word_slice_alt_word_slice</span>
+<DD>
+<pre>
+⊢ h ≤ dimindex (:α) ⇒ word_slice_alt (SUC h) l w = (h '' l) w
+</pre>
+
+<DT><span class="strong">word_slice_alt_zero</span>
+<DD>
+<pre>
+⊢ word_slice_alt h l 0w = 0w
+</pre>
+
+<DT><span class="strong">word_slice_shift</span>
+<DD>
+<pre>
+⊢ h < dimindex (:α) ⇒
+  (h '' l) w =
+  (w ⋙ l << l << (dimindex (:α) − SUC h)) ⋙ (dimindex (:α) − SUC h)
+</pre>
+
+<DT><span class="strong">word_to_bytes_aux_compute</span>
+<DD>
+<pre>
+⊢ (∀w be. word_to_bytes_aux 0 w be = []) ∧
+  (∀n w be.
+     word_to_bytes_aux <..num comp'n..> w be =
+     word_to_bytes_aux (<..num comp'n..> − 1) w be ++
+     [get_byte (n2w (<..num comp'n..> − 1)) w be]) ∧
+  ∀n w be.
+    word_to_bytes_aux <..num comp'n..> w be =
+    word_to_bytes_aux <..num comp'n..> w be ++
+    [get_byte (n2w <..num comp'n..> ) w be]
+</pre>
+
+<DT><span class="strong">word_to_bytes_word_of_bytes_32</span>
+<DD>
+<pre>
+⊢ word_of_bytes be 0w (word_to_bytes w be) = w
+</pre>
+
+<DT><span class="strong">word_to_bytes_word_of_bytes_64</span>
+<DD>
+<pre>
+⊢ word_of_bytes be 0w (word_to_bytes w be) = w
+</pre>
+
+<DT><span class="strong">words_of_bytes_append</span>
+<DD>
+<pre>
+⊢ 0 < w2n bytes_in_word ⇒
+  ∀l1 l2.
+    LENGTH l1 MOD w2n bytes_in_word = 0 ⇒
+    words_of_bytes be (l1 ++ l2) =
+    words_of_bytes be l1 ++ words_of_bytes be l2
+</pre>
+
+<DT><span class="strong">words_of_bytes_append_word</span>
+<DD>
+<pre>
+⊢ 0 < LENGTH l1 ∧ LENGTH l1 = w2n bytes_in_word ⇒
+  words_of_bytes be (l1 ++ l2) = word_of_bytes be 0w l1::words_of_bytes be l2
+</pre>
+
+<DT><span class="strong">words_of_bytes_def</span>
+<DD>
+<pre>
+⊢ (∀be. words_of_bytes be [] = []) ∧
+  ∀v3 v2 be.
+    words_of_bytes be (v2::v3) =
+    (let
+       xs = TAKE (MAX 1 (w2n bytes_in_word)) (v2::v3);
+       ys = DROP (MAX 1 (w2n bytes_in_word)) (v2::v3)
+     in
+       word_of_bytes be 0w xs::words_of_bytes be ys)
+</pre>
+
+<DT><span class="strong">words_of_bytes_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀be. P be []) ∧
+      (∀be v2 v3.
+         (∀xs ys.
+            xs = TAKE (MAX 1 (w2n bytes_in_word)) (v2::v3) ∧
+            ys = DROP (MAX 1 (w2n bytes_in_word)) (v2::v3) ⇒
+            P be ys) ⇒
+         P be (v2::v3)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: errorMonad</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "errorMonad"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "holTheory.html"><span class="strong">hol</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td> <span class="strong">error</span> <td> 2
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">bind</span>
+    <td>
+    :(γ, β) error -> (γ -> (α, β) error) -> (α, β) error
+    <tr><td>
+    <span class="strong">choice</span>
+    <td>
+    :(α, γ) error -> (α, β) error -> (α, β) error
+    <tr><td> <span class="strong">error</span> <td> :ε -> (α, ε) error
+    <tr><td>
+    <span class="strong">error_CASE</span>
+    <td>
+    :(α, ε) error -> (α -> β) -> (ε -> β) -> β
+    <tr><td>
+    <span class="strong">error_size</span>
+    <td>
+    :(α -> num) -> (ε -> num) -> (α, ε) error -> num
+    <tr><td>
+    <span class="strong">guard</span>
+    <td>
+    :α -> bool -> (unit, α) error
+    <tr><td> <span class="strong">return</span> <td> :α -> (α, ε) error
+    <tr><td>
+    <span class="strong">try</span>
+    <td>
+    :(α, γ) error -> (γ -> (α, β) error) -> (α, β) error
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">bind_def</span>
+<DD>
+<pre>
+⊢ (∀v f. bind (emret v) f = f v) ∧ ∀e f. bind (error e) f = error e
+</pre>
+
+<DT><span class="strong">choice_def</span>
+<DD>
+<pre>
+⊢ (∀v m. choice (emret v) m = emret v) ∧ ∀e m. choice (error e) m = m
+</pre>
+
+<DT><span class="strong">error_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep.
+    TYPE_DEFINITION
+      (λa0.
+           ∀ $var$('error').
+             (∀a0.
+                (∃a. a0 =
+                     (λa. ind_type$CONSTR 0 (a,ARB) (λn. ind_type$BOTTOM)) a) ∨
+                (∃a. a0 =
+                     (λa.
+                          ind_type$CONSTR (SUC 0) (ARB,a)
+                            (λn. ind_type$BOTTOM)) a) ⇒
+                $var$('error') a0) ⇒
+             $var$('error') a0) rep
+</pre>
+
+<DT><span class="strong">error_case_def</span>
+<DD>
+<pre>
+⊢ (∀a f f1. error_CASE (emret a) f f1 = f a) ∧
+  ∀a f f1. error_CASE (error a) f f1 = f1 a
+</pre>
+
+<DT><span class="strong">error_size_def</span>
+<DD>
+<pre>
+⊢ (∀f f1 a. error_size f f1 (emret a) = 1 + f a) ∧
+  ∀f f1 a. error_size f f1 (error a) = 1 + f1 a
+</pre>
+
+<DT><span class="strong">guard_def</span>
+<DD>
+<pre>
+⊢ ∀e b. guard e b = if b then emret () else error e
+</pre>
+
+<DT><span class="strong">try_def</span>
+<DD>
+<pre>
+⊢ (∀v f. try (emret v) f = emret v) ∧ ∀e f. try (error e) f = f e
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">EXISTS_ERROR</span>
+<DD>
+<pre>
+⊢ (∃e. P e) ⇔ (∃a. P (emret a)) ∨ ∃e. P (error e)
+</pre>
+
+<DT><span class="strong">FORALL_ERROR</span>
+<DD>
+<pre>
+⊢ (∀e. P e) ⇔ (∀a. P (emret a)) ∧ ∀e. P (error e)
+</pre>
+
+<DT><span class="strong">bind_EQ_error</span>
+<DD>
+<pre>
+⊢ bind m f = error e ⇔ m = error e ∨ ∃u. m = emret u ∧ f u = error e
+</pre>
+
+<DT><span class="strong">bind_EQ_return</span>
+<DD>
+<pre>
+⊢ bind m f = emret v ⇔ ∃u. m = emret u ∧ f u = emret v
+</pre>
+
+<DT><span class="strong">bind_return</span>
+<DD>
+<pre>
+⊢ bind m emret = m
+</pre>
+
+<DT><span class="strong">datatype_error</span>
+<DD>
+<pre>
+⊢ DATATYPE (error emret error)
+</pre>
+
+<DT><span class="strong">error_11</span>
+<DD>
+<pre>
+⊢ (∀a a'. emret a = emret a' ⇔ a = a') ∧ ∀a a'. error a = error a' ⇔ a = a'
+</pre>
+
+<DT><span class="strong">error_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f0 f1. ∃fn. (∀a. fn (emret a) = f0 a) ∧ ∀a. fn (error a) = f1 a
+</pre>
+
+<DT><span class="strong">error_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' f f1.
+    M = M' ∧ (∀a. M' = emret a ⇒ f a = f' a) ∧
+    (∀a. M' = error a ⇒ f1 a = f1' a) ⇒
+    error_CASE M f f1 = error_CASE M' f' f1'
+</pre>
+
+<DT><span class="strong">error_case_eq</span>
+<DD>
+<pre>
+⊢ error_CASE x f f1 = v ⇔
+  (∃a. x = emret a ∧ f a = v) ∨ ∃e. x = error e ∧ f1 e = v
+</pre>
+
+<DT><span class="strong">error_distinct</span>
+<DD>
+<pre>
+⊢ ∀a' a. emret a ≠ error a'
+</pre>
+
+<DT><span class="strong">error_induction</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a. P (emret a)) ∧ (∀e. P (error e)) ⇒ ∀e. P e
+</pre>
+
+<DT><span class="strong">error_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀ee. (∃a. ee = emret a) ∨ ∃e. ee = error e
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

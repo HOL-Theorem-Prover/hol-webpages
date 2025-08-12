@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Parse.overload_on</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="overload_on"><code>overload_on</code></h2>
+<pre class="hol4"><code>Parse.overload_on : string * term -&gt; unit</code></pre>
+<hr />
+<p>Establishes a term as one of the overloading possibilities for a
+string.</p>
+<p>Calling <code>overload_on(name,tm)</code> establishes <code>tm</code>
+as a possible resolution of the overloaded <code>name</code>. The call
+to <code>overload_on</code> also ensures that <code>tm</code> is the
+first in the list of possible resolutions chosen when a string might be
+parsed into a term in more than one way, and this is the only effect if
+this combination is already recorded as a possible overloading.</p>
+<p>When printing, this call causes <code>tm</code> to be seen as the
+operator <code>name</code>. The string <code>name</code> may prompt
+further pretty-printing if it is involved in any of the relevant
+grammar’s rules for concrete syntax.</p>
+<p>If <code>tm</code> is an abstraction, then the parser will perform
+beta-reductions if the term is the function part of a redex
+position.</p>
+<h3 id="failure">Failure</h3>
+<p>Never fails.</p>
+<h3 id="example">Example</h3>
+<p>We define the equivalent of intersection over predicates:</p>
+<pre class="hol4"><code>   - val inter = new_definition(&quot;inter&quot;, Term`inter p q x = p x /\ q x`);
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a.&gt;&gt;
+   &gt; val inter = |- !p q x. inter p q x = p x /\ q x : thm</code></pre>
+<p>We overload on our new intersection constant, and can be sure that in
+ambiguous situations, it will be preferred:</p>
+<pre class="hol4"><code>   - overload_on (&quot;/\\&quot;, Term`inter`);
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a.&gt;&gt;
+   &gt; val it = () : unit
+   - Term`p /\ q`;
+   &lt;&lt;HOL message: more than one resolution of overloading was possible.&gt;&gt;
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a.&gt;&gt;
+   &gt; val it = `p /\ q` : term
+   - type_of it;
+   &gt; val it = `:&#39;a -&gt; bool` : hol_type</code></pre>
+<p>Note that the original constant is considered overloaded to itself,
+so that our one call to <code>overload_on</code> now allows for two
+possibilities whenever the identifier <code>/\</code> is seen. In order
+to make normal conjunction the preferred choice, we can call
+<code>overload_on</code> with the original constant:</p>
+<pre class="hol4"><code>   - overload_on (&quot;/\\&quot;, Term`bool$/\`);
+   &gt; val it = () : unit
+   - Term`p /\ q`;
+   &lt;&lt;HOL message: more than one resolution of overloading was possible.&gt;&gt;
+   &gt; val it = `p /\ q` : term
+   - type_of it;
+   &gt; val it = `:bool` : hol_type</code></pre>
+<p>Note that in order to specify the original conjunction constant, we
+used the qualified identifier syntax, with the <code>$</code>. If we’d
+used just <code>/\</code>, the overloading would have ensured that this
+was parsed as <code>inter</code>. Instead of the qualified identifier
+syntax, we could have also constrained the type of conjunction
+explicitly so that the original constant would be the only possibility.
+Thus:</p>
+<pre class="hol4"><code>   - overload_on (&quot;/\\&quot;, Term`/\ :bool-&gt;bool-&gt;bool`);
+   &gt; val it = () : unit</code></pre>
+<p>The ability to overload to abstractions allows the use of simple
+symbols for “complicated” effects, without needing to actually define
+new constants.</p>
+<pre class="hol4"><code>   - overload_on (&quot;|&lt;&quot;, Term`\x y. ~(x &lt; y)`);
+   &gt; val it = () : unit
+
+   - set_fixity &quot;|&lt;&quot; (Infix(NONASSOC, 450));
+   &gt; val it = () : unit
+
+   - val t = Term`p |&lt; q`;
+   &gt; val t = `p |&lt; q` : term
+
+   - dest_neg t;
+   &gt; Val it = `p &lt; q` : term</code></pre>
+<p>This facility is used to provide symbols for “is-not-equal”
+(<code>&lt;&gt;</code>), and “is-not-a-member” (<code>NOTIN</code>).</p>
+<h3 id="comments">Comments</h3>
+<p>Overloading with abandon can lead to input that is very hard to make
+sense of, and so should be used with caution. There is a temporary
+version of this function: <code>temp_overload_on</code>.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Parse.clear_overloads_on.html"><code>Parse.clear_overloads_on</code></a>,
+<a href="Parse.set_fixity.html"><code>Parse.set_fixity</code></a></p>
+</body>
+</html>

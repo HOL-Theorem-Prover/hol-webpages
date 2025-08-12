@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Prim_rec.new_recursive_definition</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2
+id="new_recursive_definition"><code>new_recursive_definition</code></h2>
+<pre class="hol4"><code>Prim_rec.new_recursive_definition : {name:string, def:term, rec_axiom:thm} -&gt; thm</code></pre>
+<hr />
+<p>Defines a primitive recursive function over a concrete recursive
+type.</p>
+<p><code>new_recursive_definition</code> provides a facility for
+defining primitive recursive functions on arbitrary concrete recursive
+types. <code>name</code> is a name under which the resulting definition
+will be saved in the current theory segment. <code>def</code> is a term
+giving the desired primitive recursive function definition.
+<code>rec_axiom</code> is the primitive recursion theorem for the
+concrete type in question; this must be a theorem obtained from
+<code>define_type</code>. The value returned by
+<code>new_recursive_definition</code> is a theorem which states the
+primitive recursive definition requested by the user. This theorem is
+derived by formal proof from an instance of the general primitive
+recursion theorem given as the second argument.</p>
+<p>A theorem <code>th</code> of the form returned by
+<code>define_type</code> is a primitive recursion theorem for an
+automatically-defined concrete type <code>ty</code>. Let
+<code>C1</code>, …, <code>Cn</code> be the constructors of this type,
+and let ‘<code>(Ci vs)</code>’ represent a (curried) application of the
+<code>i</code>th constructor to a sequence of variables. Then a curried
+primitive recursive function <code>fn</code> over <code>ty</code> can be
+specified by a conjunction of (optionally universally-quantified)
+clauses of the form:</p>
+<pre class="hol4"><code>   fn v1 ... (C1 vs1) ... vm  =  body1   /\
+   fn v1 ... (C2 vs2) ... vm  =  body2   /\
+                             .
+                             .
+   fn v1 ... (Cn vsn) ... vm  =  bodyn</code></pre>
+<p>where the variables <code>v1</code>, …, <code>vm</code>,
+<code>vs</code> are distinct in each clause, and where in the
+<code>i</code>th clause <code>fn</code> appears (free) in
+<code>bodyi</code> only as part of an application of the form:</p>
+<pre class="hol4"><code>   fn t1 ... v ... tm</code></pre>
+<p>in which the variable <code>v</code> of type <code>ty</code> also
+occurs among the variables <code>vsi</code>.</p>
+<p>If <code>tm</code> is a conjunction of clauses, as described above,
+then evaluating:</p>
+<pre class="hol4"><code>   new_recursive_definition{name=name, rec_axiom=th, def=tm}</code></pre>
+<p>automatically proves the existence of a function <code>fn</code> that
+satisfies the defining equations supplied as the fourth argument, and
+then declares a new constant in the current theory with this definition
+as its specification. This constant specification is returned as a
+theorem and is saved in the current theory segment under the name
+<code>name</code>.</p>
+<p><code>new_recursive_definition</code> also allows the supplied
+definition to omit clauses for any number of constructors. If a defining
+equation for the <code>i</code>th constructor is omitted, then the value
+of <code>fn</code> at that constructor:</p>
+<pre class="hol4"><code>   fn v1 ... (Ci vsi) ... vn</code></pre>
+<p>is left unspecified (<code>fn</code>, however, is still a total
+function).</p>
+<h3 id="failure">Failure</h3>
+<p>A call to <code>new_recursive_definition</code> fails if the supplied
+theorem is not a primitive recursion theorem of the form returned by
+<code>define_type</code>; if the term argument supplied is not a
+well-formed primitive recursive definition; or if any other condition
+for making a constant specification is violated (see the failure
+conditions for <code>new_specification</code>).</p>
+<h3 id="example">Example</h3>
+<p>Given the following primitive recursion theorem for labelled binary
+trees:</p>
+<pre class="hol4"><code>   |- !f0 f1.
+        ?! fn.
+        (!x. fn(LEAF x) = f0 x) /\
+        (!b1 b2. fn(NODE b1 b2) = f1(fn b1)(fn b2)b1 b2)</code></pre>
+<p><code>new_recursive_definition</code> can be used to define primitive
+recursive functions over binary trees. Suppose the value of
+<code>th</code> is this theorem. Then a recursive function
+<code>Leaves</code>, which computes the number of leaves in a binary
+tree, can be defined recursively as shown below:</p>
+<pre class="hol4"><code>   - val Leaves = new_recursive_definition
+           {name = &quot;Leaves&quot;,
+            rec_axiom = th,
+            def= “(Leaves (LEAF (x:&#39;a)) = 1) /\
+                    (Leaves (NODE t1 t2) = (Leaves t1) + (Leaves t2))”};
+    &gt; val Leaves =
+        |- (!x. Leaves (LEAF x) = 1) /\
+           !t1 t2. Leaves (NODE t1 t2) = Leaves t1 + Leaves t2 : thm</code></pre>
+<p>The result is a theorem which states that the constant
+<code>Leaves</code> satisfies the primitive-recursive defining equations
+supplied by the user.</p>
+<p>The function defined using <code>new_recursive_definition</code> need
+not, in fact, be recursive. Here is the definition of a predicate
+<code>IsLeaf</code>, which is true of binary trees which are leaves, but
+is false of the internal nodes in a binary tree:</p>
+<pre class="hol4"><code>   - val IsLeaf = new_recursive_definition
+           {name = &quot;IsLeaf&quot;,
+            rec_axiom = th,
+            def = “(IsLeaf (NODE t1 t2) = F) /\
+                     (IsLeaf (LEAF (x:&#39;a)) = T)”};
+&gt; val IsLeaf = |- (!t1 t2. IsLeaf (NODE t1 t2) = F) /\
+                  !x. IsLeaf (LEAF x) = T : thm</code></pre>
+<p>Note that the equations defining a (recursive or non-recursive)
+function on binary trees by cases can be given in either order. Here,
+the <code>NODE</code> case is given first, and the <code>LEAF</code>
+case second. The reverse order was used in the above definition of
+<code>Leaves</code>.</p>
+<p><code>new_recursive_definition</code> also allows the user to
+partially specify the value of a function defined on a concrete type, by
+allowing defining equations for some of the constructors to be omitted.
+Here, for example, is the definition of a function <code>Label</code>
+which extracts the label from a leaf node. The value of
+<code>Label</code> applied to an internal node is left unspecified:</p>
+<pre class="hol4"><code>   - val Label = new_recursive_definition
+                   {name = &quot;Label&quot;,
+                    rec_axiom = th,
+                    def = “Label (LEAF (x:&#39;a)) = x”};
+   &gt; val Label = |- !x. Label (LEAF x) = x : thm</code></pre>
+<p>Curried functions can also be defined, and the recursion can be on
+any argument. The next definition defines an infix function
+<code>&lt;&lt;</code> which expresses the idea that one tree is a proper
+subtree of another.</p>
+<pre class="hol4"><code>   - val _ = set_fixity (&quot;&lt;&lt;&quot;, Infixl 231);
+
+   - val Subtree = new_recursive_definition
+           {name = &quot;Subtree&quot;,
+            rec_axiom = th,
+            def = “($&lt;&lt; (t:&#39;a bintree) (LEAF (x:&#39;a)) = F) /\
+                     ($&lt;&lt; t (NODE t1 t2) = (t = t1) \/
+                                           (t = t2) \/
+                                           ($&lt;&lt; t t1) \/
+                                           ($&lt;&lt; t t2))”};
+   &gt; val Subtree =
+       |- (!t x. t &lt;&lt; LEAF x = F) /\
+          !t t1 t2.
+            t &lt;&lt; NODE t1 t2 = (t = t1) \/ (t = t2) \/
+                              (t &lt;&lt; t1) \/ (t &lt;&lt; t2) : thm</code></pre>
+<p>Note that the fixity of the identifier <code>&lt;&lt;</code> is set
+independently of the definition.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="bossLib.Hol_datatype.html"><code>bossLib.Hol_datatype</code></a>,
+<a
+href="Prim_rec.prove_rec_fn_exists.html"><code>Prim_rec.prove_rec_fn_exists</code></a>,
+<a href="TotalDefn.Define.html"><code>TotalDefn.Define</code></a>, <a
+href="Parse.set_fixity.html"><code>Parse.set_fixity</code></a></p>
+</body>
+</html>

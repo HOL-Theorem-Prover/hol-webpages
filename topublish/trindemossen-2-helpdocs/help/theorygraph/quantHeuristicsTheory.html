@@ -1,0 +1,4334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: quantHeuristics</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "quantHeuristics"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "listTheory.html"><span class="strong">list</span></a>&nbsp;&nbsp;
+    <a href = "ConseqConvTheory.html"><span class="strong">ConseqConv</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">GUESS_EXISTS</span>
+    <td>
+    :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">GUESS_EXISTS_GAP</span>
+    <td>
+    :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">GUESS_EXISTS_POINT</span>
+    <td>
+    :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">GUESS_FORALL</span>
+    <td>
+    :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">GUESS_FORALL_GAP</span>
+    <td>
+    :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">GUESS_FORALL_POINT</span>
+    <td>
+    :(α -> β) -> (β -> bool) -> bool
+    <tr><td>
+    <span class="strong">IS_REMOVABLE_QUANT_FUN</span>
+    <td>
+    :(α -> β) -> bool
+    <tr><td>
+    <span class="strong">SIMPLE_GUESS_EXISTS</span>
+    <td>
+    :α -> α -> bool -> bool
+    <tr><td>
+    <span class="strong">SIMPLE_GUESS_FORALL</span>
+    <td>
+    :α -> α -> bool -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">GUESS_EXISTS_GAP_def</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_EXISTS_GAP i P ⇔ ∀v. P v ⇒ ∃fv. v = i fv
+</pre>
+
+<DT><span class="strong">GUESS_EXISTS_POINT_def</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_EXISTS_POINT i P ⇔ ∀fv. P (i fv)
+</pre>
+
+<DT><span class="strong">GUESS_EXISTS_def</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_EXISTS i P ⇔ ((∃v. P v) ⇔ ∃fv. P (i fv))
+</pre>
+
+<DT><span class="strong">GUESS_FORALL_GAP_def</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_FORALL_GAP i P ⇔ ∀v. ¬P v ⇒ ∃fv. v = i fv
+</pre>
+
+<DT><span class="strong">GUESS_FORALL_POINT_def</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_FORALL_POINT i P ⇔ ∀fv. ¬P (i fv)
+</pre>
+
+<DT><span class="strong">GUESS_FORALL_def</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_FORALL i P ⇔ ((∀v. P v) ⇔ ∀fv. P (i fv))
+</pre>
+
+<DT><span class="strong">IS_REMOVABLE_QUANT_FUN_def</span>
+<DD>
+<pre>
+⊢ ∀f. IS_REMOVABLE_QUANT_FUN f ⇔ ∀v. ∃x. f x = v
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_def</span>
+<DD>
+<pre>
+⊢ ∀v i P. SIMPLE_GUESS_EXISTS v i P ⇔ P ⇒ v = i
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_FORALL_def</span>
+<DD>
+<pre>
+⊢ ∀v i P. SIMPLE_GUESS_FORALL v i P ⇔ ¬P ⇒ v = i
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">CONJ_NOT_OR_THM</span>
+<DD>
+<pre>
+⊢ ∀A B. A ∧ B ⇔ ¬(¬A ∨ ¬B)
+</pre>
+
+<DT><span class="strong">CONS_EQ_REWRITE</span>
+<DD>
+<pre>
+⊢ (x::xs = ys ⇔ 1 ≤ LENGTH ys ∧ x = HD ys ∧ xs = TL ys) ∧
+  (ys = x::xs ⇔ 1 ≤ LENGTH ys ∧ HD ys = x ∧ TL ys = xs) ∧
+  (0 < n ⇒ (n ≤ LENGTH (TL ys) ⇔ n + 1 ≤ LENGTH ys)) ∧
+  (n ≤ m ⇒ (n ≤ rhs ∧ m ≤ rhs ⇔ m ≤ rhs)) ∧ ([] = TL ys ⇔ LENGTH ys ≤ 1) ∧
+  (TL ys = [] ⇔ LENGTH ys ≤ 1) ∧ (LENGTH (TL ys) ≤ n ⇔ LENGTH ys ≤ n + 1) ∧
+  (m ≤ n ∧ n ≤ m ⇔ m = n) ∧
+  (m ≤ LENGTH ys ∧ n = LENGTH ys ⇔ m ≤ n ∧ n = LENGTH ys)
+</pre>
+
+<DT><span class="strong">DISJ_IMP_INTRO</span>
+<DD>
+<pre>
+⊢ (∀x. P x ∨ Q x) ⇒ (¬P y ⇒ Q y) ∧ (¬Q y ⇒ P y)
+</pre>
+
+<DT><span class="strong">EXISTS_NOT_FORALL_THM</span>
+<DD>
+<pre>
+⊢ ∀P. (∃x. P x) ⇔ ¬∀x. ¬P x
+</pre>
+
+<DT><span class="strong">FST_PAIR_EQ</span>
+<DD>
+<pre>
+⊢ ∀p p2. (FST p,p2) = p ⇔ p2 = SND p
+</pre>
+
+<DT><span class="strong">FST_PAIR_EQ_SYM</span>
+<DD>
+<pre>
+⊢ ∀p p2. p = (FST p,p2) ⇔ SND p = p2
+</pre>
+
+<DT><span class="strong">GUESSES_NEG_DUALITY</span>
+<DD>
+<pre>
+⊢ (GUESS_EXISTS i ($¬ ∘ P) ⇔ GUESS_FORALL i P) ∧
+  (GUESS_FORALL i ($¬ ∘ P) ⇔ GUESS_EXISTS i P) ∧
+  (GUESS_EXISTS_GAP i ($¬ ∘ P) ⇔ GUESS_FORALL_GAP i P) ∧
+  (GUESS_FORALL_GAP i ($¬ ∘ P) ⇔ GUESS_EXISTS_GAP i P) ∧
+  (GUESS_EXISTS_POINT i ($¬ ∘ P) ⇔ GUESS_FORALL_POINT i P) ∧
+  (GUESS_FORALL_POINT i ($¬ ∘ P) ⇔ GUESS_EXISTS_POINT i P)
+</pre>
+
+<DT><span class="strong">GUESSES_NEG_REWRITE</span>
+<DD>
+<pre>
+⊢ (GUESS_EXISTS i (λx. ¬P x) ⇔ GUESS_FORALL i (λx. P x)) ∧
+  (GUESS_FORALL i (λx. ¬P x) ⇔ GUESS_EXISTS i (λx. P x)) ∧
+  (GUESS_EXISTS_GAP i (λx. ¬P x) ⇔ GUESS_FORALL_GAP i (λx. P x)) ∧
+  (GUESS_FORALL_GAP i (λx. ¬P x) ⇔ GUESS_EXISTS_GAP i (λx. P x)) ∧
+  (GUESS_EXISTS_POINT i (λx. ¬P x) ⇔ GUESS_FORALL_POINT i (λx. P x)) ∧
+  (GUESS_FORALL_POINT i (λx. ¬P x) ⇔ GUESS_EXISTS_POINT i (λx. P x))
+</pre>
+
+<DT><span class="strong">GUESSES_UEXISTS_THM1</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_EXISTS (λx. i) P ⇒ ($?! P ⇔ P i ∧ ∀v. P v ⇒ v = i)
+</pre>
+
+<DT><span class="strong">GUESSES_UEXISTS_THM2</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_EXISTS_GAP (λx. i) P ⇒ ($?! P ⇔ P i)
+</pre>
+
+<DT><span class="strong">GUESSES_UEXISTS_THM3</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_EXISTS_POINT (λx. i) P ⇒ ($?! P ⇔ ∀v. P v ⇒ v = i)
+</pre>
+
+<DT><span class="strong">GUESSES_UEXISTS_THM4</span>
+<DD>
+<pre>
+⊢ ∀i P.
+    GUESS_EXISTS_POINT (λx. i) P ⇒ GUESS_EXISTS_GAP (λx. i) P ⇒ ($?! P ⇔ T)
+</pre>
+
+<DT><span class="strong">GUESSES_WEAKEN_THM</span>
+<DD>
+<pre>
+⊢ (GUESS_FORALL_GAP i P ⇒ GUESS_FORALL i P) ∧
+  (GUESS_FORALL_POINT i P ⇒ GUESS_FORALL i P) ∧
+  (GUESS_EXISTS_POINT i P ⇒ GUESS_EXISTS i P) ∧
+  (GUESS_EXISTS_GAP i P ⇒ GUESS_EXISTS i P)
+</pre>
+
+<DT><span class="strong">GUESS_EXISTS_FORALL_REWRITES</span>
+<DD>
+<pre>
+⊢ (GUESS_EXISTS i P ⇔ ∀v. P v ⇒ ∃fv. P (i fv)) ∧
+  (GUESS_FORALL i P ⇔ ∀v. ¬P v ⇒ ∃fv. ¬P (i fv))
+</pre>
+
+<DT><span class="strong">GUESS_EXISTS_POINT_THM</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_EXISTS_POINT i P ⇒ ($? P ⇔ T)
+</pre>
+
+<DT><span class="strong">GUESS_EXISTS_THM</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_EXISTS i P ⇒ ($? P ⇔ ∃fv. P (i fv))
+</pre>
+
+<DT><span class="strong">GUESS_FORALL_POINT_THM</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_FORALL_POINT i P ⇒ ($! P ⇔ F)
+</pre>
+
+<DT><span class="strong">GUESS_FORALL_THM</span>
+<DD>
+<pre>
+⊢ ∀i P. GUESS_FORALL i P ⇒ ($! P ⇔ ∀fv. P (i fv))
+</pre>
+
+<DT><span class="strong">GUESS_POINT_THM</span>
+<DD>
+<pre>
+⊢ (GUESS_EXISTS_POINT i P ⇒ ((∃v. P v) ⇔ T)) ∧
+  (GUESS_FORALL_POINT i P ⇒ ((∀v. P v) ⇔ F))
+</pre>
+
+<DT><span class="strong">GUESS_REWRITES</span>
+<DD>
+<pre>
+⊢ ((GUESS_EXISTS i P ⇔ ∀v. P v ⇒ ∃fv. P (i fv)) ∧
+   (GUESS_FORALL i P ⇔ ∀v. ¬P v ⇒ ∃fv. ¬P (i fv))) ∧
+  (∀i P. GUESS_EXISTS_POINT i P ⇔ ∀fv. P (i fv)) ∧
+  (∀i P. GUESS_FORALL_POINT i P ⇔ ∀fv. ¬P (i fv)) ∧
+  (∀i P. GUESS_EXISTS_GAP i P ⇔ ∀v. P v ⇒ ∃fv. v = i fv) ∧
+  ∀i P. GUESS_FORALL_GAP i P ⇔ ∀v. ¬P v ⇒ ∃fv. v = i fv
+</pre>
+
+<DT><span class="strong">GUESS_RULES_BOOL</span>
+<DD>
+<pre>
+⊢ GUESS_EXISTS_POINT (λARB. T) (λx. x) ∧
+  GUESS_FORALL_POINT (λARB. F) (λx. x) ∧ GUESS_EXISTS_GAP (λARB. T) (λx. x) ∧
+  GUESS_FORALL_GAP (λARB. F) (λx. x)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_COND</span>
+<DD>
+<pre>
+⊢ (GUESS_FORALL_POINT i (λx. P x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+   GUESS_FORALL_POINT i (λx. if b x then P x else Q x)) ∧
+  (GUESS_EXISTS_POINT i (λx. P x) ∧ GUESS_EXISTS_POINT i (λx. Q x) ⇒
+   GUESS_EXISTS_POINT i (λx. if b x then P x else Q x)) ∧
+  (GUESS_EXISTS i (λx. P x) ∧ GUESS_EXISTS i (λx. Q x) ⇒
+   GUESS_EXISTS i (λx. if bc then P x else Q x)) ∧
+  (GUESS_FORALL i (λx. P x) ∧ GUESS_FORALL i (λx. Q x) ⇒
+   GUESS_FORALL i (λx. if bc then P x else Q x)) ∧
+  (GUESS_EXISTS_GAP i (λx. P x) ∧ GUESS_EXISTS_GAP i (λx. Q x) ⇒
+   GUESS_EXISTS_GAP i (λx. if b x then P x else Q x)) ∧
+  (GUESS_FORALL_GAP i (λx. P x) ∧ GUESS_FORALL_GAP i (λx. Q x) ⇒
+   GUESS_FORALL_GAP i (λx. if b x then P x else Q x)) ∧
+  (GUESS_FORALL_POINT i (λx. b x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+   GUESS_FORALL_POINT i (λx. if b x then P x else Q x)) ∧
+  (GUESS_FORALL_POINT i (λx. b x) ∧ GUESS_EXISTS_POINT i (λx. Q x) ⇒
+   GUESS_EXISTS_POINT i (λx. if b x then P x else Q x)) ∧
+  (GUESS_EXISTS_POINT i (λx. b x) ∧ GUESS_FORALL_POINT i (λx. P x) ⇒
+   GUESS_FORALL_POINT i (λx. if b x then P x else Q x)) ∧
+  (GUESS_EXISTS_POINT i (λx. b x) ∧ GUESS_EXISTS_POINT i (λx. P x) ⇒
+   GUESS_EXISTS_POINT i (λx. if b x then P x else Q x)) ∧
+  (GUESS_FORALL_GAP i (λx. b x) ∧ GUESS_EXISTS_GAP i (λx. P x) ⇒
+   GUESS_EXISTS_GAP i (λx. if b x then P x else Q x)) ∧
+  (GUESS_EXISTS_GAP i (λx. b x) ∧ GUESS_EXISTS_GAP i (λx. Q x) ⇒
+   GUESS_EXISTS_GAP i (λx. if b x then P x else Q x)) ∧
+  (GUESS_EXISTS_GAP i (λx. b x) ∧ GUESS_FORALL_GAP i (λx. Q x) ⇒
+   GUESS_FORALL_GAP i (λx. if b x then P x else Q x)) ∧
+  (GUESS_FORALL_GAP i (λx. b x) ∧ GUESS_FORALL_GAP i (λx. P x) ⇒
+   GUESS_FORALL_GAP i (λx. if b x then P x else Q x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_CONJ</span>
+<DD>
+<pre>
+⊢ (GUESS_FORALL_POINT i (λx. P x) ⇒ GUESS_FORALL_POINT i (λx. P x ∧ Q x)) ∧
+  (GUESS_FORALL_POINT i (λx. Q x) ⇒ GUESS_FORALL_POINT i (λx. P x ∧ Q x)) ∧
+  (GUESS_FORALL i (λx. P x) ∧ GUESS_FORALL i (λx. Q x) ⇒
+   GUESS_FORALL i (λx. P x ∧ Q x)) ∧
+  (GUESS_FORALL_GAP i (λx. P x) ∧ GUESS_FORALL_GAP i (λx. Q x) ⇒
+   GUESS_FORALL_GAP i (λx. P x ∧ Q x)) ∧
+  (GUESS_EXISTS (λxxx. iK) (λx. P x) ∧ GUESS_EXISTS (λxxx. iK) (λx. Q x) ⇒
+   GUESS_EXISTS (λxxx. iK) (λx. P x ∧ Q x)) ∧
+  (GUESS_EXISTS i (λx. P x) ⇒ GUESS_EXISTS i (λx. P x ∧ q)) ∧
+  (GUESS_EXISTS i (λx. Q x) ⇒ GUESS_EXISTS i (λx. p ∧ Q x)) ∧
+  (GUESS_EXISTS_POINT i (λx. P x) ∧ GUESS_EXISTS_POINT i (λx. Q x) ⇒
+   GUESS_EXISTS_POINT i (λx. P x ∧ Q x)) ∧
+  (GUESS_EXISTS_GAP i (λx. P x) ⇒ GUESS_EXISTS_GAP i (λx. P x ∧ Q x)) ∧
+  (GUESS_EXISTS_GAP i (λx. Q x) ⇒ GUESS_EXISTS_GAP i (λx. P x ∧ Q x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_CONSTANT_EXISTS</span>
+<DD>
+<pre>
+⊢ GUESS_EXISTS i (λx. p) ⇔ T
+</pre>
+
+<DT><span class="strong">GUESS_RULES_CONSTANT_FORALL</span>
+<DD>
+<pre>
+⊢ GUESS_FORALL i (λx. p) ⇔ T
+</pre>
+
+<DT><span class="strong">GUESS_RULES_DISJ</span>
+<DD>
+<pre>
+⊢ (GUESS_EXISTS_POINT i (λx. P x) ⇒ GUESS_EXISTS_POINT i (λx. P x ∨ Q x)) ∧
+  (GUESS_EXISTS_POINT i (λx. Q x) ⇒ GUESS_EXISTS_POINT i (λx. P x ∨ Q x)) ∧
+  (GUESS_EXISTS i (λx. P x) ∧ GUESS_EXISTS i (λx. Q x) ⇒
+   GUESS_EXISTS i (λx. P x ∨ Q x)) ∧
+  (GUESS_EXISTS_GAP i (λx. P x) ∧ GUESS_EXISTS_GAP i (λx. Q x) ⇒
+   GUESS_EXISTS_GAP i (λx. P x ∨ Q x)) ∧
+  (GUESS_FORALL (λxxx. iK) (λx. P x) ∧ GUESS_FORALL (λxxx. iK) (λx. Q x) ⇒
+   GUESS_FORALL (λxxx. iK) (λx. P x ∨ Q x)) ∧
+  (GUESS_FORALL i (λx. P x) ⇒ GUESS_FORALL i (λx. P x ∨ q)) ∧
+  (GUESS_FORALL i (λx. Q x) ⇒ GUESS_FORALL i (λx. p ∨ Q x)) ∧
+  (GUESS_FORALL_POINT i (λx. P x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+   GUESS_FORALL_POINT i (λx. P x ∨ Q x)) ∧
+  (GUESS_FORALL_GAP i (λx. P x) ⇒ GUESS_FORALL_GAP i (λx. P x ∨ Q x)) ∧
+  (GUESS_FORALL_GAP i (λx. Q x) ⇒ GUESS_FORALL_GAP i (λx. P x ∨ Q x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_ELIM_UNIT</span>
+<DD>
+<pre>
+⊢ (GUESS_FORALL_POINT i vt ⇔ GUESS_FORALL_POINT (λx. i (x,())) vt) ∧
+  (GUESS_EXISTS_POINT i vt ⇔ GUESS_EXISTS_POINT (λx. i (x,())) vt) ∧
+  (GUESS_EXISTS i vt ⇔ GUESS_EXISTS (λx. i (x,())) vt) ∧
+  (GUESS_FORALL i vt ⇔ GUESS_FORALL (λx. i (x,())) vt) ∧
+  (GUESS_EXISTS_GAP i vt ⇔ GUESS_EXISTS_GAP (λx. i (x,())) vt) ∧
+  (GUESS_FORALL_GAP i vt ⇔ GUESS_FORALL_GAP (λx. i (x,())) vt)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EQUATION_EXISTS_GAP</span>
+<DD>
+<pre>
+⊢ ∀i. GUESS_EXISTS_GAP (λxxx. i) (λx. x = i)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EQUATION_EXISTS_POINT</span>
+<DD>
+<pre>
+⊢ ∀i P Q. P i = Q i ⇒ GUESS_EXISTS_POINT (λxxx. i) (λx. P x = Q x)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EQUATION_FORALL_POINT</span>
+<DD>
+<pre>
+⊢ ∀i P Q. (∀fv. P (i fv) ≠ Q (i fv)) ⇒ GUESS_FORALL_POINT i (λx. P x = Q x)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EQUIV</span>
+<DD>
+<pre>
+⊢ (GUESS_EXISTS_POINT i (λx. P x) ∧ GUESS_EXISTS_POINT i (λx. Q x) ⇒
+   GUESS_EXISTS_POINT i (λx. P x ⇔ Q x)) ∧
+  (GUESS_FORALL_POINT i (λx. P x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+   GUESS_EXISTS_POINT i (λx. P x ⇔ Q x)) ∧
+  (GUESS_EXISTS_POINT i (λx. P x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+   GUESS_FORALL_POINT i (λx. P x ⇔ Q x)) ∧
+  (GUESS_FORALL_POINT i (λx. P x) ∧ GUESS_EXISTS_POINT i (λx. Q x) ⇒
+   GUESS_FORALL_POINT i (λx. P x ⇔ Q x)) ∧
+  (GUESS_FORALL_GAP i (λx. P1 x) ∧ GUESS_FORALL_GAP i (λx. P2 x) ⇒
+   GUESS_FORALL_GAP i (λx. P1 x ⇔ P2 x)) ∧
+  (GUESS_EXISTS_GAP i (λx. P1 x) ∧ GUESS_EXISTS_GAP i (λx. P2 x) ⇒
+   GUESS_FORALL_GAP i (λx. P1 x ⇔ P2 x)) ∧
+  (GUESS_EXISTS_GAP i (λx. P1 x) ∧ GUESS_FORALL_GAP i (λx. P2 x) ⇒
+   GUESS_EXISTS_GAP i (λx. P1 x ⇔ P2 x)) ∧
+  (GUESS_FORALL_GAP i (λx. P1 x) ∧ GUESS_EXISTS_GAP i (λx. P2 x) ⇒
+   GUESS_EXISTS_GAP i (λx. P1 x ⇔ P2 x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EXISTS</span>
+<DD>
+<pre>
+⊢ ((∀y. GUESS_EXISTS_POINT i (λx. P x y)) ⇒
+   GUESS_EXISTS_POINT i (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_EXISTS i (λx. P x y)) ⇒ GUESS_EXISTS i (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_EXISTS_GAP i (λx. P x y)) ⇒ GUESS_EXISTS_GAP i (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_FORALL_POINT i (λx. P x y)) ⇒
+   GUESS_FORALL_POINT i (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_FORALL (λxxx. iK) (λx. P x y)) ⇒
+   GUESS_FORALL (λxxx. iK) (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_FORALL_GAP i (λx. P x y)) ⇒ GUESS_FORALL_GAP i (λx. ∃y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EXISTS_UNIQUE</span>
+<DD>
+<pre>
+⊢ ((∀y. GUESS_FORALL_POINT i (λx. P x y)) ⇒
+   GUESS_FORALL_POINT i (λx. ∃!y. P x y)) ∧
+  ((∀y. GUESS_EXISTS_GAP i (λx. P x y)) ⇒ GUESS_EXISTS_GAP i (λx. ∃!y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EXISTS___NEW_FV</span>
+<DD>
+<pre>
+⊢ ((∀y. GUESS_EXISTS_POINT (iy y) (λx. P x y)) ⇒
+   GUESS_EXISTS_POINT (λfv. iy (FST fv) (SND fv)) (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_EXISTS (iy y) (λx. P x y)) ⇒
+   GUESS_EXISTS (λfv. iy (FST fv) (SND fv)) (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_EXISTS_GAP (iy y) (λx. P x y)) ⇒
+   GUESS_EXISTS_GAP (λfv. iy (FST fv) (SND fv)) (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_FORALL_GAP (iy y) (λx. P x y)) ⇒
+   GUESS_FORALL_GAP (λfv. iy (FST fv) (SND fv)) (λx. ∃y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_EXISTS___NEW_FV_1</span>
+<DD>
+<pre>
+⊢ ((∀y. GUESS_EXISTS_POINT (λxxx. i y) (λx. P x y)) ⇒
+   GUESS_EXISTS_POINT i (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_EXISTS (λxxx. i y) (λx. P x y)) ⇒ GUESS_EXISTS i (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_EXISTS_GAP (λxxx. i y) (λx. P x y)) ⇒
+   GUESS_EXISTS_GAP i (λx. ∃y. P x y)) ∧
+  ((∀y. GUESS_FORALL_GAP (λxxx. i y) (λx. P x y)) ⇒
+   GUESS_FORALL_GAP i (λx. ∃y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_FORALL</span>
+<DD>
+<pre>
+⊢ ((∀y. GUESS_FORALL_POINT i (λx. P x y)) ⇒
+   GUESS_FORALL_POINT i (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_FORALL i (λx. P x y)) ⇒ GUESS_FORALL i (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_FORALL_GAP i (λx. P x y)) ⇒ GUESS_FORALL_GAP i (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_EXISTS_POINT i (λx. P x y)) ⇒
+   GUESS_EXISTS_POINT i (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_EXISTS (λxxx. iK) (λx. P x y)) ⇒
+   GUESS_EXISTS (λxxx. iK) (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_EXISTS_GAP i (λx. P x y)) ⇒ GUESS_EXISTS_GAP i (λx. ∀y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_FORALL___NEW_FV</span>
+<DD>
+<pre>
+⊢ ((∀y. GUESS_FORALL_POINT (iy y) (λx. P x y)) ⇒
+   GUESS_FORALL_POINT (λfv. iy (FST fv) (SND fv)) (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_FORALL (iy y) (λx. P x y)) ⇒
+   GUESS_FORALL (λfv. iy (FST fv) (SND fv)) (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_FORALL_GAP (iy y) (λx. P x y)) ⇒
+   GUESS_FORALL_GAP (λfv. iy (FST fv) (SND fv)) (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_EXISTS_GAP (iy y) (λx. P x y)) ⇒
+   GUESS_EXISTS_GAP (λfv. iy (FST fv) (SND fv)) (λx. ∀y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_FORALL___NEW_FV_1</span>
+<DD>
+<pre>
+⊢ ((∀y. GUESS_FORALL_POINT (λxxx. i y) (λx. P x y)) ⇒
+   GUESS_FORALL_POINT i (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_FORALL (λxxx. i y) (λx. P x y)) ⇒ GUESS_FORALL i (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_FORALL_GAP (λxxx. i y) (λx. P x y)) ⇒
+   GUESS_FORALL_GAP i (λx. ∀y. P x y)) ∧
+  ((∀y. GUESS_EXISTS_GAP (λxxx. i y) (λx. P x y)) ⇒
+   GUESS_EXISTS_GAP i (λx. ∀y. P x y))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_IMP</span>
+<DD>
+<pre>
+⊢ (GUESS_FORALL_POINT i (λx. P x) ⇒ GUESS_EXISTS_POINT i (λx. P x ⇒ Q x)) ∧
+  (GUESS_EXISTS_POINT i (λx. Q x) ⇒ GUESS_EXISTS_POINT i (λx. P x ⇒ Q x)) ∧
+  (GUESS_FORALL i (λx. P x) ∧ GUESS_EXISTS i (λx. Q x) ⇒
+   GUESS_EXISTS i (λx. P x ⇒ Q x)) ∧
+  (GUESS_FORALL_GAP i (λx. P x) ∧ GUESS_EXISTS_GAP i (λx. Q x) ⇒
+   GUESS_EXISTS_GAP i (λx. P x ⇒ Q x)) ∧
+  (GUESS_EXISTS (λxxx. iK) (λx. P x) ∧ GUESS_FORALL (λxxx. iK) (λx. Q x) ⇒
+   GUESS_FORALL (λxxx. iK) (λx. P x ⇒ Q x)) ∧
+  (GUESS_EXISTS i (λx. P x) ⇒ GUESS_FORALL i (λx. P x ⇒ q)) ∧
+  (GUESS_FORALL i (λx. Q x) ⇒ GUESS_FORALL i (λx. p ⇒ Q x)) ∧
+  (GUESS_EXISTS_POINT i (λx. P x) ∧ GUESS_FORALL_POINT i (λx. Q x) ⇒
+   GUESS_FORALL_POINT i (λx. P x ⇒ Q x)) ∧
+  (GUESS_EXISTS_GAP i (λx. P x) ⇒ GUESS_FORALL_GAP i (λx. P x ⇒ Q x)) ∧
+  (GUESS_FORALL_GAP i (λx. Q x) ⇒ GUESS_FORALL_GAP i (λx. P x ⇒ Q x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_NEG</span>
+<DD>
+<pre>
+⊢ (GUESS_EXISTS i (λx. P x) ⇒ GUESS_FORALL i (λx. ¬P x)) ∧
+  (GUESS_EXISTS_GAP i (λx. P x) ⇒ GUESS_FORALL_GAP i (λx. ¬P x)) ∧
+  (GUESS_EXISTS_POINT i (λx. P x) ⇒ GUESS_FORALL_POINT i (λx. ¬P x)) ∧
+  (GUESS_FORALL i (λx. P x) ⇒ GUESS_EXISTS i (λx. ¬P x)) ∧
+  (GUESS_FORALL_GAP i (λx. P x) ⇒ GUESS_EXISTS_GAP i (λx. ¬P x)) ∧
+  (GUESS_FORALL_POINT i (λx. P x) ⇒ GUESS_EXISTS_POINT i (λx. ¬P x))
+</pre>
+
+<DT><span class="strong">GUESS_RULES_ONE_CASE___EXISTS_GAP</span>
+<DD>
+<pre>
+⊢ ∀P Q. (∀x. ∃fv. x = Q fv) ⇒ GUESS_EXISTS_GAP Q P
+</pre>
+
+<DT><span class="strong">GUESS_RULES_ONE_CASE___FORALL_GAP</span>
+<DD>
+<pre>
+⊢ ∀P Q. (∀x. ∃fv. x = Q fv) ⇒ GUESS_FORALL_GAP Q P
+</pre>
+
+<DT><span class="strong">GUESS_RULES_STRENGTHEN_EXISTS_POINT</span>
+<DD>
+<pre>
+⊢ ∀P Q. (∀x. P x ⇒ Q x) ⇒ GUESS_EXISTS_POINT i P ⇒ GUESS_EXISTS_POINT i Q
+</pre>
+
+<DT><span class="strong">GUESS_RULES_STRENGTHEN_FORALL_GAP</span>
+<DD>
+<pre>
+⊢ ∀P Q. (∀x. P x ⇒ Q x) ⇒ GUESS_FORALL_GAP i P ⇒ GUESS_FORALL_GAP i Q
+</pre>
+
+<DT><span class="strong">GUESS_RULES_TRIVIAL_EXISTS_POINT</span>
+<DD>
+<pre>
+⊢ ∀i P. P i ⇒ GUESS_EXISTS_POINT (λxxx. i) P
+</pre>
+
+<DT><span class="strong">GUESS_RULES_TRIVIAL_FORALL_POINT</span>
+<DD>
+<pre>
+⊢ ∀i P. ¬P i ⇒ GUESS_FORALL_POINT (λxxx. i) P
+</pre>
+
+<DT><span class="strong">GUESS_RULES_TWO_CASES</span>
+<DD>
+<pre>
+⊢ ∀y Q. (∀x. x = y ∨ ∃fv. x = Q fv) ⇒ GUESS_FORALL_GAP Q (λx. x = y)
+</pre>
+
+<DT><span class="strong">GUESS_RULES_WEAKEN_EXISTS_GAP</span>
+<DD>
+<pre>
+⊢ ∀P Q. (∀x. Q x ⇒ P x) ⇒ GUESS_EXISTS_GAP i P ⇒ GUESS_EXISTS_GAP i Q
+</pre>
+
+<DT><span class="strong">GUESS_RULES_WEAKEN_FORALL_POINT</span>
+<DD>
+<pre>
+⊢ ∀P Q. (∀x. Q x ⇒ P x) ⇒ GUESS_FORALL_POINT i P ⇒ GUESS_FORALL_POINT i Q
+</pre>
+
+<DT><span class="strong">HD_TL_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀l. HD l::TL l = l ⇔ l ≠ []
+</pre>
+
+<DT><span class="strong">HD_TL_EQ_NIL_1_bothways</span>
+<DD>
+<pre>
+⊢ (∀l. [HD l] = l ⇔ LENGTH l = 1) ∧ ∀l. l = [HD l] ⇔ LENGTH l = 1
+</pre>
+
+<DT><span class="strong">HD_TL_EQ_THMS</span>
+<DD>
+<pre>
+⊢ (∀l. HD l::TL l = l ⇔ l ≠ []) ∧
+  (∀l. HD l::HD (TL l)::TL (TL l) = l ⇔ LENGTH l > 1) ∧
+  (∀l. HD l::HD (TL l)::HD (TL (TL l))::TL (TL (TL l)) = l ⇔ LENGTH l > 2) ∧
+  (∀l. HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         TL (TL (TL (TL l))) = l ⇔ LENGTH l > 3) ∧
+  (∀l. HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         HD (TL (TL (TL (TL l))))::TL (TL (TL (TL (TL l)))) = l ⇔ LENGTH l > 4) ∧
+  (∀l. HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         HD (TL (TL (TL (TL l))))::HD (TL (TL (TL (TL (TL l)))))::
+         TL (TL (TL (TL (TL (TL l))))) = l ⇔ LENGTH l > 5) ∧
+  (∀l. HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         HD (TL (TL (TL (TL l))))::HD (TL (TL (TL (TL (TL l)))))::
+         HD (TL (TL (TL (TL (TL (TL l))))))::
+         TL (TL (TL (TL (TL (TL (TL l)))))) = l ⇔ LENGTH l > 6) ∧
+  (∀l. HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         HD (TL (TL (TL (TL l))))::HD (TL (TL (TL (TL (TL l)))))::
+         HD (TL (TL (TL (TL (TL (TL l))))))::
+         HD (TL (TL (TL (TL (TL (TL (TL l)))))))::
+         TL (TL (TL (TL (TL (TL (TL (TL l))))))) = l ⇔ LENGTH l > 7) ∧
+  (∀l. HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         HD (TL (TL (TL (TL l))))::HD (TL (TL (TL (TL (TL l)))))::
+         HD (TL (TL (TL (TL (TL (TL l))))))::
+         HD (TL (TL (TL (TL (TL (TL (TL l)))))))::
+         HD (TL (TL (TL (TL (TL (TL (TL (TL l))))))))::
+         TL (TL (TL (TL (TL (TL (TL (TL (TL l)))))))) = l ⇔ LENGTH l > 8) ∧
+  (∀l. [HD l] = l ⇔ LENGTH l = 1) ∧
+  (∀l. [HD l; HD (TL l)] = l ⇔ LENGTH l = 2) ∧
+  (∀l. [HD l; HD (TL l); HD (TL (TL l))] = l ⇔ LENGTH l = 3) ∧
+  (∀l. [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)))] = l ⇔
+       LENGTH l = 4) ∧
+  (∀l. [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)));
+        HD (TL (TL (TL (TL l))))] = l ⇔ LENGTH l = 5) ∧
+  (∀l. [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)));
+        HD (TL (TL (TL (TL l)))); HD (TL (TL (TL (TL (TL l)))))] = l ⇔
+       LENGTH l = 6) ∧
+  (∀l. [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)));
+        HD (TL (TL (TL (TL l)))); HD (TL (TL (TL (TL (TL l)))));
+        HD (TL (TL (TL (TL (TL (TL l))))))] = l ⇔ LENGTH l = 7) ∧
+  (∀l. [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)));
+        HD (TL (TL (TL (TL l)))); HD (TL (TL (TL (TL (TL l)))));
+        HD (TL (TL (TL (TL (TL (TL l))))));
+        HD (TL (TL (TL (TL (TL (TL (TL l)))))))] = l ⇔ LENGTH l = 8) ∧
+  (∀l. [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)));
+        HD (TL (TL (TL (TL l)))); HD (TL (TL (TL (TL (TL l)))));
+        HD (TL (TL (TL (TL (TL (TL l))))));
+        HD (TL (TL (TL (TL (TL (TL (TL l)))))));
+        HD (TL (TL (TL (TL (TL (TL (TL (TL l))))))))] = l ⇔ LENGTH l = 9) ∧
+  (∀l. l = HD l::TL l ⇔ l ≠ []) ∧
+  (∀l. l = HD l::HD (TL l)::TL (TL l) ⇔ LENGTH l > 1) ∧
+  (∀l. l = HD l::HD (TL l)::HD (TL (TL l))::TL (TL (TL l)) ⇔ LENGTH l > 2) ∧
+  (∀l. l =
+       HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         TL (TL (TL (TL l))) ⇔ LENGTH l > 3) ∧
+  (∀l. l =
+       HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         HD (TL (TL (TL (TL l))))::TL (TL (TL (TL (TL l)))) ⇔ LENGTH l > 4) ∧
+  (∀l. l =
+       HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         HD (TL (TL (TL (TL l))))::HD (TL (TL (TL (TL (TL l)))))::
+         TL (TL (TL (TL (TL (TL l))))) ⇔ LENGTH l > 5) ∧
+  (∀l. l =
+       HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         HD (TL (TL (TL (TL l))))::HD (TL (TL (TL (TL (TL l)))))::
+         HD (TL (TL (TL (TL (TL (TL l))))))::
+         TL (TL (TL (TL (TL (TL (TL l)))))) ⇔ LENGTH l > 6) ∧
+  (∀l. l =
+       HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         HD (TL (TL (TL (TL l))))::HD (TL (TL (TL (TL (TL l)))))::
+         HD (TL (TL (TL (TL (TL (TL l))))))::
+         HD (TL (TL (TL (TL (TL (TL (TL l)))))))::
+         TL (TL (TL (TL (TL (TL (TL (TL l))))))) ⇔ LENGTH l > 7) ∧
+  (∀l. l =
+       HD l::HD (TL l)::HD (TL (TL l))::HD (TL (TL (TL l)))::
+         HD (TL (TL (TL (TL l))))::HD (TL (TL (TL (TL (TL l)))))::
+         HD (TL (TL (TL (TL (TL (TL l))))))::
+         HD (TL (TL (TL (TL (TL (TL (TL l)))))))::
+         HD (TL (TL (TL (TL (TL (TL (TL (TL l))))))))::
+         TL (TL (TL (TL (TL (TL (TL (TL (TL l)))))))) ⇔ LENGTH l > 8) ∧
+  (∀l. l = [HD l] ⇔ LENGTH l = 1) ∧
+  (∀l. l = [HD l; HD (TL l)] ⇔ LENGTH l = 2) ∧
+  (∀l. l = [HD l; HD (TL l); HD (TL (TL l))] ⇔ LENGTH l = 3) ∧
+  (∀l. l = [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)))] ⇔
+       LENGTH l = 4) ∧
+  (∀l. l =
+       [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)));
+        HD (TL (TL (TL (TL l))))] ⇔ LENGTH l = 5) ∧
+  (∀l. l =
+       [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)));
+        HD (TL (TL (TL (TL l)))); HD (TL (TL (TL (TL (TL l)))))] ⇔
+       LENGTH l = 6) ∧
+  (∀l. l =
+       [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)));
+        HD (TL (TL (TL (TL l)))); HD (TL (TL (TL (TL (TL l)))));
+        HD (TL (TL (TL (TL (TL (TL l))))))] ⇔ LENGTH l = 7) ∧
+  (∀l. l =
+       [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)));
+        HD (TL (TL (TL (TL l)))); HD (TL (TL (TL (TL (TL l)))));
+        HD (TL (TL (TL (TL (TL (TL l))))));
+        HD (TL (TL (TL (TL (TL (TL (TL l)))))))] ⇔ LENGTH l = 8) ∧
+  ∀l. l =
+      [HD l; HD (TL l); HD (TL (TL l)); HD (TL (TL (TL l)));
+       HD (TL (TL (TL (TL l)))); HD (TL (TL (TL (TL (TL l)))));
+       HD (TL (TL (TL (TL (TL (TL l))))));
+       HD (TL (TL (TL (TL (TL (TL (TL l)))))));
+       HD (TL (TL (TL (TL (TL (TL (TL (TL l))))))))] ⇔ LENGTH l = 9
+</pre>
+
+<DT><span class="strong">IMP_NEG_CONTRA</span>
+<DD>
+<pre>
+⊢ ∀P i x. ¬P i ⇒ P x ⇒ x ≠ i
+</pre>
+
+<DT><span class="strong">INL_NEQ_ELIM</span>
+<DD>
+<pre>
+⊢ ((∀l. x ≠ INL l) ⇔ ISR x) ∧ ((∀l. INL l ≠ x) ⇔ ISR x)
+</pre>
+
+<DT><span class="strong">INR_NEQ_ELIM</span>
+<DD>
+<pre>
+⊢ ((∀r. x ≠ INR r) ⇔ ISL x) ∧ ((∀r. INR r ≠ x) ⇔ ISL x)
+</pre>
+
+<DT><span class="strong">ISL_exists</span>
+<DD>
+<pre>
+⊢ ISL x ⇔ ∃l. x = INL l
+</pre>
+
+<DT><span class="strong">ISR_exists</span>
+<DD>
+<pre>
+⊢ ISR x ⇔ ∃r. x = INR r
+</pre>
+
+<DT><span class="strong">IS_REMOVABLE_QUANT_FUN___EXISTS_THM</span>
+<DD>
+<pre>
+⊢ ∀f P. IS_REMOVABLE_QUANT_FUN f ⇒ ((∃x. P (f x)) ⇔ ∃x'. P x')
+</pre>
+
+<DT><span class="strong">IS_REMOVABLE_QUANT_FUN___FORALL_THM</span>
+<DD>
+<pre>
+⊢ ∀f P. IS_REMOVABLE_QUANT_FUN f ⇒ ((∀x. P (f x)) ⇔ ∀x'. P x')
+</pre>
+
+<DT><span class="strong">IS_SOME_EQ_NOT_NONE</span>
+<DD>
+<pre>
+⊢ ∀x. IS_SOME x ⇔ x ≠ NONE
+</pre>
+
+<DT><span class="strong">LEFT_IMP_AND_INTRO</span>
+<DD>
+<pre>
+⊢ ∀x t1 t2. (t1 ⇒ t2) ⇒ x ∧ t1 ⇒ x ∧ t2
+</pre>
+
+<DT><span class="strong">LEFT_IMP_OR_INTRO</span>
+<DD>
+<pre>
+⊢ ∀x t1 t2. (t1 ⇒ t2) ⇒ x ∨ t1 ⇒ x ∨ t2
+</pre>
+
+<DT><span class="strong">LENGTH_LE_NUM</span>
+<DD>
+<pre>
+⊢ n ≤ LENGTH l ⇔ ∃l1 l2. LENGTH l1 = n ∧ l = l1 ++ l2
+</pre>
+
+<DT><span class="strong">LENGTH_LE_PLUS</span>
+<DD>
+<pre>
+⊢ n + m ≤ LENGTH l ⇔ ∃l1 l2. LENGTH l1 = n ∧ m ≤ LENGTH l2 ∧ l = l1 ++ l2
+</pre>
+
+<DT><span class="strong">LENGTH_NIL_SYM</span>
+<DD>
+<pre>
+⊢ 0 = LENGTH l ⇔ l = []
+</pre>
+
+<DT><span class="strong">LENGTH_TO_EXISTS_CONS</span>
+<DD>
+<pre>
+⊢ (n < LENGTH xs ⇔ ∃y ys. xs = y::ys ∧ n ≤ LENGTH ys) ∧
+  (LENGTH xs > n ⇔ ∃y ys. xs = y::ys ∧ n ≤ LENGTH ys) ∧
+  (0 < n ⇒ (LENGTH xs = n ⇔ ∃y ys. xs = y::ys ∧ LENGTH ys = PRE n)) ∧
+  (0 < n ⇒ (n = LENGTH xs ⇔ ∃y ys. xs = y::ys ∧ LENGTH ys = PRE n)) ∧
+  (0 < n ⇒ (n ≤ LENGTH xs ⇔ ∃y ys. xs = y::ys ∧ PRE n ≤ LENGTH ys)) ∧
+  (0 < n ⇒ (LENGTH xs ≥ n ⇔ ∃y ys. xs = y::ys ∧ PRE n ≤ LENGTH ys)) ∧
+  (0 < x ⇒ PRE (x + y) = PRE x + y) ∧ (0 < y ⇒ PRE (x + y) = x + PRE y)
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_0</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_1</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 1 ⇔ ∃e1. l = [e1]) ∧ (1 = LENGTH l ⇔ ∃e1. l = [e1]) ∧
+  (0 < LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l > 0 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 ≤ LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l ≥ 1 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 + x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ 1 + x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (x + 1 ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ x + 1 ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = 1 + x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (1 + x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = x + 1 ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (x + 1 = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_10</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 10 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10]) ∧
+  (10 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10]) ∧
+  (9 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l > 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ 10 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (x + 10 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ x + 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = 10 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = x + 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (x + 10 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = 9 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9. l = [e1; e2; e3; e4; e5; e6; e7; e8; e9]) ∧
+  (9 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9. l = [e1; e2; e3; e4; e5; e6; e7; e8; e9]) ∧
+  (8 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l > 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ 9 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (x + 9 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ x + 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = 9 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = x + 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (x + 9 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = 8 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8. l = [e1; e2; e3; e4; e5; e6; e7; e8]) ∧
+  (8 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8. l = [e1; e2; e3; e4; e5; e6; e7; e8]) ∧
+  (7 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l > 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ 8 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (x + 8 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ x + 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = 8 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = x + 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (x + 8 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = 7 ⇔ ∃e1 e2 e3 e4 e5 e6 e7. l = [e1; e2; e3; e4; e5; e6; e7]) ∧
+  (7 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5 e6 e7. l = [e1; e2; e3; e4; e5; e6; e7]) ∧
+  (6 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l > 6 ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ 7 ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ 7 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (x + 7 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ x + 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = 7 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = x + 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (x + 7 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = 6 ⇔ ∃e1 e2 e3 e4 e5 e6. l = [e1; e2; e3; e4; e5; e6]) ∧
+  (6 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5 e6. l = [e1; e2; e3; e4; e5; e6]) ∧
+  (5 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l > 5 ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ 6 ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ 6 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (x + 6 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ x + 6 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = 6 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = x + 6 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (x + 6 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = 5 ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (5 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (4 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l > 4 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 4 ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (4 = LENGTH l ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (3 < LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l > 3 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 + x ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ x + 4 ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 4 + x ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (4 + x = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = x + 4 ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 3 ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (3 = LENGTH l ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (2 < LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l > 2 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 + x ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (x + 3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ x + 3 ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 3 + x ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (3 + x = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = x + 3 ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (x + 3 = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 2 ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (2 = LENGTH l ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (1 < LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l > 1 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 ≤ LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 + x ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 + x ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (x + 2 ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ x + 2 ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l = 2 + x ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (2 + x = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = x + 2 ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (x + 2 = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = 1 ⇔ ∃e1. l = [e1]) ∧ (1 = LENGTH l ⇔ ∃e1. l = [e1]) ∧
+  (0 < LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l > 0 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 ≤ LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l ≥ 1 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 + x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ 1 + x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (x + 1 ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ x + 1 ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = 1 + x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (1 + x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = x + 1 ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (x + 1 = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_15</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 15 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15]) ∧
+  (15 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15]) ∧
+  (14 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l > 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (15 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l ≥ 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (15 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l ≥ 15 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (x + 15 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l ≥ x + 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l = 15 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (15 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l = x + 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (x + 15 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l = 14 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14]) ∧
+  (14 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14]) ∧
+  (13 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l > 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (14 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l ≥ 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (14 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l ≥ 14 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (x + 14 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l ≥ x + 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l = 14 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (14 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l = x + 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (x + 14 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l = 13 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13]) ∧
+  (13 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13]) ∧
+  (12 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l > 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (13 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l ≥ 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (13 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l ≥ 13 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (x + 13 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l ≥ x + 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l = 13 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (13 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l = x + 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (x + 13 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l = 12 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12]) ∧
+  (12 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12]) ∧
+  (11 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l > 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (12 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l ≥ 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (12 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l ≥ 12 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (x + 12 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l ≥ x + 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l = 12 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (12 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l = x + 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (x + 12 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l = 11 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11]) ∧
+  (11 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11]) ∧
+  (10 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l > 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (11 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l ≥ 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (11 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l ≥ 11 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (x + 11 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l ≥ x + 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l = 11 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (11 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l = x + 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (x + 11 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l = 10 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10]) ∧
+  (10 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10]) ∧
+  (9 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l > 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ 10 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (x + 10 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ x + 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = 10 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = x + 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (x + 10 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = 9 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9. l = [e1; e2; e3; e4; e5; e6; e7; e8; e9]) ∧
+  (9 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9. l = [e1; e2; e3; e4; e5; e6; e7; e8; e9]) ∧
+  (8 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l > 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ 9 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (x + 9 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ x + 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = 9 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = x + 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (x + 9 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = 8 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8. l = [e1; e2; e3; e4; e5; e6; e7; e8]) ∧
+  (8 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8. l = [e1; e2; e3; e4; e5; e6; e7; e8]) ∧
+  (7 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l > 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ 8 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (x + 8 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ x + 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = 8 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = x + 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (x + 8 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = 7 ⇔ ∃e1 e2 e3 e4 e5 e6 e7. l = [e1; e2; e3; e4; e5; e6; e7]) ∧
+  (7 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5 e6 e7. l = [e1; e2; e3; e4; e5; e6; e7]) ∧
+  (6 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l > 6 ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ 7 ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ 7 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (x + 7 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ x + 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = 7 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = x + 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (x + 7 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = 6 ⇔ ∃e1 e2 e3 e4 e5 e6. l = [e1; e2; e3; e4; e5; e6]) ∧
+  (6 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5 e6. l = [e1; e2; e3; e4; e5; e6]) ∧
+  (5 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l > 5 ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ 6 ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ 6 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (x + 6 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ x + 6 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = 6 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = x + 6 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (x + 6 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = 5 ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (5 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (4 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l > 4 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 4 ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (4 = LENGTH l ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (3 < LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l > 3 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 + x ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ x + 4 ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 4 + x ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (4 + x = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = x + 4 ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 3 ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (3 = LENGTH l ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (2 < LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l > 2 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 + x ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (x + 3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ x + 3 ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 3 + x ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (3 + x = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = x + 3 ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (x + 3 = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 2 ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (2 = LENGTH l ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (1 < LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l > 1 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 ≤ LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 + x ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 + x ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (x + 2 ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ x + 2 ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l = 2 + x ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (2 + x = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = x + 2 ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (x + 2 = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = 1 ⇔ ∃e1. l = [e1]) ∧ (1 = LENGTH l ⇔ ∃e1. l = [e1]) ∧
+  (0 < LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l > 0 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 ≤ LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l ≥ 1 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 + x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ 1 + x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (x + 1 ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ x + 1 ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = 1 + x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (1 + x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = x + 1 ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (x + 1 = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_2</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 2 ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (2 = LENGTH l ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (1 < LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l > 1 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 ≤ LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 + x ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 + x ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (x + 2 ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ x + 2 ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l = 2 + x ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (2 + x = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = x + 2 ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (x + 2 = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = 1 ⇔ ∃e1. l = [e1]) ∧ (1 = LENGTH l ⇔ ∃e1. l = [e1]) ∧
+  (0 < LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l > 0 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 ≤ LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l ≥ 1 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 + x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ 1 + x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (x + 1 ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ x + 1 ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = 1 + x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (1 + x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = x + 1 ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (x + 1 = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_20</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 20 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20]) ∧
+  (20 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20]) ∧
+  (19 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l > 19 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (20 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l ≥ 20 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (20 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l ≥ 20 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (x + 20 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l ≥ x + 20 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l = 20 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (20 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l = x + 20 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (x + 20 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l = 19 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19]) ∧
+  (19 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19]) ∧
+  (18 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l > 18 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (19 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l ≥ 19 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (19 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l ≥ 19 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (x + 19 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l ≥ x + 19 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l = 19 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (19 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l = x + 19 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (x + 19 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l = 18 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18]) ∧
+  (18 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18]) ∧
+  (17 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l > 17 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (18 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l ≥ 18 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (18 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l ≥ 18 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (x + 18 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l ≥ x + 18 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l = 18 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (18 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l = x + 18 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (x + 18 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l = 17 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17]) ∧
+  (17 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17]) ∧
+  (16 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l > 16 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (17 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l ≥ 17 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (17 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l ≥ 17 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (x + 17 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l ≥ x + 17 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l = 17 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (17 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l = x + 17 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (x + 17 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l = 16 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16]) ∧
+  (16 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16]) ∧
+  (15 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l > 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (16 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l ≥ 16 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (16 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l ≥ 16 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (x + 16 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l ≥ x + 16 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l = 16 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (16 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l = x + 16 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (x + 16 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l = 15 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15]) ∧
+  (15 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15]) ∧
+  (14 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l > 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (15 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l ≥ 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (15 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l ≥ 15 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (x + 15 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l ≥ x + 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l = 15 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (15 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l = x + 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (x + 15 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l = 14 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14]) ∧
+  (14 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14]) ∧
+  (13 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l > 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (14 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l ≥ 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (14 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l ≥ 14 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (x + 14 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l ≥ x + 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l = 14 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (14 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l = x + 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (x + 14 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l = 13 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13]) ∧
+  (13 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13]) ∧
+  (12 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l > 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (13 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l ≥ 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (13 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l ≥ 13 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (x + 13 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l ≥ x + 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l = 13 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (13 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l = x + 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (x + 13 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l = 12 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12]) ∧
+  (12 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12]) ∧
+  (11 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l > 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (12 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l ≥ 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (12 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l ≥ 12 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (x + 12 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l ≥ x + 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l = 12 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (12 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l = x + 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (x + 12 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l = 11 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11]) ∧
+  (11 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11]) ∧
+  (10 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l > 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (11 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l ≥ 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (11 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l ≥ 11 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (x + 11 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l ≥ x + 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l = 11 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (11 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l = x + 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (x + 11 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l = 10 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10]) ∧
+  (10 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10]) ∧
+  (9 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l > 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ 10 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (x + 10 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ x + 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = 10 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = x + 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (x + 10 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = 9 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9. l = [e1; e2; e3; e4; e5; e6; e7; e8; e9]) ∧
+  (9 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9. l = [e1; e2; e3; e4; e5; e6; e7; e8; e9]) ∧
+  (8 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l > 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ 9 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (x + 9 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ x + 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = 9 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = x + 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (x + 9 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = 8 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8. l = [e1; e2; e3; e4; e5; e6; e7; e8]) ∧
+  (8 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8. l = [e1; e2; e3; e4; e5; e6; e7; e8]) ∧
+  (7 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l > 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ 8 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (x + 8 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ x + 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = 8 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = x + 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (x + 8 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = 7 ⇔ ∃e1 e2 e3 e4 e5 e6 e7. l = [e1; e2; e3; e4; e5; e6; e7]) ∧
+  (7 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5 e6 e7. l = [e1; e2; e3; e4; e5; e6; e7]) ∧
+  (6 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l > 6 ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ 7 ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ 7 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (x + 7 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ x + 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = 7 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = x + 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (x + 7 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = 6 ⇔ ∃e1 e2 e3 e4 e5 e6. l = [e1; e2; e3; e4; e5; e6]) ∧
+  (6 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5 e6. l = [e1; e2; e3; e4; e5; e6]) ∧
+  (5 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l > 5 ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ 6 ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ 6 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (x + 6 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ x + 6 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = 6 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = x + 6 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (x + 6 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = 5 ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (5 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (4 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l > 4 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 4 ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (4 = LENGTH l ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (3 < LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l > 3 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 + x ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ x + 4 ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 4 + x ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (4 + x = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = x + 4 ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 3 ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (3 = LENGTH l ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (2 < LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l > 2 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 + x ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (x + 3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ x + 3 ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 3 + x ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (3 + x = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = x + 3 ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (x + 3 = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 2 ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (2 = LENGTH l ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (1 < LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l > 1 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 ≤ LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 + x ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 + x ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (x + 2 ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ x + 2 ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l = 2 + x ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (2 + x = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = x + 2 ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (x + 2 = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = 1 ⇔ ∃e1. l = [e1]) ∧ (1 = LENGTH l ⇔ ∃e1. l = [e1]) ∧
+  (0 < LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l > 0 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 ≤ LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l ≥ 1 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 + x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ 1 + x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (x + 1 ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ x + 1 ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = 1 + x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (1 + x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = x + 1 ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (x + 1 = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_25</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 25 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21
+       e22 e23 e24 e25.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20; e21; e22; e23; e24; e25]) ∧
+  (25 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21
+       e22 e23 e24 e25.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20; e21; e22; e23; e24; e25]) ∧
+  (24 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (LENGTH l > 24 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (25 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (LENGTH l ≥ 25 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (25 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (LENGTH l ≥ 25 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (x + 25 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (LENGTH l ≥ x + 25 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (LENGTH l = 25 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (25 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (LENGTH l = x + 25 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (x + 25 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24 e25.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::e25::l') ∧
+  (LENGTH l = 24 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21
+       e22 e23 e24.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20; e21; e22; e23; e24]) ∧
+  (24 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21
+       e22 e23 e24.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20; e21; e22; e23; e24]) ∧
+  (23 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (LENGTH l > 23 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (24 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (LENGTH l ≥ 24 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (24 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (LENGTH l ≥ 24 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (x + 24 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (LENGTH l ≥ x + 24 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (LENGTH l = 24 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (24 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (LENGTH l = x + 24 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (x + 24 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23 e24.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::e24::l') ∧
+  (LENGTH l = 23 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21
+       e22 e23.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20; e21; e22; e23]) ∧
+  (23 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21
+       e22 e23.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20; e21; e22; e23]) ∧
+  (22 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (LENGTH l > 22 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (23 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (LENGTH l ≥ 23 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (23 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (LENGTH l ≥ 23 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (x + 23 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (LENGTH l ≥ x + 23 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (LENGTH l = 23 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (23 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (LENGTH l = x + 23 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (x + 23 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22 e23.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::e23::l') ∧
+  (LENGTH l = 22 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21
+       e22.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20; e21; e22]) ∧
+  (22 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21
+       e22.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20; e21; e22]) ∧
+  (21 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (LENGTH l > 21 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (22 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (LENGTH l ≥ 22 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (22 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (LENGTH l ≥ 22 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (x + 22 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (LENGTH l ≥ x + 22 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (LENGTH l = 22 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (22 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (LENGTH l = x + 22 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (x + 22 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21 e22.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::e22::l') ∧
+  (LENGTH l = 21 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20; e21]) ∧
+  (21 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20; e21]) ∧
+  (20 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (LENGTH l > 20 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (21 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (LENGTH l ≥ 21 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (21 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (LENGTH l ≥ 21 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (x + 21 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (LENGTH l ≥ x + 21 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (LENGTH l = 21 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (21 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (LENGTH l = x + 21 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (x + 21 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+       e21.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::e21::l') ∧
+  (LENGTH l = 20 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20]) ∧
+  (20 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19; e20]) ∧
+  (19 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l > 19 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (20 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l ≥ 20 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (20 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l ≥ 20 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (x + 20 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l ≥ x + 20 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l = 20 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (20 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l = x + 20 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (x + 20 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::e20::l') ∧
+  (LENGTH l = 19 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19]) ∧
+  (19 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18; e19]) ∧
+  (18 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l > 18 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (19 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l ≥ 19 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (19 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l ≥ 19 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (x + 19 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l ≥ x + 19 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l = 19 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (19 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l = x + 19 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (x + 19 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::e19::l') ∧
+  (LENGTH l = 18 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18]) ∧
+  (18 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17; e18]) ∧
+  (17 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l > 17 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (18 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l ≥ 18 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (18 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l ≥ 18 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (x + 18 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l ≥ x + 18 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l = 18 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (18 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l = x + 18 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (x + 18 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::e18::l') ∧
+  (LENGTH l = 17 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17]) ∧
+  (17 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16;
+      e17]) ∧
+  (16 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l > 16 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (17 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l ≥ 17 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (17 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l ≥ 17 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (x + 17 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l ≥ x + 17 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l = 17 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (17 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l = x + 17 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (x + 17 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::
+       e17::l') ∧
+  (LENGTH l = 16 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16]) ∧
+  (16 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15; e16]) ∧
+  (15 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l > 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (16 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l ≥ 16 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (16 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l ≥ 16 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (x + 16 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l ≥ x + 16 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     x ≤ LENGTH l' ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l = 16 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (16 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l = x + 16 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (x + 16 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+     LENGTH l' = x ∧
+     l =
+     e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::e16::l') ∧
+  (LENGTH l = 15 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15]) ∧
+  (15 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14; e15]) ∧
+  (14 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l > 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (15 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l ≥ 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (15 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l ≥ 15 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (x + 15 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l ≥ x + 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l = 15 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (15 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l = x + 15 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (x + 15 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::e15::l') ∧
+  (LENGTH l = 14 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14]) ∧
+  (14 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13; e14]) ∧
+  (13 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l > 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (14 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l ≥ 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (14 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l ≥ 14 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (x + 14 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l ≥ x + 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l = 14 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (14 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l = x + 14 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (x + 14 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::e14::l') ∧
+  (LENGTH l = 13 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13]) ∧
+  (13 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12; e13]) ∧
+  (12 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l > 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (13 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l ≥ 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (13 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l ≥ 13 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (x + 13 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l ≥ x + 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     x ≤ LENGTH l' ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l = 13 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (13 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l = x + 13 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (x + 13 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+     LENGTH l' = x ∧
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::e13::l') ∧
+  (LENGTH l = 12 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12]) ∧
+  (12 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11; e12]) ∧
+  (11 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l > 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (12 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l ≥ 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (12 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l ≥ 12 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (x + 12 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l ≥ x + 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l = 12 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (12 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l = x + 12 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (x + 12 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::e12::l') ∧
+  (LENGTH l = 11 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11]) ∧
+  (11 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10; e11]) ∧
+  (10 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l > 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (11 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l ≥ 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (11 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l ≥ 11 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (x + 11 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l ≥ x + 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l = 11 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (11 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l = x + 11 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (x + 11 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::e11::l') ∧
+  (LENGTH l = 10 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10]) ∧
+  (10 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = [e1; e2; e3; e4; e5; e6; e7; e8; e9; e10]) ∧
+  (9 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l > 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ 10 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (x + 10 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l ≥ x + 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = 10 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (10 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = x + 10 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (x + 10 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::e10::l') ∧
+  (LENGTH l = 9 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9. l = [e1; e2; e3; e4; e5; e6; e7; e8; e9]) ∧
+  (9 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8 e9. l = [e1; e2; e3; e4; e5; e6; e7; e8; e9]) ∧
+  (8 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l > 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9. l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ 9 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (x + 9 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l ≥ x + 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = 9 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (9 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = x + 9 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (x + 9 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8 e9.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::e9::l') ∧
+  (LENGTH l = 8 ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8. l = [e1; e2; e3; e4; e5; e6; e7; e8]) ∧
+  (8 = LENGTH l ⇔
+   ∃e1 e2 e3 e4 e5 e6 e7 e8. l = [e1; e2; e3; e4; e5; e6; e7; e8]) ∧
+  (7 < LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l > 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8. l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ 8 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (x + 8 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l ≥ x + 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = 8 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (8 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = x + 8 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (x + 8 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7 e8.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::e8::l') ∧
+  (LENGTH l = 7 ⇔ ∃e1 e2 e3 e4 e5 e6 e7. l = [e1; e2; e3; e4; e5; e6; e7]) ∧
+  (7 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5 e6 e7. l = [e1; e2; e3; e4; e5; e6; e7]) ∧
+  (6 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l > 6 ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ 7 ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ 7 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (x + 7 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ x + 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = 7 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = x + 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (x + 7 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = 6 ⇔ ∃e1 e2 e3 e4 e5 e6. l = [e1; e2; e3; e4; e5; e6]) ∧
+  (6 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5 e6. l = [e1; e2; e3; e4; e5; e6]) ∧
+  (5 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l > 5 ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ 6 ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ 6 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (x + 6 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ x + 6 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = 6 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = x + 6 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (x + 6 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = 5 ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (5 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (4 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l > 4 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 4 ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (4 = LENGTH l ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (3 < LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l > 3 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 + x ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ x + 4 ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 4 + x ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (4 + x = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = x + 4 ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 3 ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (3 = LENGTH l ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (2 < LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l > 2 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 + x ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (x + 3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ x + 3 ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 3 + x ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (3 + x = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = x + 3 ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (x + 3 = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 2 ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (2 = LENGTH l ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (1 < LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l > 1 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 ≤ LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 + x ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 + x ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (x + 2 ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ x + 2 ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l = 2 + x ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (2 + x = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = x + 2 ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (x + 2 = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = 1 ⇔ ∃e1. l = [e1]) ∧ (1 = LENGTH l ⇔ ∃e1. l = [e1]) ∧
+  (0 < LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l > 0 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 ≤ LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l ≥ 1 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 + x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ 1 + x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (x + 1 ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ x + 1 ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = 1 + x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (1 + x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = x + 1 ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (x + 1 = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_3</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 3 ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (3 = LENGTH l ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (2 < LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l > 2 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 + x ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (x + 3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ x + 3 ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 3 + x ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (3 + x = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = x + 3 ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (x + 3 = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 2 ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (2 = LENGTH l ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (1 < LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l > 1 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 ≤ LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 + x ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 + x ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (x + 2 ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ x + 2 ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l = 2 + x ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (2 + x = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = x + 2 ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (x + 2 = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = 1 ⇔ ∃e1. l = [e1]) ∧ (1 = LENGTH l ⇔ ∃e1. l = [e1]) ∧
+  (0 < LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l > 0 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 ≤ LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l ≥ 1 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 + x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ 1 + x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (x + 1 ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ x + 1 ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = 1 + x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (1 + x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = x + 1 ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (x + 1 = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_4</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 4 ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (4 = LENGTH l ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (3 < LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l > 3 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 + x ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ x + 4 ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 4 + x ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (4 + x = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = x + 4 ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 3 ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (3 = LENGTH l ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (2 < LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l > 2 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 + x ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (x + 3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ x + 3 ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 3 + x ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (3 + x = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = x + 3 ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (x + 3 = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 2 ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (2 = LENGTH l ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (1 < LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l > 1 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 ≤ LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 + x ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 + x ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (x + 2 ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ x + 2 ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l = 2 + x ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (2 + x = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = x + 2 ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (x + 2 = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = 1 ⇔ ∃e1. l = [e1]) ∧ (1 = LENGTH l ⇔ ∃e1. l = [e1]) ∧
+  (0 < LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l > 0 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 ≤ LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l ≥ 1 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 + x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ 1 + x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (x + 1 ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ x + 1 ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = 1 + x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (1 + x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = x + 1 ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (x + 1 = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_5</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 5 ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (5 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (4 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l > 4 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 4 ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (4 = LENGTH l ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (3 < LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l > 3 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 + x ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ x + 4 ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 4 + x ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (4 + x = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = x + 4 ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 3 ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (3 = LENGTH l ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (2 < LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l > 2 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 + x ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (x + 3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ x + 3 ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 3 + x ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (3 + x = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = x + 3 ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (x + 3 = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 2 ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (2 = LENGTH l ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (1 < LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l > 1 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 ≤ LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 + x ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 + x ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (x + 2 ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ x + 2 ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l = 2 + x ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (2 + x = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = x + 2 ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (x + 2 = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = 1 ⇔ ∃e1. l = [e1]) ∧ (1 = LENGTH l ⇔ ∃e1. l = [e1]) ∧
+  (0 < LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l > 0 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 ≤ LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l ≥ 1 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 + x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ 1 + x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (x + 1 ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ x + 1 ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = 1 + x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (1 + x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = x + 1 ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (x + 1 = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_7</span>
+<DD>
+<pre>
+⊢ (LENGTH l = 7 ⇔ ∃e1 e2 e3 e4 e5 e6 e7. l = [e1; e2; e3; e4; e5; e6; e7]) ∧
+  (7 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5 e6 e7. l = [e1; e2; e3; e4; e5; e6; e7]) ∧
+  (6 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l > 6 ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ 7 ⇔ ∃l' e1 e2 e3 e4 e5 e6 e7. l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ 7 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (x + 7 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l ≥ x + 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = 7 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (7 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = x + 7 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (x + 7 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6 e7.
+     LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::e7::l') ∧
+  (LENGTH l = 6 ⇔ ∃e1 e2 e3 e4 e5 e6. l = [e1; e2; e3; e4; e5; e6]) ∧
+  (6 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5 e6. l = [e1; e2; e3; e4; e5; e6]) ∧
+  (5 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l > 5 ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ 6 ⇔ ∃l' e1 e2 e3 e4 e5 e6. l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ 6 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (x + 6 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l ≥ x + 6 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = 6 + x ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (6 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = x + 6 ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (x + 6 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5 e6. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::e6::l') ∧
+  (LENGTH l = 5 ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (5 = LENGTH l ⇔ ∃e1 e2 e3 e4 e5. l = [e1; e2; e3; e4; e5]) ∧
+  (4 < LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l > 4 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 ⇔ ∃l' e1 e2 e3 e4 e5. l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 ≤ LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l ≥ x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 5 + x ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (5 + x = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = x + 5 ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (x + 5 = LENGTH l ⇔
+   ∃l' e1 e2 e3 e4 e5. LENGTH l' = x ∧ l = e1::e2::e3::e4::e5::l') ∧
+  (LENGTH l = 4 ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (4 = LENGTH l ⇔ ∃e1 e2 e3 e4. l = [e1; e2; e3; e4]) ∧
+  (3 < LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l > 3 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 ⇔ ∃l' e1 e2 e3 e4. l = e1::e2::e3::e4::l') ∧
+  (4 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ 4 + x ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 ≤ LENGTH l ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l ≥ x + 4 ⇔ ∃l' e1 e2 e3 e4. x ≤ LENGTH l' ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 4 + x ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (4 + x = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = x + 4 ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (x + 4 = LENGTH l ⇔ ∃l' e1 e2 e3 e4. LENGTH l' = x ∧ l = e1::e2::e3::e4::l') ∧
+  (LENGTH l = 3 ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (3 = LENGTH l ⇔ ∃e1 e2 e3. l = [e1; e2; e3]) ∧
+  (2 < LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l > 2 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 ⇔ ∃l' e1 e2 e3. l = e1::e2::e3::l') ∧
+  (3 + x ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ 3 + x ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (x + 3 ≤ LENGTH l ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l ≥ x + 3 ⇔ ∃l' e1 e2 e3. x ≤ LENGTH l' ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 3 + x ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (3 + x = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = x + 3 ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (x + 3 = LENGTH l ⇔ ∃l' e1 e2 e3. LENGTH l' = x ∧ l = e1::e2::e3::l') ∧
+  (LENGTH l = 2 ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (2 = LENGTH l ⇔ ∃e1 e2. l = [e1; e2]) ∧
+  (1 < LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l > 1 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 ≤ LENGTH l ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 ⇔ ∃l' e1 e2. l = e1::e2::l') ∧
+  (2 + x ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ 2 + x ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (x + 2 ≤ LENGTH l ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l ≥ x + 2 ⇔ ∃l' e1 e2. x ≤ LENGTH l' ∧ l = e1::e2::l') ∧
+  (LENGTH l = 2 + x ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (2 + x = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = x + 2 ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (x + 2 = LENGTH l ⇔ ∃l' e1 e2. LENGTH l' = x ∧ l = e1::e2::l') ∧
+  (LENGTH l = 1 ⇔ ∃e1. l = [e1]) ∧ (1 = LENGTH l ⇔ ∃e1. l = [e1]) ∧
+  (0 < LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l > 0 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 ≤ LENGTH l ⇔ ∃l' e1. l = e1::l') ∧ (LENGTH l ≥ 1 ⇔ ∃l' e1. l = e1::l') ∧
+  (1 + x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ 1 + x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (x + 1 ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ x + 1 ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = 1 + x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (1 + x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = x + 1 ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (x + 1 = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (LENGTH l = 0 ⇔ l = []) ∧ (0 = LENGTH l ⇔ l = []) ∧
+  (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_COMPARE_1</span>
+<DD>
+<pre>
+⊢ (LENGTH l < 1 ⇔ l = []) ∧ (1 > LENGTH l ⇔ l = []) ∧
+  (0 ≥ LENGTH l ⇔ l = []) ∧ (LENGTH l ≤ 0 ⇔ l = [])
+</pre>
+
+<DT><span class="strong">LIST_LENGTH_COMPARE_SUC</span>
+<DD>
+<pre>
+⊢ (SUC x ≤ LENGTH l ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l ≥ SUC x ⇔ ∃l' e1. x ≤ LENGTH l' ∧ l = e1::l') ∧
+  (LENGTH l = SUC x ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l') ∧
+  (SUC x = LENGTH l ⇔ ∃l' e1. LENGTH l' = x ∧ l = e1::l')
+</pre>
+
+<DT><span class="strong">MOVE_EXISTS_IMP_THM</span>
+<DD>
+<pre>
+⊢ (∃x. (∀y. ¬P x y ⇒ R y) ⇒ Q x) ⇔ (∀y. ¬(∀x. P x y) ⇒ R y) ⇒ ∃x. Q x
+</pre>
+
+<DT><span class="strong">PAIR_EQ_EXPAND</span>
+<DD>
+<pre>
+⊢ ((x,y) = X ⇔ x = FST X ∧ y = SND X) ∧ (X = (x,y) ⇔ FST X = x ∧ SND X = y)
+</pre>
+
+<DT><span class="strong">PAIR_EQ_SIMPLE_EXPAND</span>
+<DD>
+<pre>
+⊢ ((x,y) = (x,y') ⇔ y = y') ∧ ((y,x) = (y',x) ⇔ y = y') ∧
+  ((FST X,y) = X ⇔ y = SND X) ∧ ((x,SND X) = X ⇔ x = FST X) ∧
+  (X = (FST X,y) ⇔ SND X = y) ∧ (X = (x,SND X) ⇔ FST X = x)
+</pre>
+
+<DT><span class="strong">RIGHT_IMP_AND_INTRO</span>
+<DD>
+<pre>
+⊢ ∀x t1 t2. (t1 ⇒ t2) ⇒ t1 ∧ x ⇒ t2 ∧ x
+</pre>
+
+<DT><span class="strong">RIGHT_IMP_OR_INTRO</span>
+<DD>
+<pre>
+⊢ ∀x t1 t2. (t1 ⇒ t2) ⇒ t1 ∨ x ⇒ t2 ∨ x
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_ALT_DEF</span>
+<DD>
+<pre>
+⊢ (∀v. SIMPLE_GUESS_EXISTS v i (P v)) ⇔ GUESS_EXISTS_GAP (K i) (λv. P v)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_AND_1</span>
+<DD>
+<pre>
+⊢ ∀v i P1 P2. SIMPLE_GUESS_EXISTS v i P1 ⇒ SIMPLE_GUESS_EXISTS v i (P1 ∧ P2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_AND_2</span>
+<DD>
+<pre>
+⊢ ∀v i P1 P2. SIMPLE_GUESS_EXISTS v i P2 ⇒ SIMPLE_GUESS_EXISTS v i (P1 ∧ P2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_EQ_1</span>
+<DD>
+<pre>
+⊢ ∀v i. SIMPLE_GUESS_EXISTS v i (v = i)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_EQ_2</span>
+<DD>
+<pre>
+⊢ ∀v i. SIMPLE_GUESS_EXISTS v i (i = v)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_EQ_FUN</span>
+<DD>
+<pre>
+⊢ ∀v i t1 t2 f.
+    SIMPLE_GUESS_EXISTS v i (f t1 = f t2) ⇒ SIMPLE_GUESS_EXISTS v i (t1 = t2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_EQ_T</span>
+<DD>
+<pre>
+⊢ ∀v. SIMPLE_GUESS_EXISTS v T v
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀v i P.
+    (∀v2. SIMPLE_GUESS_EXISTS v i (P v2)) ⇒
+    SIMPLE_GUESS_EXISTS v i (∃v2. P v2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_FORALL</span>
+<DD>
+<pre>
+⊢ ∀v i P.
+    (∀v2. SIMPLE_GUESS_EXISTS v i (P v2)) ⇒
+    SIMPLE_GUESS_EXISTS v i (∀v2. P v2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_NEG</span>
+<DD>
+<pre>
+⊢ ∀v i P. SIMPLE_GUESS_FORALL v i P ⇒ SIMPLE_GUESS_EXISTS v i (¬P)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_EXISTS_THM</span>
+<DD>
+<pre>
+⊢ ∀i P. (∀v. SIMPLE_GUESS_EXISTS v i (P v)) ⇒ ((∃v. P v) ⇔ P i)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_FORALL_ALT_DEF</span>
+<DD>
+<pre>
+⊢ (∀v. SIMPLE_GUESS_FORALL v i (P v)) ⇔ GUESS_FORALL_GAP (K i) (λv. P v)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_FORALL_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀v i P.
+    (∀v2. SIMPLE_GUESS_FORALL v i (P v2)) ⇒
+    SIMPLE_GUESS_FORALL v i (∃v2. P v2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_FORALL_FORALL</span>
+<DD>
+<pre>
+⊢ ∀v i P.
+    (∀v2. SIMPLE_GUESS_FORALL v i (P v2)) ⇒
+    SIMPLE_GUESS_FORALL v i (∀v2. P v2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_FORALL_IMP_1</span>
+<DD>
+<pre>
+⊢ ∀v i P1 P2. SIMPLE_GUESS_EXISTS v i P1 ⇒ SIMPLE_GUESS_FORALL v i (P1 ⇒ P2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_FORALL_IMP_2</span>
+<DD>
+<pre>
+⊢ ∀v i P1 P2. SIMPLE_GUESS_FORALL v i P2 ⇒ SIMPLE_GUESS_FORALL v i (P1 ⇒ P2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_FORALL_NEG</span>
+<DD>
+<pre>
+⊢ ∀v i P. SIMPLE_GUESS_EXISTS v i P ⇒ SIMPLE_GUESS_FORALL v i (¬P)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_FORALL_OR_1</span>
+<DD>
+<pre>
+⊢ ∀v i P1 P2. SIMPLE_GUESS_FORALL v i P1 ⇒ SIMPLE_GUESS_FORALL v i (P1 ∨ P2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_FORALL_OR_2</span>
+<DD>
+<pre>
+⊢ ∀v i P1 P2. SIMPLE_GUESS_FORALL v i P2 ⇒ SIMPLE_GUESS_FORALL v i (P1 ∨ P2)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_FORALL_THM</span>
+<DD>
+<pre>
+⊢ ∀i P. (∀v. SIMPLE_GUESS_FORALL v i (P v)) ⇒ ((∀v. P v) ⇔ P i)
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_SELECT_THM</span>
+<DD>
+<pre>
+⊢ ∀i P.
+    (∀v. SIMPLE_GUESS_EXISTS v i (P v)) ⇒ (@v. P v) = if P i then i else @v. F
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_SOME_THM</span>
+<DD>
+<pre>
+⊢ ∀i P.
+    (∀v. SIMPLE_GUESS_EXISTS v i (P v)) ⇒
+    (some v. P v) = if P i then SOME i else NONE
+</pre>
+
+<DT><span class="strong">SIMPLE_GUESS_UEXISTS_THM</span>
+<DD>
+<pre>
+⊢ ∀i P. (∀v. SIMPLE_GUESS_EXISTS v i (P v)) ⇒ ((∃!v. P v) ⇔ P i)
+</pre>
+
+<DT><span class="strong">SND_PAIR_EQ</span>
+<DD>
+<pre>
+⊢ ∀p p1. (p1,SND p) = p ⇔ p1 = FST p
+</pre>
+
+<DT><span class="strong">SND_PAIR_EQ_SYM</span>
+<DD>
+<pre>
+⊢ ∀p p1. p = (p1,SND p) ⇔ FST p = p1
+</pre>
+
+<DT><span class="strong">SOME_THE_EQ</span>
+<DD>
+<pre>
+⊢ ∀opt. SOME (THE opt) = opt ⇔ IS_SOME opt
+</pre>
+
+<DT><span class="strong">SOME_THE_EQ_SYM</span>
+<DD>
+<pre>
+⊢ ∀opt. opt = SOME (THE opt) ⇔ IS_SOME opt
+</pre>
+
+<DT><span class="strong">UNWIND_EXISTS_THM</span>
+<DD>
+<pre>
+⊢ ∀a P. (∃x. P x) ⇔ (∀x. x ≠ a ⇒ ¬P x) ⇒ P a
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

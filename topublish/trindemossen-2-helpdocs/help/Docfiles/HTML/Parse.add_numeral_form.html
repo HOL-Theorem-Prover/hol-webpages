@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Parse.add_numeral_form</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="add_numeral_form"><code>add_numeral_form</code></h2>
+<pre class="hol4"><code>Parse.add_numeral_form : (char * string option) -&gt; unit</code></pre>
+<hr />
+<p>Adds support for numerals of differing types to the
+parser/pretty-printer.</p>
+<p>This function allows the user to extend HOL’s parser and
+pretty-printer so that they recognise and print numerals. A numeral in
+this context is a string of digits. Each such string corresponds to a
+natural number (i.e., the HOL type <code>num</code>) but
+<code>add_numeral_form</code> allows for numerals to stand for values in
+other types as well.</p>
+<p>A call to <code>add_numeral_form(c,s)</code> augments the global term
+grammar in two ways. Firstly, in common with the function
+<code>add_bare_numeral_form</code> (q.v.), it allows the user to write a
+single letter suffix after a numeral (the argument <code>c</code>). The
+presence of this character specifies <code>s</code> as the “injection
+function” which is to be applied to the natural number denoted by the
+preceding digits.</p>
+<p>Secondly, the constant denoted by the <code>s</code> argument is
+overloaded to be one of the possible resolutions of an internal,
+overloaded operator, which is invisibly wrapped around all numerals that
+appear without a character suffix. After applying
+<code>add_numeral_form</code>, the function denoted by the argument
+<code>s</code> is now a possible resolution of this overloading, so
+numerals can now be seen as members of the range of the type of
+<code>s</code>.</p>
+<p>Finally, if <code>s</code> is not <code>NONE</code>, the constant
+denoted by <code>s</code> is overloaded to be one of the possible
+resolutions of the string <code>&amp;</code>. This operator is thus the
+standard way of writing the injection function from <code>:num</code>
+into other numeric types.</p>
+<p>The injection function specifed by argument <code>s</code> is either
+the constant with name <code>s0</code>, if <code>s</code> is of the form
+<code>SOME s0</code>, or the identity function if <code>s</code> is
+<code>NONE</code>. Using <code>add_numeral_form</code> with
+<code>NONE</code> for this parameter is done in the development of
+<code>arithmeticTheory</code>, and should not be done subsequently.</p>
+<h3 id="failure">Failure</h3>
+<p>Fails if <code>arithmeticTheory</code> is not loaded, as this is
+where the basic constants implementing natural number numerals are
+defined. Also fails if there is no constant with the given name, or if
+it doesn’t have type <code>:num -&gt; 'a</code> for some
+<code>'a</code>. Fails if <code>add_bare_numeral_form</code> would also
+fail on this input.</p>
+<h3 id="example">Example</h3>
+<p>The natural numbers are given numeral forms as follows:</p>
+<pre class="hol4"><code>   val _ = add_numeral_form (#&quot;n&quot;, NONE);</code></pre>
+<p>This is done in <code>arithmeticTheory</code> so that after it is
+loaded, one can write numerals and have them parse (and print) as
+natural numbers. However, later in the development, in
+<code>integerTheory</code>, numeral forms for integers are also
+introduced:</p>
+<pre class="hol4"><code>   val _ = add_numeral_form(#&quot;i&quot;, SOME &quot;int_of_num&quot;);</code></pre>
+<p>Here <code>int_of_num</code> is the name of the function which
+injects natural numbers into integers. After this call is made, numeral
+strings can be treated as integers or natural numbers, depending on the
+context.</p>
+<pre class="hol4"><code>   - load &quot;integerTheory&quot;;
+   &gt; val it = () : unit
+   - Term`3`;
+   &lt;&lt;HOL message: more than one resolution of overloading was possible.&gt;&gt;
+   &gt; val it = `3` : term
+   - type_of it;
+   &gt; val it = `:int` : hol_type</code></pre>
+<p>The parser has chosen to give the string “3” integer type (it will
+prefer the most recently specified possibility, in common with
+overloading in general). However, numerals can appear with natural
+number type in appropriate contexts:</p>
+<pre class="hol4"><code>   - Term`(SUC 3, 4 + ~x)`;
+   &gt; val it = `(SUC 3,4 + ~x)` : term
+   - type_of it;
+   &gt; val it = `:num # int` : hol_type</code></pre>
+<p>Moreover, one can always use the character suffixes to absolutely
+specify the type of the numeral form:</p>
+<pre class="hol4"><code>   - Term`f 3 /\ p`;
+   &lt;&lt;HOL message: more than one resolution of overloading was possible.&gt;&gt;
+   &gt; val it = `f 3 /\ p` : term
+
+   - Term`f 3n /\ p`;
+   &gt; val it = `f 3 /\ p` : term</code></pre>
+<h3 id="comments">Comments</h3>
+<p>Overloading on too many numeral forms is a sure recipe for
+confusion.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Parse.add_bare_numeral_form.html"><code>Parse.add_bare_numeral_form</code></a>,
+<a href="Parse.overload_on.html"><code>Parse.overload_on</code></a>, <a
+href="Parse.show_numeral_types.html"><code>Parse.show_numeral_types</code></a></p>
+</body>
+</html>

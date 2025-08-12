@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure Redblackmap</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Redblackmap</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/Redblackmap.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(*
+<a name="line2"></a> * Abstract signature of an applicative-style finite maps (dictionaries)
+<a name="line3"></a> * structure over ordered monomorphic keys.
+<a name="line4"></a> *
+<a name="line5"></a> * COPYRIGHT (c) 1996 by AT&T Research.
+<a name="line6"></a> * COPYRIGHT (c) 2020 The Fellowship of SML/NJ (http://www.smlnj.org)
+<a name="line7"></a> * All rights reserved.
+<a name="line8"></a> *)
+<a name="line9"></a>
+<a name="line10"></a>signature Redblackmap =
+<a name="line11"></a>sig
+<a name="line12"></a>  type ('key, 'a) <a href="#dict-typ">dict</a>
+<a name="line13"></a>
+<a name="line14"></a>  exception NotFound
+<a name="line15"></a>
+<a name="line16"></a>  val <a href="#mkDict-val">mkDict</a>     : ('key * 'key -&gt; order) -&gt; ('key, 'a) dict
+<a name="line17"></a>  val <a href="#fromList-val">fromList</a>   : ('key * 'key -&gt; order) -&gt; ('key * 'a) list -&gt; ('key, 'a) dict
+<a name="line18"></a>  val <a href="#update-val">update</a>     : ('key, 'a) dict * 'key * ('a option -&gt; 'a) -&gt; ('key, 'a) dict
+<a name="line19"></a>  val <a href="#insert-val">insert</a>     : ('key, 'a) dict * 'key * 'a -&gt; ('key, 'a) dict
+<a name="line20"></a>  val <a href="#insertList-val">insertList</a> : ('key, 'a) dict * ('key * 'a) list -&gt; ('key, 'a) dict
+<a name="line21"></a>  val <a href="#findKey-val">findKey</a>    : ('key, 'a) dict * 'key -&gt; 'key * 'a
+<a name="line22"></a>  val <a href="#find-val">find</a>       : ('key, 'a) dict * 'key -&gt; 'a
+<a name="line23"></a>  val <a href="#peek-val">peek</a>       : ('key, 'a) dict * 'key -&gt; 'a option
+<a name="line24"></a>  val <a href="#remove-val">remove</a>     : ('key, 'a) dict * 'key -&gt; ('key, 'a) dict * 'a
+<a name="line25"></a>  val <a href="#numItems-val">numItems</a>   : ('key, 'a) dict -&gt; int
+<a name="line26"></a>  val <a href="#listItems-val">listItems</a>  : ('key, 'a) dict -&gt; ('key * 'a) list
+<a name="line27"></a>  val <a href="#isEmpty-val">isEmpty</a>    : ('key, 'a) dict -&gt; bool
+<a name="line28"></a>  val <a href="#app-val">app</a>        : ('key * 'a -&gt; unit) -&gt; ('key, 'a) dict -&gt; unit
+<a name="line29"></a>  val <a href="#revapp-val">revapp</a>     : ('key * 'a -&gt; unit) -&gt; ('key, 'a) dict -&gt; unit
+<a name="line30"></a>  val <a href="#foldr-val">foldr</a>      : ('key * 'a * 'b -&gt; 'b)-&gt; 'b -&gt; ('key, 'a) dict -&gt; 'b
+<a name="line31"></a>  val <a href="#foldl-val">foldl</a>      : ('key * 'a * 'b -&gt; 'b) -&gt; 'b -&gt; ('key, 'a) dict -&gt; 'b
+<a name="line32"></a>  val <a href="#map-val">map</a>        : ('key * 'a -&gt; 'b) -&gt; ('key, 'a) dict -&gt; ('key, 'b) dict
+<a name="line33"></a>  val <a href="#transform-val">transform</a>  : ('a -&gt; 'b) -&gt; ('key, 'a) dict -&gt; ('key, 'b) dict
+<a name="line34"></a>
+<a name="line35"></a>   (* Below are API extensions of HOL's old Redblackmap structure *)
+<a name="line36"></a>  val <a href="#singleton-val">singleton</a>  : ('key * 'key -&gt; order) -&gt; ('key * 'a) -&gt; ('key, 'a) dict
+<a name="line37"></a>  val <a href="#insert'-val">insert'</a>    : (('key * 'a) * ('key, 'a) dict) -&gt; ('key, 'a) dict
+<a name="line38"></a>  val <a href="#insertWith-val">insertWith</a> : ('a * 'a -&gt; 'a) -&gt; ('key, 'a) dict * 'key * 'a -&gt;
+<a name="line39"></a>                   ('key, 'a) dict
+<a name="line40"></a>  val <a href="#insertWithi-val">insertWithi</a> : ('key * 'a * 'a -&gt; 'a) -&gt; ('key, 'a) dict * 'key * 'a -&gt;
+<a name="line41"></a>                    ('key, 'a) dict
+<a name="line42"></a>  val <a href="#inDomain-val">inDomain</a>   : (('key, 'a) dict * 'key) -&gt; bool
+<a name="line43"></a>  val <a href="#first-val">first</a>      : ('key, 'a) dict -&gt; 'a option
+<a name="line44"></a>  val <a href="#firsti-val">firsti</a>     : ('key, 'a) dict -&gt; ('key * 'a) option
+<a name="line45"></a>  val <a href="#listItems'-val">listItems'</a> : ('key, 'a) dict -&gt; 'a list
+<a name="line46"></a>  val <a href="#listKeys-val">listKeys</a>   : ('key, 'a) dict -&gt; 'key list
+<a name="line47"></a>  val <a href="#collate-val">collate</a>    : ('a * 'a -&gt; order) -&gt; (('key, 'a) dict * ('key, 'a) dict) -&gt; order
+<a name="line48"></a>  val <a href="#unionWith-val">unionWith</a>  : ('a * 'a -&gt; 'a) -&gt;
+<a name="line49"></a>                   (('key, 'a) dict * ('key, 'a) dict) -&gt; ('key, 'a) dict
+<a name="line50"></a>  val <a href="#unionWithi-val">unionWithi</a> : ('key * 'a * 'a -&gt; 'a) -&gt;
+<a name="line51"></a>                   (('key, 'a) dict * ('key, 'a) dict) -&gt; ('key, 'a) dict
+<a name="line52"></a>  val <a href="#intersectWith-val">intersectWith</a>  : ('a * 'b -&gt; 'c) -&gt;
+<a name="line53"></a>                       (('key, 'a) dict * ('key, 'b) dict) -&gt; ('key, 'c) dict
+<a name="line54"></a>  val <a href="#intersectWithi-val">intersectWithi</a> : ('key * 'a * 'b -&gt; 'c) -&gt;
+<a name="line55"></a>                       (('key, 'a) dict * ('key, 'b) dict) -&gt; ('key, 'c) dict
+<a name="line56"></a>  val <a href="#mergeWith-val">mergeWith</a>  : ('a option * 'b option -&gt; 'c option) -&gt;
+<a name="line57"></a>                   (('key, 'a) dict * ('key, 'b) dict) -&gt; ('key, 'c) dict
+<a name="line58"></a>  val <a href="#mergeWithi-val">mergeWithi</a> : ('key * 'a option * 'b option -&gt; 'c option) -&gt;
+<a name="line59"></a>                   (('key, 'a) dict * ('key, 'b) dict) -&gt; ('key, 'c) dict
+<a name="line60"></a>  val <a href="#app'-val">app'</a>       : ('a -&gt; unit) -&gt; ('key, 'a) dict -&gt; unit
+<a name="line61"></a>  val <a href="#foldl'-val">foldl'</a>     : ('a * 'b -&gt; 'b) -&gt; 'b -&gt; ('key, 'a) dict -&gt; 'b
+<a name="line62"></a>  val <a href="#foldr'-val">foldr'</a>     : ('a * 'b -&gt; 'b) -&gt; 'b -&gt; ('key, 'a) dict -&gt; 'b
+<a name="line63"></a>  val <a href="#filter-val">filter</a>     : ('a -&gt; bool) -&gt; ('key, 'a) dict -&gt; ('key, 'a) dict
+<a name="line64"></a>  val <a href="#filteri-val">filteri</a>    : ('key * 'a -&gt; bool) -&gt; ('key, 'a) dict -&gt; ('key, 'a) dict
+<a name="line65"></a>  val <a href="#mapPartial-val">mapPartial</a>  : ('a -&gt; 'b option) -&gt; ('key, 'a) dict -&gt; ('key, 'b) dict
+<a name="line66"></a>  val <a href="#mapPartiali-val">mapPartiali</a> : ('key * 'a -&gt; 'b option) -&gt; ('key, 'a) dict -&gt; ('key, 'b) dict
+<a name="line67"></a>  val <a href="#exists-val">exists</a>     : ('a -&gt; bool) -&gt; ('key, 'a) dict -&gt; bool
+<a name="line68"></a>  val <a href="#existsi-val">existsi</a>    : ('key * 'a -&gt; bool) -&gt; ('key, 'a) dict -&gt; bool
+<a name="line69"></a>  val <a href="#all-val">all</a>        : ('a -&gt; bool) -&gt; ('key, 'a) dict -&gt; bool
+<a name="line70"></a>  val <a href="#alli-val">alli</a>       : ('key * 'a -&gt; bool) -&gt; ('key, 'a) dict -&gt; bool
+<a name="line71"></a>
+<a name="line72"></a>  val <a href="#fromOrderedList-val">fromOrderedList</a>    : ('key * 'key -&gt; order) -&gt; ('key * 'a) list -&gt;
+<a name="line73"></a>                           ('key, 'a) dict
+<a name="line74"></a>end
+<a name="line75"></a>
+<a name="line76"></a>(*
+   [('key, 'a) <a name="dict-typ"><b>dict</b></a>] is the type of applicative maps from domain type
+   'key to range type 'a, or equivalently, applicative dictionaries
+   with keys of type 'key and values of type 'a.  They are implemented
+   as Okasaki-style red-black trees.
+
+   [<a name="mkDict-val"><b>mkDict</b></a> ordr] returns a new, empty map whose keys have ordering
+   ordr.
+
+   [<a name="fromList-val"><b>fromList</b></a> ordr xs] returns a map that contains the (index, value)
+   pairs in xs, whose keys have ordering ordr.  It is equivalent to
+   insertList (mkDict ordr, xs).
+
+   [<a name="update-val"><b>update</b></a>(m, i, f)] extends m to map i to (f NONE) if i is not
+   already mapped, or to (f (SOME v)) if i is already mapped to v.
+
+   [<a name="insert-val"><b>insert</b></a>(m, i, v)] extends (or modifies) map m to map i to v.
+
+   [<a name="insertList-val"><b>insertList</b></a>(m, xs)] extends (or modifies) map m with the (index,
+   value) pairs in xs.  (It is equivalent to foldl (fn ((i, v), m) =&gt;
+   insert (m, i, v)) m xs.)  Note that later list entries will
+   overwrite earlier entries for the same index.
+
+   [<a name="findKey-val"><b>findKey</b></a> (m, k)] returns (k, v) if m maps k to v;
+   otherwise, raises NotFound. The returned key is the last one EQUAL in
+   the order to k that was used to extend or modify the map.
+
+   [<a name="find-val"><b>find</b></a> (m, k)] returns v if m maps k to v; otherwise raises NotFound.
+
+   [<a name="peek-val"><b>peek</b></a>(m, k)] returns SOME v if m maps k to v; otherwise returns NONE.
+
+   [<a name="remove-val"><b>remove</b></a>(m, k)] removes k from the domain of m and returns the
+   modified map and the element v corresponding to k.  Raises NotFound
+   if k is not in the domain of m.
+
+   [<a name="numItems-val"><b>numItems</b></a> m] returns the number of entries in m (that is, the size
+   of the domain of m).
+
+   [<a name="listItems-val"><b>listItems</b></a> m] returns a list of the entries (k, v) of keys k and
+   the corresponding values v in m, in order of increasing key values.
+
+   [<a name="isEmpty-val"><b>isEmpty</b></a> m] returns true if the map m is empty, and false otherwise.
+
+   [<a name="app-val"><b>app</b></a> f m] applies function f to the entries (k, v) in m, in
+   increasing order of k (according to the ordering ordr used to
+   create the map or dictionary).
+
+   [<a name="revapp-val"><b>revapp</b></a> f m] applies function f to the entries (k, v) in m, in
+   decreasing order of k.
+
+   [<a name="foldl-val"><b>foldl</b></a> f e m] applies the folding function f to the entries (k, v)
+   in m, in increasing order of k.
+
+   [<a name="foldr-val"><b>foldr</b></a> f e m] applies the folding function f to the entries (k, v)
+   in m, in decreasing order of k.
+
+   [<a name="map-val"><b>map</b></a> f m] returns a new map whose entries have form (k, f(k,v)),
+   where (k, v) is an entry in m.
+
+   [<a name="transform-val"><b>transform</b></a> f m] returns a new map whose entries have form (k, f v),
+   where (k, v) is an entry in m.
+
+                                *  *  *
+
+   [<a name="singleton-val"><b>singleton</b></a> ordr (i, v)] returns the specified singleton map.
+
+   [<a name="insert'-val"><b>insert'</b></a> ((i, v), m)] extends (or modifies) map m to map i to v.
+    Like insert, except that type of inputs are different. insert' is
+    useful when the entry (i, v) to be inserted is given by a single
+    variable.
+
+   [<a name="insertWith-val"><b>insertWith</b></a> comb (m, k, v)] inserts an item with a combining function
+    to resolve collisions. The first argument to the combining function is
+    the existing value, and the second argument is the value being inserted
+    into the map.
+
+   [<a name="insertWithi-val"><b>insertWithi</b></a> comb' (m, k, v)] is similar with insertWith, except that the
+    combining function also takes the key as an argument.
+
+   [<a name="inDomain-val"><b>inDomain</b></a> (m, k)] returns true, if the key k is in the domain of the map m
+
+   [<a name="first-val"><b>first</b></a> m] returns the first item in the map (or NONE if it is empty)
+
+   [<a name="firsti-val"><b>firsti</b></a> m] is like first, except that the key is also returned.
+
+   [<a name="listItems'-val"><b>listItems'</b></a> m] returns an ordered list of the items in the map m.
+
+   [<a name="listKeys-val"><b>listKeys</b></a> m] returns an ordered list of the keys in the map.
+
+   [<a name="collate-val"><b>collate</b></a> ordr] is given an ordering on the map's range, it returns
+    an ordering on the map (lexcographic).
+
+   [<a name="unionWith-val"><b>unionWith</b></a> f (m1, m2)] returns a map whose domain is the union of the
+    domains of the two input maps, using the supplied function to define the
+    map on elements that are in both domains.
+
+   [<a name="unionWithi-val"><b>unionWithi</b></a> f (m1, m2)] is like unionWith, except that the supplied
+    function also takes the key as an argument.
+
+   [<a name="intersectWith-val"><b>intersectWith</b></a> f (m1, m2)] returns a map whose domain is the intersection of
+    the domains of the two input maps, using the supplied function to define
+    the range.
+
+   [<a name="intersectWithi-val"><b>intersectWithi</b></a> f (m1, m2)] is like intersectWith, except that the supplied
+    function also takes the key as an argument.
+
+   [<a name="mergeWith-val"><b>mergeWith</b></a> f (m1, m2)] merges two maps using the given function to control
+    the merge. For each key k in the union of the two maps domains, the function
+    is applied to the image of the key under the map.  If the function returns
+    SOME y, then (k, y) is added to the resulting map.
+
+   [<a name="mergeWithi-val"><b>mergeWithi</b></a> f (m1, m2)] is like mergeWith, except that the function f also
+    takes the key as an argument.
+
+   [<a name="app'-val"><b>app'</b></a> f m] applies the function f to the ranges of the map m in map order.
+
+   [<a name="foldl'-val"><b>foldl'</b></a> f e m] applies the folding function f to the ranges of the map m in
+    increasing map order.
+
+   [<a name="foldr'-val"><b>foldr'</b></a> f e m] applies the folding function f to the ranges of the map m in
+    decreasing map order.
+
+   [<a name="filter-val"><b>filter</b></a> p m] filters out those elements of the map m that do not satisfy the
+    predicate p.  The filtering is done in increasing map order.
+
+   [<a name="filteri-val"><b>filteri</b></a> p m] is like filter, except that the predicate p also takes the key
+    as an argument.
+
+   [<a name="mapPartial-val"><b>mapPartial</b></a> f m] maps a partial function f over the elements of a map in
+    increasing map order.
+
+   [<a name="mapPartiali-val"><b>mapPartiali</b></a> f m] is like mapPartial, except that the function f also takes
+    the key as an argument.
+
+   [<a name="exists-val"><b>exists</b></a> p m] checks the elements of a map with a predicate and return true
+    if any element satisfies the predicate. Return false otherwise.
+    Elements are checked in key order.
+
+   [<a name="existsi-val"><b>existsi</b></a> p m] is like exists, except that the predicate p also takes the key
+    as an argument.
+
+   [<a name="all-val"><b>all</b></a> p m] checks the elements of a map m with a predicate p and return true
+    if they all satisfy the predicate. Return false otherwise.  Elements
+    are checked in key order.
+
+   [<a name="alli-val"><b>alli</b></a> p m] is like all, except that the predicate p also takes the key as an
+    argument.
+
+   [<a name="fromOrderedList-val"><b>fromOrderedList</b></a> ordr xs] returns a map that contains the (index, value)
+    pairs in xs, whose keys have ordering ordr.  The list xs must be sorted by
+    the keys w.r.t. the ordr and has no key duplications.
+
+    NOTE: This function constructs the map in linear-time, but raises no error
+    if the supplied xs is not ordered (the resulting map may lack some pairs).
+
+*)
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/portableML/Redblackmap.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

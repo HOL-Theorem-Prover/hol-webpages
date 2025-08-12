@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tactic.mp_then</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="mp_then"><code>mp_then</code></h2>
+<pre class="hol4"><code>Tactic.mp_then : match_position -&gt; thm_tactic -&gt; thm -&gt; thm -&gt; tactic</code></pre>
+<hr />
+<p>Matches two theorems against each other and then continues</p>
+<p>The <code>mp_then</code> tactic combines two theorems (one or both of
+which will typically come from the current goal’s assumptions) using
+modus ponens in a controlled way, and then passes the result of this to
+a continuation theorem-tactic.</p>
+<p>Thus <code>mp_then ttac pos ith th</code> is a tactic in the usual
+“<code>_then</code>” fashion which produces a theorem and then applies
+the <code>ttac</code> continuation to that result. The theorems
+<code>ith</code> and <code>th</code> are the two theorems:
+<code>ith</code> contains the implication, and the other has a
+conclusion matching one of the antecedents of the implication.</p>
+<p>An implication’s antecedents are calculated by first normalising the
+implication so that it is of the form</p>
+<pre class="hol4"><code>  !v1 .. vn. ant1 /\ ant2 .. /\ antn ==&gt; concl</code></pre>
+<p>The <code>pos</code> parameter indicates how to find the antecedent.
+There are four possible forms for <code>pos</code> (constructors for the
+<code>match_position</code> type). It can be <code>Any</code>, which
+tells <code>mp_then</code> to search for anything that works. It can be
+<code>Pat q</code>, with <code>q</code> a quotation, which means to find
+anything matching <code>q</code> that works. It can be
+<code>Pos f</code>, where <code>f</code> is a function of type
+<code>term list -&gt; term</code>, and is typically a value such as
+<code>hd</code>, <code>el n</code> for some number <code>n</code> or
+<code>last</code>. This function is passed the list of all
+<code>ith</code>’s antecedents to pick the right one. Finally, the
+<code>pos</code> parameter might be <code>Concl</code>, meaning that the
+conclusion of <code>ith</code> is treated as a negated assumption. This
+allows implications to be used in a contrapositive way.</p>
+<p>In practice, there are some common patterns for obtaining
+<code>ith</code> and <code>th</code>. Apart from the fully applied
+version above, you might also see:</p>
+<pre class="hol4"><code>   &lt;sel&gt;_assum (mp_then pos ttac ith)
+
+   &lt;sel&gt;_assum (&lt;sel&gt;_assum o mp_then pos ttac)
+
+   disch_then(&lt;sel&gt;_assum o mp_then pos ttac)</code></pre>
+<p>where <code>&lt;sel&gt;</code> is one of <code>first</code>,
+<code>last</code>, <code>qpat</code> and <code>goal</code>, possibly
+with an appended <code>_x</code>; the usual ways of obtaining theorems
+from the current goal. Where there are two selectors used, the outermost
+is used for the selection of the implicational theorem and the innermost
+selects <code>th</code>. In the first example, the <code>ith</code>
+value is provided in the call, and is presumably an existing theorem
+rather than an assumption from the goal.</p>
+<p>The <code>goal_assum</code> selector is worth special mention since
+it’s especially useful with <code>mp_then</code>: it turns an
+existentially quantified goal <code>?x. P x</code> into the assumption
+<code>!x. P x ==&gt; F</code> thereby providing a theorem with
+antecedents to match on. In conjunction with <code>mp_tac</code> (which
+will put the revised implication back into the goal as an existential
+once more) it has the effect of instantiating the existential quantifier
+in order to match a provided subterm (similar to
+<code>part_match_exists_tac</code> or <code>asm_exists_tac</code>).</p>
+<p>Finally, note that the <code>Pat</code> and <code>Any</code> position
+selectors will backtrack across the set of theorem antecedents to find a
+match that makes the whole application succeed.</p>
+<h3 id="failure">Failure</h3>
+<p>If the provided implicational theorem doesn’t have a match at a
+compatible position for the second provided theorem, or if no such match
+then allows the continuation <code>ttac</code> to succeed.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Tactical.goal_assum.html"><code>Tactical.goal_assum</code></a>, <a
+href="Tactic.resolve_then.html"><code>Tactic.resolve_then</code></a></p>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Parse.set_fixity</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="set_fixity"><code>set_fixity</code></h2>
+<pre class="hol4"><code>Parse.set_fixity : string -&gt; fixity -&gt; unit</code></pre>
+<hr />
+<p>Allows the fixity of tokens to be updated.</p>
+<p>The <code>set_fixity</code> function is used to change the fixity of
+single tokens. It implements this functionality rather crudely. When
+called on to set the fixity of <code>t</code> to <code>f</code>, it
+removes all rules mentioning <code>t</code> from the global (term)
+grammar, and then adds a new rule to the grammar. The new rule maps
+occurrences of <code>t</code> with the given fixity to terms of the same
+name.</p>
+<h3 id="failure">Failure</h3>
+<p>This function fails if the new fixity causes a clash with existing
+rules, as happens if the precedence level of the specified fixity is
+already taken by rules using a fixity of a different type. Even if the
+application of <code>set_fixity</code> succeeds, it may cause the next
+subsequent application of the <code>Term</code> parsing function to
+complain about precedence conflicts in the operator precedence matrix.
+These problems may cause the parser to behave oddly on terms involving
+the token whose fixity was set. Excessive parentheses will usually cure
+even these problems.</p>
+<h3 id="example">Example</h3>
+<p>After a new constant is defined, <code>set_fixity</code> can be used
+to give it an appropriate parse status:</p>
+<pre class="hol4"><code>   - val thm = Psyntax.new_recursive_definition
+                  prim_recTheory.num_Axiom &quot;f&quot;
+                  (Term`(f 0 n = n) /\ (f (SUC n) m = SUC (SUC (f n m)))`);
+   &gt; val thm =
+       |- (!n. f 0 n = n) /\ !n m. f (SUC n) m = SUC (SUC (f n m))
+       : thm
+   - set_fixity &quot;f&quot; (Infixl 500);
+   &gt; val it = () : unit
+   - thm;
+   &gt; val it =
+       |- (!n. 0 f n = n) /\ !n m. SUC n f m = SUC (SUC (n f m)) : thm</code></pre>
+<p>The same function can be used to alter the fixities of existing
+constants:</p>
+<pre class="hol4"><code>   - val t = Term`2 + 3 + 4 - 6`;
+   &gt; val t = `2 + 3 + 4 - 6` : term
+   - set_fixity &quot;+&quot; (Infixr 501);
+   &gt; val it = () : unit
+   - t;
+   &gt; val it = `(2 + 3) + 4 - 6` : term
+   - dest_comb (Term`3 - 1 + 2`);
+   &gt; val it = (`$- 3`, `1 + 2`) : term * term</code></pre>
+<h3 id="comments">Comments</h3>
+<p>This function is of no use if multiple-token rules (such as those for
+conditional expressions) are desired, or if the token does not
+correspond to the name of the constant or variable that is to be
+produced. (For the latter case, use <code>set_mapped_fixity</code>.)</p>
+<p>As with other functions in the <code>Parse</code> structure, there is
+a companion <code>temp_set_fixity</code> function, which has the same
+effect on the global grammar, but which does not cause this effect to
+persist when the current theory is exported.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Parse.add_rule.html"><code>Parse.add_rule</code></a>, <a
+href="Parse.add_infix.html"><code>Parse.add_infix</code></a>, <a
+href="Parse.remove_rules_for_term.html"><code>Parse.remove_rules_for_term</code></a>,
+<a
+href="Parse.remove_termtok.html"><code>Parse.remove_termtok</code></a>,
+<a
+href="Parse.set_mapped_fixity.html"><code>Parse.set_mapped_fixity</code></a></p>
+</body>
+</html>

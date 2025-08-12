@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>holCheckLib.holCheck</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="holcheck"><code>holCheck</code></h2>
+<pre class="hol4"><code>holCheckLib.holCheck : model -&gt; model</code></pre>
+<hr />
+<p>Basic symbolic model checker.</p>
+<p>User specifies a model by specifying (at least) the initial states, a
+labelled transition system, and a list of CTL or mu-calculus propertes.
+This model is then passed to the model checker which returns the model
+with the results of the checking filled in. These can be recovered by
+calling get_results on the returned model and are presented as a list of
+: the BDD semantics of each property, a theorem if the property holds in
+the model, and a counterexample or witness trace if appropriate.</p>
+<h3 id="failure">Failure</h3>
+<p>holCheck should not fail, except on malformed input e.g. mu-calculus
+properties that are not well-formed mu-formulas or a supplied state
+tuple that does not include all state variables etc.</p>
+<h3 id="example">Example</h3>
+<p>We choose a mod-8 counter as our example, which starts at 0 and
+counts up to 7, and then loops from 0 again. We wish to show that the
+most significant bit eventually goes high.</p>
+<ol type="1">
+<li><p>Load the HolCheck library:</p>
+<ul>
+<li>load “holCheckLib”; open holCheckLib; (* we don’t show the output
+from the “open” here *) &gt; val it = () : unit</li>
+</ul></li>
+<li><p>Specify the labelled transition system as a list of (string,
+term) pairs, where each string is a transition label and each term
+represents a transition relation (three booleans required to encode
+numbers 0-7; next-state variable values indicated by priming; note we
+expand the xor, since HolCheck requires purely propositional terms)
+:</p>
+<ul>
+<li>val xor_def = Define <code>xor x y = (x \/ y) /\ ~(x=y)</code>; val
+TS = List.map (I ## (rhs o concl o (fn tm =&gt; REWRITE_CONV [xor_def]
+tm handle ex =&gt; REFL tm)))
+[(“v0”,<code>(v0'=~v0)</code>),(“v1”,<code>v1' = xor v0 v1</code>),(“v2”,<code>v2' = xor (v0 /\ v1) v2</code>)]
+Definition has been stored under “xor_def”. &gt; val xor_def = |- !x y.
+xor x y = (x / y) / ~(x = y) : thm &gt; val TS = [(“v0”,
+<code>v0' = ~v0</code>), (“v1”,
+<code>v1' = (v0 \/ v1) /\ ~(v0 = v1)</code>), (“v2”,
+<code>v2' = (v0 /\ v1 \/ v2) /\ ~(v0 /\ v1 = v2)</code>)] : (string *
+term) list</li>
+</ul></li>
+<li><p>Specify the initial states (counter starts at 0):</p>
+<ul>
+<li>val S0 = <code>~v0 /\ ~v1 /\ ~v2</code>; &gt; val S0 =
+<code>~v0 /\ ~v1 /\ ~v2</code> : term</li>
+</ul></li>
+<li><p>Specify whether the transitions happen synchronously (it
+does):</p>
+<ul>
+<li>val ric = true; &gt; val ric = true : bool</li>
+</ul></li>
+<li><p>Set up the state tuple:</p>
+<ul>
+<li>val state = mk_state S0 TS; &gt; val state = <code>(v0,v1,v2)</code>
+: term</li>
+</ul></li>
+<li><p>Specify a property (there exists a future in which the most
+significant bit will go high) :</p>
+<ul>
+<li>val ctlf =
+(“ef_msb_high”,<code>C_EF (C_BOOL (B_PROP ^(pairSyntax.mk_pabs(state,</code>v2:bool<code>))))</code>);
+&gt; val ctlf =
+(“ef_msb_high”,<code>C_EF (C_BOOL (B_PROP (\(v0,v1,v2). v2))</code>) :
+string * term</li>
+</ul></li>
+</ol>
+<p>Note how atomic propositions are represented as functions on the
+state.</p>
+<ol start="7" type="1">
+<li><p>Create the model:</p>
+<ul>
+<li>val m = ((set_init S0) o (set_trans TS) o (set_flag_ric ric) o
+(set_state state) o (set_props [ctlf])) empty_model; &gt; val m =
+<model> : model</li>
+</ul></li>
+<li><p>Call the model checker:</p>
+<ul>
+<li>val m2 = holCheck m; &gt; val m2 = model : <model></li>
+</ul></li>
+<li><p>Examine the results:</p>
+<ul>
+<li>get_results m2; &gt; val it = SOME [(<term_bdd>, SOME [……………………….]
+|- CTL_MODEL_SAT ctlKS (C_EF (C_BOOL (B_PROP ((v0,v1,v2). v2)))), SOME
+[<code>(~v0,~v1,~v2)</code>, <code>(v0,~v1,~v2)</code>,
+<code>(~v0,v1,~v2)</code>, <code>(v0,v1,~v2)</code>,
+<code>(~v0,~v1,v2)</code>])] : (term_bdd * thm option * term list
+option) list option</li>
+</ul></li>
+</ol>
+<p>The result is a list of triples, one triple per property checked. The
+first component contains the BDD representation of the set of states
+satisfying the property. The second component contains a theorem
+certifying that the property holds in the model i.e. it holds in the
+initial states. The third contains a witness trace that counts up to 4,
+at which point v2 goes high.</p>
+<p>Note that since we did not supply a name for the model (via
+holCheckLib.set_name), the system has chosen the default name ctlKS,
+which stands for “CTL Kripke structure”, since models are internally
+represented formally as Kripke structures.</p>
+<ol start="10" type="1">
+<li><p>Verify the proof:</p>
+<ul>
+<li>val m3 = prove_model m2; (* we don’t show the prove_model “chatting”
+messages here *) &gt; val m3 = <model> : model</li>
+</ul></li>
+<li><p>Examine the verified results:</p>
+<ul>
+<li>get_results m3; &gt; val it = SOME [(<term_bdd>, SOME|-
+CTL_MODEL_SAT ctlKS (C_EF (C_BOOL (B_PROP ((v0,v1,v2). v2)))), SOME
+[<code>(~v0,~v1,~v2)</code>, <code>(v0,~v1,~v2)</code>,
+<code>(~v0,v1,~v2)</code>, <code>(v0,v1,~v2)</code>,
+<code>(~v0,~v1,v2)</code>])] : (term_bdd * thm option * term list
+option) list option</li>
+</ul></li>
+</ol>
+<p>Note that the theorem component now has no assumptions. Any
+assumptions to the term_bdd would also have been discharged.</p>
+<h3 id="comments">Comments</h3>
+<p>For more detail, read the section on the HolCheck library in the HOL
+System Description.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="holCheckLib.empty_model.html"><code>holCheckLib.empty_model</code></a>,
+<a
+href="holCheckLib.get_init.html"><code>holCheckLib.get_init</code></a>,
+<a
+href="holCheckLib.get_trans.html"><code>holCheckLib.get_trans</code></a>,
+<a
+href="holCheckLib.get_flag_ric.html"><code>holCheckLib.get_flag_ric</code></a>,
+<a
+href="holCheckLib.get_name.html"><code>holCheckLib.get_name</code></a>,
+<a
+href="holCheckLib.get_vord.html"><code>holCheckLib.get_vord</code></a>,
+<a
+href="holCheckLib.get_state.html"><code>holCheckLib.get_state</code></a>,
+<a
+href="holCheckLib.get_props.html"><code>holCheckLib.get_props</code></a>,
+<a
+href="holCheckLib.get_results.html"><code>holCheckLib.get_results</code></a>,
+<a
+href="holCheckLib.get_flag_abs.html"><code>holCheckLib.get_flag_abs</code></a>,
+<a
+href="holCheckLib.set_init.html"><code>holCheckLib.set_init</code></a>,
+<a
+href="holCheckLib.set_trans.html"><code>holCheckLib.set_trans</code></a>,
+<a
+href="holCheckLib.set_flag_ric.html"><code>holCheckLib.set_flag_ric</code></a>,
+<a
+href="holCheckLib.set_name.html"><code>holCheckLib.set_name</code></a>,
+<a
+href="holCheckLib.set_vord.html"><code>holCheckLib.set_vord</code></a>,
+<a
+href="holCheckLib.set_state.html"><code>holCheckLib.set_state</code></a>,
+<a
+href="holCheckLib.set_props.html"><code>holCheckLib.set_props</code></a>,
+<a
+href="holCheckLib.set_flag_abs.html"><code>holCheckLib.set_flag_abs</code></a>,
+<a
+href="holCheckLib.mk_state.html"><code>holCheckLib.mk_state</code></a>,
+<a
+href="holCheckLib.prove_model.html"><code>holCheckLib.prove_model</code></a></p>
+</body>
+</html>

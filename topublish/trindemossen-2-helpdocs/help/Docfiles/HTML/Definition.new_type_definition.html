@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Definition.new_type_definition</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="new_type_definition"><code>new_type_definition</code></h2>
+<pre class="hol4"><code>Definition.new_type_definition : string * thm -&gt; thm</code></pre>
+<hr />
+<p>Defines a new type constant or type operator.</p>
+<p>The ML function <code>new_type_definition</code> implements the
+primitive HOL rule of definition for introducing new type constants or
+type operators into the logic. If <code>t</code> is a term of type
+<code>ty-&gt;bool</code> containing <code>n</code> distinct type
+variables, then evaluating:</p>
+<pre class="hol4"><code>   new_type_definition (tyop, |- ?x. t x)</code></pre>
+<p>results in <code>tyop</code> being declared as a new
+<code>n</code>-ary type operator in the current theory and returned by
+the call to <code>new_type_definition</code>. This new type operator is
+characterized by a definitional axiom of the form:</p>
+<pre class="hol4"><code>   |- ?rep:(&#39;a,...,&#39;n)op-&gt;tyop. TYPE_DEFINITION t rep</code></pre>
+<p>which is stored as a definition in the current theory segment under
+the automatically-generated name <code>op_TY_DEF</code>. The arguments
+to the new type operator occur in the order given by an alphabetic
+ordering of the name of the corresponding type variables. The constant
+<code>TYPE_DEFINITION</code> in this axiomatic characterization of
+<code>tyop</code> is defined by:</p>
+<pre class="hol4"><code>   |- TYPE_DEFINITION (P:&#39;a-&gt;bool) (rep:&#39;b-&gt;&#39;a) =
+         (!x&#39; x&#39;&#39;. (rep x&#39; = rep x&#39;&#39;) ==&gt; (x&#39; = x&#39;&#39;)) /\
+         (!x. P x = (?x&#39;. x = rep x&#39;))</code></pre>
+<p>Thus <code>|- ?rep. TYPE_DEFINITION P rep</code> asserts that there
+is a bijection between the newly defined type
+<code>('a,...,'n)tyop</code> and the set of values of type
+<code>ty</code> that satisfy <code>P</code>.</p>
+<h3 id="failure">Failure</h3>
+<p>Executing <code>new_type_definition(tyop,th)</code> fails if
+<code>th</code> is not an assumption-free theorem of the form
+<code>|- ?x. t x</code>, if the type of <code>t</code> is not of the
+form <code>ty-&gt;bool</code>, or if there are free variables in the
+term <code>t</code>.</p>
+<h3 id="example">Example</h3>
+<p>In this example, a type containing three elements is defined. The
+predicate defining the type is over the type
+<code>bool # bool</code>.</p>
+<pre class="hol4"><code>   app load [&quot;PairedLambda&quot;, &quot;Q&quot;]; open PairedLambda pairTheory;
+
+   - val tyax =
+      new_type_definition (&quot;three&quot;,
+        Q.prove(`?p. (\(x,y). ~(x /\ y)) p`,
+                Q.EXISTS_TAC `(F,F)` THEN GEN_BETA_TAC THEN REWRITE_TAC []));
+
+   &gt; val tyax = |- ?rep. TYPE_DEFINITION (\(x,y). ~(x /\ y)) rep : thm</code></pre>
+<h3 id="comments">Comments</h3>
+<p>Usually, once a type has been defined, maps between the
+representation type and the new type need to be proved. This may be
+accomplished using <code>define_new_type_bijections</code>. In the
+example, the two functions are named <code>abs3</code> and
+<code>rep3</code>.</p>
+<pre class="hol4"><code>   - val three_bij = define_new_type_bijections
+                      {name=&quot;three_tybij&quot;, ABS=&quot;abs3&quot;, REP=&quot;rep3&quot;, tyax=tyax};
+   &gt; val three_bij =
+       |- (!a. abs3 (rep3 a) = a) /\
+          (!r. (\(x,y). ~(x /\ y)) r = (rep3 (abs3 r) = r))</code></pre>
+<p>Properties of the maps may be conveniently proved with
+<code>prove_abs_fn_one_one</code>, <code>prove_abs_fn_onto</code>,
+<code>prove_rep_fn_one_one</code>, and <code>prove_rep_fn_onto</code>.
+In this case, we need only <code>prove_abs_fn_one_one</code>.</p>
+<pre class="hol4"><code>   - val abs_11 = GEN_BETA_RULE (prove_abs_fn_one_one three_bij);
+
+   &gt; val abs_11 =
+       |- !r r&#39;.
+            ~(FST r /\ SND r) ==&gt;
+            ~(FST r&#39; /\ SND r&#39;) ==&gt;
+            ((abs3 r = abs3 r&#39;) = (r = r&#39;)) : thm</code></pre>
+<p>Now we address how to define constants designating the three elements
+of our example type. We will use <code>new_specification</code> to
+create these constants (say <code>e1</code>, <code>e2</code>, and
+<code>e3</code>) and their characterizing property, which is</p>
+<pre class="hol4"><code>   ~(e1 = e2) /\ ~(e2 = e3) /\ ~(e3 = e1)</code></pre>
+<p>A simple lemma stating that the abstraction function doesn’t confuse
+any of the representations is required:</p>
+<pre class="hol4"><code>   - val abs_distinct =
+       REWRITE_RULE (PAIR_EQ::pair_rws)
+         (LIST_CONJ (map (C Q.SPECL abs_11)
+                         [[`(F,F)`,`(F,T)`],
+                          [`(F,T)`,`(T,F)`],
+                          [`(T,F)`,`(F,F)`]]));
+
+   &gt; val abs_distinct =
+      |- ~(abs3 (F,F) = abs3 (F,T)) /\
+         ~(abs3 (F,T) = abs3 (T,F)) /\
+         ~(abs3 (T,F) = abs3 (F,F)) : thm</code></pre>
+<p>Finally, we can introduce the constants and their property.</p>
+<pre class="hol4"><code>   - val THREE = new_specification
+       (&quot;THREE&quot;, [&quot;e1&quot;, &quot;e2&quot;, &quot;e3&quot;],
+        PROVE [abs_distinct]
+         (Term`?x y z:three. ~(x=y) /\ ~(y=z) /\ ~(z=x)`));
+
+   &gt; val THREE = |- ~(e1 = e2) /\ ~(e2 = e3) /\ ~(e3 = e1) : thm</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Drule.define_new_type_bijections.html"><code>Drule.define_new_type_bijections</code></a>,
+<a
+href="Prim_rec.prove_abs_fn_one_one.html"><code>Prim_rec.prove_abs_fn_one_one</code></a>,
+<a
+href="Prim_rec.prove_abs_fn_onto.html"><code>Prim_rec.prove_abs_fn_onto</code></a>,
+<a
+href="Drule.prove_rep_fn_one_one.html"><code>Drule.prove_rep_fn_one_one</code></a>,
+<a
+href="Drule.prove_rep_fn_onto.html"><code>Drule.prove_rep_fn_onto</code></a>,
+<a
+href="Definition.new_specification.html"><code>Definition.new_specification</code></a></p>
+</body>
+</html>

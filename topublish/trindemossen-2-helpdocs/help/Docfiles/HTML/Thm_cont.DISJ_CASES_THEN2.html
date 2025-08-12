@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Thm_cont.DISJ_CASES_THEN2</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="disj_cases_then2"><code>DISJ_CASES_THEN2</code></h2>
+<pre class="hol4"><code>Thm_cont.DISJ_CASES_THEN2 : (thm_tactic -&gt; thm_tactical)</code></pre>
+<hr />
+<p>Applies separate theorem-tactics to the two disjuncts of a
+theorem.</p>
+<p>If the theorem-tactics <code>f1</code> and <code>f2</code>, applied
+to the <code>ASSUME</code>d left and right disjunct of a theorem
+<code>|- u \/ v</code> respectively, produce results as follows when
+applied to a goal <code>(A ?- t)</code>:</p>
+<pre class="hol4"><code>    A ?- t                                 A ?- t
+   =========  f1 (u |- u)      and        =========  f2 (v |- v)
+    A ?- t1                                A ?- t2</code></pre>
+<p>then applying <code>DISJ_CASES_THEN2 f1 f2 (|- u \/ v)</code> to the
+goal <code>(A ?- t)</code> produces two subgoals.</p>
+<pre class="hol4"><code>           A ?- t
+   ======================  DISJ_CASES_THEN2 f1 f2 (|- u \/ v)
+    A ?- t1      A ?- t2</code></pre>
+<h3 id="failure">Failure</h3>
+<p>Fails if the theorem is not a disjunction. An invalid tactic is
+produced if the theorem has any hypothesis which is not
+alpha-convertible to an assumption of the goal.</p>
+<h3 id="example">Example</h3>
+<p>Given the theorem</p>
+<pre class="hol4"><code>   th = |- (m = 0) \/ (?n. m = SUC n)</code></pre>
+<p>and a goal of the form <code>?- (PRE m = m) = (m = 0)</code>,
+applying the tactic</p>
+<pre class="hol4"><code>   DISJ_CASES_THEN2 SUBST1_TAC ASSUME_TAC th</code></pre>
+<p>to the goal will produce two subgoals</p>
+<pre class="hol4"><code>   ?n. m = SUC n ?- (PRE m = m) = (m = 0)
+
+   ?- (PRE 0 = 0) = (0 = 0)</code></pre>
+<p>The first subgoal has had the disjunct <code>m = 0</code> used for a
+substitution, and the second has added the disjunct to the assumption
+list. Alternatively, applying the tactic</p>
+<pre class="hol4"><code>   DISJ_CASES_THEN2 SUBST1_TAC (CHOOSE_THEN SUBST1_TAC) th</code></pre>
+<p>to the goal produces the subgoals:</p>
+<pre class="hol4"><code>   ?- (PRE(SUC n) = SUC n) = (SUC n = 0)
+
+   ?- (PRE 0 = 0) = (0 = 0)</code></pre>
+<p>Building cases tacticals. For example, <code>DISJ_CASES_THEN</code>
+could be defined by:</p>
+<pre class="hol4"><code>  let DISJ_CASES_THEN f = DISJ_CASES_THEN2 f f</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Thm_cont.STRIP_THM_THEN.html"><code>Thm_cont.STRIP_THM_THEN</code></a>,
+<a
+href="Thm_cont.CHOOSE_THEN.html"><code>Thm_cont.CHOOSE_THEN</code></a>,
+<a
+href="Thm_cont.CONJUNCTS_THEN.html"><code>Thm_cont.CONJUNCTS_THEN</code></a>,
+<a
+href="Thm_cont.CONJUNCTS_THEN2.html"><code>Thm_cont.CONJUNCTS_THEN2</code></a>,
+<a
+href="Thm_cont.DISJ_CASES_THEN.html"><code>Thm_cont.DISJ_CASES_THEN</code></a>,
+<a
+href="Thm_cont.DISJ_CASES_THENL.html"><code>Thm_cont.DISJ_CASES_THENL</code></a></p>
+</body>
+</html>

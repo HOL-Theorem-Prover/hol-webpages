@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure normalForms</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure normalForms</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/normalForms.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>(* ========================================================================= *)
+<a name="line2"></a>(* HOL NORMALIZATION FUNCTIONS.                                              *)
+<a name="line3"></a>(* Created by Joe Hurd, October 2001                                         *)
+<a name="line4"></a>(* ========================================================================= *)
+<a name="line5"></a>
+<a name="line6"></a>signature normalForms =
+<a name="line7"></a>sig
+<a name="line8"></a>
+<a name="line9"></a>include Abbrev
+<a name="line10"></a>type ssfrag  = simpLib.ssfrag
+<a name="line11"></a>type simpset = simpLib.simpset
+<a name="line12"></a>
+<a name="line13"></a>(* ------------------------------------------------------------------------- *)
+<a name="line14"></a>(* Replace genvars with variants on `v`.                                     *)
+<a name="line15"></a>(*                                                                           *)
+<a name="line16"></a>(* Example:                                                                  *)
+<a name="line17"></a>(*   ?%%genvar%%20744 %%genvar%%20745 %%genvar%%20746.                       *)
+<a name="line18"></a>(*     (%%genvar%%20744 \/ %%genvar%%20745 \/ ~%%genvar%%20746) /\           *)
+<a name="line19"></a>(*     (%%genvar%%20746 \/ ~%%genvar%%20744) /\                              *)
+<a name="line20"></a>(*     (%%genvar%%20746 \/ ~%%genvar%%20745) /\ (~q \/ ~%%genvar%%20745) /\  *)
+<a name="line21"></a>(*     (r \/ ~%%genvar%%20745) /\ (%%genvar%%20745 \/ q \/ ~r) /\            *)
+<a name="line22"></a>(*     (q \/ ~p \/ ~%%genvar%%20744) /\ (p \/ ~q \/ ~%%genvar%%20744) /\     *)
+<a name="line23"></a>(*     (%%genvar%%20744 \/ ~p \/ ~q) /\ (%%genvar%%20744 \/ p \/ q) /\       *)
+<a name="line24"></a>(*     %%genvar%%20746                                                       *)
+<a name="line25"></a>(*   =                                                                       *)
+<a name="line26"></a>(*   ?v v1 v2.                                                               *)
+<a name="line27"></a>(*     (v \/ v1 \/ ~v2) /\ (v2 \/ ~v) /\ (v2 \/ ~v1) /\ (q \/ ~v1) /\        *)
+<a name="line28"></a>(*     (r \/ ~v1) /\ (v1 \/ ~q \/ ~r) /\ (q \/ ~p \/ ~v) /\                  *)
+<a name="line29"></a>(*     (p \/ ~q \/ ~v) /\ (v \/ ~p \/ ~q) /\ (v \/ p \/ q) /\ v2             *)
+<a name="line30"></a>(* ------------------------------------------------------------------------- *)
+<a name="line31"></a>
+<a name="line32"></a>val prettify_vars      : term -&gt; term
+<a name="line33"></a>val PRETTIFY_VARS_CONV : conv
+<a name="line34"></a>
+<a name="line35"></a>(* ------------------------------------------------------------------------- *)
+<a name="line36"></a>(* Conversion to combinators {S,K,I}.                                        *)
+<a name="line37"></a>(*                                                                           *)
+<a name="line38"></a>(* Example:                                                                  *)
+<a name="line39"></a>(*   (?f. !y. f y = y + 1)                                                   *)
+<a name="line40"></a>(*   =                                                                       *)
+<a name="line41"></a>(*   $? (S (K $!) (S (S (K S) (S (K (S (K $=))) I)) (K (S $+ (K 1)))))       *)
+<a name="line42"></a>(* ------------------------------------------------------------------------- *)
+<a name="line43"></a>
+<a name="line44"></a>val SKI_CONV : conv
+<a name="line45"></a>
+<a name="line46"></a>(* ------------------------------------------------------------------------- *)
+<a name="line47"></a>(* Conversion to combinators {S,K,I,C,o}.                                    *)
+<a name="line48"></a>(*                                                                           *)
+<a name="line49"></a>(* Example:                                                                  *)
+<a name="line50"></a>(*   (?f. !y. f y = y + 1)                                                   *)
+<a name="line51"></a>(*   =                                                                       *)
+<a name="line52"></a>(*   $? ($! o C (S o $o $= o I) (C $+ 1))                                    *)
+<a name="line53"></a>(* ------------------------------------------------------------------------- *)
+<a name="line54"></a>
+<a name="line55"></a>val SKICo_CONV : conv
+<a name="line56"></a>
+<a name="line57"></a>(* ------------------------------------------------------------------------- *)
+<a name="line58"></a>(* Beta reduction and simplifying boolean rewrites.                          *)
+<a name="line59"></a>(*                                                                           *)
+<a name="line60"></a>(* Example:                                                                  *)
+<a name="line61"></a>(*   (!x y. P x \/ (P y /\ F)) ==&gt; ?z. P z                                   *)
+<a name="line62"></a>(*   =                                                                       *)
+<a name="line63"></a>(*   (!x. P x) ==&gt; ?z. P z                                                   *)
+<a name="line64"></a>(* ------------------------------------------------------------------------- *)
+<a name="line65"></a>
+<a name="line66"></a>val simplify_ss   : simpset             (* pure + BOOL *)
+<a name="line67"></a>val SIMPLIFY_CONV : conv
+<a name="line68"></a>
+<a name="line69"></a>(* ------------------------------------------------------------------------- *)
+<a name="line70"></a>(* Negation normal form.                                                     *)
+<a name="line71"></a>(*                                                                           *)
+<a name="line72"></a>(* Example:                                                                  *)
+<a name="line73"></a>(*   (!x. P x) ==&gt; ((?y. Q y) = ?z. P z /\ Q z)                              *)
+<a name="line74"></a>(*   =                                                                       *)
+<a name="line75"></a>(*   ((?y. Q y) /\ (?z. P z /\ Q z) \/ (!y. ~Q y) /\ !z. ~P z \/ ~Q z) \/    *)
+<a name="line76"></a>(*   ?x. ~P x                                                                *)
+<a name="line77"></a>(* ------------------------------------------------------------------------- *)
+<a name="line78"></a>
+<a name="line79"></a>val PURE_NNF_CONV' : conv -&gt; conv       (* takes a 'leaf conversion' *)
+<a name="line80"></a>val PURE_NNF_CONV  : conv
+<a name="line81"></a>val NNF_CONV'      : conv -&gt; conv       (* takes a 'leaf conversion' *)
+<a name="line82"></a>val NNF_CONV       : conv
+<a name="line83"></a>
+<a name="line84"></a>(* ------------------------------------------------------------------------- *)
+<a name="line85"></a>(* General NNF conversion. The user supplies some conversion to be applied   *)
+<a name="line86"></a>(* to atomic formulas.                                                       *)
+<a name="line87"></a>(*                                                                           *)
+<a name="line88"></a>(* "Iff"s are split conjunctively or disjunctively according to the flag     *)
+<a name="line89"></a>(* argument (conjuctively = true) until a universal quantifier (modulo       *)
+<a name="line90"></a>(* current parity) is passed; after that they are split conjunctively. This  *)
+<a name="line91"></a>(* is appropriate when the result is passed to a disjunctive splitter        *)
+<a name="line92"></a>(* followed by a clausal form inner core, such as MESON.                     *)
+<a name="line93"></a>(*                                                                           *)
+<a name="line94"></a>(* To avoid some duplicate computation, this function will in general        *)
+<a name="line95"></a>(* enter a recursion where it simultaneously computes NNF representations    *)
+<a name="line96"></a>(* for "p" and "~p", so the user needs to supply an atomic "conversion"      *)
+<a name="line97"></a>(* that does the same.                                                       *)
+<a name="line98"></a>(* ------------------------------------------------------------------------- *)
+<a name="line99"></a>
+<a name="line100"></a>val GEN_NNF_CONV   : bool -&gt; conv * (term -&gt; thm * thm) -&gt; conv
+<a name="line101"></a>
+<a name="line102"></a>(* A trivial application of GEN_NNF_CONV which splits "Iff"s conjuctively.
+<a name="line103"></a>   NOTE: The above NNF_CONV has the same behavior with NNF_CONV on "Iff"s. *)
+<a name="line104"></a>val NNFC_CONV      : conv
+<a name="line105"></a>
+<a name="line106"></a>(* A trivial application of GEN_NNF_CONV which splits "Iff"s disjuctively.
+<a name="line107"></a>   NOTE: this is the HOL-Light's "NNF_CONV" (canon.ml). *)
+<a name="line108"></a>val NNFD_CONV      : conv
+<a name="line109"></a>
+<a name="line110"></a>(* ------------------------------------------------------------------------- *)
+<a name="line111"></a>(* Skolemization.                                                            *)
+<a name="line112"></a>(*                                                                           *)
+<a name="line113"></a>(* Example:                                                                  *)
+<a name="line114"></a>(*   (!x. (?y. Q y \/ !z. ~P z \/ ~Q z) \/ ~P x)                             *)
+<a name="line115"></a>(*   =                                                                       *)
+<a name="line116"></a>(*   ?y. !x. (Q (y x) \/ !z. ~P z \/ ~Q z) \/ ~P x                           *)
+<a name="line117"></a>(* ------------------------------------------------------------------------- *)
+<a name="line118"></a>
+<a name="line119"></a>val SKOLEMIZE_CONV : conv
+<a name="line120"></a>
+<a name="line121"></a>(* ------------------------------------------------------------------------- *)
+<a name="line122"></a>(* Prenex Normal Form.                                                       *)
+<a name="line123"></a>(* ------------------------------------------------------------------------- *)
+<a name="line124"></a>
+<a name="line125"></a>val PRENEX_CONV      : conv
+<a name="line126"></a>val ANTI_PRENEX_CONV : conv
+<a name="line127"></a>
+<a name="line128"></a>(* ------------------------------------------------------------------------- *)
+<a name="line129"></a>(* A basic tautology prover and simplifier for clauses                       *)
+<a name="line130"></a>(*                                                                           *)
+<a name="line131"></a>(* Examples:                                                                 *)
+<a name="line132"></a>(*   TAUTOLOGY_CONV:   p \/ r \/ ~p \/ ~q   =  T                             *)
+<a name="line133"></a>(*   CONTRACT_CONV:    (p \/ r) \/ p \/ ~q  =  p \/ r \/ ~q                  *)
+<a name="line134"></a>(* ------------------------------------------------------------------------- *)
+<a name="line135"></a>
+<a name="line136"></a>val TAUTOLOGY_CONV : conv
+<a name="line137"></a>val CONTRACT_CONV : conv
+<a name="line138"></a>
+<a name="line139"></a>(* ------------------------------------------------------------------------- *)
+<a name="line140"></a>(* Conjunctive Normal Form.                                                  *)
+<a name="line141"></a>(*                                                                           *)
+<a name="line142"></a>(* Example:                                                                  *)
+<a name="line143"></a>(*  (!x. P x ==&gt; ?y z. Q y \/ ~?z. P z \/ Q z)                               *)
+<a name="line144"></a>(*  =                                                                        *)
+<a name="line145"></a>(*  ?y. (!x x'. Q (y x) \/ ~P x' \/ ~P x) /\ !x x'. Q (y x) \/ ~Q x' \/ ~P x *)
+<a name="line146"></a>(* ------------------------------------------------------------------------- *)
+<a name="line147"></a>
+<a name="line148"></a>val tautology_checking : bool ref
+<a name="line149"></a>val PURE_CNF_CONV  : conv
+<a name="line150"></a>val CNF_CONV'      : conv -&gt; conv       (* takes a 'leaf conversion' *)
+<a name="line151"></a>val <a href="../../Docfiles/HTML/normalForms.CNF_CONV.html">CNF_CONV</a>       : conv
+<a name="line152"></a>
+<a name="line153"></a>(* ------------------------------------------------------------------------- *)
+<a name="line154"></a>(* Disjunctive Normal Form.                                                  *)
+<a name="line155"></a>(*                                                                           *)
+<a name="line156"></a>(* Example:                                                                  *)
+<a name="line157"></a>(*   (!x. P x ==&gt; ?y z. Q y \/ ~?z. P z \/ Q z)                              *)
+<a name="line158"></a>(*   =                                                                       *)
+<a name="line159"></a>(*   !x z. (?y. Q y) \/ (?y. ~P (z y) /\ ~Q (z y)) \/ ~P x                   *)
+<a name="line160"></a>(* ------------------------------------------------------------------------- *)
+<a name="line161"></a>
+<a name="line162"></a>val DNF_CONV'      : conv -&gt; conv       (* takes a 'leaf conversion' *)
+<a name="line163"></a>val DNF_CONV       : conv
+<a name="line164"></a>
+<a name="line165"></a>(* ------------------------------------------------------------------------- *)
+<a name="line166"></a>(* Definitional Negation Normal Form                                         *)
+<a name="line167"></a>(*                                                                           *)
+<a name="line168"></a>(* Example:                                                                  *)
+<a name="line169"></a>(*   (~(p = ~(q = r)) = ~(~(p = q) = r))                                     *)
+<a name="line170"></a>(*   =                                                                       *)
+<a name="line171"></a>(*   ((p = (q = r)) = ((p = ~q) = ~r))                                       *)
+<a name="line172"></a>(* ------------------------------------------------------------------------- *)
+<a name="line173"></a>
+<a name="line174"></a>val DEF_NNF_CONV : conv
+<a name="line175"></a>
+<a name="line176"></a>(* ------------------------------------------------------------------------- *)
+<a name="line177"></a>(* Definitional Conjunctive Normal Form                                      *)
+<a name="line178"></a>(*                                                                           *)
+<a name="line179"></a>(* Example:                                                                  *)
+<a name="line180"></a>(*   (~(p = ~(q = r)) = ~(~(p = q) = r))                                     *)
+<a name="line181"></a>(*   =                                                                       *)
+<a name="line182"></a>(*   ?v v1 v2 v3 v4.                                                         *)
+<a name="line183"></a>(*     (v4 \/ v1 \/ v3) /\ (v4 \/ ~v1 \/ ~v3) /\ (v1 \/ ~v3 \/ ~v4) /\       *)
+<a name="line184"></a>(*     (v3 \/ ~v1 \/ ~v4) /\ (v3 \/ v2 \/ ~r) /\ (v3 \/ ~v2 \/ r) /\         *)
+<a name="line185"></a>(*     (v2 \/ r \/ ~v3) /\ (~r \/ ~v2 \/ ~v3) /\ (v2 \/ p \/ ~q) /\          *)
+<a name="line186"></a>(*     (v2 \/ ~p \/ q) /\ (p \/ q \/ ~v2) /\ (~q \/ ~p \/ ~v2) /\            *)
+<a name="line187"></a>(*     (v1 \/ p \/ v) /\ (v1 \/ ~p \/ ~v) /\ (p \/ ~v \/ ~v1) /\             *)
+<a name="line188"></a>(*     (v \/ ~p \/ ~v1) /\ (v \/ q \/ r) /\ (v \/ ~q \/ ~r) /\               *)
+<a name="line189"></a>(*     (q \/ ~r \/ ~v) /\ (r \/ ~q \/ ~v) /\ v4                              *)
+<a name="line190"></a>(* ------------------------------------------------------------------------- *)
+<a name="line191"></a>
+<a name="line192"></a>val PURE_DEF_CNF_CONV    : conv         (* Introduces definitions *)
+<a name="line193"></a>val CLEANUP_DEF_CNF_CONV : conv         (* Converts defns to CNF *)
+<a name="line194"></a>val DEF_CNF_CONV         : conv         (* NNF + PURE + CLEANUP *)
+<a name="line195"></a>
+<a name="line196"></a>val ORACLE_PURE_DEF_CNF_CONV : conv     (* Simply asserts the conversion thm *)
+<a name="line197"></a>val ORACLE_DEF_CNF_CONV      : conv     (* NNF + ORACLE_PURE + CLEANUP *)
+<a name="line198"></a>
+<a name="line199"></a>(* ------------------------------------------------------------------------- *)
+<a name="line200"></a>(* Removes leading existential quantifiers from a theorem, by introducing a  *)
+<a name="line201"></a>(* new skolem constant with an appropriate assumption.                       *)
+<a name="line202"></a>(*                                                                           *)
+<a name="line203"></a>(* Examples:                                                                 *)
+<a name="line204"></a>(*   SKOLEM_CONST_RULE   ``a``   |- ?x. P x y z                              *)
+<a name="line205"></a>(*   ----&gt;  [a = @x. P x y z] |- P a y                                       *)
+<a name="line206"></a>(*                                                                           *)
+<a name="line207"></a>(*   SKOLEM_CONST_RULE   ``a y z``   |- ?x. P x y                            *)
+<a name="line208"></a>(*   ----&gt;  [a = \y z. @x. P x y z] |- P (a y z) y                           *)
+<a name="line209"></a>(*                                                                           *)
+<a name="line210"></a>(* NEW_SKOLEM_CONST generates an argument for SKOLEM_CONST_RULE, and         *)
+<a name="line211"></a>(* NEW_SKOLEM_CONST_RULE puts the two functions together.                    *)
+<a name="line212"></a>(* CLEANUP_SKOLEM_CONSTS_RULE tries to eliminate as many 'skolem             *)
+<a name="line213"></a>(* assumptions' as possible.                                                 *)
+<a name="line214"></a>(* ------------------------------------------------------------------------- *)
+<a name="line215"></a>
+<a name="line216"></a>val SKOLEM_CONST_RULE          : term -&gt; rule
+<a name="line217"></a>val NEW_SKOLEM_CONST           : thm -&gt; term
+<a name="line218"></a>val NEW_SKOLEM_CONST_RULE      : rule
+<a name="line219"></a>val CLEANUP_SKOLEM_CONSTS_RULE : rule
+<a name="line220"></a>
+<a name="line221"></a>(* ------------------------------------------------------------------------- *)
+<a name="line222"></a>(* Eliminates some lambdas to make terms "as first-order as possible".       *)
+<a name="line223"></a>(*                                                                           *)
+<a name="line224"></a>(* Example:  ((\x. f x z) = g z)  =  !x. f x z = g z x                       *)
+<a name="line225"></a>(* ------------------------------------------------------------------------- *)
+<a name="line226"></a>
+<a name="line227"></a>val DELAMB_CONV : conv
+<a name="line228"></a>
+<a name="line229"></a>(* ------------------------------------------------------------------------- *)
+<a name="line230"></a>(* Eliminating Hilbert's epsilon operator.                                   *)
+<a name="line231"></a>(*                                                                           *)
+<a name="line232"></a>(* Example:                                                                  *)
+<a name="line233"></a>(*                                                                           *)
+<a name="line234"></a>(*   ((?n. f n = 0) ==&gt; (f n = 0)) ==&gt; 3 &lt; n                                 *)
+<a name="line235"></a>(*   ---------------------------------------  SELECT_TAC                     *)
+<a name="line236"></a>(*               3 &lt; @n. f n = 0                                             *)
+<a name="line237"></a>(* ------------------------------------------------------------------------- *)
+<a name="line238"></a>
+<a name="line239"></a>val SELECT_TAC : tactic
+<a name="line240"></a>
+<a name="line241"></a>(* ------------------------------------------------------------------------- *)
+<a name="line242"></a>(* Remove all Abbrev terms from a goal by rewriting them away (Abbrev = I)   *)
+<a name="line243"></a>(* ------------------------------------------------------------------------- *)
+<a name="line244"></a>
+<a name="line245"></a>val REMOVE_ABBR_TAC : tactic
+<a name="line246"></a>
+<a name="line247"></a>(* ------------------------------------------------------------------------- *)
+<a name="line248"></a>(* Lifting conditionals through function applications.                       *)
+<a name="line249"></a>(*                                                                           *)
+<a name="line250"></a>(* Example:  f (if x then y else z)  =  (if x then f y else f z)             *)
+<a name="line251"></a>(* ------------------------------------------------------------------------- *)
+<a name="line252"></a>
+<a name="line253"></a>val cond_lift_SS : ssfrag
+<a name="line254"></a>val cond_lift_ss : simpset      (* pure + cond_lift *)
+<a name="line255"></a>
+<a name="line256"></a>(* ------------------------------------------------------------------------- *)
+<a name="line257"></a>(* Converting boolean connectives to conditionals.                           *)
+<a name="line258"></a>(*                                                                           *)
+<a name="line259"></a>(* Example:  x /\ ~(y ==&gt; ~z)  =  (if x then (if y then z else F) else F)    *)
+<a name="line260"></a>(* ------------------------------------------------------------------------- *)
+<a name="line261"></a>
+<a name="line262"></a>val condify_SS : ssfrag
+<a name="line263"></a>val condify_ss : simpset      (* pure + condify *)
+<a name="line264"></a>
+<a name="line265"></a>(* ------------------------------------------------------------------------- *)
+<a name="line266"></a>(* Definitional CNF minimizing number of clauses.                            *)
+<a name="line267"></a>(*                                                                           *)
+<a name="line268"></a>(* Example:                                                                  *)
+<a name="line269"></a>(* |- (p /\ q /\ r) \/ (s /\ t /\ u)                                         *)
+<a name="line270"></a>(*    --&gt;                                                                    *)
+<a name="line271"></a>(* ([``d``],                                                                 *)
+<a name="line272"></a>(*   [[.] |- (d \/ s) /\ (d \/ t) /\ (d \/ u),                               *)
+<a name="line273"></a>(*    [.] |- (d \/ ~p \/ ~q \/ ~r) /\ (~d \/ p) /\ (~d \/ q) /\ (~d \/ r)])  *)
+<a name="line274"></a>(*                                                                           *)
+<a name="line275"></a>(* where the assumption [.] in both theorems is d = (p /\ q /\ r).           *)
+<a name="line276"></a>(* ------------------------------------------------------------------------- *)
+<a name="line277"></a>
+<a name="line278"></a>val MIN_CNF : thm list -&gt; term list * thm list
+<a name="line279"></a>
+<a name="line280"></a>(* ------------------------------------------------------------------------- *)
+<a name="line281"></a>(* Some conversions ported from HOL-Light's canon.ml                         *)
+<a name="line282"></a>(* ------------------------------------------------------------------------- *)
+<a name="line283"></a>
+<a name="line284"></a>val CONJ_CANON_CONV  : conv
+<a name="line285"></a>val CONDS_ELIM_CONV  : conv
+<a name="line286"></a>val CONDS_CELIM_CONV : conv
+<a name="line287"></a>val WEAK_DNF_CONV    : conv
+<a name="line288"></a>val STRONG_DNF_CONV  : conv
+<a name="line289"></a>val WEAK_CNF_CONV    : conv
+<a name="line290"></a>val STRONG_CNF_CONV  : conv
+<a name="line291"></a>
+<a name="line292"></a>end
+<a name="line293"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/metis/normalForms.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

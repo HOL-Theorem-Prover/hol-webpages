@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Rewrite.REWRITE_TAC</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="rewrite_tac"><code>REWRITE_TAC</code></h2>
+<pre class="hol4"><code>Rewrite.REWRITE_TAC : (thm list -&gt; tactic)</code></pre>
+<hr />
+<p>Rewrites a goal including built-in tautologies in the list of
+rewrites.</p>
+<p>Rewriting tactics in HOL provide a recursive left-to-right matching
+and rewriting facility that automatically decomposes subgoals and
+justifies segments of proof in which equational theorems are used,
+singly or collectively. These include the unfolding of definitions, and
+the substitution of equals for equals. Rewriting is used either to
+advance or to complete the decomposition of subgoals.</p>
+<p><code>REWRITE_TAC</code> transforms (or solves) a goal by using as
+rewrite rules (i.e. as left-to-right replacement rules) the conclusions
+of the given list of (equational) theorems, as well as a set of built-in
+theorems (common tautologies) held in the ML variable
+<code>implicit_rewrites</code>. Recognition of a tautology often
+terminates the subgoaling process (i.e. solves the goal).</p>
+<p>The equational rewrites generated are applied recursively and to
+arbitrary depth, with matching and instantiation of variables and type
+variables. A list of rewrites can set off an infinite rewriting process,
+and it is not, of course, decidable in general whether a rewrite set has
+that property. The order in which the rewrite theorems are applied is
+unspecified, and the user should not depend on any ordering.</p>
+<p>See <code>GEN_REWRITE_TAC</code> for more details on the rewriting
+process. Variants of <code>REWRITE_TAC</code> allow the use of a
+different set of rewrites. Some of them, such as
+<code>PURE_REWRITE_TAC</code>, exclude the basic tautologies from the
+possible transformations. <code>ASM_REWRITE_TAC</code> and others
+include the assumptions at the goal in the set of possible rewrites.</p>
+<p>Still other tactics allow greater control over the search for
+rewritable subterms. Several of them such as
+<code>ONCE_REWRITE_TAC</code> do not apply rewrites recursively.
+<code>GEN_REWRITE_TAC</code> allows a rewrite to be applied at a
+particular subterm.</p>
+<h3 id="failure">Failure</h3>
+<p><code>REWRITE_TAC</code> does not fail. Certain sets of rewriting
+theorems on certain goals may cause a non-terminating sequence of
+rewrites. Divergent rewriting behaviour results from a term
+<code>t</code> being immediately or eventually rewritten to a term
+containing <code>t</code> as a sub-term. The exact behaviour depends on
+the <code>HOL</code> implementation.</p>
+<h3 id="example">Example</h3>
+<p>The arithmetic theorem <code>GREATER_DEF</code>,
+<code>|- !m n. m &gt; n = n &lt; m</code>, is used below to advance a
+goal:</p>
+<pre class="hol4"><code>   - REWRITE_TAC [GREATER_DEF] ([],``5 &gt; 4``);
+   &gt; ([([], ``4 &lt; 5``)], -) : subgoals</code></pre>
+<p>It is used below with the theorem <code>LESS_0</code>,
+<code>|- !n. 0 &lt; (SUC n)</code>, to solve a goal:</p>
+<pre class="hol4"><code>   - val (gl,p) =
+       REWRITE_TAC [GREATER_DEF, LESS_0] ([],``(SUC n) &gt; 0``);
+   &gt; val gl = [] : goal list
+   &gt; val p = fn : proof
+
+   - p[];
+   &gt; val it = |- (SUC n) &gt; 0 : thm</code></pre>
+<p>Rewriting is a powerful and general mechanism in HOL, and an
+important part of many proofs. It relieves the user of the burden of
+directing and justifying a large number of minor proof steps.
+<code>REWRITE_TAC</code> fits a forward proof sequence smoothly into the
+general goal-oriented framework. That is, (within one subgoaling step)
+it produces and justifies certain forward inferences, none of which are
+necessarily on a direct path to the desired goal.</p>
+<p><code>REWRITE_TAC</code> may be more powerful a tactic than is needed
+in certain situations; if efficiency is at stake, alternatives might be
+considered. On the other hand, if more power is required, the
+simplification functions (<code>SIMP_TAC</code> and others) may be
+appropriate.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Rewrite.ASM_REWRITE_TAC.html"><code>Rewrite.ASM_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.GEN_REWRITE_TAC.html"><code>Rewrite.GEN_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.FILTER_ASM_REWRITE_TAC.html"><code>Rewrite.FILTER_ASM_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.FILTER_ONCE_ASM_REWRITE_TAC.html"><code>Rewrite.FILTER_ONCE_ASM_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.ONCE_ASM_REWRITE_TAC.html"><code>Rewrite.ONCE_ASM_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.ONCE_REWRITE_TAC.html"><code>Rewrite.ONCE_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.PURE_ASM_REWRITE_TAC.html"><code>Rewrite.PURE_ASM_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.PURE_ONCE_ASM_REWRITE_TAC.html"><code>Rewrite.PURE_ONCE_ASM_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.PURE_ONCE_REWRITE_TAC.html"><code>Rewrite.PURE_ONCE_REWRITE_TAC</code></a>,
+<a
+href="Rewrite.PURE_REWRITE_TAC.html"><code>Rewrite.PURE_REWRITE_TAC</code></a>,
+<a href="Conv.REWR_CONV.html"><code>Conv.REWR_CONV</code></a>, <a
+href="Rewrite.REWRITE_CONV.html"><code>Rewrite.REWRITE_CONV</code></a>,
+<a href="simpLib.SIMP_TAC.html"><code>simpLib.SIMP_TAC</code></a>, <a
+href="Tactic.SUBST_TAC.html"><code>Tactic.SUBST_TAC</code></a></p>
+</body>
+</html>

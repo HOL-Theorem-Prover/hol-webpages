@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Drule.RES_CANON</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="res_canon"><code>RES_CANON</code></h2>
+<pre class="hol4"><code>Drule.RES_CANON : (thm -&gt; thm list)</code></pre>
+<hr />
+<p>Put an implication into canonical form for resolution.</p>
+<p>All the HOL resolution tactics (e.g. <code>IMP_RES_TAC</code>) work
+by using modus ponens to draw consequences from an implicative theorem
+and the assumptions of the goal. Some of these tactics derive this
+implication from a theorem supplied explicitly the user (or otherwise
+from ‘outside’ the goal) and some obtain it from the assumptions of the
+goal itself. But in either case, the supplied theorem or assumption is
+first transformed into a list of implications in ‘canonical’ form by the
+function <code>RES_CANON</code>.</p>
+<p>The theorem argument to <code>RES_CANON</code> should be either be an
+implication (which can be universally quantified) or a theorem from
+which an implication can be derived using the transformation rules
+discussed below. Given such a theorem, <code>RES_CANON</code> returns a
+list of implications in canonical form. It is the implications in this
+resulting list that are used by the various resolution tactics to infer
+consequences from the assumptions of a goal.</p>
+<p>The transformations done by <code>RES_CANON th</code> to the theorem
+<code>th</code> are as follows. First, if <code>th</code> is a negation
+<code>A |- ~t</code>, this is converted to the implication
+<code>A |- t ==&gt; F</code>. The following inference rules are then
+applied repeatedly, until no further rule applies. Conjunctions are
+split into their components and equivalence (boolean equality) is split
+into implication in both directions:</p>
+<pre class="hol4"><code>      A |- t1 /\ t2                         A |- t1 = t2
+   --------------------           ----------------------------------
+    A |- t1    A |- t2             A |- t1 ==&gt; t2    A |- t2 ==&gt; t1</code></pre>
+<p>Conjunctive antecedents are transformed by:</p>
+<pre class="hol4"><code>                A |- (t1 /\ t2) ==&gt; t
+   ---------------------------------------------------
+    A |- t1 ==&gt; (t2 ==&gt; t)     A |- t2 ==&gt; (t1 ==&gt; t)</code></pre>
+<p>and disjunctive antecedents by:</p>
+<pre class="hol4"><code>        A |- (t1 \/ t2) ==&gt; t
+   --------------------------------
+    A |- t1 ==&gt; t    A |- t2 ==&gt; t</code></pre>
+<p>The scope of universal quantifiers is restricted, if possible:</p>
+<pre class="hol4"><code>    A |- !x. t1 ==&gt; t2
+   --------------------         [if x is not free in t1]
+    A |- t1 ==&gt; !x. t2</code></pre>
+<p>and existentially-quantified antecedents are eliminated by:</p>
+<pre class="hol4"><code>      A |- (?x. t1) ==&gt; t2
+   ---------------------------  [x&#39; chosen so as not to be free in t2]
+    A |- !x&#39;. t1[x&#39;/x] ==&gt; t2</code></pre>
+<p>Finally, when no further applications of the above rules are
+possible, and the theorem is an implication:</p>
+<pre class="hol4"><code>   A |- !x1...xn. t1 ==&gt; t2</code></pre>
+<p>then the theorem <code>A u {t1} |- t2</code> is transformed by a
+recursive application of <code>RES_CANON</code> to get a list of
+theorems:</p>
+<pre class="hol4"><code>   [A u {t1} |- t21 , ... , A u {t1} |- t2n]</code></pre>
+<p>and the result of discharging <code>t1</code> from these
+theorems:</p>
+<pre class="hol4"><code>   [A |- !x1...xn. t1 ==&gt; t21 , ... , A |- !x1...xn. t1 ==&gt; t2n]</code></pre>
+<p>is returned. That is, the transformation rules are recursively
+applied to the conclusions of all implications.</p>
+<h3 id="failure">Failure</h3>
+<p><code>RES_CANON th</code> fails if no implication(s) can be derived
+from <code>th</code> using the transformation rules shown above.</p>
+<h3 id="example">Example</h3>
+<p>The uniqueness of the remainder <code>k MOD n</code> is expressed in
+HOL by the built-in theorem <code>MOD_UNIQUE</code>:</p>
+<pre class="hol4"><code>   |- !n k r. (?q. (k = (q * n) + r) /\ r &lt; n) ==&gt; (k MOD n = r)</code></pre>
+<p>For this theorem, the canonical list of implications returned by
+<code>RES_CANON</code> is as follows:</p>
+<pre class="hol4"><code>   - RES_CANON MOD_UNIQUE;
+   &gt; val it =
+       [|- !r n q k. (k = q * n + r) ==&gt; r &lt; n ==&gt; (k MOD n = r),
+        |- !n r. r &lt; n ==&gt; !q k. (k = q * n + r) ==&gt; (k MOD n = r)] : thm list</code></pre>
+<p>The existentially-quantified, conjunctive, antecedent has given rise
+to two implications, and the scope of universal quantifiers has been
+restricted to the conclusions of the resulting implications wherever
+possible.</p>
+<p>The primary use of <code>RES_CANON</code> is for the (internal)
+pre-processing phase of the built-in resolution tactics
+<code>IMP_RES_TAC</code>, <code>IMP_RES_THEN</code>,
+<code>RES_TAC</code>, and <code>RES_THEN</code>. But the function
+<code>RES_CANON</code> is also made available at top-level so that users
+can call it to see the actual form of the implications used for
+resolution in any particular case.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Tactic.IMP_RES_TAC.html"><code>Tactic.IMP_RES_TAC</code></a>, <a
+href="Thm_cont.IMP_RES_THEN.html"><code>Thm_cont.IMP_RES_THEN</code></a>,
+<a href="Tactic.RES_TAC.html"><code>Tactic.RES_TAC</code></a>, <a
+href="Thm_cont.RES_THEN.html"><code>Thm_cont.RES_THEN</code></a></p>
+</body>
+</html>

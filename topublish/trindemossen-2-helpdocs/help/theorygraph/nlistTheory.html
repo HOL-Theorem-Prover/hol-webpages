@@ -1,0 +1,476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: nlist</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "nlist"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "rich_listTheory.html"><span class="strong">rich_list</span></a>&nbsp;&nbsp;
+    <a href = "set_relationTheory.html"><span class="strong">set_relation</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">listOfN</span>
+    <td>
+    :num -> num list
+    <tr><td> <span class="strong">ncons</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">nel</span> <td> :num -> num -> num
+    <tr><td> <span class="strong">nfront</span> <td> :num -> num
+    <tr><td> <span class="strong">nhd</span> <td> :num -> num
+    <tr><td> <span class="strong">nlast</span> <td> :num -> num
+    <tr><td> <span class="strong">nlist_of</span> <td> :num list -> num
+    <tr><td>
+    <span class="strong">nlistrec</span>
+    <td>
+    :α -> (num -> num -> α -> α) -> num -> α
+    <tr><td> <span class="strong">ntl</span> <td> :num -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">listOfN_def</span>
+<DD>
+<pre>
+⊢ listOfN = nlistrec [] (λh tn t. h::t)
+</pre>
+
+<DT><span class="strong">ncons_def</span>
+<DD>
+<pre>
+⊢ ∀h t. ncons h t = h ⊗ t + 1
+</pre>
+
+<DT><span class="strong">nel_def</span>
+<DD>
+<pre>
+⊢ ∀n nlist. nel n nlist = nhd (ndrop n nlist)
+</pre>
+
+<DT><span class="strong">nfront_def</span>
+<DD>
+<pre>
+⊢ nfront = nlistrec 0 (λh tn rn. if tn = 0 then 0 else ncons h rn)
+</pre>
+
+<DT><span class="strong">nhd_def</span>
+<DD>
+<pre>
+⊢ ∀nl. nhd nl = nfst (nl − 1)
+</pre>
+
+<DT><span class="strong">nlast_def</span>
+<DD>
+<pre>
+⊢ nlast = nlistrec 0 (λh tn rn. if tn = 0 then h else rn)
+</pre>
+
+<DT><span class="strong">nlist_of_def</span>
+<DD>
+<pre>
+⊢ nlist_of [] = 0 ∧ ∀h t. nlist_of (h::t) = ncons h (nlist_of t)
+</pre>
+
+<DT><span class="strong">ntl_def</span>
+<DD>
+<pre>
+⊢ ∀nlist. ntl nlist = nsnd (nlist − 1)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">LENGTH_nfront</span>
+<DD>
+<pre>
+⊢ ∀t. t ≠ 0 ⇒ nlen (nfront t) = nlen t − 1
+</pre>
+
+<DT><span class="strong">MEM_listOfN_LESS</span>
+<DD>
+<pre>
+⊢ ∀l e. MEM e (listOfN l) ⇒ e < l
+</pre>
+
+<DT><span class="strong">listOfN_EQ_CONS</span>
+<DD>
+<pre>
+⊢ listOfN n = h::t ⇔ ∃tn. n = ncons h tn ∧ listOfN tn = t
+</pre>
+
+<DT><span class="strong">listOfN_EQ_NIL</span>
+<DD>
+<pre>
+⊢ (listOfN l = [] ⇔ l = 0) ∧ ([] = listOfN l ⇔ l = 0)
+</pre>
+
+<DT><span class="strong">listOfN_INJ</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. listOfN l1 = listOfN l2 ⇔ l1 = l2
+</pre>
+
+<DT><span class="strong">listOfN_SURJ</span>
+<DD>
+<pre>
+⊢ ∀l. ∃n. listOfN n = l
+</pre>
+
+<DT><span class="strong">listOfN_ncons</span>
+<DD>
+<pre>
+⊢ listOfN (ncons h t) = h::listOfN t
+</pre>
+
+<DT><span class="strong">listOfN_nlist</span>
+<DD>
+<pre>
+⊢ ∀l. listOfN (nlist_of l) = l
+</pre>
+
+<DT><span class="strong">listOfN_zero</span>
+<DD>
+<pre>
+⊢ listOfN 0 = []
+</pre>
+
+<DT><span class="strong">lt_ncons1</span>
+<DD>
+<pre>
+⊢ h < ncons h t
+</pre>
+
+<DT><span class="strong">lt_ncons2</span>
+<DD>
+<pre>
+⊢ t < ncons h t
+</pre>
+
+<DT><span class="strong">napp_ndrop_l1_empty</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. ndrop (nlen l1) (napp l1 l2) = l2
+</pre>
+
+<DT><span class="strong">napp_nsnoc_lt</span>
+<DD>
+<pre>
+⊢ ∀l. l < napp l (ncons x 0)
+</pre>
+
+<DT><span class="strong">napp_sing_eq</span>
+<DD>
+<pre>
+⊢ napp l1 (ncons l 0) = ncons x 0 ⇔ l1 = 0 ∧ x = l
+</pre>
+
+<DT><span class="strong">ncons_11</span>
+<DD>
+<pre>
+⊢ ncons x y = ncons h t ⇔ x = h ∧ y = t
+</pre>
+
+<DT><span class="strong">ncons_nhd_ntl</span>
+<DD>
+<pre>
+⊢ ∀l. l ≠ 0 ⇒ ncons (nhd l) (ntl l) = l
+</pre>
+
+<DT><span class="strong">ncons_not_nnil</span>
+<DD>
+<pre>
+⊢ ncons x y ≠ 0
+</pre>
+
+<DT><span class="strong">ncons_x_0_LENGTH_1</span>
+<DD>
+<pre>
+⊢ nlen l = 1 ⇔ ∃n. l = ncons n 0
+</pre>
+
+<DT><span class="strong">ndrop_SUC</span>
+<DD>
+<pre>
+⊢ ∀l n. ndrop (SUC n) l = ntl (ndrop n l)
+</pre>
+
+<DT><span class="strong">ndrop_nsingl</span>
+<DD>
+<pre>
+⊢ m ≠ 0 ⇒ ndrop m (ncons x 0) = 0
+</pre>
+
+<DT><span class="strong">nel0_ncons</span>
+<DD>
+<pre>
+⊢ nel 0 (ncons h t) = h
+</pre>
+
+<DT><span class="strong">nel_SUC_CONS</span>
+<DD>
+<pre>
+⊢ ∀n h t. nel (SUC n) (ncons h t) = nel n t
+</pre>
+
+<DT><span class="strong">nel_correct</span>
+<DD>
+<pre>
+⊢ ∀l i. i < nlen l ⇒ EL i (listOfN l) = nel i l
+</pre>
+
+<DT><span class="strong">nel_eq_nlist</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. l1 = l2 ⇔ nlen l1 = nlen l2 ∧ ∀m. m < nlen l1 ⇒ nel m l1 = nel m l2
+</pre>
+
+<DT><span class="strong">nel_napp</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. n < nlen l1 ⇒ nel n (napp l1 l2) = nel n l1
+</pre>
+
+<DT><span class="strong">nel_napp2</span>
+<DD>
+<pre>
+⊢ ∀y n x. nlen x ≤ n ⇒ nel n (napp x y) = nel (n − nlen x) y
+</pre>
+
+<DT><span class="strong">nel_ncons_nonzero</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ nel n (ncons h t) = nel (n − 1) t
+</pre>
+
+<DT><span class="strong">nel_nfront</span>
+<DD>
+<pre>
+⊢ ∀t. m < nlen (nfront t) ⇒ nel m (nfront t) = nel m t
+</pre>
+
+<DT><span class="strong">nel_nhd</span>
+<DD>
+<pre>
+⊢ nel 0 l = nhd l
+</pre>
+
+<DT><span class="strong">nel_nnil</span>
+<DD>
+<pre>
+⊢ nel x 0 = 0
+</pre>
+
+<DT><span class="strong">nfront_napp_sing</span>
+<DD>
+<pre>
+⊢ ∀pfx. nfront (napp pfx (ncons e 0)) = pfx
+</pre>
+
+<DT><span class="strong">nfront_nnil</span>
+<DD>
+<pre>
+⊢ nfront 0 = 0
+</pre>
+
+<DT><span class="strong">nfront_nsingl</span>
+<DD>
+<pre>
+⊢ nfront (ncons x 0) = 0
+</pre>
+
+<DT><span class="strong">nfront_thm</span>
+<DD>
+<pre>
+⊢ nfront 0 = 0 ∧ nfront (ncons h t) = if t = 0 then 0 else ncons h (nfront t)
+</pre>
+
+<DT><span class="strong">nhd0</span>
+<DD>
+<pre>
+⊢ nhd 0 = 0
+</pre>
+
+<DT><span class="strong">nhd_napp</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. l1 ≠ 0 ⇒ nhd (napp l1 l2) = nhd l1
+</pre>
+
+<DT><span class="strong">nhd_nfront</span>
+<DD>
+<pre>
+⊢ ∀l. l ≠ 0 ∧ ntl l ≠ 0 ⇒ nhd (nfront l) = nhd l
+</pre>
+
+<DT><span class="strong">nhd_thm</span>
+<DD>
+<pre>
+⊢ nhd (ncons h t) = h
+</pre>
+
+<DT><span class="strong">nlast_napp</span>
+<DD>
+<pre>
+⊢ ∀l1 l2. l2 ≠ 0 ⇒ nlast (napp l1 l2) = nlast l2
+</pre>
+
+<DT><span class="strong">nlast_ncons</span>
+<DD>
+<pre>
+⊢ nlast (ncons h tn) = if tn = 0 then h else nlast tn
+</pre>
+
+<DT><span class="strong">nlast_nel</span>
+<DD>
+<pre>
+⊢ ∀l. nlast l = nel (nlen l − 1) l
+</pre>
+
+<DT><span class="strong">nlast_nnil</span>
+<DD>
+<pre>
+⊢ nlast 0 = 0
+</pre>
+
+<DT><span class="strong">nlist_cases</span>
+<DD>
+<pre>
+⊢ ∀n. n = 0 ∨ ∃h t. n = ncons h t
+</pre>
+
+<DT><span class="strong">nlist_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P 0 ∧ (∀h t. P t ⇒ P (ncons h t)) ⇒ ∀n. P n
+</pre>
+
+<DT><span class="strong">nlist_listOfN</span>
+<DD>
+<pre>
+⊢ ∀l. nlist_of (listOfN l) = l
+</pre>
+
+<DT><span class="strong">nlist_of_EQ0</span>
+<DD>
+<pre>
+⊢ (nlist_of l = 0 ⇔ l = []) ∧ (0 = nlist_of l ⇔ l = [])
+</pre>
+
+<DT><span class="strong">nlist_of_INJ</span>
+<DD>
+<pre>
+⊢ ∀n1 n2. nlist_of n1 = nlist_of n2 ⇔ n1 = n2
+</pre>
+
+<DT><span class="strong">nlist_of_SURJ</span>
+<DD>
+<pre>
+⊢ ∀l. ∃n. nlist_of n = l
+</pre>
+
+<DT><span class="strong">nlistrec_def</span>
+<DD>
+<pre>
+⊢ ∀n l f.
+    nlistrec n f l =
+    if l = 0 then n
+    else f (nfst (l − 1)) (nsnd (l − 1)) (nlistrec n f (nsnd (l − 1)))
+</pre>
+
+<DT><span class="strong">nlistrec_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n f l. (l ≠ 0 ⇒ P n f (nsnd (l − 1))) ⇒ P n f l) ⇒ ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">nlistrec_thm</span>
+<DD>
+<pre>
+⊢ nlistrec n f 0 = n ∧ nlistrec n f (ncons h t) = f h t (nlistrec n f t)
+</pre>
+
+<DT><span class="strong">nsnoc_cases</span>
+<DD>
+<pre>
+⊢ ∀t. t = 0 ∨ ∃f l. t = napp f (ncons l 0)
+</pre>
+
+<DT><span class="strong">ntl_DROP</span>
+<DD>
+<pre>
+⊢ ∀l m. ntl (nlist_of (DROP m l)) = ndrop m (ntl (nlist_of l))
+</pre>
+
+<DT><span class="strong">ntl_LE</span>
+<DD>
+<pre>
+⊢ ∀n. ntl n ≤ n
+</pre>
+
+<DT><span class="strong">ntl_LT</span>
+<DD>
+<pre>
+⊢ 0 < n ⇒ ntl n < n
+</pre>
+
+<DT><span class="strong">ntl_ndrop</span>
+<DD>
+<pre>
+⊢ ∀l. ntl (ndrop n l) = ndrop n (ntl l)
+</pre>
+
+<DT><span class="strong">ntl_nonzero_LESS</span>
+<DD>
+<pre>
+⊢ ∀n. n ≠ 0 ⇒ ntl n < n
+</pre>
+
+<DT><span class="strong">ntl_thm</span>
+<DD>
+<pre>
+⊢ ntl (ncons h t) = t
+</pre>
+
+<DT><span class="strong">ntl_zero</span>
+<DD>
+<pre>
+⊢ ntl 0 = 0
+</pre>
+
+<DT><span class="strong">ntl_zero_empty_OR_ncons</span>
+<DD>
+<pre>
+⊢ ntl l = 0 ⇔ l = 0 ∨ ∃x. l = ncons x 0
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

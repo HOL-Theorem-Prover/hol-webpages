@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Theory.scrub</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="scrub"><code>scrub</code></h2>
+<pre class="hol4"><code>Theory.scrub : unit -&gt; unit</code></pre>
+<hr />
+<p>Remove all out-of-date elements from the current theory segment.</p>
+<p>An invocation <code>scrub()</code> goes through the current theory
+segment and removes all out-of-date elements.</p>
+<h3 id="failure">Failure</h3>
+<p>Never fails.</p>
+<h3 id="example">Example</h3>
+<p>In the following, we define a concrete type and examine the current
+theory segment to see what consequences of this definition have been
+stored there. Then we delete the type, which turns all those
+consequences into garbage. An query, like <code>current_theorems</code>,
+shows that this garbage is not collected automatically. A manual
+invocation of <code>scrub</code> is necessary to show the true state of
+play.</p>
+<pre class="hol4"><code>   - Hol_datatype `foo = A | B of &#39;a`;
+   &lt;&lt;HOL message: Defined type: &quot;foo&quot;&gt;&gt;
+   &gt; val it = () : unit
+
+   - current_theorems();
+   &gt; val it =
+       [(&quot;foo_induction&quot;, |- !P. P A /\ (!a. P (B a)) ==&gt; !f. P f),
+        (&quot;foo_Axiom&quot;, |- !f0 f1. ?fn. (fn A = f0) /\ !a. fn (B a) = f1 a),
+        (&quot;foo_nchotomy&quot;, |- !f. (f = A) \/ ?a. f = B a),
+        (&quot;foo_case_cong&quot;,
+         |- !M M&#39; v f.
+              (M = M&#39;) /\ ((M&#39; = A) ==&gt; (v = v&#39;)) /\
+              (!a. (M&#39; = B a) ==&gt; (f a = f&#39; a)) ==&gt;
+              (case v f M = case v&#39; f&#39; M&#39;)),
+        (&quot;foo_distinct&quot;, |- !a. ~(A = B a)),
+        (&quot;foo_11&quot;, |- !a a&#39;. (B a = B a&#39;) = (a = a&#39;))] : (string * thm) list
+
+   - delete_type &quot;foo&quot;;
+   &gt; val it = () : unit
+
+   - current_theorems();
+   &gt; val it =
+       [(&quot;foo_induction&quot;, |- !P. P A /\ (!a. P (B a)) ==&gt; !f. P f),
+        (&quot;foo_Axiom&quot;, |- !f0 f1. ?fn. (fn A = f0) /\ !a. fn (B a) = f1 a),
+        (&quot;foo_nchotomy&quot;, |- !f. (f = A) \/ ?a. f = B a),
+        (&quot;foo_case_cong&quot;,
+         |- !M M&#39; v f.
+              (M = M&#39;) /\ ((M&#39; = A) ==&gt; (v = v&#39;)) /\
+              (!a. (M&#39; = B a) ==&gt; (f a = f&#39; a)) ==&gt;
+              (case v f M = case v&#39; f&#39; M&#39;)),
+        (&quot;foo_distinct&quot;, |- !a. ~(A = B a)),
+        (&quot;foo_11&quot;, |- !a a&#39;. (B a = B a&#39;) = (a = a&#39;))] : (string * thm) list
+
+   - scrub();
+   &gt; val it = () : unit
+
+   - current_theorems();
+   &gt; val it = [] : (string * thm) list</code></pre>
+<p>When <code>export_theory</code> is called, it uses <code>scrub</code>
+to prepare the current segment for export. Users can also call
+<code>scrub</code> to find out what setting they are really working
+in.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Theory.uptodate_type.html"><code>Theory.uptodate_type</code></a>,
+<a
+href="Theory.uptodate_term.html"><code>Theory.uptodate_term</code></a>,
+<a href="Theory.uptodate_thm.html"><code>Theory.uptodate_thm</code></a>,
+<a href="Theory.delete_type.html"><code>Theory.delete_type</code></a>,
+<a
+href="Theory.delete_const.html"><code>Theory.delete_const</code></a></p>
+</body>
+</html>

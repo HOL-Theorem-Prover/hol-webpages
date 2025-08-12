@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure Manager</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Manager</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/proofman/Manager.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Manager =
+<a name="line2"></a>sig
+<a name="line3"></a> include Abbrev
+<a name="line4"></a>
+<a name="line5"></a>  datatype proof0
+<a name="line6"></a>       = GOALSTACK of goalStack.gstk History.history
+<a name="line7"></a>       | GOALTREE of goalTree.gtree History.history
+<a name="line8"></a>       | GOALFRAG of goalFrag.goalstate History.history
+<a name="line9"></a>  type tacmodifier = {tacm: tactic -&gt; tactic,
+<a name="line10"></a>                      ltacm : list_tactic -&gt; list_tactic}
+<a name="line11"></a>
+<a name="line12"></a>  datatype proof = PF of proof0 * tacmodifier
+<a name="line13"></a>
+<a name="line14"></a>  datatype proofs = PRFS of proof list
+<a name="line15"></a>  exception NO_PROOFS
+<a name="line16"></a>  val id_tacm : tacmodifier
+<a name="line17"></a>
+<a name="line18"></a>  (* Starting a proof *)
+<a name="line19"></a>  val new_goalstack  : goal -&gt; tacmodifier -&gt; (thm-&gt;thm) -&gt; proof
+<a name="line20"></a>  val new_goaltree   : goal -&gt; tacmodifier -&gt; proof
+<a name="line21"></a>  val new_goalfrag   : goal -&gt; tacmodifier -&gt; proof
+<a name="line22"></a>  val set_goal       : goal -&gt; tacmodifier -&gt; proof
+<a name="line23"></a>  val add            : proof -&gt; proofs -&gt; proofs
+<a name="line24"></a>
+<a name="line25"></a>  (* Undo *)
+<a name="line26"></a>  val backup         : proof -&gt; proof
+<a name="line27"></a>  val set_backup     : int -&gt; proof -&gt; proof
+<a name="line28"></a>  val redo           : proof -&gt; proof
+<a name="line29"></a>  val restore        : proof -&gt; proof
+<a name="line30"></a>  val save           : proof -&gt; proof
+<a name="line31"></a>  val forget_history : proof -&gt; proof
+<a name="line32"></a>  val restart        : proof -&gt; proof
+<a name="line33"></a>  val drop           : proofs -&gt; proofs
+<a name="line34"></a>
+<a name="line35"></a>  (* Applying a tactic to a goal *)
+<a name="line36"></a>  val expand         : tactic -&gt; proof -&gt; proof
+<a name="line37"></a>  val expandf        : tactic -&gt; proof -&gt; proof
+<a name="line38"></a>  val expand_list    : list_tactic -&gt; proof -&gt; proof
+<a name="line39"></a>  val expand_listf   : list_tactic -&gt; proof -&gt; proof
+<a name="line40"></a>  val expand_frag    : goalFrag.frag_tactic -&gt; proof -&gt; proof
+<a name="line41"></a>  val expandv        : string * tactic -&gt; proof -&gt; proof
+<a name="line42"></a>
+<a name="line43"></a>  (* Seeing what the state of the proof manager is *)
+<a name="line44"></a>  val top_thm        : proof -&gt; thm
+<a name="line45"></a>  val initial_goal   : proof -&gt; goal
+<a name="line46"></a>  val finalizer      : proof -&gt; (thm -&gt; thm)
+<a name="line47"></a>  val top_goal       : proof -&gt; goal
+<a name="line48"></a>  val top_goals      : proof -&gt; goal list
+<a name="line49"></a>  val current_proof  : proofs -&gt; proof
+<a name="line50"></a>
+<a name="line51"></a>  (* Switch focus to a different subgoal (or proof attempt) *)
+<a name="line52"></a>  val rotate         : int -&gt; proof -&gt; proof
+<a name="line53"></a>  val flatn          : int -&gt; proof -&gt; proof
+<a name="line54"></a>  val rotate_proofs  : int -&gt; proofs -&gt; proofs
+<a name="line55"></a>
+<a name="line56"></a>  (* Operations on proof attempts *)
+<a name="line57"></a>  val hd_opr         : (proof -&gt; proof) -&gt; proofs -&gt; proofs
+<a name="line58"></a>  val hd_proj        : (proof -&gt; 'a) -&gt; proofs -&gt; 'a
+<a name="line59"></a>
+<a name="line60"></a>  val initial_proofs : unit -&gt; proofs
+<a name="line61"></a>  val set_goal_pp    : goal Parse.pprinter -&gt; goal Parse.pprinter
+<a name="line62"></a>  val std_goal_pp    : goal Parse.pprinter
+<a name="line63"></a>
+<a name="line64"></a>  val pp_proof       : proof Parse.pprinter
+<a name="line65"></a>  val pp_proofs      : proofs Parse.pprinter
+<a name="line66"></a>
+<a name="line67"></a>end
+<a name="line68"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/proofman/Manager.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

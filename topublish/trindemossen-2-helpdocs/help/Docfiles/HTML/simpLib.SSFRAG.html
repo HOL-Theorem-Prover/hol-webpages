@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>simpLib.SSFRAG</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="ssfrag"><code>SSFRAG</code></h2>
+<pre class="hol4"><code>simpLib.SSFRAG : { ac : (thm * thm) list,
+           congs  : thm list,
+           convs  : {conv  : (term list -&gt; conv) -&gt; term list -&gt; conv,
+                     key   : (term list * term) option,
+                     name  : string,
+                     trace : int} list,
+           dprocs : Traverse.reducer list,
+           filter : (controlled_thm -&gt; controlled_thm list) option,
+           name   : string option,
+           rewrs  : thm list } -&gt; ssfrag</code></pre>
+<hr />
+<p>Constructs <code>ssfrag</code> values.</p>
+<p>The <code>ssfrag</code> type is the way in which simplification
+components are packaged up and made available to the simplifier (though
+<code>ssfrag</code> values must first be turned into simpsets, either by
+addition to an existing simpset, or with the <code>mk_simpset</code>
+function).</p>
+<p>The big record type passed to <code>SSFRAG</code> as an argument has
+seven fields. Here we describe each in turn.</p>
+<p>The <code>ac</code> field is a list of “AC theorem” pairs. Each such
+pair is the pair of theorems stating that a given binary function is
+associative and commutative. The theorems can be given in either order,
+can present the associativity theorem in either direction, and can be
+generalised to any extent.</p>
+<p>The <code>congs</code> field is a list of congruence theorems
+justifying the addition of theorems to simplification contexts. For
+example, the congruence theorem for implication is</p>
+<pre class="hol4"><code>   |- (P = P&#39;) ==&gt; (P&#39; ==&gt; (Q = Q&#39;)) ==&gt; (P ==&gt; Q = P&#39; ==&gt; Q&#39;)</code></pre>
+<p>This theorem encodes a rewriting strategy. The consequent of the
+chain of implications is the form of term in question, where the
+appropriate components have been rewritten. Then, in left-to-right
+order, the various antecedents of the implication specify the rewriting
+strategy which gives rise to the consequent. In this example,
+<code>P</code> is first simplified to <code>P'</code> without any
+additional context, then, using <code>P'</code> as additional context,
+simplification of <code>Q</code> proceeds, producing <code>Q'</code>.
+Another example is a rule for conjunction:</p>
+<pre class="hol4"><code>   |- (P ==&gt; (Q = Q&#39;)) ==&gt; (Q&#39; ==&gt; (P = P&#39;)) ==&gt; ((P /\ Q) = (P&#39; /\ Q&#39;))</code></pre>
+<p>Here <code>P</code> is assumed while <code>Q</code> is simplified to
+<code>Q'</code>. Then, <code>Q'</code> is assumed while <code>P</code>
+is simplified to <code>P'</code>. If an antecedent doesn’t involve the
+relation in question (here, equality) then it is treated as a
+side-condition, and the simplifier will be recursively invoked to try
+and solve it.</p>
+<p>Higher-order congruence rules are also possible. These provide a
+method for dealing with bound variables. The following is a rule for the
+restricted universal quantifier, for example:</p>
+<pre class="hol4"><code>   |- (P = Q) ==&gt; (!v. v IN Q ==&gt; (f v = g v)) ==&gt;
+      (RES_FORALL P f = RES_FORALL Q g)</code></pre>
+<p>(If <code>f</code> is an abstraction, <code>\x. t</code>, then
+<code>RES_FORALL P f</code> is pretty-printed as <code>!x::P. t</code>)
+Terms in the conclusions of higher-order congruence rules that might be
+abstractions (such as <code>f</code> above) should be kept as variables,
+rather than written out as abstractions. In other words, the conclusion
+of the congruence rule above should not be written as</p>
+<pre class="hol4"><code>   RES_FORALL P (\v. f v) = RES_FORALL Q (\v. g v)</code></pre>
+<p>The <code>convs</code> field is a list of conversions that the
+simplifier will apply. Each conversion added to an <code>ssfrag</code>
+value is done so in a record consisting of four fields.</p>
+<p>The <code>conv</code> field of this subsidiary record type includes
+the value of the conversion itself. When the simplifier applies the
+conversion it is actually passed two extra arguments (as the type
+indicates). The first is a solver function that can be used to
+recursively do side-condition solving, and the second is a stack of
+side-conditions that have been accumulated to date. Many conversions
+will typically ignore these arguments (as in the example below).</p>
+<p>The <code>key</code> field of the subsidiary record type is an
+optional pattern, specifying the places where the conversion should be
+applied. If the value is <code>NONE</code>, then the conversion will be
+applied to all sub-terms. If the value is <code>SOME(lcs, t)</code>,
+then the term <code>t</code> is used as a pattern specifying those terms
+to which the conversion should be applied. Further, the list
+<code>lcs</code> (which must be a list of variables), specifies those
+variables in <code>t</code> which shouldn’t be generalised against; they
+are effectively local constants. Note, however, that the types in the
+pattern term <code>t</code> will not be used to eliminate possible
+matches, so that if a match is desired with a particular type
+instantiation of a term, then the conversion will need to reject the
+input itself. The <code>name</code> and <code>trace</code> fields are
+only relevant to the debugging facilities of the simplifier.</p>
+<p>The <code>dprocs</code> field of the record passed to
+<code>SSFRAG</code> is where decision procedures can be specified.
+Documentation describing the construction and use of values of type
+<code>reducer</code> is available in the DESCRIPTION.</p>
+<p>The <code>filter</code> field of the record is an optional function,
+which, if present, is composed with the standard simplifier’s function
+for generating rewrites from theorems, and replaces that function. The
+version of this present in <code>bool_ss</code> and its descendents
+will, for example, turn <code>|- P /\ Q</code> into <code>|- P</code>
+and <code>|- Q</code>, and <code>|- ~(t1 = t2)</code> into
+<code>|- (t1 = t2) = F</code> and <code>|- (t2 = t1) = F</code>.</p>
+<p>The <code>controlled_thm</code> type is defined in the module
+<code>BoundedRewrites</code>, and pairs a theorem with a bound, which is
+either the value <code>UNBOUNDED</code> or the constructor
+<code>BOUNDED</code> applied to an integer reference. The reference is
+used to limit the number of times a rewrite may be applied. The filter
+gets information as to whether and how a rewrite is bounded as this can
+affect its decision on whether or not to include a rewrite at all (if it
+looks as if it will loop, and the bound is <code>UNBOUNDED</code>, it
+should be dropped, but it may choose to keep it if there is bound
+present).</p>
+<p>The <code>rewrs</code> field of the record is a list of rewrite
+theorems that are to be applied.</p>
+<p>The <code>name</code> field of the record is an optional name for the
+simpset fragment that is used when it, and simpsets that it becomes part
+of are pretty-printed.</p>
+<h3 id="failure">Failure</h3>
+<p>Never fails. Failure to provide theorems of just the right form may
+cause later application of simplification functions to fail,
+documentation to the contrary notwithstanding.</p>
+<h3 id="example">Example</h3>
+<p>Given a conversion <code>MUL_CONV</code> to calculate
+multiplications, the following illustrates how this can be added to a
+simpset:</p>
+<pre class="hol4"><code>   - val ssd = SSFRAG {ac = [], congs = [],
+                        convs = [{conv = K (K MUL_CONV),
+                                  key= SOME ([], Term`x * y`),
+                                  name = &quot;MUL_CONV&quot;,
+                                  trace = 2}],
+                        dprocs = [], filter = NONE, rewrs = []};
+   &gt; val ssd =
+       SSFRAG{ac = [], congs = [],
+               convs =
+                 [{conv = fn, key = SOME([], `x * y`), name = &quot;MUL_CONV&quot;,
+                   trace = 2}], dprocs = [], filter = NONE, rewrs = []}
+       : ssfrag
+   - SIMP_CONV bool_ss [] (Term`3 * 4`);
+   &gt; val it = |- 3 * 4 = 3 * 4 : thm
+   - SIMP_CONV (bool_ss ++ ssd) [] (Term`3 * 4`);
+   &gt; val it = |- 3 * 4 = 12 : thm</code></pre>
+<p>Given the theorems <code>ADD_SYM</code> and <code>ADD_ASSOC</code>
+from <code>arithmeticTheory</code>, we can construct a normaliser for
+additive terms.</p>
+<pre class="hol4"><code>   - val ssd2 = SSFRAG {ac = [(SPEC_ALL ADD_ASSOC, SPEC_ALL ADD_SYM)],
+                         congs = [], convs = [], dprocs = [],
+                         filter = NONE, rewrs = []};
+   &gt; val ssd2 =
+       SSFRAG{ac = [(|- m + n + p = (m + n) + p, |- m + n = n + m)],
+               congs = [], convs = [], dprocs = [], filter = NONE,
+               rewrs = []}
+       : ssfrag
+   - SIMP_CONV (bool_ss ++ ssd2) [] (Term`(y + 3) + x + 4`);
+     (* note that the printing of + in this example is that of a
+        right associative operator.*)
+   &gt; val it = |- (y + 3) + x + 4 = 3 + 4 + x + y : thm</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a href="simpLib..KAL.html"><code>simpLib.++</code></a>, <a
+href="boolSimps.bool_ss.html"><code>boolSimps.bool_ss</code></a>, <a
+href="simpLib.Cong.html"><code>simpLib.Cong</code></a>, <a
+href="simpLib.mk_simpset.html"><code>simpLib.mk_simpset</code></a>, <a
+href="simpLib.rewrites.html"><code>simpLib.rewrites</code></a>, <a
+href="simpLib.SIMP_CONV.html"><code>simpLib.SIMP_CONV</code></a></p>
+</body>
+</html>

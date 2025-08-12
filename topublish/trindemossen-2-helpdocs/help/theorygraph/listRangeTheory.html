@@ -1,0 +1,532 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: listRange</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "listRange"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "listTheory.html"><span class="strong">list</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">listRangeINC</span>
+    <td>
+    :num -> num -> num list
+    <tr><td>
+    <span class="strong">listRangeLHI</span>
+    <td>
+    :num -> num -> num list
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">listRangeINC_def</span>
+<DD>
+<pre>
+⊢ ∀m n. [m .. n] = GENLIST (λi. m + i) (n + 1 − m)
+</pre>
+
+<DT><span class="strong">listRangeLHI_def</span>
+<DD>
+<pre>
+⊢ ∀m n. [m ..< n] = GENLIST (λi. m + i) (n − m)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">EL_listRangeLHI</span>
+<DD>
+<pre>
+⊢ lo + i < hi ⇒ EL i [lo ..< hi] = lo + i
+</pre>
+
+<DT><span class="strong">LENGTH_listRangeLHI</span>
+<DD>
+<pre>
+⊢ LENGTH [lo ..< hi] = hi − lo
+</pre>
+
+<DT><span class="strong">MEM_listRangeINC</span>
+<DD>
+<pre>
+⊢ MEM x [m .. n] ⇔ m ≤ x ∧ x ≤ n
+</pre>
+
+<DT><span class="strong">MEM_listRangeLHI</span>
+<DD>
+<pre>
+⊢ MEM x [m ..< n] ⇔ m ≤ x ∧ x < n
+</pre>
+
+<DT><span class="strong">every_range_cons</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    a ≤ b ⇒ ((∀j. a ≤ j ∧ j ≤ b ⇒ f j) ⇔ f a ∧ ∀j. a + 1 ≤ j ∧ j ≤ b ⇒ f j)
+</pre>
+
+<DT><span class="strong">every_range_less_ends</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    a ≤ b ⇒ ((∀j. a ≤ j ∧ j ≤ b ⇒ f j) ⇔ f a ∧ f b ∧ ∀j. a < j ∧ j < b ⇒ f j)
+</pre>
+
+<DT><span class="strong">every_range_sing</span>
+<DD>
+<pre>
+⊢ ∀a j. a ≤ j ∧ j ≤ a ⇔ j = a
+</pre>
+
+<DT><span class="strong">every_range_span_max</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    a < b ∧ f a ∧ ¬f b ⇒
+    ∃m. a ≤ m ∧ m < b ∧ (∀j. a ≤ j ∧ j ≤ m ⇒ f j) ∧ ¬f (SUC m)
+</pre>
+
+<DT><span class="strong">every_range_span_min</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    a < b ∧ ¬f a ∧ f b ⇒
+    ∃m. a < m ∧ m ≤ b ∧ (∀j. m ≤ j ∧ j ≤ b ⇒ f j) ∧ ¬f (PRE m)
+</pre>
+
+<DT><span class="strong">every_range_split_head</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    a ≤ b ⇒
+    ((∀j. PRE a ≤ j ∧ j ≤ b ⇒ f j) ⇔ f (PRE a) ∧ ∀j. a ≤ j ∧ j ≤ b ⇒ f j)
+</pre>
+
+<DT><span class="strong">every_range_split_last</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    a ≤ b ⇒
+    ((∀j. a ≤ j ∧ j ≤ SUC b ⇒ f j) ⇔ f (SUC b) ∧ ∀j. a ≤ j ∧ j ≤ b ⇒ f j)
+</pre>
+
+<DT><span class="strong">exists_range_cons</span>
+<DD>
+<pre>
+⊢ ∀f a b.
+    a ≤ b ⇒ ((∃j. a ≤ j ∧ j ≤ b ∧ f j) ⇔ f a ∨ ∃j. a + 1 ≤ j ∧ j ≤ b ∧ f j)
+</pre>
+
+<DT><span class="strong">exists_range_sing</span>
+<DD>
+<pre>
+⊢ ∀a. ∃j. a ≤ j ∧ j ≤ a ⇔ j = a
+</pre>
+
+<DT><span class="strong">isPREFIX_listRangeINC</span>
+<DD>
+<pre>
+⊢ ∀m n m' n'. m = m' ∧ n ≤ n' ⇒ [m .. n] ≼ [m' .. n']
+</pre>
+
+<DT><span class="strong">isPREFIX_listRangeINC_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n m' n'. m ≤ n ∧ m' ≤ n' ⇒ ([m .. n] ≼ [m' .. n'] ⇔ m = m' ∧ n ≤ n')
+</pre>
+
+<DT><span class="strong">isPREFIX_listRangeLHI</span>
+<DD>
+<pre>
+⊢ ∀m n m' n'. m = m' ∧ n ≤ n' ⇒ [m ..< n] ≼ [m' ..< n']
+</pre>
+
+<DT><span class="strong">isPREFIX_listRangeLHI_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n m' n'. m < n ∧ m' < n' ⇒ ([m ..< n] ≼ [m' ..< n'] ⇔ m = m' ∧ n ≤ n')
+</pre>
+
+<DT><span class="strong">listRangeINC_11</span>
+<DD>
+<pre>
+⊢ ∀m n m' n'. m ≤ n ∧ m' ≤ n' ⇒ ([m .. n] = [m' .. n'] ⇔ m = m' ∧ n = n')
+</pre>
+
+<DT><span class="strong">listRangeINC_1_n</span>
+<DD>
+<pre>
+⊢ ∀n. [1 .. n] = GENLIST SUC n
+</pre>
+
+<DT><span class="strong">listRangeINC_ALL_DISTINCT</span>
+<DD>
+<pre>
+⊢ ∀m n. ALL_DISTINCT [m .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_APPEND</span>
+<DD>
+<pre>
+⊢ ∀a b c. a ≤ b ∧ b ≤ c ⇒ [a .. b] ++ [b + 1 .. c] = [a .. c]
+</pre>
+
+<DT><span class="strong">listRangeINC_CONS</span>
+<DD>
+<pre>
+⊢ m ≤ n ⇒ [m .. n] = m::[m + 1 .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_EL</span>
+<DD>
+<pre>
+⊢ ∀m n i. m + i ≤ n ⇒ EL i [m .. n] = m + i
+</pre>
+
+<DT><span class="strong">listRangeINC_EMPTY</span>
+<DD>
+<pre>
+⊢ n < m ⇒ [m .. n] = []
+</pre>
+
+<DT><span class="strong">listRangeINC_EVERY</span>
+<DD>
+<pre>
+⊢ ∀P m n. EVERY P [m .. n] ⇔ ∀x. m ≤ x ∧ x ≤ n ⇒ P x
+</pre>
+
+<DT><span class="strong">listRangeINC_EVERY_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀P m n. EVERY P [m .. n] ⇔ ¬EXISTS ($¬ ∘ P) [m .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_EVERY_less_last</span>
+<DD>
+<pre>
+⊢ ∀P m n. m ≤ n ⇒ (EVERY P [m .. n] ⇔ P n ∧ EVERY P [m ..< n])
+</pre>
+
+<DT><span class="strong">listRangeINC_EVERY_span_max</span>
+<DD>
+<pre>
+⊢ ∀P m n.
+    m < n ∧ P m ∧ ¬P n ⇒ ∃k. m ≤ k ∧ k < n ∧ EVERY P [m .. k] ∧ ¬P (SUC k)
+</pre>
+
+<DT><span class="strong">listRangeINC_EVERY_span_min</span>
+<DD>
+<pre>
+⊢ ∀P m n.
+    m < n ∧ ¬P m ∧ P n ⇒ ∃k. m < k ∧ k ≤ n ∧ EVERY P [k .. n] ∧ ¬P (PRE k)
+</pre>
+
+<DT><span class="strong">listRangeINC_EVERY_split_head</span>
+<DD>
+<pre>
+⊢ ∀P m n. m ≤ n ⇒ (EVERY P [m − 1 .. n] ⇔ P (m − 1) ∧ EVERY P [m .. n])
+</pre>
+
+<DT><span class="strong">listRangeINC_EVERY_split_last</span>
+<DD>
+<pre>
+⊢ ∀P m n. m ≤ n ⇒ (EVERY P [m .. n + 1] ⇔ P (n + 1) ∧ EVERY P [m .. n])
+</pre>
+
+<DT><span class="strong">listRangeINC_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀P m n. EXISTS P [m .. n] ⇔ ∃x. m ≤ x ∧ x ≤ n ∧ P x
+</pre>
+
+<DT><span class="strong">listRangeINC_EXISTS_EVERY</span>
+<DD>
+<pre>
+⊢ ∀P m n. EXISTS P [m .. n] ⇔ ¬EVERY ($¬ ∘ P) [m .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_FRONT</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n + 1 ⇒ FRONT [m .. n + 1] = [m .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_LAST</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ LAST [m .. n] = n
+</pre>
+
+<DT><span class="strong">listRangeINC_LEN</span>
+<DD>
+<pre>
+⊢ ∀m n. LENGTH [m .. n] = n + 1 − m
+</pre>
+
+<DT><span class="strong">listRangeINC_MAP</span>
+<DD>
+<pre>
+⊢ ∀f n. MAP f [1 .. n] = GENLIST (f ∘ SUC) n
+</pre>
+
+<DT><span class="strong">listRangeINC_MAP_SUC</span>
+<DD>
+<pre>
+⊢ ∀f m n. MAP f [m + 1 .. n + 1] = MAP (f ∘ SUC) [m .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_MEM</span>
+<DD>
+<pre>
+⊢ ∀m n x. MEM x [m .. n] ⇔ m ≤ x ∧ x ≤ n
+</pre>
+
+<DT><span class="strong">listRangeINC_NIL</span>
+<DD>
+<pre>
+⊢ ∀m n. [m .. n] = [] ⇔ n + 1 ≤ m
+</pre>
+
+<DT><span class="strong">listRangeINC_REVERSE</span>
+<DD>
+<pre>
+⊢ ∀m n. (n downto m) = MAP (λx. n − x + m) [m .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_REVERSE_MAP</span>
+<DD>
+<pre>
+⊢ ∀f m n. REVERSE (MAP f [m .. n]) = MAP (f ∘ (λx. n − x + m)) [m .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_SET</span>
+<DD>
+<pre>
+⊢ ∀n. LIST_TO_SET [1 .. n] = natural n
+</pre>
+
+<DT><span class="strong">listRangeINC_SING</span>
+<DD>
+<pre>
+⊢ [m .. m] = [m]
+</pre>
+
+<DT><span class="strong">listRangeINC_SNOC</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n + 1 ⇒ [m .. n + 1] = SNOC (n + 1) [m .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀m n j. m < j ∧ j ≤ n ⇒ [m .. n] = [m .. j − 1] ++ j::[j + 1 .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_SUM</span>
+<DD>
+<pre>
+⊢ ∀m n. SUM [m .. n] = SUM [1 .. n] − SUM [1 .. m − 1]
+</pre>
+
+<DT><span class="strong">listRangeINC_SUM_MAP</span>
+<DD>
+<pre>
+⊢ ∀f n. SUM (MAP f [1 .. SUC n]) = f (SUC n) + SUM (MAP f [1 .. n])
+</pre>
+
+<DT><span class="strong">listRangeINC_has_divisors</span>
+<DD>
+<pre>
+⊢ ∀m n x. 0 < n ∧ m ≤ x ∧ x divides n ⇒ MEM x [m .. n]
+</pre>
+
+<DT><span class="strong">listRangeINC_to_LHI</span>
+<DD>
+<pre>
+⊢ ∀m n. [m .. n] = [m ..< SUC n]
+</pre>
+
+<DT><span class="strong">listRangeLHI_0_n</span>
+<DD>
+<pre>
+⊢ ∀n. [0 ..< n] = GENLIST I n
+</pre>
+
+<DT><span class="strong">listRangeLHI_11</span>
+<DD>
+<pre>
+⊢ ∀m n m' n'. m < n ∧ m' < n' ⇒ ([m ..< n] = [m' ..< n'] ⇔ m = m' ∧ n = n')
+</pre>
+
+<DT><span class="strong">listRangeLHI_ALL_DISTINCT</span>
+<DD>
+<pre>
+⊢ ALL_DISTINCT [lo ..< hi]
+</pre>
+
+<DT><span class="strong">listRangeLHI_APPEND</span>
+<DD>
+<pre>
+⊢ ∀a b c. a ≤ b ∧ b ≤ c ⇒ [a ..< b] ++ [b ..< c] = [a ..< c]
+</pre>
+
+<DT><span class="strong">listRangeLHI_CONS</span>
+<DD>
+<pre>
+⊢ lo < hi ⇒ [lo ..< hi] = lo::[lo + 1 ..< hi]
+</pre>
+
+<DT><span class="strong">listRangeLHI_EL</span>
+<DD>
+<pre>
+⊢ ∀m n i. m + i < n ⇒ EL i [m ..< n] = m + i
+</pre>
+
+<DT><span class="strong">listRangeLHI_EMPTY</span>
+<DD>
+<pre>
+⊢ hi ≤ lo ⇒ [lo ..< hi] = []
+</pre>
+
+<DT><span class="strong">listRangeLHI_EQ</span>
+<DD>
+<pre>
+⊢ [m ..< m] = []
+</pre>
+
+<DT><span class="strong">listRangeLHI_EVERY</span>
+<DD>
+<pre>
+⊢ ∀P m n. EVERY P [m ..< n] ⇔ ∀x. m ≤ x ∧ x < n ⇒ P x
+</pre>
+
+<DT><span class="strong">listRangeLHI_FRONT</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ FRONT [m ..< n + 1] = [m ..< n]
+</pre>
+
+<DT><span class="strong">listRangeLHI_LAST</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ LAST [m ..< n + 1] = n
+</pre>
+
+<DT><span class="strong">listRangeLHI_LEN</span>
+<DD>
+<pre>
+⊢ ∀n m. LENGTH [m ..< n] = n − m
+</pre>
+
+<DT><span class="strong">listRangeLHI_MAP</span>
+<DD>
+<pre>
+⊢ ∀f n. MAP f [0 ..< n] = GENLIST f n
+</pre>
+
+<DT><span class="strong">listRangeLHI_MAP_SUC</span>
+<DD>
+<pre>
+⊢ ∀f m n. MAP f [m + 1 ..< n + 1] = MAP (f ∘ SUC) [m ..< n]
+</pre>
+
+<DT><span class="strong">listRangeLHI_MEM</span>
+<DD>
+<pre>
+⊢ ∀m n x. MEM x [m ..< n] ⇔ m ≤ x ∧ x < n
+</pre>
+
+<DT><span class="strong">listRangeLHI_NIL</span>
+<DD>
+<pre>
+⊢ ∀m n. [m ..< n] = [] ⇔ n ≤ m
+</pre>
+
+<DT><span class="strong">listRangeLHI_REVERSE</span>
+<DD>
+<pre>
+⊢ ∀m n. REVERSE [m ..< n] = MAP (λx. n − 1 − x + m) [m ..< n]
+</pre>
+
+<DT><span class="strong">listRangeLHI_REVERSE_MAP</span>
+<DD>
+<pre>
+⊢ ∀f m n. REVERSE (MAP f [m ..< n]) = MAP (f ∘ (λx. n − 1 − x + m)) [m ..< n]
+</pre>
+
+<DT><span class="strong">listRangeLHI_SET</span>
+<DD>
+<pre>
+⊢ ∀n. LIST_TO_SET [0 ..< n] = count n
+</pre>
+
+<DT><span class="strong">listRangeLHI_SNOC</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≤ n ⇒ [m ..< n + 1] = SNOC n [m ..< n]
+</pre>
+
+<DT><span class="strong">listRangeLHI_SPLIT</span>
+<DD>
+<pre>
+⊢ ∀m n j. m ≤ j ∧ j < n ⇒ [m ..< n] = [m ..< j] ++ j::[j + 1 ..< n]
+</pre>
+
+<DT><span class="strong">listRangeLHI_SUM</span>
+<DD>
+<pre>
+⊢ ∀m n. SUM [m ..< n] = SUM [1 ..< n] − SUM [1 ..< m]
+</pre>
+
+<DT><span class="strong">listRangeLHI_SUM_MAP</span>
+<DD>
+<pre>
+⊢ ∀f n. SUM (MAP f [0 ..< SUC n]) = f n + SUM (MAP f [0 ..< n])
+</pre>
+
+<DT><span class="strong">listRangeLHI_has_divisors</span>
+<DD>
+<pre>
+⊢ ∀m n x. 0 < n ∧ m ≤ x ∧ x divides n ⇒ MEM x [m ..< n + 1]
+</pre>
+
+<DT><span class="strong">listRangeLHI_to_INC</span>
+<DD>
+<pre>
+⊢ ∀m n. [m ..< n + 1] = [m .. n]
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

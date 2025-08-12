@@ -1,0 +1,611 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: bitArith</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "bitArith"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "realTheory.html"><span class="strong">real</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">add</span>
+    <td>
+    :bool list -> bool list -> bool list
+    <tr><td>
+    <span class="strong">add_aux</span>
+    <td>
+    :bool list -> bool list -> bool -> bool list
+    <tr><td> <span class="strong">bleval</span> <td> :bool list -> num
+    <tr><td>
+    <span class="strong">divpow2</span>
+    <td>
+    :bool list -> num -> bool list
+    <tr><td> <span class="strong">fromBL</span> <td> :bool list -> num
+    <tr><td> <span class="strong">frombl</span> <td> :bool -> bool list -> num
+    <tr><td>
+    <span class="strong">lte</span>
+    <td>
+    :bool list -> bool list -> bool
+    <tr><td>
+    <span class="strong">lte_aux</span>
+    <td>
+    :bool list -> bool list -> bool
+    <tr><td>
+    <span class="strong">modpow2</span>
+    <td>
+    :bool list -> num -> bool list
+    <tr><td>
+    <span class="strong">mul</span>
+    <td>
+    :bool list -> bool list -> bool list
+    <tr><td>
+    <span class="strong">mulpow2</span>
+    <td>
+    :bool list -> num -> bool list
+    <tr><td>
+    <span class="strong">sub</span>
+    <td>
+    :bool list -> bool list -> bool list
+    <tr><td>
+    <span class="strong">sub_aux</span>
+    <td>
+    :bool list -> bool list -> bool -> bool list
+    <tr><td> <span class="strong">tobl</span> <td> :num -> bool -> bool list
+    <tr><td>
+    <span class="strong">zeroPad</span>
+    <td>
+    :bool list -> bool list -> bool list # bool list
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">add_def</span>
+<DD>
+<pre>
+⊢ ∀bs1 bs2. add bs1 bs2 = add_aux bs1 bs2 F
+</pre>
+
+<DT><span class="strong">bleval_def_primitive</span>
+<DD>
+<pre>
+⊢ bleval =
+  WFREC (@R. WF R ∧ (∀rest. R rest (T::rest)) ∧ ∀rest. R rest (F::rest))
+    (λbleval a.
+         case a of
+           [] => I 0
+         | T::rest => I (2 * bleval rest + 1)
+         | F::rest => I (2 * bleval rest))
+</pre>
+
+<DT><span class="strong">fromBL_def</span>
+<DD>
+<pre>
+⊢ ∀bs.
+    fromBL bs =
+    if bs = [] then 0
+    else
+      (let
+         bs1 = REV bs []
+       in
+         if HD bs1 then <..num comp'n..>
+         else
+           (let
+              bs2 = dropWhile ($<=> F) bs1;
+              bs3 = REV bs2 []
+            in
+              if bs3 = [] then 0 else <..num comp'n..> ))
+</pre>
+
+<DT><span class="strong">lte_def</span>
+<DD>
+<pre>
+⊢ ∀bs1 bs2.
+    lte bs1 bs2 ⇔
+    (let
+       (bs1pad,bs2pad) = zeroPad bs1 bs2
+     in
+       lte_aux (REV bs1pad []) (REV bs2pad []))
+</pre>
+
+<DT><span class="strong">sub_def</span>
+<DD>
+<pre>
+⊢ ∀bs1 bs2. sub bs1 bs2 = if lte bs2 bs1 then sub_aux bs1 bs2 F else []
+</pre>
+
+<DT><span class="strong">tobl_def</span>
+<DD>
+<pre>
+⊢ (∀b. tobl ZERO b = if b then [] else [T]) ∧
+  (∀n x. tobl <..num comp'n..> x = x::tobl n x) ∧
+  ∀n x. tobl <..num comp'n..> x = ¬x::tobl n F
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">DIV_POW2</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < y ⇒ 2 * x DIV (2 * y) = x DIV y
+</pre>
+
+<DT><span class="strong">EVERYF_bleval0</span>
+<DD>
+<pre>
+⊢ bleval bs = 0 ⇔ EVERY ($<=> F) bs
+</pre>
+
+<DT><span class="strong">EVERYF_suffix_bleval</span>
+<DD>
+<pre>
+⊢ EVERY ($<=> F) s ⇒ bleval (p ++ s) = bleval p
+</pre>
+
+<DT><span class="strong">LASTbl_nonzero</span>
+<DD>
+<pre>
+⊢ LAST (x::xs) ⇒ 0 < bleval (x::xs)
+</pre>
+
+<DT><span class="strong">add_aux_def</span>
+<DD>
+<pre>
+⊢ (∀bs. add_aux [] bs F = bs) ∧ add_aux [] [] T = [T] ∧
+  (∀bs. add_aux [] (F::bs) T = T::bs) ∧
+  (∀bs. add_aux [] (T::bs) T = F::add_aux [] bs T) ∧
+  (∀v5 v4. add_aux (v4::v5) [] F = v4::v5) ∧
+  (∀bs. add_aux (F::bs) [] T = T::bs) ∧
+  (∀bs. add_aux (T::bs) [] T = F::add_aux [] bs T) ∧
+  (∀bs2 bs1. add_aux (F::bs1) (F::bs2) T = T::add_aux bs1 bs2 F) ∧
+  (∀bs2 bs1. add_aux (F::bs1) (F::bs2) F = F::add_aux bs1 bs2 F) ∧
+  (∀bs2 bs1. add_aux (T::bs1) (F::bs2) F = T::add_aux bs1 bs2 F) ∧
+  (∀bs2 bs1. add_aux (T::bs1) (F::bs2) T = F::add_aux bs1 bs2 T) ∧
+  (∀bs2 bs1. add_aux (F::bs1) (T::bs2) T = F::add_aux bs1 bs2 T) ∧
+  (∀bs2 bs1. add_aux (F::bs1) (T::bs2) F = T::add_aux bs1 bs2 F) ∧
+  (∀bs2 bs1. add_aux (T::bs1) (T::bs2) T = T::add_aux bs1 bs2 T) ∧
+  ∀bs2 bs1. add_aux (T::bs1) (T::bs2) F = F::add_aux bs1 bs2 T
+</pre>
+
+<DT><span class="strong">add_aux_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀bs. P [] bs F) ∧ P [] [] T ∧ (∀bs. P [] (F::bs) T) ∧
+      (∀bs. P [] bs T ⇒ P [] (T::bs) T) ∧ (∀v4 v5. P (v4::v5) [] F) ∧
+      (∀bs. P (F::bs) [] T) ∧ (∀bs. P [] bs T ⇒ P (T::bs) [] T) ∧
+      (∀bs1 bs2. P bs1 bs2 F ⇒ P (F::bs1) (F::bs2) T) ∧
+      (∀bs1 bs2. P bs1 bs2 F ⇒ P (F::bs1) (F::bs2) F) ∧
+      (∀bs1 bs2. P bs1 bs2 F ⇒ P (T::bs1) (F::bs2) F) ∧
+      (∀bs1 bs2. P bs1 bs2 T ⇒ P (T::bs1) (F::bs2) T) ∧
+      (∀bs1 bs2. P bs1 bs2 T ⇒ P (F::bs1) (T::bs2) T) ∧
+      (∀bs1 bs2. P bs1 bs2 F ⇒ P (F::bs1) (T::bs2) F) ∧
+      (∀bs1 bs2. P bs1 bs2 T ⇒ P (T::bs1) (T::bs2) T) ∧
+      (∀bs1 bs2. P bs1 bs2 T ⇒ P (T::bs1) (T::bs2) F) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">add_aux_thm</span>
+<DD>
+<pre>
+⊢ ∀m n b. bleval (add_aux m n b) = bleval m + bleval n + if b then 1 else 0
+</pre>
+
+<DT><span class="strong">add_thm</span>
+<DD>
+<pre>
+⊢ bleval (add m n) = bleval m + bleval n
+</pre>
+
+<DT><span class="strong">bleval_APPEND</span>
+<DD>
+<pre>
+⊢ bleval (xs ++ ys) = bleval ys * 2 ** LENGTH xs + bleval xs
+</pre>
+
+<DT><span class="strong">bleval_def</span>
+<DD>
+<pre>
+⊢ bleval [] = 0 ∧ (∀rest. bleval (T::rest) = 2 * bleval rest + 1) ∧
+  ∀rest. bleval (F::rest) = 2 * bleval rest
+</pre>
+
+<DT><span class="strong">bleval_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P [] ∧ (∀rest. P rest ⇒ P (T::rest)) ∧ (∀rest. P rest ⇒ P (F::rest)) ⇒
+      ∀v. P v
+</pre>
+
+<DT><span class="strong">bleval_less</span>
+<DD>
+<pre>
+⊢ ∀bs. bleval bs < 2 ** LENGTH bs
+</pre>
+
+<DT><span class="strong">bleval_less_large</span>
+<DD>
+<pre>
+⊢ LENGTH bs ≤ k ⇒ bleval bs < 2 ** k
+</pre>
+
+<DT><span class="strong">divpow2_compute</span>
+<DD>
+<pre>
+⊢ (∀k. divpow2 [] k = []) ∧ (∀v3 v2. divpow2 (v2::v3) 0 = v2::v3) ∧
+  (∀k bs b.
+     divpow2 (b::bs) <..num comp'n..> = divpow2 bs (<..num comp'n..> − 1)) ∧
+  ∀k bs b. divpow2 (b::bs) <..num comp'n..> = divpow2 bs <..num comp'n..>
+</pre>
+
+<DT><span class="strong">divpow2_def</span>
+<DD>
+<pre>
+⊢ (∀k. divpow2 [] k = []) ∧ (∀v3 v2. divpow2 (v2::v3) 0 = v2::v3) ∧
+  ∀k bs b. divpow2 (b::bs) (SUC k) = divpow2 bs k
+</pre>
+
+<DT><span class="strong">divpow2_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀k. P [] k) ∧ (∀v2 v3. P (v2::v3) 0) ∧
+      (∀b bs k. P bs k ⇒ P (b::bs) (SUC k)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">divpow2_thm</span>
+<DD>
+<pre>
+⊢ ∀x k. bleval (divpow2 x k) = bleval x DIV 2 ** k
+</pre>
+
+<DT><span class="strong">fromBL_correct</span>
+<DD>
+<pre>
+⊢ fromBL bs = bleval bs
+</pre>
+
+<DT><span class="strong">frombl_correct</span>
+<DD>
+<pre>
+⊢ bl ≠ [] ∧ LAST bl ⇒ frombl F bl = bleval bl ∧ frombl T bl = bleval bl − 1
+</pre>
+
+<DT><span class="strong">frombl_def</span>
+<DD>
+<pre>
+⊢ (∀addedp. frombl addedp [] = 0) ∧ frombl T [T] = ZERO ∧
+  frombl F [T] = <..num comp'n..> ∧
+  (∀rest. frombl T (F::rest) = <..num comp'n..> ) ∧
+  (∀rest. frombl F (F::rest) = <..num comp'n..> ) ∧
+  (∀v5 v4. frombl T (T::v4::v5) = <..num comp'n..> ) ∧
+  ∀v7 v6. frombl F (T::v6::v7) = <..num comp'n..>
+</pre>
+
+<DT><span class="strong">frombl_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀addedp. P addedp []) ∧ P T [T] ∧ P F [T] ∧
+      (∀rest. P T rest ⇒ P T (F::rest)) ∧ (∀rest. P T rest ⇒ P F (F::rest)) ∧
+      (∀v4 v5. P T (v4::v5) ⇒ P T (T::v4::v5)) ∧
+      (∀v6 v7. P F (v6::v7) ⇒ P F (T::v6::v7)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">id_thm</span>
+<DD>
+<pre>
+⊢ ∀x. x = x
+</pre>
+
+<DT><span class="strong">karatsuba_bit</span>
+<DD>
+<pre>
+⊢ ∀x y.
+    bleval (mul x y) =
+    bleval
+      (let
+         d =
+           fromBL
+             (divpow2
+                (add (divpow2 (tobl (LENGTH x) F) 1)
+                   (divpow2 (tobl (LENGTH y) F) 1)) 1) + 1;
+         x1 = divpow2 x d;
+         x0 = modpow2 x d;
+         y1 = divpow2 y d;
+         y0 = modpow2 y d;
+         z0 = mul x0 y0;
+         z2 = mul x1 y1;
+         z1a = add x1 x0;
+         z1b = add y1 y0;
+         z1Mul = mul z1a z1b;
+         z1 = sub (sub z1Mul z2) z0
+       in
+         add (mulpow2 (add (mulpow2 z2 d) z1) d) z0)
+</pre>
+
+<DT><span class="strong">karatsuba_num</span>
+<DD>
+<pre>
+⊢ ∀d x y.
+    0 < d ⇒
+    x * y =
+    (let
+       x1 = x DIV d;
+       x0 = x MOD d;
+       y1 = y DIV d;
+       y0 = y MOD d;
+       z0 = x0 * y0;
+       z2 = x1 * y1;
+       z1a = x1 + x0;
+       z1b = y1 + y0;
+       z1 = z1a * z1b;
+       z1 = z1 − z2 − z0
+     in
+       (z2 * d + z1) * d + z0)
+</pre>
+
+<DT><span class="strong">lte_aux_def</span>
+<DD>
+<pre>
+⊢ (lte_aux [] [] ⇔ T) ∧ (∀bs2 bs1. lte_aux (F::bs1) (T::bs2) ⇔ T) ∧
+  (∀bs2 bs1. lte_aux (T::bs1) (F::bs2) ⇔ F) ∧
+  (∀bs2 bs1. lte_aux (T::bs1) (T::bs2) ⇔ lte_aux bs1 bs2) ∧
+  (∀bs2 bs1. lte_aux (F::bs1) (F::bs2) ⇔ lte_aux bs1 bs2) ∧
+  (∀v8 v7. lte_aux [] (v7::v8) ⇔ F) ∧ ∀v4 v3. lte_aux (v3::v4) [] ⇔ F
+</pre>
+
+<DT><span class="strong">lte_aux_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P [] [] ∧ (∀bs1 bs2. P (F::bs1) (T::bs2)) ∧
+      (∀bs1 bs2. P (T::bs1) (F::bs2)) ∧
+      (∀bs1 bs2. P bs1 bs2 ⇒ P (T::bs1) (T::bs2)) ∧
+      (∀bs1 bs2. P bs1 bs2 ⇒ P (F::bs1) (F::bs2)) ∧ (∀v7 v8. P [] (v7::v8)) ∧
+      (∀v3 v4. P (v3::v4) []) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">lte_aux_thm</span>
+<DD>
+<pre>
+⊢ ∀bs1 bs2.
+    LENGTH bs1 = LENGTH bs2 ⇒
+    (lte_aux bs1 bs2 ⇔ bleval (REVERSE bs1) ≤ bleval (REVERSE bs2))
+</pre>
+
+<DT><span class="strong">lte_thm</span>
+<DD>
+<pre>
+⊢ ∀bs1 bs2. lte bs1 bs2 ⇔ bleval bs1 ≤ bleval bs2
+</pre>
+
+<DT><span class="strong">mk_frac_thm</span>
+<DD>
+<pre>
+⊢ ∀x. x = x / 1
+</pre>
+
+<DT><span class="strong">modpow2_compute</span>
+<DD>
+<pre>
+⊢ (∀k. modpow2 [] k = []) ∧ (∀v3 v2. modpow2 (v2::v3) 0 = []) ∧
+  (∀k bs b.
+     modpow2 (b::bs) <..num comp'n..> = b::modpow2 bs (<..num comp'n..> − 1)) ∧
+  ∀k bs b. modpow2 (b::bs) <..num comp'n..> = b::modpow2 bs <..num comp'n..>
+</pre>
+
+<DT><span class="strong">modpow2_def</span>
+<DD>
+<pre>
+⊢ (∀k. modpow2 [] k = []) ∧ (∀v3 v2. modpow2 (v2::v3) 0 = []) ∧
+  ∀k bs b. modpow2 (b::bs) (SUC k) = b::modpow2 bs k
+</pre>
+
+<DT><span class="strong">modpow2_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀k. P [] k) ∧ (∀v2 v3. P (v2::v3) 0) ∧
+      (∀b bs k. P bs k ⇒ P (b::bs) (SUC k)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">modpow2_thm</span>
+<DD>
+<pre>
+⊢ ∀x k. bleval (modpow2 x k) = bleval x MOD 2 ** k
+</pre>
+
+<DT><span class="strong">mul_def</span>
+<DD>
+<pre>
+⊢ (∀v0. mul [] v0 = []) ∧
+  (∀bs2 bs. mul (T::bs) bs2 = add bs2 (mul bs (F::bs2))) ∧
+  ∀bs2 bs. mul (F::bs) bs2 = mul bs (F::bs2)
+</pre>
+
+<DT><span class="strong">mul_frac_thm</span>
+<DD>
+<pre>
+⊢ ∀a b c d. a / b * (c / d) = a * c / (b * d)
+</pre>
+
+<DT><span class="strong">mul_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀v0. P [] v0) ∧ (∀bs bs2. P bs (F::bs2) ⇒ P (T::bs) bs2) ∧
+      (∀bs bs2. P bs (F::bs2) ⇒ P (F::bs) bs2) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">mul_thm</span>
+<DD>
+<pre>
+⊢ ∀x y. bleval (mul x y) = bleval x * bleval y
+</pre>
+
+<DT><span class="strong">mulpow2_compute</span>
+<DD>
+<pre>
+⊢ (∀v0. mulpow2 [] v0 = []) ∧ (∀v3 v2. mulpow2 (v2::v3) 0 = v2::v3) ∧
+  (∀v5 v4 k.
+     mulpow2 (v4::v5) <..num comp'n..> =
+     F::mulpow2 (v4::v5) (<..num comp'n..> − 1)) ∧
+  ∀v5 v4 k.
+    mulpow2 (v4::v5) <..num comp'n..> = F::mulpow2 (v4::v5) <..num comp'n..>
+</pre>
+
+<DT><span class="strong">mulpow2_def</span>
+<DD>
+<pre>
+⊢ (∀v0. mulpow2 [] v0 = []) ∧ (∀v3 v2. mulpow2 (v2::v3) 0 = v2::v3) ∧
+  ∀v5 v4 k. mulpow2 (v4::v5) (SUC k) = F::mulpow2 (v4::v5) k
+</pre>
+
+<DT><span class="strong">mulpow2_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀v0. P [] v0) ∧ (∀v2 v3. P (v2::v3) 0) ∧
+      (∀v4 v5 k. P (v4::v5) k ⇒ P (v4::v5) (SUC k)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">mulpow2_thm</span>
+<DD>
+<pre>
+⊢ ∀bs k. bleval (mulpow2 bs k) = bleval bs * 2 ** k
+</pre>
+
+<DT><span class="strong">sub_aux_def</span>
+<DD>
+<pre>
+⊢ (∀v1 v0. sub_aux [] v0 v1 = []) ∧
+  (∀bs1. sub_aux (F::bs1) [] T = T::sub_aux bs1 [] T) ∧
+  (∀bs1. sub_aux (T::bs1) [] T = F::bs1) ∧
+  (∀bs1. sub_aux (F::bs1) [] F = F::bs1) ∧
+  (∀bs1. sub_aux (T::bs1) [] F = T::bs1) ∧
+  (∀bs2 bs1. sub_aux (F::bs1) (F::bs2) T = T::sub_aux bs1 bs2 T) ∧
+  (∀bs2 bs1. sub_aux (F::bs1) (F::bs2) F = F::sub_aux bs1 bs2 F) ∧
+  (∀bs2 bs1. sub_aux (F::bs1) (T::bs2) T = F::sub_aux bs1 bs2 T) ∧
+  (∀bs2 bs1. sub_aux (F::bs1) (T::bs2) F = T::sub_aux bs1 bs2 T) ∧
+  (∀bs2 bs1. sub_aux (T::bs1) (F::bs2) T = F::sub_aux bs1 bs2 F) ∧
+  (∀bs2 bs1. sub_aux (T::bs1) (F::bs2) F = T::sub_aux bs1 bs2 F) ∧
+  (∀bs2 bs1. sub_aux (T::bs1) (T::bs2) T = T::sub_aux bs1 bs2 T) ∧
+  ∀bs2 bs1. sub_aux (T::bs1) (T::bs2) F = F::sub_aux bs1 bs2 F
+</pre>
+
+<DT><span class="strong">sub_aux_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀v0 v1. P [] v0 v1) ∧ (∀bs1. P bs1 [] T ⇒ P (F::bs1) [] T) ∧
+      (∀bs1. P (T::bs1) [] T) ∧ (∀bs1. P (F::bs1) [] F) ∧
+      (∀bs1. P (T::bs1) [] F) ∧
+      (∀bs1 bs2. P bs1 bs2 T ⇒ P (F::bs1) (F::bs2) T) ∧
+      (∀bs1 bs2. P bs1 bs2 F ⇒ P (F::bs1) (F::bs2) F) ∧
+      (∀bs1 bs2. P bs1 bs2 T ⇒ P (F::bs1) (T::bs2) T) ∧
+      (∀bs1 bs2. P bs1 bs2 T ⇒ P (F::bs1) (T::bs2) F) ∧
+      (∀bs1 bs2. P bs1 bs2 F ⇒ P (T::bs1) (F::bs2) T) ∧
+      (∀bs1 bs2. P bs1 bs2 F ⇒ P (T::bs1) (F::bs2) F) ∧
+      (∀bs1 bs2. P bs1 bs2 T ⇒ P (T::bs1) (T::bs2) T) ∧
+      (∀bs1 bs2. P bs1 bs2 F ⇒ P (T::bs1) (T::bs2) F) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">sub_aux_thm</span>
+<DD>
+<pre>
+⊢ ∀bs1 bs2 b.
+    bleval bs2 + (if b then 1 else 0) ≤ bleval bs1 ⇒
+    bleval (sub_aux bs1 bs2 b) =
+    bleval bs1 − (bleval bs2 + if b then 1 else 0)
+</pre>
+
+<DT><span class="strong">sub_thm</span>
+<DD>
+<pre>
+⊢ ∀m n. bleval (sub m n) = bleval m − bleval n
+</pre>
+
+<DT><span class="strong">tobl0</span>
+<DD>
+<pre>
+⊢ tobl 0 b = tobl ZERO b
+</pre>
+
+<DT><span class="strong">tobl_NUMERAL</span>
+<DD>
+<pre>
+⊢ tobl <..num comp'n..> = tobl x
+</pre>
+
+<DT><span class="strong">tobl_correct</span>
+<DD>
+<pre>
+⊢ bleval (tobl n T) = n ∧ bleval (tobl n F) = n + 1
+</pre>
+
+<DT><span class="strong">zeroPad_def</span>
+<DD>
+<pre>
+⊢ zeroPad [] [] = ([],[]) ∧
+  (∀bs1 b.
+     zeroPad (b::bs1) [] =
+     (let (bs1pad,bs2pad) = zeroPad bs1 [] in (b::bs1pad,F::bs2pad))) ∧
+  (∀bs2 b.
+     zeroPad [] (b::bs2) =
+     (let (bs1pad,bs2pad) = zeroPad [] bs2 in (F::bs1pad,b::bs2pad))) ∧
+  ∀bs2 bs1 b2 b1.
+    zeroPad (b1::bs1) (b2::bs2) =
+    (let (bs1pad,bs2pad) = zeroPad bs1 bs2 in (b1::bs1pad,b2::bs2pad))
+</pre>
+
+<DT><span class="strong">zeroPad_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P [] [] ∧ (∀b bs1. P bs1 [] ⇒ P (b::bs1) []) ∧
+      (∀b bs2. P [] bs2 ⇒ P [] (b::bs2)) ∧
+      (∀b1 bs1 b2 bs2. P bs1 bs2 ⇒ P (b1::bs1) (b2::bs2)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">zeroPad_thm</span>
+<DD>
+<pre>
+⊢ ∀bs1 bs2 bs1pad bs2pad.
+    zeroPad bs1 bs2 = (bs1pad,bs2pad) ⇒
+    bleval bs1 = bleval bs1pad ∧ bleval bs2 = bleval bs2pad ∧
+    LENGTH bs1pad = LENGTH bs2pad
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

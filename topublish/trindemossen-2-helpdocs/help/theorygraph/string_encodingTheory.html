@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: string_encoding</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "string_encoding"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "ASCIInumbersTheory.html"><span class="strong">ASCIInumbers</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">delimiter</span>
+    <td>
+    0
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">DQ</span>
+    <td>
+    :delimiter
+    <tr><td> <span class="strong">PIPE</span> <td> :delimiter
+    <tr><td> <span class="strong">SQ</span> <td> :delimiter
+    <tr><td>
+    <span class="strong">char_decode</span>
+    <td>
+    :delimiter option -> string -> (char # string) option
+    <tr><td>
+    <span class="strong">char_encode</span>
+    <td>
+    :delimiter option -> char -> string
+    <tr><td> <span class="strong">del_to_char</span> <td> :delimiter -> char
+    <tr><td> <span class="strong">delimiter2num</span> <td> :delimiter -> num
+    <tr><td>
+    <span class="strong">delimiter_CASE</span>
+    <td>
+    :delimiter -> α -> α -> α -> α
+    <tr><td> <span class="strong">delimiter_size</span> <td> :delimiter -> num
+    <tr><td>
+    <span class="strong">delopt_to_str</span>
+    <td>
+    :delimiter option -> string
+    <tr><td> <span class="strong">num2delimiter</span> <td> :num -> delimiter
+    <tr><td>
+    <span class="strong">strdecode</span>
+    <td>
+    :delimiter option -> string -> (string # string) option
+    <tr><td>
+    <span class="strong">strencode</span>
+    <td>
+    :delimiter option -> string -> string
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">@tempDQ_def</span>
+<DD>
+<pre>
+⊢ DQ = num2delimiter 0
+</pre>
+
+<DT><span class="strong">@tempPIPE_def</span>
+<DD>
+<pre>
+⊢ PIPE = num2delimiter 2
+</pre>
+
+<DT><span class="strong">@tempSQ_def</span>
+<DD>
+<pre>
+⊢ SQ = num2delimiter 1
+</pre>
+
+<DT><span class="strong">char_decode_def</span>
+<DD>
+<pre>
+⊢ (∀delopt. char_decode delopt "" = NONE) ∧
+  ∀delopt c s.
+    char_decode delopt (STRING c s) =
+    if c = #"\\" then
+      case s of
+        "" => NONE
+      | STRING #"n" stl => SOME (#"\n",stl)
+      | STRING #"t" stl => SOME (#"\t",stl)
+      | STRING #"\\" stl => SOME (#"\\",stl)
+      | STRING c2 stl =>
+        if isDigit c2 then
+          (let
+             d23 = TAKE 2 stl
+           in
+             if STRLEN d23 = 2 ∧ EVERY isDigit d23 then
+               (let
+                  n = toNum (STRING c2 d23)
+                in
+                  if n < 256 then SOME (CHR n,DROP 2 stl) else NONE)
+             else NONE)
+        else
+          case delopt of
+            NONE => NONE
+          | SOME d => if del_to_char d = c2 then SOME (c2,stl) else NONE
+    else if isPrint c then
+      case delopt of
+        NONE => SOME (c,s)
+      | SOME d => if del_to_char d = c then NONE else SOME (c,s)
+    else NONE
+</pre>
+
+<DT><span class="strong">char_encode_def</span>
+<DD>
+<pre>
+⊢ ∀delopt c.
+    char_encode delopt c =
+    if ¬isPrint c then
+      if c = #"\n" then "\\n"
+      else if c = #"\t" then "\\t"
+      else if ORD c < 10 then STRCAT "\\00" (toString (ORD c))
+      else if ORD c < 100 then STRCAT "\\0" (toString (ORD c))
+      else STRCAT "\\" (toString (ORD c))
+    else if c = #"\\" then "\\\\"
+    else
+      case delopt of
+        NONE => STRING c ""
+      | SOME d =>
+        if c = del_to_char d then STRCAT "\\" (STRING c "") else STRING c ""
+</pre>
+
+<DT><span class="strong">del_to_char_def</span>
+<DD>
+<pre>
+⊢ del_to_char DQ = #"\"" ∧ del_to_char SQ = #"'" ∧ del_to_char PIPE = #"|"
+</pre>
+
+<DT><span class="strong">delimiter_BIJ</span>
+<DD>
+<pre>
+⊢ (∀a. num2delimiter (delimiter2num a) = a) ∧
+  ∀r. (λn. n < 3) r ⇔ delimiter2num (num2delimiter r) = r
+</pre>
+
+<DT><span class="strong">delimiter_CASE</span>
+<DD>
+<pre>
+⊢ ∀x v0 v1 v2.
+    (case x of DQ => v0 | SQ => v1 | PIPE => v2) =
+    (λm. if m < 1 then v0 else if m = 1 then v1 else v2) (delimiter2num x)
+</pre>
+
+<DT><span class="strong">delimiter_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION (λn. n < 3) rep
+</pre>
+
+<DT><span class="strong">delimiter_size_def</span>
+<DD>
+<pre>
+⊢ ∀x. delimiter_size x = 0
+</pre>
+
+<DT><span class="strong">delopt_to_str_def</span>
+<DD>
+<pre>
+⊢ delopt_to_str NONE = "" ∧
+  ∀d. delopt_to_str (SOME d) = STRING (del_to_char d) ""
+</pre>
+
+<DT><span class="strong">strencode_def</span>
+<DD>
+<pre>
+⊢ ∀delopt s. strencode delopt s = CONCAT (MAP (char_encode delopt) s)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">char_decode_encode</span>
+<DD>
+<pre>
+⊢ char_decode delopt (STRCAT (char_encode delopt c) s) = SOME (c,s)
+</pre>
+
+<DT><span class="strong">char_decode_reduces</span>
+<DD>
+<pre>
+⊢ char_decode delopt s = SOME (c,s') ⇒ STRLEN s' < STRLEN s
+</pre>
+
+<DT><span class="strong">char_encode_isPrintable</span>
+<DD>
+<pre>
+⊢ EVERY isPrint (char_encode delopt c)
+</pre>
+
+<DT><span class="strong">datatype_delimiter</span>
+<DD>
+<pre>
+⊢ DATATYPE (delimiter DQ SQ PIPE)
+</pre>
+
+<DT><span class="strong">delimiter2num_11</span>
+<DD>
+<pre>
+⊢ ∀a a'. delimiter2num a = delimiter2num a' ⇔ a = a'
+</pre>
+
+<DT><span class="strong">delimiter2num_ONTO</span>
+<DD>
+<pre>
+⊢ ∀r. r < 3 ⇔ ∃a. r = delimiter2num a
+</pre>
+
+<DT><span class="strong">delimiter2num_num2delimiter</span>
+<DD>
+<pre>
+⊢ ∀r. r < 3 ⇔ delimiter2num (num2delimiter r) = r
+</pre>
+
+<DT><span class="strong">delimiter2num_thm</span>
+<DD>
+<pre>
+⊢ delimiter2num DQ = 0 ∧ delimiter2num SQ = 1 ∧ delimiter2num PIPE = 2
+</pre>
+
+<DT><span class="strong">delimiter_Axiom</span>
+<DD>
+<pre>
+⊢ ∀x0 x1 x2. ∃f. f DQ = x0 ∧ f SQ = x1 ∧ f PIPE = x2
+</pre>
+
+<DT><span class="strong">delimiter_EQ_delimiter</span>
+<DD>
+<pre>
+⊢ ∀a a'. a = a' ⇔ delimiter2num a = delimiter2num a'
+</pre>
+
+<DT><span class="strong">delimiter_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' v0 v1 v2.
+    M = M' ∧ (M' = DQ ⇒ v0 = v0') ∧ (M' = SQ ⇒ v1 = v1') ∧
+    (M' = PIPE ⇒ v2 = v2') ⇒
+    (case M of DQ => v0 | SQ => v1 | PIPE => v2) =
+    case M' of DQ => v0' | SQ => v1' | PIPE => v2'
+</pre>
+
+<DT><span class="strong">delimiter_case_def</span>
+<DD>
+<pre>
+⊢ (∀v0 v1 v2. (case DQ of DQ => v0 | SQ => v1 | PIPE => v2) = v0) ∧
+  (∀v0 v1 v2. (case SQ of DQ => v0 | SQ => v1 | PIPE => v2) = v1) ∧
+  ∀v0 v1 v2. (case PIPE of DQ => v0 | SQ => v1 | PIPE => v2) = v2
+</pre>
+
+<DT><span class="strong">delimiter_case_eq</span>
+<DD>
+<pre>
+⊢ (case x of DQ => v0 | SQ => v1 | PIPE => v2) = v ⇔
+  x = DQ ∧ v0 = v ∨ x = SQ ∧ v1 = v ∨ x = PIPE ∧ v2 = v
+</pre>
+
+<DT><span class="strong">delimiter_distinct</span>
+<DD>
+<pre>
+⊢ DQ ≠ SQ ∧ DQ ≠ PIPE ∧ SQ ≠ PIPE
+</pre>
+
+<DT><span class="strong">delimiter_induction</span>
+<DD>
+<pre>
+⊢ ∀P. P DQ ∧ P PIPE ∧ P SQ ⇒ ∀a. P a
+</pre>
+
+<DT><span class="strong">delimiter_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀a. a = DQ ∨ a = SQ ∨ a = PIPE
+</pre>
+
+<DT><span class="strong">num2delimiter_11</span>
+<DD>
+<pre>
+⊢ ∀r r'. r < 3 ⇒ r' < 3 ⇒ (num2delimiter r = num2delimiter r' ⇔ r = r')
+</pre>
+
+<DT><span class="strong">num2delimiter_ONTO</span>
+<DD>
+<pre>
+⊢ ∀a. ∃r. a = num2delimiter r ∧ r < 3
+</pre>
+
+<DT><span class="strong">num2delimiter_delimiter2num</span>
+<DD>
+<pre>
+⊢ ∀a. num2delimiter (delimiter2num a) = a
+</pre>
+
+<DT><span class="strong">num2delimiter_thm</span>
+<DD>
+<pre>
+⊢ num2delimiter 0 = DQ ∧ num2delimiter 1 = SQ ∧ num2delimiter 2 = PIPE
+</pre>
+
+<DT><span class="strong">strdecode_def</span>
+<DD>
+<pre>
+⊢ ∀s delopt.
+    strdecode delopt s =
+    case char_decode delopt s of
+      NONE =>
+        (case (s,delopt) of
+           ("",v1) => SOME ("","")
+         | (STRING c tl,NONE) => NONE
+         | (STRING c tl,SOME d) =>
+           if c = del_to_char d then SOME ("",STRING c tl) else NONE)
+    | SOME (c,rest) => OPTION_MAP (STRING c ## I) (strdecode delopt rest)
+</pre>
+
+<DT><span class="strong">strdecode_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀delopt s.
+         (∀v2 c rest.
+            char_decode delopt s = SOME v2 ∧ v2 = (c,rest) ⇒ P delopt rest) ⇒
+         P delopt s) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">strdecode_strencode</span>
+<DD>
+<pre>
+⊢ strdecode delopt (strencode delopt s) = SOME (s,"")
+</pre>
+
+<DT><span class="strong">strdecode_strencode_tail_delimited</span>
+<DD>
+<pre>
+⊢ strdecode delopt (STRCAT (strencode delopt s) (delopt_to_str delopt)) =
+  SOME (s,delopt_to_str delopt)
+</pre>
+
+<DT><span class="strong">strencode_isPrintable</span>
+<DD>
+<pre>
+⊢ EVERY isPrint (strencode delopt s)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

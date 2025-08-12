@@ -1,0 +1,2520 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: extreal_base</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "extreal_base"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "real_sigmaTheory.html"><span class="strong">real_sigma</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">extreal</span>
+    <td>
+    0
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">NegInf</span>
+    <td>
+    :extreal
+    <tr><td> <span class="strong">Normal</span> <td> :real -> extreal
+    <tr><td> <span class="strong">PosInf</span> <td> :extreal
+    <tr><td>
+    <span class="strong">extreal_CASE</span>
+    <td>
+    :extreal -> α -> α -> (real -> α) -> α
+    <tr><td> <span class="strong">extreal_abs</span> <td> :extreal -> extreal
+    <tr><td>
+    <span class="strong">extreal_add</span>
+    <td>
+    :extreal -> extreal -> extreal
+    <tr><td> <span class="strong">extreal_ainv</span> <td> :extreal -> extreal
+    <tr><td>
+    <span class="strong">extreal_div</span>
+    <td>
+    :extreal -> extreal -> extreal
+    <tr><td> <span class="strong">extreal_inv</span> <td> :extreal -> extreal
+    <tr><td>
+    <span class="strong">extreal_le</span>
+    <td>
+    :extreal -> extreal -> bool
+    <tr><td>
+    <span class="strong">extreal_lt</span>
+    <td>
+    :extreal -> extreal -> bool
+    <tr><td>
+    <span class="strong">extreal_max</span>
+    <td>
+    :extreal -> extreal -> extreal
+    <tr><td>
+    <span class="strong">extreal_min</span>
+    <td>
+    :extreal -> extreal -> extreal
+    <tr><td>
+    <span class="strong">extreal_mul</span>
+    <td>
+    :extreal -> extreal -> extreal
+    <tr><td> <span class="strong">extreal_of_num</span> <td> :num -> extreal
+    <tr><td>
+    <span class="strong">extreal_pow</span>
+    <td>
+    :extreal -> num -> extreal
+    <tr><td> <span class="strong">extreal_size</span> <td> :extreal -> num
+    <tr><td> <span class="strong">extreal_sqrt</span> <td> :extreal -> extreal
+    <tr><td>
+    <span class="strong">extreal_sub</span>
+    <td>
+    :extreal -> extreal -> extreal
+    <tr><td> <span class="strong">real</span> <td> :extreal -> real
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">extreal_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep.
+    TYPE_DEFINITION
+      (λa0.
+           ∀ $var$('extreal').
+             (∀a0.
+                a0 = ind_type$CONSTR 0 ARB (λn. ind_type$BOTTOM) ∨
+                a0 = ind_type$CONSTR (SUC 0) ARB (λn. ind_type$BOTTOM) ∨
+                (∃a. a0 =
+                     (λa.
+                          ind_type$CONSTR (SUC (SUC 0)) a
+                            (λn. ind_type$BOTTOM)) a) ⇒
+                $var$('extreal') a0) ⇒
+             $var$('extreal') a0) rep
+</pre>
+
+<DT><span class="strong">extreal_abs_def_primitive</span>
+<DD>
+<pre>
+⊢ abs =
+  WFREC (@R. WF R)
+    (λextreal_abs a.
+         case a of −∞ => I +∞ | +∞ => I +∞ | Normal x => I (Normal (abs x)))
+</pre>
+
+<DT><span class="strong">extreal_ainv_def</span>
+<DD>
+<pre>
+⊢ -−∞ = +∞ ∧ -+∞ = −∞ ∧ ∀x. -Normal x = Normal (-x)
+</pre>
+
+<DT><span class="strong">extreal_case_def</span>
+<DD>
+<pre>
+⊢ (∀v v1 f. extreal_CASE −∞ v v1 f = v) ∧
+  (∀v v1 f. extreal_CASE +∞ v v1 f = v1) ∧
+  ∀a v v1 f. extreal_CASE (Normal a) v v1 f = f a
+</pre>
+
+<DT><span class="strong">extreal_div_def</span>
+<DD>
+<pre>
+⊢ (∀r. Normal r / +∞ = Normal 0) ∧ (∀r. Normal r / −∞ = Normal 0) ∧
+  ∀x r. r ≠ 0 ⇒ x / Normal r = x * (Normal r)⁻¹
+</pre>
+
+<DT><span class="strong">extreal_inv_def</span>
+<DD>
+<pre>
+⊢ −∞ ⁻¹ = Normal 0 ∧ +∞ ⁻¹ = Normal 0 ∧ ∀r. r ≠ 0 ⇒ (Normal r)⁻¹ = Normal r⁻¹
+</pre>
+
+<DT><span class="strong">extreal_lt_def</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇔ ¬(y ≤ x)
+</pre>
+
+<DT><span class="strong">extreal_max_def</span>
+<DD>
+<pre>
+⊢ ∀x y. max x y = if x ≤ y then y else x
+</pre>
+
+<DT><span class="strong">extreal_min_def</span>
+<DD>
+<pre>
+⊢ ∀x y. min x y = if x ≤ y then x else y
+</pre>
+
+<DT><span class="strong">extreal_of_num_def</span>
+<DD>
+<pre>
+⊢ ∀n. &n = Normal (&n)
+</pre>
+
+<DT><span class="strong">extreal_pow_def</span>
+<DD>
+<pre>
+⊢ (∀a n. Normal a pow n = Normal (a pow n)) ∧
+  (∀n. +∞ pow n = if n = 0 then Normal 1 else +∞) ∧
+  ∀n. −∞ pow n = if n = 0 then Normal 1 else if EVEN n then +∞ else −∞
+</pre>
+
+<DT><span class="strong">extreal_size_def</span>
+<DD>
+<pre>
+⊢ extreal_size −∞ = 0 ∧ extreal_size +∞ = 0 ∧ ∀a. extreal_size (Normal a) = 1
+</pre>
+
+<DT><span class="strong">extreal_sqrt_def</span>
+<DD>
+<pre>
+⊢ (∀x. sqrt (Normal x) = Normal (sqrt x)) ∧ sqrt +∞ = +∞
+</pre>
+
+<DT><span class="strong">extreal_sub</span>
+<DD>
+<pre>
+⊢ ∀x y. x − y = x + -y
+</pre>
+
+<DT><span class="strong">real_def</span>
+<DD>
+<pre>
+⊢ ∀x. real x = if x = −∞ ∨ x = +∞ then 0 else @r. x = Normal r
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">EXTREAL_ARCH</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ ∀y. y ≠ +∞ ⇒ ∃n. y < &n * x
+</pre>
+
+<DT><span class="strong">EXTREAL_ARCH_INV</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ ∃n. (&SUC n)⁻¹ < x
+</pre>
+
+<DT><span class="strong">EXTREAL_ARCH_INV'</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ ∃n. (&SUC n)⁻¹ ≤ x
+</pre>
+
+<DT><span class="strong">EXTREAL_EQ_LADD</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ⇒ (x + y = x + z ⇔ y = z)
+</pre>
+
+<DT><span class="strong">EXTREAL_EQ_RADD</span>
+<DD>
+<pre>
+⊢ ∀x y z. z ≠ −∞ ∧ z ≠ +∞ ⇒ (x + z = y + z ⇔ x = y)
+</pre>
+
+<DT><span class="strong">SIMP_EXTREAL_ARCH</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ +∞ ⇒ ∃n. x ≤ &n
+</pre>
+
+<DT><span class="strong">SIMP_EXTREAL_ARCH_NEG</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ −∞ ⇒ ∃n. -&n ≤ x
+</pre>
+
+<DT><span class="strong">abs_0</span>
+<DD>
+<pre>
+⊢ abs 0 = 0
+</pre>
+
+<DT><span class="strong">abs_abs</span>
+<DD>
+<pre>
+⊢ ∀x. abs (abs x) = abs x
+</pre>
+
+<DT><span class="strong">abs_bounds</span>
+<DD>
+<pre>
+⊢ ∀x k. abs x ≤ k ⇔ -k ≤ x ∧ x ≤ k
+</pre>
+
+<DT><span class="strong">abs_bounds_lt</span>
+<DD>
+<pre>
+⊢ ∀x k. abs x < k ⇔ -k < x ∧ x < k
+</pre>
+
+<DT><span class="strong">abs_div</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ +∞ ∧ x ≠ −∞ ∧ y ≠ 0 ⇒ abs (x / y) = abs x / abs y
+</pre>
+
+<DT><span class="strong">abs_div_normal</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≠ 0 ⇒ abs (x / Normal y) = abs x / Normal (abs y)
+</pre>
+
+<DT><span class="strong">abs_eq_0</span>
+<DD>
+<pre>
+⊢ ∀x. abs x = 0 ⇔ x = 0
+</pre>
+
+<DT><span class="strong">abs_gt_0</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < abs x ⇔ x ≠ 0
+</pre>
+
+<DT><span class="strong">abs_le_0</span>
+<DD>
+<pre>
+⊢ ∀x. abs x ≤ 0 ⇔ x = 0
+</pre>
+
+<DT><span class="strong">abs_le_half_pow2</span>
+<DD>
+<pre>
+⊢ ∀x y. abs (x * y) ≤ Normal (1 / 2) * (x² + y²)
+</pre>
+
+<DT><span class="strong">abs_le_square_plus1</span>
+<DD>
+<pre>
+⊢ ∀x. abs x ≤ x² + 1
+</pre>
+
+<DT><span class="strong">abs_max</span>
+<DD>
+<pre>
+⊢ ∀x. abs x = max x (-x)
+</pre>
+
+<DT><span class="strong">abs_mul</span>
+<DD>
+<pre>
+⊢ ∀x y. abs (x * y) = abs x * abs y
+</pre>
+
+<DT><span class="strong">abs_neg</span>
+<DD>
+<pre>
+⊢ ∀x. x < 0 ⇒ abs x = -x
+</pre>
+
+<DT><span class="strong">abs_neg'</span>
+<DD>
+<pre>
+⊢ ∀x. x ≤ 0 ⇒ abs x = -x
+</pre>
+
+<DT><span class="strong">abs_neg_eq</span>
+<DD>
+<pre>
+⊢ ∀x. abs (-x) = abs x
+</pre>
+
+<DT><span class="strong">abs_not_infty</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ +∞ ∧ x ≠ −∞ ⇒ abs x ≠ +∞ ∧ abs x ≠ −∞
+</pre>
+
+<DT><span class="strong">abs_not_zero</span>
+<DD>
+<pre>
+⊢ ∀x. abs x ≠ 0 ⇔ x ≠ 0
+</pre>
+
+<DT><span class="strong">abs_pos</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ abs x
+</pre>
+
+<DT><span class="strong">abs_pow2</span>
+<DD>
+<pre>
+⊢ ∀x. (abs x)² = x²
+</pre>
+
+<DT><span class="strong">abs_pow_le_mono</span>
+<DD>
+<pre>
+⊢ ∀x n m. n ≤ m ⇒ abs x pow n ≤ 1 + abs x pow m
+</pre>
+
+<DT><span class="strong">abs_real</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ +∞ ∧ x ≠ −∞ ⇒ abs (real x) = real (abs x)
+</pre>
+
+<DT><span class="strong">abs_refl</span>
+<DD>
+<pre>
+⊢ ∀x. abs x = x ⇔ 0 ≤ x
+</pre>
+
+<DT><span class="strong">abs_sub</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ +∞ ∧ x ≠ −∞ ∧ y ≠ +∞ ∧ y ≠ −∞ ⇒ abs (x − y) = abs (y − x)
+</pre>
+
+<DT><span class="strong">abs_sub'</span>
+<DD>
+<pre>
+⊢ ∀x y. abs (x − y) = abs (y − x)
+</pre>
+
+<DT><span class="strong">abs_triangle</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ +∞ ∧ x ≠ −∞ ∧ y ≠ +∞ ∧ y ≠ −∞ ⇒ abs (x + y) ≤ abs x + abs y
+</pre>
+
+<DT><span class="strong">abs_triangle_full</span>
+<DD>
+<pre>
+⊢ ∀x y. abs (x + y) ≤ abs x + abs y
+</pre>
+
+<DT><span class="strong">abs_triangle_neg</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ +∞ ∧ x ≠ −∞ ∧ y ≠ +∞ ∧ y ≠ −∞ ⇒ abs (x − y) ≤ abs x + abs y
+</pre>
+
+<DT><span class="strong">abs_triangle_neg_full</span>
+<DD>
+<pre>
+⊢ ∀x y. abs (x − y) ≤ abs x + abs y
+</pre>
+
+<DT><span class="strong">abs_triangle_sub</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ +∞ ∧ x ≠ −∞ ∧ y ≠ +∞ ∧ y ≠ −∞ ⇒ abs x ≤ abs y + abs (x − y)
+</pre>
+
+<DT><span class="strong">abs_triangle_sub'</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ +∞ ∧ x ≠ −∞ ∧ y ≠ +∞ ∧ y ≠ −∞ ⇒ abs x ≤ abs y + abs (y − x)
+</pre>
+
+<DT><span class="strong">abs_triangle_sub_full</span>
+<DD>
+<pre>
+⊢ ∀x y. abs x ≤ abs y + abs (x − y)
+</pre>
+
+<DT><span class="strong">abs_triangle_sub_full'</span>
+<DD>
+<pre>
+⊢ ∀x y. abs x ≤ abs y + abs (y − x)
+</pre>
+
+<DT><span class="strong">abs_unbounds</span>
+<DD>
+<pre>
+⊢ ∀x k. 0 ≤ k ⇒ (k ≤ abs x ⇔ x ≤ -k ∨ k ≤ x)
+</pre>
+
+<DT><span class="strong">add2_sub2</span>
+<DD>
+<pre>
+⊢ ∀a b c d.
+    a ≠ −∞ ∧ b ≠ +∞ ∧ c ≠ −∞ ∧ d ≠ +∞ ⇒ a − b + (c − d) = a + c − (b + d)
+</pre>
+
+<DT><span class="strong">add_assoc</span>
+<DD>
+<pre>
+⊢ ∀x y z.
+    x ≠ −∞ ∧ y ≠ −∞ ∧ z ≠ −∞ ∨ x ≠ +∞ ∧ y ≠ +∞ ∧ z ≠ +∞ ⇒
+    x + (y + z) = x + y + z
+</pre>
+
+<DT><span class="strong">add_comm</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ y ≠ −∞ ∨ x ≠ +∞ ∧ y ≠ +∞ ⇒ x + y = y + x
+</pre>
+
+<DT><span class="strong">add_comm_normal</span>
+<DD>
+<pre>
+⊢ ∀x y. Normal x + y = y + Normal x
+</pre>
+
+<DT><span class="strong">add_infty</span>
+<DD>
+<pre>
+⊢ (∀x. x ≠ −∞ ⇒ x + +∞ = +∞ ∧ +∞ + x = +∞) ∧
+  ∀x. x ≠ +∞ ⇒ x + −∞ = −∞ ∧ −∞ + x = −∞
+</pre>
+
+<DT><span class="strong">add_ldistrib</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 ≤ y ∧ 0 ≤ z ∨ y ≤ 0 ∧ z ≤ 0 ⇒ x * (y + z) = x * y + x * z
+</pre>
+
+<DT><span class="strong">add_ldistrib_neg</span>
+<DD>
+<pre>
+⊢ ∀x y z. y ≤ 0 ∧ z ≤ 0 ⇒ x * (y + z) = x * y + x * z
+</pre>
+
+<DT><span class="strong">add_ldistrib_normal</span>
+<DD>
+<pre>
+⊢ ∀r y z.
+    y ≠ +∞ ∧ z ≠ +∞ ∨ y ≠ −∞ ∧ z ≠ −∞ ⇒
+    Normal r * (y + z) = Normal r * y + Normal r * z
+</pre>
+
+<DT><span class="strong">add_ldistrib_normal2</span>
+<DD>
+<pre>
+⊢ ∀r y z.
+    y ≠ +∞ ∧ z ≠ +∞ ∨ y ≠ −∞ ∧ z ≠ −∞ ⇒
+    Normal r * (y + z) = Normal r * y + Normal r * z
+</pre>
+
+<DT><span class="strong">add_ldistrib_pos</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 ≤ y ∧ 0 ≤ z ⇒ x * (y + z) = x * y + x * z
+</pre>
+
+<DT><span class="strong">add_lzero</span>
+<DD>
+<pre>
+⊢ ∀x. 0 + x = x
+</pre>
+
+<DT><span class="strong">add_not_infty</span>
+<DD>
+<pre>
+⊢ ∀x y. (x ≠ −∞ ∧ y ≠ −∞ ⇒ x + y ≠ −∞) ∧ (x ≠ +∞ ∧ y ≠ +∞ ⇒ x + y ≠ +∞)
+</pre>
+
+<DT><span class="strong">add_pow2</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ x ≠ +∞ ∧ y ≠ −∞ ∧ y ≠ +∞ ⇒ (x + y)² = x² + y² + 2 * x * y
+</pre>
+
+<DT><span class="strong">add_pow2_pos</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ x ≠ +∞ ∧ 0 ≤ y ⇒ (x + y)² = x² + y² + 2 * x * y
+</pre>
+
+<DT><span class="strong">add_rdistrib</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 ≤ y ∧ 0 ≤ z ∨ y ≤ 0 ∧ z ≤ 0 ⇒ (y + z) * x = y * x + z * x
+</pre>
+
+<DT><span class="strong">add_rdistrib_normal</span>
+<DD>
+<pre>
+⊢ ∀x y z.
+    y ≠ +∞ ∧ z ≠ +∞ ∨ y ≠ −∞ ∧ z ≠ −∞ ⇒
+    (y + z) * Normal x = y * Normal x + z * Normal x
+</pre>
+
+<DT><span class="strong">add_rdistrib_normal2</span>
+<DD>
+<pre>
+⊢ ∀x y z.
+    y ≠ +∞ ∧ z ≠ +∞ ∨ y ≠ −∞ ∧ z ≠ −∞ ⇒
+    (y + z) * Normal x = y * Normal x + z * Normal x
+</pre>
+
+<DT><span class="strong">add_rzero</span>
+<DD>
+<pre>
+⊢ ∀x. x + 0 = x
+</pre>
+
+<DT><span class="strong">add_sub</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≠ −∞ ∧ y ≠ +∞ ⇒ x + y − y = x
+</pre>
+
+<DT><span class="strong">add_sub2</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≠ −∞ ∧ y ≠ +∞ ⇒ y + x − y = x
+</pre>
+
+<DT><span class="strong">add_sub_normal</span>
+<DD>
+<pre>
+⊢ ∀x r. x + Normal r − Normal r = x
+</pre>
+
+<DT><span class="strong">datatype_extreal</span>
+<DD>
+<pre>
+⊢ DATATYPE (extreal −∞ +∞ Normal)
+</pre>
+
+<DT><span class="strong">div_add</span>
+<DD>
+<pre>
+⊢ ∀x y z.
+    x ≠ +∞ ∧ x ≠ −∞ ∧ y ≠ +∞ ∧ y ≠ −∞ ∧ z ≠ 0 ⇒ x / z + y / z = (x + y) / z
+</pre>
+
+<DT><span class="strong">div_add2</span>
+<DD>
+<pre>
+⊢ ∀x y z.
+    (x ≠ +∞ ∧ y ≠ +∞ ∨ x ≠ −∞ ∧ y ≠ −∞) ∧ z ≠ 0 ∧ z ≠ +∞ ∧ z ≠ −∞ ⇒
+    x / z + y / z = (x + y) / z
+</pre>
+
+<DT><span class="strong">div_eq_mul_linv</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ +∞ ∧ x ≠ −∞ ∧ 0 < y ⇒ x / y = y⁻¹ * x
+</pre>
+
+<DT><span class="strong">div_eq_mul_rinv</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ +∞ ∧ x ≠ −∞ ∧ 0 < y ⇒ x / y = x * y⁻¹
+</pre>
+
+<DT><span class="strong">div_infty</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ +∞ ∧ x ≠ −∞ ⇒ x / +∞ = 0 ∧ x / −∞ = 0
+</pre>
+
+<DT><span class="strong">div_mul_refl</span>
+<DD>
+<pre>
+⊢ ∀x r. r ≠ 0 ⇒ x = x / Normal r * Normal r
+</pre>
+
+<DT><span class="strong">div_not_infty</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≠ 0 ⇒ Normal x / y ≠ +∞ ∧ Normal x / y ≠ −∞
+</pre>
+
+<DT><span class="strong">div_one</span>
+<DD>
+<pre>
+⊢ ∀x. x / 1 = x
+</pre>
+
+<DT><span class="strong">div_refl</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ∧ x ≠ +∞ ∧ x ≠ −∞ ⇒ x / x = 1
+</pre>
+
+<DT><span class="strong">div_refl_pos</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ∧ x ≠ +∞ ⇒ x / x = 1
+</pre>
+
+<DT><span class="strong">div_sub</span>
+<DD>
+<pre>
+⊢ ∀x y z.
+    x ≠ +∞ ∧ x ≠ −∞ ∧ y ≠ +∞ ∧ y ≠ −∞ ∧ z ≠ 0 ⇒ x / z − y / z = (x − y) / z
+</pre>
+
+<DT><span class="strong">entire</span>
+<DD>
+<pre>
+⊢ ∀x y. x * y = 0 ⇔ x = 0 ∨ y = 0
+</pre>
+
+<DT><span class="strong">eq_add_sub_switch</span>
+<DD>
+<pre>
+⊢ ∀a b c d.
+    b ≠ −∞ ∧ b ≠ +∞ ∧ c ≠ −∞ ∧ c ≠ +∞ ⇒ (a + b = c + d ⇔ a − c = d − b)
+</pre>
+
+<DT><span class="strong">eq_neg</span>
+<DD>
+<pre>
+⊢ ∀x y. -x = -y ⇔ x = y
+</pre>
+
+<DT><span class="strong">eq_rdiv</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ⇒ (x = y / Normal z ⇔ x * Normal z = y)
+</pre>
+
+<DT><span class="strong">eq_sub_ladd</span>
+<DD>
+<pre>
+⊢ ∀x y z. z ≠ −∞ ∧ z ≠ +∞ ⇒ (x = y − z ⇔ x + z = y)
+</pre>
+
+<DT><span class="strong">eq_sub_ladd_normal</span>
+<DD>
+<pre>
+⊢ ∀x y z. x = y − Normal z ⇔ x + Normal z = y
+</pre>
+
+<DT><span class="strong">eq_sub_radd</span>
+<DD>
+<pre>
+⊢ ∀x y z. y ≠ −∞ ∧ y ≠ +∞ ⇒ (x − y = z ⇔ x = z + y)
+</pre>
+
+<DT><span class="strong">eq_sub_switch</span>
+<DD>
+<pre>
+⊢ ∀x y z. x = Normal z − y ⇔ y = Normal z − x
+</pre>
+
+<DT><span class="strong">extreal_11</span>
+<DD>
+<pre>
+⊢ ∀a a'. Normal a = Normal a' ⇔ a = a'
+</pre>
+
+<DT><span class="strong">extreal_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f0 f1 f2. ∃fn. fn −∞ = f0 ∧ fn +∞ = f1 ∧ ∀a. fn (Normal a) = f2 a
+</pre>
+
+<DT><span class="strong">extreal_abs_def</span>
+<DD>
+<pre>
+⊢ abs (Normal x) = Normal (abs x) ∧ abs −∞ = +∞ ∧ abs +∞ = +∞
+</pre>
+
+<DT><span class="strong">extreal_abs_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀x. P (Normal x)) ∧ P −∞ ∧ P +∞ ⇒ ∀v. P v
+</pre>
+
+<DT><span class="strong">extreal_add_def</span>
+<DD>
+<pre>
+⊢ Normal x + Normal y = Normal (x + y) ∧ Normal v0 + −∞ = −∞ ∧
+  Normal v0 + +∞ = +∞ ∧ −∞ + Normal v1 = −∞ ∧ +∞ + Normal v1 = +∞ ∧
+  −∞ + −∞ = −∞ ∧ +∞ + +∞ = +∞
+</pre>
+
+<DT><span class="strong">extreal_add_eq</span>
+<DD>
+<pre>
+⊢ ∀x y. Normal x + Normal y = Normal (x + y)
+</pre>
+
+<DT><span class="strong">extreal_add_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀x y. P (Normal x) (Normal y)) ∧ (∀v0. P (Normal v0) −∞) ∧
+      (∀v0. P (Normal v0) +∞) ∧ (∀v1. P −∞ (Normal v1)) ∧
+      (∀v1. P +∞ (Normal v1)) ∧ P −∞ −∞ ∧ P +∞ +∞ ∧ P −∞ +∞ ∧ P +∞ −∞ ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">extreal_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' v v1 f.
+    M = M' ∧ (M' = −∞ ⇒ v = v') ∧ (M' = +∞ ⇒ v1 = v1') ∧
+    (∀a. M' = Normal a ⇒ f a = f' a) ⇒
+    extreal_CASE M v v1 f = extreal_CASE M' v' v1' f'
+</pre>
+
+<DT><span class="strong">extreal_case_eq</span>
+<DD>
+<pre>
+⊢ extreal_CASE x v v1 f = v' ⇔
+  x = −∞ ∧ v = v' ∨ x = +∞ ∧ v1 = v' ∨ ∃r. x = Normal r ∧ f r = v'
+</pre>
+
+<DT><span class="strong">extreal_cases</span>
+<DD>
+<pre>
+⊢ ∀x. x = −∞ ∨ x = +∞ ∨ ∃r. x = Normal r
+</pre>
+
+<DT><span class="strong">extreal_distinct</span>
+<DD>
+<pre>
+⊢ −∞ ≠ +∞ ∧ (∀a. −∞ ≠ Normal a) ∧ ∀a. +∞ ≠ Normal a
+</pre>
+
+<DT><span class="strong">extreal_div_eq</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≠ 0 ⇒ Normal x / Normal y = Normal (x / y)
+</pre>
+
+<DT><span class="strong">extreal_double</span>
+<DD>
+<pre>
+⊢ ∀x. x + x = 2 * x
+</pre>
+
+<DT><span class="strong">extreal_eq_zero</span>
+<DD>
+<pre>
+⊢ ∀x. Normal x = 0 ⇔ x = 0
+</pre>
+
+<DT><span class="strong">extreal_induction</span>
+<DD>
+<pre>
+⊢ ∀P. P −∞ ∧ P +∞ ∧ (∀r. P (Normal r)) ⇒ ∀e. P e
+</pre>
+
+<DT><span class="strong">extreal_inv_eq</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ⇒ (Normal x)⁻¹ = Normal x⁻¹
+</pre>
+
+<DT><span class="strong">extreal_le_def</span>
+<DD>
+<pre>
+⊢ (Normal x ≤ Normal y ⇔ x ≤ y) ∧ (−∞ ≤ v0 ⇔ T) ∧ (+∞ ≤ +∞ ⇔ T) ∧
+  (Normal v5 ≤ +∞ ⇔ T) ∧ (+∞ ≤ −∞ ⇔ F) ∧ (Normal v6 ≤ −∞ ⇔ F) ∧
+  (+∞ ≤ Normal v8 ⇔ F)
+</pre>
+
+<DT><span class="strong">extreal_le_eq</span>
+<DD>
+<pre>
+⊢ ∀x y. Normal x ≤ Normal y ⇔ x ≤ y
+</pre>
+
+<DT><span class="strong">extreal_le_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀x y. P (Normal x) (Normal y)) ∧ (∀v0. P −∞ v0) ∧ P +∞ +∞ ∧
+      (∀v5. P (Normal v5) +∞) ∧ P +∞ −∞ ∧ (∀v6. P (Normal v6) −∞) ∧
+      (∀v8. P +∞ (Normal v8)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">extreal_lt_eq</span>
+<DD>
+<pre>
+⊢ ∀x y. Normal x < Normal y ⇔ x < y
+</pre>
+
+<DT><span class="strong">extreal_max_eq</span>
+<DD>
+<pre>
+⊢ ∀a b. max (Normal a) (Normal b) = Normal (max a b)
+</pre>
+
+<DT><span class="strong">extreal_mean</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇒ ∃z. x < z ∧ z < y
+</pre>
+
+<DT><span class="strong">extreal_min_eq</span>
+<DD>
+<pre>
+⊢ ∀a b. min (Normal a) (Normal b) = Normal (min a b)
+</pre>
+
+<DT><span class="strong">extreal_mul_def</span>
+<DD>
+<pre>
+⊢ −∞ * −∞ = +∞ ∧ −∞ * +∞ = −∞ ∧ +∞ * −∞ = −∞ ∧ +∞ * +∞ = +∞ ∧
+  Normal x * −∞ = (if x = 0 then Normal 0 else if 0 < x then −∞ else +∞) ∧
+  −∞ * Normal y = (if y = 0 then Normal 0 else if 0 < y then −∞ else +∞) ∧
+  Normal x * +∞ = (if x = 0 then Normal 0 else if 0 < x then +∞ else −∞) ∧
+  +∞ * Normal y = (if y = 0 then Normal 0 else if 0 < y then +∞ else −∞) ∧
+  Normal x * Normal y = Normal (x * y)
+</pre>
+
+<DT><span class="strong">extreal_mul_eq</span>
+<DD>
+<pre>
+⊢ ∀x y. Normal x * Normal y = Normal (x * y)
+</pre>
+
+<DT><span class="strong">extreal_mul_ind</span>
+<DD>
+<pre>
+⊢ ∀P. P −∞ −∞ ∧ P −∞ +∞ ∧ P +∞ −∞ ∧ P +∞ +∞ ∧ (∀x. P (Normal x) −∞) ∧
+      (∀y. P −∞ (Normal y)) ∧ (∀x. P (Normal x) +∞) ∧ (∀y. P +∞ (Normal y)) ∧
+      (∀x y. P (Normal x) (Normal y)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">extreal_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀ee. ee = −∞ ∨ ee = +∞ ∨ ∃r. ee = Normal r
+</pre>
+
+<DT><span class="strong">extreal_not_infty</span>
+<DD>
+<pre>
+⊢ ∀x. Normal x ≠ −∞ ∧ Normal x ≠ +∞
+</pre>
+
+<DT><span class="strong">extreal_not_lt</span>
+<DD>
+<pre>
+⊢ ∀x y. ¬(x < y) ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">extreal_pow</span>
+<DD>
+<pre>
+⊢ (∀x. x pow 0 = 1) ∧ ∀x n. x pow SUC n = x * x pow n
+</pre>
+
+<DT><span class="strong">extreal_sub_add</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ y ≠ +∞ ∨ x ≠ +∞ ∧ y ≠ −∞ ⇒ x − y = x + -y
+</pre>
+
+<DT><span class="strong">extreal_sub_def</span>
+<DD>
+<pre>
+⊢ Normal x − Normal y = Normal (x − y) ∧ +∞ − Normal x = +∞ ∧
+  −∞ − Normal x = −∞ ∧ Normal x − −∞ = +∞ ∧ Normal x − +∞ = −∞ ∧
+  −∞ − +∞ = −∞ ∧ +∞ − −∞ = +∞
+</pre>
+
+<DT><span class="strong">extreal_sub_eq</span>
+<DD>
+<pre>
+⊢ ∀x y. Normal x − Normal y = Normal (x − y)
+</pre>
+
+<DT><span class="strong">fourth_cancel</span>
+<DD>
+<pre>
+⊢ 4 * (1 / 4) = 1
+</pre>
+
+<DT><span class="strong">fourths_between</span>
+<DD>
+<pre>
+⊢ ((0 < 1 / 4 ∧ 1 / 4 < 1) ∧ 0 < 3 / 4 ∧ 3 / 4 < 1) ∧
+  (0 ≤ 1 / 4 ∧ 1 / 4 ≤ 1) ∧ 0 ≤ 3 / 4 ∧ 3 / 4 ≤ 1
+</pre>
+
+<DT><span class="strong">half_between</span>
+<DD>
+<pre>
+⊢ (0 < 1 / 2 ∧ 1 / 2 < 1) ∧ 0 ≤ 1 / 2 ∧ 1 / 2 ≤ 1
+</pre>
+
+<DT><span class="strong">half_cancel</span>
+<DD>
+<pre>
+⊢ 2 * (1 / 2) = 1
+</pre>
+
+<DT><span class="strong">half_double</span>
+<DD>
+<pre>
+⊢ ∀x. x / 2 + x / 2 = x
+</pre>
+
+<DT><span class="strong">half_not_infty</span>
+<DD>
+<pre>
+⊢ 1 / 2 ≠ +∞ ∧ 1 / 2 ≠ −∞
+</pre>
+
+<DT><span class="strong">infty_div</span>
+<DD>
+<pre>
+⊢ ∀r. 0 < r ⇒ +∞ / Normal r = +∞ ∧ −∞ / Normal r = −∞
+</pre>
+
+<DT><span class="strong">infty_pow2</span>
+<DD>
+<pre>
+⊢ +∞ ² = +∞ ∧ −∞ ² = +∞
+</pre>
+
+<DT><span class="strong">inv_1over</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ⇒ x⁻¹ = 1 / x
+</pre>
+
+<DT><span class="strong">inv_infty</span>
+<DD>
+<pre>
+⊢ +∞ ⁻¹ = 0 ∧ −∞ ⁻¹ = 0
+</pre>
+
+<DT><span class="strong">inv_inj</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ (x⁻¹ = y⁻¹ ⇔ x = y)
+</pre>
+
+<DT><span class="strong">inv_inv</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ∧ x ≠ +∞ ∧ x ≠ −∞ ⇒ x⁻¹ ⁻¹ = x
+</pre>
+
+<DT><span class="strong">inv_le_antimono</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ (x⁻¹ ≤ y⁻¹ ⇔ y ≤ x)
+</pre>
+
+<DT><span class="strong">inv_le_antimono_imp</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < y ∧ y ≤ x ⇒ x⁻¹ ≤ y⁻¹
+</pre>
+
+<DT><span class="strong">inv_lt_antimono</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ (x⁻¹ < y⁻¹ ⇔ y < x)
+</pre>
+
+<DT><span class="strong">inv_mul</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ 0 ∧ y ≠ 0 ⇒ (x * y)⁻¹ = x⁻¹ * y⁻¹
+</pre>
+
+<DT><span class="strong">inv_not_infty</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ⇒ x⁻¹ ≠ +∞ ∧ x⁻¹ ≠ −∞
+</pre>
+
+<DT><span class="strong">inv_one</span>
+<DD>
+<pre>
+⊢ 1⁻¹ = 1
+</pre>
+
+<DT><span class="strong">inv_pos</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ∧ x ≠ +∞ ⇒ 0 < 1 / x
+</pre>
+
+<DT><span class="strong">inv_pos'</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ∧ x ≠ +∞ ⇒ 0 < x⁻¹
+</pre>
+
+<DT><span class="strong">inv_pos_eq</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ⇒ (0 < x⁻¹ ⇔ x ≠ +∞ ∧ 0 ≤ x)
+</pre>
+
+<DT><span class="strong">ldiv_eq</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ∧ z < +∞ ⇒ (x / z = y ⇔ x = y * z)
+</pre>
+
+<DT><span class="strong">ldiv_le_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ∧ z ≠ +∞ ∧ x ≤ y ⇒ x / z ≤ y / z
+</pre>
+
+<DT><span class="strong">le_01</span>
+<DD>
+<pre>
+⊢ 0 ≤ 1
+</pre>
+
+<DT><span class="strong">le_02</span>
+<DD>
+<pre>
+⊢ 0 ≤ 2
+</pre>
+
+<DT><span class="strong">le_abs</span>
+<DD>
+<pre>
+⊢ ∀x. x ≤ abs x ∧ -x ≤ abs x
+</pre>
+
+<DT><span class="strong">le_abs_bounds</span>
+<DD>
+<pre>
+⊢ ∀k x. k ≤ abs x ⇔ x ≤ -k ∨ k ≤ x
+</pre>
+
+<DT><span class="strong">le_add</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 ≤ y ⇒ 0 ≤ x + y
+</pre>
+
+<DT><span class="strong">le_add2</span>
+<DD>
+<pre>
+⊢ ∀w x y z. w ≤ x ∧ y ≤ z ⇒ w + y ≤ x + z
+</pre>
+
+<DT><span class="strong">le_add_neg</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ 0 ∧ y ≤ 0 ⇒ x + y ≤ 0
+</pre>
+
+<DT><span class="strong">le_addl</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≠ −∞ ∧ y ≠ +∞ ⇒ (y ≤ x + y ⇔ 0 ≤ x)
+</pre>
+
+<DT><span class="strong">le_addl_imp</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ⇒ y ≤ x + y
+</pre>
+
+<DT><span class="strong">le_addr</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ x ≠ +∞ ⇒ (x ≤ x + y ⇔ 0 ≤ y)
+</pre>
+
+<DT><span class="strong">le_addr_imp</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ y ⇒ x ≤ x + y
+</pre>
+
+<DT><span class="strong">le_antisym</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ∧ y ≤ x ⇔ x = y
+</pre>
+
+<DT><span class="strong">le_div</span>
+<DD>
+<pre>
+⊢ ∀y z. 0 ≤ y ∧ 0 < z ⇒ 0 ≤ y / Normal z
+</pre>
+
+<DT><span class="strong">le_infty</span>
+<DD>
+<pre>
+⊢ (∀x. −∞ ≤ x ∧ x ≤ +∞) ∧ (∀x. x ≤ −∞ ⇔ x = −∞) ∧ ∀x. +∞ ≤ x ⇔ x = +∞
+</pre>
+
+<DT><span class="strong">le_inv</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ 0 ≤ x⁻¹
+</pre>
+
+<DT><span class="strong">le_ladd</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ⇒ (x + y ≤ x + z ⇔ y ≤ z)
+</pre>
+
+<DT><span class="strong">le_ladd_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. y ≤ z ⇒ x + y ≤ x + z
+</pre>
+
+<DT><span class="strong">le_ldiv</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < x ⇒ (y ≤ z * Normal x ⇔ y / Normal x ≤ z)
+</pre>
+
+<DT><span class="strong">le_lmul</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < x ∧ x ≠ +∞ ⇒ (x * y ≤ x * z ⇔ y ≤ z)
+</pre>
+
+<DT><span class="strong">le_lmul_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 ≤ z ∧ x ≤ y ⇒ z * x ≤ z * y
+</pre>
+
+<DT><span class="strong">le_lneg</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ y ≠ −∞ ∨ x ≠ +∞ ∧ y ≠ +∞ ⇒ (-x ≤ y ⇔ 0 ≤ x + y)
+</pre>
+
+<DT><span class="strong">le_lsub_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. y ≤ z ⇒ x − z ≤ x − y
+</pre>
+
+<DT><span class="strong">le_lt</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ⇔ x < y ∨ x = y
+</pre>
+
+<DT><span class="strong">le_max</span>
+<DD>
+<pre>
+⊢ ∀z x y. z ≤ max x y ⇔ z ≤ x ∨ z ≤ y
+</pre>
+
+<DT><span class="strong">le_max1</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ max x y
+</pre>
+
+<DT><span class="strong">le_max2</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≤ max x y
+</pre>
+
+<DT><span class="strong">le_min</span>
+<DD>
+<pre>
+⊢ ∀z x y. z ≤ min x y ⇔ z ≤ x ∧ z ≤ y
+</pre>
+
+<DT><span class="strong">le_mul</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 ≤ y ⇒ 0 ≤ x * y
+</pre>
+
+<DT><span class="strong">le_mul2</span>
+<DD>
+<pre>
+⊢ ∀x1 x2 y1 y2. 0 ≤ x1 ∧ 0 ≤ y1 ∧ x1 ≤ x2 ∧ y1 ≤ y2 ⇒ x1 * y1 ≤ x2 * y2
+</pre>
+
+<DT><span class="strong">le_mul_neg</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ 0 ∧ y ≤ 0 ⇒ 0 ≤ x * y
+</pre>
+
+<DT><span class="strong">le_neg</span>
+<DD>
+<pre>
+⊢ ∀x y. -x ≤ -y ⇔ y ≤ x
+</pre>
+
+<DT><span class="strong">le_not_infty</span>
+<DD>
+<pre>
+⊢ (∀x. 0 ≤ x ⇒ x ≠ −∞) ∧ ∀x. x ≤ 0 ⇒ x ≠ +∞
+</pre>
+
+<DT><span class="strong">le_num</span>
+<DD>
+<pre>
+⊢ ∀n. 0 ≤ &n
+</pre>
+
+<DT><span class="strong">le_pow2</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x²
+</pre>
+
+<DT><span class="strong">le_radd</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ⇒ (y + x ≤ z + x ⇔ y ≤ z)
+</pre>
+
+<DT><span class="strong">le_radd_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. y ≤ z ⇒ y + x ≤ z + x
+</pre>
+
+<DT><span class="strong">le_rdiv</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < x ⇒ (y * Normal x ≤ z ⇔ y ≤ z / Normal x)
+</pre>
+
+<DT><span class="strong">le_refl</span>
+<DD>
+<pre>
+⊢ ∀x. x ≤ x
+</pre>
+
+<DT><span class="strong">le_rmul</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ∧ z ≠ +∞ ⇒ (x * z ≤ y * z ⇔ x ≤ y)
+</pre>
+
+<DT><span class="strong">le_rmul_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 ≤ z ∧ x ≤ y ⇒ x * z ≤ y * z
+</pre>
+
+<DT><span class="strong">le_rsub</span>
+<DD>
+<pre>
+⊢ ∀x y z. z ≠ +∞ ∧ z ≠ −∞ ⇒ (x − z ≤ y − z ⇔ x ≤ y)
+</pre>
+
+<DT><span class="strong">le_rsub_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≤ y ⇒ x − z ≤ y − z
+</pre>
+
+<DT><span class="strong">le_sub_eq</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ⇒ (y ≤ z − x ⇔ y + x ≤ z)
+</pre>
+
+<DT><span class="strong">le_sub_eq2</span>
+<DD>
+<pre>
+⊢ ∀x y z. z ≠ −∞ ∧ z ≠ +∞ ∧ x ≠ −∞ ∧ y ≠ −∞ ⇒ (y ≤ z − x ⇔ y + x ≤ z)
+</pre>
+
+<DT><span class="strong">le_sub_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ∧ y + x ≤ z ⇒ y ≤ z − x
+</pre>
+
+<DT><span class="strong">le_sub_imp2</span>
+<DD>
+<pre>
+⊢ ∀x y z. z ≠ −∞ ∧ z ≠ +∞ ∧ y + x ≤ z ⇒ y ≤ z − x
+</pre>
+
+<DT><span class="strong">le_total</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ∨ y ≤ x
+</pre>
+
+<DT><span class="strong">le_trans</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≤ y ∧ y ≤ z ⇒ x ≤ z
+</pre>
+
+<DT><span class="strong">let_add</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 < y ⇒ 0 < x + y
+</pre>
+
+<DT><span class="strong">let_add2</span>
+<DD>
+<pre>
+⊢ ∀w x y z. w ≠ −∞ ∧ w ≠ +∞ ∧ w ≤ x ∧ y < z ⇒ w + y < x + z
+</pre>
+
+<DT><span class="strong">let_add2_alt</span>
+<DD>
+<pre>
+⊢ ∀w x y z. x ≠ −∞ ∧ x ≠ +∞ ∧ w ≤ x ∧ y < z ⇒ w + y < x + z
+</pre>
+
+<DT><span class="strong">let_antisym</span>
+<DD>
+<pre>
+⊢ ∀x y. ¬(x < y ∧ y ≤ x)
+</pre>
+
+<DT><span class="strong">let_mul</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 < y ⇒ 0 ≤ x * y
+</pre>
+
+<DT><span class="strong">let_total</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ∨ y < x
+</pre>
+
+<DT><span class="strong">let_trans</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≤ y ∧ y < z ⇒ x < z
+</pre>
+
+<DT><span class="strong">linv_uniq</span>
+<DD>
+<pre>
+⊢ ∀x y. x * y = 1 ⇒ x = y⁻¹
+</pre>
+
+<DT><span class="strong">lt_01</span>
+<DD>
+<pre>
+⊢ 0 < 1
+</pre>
+
+<DT><span class="strong">lt_02</span>
+<DD>
+<pre>
+⊢ 0 < 2
+</pre>
+
+<DT><span class="strong">lt_10</span>
+<DD>
+<pre>
+⊢ -1 < 0
+</pre>
+
+<DT><span class="strong">lt_abs_bounds</span>
+<DD>
+<pre>
+⊢ ∀k x. k < abs x ⇔ x < -k ∨ k < x
+</pre>
+
+<DT><span class="strong">lt_add</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ 0 < x + y
+</pre>
+
+<DT><span class="strong">lt_add2</span>
+<DD>
+<pre>
+⊢ ∀w x y z. w < x ∧ y < z ⇒ w + y < x + z
+</pre>
+
+<DT><span class="strong">lt_add_neg</span>
+<DD>
+<pre>
+⊢ ∀x y. x < 0 ∧ y < 0 ⇒ x + y < 0
+</pre>
+
+<DT><span class="strong">lt_addl</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≠ −∞ ∧ y ≠ +∞ ⇒ (y < x + y ⇔ 0 < x)
+</pre>
+
+<DT><span class="strong">lt_addr</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ x ≠ +∞ ⇒ (x < x + y ⇔ 0 < y)
+</pre>
+
+<DT><span class="strong">lt_addr_imp</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ x ≠ +∞ ∧ 0 < y ⇒ x < x + y
+</pre>
+
+<DT><span class="strong">lt_antisym</span>
+<DD>
+<pre>
+⊢ ∀x y. ¬(x < y ∧ y < x)
+</pre>
+
+<DT><span class="strong">lt_div</span>
+<DD>
+<pre>
+⊢ ∀y z. 0 < y ∧ 0 < z ⇒ 0 < y / Normal z
+</pre>
+
+<DT><span class="strong">lt_imp_le</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇒ x ≤ y
+</pre>
+
+<DT><span class="strong">lt_imp_ne</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇒ x ≠ y
+</pre>
+
+<DT><span class="strong">lt_infty</span>
+<DD>
+<pre>
+⊢ −∞ < +∞ ∧ (∀x. −∞ < Normal x ∧ Normal x < +∞) ∧
+  (∀x. ¬(x < −∞) ∧ ¬(+∞ < x)) ∧ (∀x. x ≠ +∞ ⇔ x < +∞) ∧ ∀x. x ≠ −∞ ⇔ −∞ < x
+</pre>
+
+<DT><span class="strong">lt_ladd</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ⇒ (x + y < x + z ⇔ y < z)
+</pre>
+
+<DT><span class="strong">lt_ldiv</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ⇒ (x / Normal z < y ⇔ x < y * Normal z)
+</pre>
+
+<DT><span class="strong">lt_le</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇔ x ≤ y ∧ x ≠ y
+</pre>
+
+<DT><span class="strong">lt_lmul</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < x ∧ x ≠ +∞ ⇒ (x * y < x * z ⇔ y < z)
+</pre>
+
+<DT><span class="strong">lt_lmul_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < x ∧ x ≠ +∞ ∧ y < z ⇒ x * y < x * z
+</pre>
+
+<DT><span class="strong">lt_lsub</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ +∞ ∧ x ≠ −∞ ⇒ (x − z < x − y ⇔ y < z)
+</pre>
+
+<DT><span class="strong">lt_lsub_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ +∞ ∧ x ≠ −∞ ∧ y < z ⇒ x − z < x − y
+</pre>
+
+<DT><span class="strong">lt_max</span>
+<DD>
+<pre>
+⊢ ∀x y z. x < max y z ⇔ x < y ∨ x < z
+</pre>
+
+<DT><span class="strong">lt_max_between</span>
+<DD>
+<pre>
+⊢ ∀x b d. x < max b d ∧ b ≤ x ⇒ x < d
+</pre>
+
+<DT><span class="strong">lt_min</span>
+<DD>
+<pre>
+⊢ ∀x y z. z < min x y ⇔ z < x ∧ z < y
+</pre>
+
+<DT><span class="strong">lt_mul</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 < y ⇒ 0 < x * y
+</pre>
+
+<DT><span class="strong">lt_mul2</span>
+<DD>
+<pre>
+⊢ ∀x1 x2 y1 y2.
+    0 ≤ x1 ∧ 0 ≤ y1 ∧ x1 ≠ +∞ ∧ y1 ≠ +∞ ∧ x1 < x2 ∧ y1 < y2 ⇒
+    x1 * y1 < x2 * y2
+</pre>
+
+<DT><span class="strong">lt_mul_neg</span>
+<DD>
+<pre>
+⊢ ∀x y. x < 0 ∧ y < 0 ⇒ 0 < x * y
+</pre>
+
+<DT><span class="strong">lt_neg</span>
+<DD>
+<pre>
+⊢ ∀x y. -x < -y ⇔ y < x
+</pre>
+
+<DT><span class="strong">lt_radd</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ⇒ (y + x < z + x ⇔ y < z)
+</pre>
+
+<DT><span class="strong">lt_rdiv</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ⇒ (x < y / Normal z ⇔ x * Normal z < y)
+</pre>
+
+<DT><span class="strong">lt_rdiv_neg</span>
+<DD>
+<pre>
+⊢ ∀x y z. z < 0 ⇒ (y / Normal z < x ⇔ x * Normal z < y)
+</pre>
+
+<DT><span class="strong">lt_refl</span>
+<DD>
+<pre>
+⊢ ∀x. ¬(x < x)
+</pre>
+
+<DT><span class="strong">lt_rmul</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ∧ z ≠ +∞ ⇒ (x * z < y * z ⇔ x < y)
+</pre>
+
+<DT><span class="strong">lt_rmul_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. x < y ∧ 0 < z ∧ z ≠ +∞ ⇒ x * z < y * z
+</pre>
+
+<DT><span class="strong">lt_rsub</span>
+<DD>
+<pre>
+⊢ ∀x y z. z ≠ +∞ ∧ z ≠ −∞ ⇒ (x − z < y − z ⇔ x < y)
+</pre>
+
+<DT><span class="strong">lt_rsub_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. z ≠ +∞ ∧ z ≠ −∞ ∧ x < y ⇒ x − z < y − z
+</pre>
+
+<DT><span class="strong">lt_sub</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ y ≠ −∞ ∧ z ≠ −∞ ∧ z ≠ +∞ ⇒ (y + x < z ⇔ y < z − x)
+</pre>
+
+<DT><span class="strong">lt_sub'</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ +∞ ∧ y ≠ +∞ ∧ z ≠ −∞ ∧ z ≠ +∞ ⇒ (y + x < z ⇔ y < z − x)
+</pre>
+
+<DT><span class="strong">lt_sub_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ y ≠ −∞ ∧ y + x < z ⇒ y < z − x
+</pre>
+
+<DT><span class="strong">lt_sub_imp'</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ +∞ ∧ y ≠ +∞ ∧ y + x < z ⇒ y < z − x
+</pre>
+
+<DT><span class="strong">lt_sub_imp2</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ∧ y + x < z ⇒ y < z − x
+</pre>
+
+<DT><span class="strong">lt_total</span>
+<DD>
+<pre>
+⊢ ∀x y. x = y ∨ x < y ∨ y < x
+</pre>
+
+<DT><span class="strong">lt_trans</span>
+<DD>
+<pre>
+⊢ ∀x y z. x < y ∧ y < z ⇒ x < z
+</pre>
+
+<DT><span class="strong">lte_add</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 ≤ y ⇒ 0 < x + y
+</pre>
+
+<DT><span class="strong">lte_mul</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ 0 ≤ y ⇒ 0 ≤ x * y
+</pre>
+
+<DT><span class="strong">lte_total</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ∨ y ≤ x
+</pre>
+
+<DT><span class="strong">lte_trans</span>
+<DD>
+<pre>
+⊢ ∀x y z. x < y ∧ y ≤ z ⇒ x < z
+</pre>
+
+<DT><span class="strong">max_0_reduce</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ max 0 x = x
+</pre>
+
+<DT><span class="strong">max_comm</span>
+<DD>
+<pre>
+⊢ ∀x y. max x y = max y x
+</pre>
+
+<DT><span class="strong">max_infty</span>
+<DD>
+<pre>
+⊢ ∀x. max x +∞ = +∞ ∧ max +∞ x = +∞ ∧ max −∞ x = x ∧ max x −∞ = x
+</pre>
+
+<DT><span class="strong">max_le</span>
+<DD>
+<pre>
+⊢ ∀z x y. max x y ≤ z ⇔ x ≤ z ∧ y ≤ z
+</pre>
+
+<DT><span class="strong">max_le2_imp</span>
+<DD>
+<pre>
+⊢ ∀x1 x2 y1 y2. x1 ≤ y1 ∧ x2 ≤ y2 ⇒ max x1 x2 ≤ max y1 y2
+</pre>
+
+<DT><span class="strong">max_lt</span>
+<DD>
+<pre>
+⊢ ∀x y z. max x y < z ⇔ x < z ∧ y < z
+</pre>
+
+<DT><span class="strong">max_reduce</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ∨ x < y ⇒ max x y = y ∧ max y x = y
+</pre>
+
+<DT><span class="strong">max_refl</span>
+<DD>
+<pre>
+⊢ ∀x. max x x = x
+</pre>
+
+<DT><span class="strong">min_comm</span>
+<DD>
+<pre>
+⊢ ∀x y. min x y = min y x
+</pre>
+
+<DT><span class="strong">min_infty</span>
+<DD>
+<pre>
+⊢ ∀x. min x +∞ = x ∧ min +∞ x = x ∧ min −∞ x = −∞ ∧ min x −∞ = −∞
+</pre>
+
+<DT><span class="strong">min_le</span>
+<DD>
+<pre>
+⊢ ∀z x y. min x y ≤ z ⇔ x ≤ z ∨ y ≤ z
+</pre>
+
+<DT><span class="strong">min_le1</span>
+<DD>
+<pre>
+⊢ ∀x y. min x y ≤ x
+</pre>
+
+<DT><span class="strong">min_le2</span>
+<DD>
+<pre>
+⊢ ∀x y. min x y ≤ y
+</pre>
+
+<DT><span class="strong">min_le2_imp</span>
+<DD>
+<pre>
+⊢ ∀x1 x2 y1 y2. x1 ≤ y1 ∧ x2 ≤ y2 ⇒ min x1 x2 ≤ min y1 y2
+</pre>
+
+<DT><span class="strong">min_le_between</span>
+<DD>
+<pre>
+⊢ ∀x a c. min a c ≤ x ∧ x < a ⇒ c ≤ x
+</pre>
+
+<DT><span class="strong">min_reduce</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ y ∨ x < y ⇒ min x y = x ∧ min y x = x
+</pre>
+
+<DT><span class="strong">min_refl</span>
+<DD>
+<pre>
+⊢ ∀x. min x x = x
+</pre>
+
+<DT><span class="strong">mul_assoc</span>
+<DD>
+<pre>
+⊢ ∀x y z. x * (y * z) = x * y * z
+</pre>
+
+<DT><span class="strong">mul_comm</span>
+<DD>
+<pre>
+⊢ ∀x y. x * y = y * x
+</pre>
+
+<DT><span class="strong">mul_div_refl</span>
+<DD>
+<pre>
+⊢ ∀x r. r ≠ 0 ⇒ x = x * Normal r / Normal r
+</pre>
+
+<DT><span class="strong">mul_infty</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ +∞ * x = +∞ ∧ x * +∞ = +∞ ∧ −∞ * x = −∞ ∧ x * −∞ = −∞
+</pre>
+
+<DT><span class="strong">mul_infty'</span>
+<DD>
+<pre>
+⊢ ∀x. x < 0 ⇒ +∞ * x = −∞ ∧ x * +∞ = −∞ ∧ −∞ * x = +∞ ∧ x * −∞ = +∞
+</pre>
+
+<DT><span class="strong">mul_lcancel</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ +∞ ∧ x ≠ −∞ ⇒ (x * y = x * z ⇔ x = 0 ∨ y = z)
+</pre>
+
+<DT><span class="strong">mul_le</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ y ≤ 0 ⇒ x * y ≤ 0
+</pre>
+
+<DT><span class="strong">mul_le2</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≤ 0 ∧ 0 ≤ y ⇒ x * y ≤ 0
+</pre>
+
+<DT><span class="strong">mul_let</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ y < 0 ⇒ x * y ≤ 0
+</pre>
+
+<DT><span class="strong">mul_linv</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ∧ x ≠ +∞ ∧ x ≠ −∞ ⇒ x⁻¹ * x = 1
+</pre>
+
+<DT><span class="strong">mul_linv_pos</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ∧ x ≠ +∞ ⇒ x⁻¹ * x = 1
+</pre>
+
+<DT><span class="strong">mul_lneg</span>
+<DD>
+<pre>
+⊢ ∀x y. -x * y = -(x * y)
+</pre>
+
+<DT><span class="strong">mul_lone</span>
+<DD>
+<pre>
+⊢ ∀x. 1 * x = x
+</pre>
+
+<DT><span class="strong">mul_lposinf</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ +∞ * x = +∞
+</pre>
+
+<DT><span class="strong">mul_lt</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ y < 0 ⇒ x * y < 0
+</pre>
+
+<DT><span class="strong">mul_lt2</span>
+<DD>
+<pre>
+⊢ ∀x y. x < 0 ∧ 0 < y ⇒ x * y < 0
+</pre>
+
+<DT><span class="strong">mul_lte</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 < x ∧ y ≤ 0 ⇒ x * y ≤ 0
+</pre>
+
+<DT><span class="strong">mul_lzero</span>
+<DD>
+<pre>
+⊢ ∀x. 0 * x = 0
+</pre>
+
+<DT><span class="strong">mul_not_infty</span>
+<DD>
+<pre>
+⊢ (∀c y. 0 ≤ c ∧ y ≠ −∞ ⇒ Normal c * y ≠ −∞) ∧
+  (∀c y. 0 ≤ c ∧ y ≠ +∞ ⇒ Normal c * y ≠ +∞) ∧
+  (∀c y. c ≤ 0 ∧ y ≠ −∞ ⇒ Normal c * y ≠ +∞) ∧
+  ∀c y. c ≤ 0 ∧ y ≠ +∞ ⇒ Normal c * y ≠ −∞
+</pre>
+
+<DT><span class="strong">mul_not_infty2</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ x ≠ +∞ ∧ y ≠ −∞ ∧ y ≠ +∞ ⇒ x * y ≠ −∞ ∧ x * y ≠ +∞
+</pre>
+
+<DT><span class="strong">mul_rcancel</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ +∞ ∧ x ≠ −∞ ⇒ (y * x = z * x ⇔ x = 0 ∨ y = z)
+</pre>
+
+<DT><span class="strong">mul_rneg</span>
+<DD>
+<pre>
+⊢ ∀x y. x * -y = -(x * y)
+</pre>
+
+<DT><span class="strong">mul_rone</span>
+<DD>
+<pre>
+⊢ ∀x. x * 1 = x
+</pre>
+
+<DT><span class="strong">mul_rposinf</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ x * +∞ = +∞
+</pre>
+
+<DT><span class="strong">mul_rzero</span>
+<DD>
+<pre>
+⊢ ∀x. x * 0 = 0
+</pre>
+
+<DT><span class="strong">ne_01</span>
+<DD>
+<pre>
+⊢ 0 ≠ 1
+</pre>
+
+<DT><span class="strong">ne_02</span>
+<DD>
+<pre>
+⊢ 0 ≠ 2
+</pre>
+
+<DT><span class="strong">neg_0</span>
+<DD>
+<pre>
+⊢ -0 = 0
+</pre>
+
+<DT><span class="strong">neg_add</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ y ≠ −∞ ∨ x ≠ +∞ ∧ y ≠ +∞ ⇒ -(x + y) = -x + -y
+</pre>
+
+<DT><span class="strong">neg_eq0</span>
+<DD>
+<pre>
+⊢ ∀x. -x = 0 ⇔ x = 0
+</pre>
+
+<DT><span class="strong">neg_minus1</span>
+<DD>
+<pre>
+⊢ ∀x. -x = -1 * x
+</pre>
+
+<DT><span class="strong">neg_mul2</span>
+<DD>
+<pre>
+⊢ ∀x y. -x * -y = x * y
+</pre>
+
+<DT><span class="strong">neg_neg</span>
+<DD>
+<pre>
+⊢ ∀x. - -x = x
+</pre>
+
+<DT><span class="strong">neg_not_posinf</span>
+<DD>
+<pre>
+⊢ ∀x. x ≤ 0 ⇒ x ≠ +∞
+</pre>
+
+<DT><span class="strong">neg_sub</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ x ≠ +∞ ∨ y ≠ −∞ ∧ y ≠ +∞ ⇒ -(x − y) = y − x
+</pre>
+
+<DT><span class="strong">normal_inv_eq</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ⇒ Normal x⁻¹ = (Normal x)⁻¹
+</pre>
+
+<DT><span class="strong">normal_real</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ −∞ ∧ x ≠ +∞ ⇒ Normal (real x) = x
+</pre>
+
+<DT><span class="strong">num_lt_infty</span>
+<DD>
+<pre>
+⊢ ∀n. &n < +∞
+</pre>
+
+<DT><span class="strong">num_not_infty</span>
+<DD>
+<pre>
+⊢ ∀n. &n ≠ −∞ ∧ &n ≠ +∞
+</pre>
+
+<DT><span class="strong">one_pow</span>
+<DD>
+<pre>
+⊢ ∀n. 1 pow n = 1
+</pre>
+
+<DT><span class="strong">pos_not_neginf</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ x ≠ −∞
+</pre>
+
+<DT><span class="strong">pow2_le_eq</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 ≤ y ⇒ (x ≤ y ⇔ x² ≤ y²)
+</pre>
+
+<DT><span class="strong">pow2_sqrt</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ sqrt x² = x
+</pre>
+
+<DT><span class="strong">pow_0</span>
+<DD>
+<pre>
+⊢ ∀x. x pow 0 = 1
+</pre>
+
+<DT><span class="strong">pow_1</span>
+<DD>
+<pre>
+⊢ ∀x. x pow 1 = x
+</pre>
+
+<DT><span class="strong">pow_2</span>
+<DD>
+<pre>
+⊢ ∀x. x² = x * x
+</pre>
+
+<DT><span class="strong">pow_2_abs</span>
+<DD>
+<pre>
+⊢ ∀x. x² = abs x * abs x
+</pre>
+
+<DT><span class="strong">pow_add</span>
+<DD>
+<pre>
+⊢ ∀x n m. x pow (n + m) = x pow n * x pow m
+</pre>
+
+<DT><span class="strong">pow_div</span>
+<DD>
+<pre>
+⊢ ∀n x y. x ≠ +∞ ∧ x ≠ −∞ ∧ 0 < y ⇒ (x / y) pow n = x pow n / y pow n
+</pre>
+
+<DT><span class="strong">pow_eq</span>
+<DD>
+<pre>
+⊢ ∀n x y. n ≠ 0 ∧ 0 ≤ x ∧ 0 ≤ y ⇒ (x = y ⇔ x pow n = y pow n)
+</pre>
+
+<DT><span class="strong">pow_inv</span>
+<DD>
+<pre>
+⊢ ∀n y. y ≠ 0 ⇒ (y pow n)⁻¹ = y⁻¹ pow n
+</pre>
+
+<DT><span class="strong">pow_le</span>
+<DD>
+<pre>
+⊢ ∀n x y. 0 ≤ x ∧ x ≤ y ⇒ x pow n ≤ y pow n
+</pre>
+
+<DT><span class="strong">pow_le_full</span>
+<DD>
+<pre>
+⊢ ∀n x y. n ≠ 0 ∧ 0 ≤ x ∧ 0 ≤ y ⇒ (x ≤ y ⇔ x pow n ≤ y pow n)
+</pre>
+
+<DT><span class="strong">pow_le_mono</span>
+<DD>
+<pre>
+⊢ ∀x n m. 1 ≤ x ∧ n ≤ m ⇒ x pow n ≤ x pow m
+</pre>
+
+<DT><span class="strong">pow_lt</span>
+<DD>
+<pre>
+⊢ ∀n x y. 0 ≤ x ∧ x < y ⇒ x pow SUC n < y pow SUC n
+</pre>
+
+<DT><span class="strong">pow_lt2</span>
+<DD>
+<pre>
+⊢ ∀n x y. n ≠ 0 ∧ 0 ≤ x ∧ x < y ⇒ x pow n < y pow n
+</pre>
+
+<DT><span class="strong">pow_minus1</span>
+<DD>
+<pre>
+⊢ ∀n. -1 pow (2 * n) = 1
+</pre>
+
+<DT><span class="strong">pow_mul</span>
+<DD>
+<pre>
+⊢ ∀n x y. (x * y) pow n = x pow n * y pow n
+</pre>
+
+<DT><span class="strong">pow_neg_odd</span>
+<DD>
+<pre>
+⊢ ∀x. x < 0 ⇒ (x pow n < 0 ⇔ ODD n)
+</pre>
+
+<DT><span class="strong">pow_not_infty</span>
+<DD>
+<pre>
+⊢ ∀n x. x ≠ −∞ ∧ x ≠ +∞ ⇒ x pow n ≠ −∞ ∧ x pow n ≠ +∞
+</pre>
+
+<DT><span class="strong">pow_pos_even</span>
+<DD>
+<pre>
+⊢ ∀x. x < 0 ⇒ (0 < x pow n ⇔ EVEN n)
+</pre>
+
+<DT><span class="strong">pow_pos_le</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 ≤ x ⇒ 0 ≤ x pow n
+</pre>
+
+<DT><span class="strong">pow_pos_lt</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 < x ⇒ 0 < x pow n
+</pre>
+
+<DT><span class="strong">pow_pow</span>
+<DD>
+<pre>
+⊢ ∀x m n. (x pow m) pow n = x pow (m * n)
+</pre>
+
+<DT><span class="strong">pow_zero</span>
+<DD>
+<pre>
+⊢ ∀n x. x pow SUC n = 0 ⇔ x = 0
+</pre>
+
+<DT><span class="strong">pow_zero_imp</span>
+<DD>
+<pre>
+⊢ ∀n x. x pow n = 0 ⇒ x = 0
+</pre>
+
+<DT><span class="strong">quotient_normal</span>
+<DD>
+<pre>
+⊢ ∀n m. m ≠ 0 ⇒ &n / &m = Normal (&n / &m)
+</pre>
+
+<DT><span class="strong">rdiv_eq</span>
+<DD>
+<pre>
+⊢ ∀x y z. 0 < z ∧ z < +∞ ⇒ (x = y / z ⇔ x * z = y)
+</pre>
+
+<DT><span class="strong">real_0</span>
+<DD>
+<pre>
+⊢ real 0 = 0
+</pre>
+
+<DT><span class="strong">real_normal</span>
+<DD>
+<pre>
+⊢ ∀x. real (Normal x) = x
+</pre>
+
+<DT><span class="strong">rinv_uniq</span>
+<DD>
+<pre>
+⊢ ∀x y. x * y = 1 ⇒ y = x⁻¹
+</pre>
+
+<DT><span class="strong">sqrt_0</span>
+<DD>
+<pre>
+⊢ sqrt 0 = 0
+</pre>
+
+<DT><span class="strong">sqrt_1</span>
+<DD>
+<pre>
+⊢ sqrt 1 = 1
+</pre>
+
+<DT><span class="strong">sqrt_le_n</span>
+<DD>
+<pre>
+⊢ ∀n. sqrt (&n) ≤ &n
+</pre>
+
+<DT><span class="strong">sqrt_le_x</span>
+<DD>
+<pre>
+⊢ ∀x. 1 ≤ x ⇒ sqrt x ≤ x
+</pre>
+
+<DT><span class="strong">sqrt_mono_le</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ x ≤ y ⇒ sqrt x ≤ sqrt y
+</pre>
+
+<DT><span class="strong">sqrt_mul</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ x ∧ 0 ≤ y ⇒ sqrt (x * y) = sqrt x * sqrt y
+</pre>
+
+<DT><span class="strong">sqrt_pos_le</span>
+<DD>
+<pre>
+⊢ ∀x. 0 ≤ x ⇒ 0 ≤ sqrt x
+</pre>
+
+<DT><span class="strong">sqrt_pos_lt</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ 0 < sqrt x
+</pre>
+
+<DT><span class="strong">sqrt_pos_ne</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < x ⇒ sqrt x ≠ 0
+</pre>
+
+<DT><span class="strong">sqrt_pow2</span>
+<DD>
+<pre>
+⊢ ∀x. (sqrt x)² = x ⇔ 0 ≤ x
+</pre>
+
+<DT><span class="strong">sub_0</span>
+<DD>
+<pre>
+⊢ ∀x y. x − y = 0 ⇒ x = y
+</pre>
+
+<DT><span class="strong">sub_add</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≠ −∞ ∧ y ≠ +∞ ⇒ x − y + y = x
+</pre>
+
+<DT><span class="strong">sub_add2</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ x ≠ +∞ ⇒ x + (y − x) = y
+</pre>
+
+<DT><span class="strong">sub_add_normal</span>
+<DD>
+<pre>
+⊢ ∀x r. x − Normal r + Normal r = x
+</pre>
+
+<DT><span class="strong">sub_eq_0</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ +∞ ∧ x ≠ −∞ ∧ x = y ⇒ x − y = 0
+</pre>
+
+<DT><span class="strong">sub_infty</span>
+<DD>
+<pre>
+⊢ (∀x. x ≠ −∞ ⇒ x − −∞ = +∞) ∧ (∀x. x ≠ +∞ ⇒ x − +∞ = −∞) ∧
+  (∀x. x ≠ +∞ ⇒ +∞ − x = +∞) ∧ ∀x. x ≠ −∞ ⇒ −∞ − x = −∞
+</pre>
+
+<DT><span class="strong">sub_ldistrib</span>
+<DD>
+<pre>
+⊢ ∀x y z.
+    x ≠ −∞ ∧ x ≠ +∞ ∧ y ≠ −∞ ∧ y ≠ +∞ ∧ z ≠ −∞ ∧ z ≠ +∞ ⇒
+    x * (y − z) = x * y − x * z
+</pre>
+
+<DT><span class="strong">sub_le_eq</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ⇒ (y − x ≤ z ⇔ y ≤ z + x)
+</pre>
+
+<DT><span class="strong">sub_le_eq2</span>
+<DD>
+<pre>
+⊢ ∀x y z. y ≠ −∞ ∧ y ≠ +∞ ∧ x ≠ −∞ ∧ z ≠ −∞ ⇒ (y − x ≤ z ⇔ y ≤ z + x)
+</pre>
+
+<DT><span class="strong">sub_le_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ∧ y ≤ z + x ⇒ y − x ≤ z
+</pre>
+
+<DT><span class="strong">sub_le_imp2</span>
+<DD>
+<pre>
+⊢ ∀x y z. y ≠ −∞ ∧ y ≠ +∞ ∧ y ≤ z + x ⇒ y − x ≤ z
+</pre>
+
+<DT><span class="strong">sub_le_switch</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ∧ z ≠ −∞ ∧ z ≠ +∞ ⇒ (y − x ≤ z ⇔ y − z ≤ x)
+</pre>
+
+<DT><span class="strong">sub_le_switch2</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ∧ y ≠ −∞ ∧ y ≠ +∞ ⇒ (y − x ≤ z ⇔ y − z ≤ x)
+</pre>
+
+<DT><span class="strong">sub_le_zero</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≠ −∞ ∧ y ≠ +∞ ⇒ (x ≤ y ⇔ x − y ≤ 0)
+</pre>
+
+<DT><span class="strong">sub_lneg</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ y ≠ −∞ ∨ x ≠ +∞ ∧ y ≠ +∞ ⇒ -x − y = -(x + y)
+</pre>
+
+<DT><span class="strong">sub_lt_eq</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ⇒ (y − x < z ⇔ y < z + x)
+</pre>
+
+<DT><span class="strong">sub_lt_imp</span>
+<DD>
+<pre>
+⊢ ∀x y z. x ≠ −∞ ∧ x ≠ +∞ ∧ y < z + x ⇒ y − x < z
+</pre>
+
+<DT><span class="strong">sub_lt_imp2</span>
+<DD>
+<pre>
+⊢ ∀x y z. z ≠ −∞ ∧ z ≠ +∞ ∧ y < z + x ⇒ y − x < z
+</pre>
+
+<DT><span class="strong">sub_lt_zero</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇒ x − y < 0
+</pre>
+
+<DT><span class="strong">sub_lt_zero2</span>
+<DD>
+<pre>
+⊢ ∀x y. y ≠ −∞ ∧ y ≠ +∞ ∧ x − y < 0 ⇒ x < y
+</pre>
+
+<DT><span class="strong">sub_lzero</span>
+<DD>
+<pre>
+⊢ ∀x. 0 − x = -x
+</pre>
+
+<DT><span class="strong">sub_not_infty</span>
+<DD>
+<pre>
+⊢ ∀x y. (x ≠ −∞ ∧ y ≠ +∞ ⇒ x − y ≠ −∞) ∧ (x ≠ +∞ ∧ y ≠ −∞ ⇒ x − y ≠ +∞)
+</pre>
+
+<DT><span class="strong">sub_pow2</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ x ≠ +∞ ∧ y ≠ −∞ ∧ y ≠ +∞ ⇒ (x − y)² = x² + y² − 2 * x * y
+</pre>
+
+<DT><span class="strong">sub_rdistrib</span>
+<DD>
+<pre>
+⊢ ∀x y z.
+    x ≠ −∞ ∧ x ≠ +∞ ∧ y ≠ −∞ ∧ y ≠ +∞ ∧ z ≠ −∞ ∧ z ≠ +∞ ⇒
+    (x − y) * z = x * z − y * z
+</pre>
+
+<DT><span class="strong">sub_refl</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ −∞ ∧ x ≠ +∞ ⇒ x − x = 0
+</pre>
+
+<DT><span class="strong">sub_rneg</span>
+<DD>
+<pre>
+⊢ ∀x y. x − -y = x + y
+</pre>
+
+<DT><span class="strong">sub_rzero</span>
+<DD>
+<pre>
+⊢ ∀x. x − 0 = x
+</pre>
+
+<DT><span class="strong">sub_zero_le</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ x ≠ +∞ ⇒ (x ≤ y ⇔ 0 ≤ y − x)
+</pre>
+
+<DT><span class="strong">sub_zero_lt</span>
+<DD>
+<pre>
+⊢ ∀x y. x < y ⇒ 0 < y − x
+</pre>
+
+<DT><span class="strong">sub_zero_lt2</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ −∞ ∧ x ≠ +∞ ∧ 0 < y − x ⇒ x < y
+</pre>
+
+<DT><span class="strong">third_cancel</span>
+<DD>
+<pre>
+⊢ 3 * (1 / 3) = 1
+</pre>
+
+<DT><span class="strong">thirds_between</span>
+<DD>
+<pre>
+⊢ ((0 < 1 / 3 ∧ 1 / 3 < 1) ∧ 0 < 2 / 3 ∧ 2 / 3 < 1) ∧
+  (0 ≤ 1 / 3 ∧ 1 / 3 ≤ 1) ∧ 0 ≤ 2 / 3 ∧ 2 / 3 ≤ 1
+</pre>
+
+<DT><span class="strong">x_half_half</span>
+<DD>
+<pre>
+⊢ ∀x. 1 / 2 * x + 1 / 2 * x = x
+</pre>
+
+<DT><span class="strong">zero_div</span>
+<DD>
+<pre>
+⊢ ∀x. x ≠ 0 ⇒ 0 / x = 0
+</pre>
+
+<DT><span class="strong">zero_pow</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ 0 pow n = 0
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

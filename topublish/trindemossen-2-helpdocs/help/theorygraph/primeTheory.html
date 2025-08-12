@@ -1,0 +1,3111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: prime</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "prime"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "combinatoricsTheory.html"><span class="strong">combinatorics</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">coprimes_by</span>
+    <td>
+    :num -> num -> num -> bool
+    <tr><td>
+    <span class="strong">count_up</span>
+    <td>
+    :num -> num -> num -> num
+    <tr><td> <span class="strong">divisors</span> <td> :num -> num -> bool
+    <tr><td>
+    <span class="strong">factor_seek</span>
+    <td>
+    :num -> num -> num -> num
+    <tr><td>
+    <span class="strong">gcd_matches</span>
+    <td>
+    :num -> num -> num -> bool
+    <tr><td> <span class="strong">halves</span> <td> :num -> num
+    <tr><td> <span class="strong">lcm_fun</span> <td> :num -> num
+    <tr><td>
+    <span class="strong">multiples_upto</span>
+    <td>
+    :num -> num -> num -> bool
+    <tr><td>
+    <span class="strong">perfect_power</span>
+    <td>
+    :num -> num -> bool
+    <tr><td> <span class="strong">phi</span> <td> :num -> num
+    <tr><td> <span class="strong">power_free</span> <td> :num -> bool
+    <tr><td> <span class="strong">power_free_test</span> <td> :num -> bool
+    <tr><td>
+    <span class="strong">power_free_upto</span>
+    <td>
+    :num -> num -> bool
+    <tr><td> <span class="strong">power_index</span> <td> :num -> num -> num
+    <tr><td>
+    <span class="strong">prime_divisors</span>
+    <td>
+    :num -> num -> bool
+    <tr><td>
+    <span class="strong">prime_factors</span>
+    <td>
+    :num -> num -> bool
+    <tr><td>
+    <span class="strong">prime_power_divisors</span>
+    <td>
+    :num -> num -> bool
+    <tr><td>
+    <span class="strong">prime_power_index</span>
+    <td>
+    :num -> num -> num
+    <tr><td>
+    <span class="strong">prime_powers_upto</span>
+    <td>
+    :num -> num -> bool
+    <tr><td> <span class="strong">prime_test</span> <td> :num -> bool
+    <tr><td> <span class="strong">primes_upto</span> <td> :num -> num -> bool
+    <tr><td> <span class="strong">rec_phi</span> <td> :num -> num
+    <tr><td> <span class="strong">square</span> <td> :num -> bool
+    <tr><td> <span class="strong">square_free</span> <td> :num -> bool
+    <tr><td> <span class="strong">ulog</span> <td> :num -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">coprimes_by_def</span>
+<DD>
+<pre>
+⊢ ∀n d.
+    coprimes_by n d = if 0 < n ∧ d divides n then coprimes (n DIV d) else ∅
+</pre>
+
+<DT><span class="strong">divisors_def</span>
+<DD>
+<pre>
+⊢ ∀n. divisors n = {d | 0 < d ∧ d ≤ n ∧ d divides n}
+</pre>
+
+<DT><span class="strong">gcd_matches_def</span>
+<DD>
+<pre>
+⊢ ∀n d. gcd_matches n d = {j | j ∈ natural n ∧ gcd j n = d}
+</pre>
+
+<DT><span class="strong">halves_def_primitive</span>
+<DD>
+<pre>
+⊢ halves =
+  WFREC (@R. WF R ∧ ∀n. n ≠ 0 ⇒ R (n DIV 2) n)
+    (λhalves a. I (if a = 0 then 0 else SUC (halves (a DIV 2))))
+</pre>
+
+<DT><span class="strong">lcm_fun_def</span>
+<DD>
+<pre>
+⊢ lcm_fun 0 = 1 ∧
+  ∀n. lcm_fun (SUC n) =
+      if n = 0 then 1
+      else
+        case some p. ∃k. 0 < k ∧ prime p ∧ SUC n = p ** k of
+          NONE => lcm_fun n
+        | SOME p => p * lcm_fun n
+</pre>
+
+<DT><span class="strong">multiples_upto_def</span>
+<DD>
+<pre>
+⊢ ∀m n. m multiples_upto n = {x | m divides x ∧ 0 < x ∧ x ≤ n}
+</pre>
+
+<DT><span class="strong">perfect_power_def</span>
+<DD>
+<pre>
+⊢ ∀n m. n power_of m ⇔ ∃e. n = m ** e
+</pre>
+
+<DT><span class="strong">phi_def</span>
+<DD>
+<pre>
+⊢ ∀n. phi n = CARD (coprimes n)
+</pre>
+
+<DT><span class="strong">power_free_def</span>
+<DD>
+<pre>
+⊢ ∀n. power_free n ⇔ ∀m e. n = m ** e ⇒ m = n ∧ e = 1
+</pre>
+
+<DT><span class="strong">power_free_test_def</span>
+<DD>
+<pre>
+⊢ ∀n. power_free_test n ⇔ 1 < n ∧ n power_free_upto ulog n
+</pre>
+
+<DT><span class="strong">power_free_upto_def</span>
+<DD>
+<pre>
+⊢ ∀n k. n power_free_upto k ⇔ ∀j. 1 < j ∧ j ≤ k ⇒ ROOT j n ** j ≠ n
+</pre>
+
+<DT><span class="strong">prime_divisors_def</span>
+<DD>
+<pre>
+⊢ ∀n. prime_divisors n = {p | prime p ∧ p divides n}
+</pre>
+
+<DT><span class="strong">prime_factors_def</span>
+<DD>
+<pre>
+⊢ ∀n. prime_factors n = {p | prime p ∧ p ∈ divisors n}
+</pre>
+
+<DT><span class="strong">prime_power_divisors_def</span>
+<DD>
+<pre>
+⊢ ∀n. prime_power_divisors n = IMAGE (λp. p ** ppidx n) (prime_divisors n)
+</pre>
+
+<DT><span class="strong">prime_power_index_def</span>
+<DD>
+<pre>
+⊢ ∀p n.
+    0 < n ∧ prime p ⇒ p ** ppidx n divides n ∧ coprime p (n DIV p ** ppidx n)
+</pre>
+
+<DT><span class="strong">prime_powers_upto_def</span>
+<DD>
+<pre>
+⊢ ∀n. prime_powers_upto n = IMAGE (λp. p ** LOG p n) (primes_upto n)
+</pre>
+
+<DT><span class="strong">prime_test_def</span>
+<DD>
+<pre>
+⊢ ∀n. prime_test n ⇔ if n ≤ 1 then F else factor_seek n (1 + SQRT n) 2 = n
+</pre>
+
+<DT><span class="strong">primes_upto_def</span>
+<DD>
+<pre>
+⊢ ∀n. primes_upto n = {p | prime p ∧ p ≤ n}
+</pre>
+
+<DT><span class="strong">rec_phi_def_primitive</span>
+<DD>
+<pre>
+⊢ rec_phi =
+  WFREC
+    (@R. WF R ∧ ∀n a. n ≠ 0 ∧ n ≠ 1 ∧ a ∈ {m | m < n ∧ m divides n} ⇒ R a n)
+    (λrec_phi a'.
+         I
+           (if a' = 0 then 0
+            else if a' = 1 then 1
+            else a' − ∑ (λa. rec_phi a) {m | m < a' ∧ m divides a'}))
+</pre>
+
+<DT><span class="strong">square_def</span>
+<DD>
+<pre>
+⊢ ∀n. square n ⇔ ∃k. n = k * k
+</pre>
+
+<DT><span class="strong">square_free_def</span>
+<DD>
+<pre>
+⊢ ∀n. square_free n ⇔ ∀p. prime p ∧ p divides n ⇒ ¬(p * p divides n)
+</pre>
+
+<DT><span class="strong">ulog_def</span>
+<DD>
+<pre>
+⊢ ∀n. ulog n = count_up n 1 0
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">Gauss_little_thm</span>
+<DD>
+<pre>
+⊢ ∀n. ∑ phi (divisors n) = n
+</pre>
+
+<DT><span class="strong">LOG2_BY_HALF</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ LOG2 n = 1 + LOG2 (n DIV 2)
+</pre>
+
+<DT><span class="strong">LOG2_DIV_EXP</span>
+<DD>
+<pre>
+⊢ ∀n m. 2 ** m < n ⇒ LOG2 (n DIV 2 ** m) = LOG2 n − m
+</pre>
+
+<DT><span class="strong">LOG2_HALF</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ LOG2 (n DIV 2) = LOG2 n − 1
+</pre>
+
+<DT><span class="strong">LOG2_SUC_TIMES_SQ_DIV_2_POS</span>
+<DD>
+<pre>
+⊢ ∀n m. 1 < m ⇒ 0 < SUC (LOG2 n) * (m² DIV 2)
+</pre>
+
+<DT><span class="strong">LOG2_compute</span>
+<DD>
+<pre>
+⊢ ∀n. LOG2 n = if n = 0 then LOG2 0 else halves n − 1
+</pre>
+
+<DT><span class="strong">LOG_SUC</span>
+<DD>
+<pre>
+⊢ ∀b n.
+    1 < b ∧ 0 < n ⇒
+    LOG b (SUC n) = LOG b n + if SUC n power_of b then 1 else 0
+</pre>
+
+<DT><span class="strong">ROOT_EQN</span>
+<DD>
+<pre>
+⊢ ∀r n.
+    0 < r ⇒
+    ROOT r n =
+    (let
+       m = 2 * ROOT r (n DIV 2 ** r)
+     in
+       m + if (m + 1) ** r ≤ n then 1 else 0)
+</pre>
+
+<DT><span class="strong">SQRT_LE_IMP</span>
+<DD>
+<pre>
+⊢ ∀n m. SQRT n ≤ m ⇒ n ≤ 3 * m²
+</pre>
+
+<DT><span class="strong">SQRT_LE_SELF</span>
+<DD>
+<pre>
+⊢ ∀n. SQRT n ≤ n
+</pre>
+
+<DT><span class="strong">SQRT_MULT_LE</span>
+<DD>
+<pre>
+⊢ ∀n m. SQRT n * SQRT m ≤ SQRT (n * m)
+</pre>
+
+<DT><span class="strong">SQRT_SQ</span>
+<DD>
+<pre>
+⊢ ∀n. SQRT (n * n) = n
+</pre>
+
+<DT><span class="strong">SQ_SQRT_LE</span>
+<DD>
+<pre>
+⊢ ∀n. SQRT n * SQRT n ≤ n
+</pre>
+
+<DT><span class="strong">SQ_SQRT_LE_alt</span>
+<DD>
+<pre>
+⊢ ∀n. (SQRT n)² ≤ n
+</pre>
+
+<DT><span class="strong">SQ_SQRT_LT</span>
+<DD>
+<pre>
+⊢ ∀n. ¬square n ⇒ SQRT n * SQRT n < n
+</pre>
+
+<DT><span class="strong">SQ_SQRT_LT_alt</span>
+<DD>
+<pre>
+⊢ ∀n. ¬square n ⇒ (SQRT n)² < n
+</pre>
+
+<DT><span class="strong">basic_prime_factorisation</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ n = PROD_SET (IMAGE (λp. p ** ppidx n) (prime_divisors n))
+</pre>
+
+<DT><span class="strong">common_prime_divisors_element</span>
+<DD>
+<pre>
+⊢ ∀m n p.
+    p ∈ common_prime_divisors m n ⇔
+    p ∈ prime_divisors m ∧ p ∈ prime_divisors n
+</pre>
+
+<DT><span class="strong">common_prime_divisors_finite</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ 0 < n ⇒ FINITE (common_prime_divisors m n)
+</pre>
+
+<DT><span class="strong">common_prime_divisors_min_image_pairwise_coprime</span>
+<DD>
+<pre>
+⊢ ∀m n x y.
+    x ∈ IMAGE (λp. p ** MIN (ppidx m) (ppidx n)) (common_prime_divisors m n) ∧
+    y ∈ IMAGE (λp. p ** MIN (ppidx m) (ppidx n)) (common_prime_divisors m n) ∧
+    x ≠ y ⇒
+    coprime x y
+</pre>
+
+<DT><span class="strong">common_prime_divisors_pairwise_coprime</span>
+<DD>
+<pre>
+⊢ ∀m n x y.
+    x ∈ common_prime_divisors m n ∧ y ∈ common_prime_divisors m n ∧ x ≠ y ⇒
+    coprime x y
+</pre>
+
+<DT><span class="strong">coprimes_by_0</span>
+<DD>
+<pre>
+⊢ ∀d. coprimes_by 0 d = ∅
+</pre>
+
+<DT><span class="strong">coprimes_by_by_0</span>
+<DD>
+<pre>
+⊢ ∀n. coprimes_by n 0 = ∅
+</pre>
+
+<DT><span class="strong">coprimes_by_by_1</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ coprimes_by n 1 = coprimes n
+</pre>
+
+<DT><span class="strong">coprimes_by_by_divisor</span>
+<DD>
+<pre>
+⊢ ∀n d. 0 < n ∧ d divides n ⇒ coprimes_by n d = coprimes (n DIV d)
+</pre>
+
+<DT><span class="strong">coprimes_by_by_last</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ coprimes_by n n = {1}
+</pre>
+
+<DT><span class="strong">coprimes_by_divisors_card</span>
+<DD>
+<pre>
+⊢ ∀n x. x ∈ divisors n ⇒ (CARD ∘ coprimes_by n) x = (λd. phi (n DIV d)) x
+</pre>
+
+<DT><span class="strong">coprimes_by_element</span>
+<DD>
+<pre>
+⊢ ∀n d j. j ∈ coprimes_by n d ⇔ 0 < n ∧ d divides n ∧ j ∈ coprimes (n DIV d)
+</pre>
+
+<DT><span class="strong">coprimes_by_eq_empty</span>
+<DD>
+<pre>
+⊢ ∀n d. 0 < n ⇒ (coprimes_by n d = ∅ ⇔ ¬(d divides n))
+</pre>
+
+<DT><span class="strong">coprimes_by_finite</span>
+<DD>
+<pre>
+⊢ ∀n d. FINITE (coprimes_by n d)
+</pre>
+
+<DT><span class="strong">coprimes_by_with_card</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒
+      CARD ∘ coprimes_by n = (λd. phi (if d ∈ divisors n then n DIV d else 0))
+</pre>
+
+<DT><span class="strong">coprimes_eq_Euler</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ coprimes n = Euler n
+</pre>
+
+<DT><span class="strong">coprimes_from_not_1_inj</span>
+<DD>
+<pre>
+⊢ INJ coprimes (𝕌(:num) DIFF {1}) 𝕌(:num -> bool)
+</pre>
+
+<DT><span class="strong">coprimes_map_cross_inj</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    coprime m n ⇒
+    INJ (λ(x,y). if m * n = 1 then 1 else (x * n + y * m) MOD (m * n))
+      (coprimes m × coprimes n) 𝕌(:num)
+</pre>
+
+<DT><span class="strong">coprimes_mult_by_image</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    coprime m n ⇒
+    coprimes (m * n) =
+    IMAGE (λ(x,y). if m * n = 1 then 1 else (x * n + y * m) MOD (m * n))
+      (coprimes m × coprimes n)
+</pre>
+
+<DT><span class="strong">coprimes_prime</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇒ coprimes n = residue n
+</pre>
+
+<DT><span class="strong">coprimes_prime_power</span>
+<DD>
+<pre>
+⊢ ∀p n.
+    prime p ⇒
+    coprimes (p ** n) = natural (p ** n) DIFF p multiples_upto p ** n
+</pre>
+
+<DT><span class="strong">coprimes_thm</span>
+<DD>
+<pre>
+⊢ ∀n. coprimes n = LIST_TO_SET (FILTER (λj. coprime j n) (GENLIST SUC n))
+</pre>
+
+<DT><span class="strong">count_up_def</span>
+<DD>
+<pre>
+⊢ ∀n m k.
+    count_up n m k =
+    if m = 0 then 0 else if n ≤ m then k else count_up n (2 * m) (SUC k)
+</pre>
+
+<DT><span class="strong">count_up_exit</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≠ 0 ∧ n ≤ m ⇒ ∀k. count_up n m k = k
+</pre>
+
+<DT><span class="strong">count_up_exit_eqn</span>
+<DD>
+<pre>
+⊢ ∀m. m ≠ 0 ⇒
+      ∀n t. 2 ** t * m < 2 * n ∧ n ≤ 2 ** t * m ⇒ ∀k. count_up n m k = k + t
+</pre>
+
+<DT><span class="strong">count_up_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n m k. (m ≠ 0 ∧ ¬(n ≤ m) ⇒ P n (2 * m) (SUC k)) ⇒ P n m k) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">count_up_suc</span>
+<DD>
+<pre>
+⊢ ∀m n. m ≠ 0 ∧ m < n ⇒ ∀k. count_up n m k = count_up n (2 * m) (SUC k)
+</pre>
+
+<DT><span class="strong">count_up_suc_eqn</span>
+<DD>
+<pre>
+⊢ ∀m. m ≠ 0 ⇒
+      ∀n t.
+        2 ** t * m < n ⇒
+        ∀k. count_up n m k = count_up n (2 ** SUC t * m) (SUC k + t)
+</pre>
+
+<DT><span class="strong">divisor_gt_cofactor_le</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < p ∧ p divides n ∧ SQRT n < p ⇒ n DIV p ≤ SQRT n
+</pre>
+
+<DT><span class="strong">divisor_le_cofactor_ge</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < p ∧ p divides n ∧ p ≤ SQRT n ⇒ SQRT n ≤ n DIV p
+</pre>
+
+<DT><span class="strong">divisor_prime_factorisation</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < n ∧ m divides n ⇒
+    m = PROD_SET (IMAGE (λp. p ** ppidx m) (prime_divisors n))
+</pre>
+
+<DT><span class="strong">divisors_0</span>
+<DD>
+<pre>
+⊢ divisors 0 = ∅
+</pre>
+
+<DT><span class="strong">divisors_1</span>
+<DD>
+<pre>
+⊢ divisors 1 = {1}
+</pre>
+
+<DT><span class="strong">divisors_card_upper</span>
+<DD>
+<pre>
+⊢ ∀n. CARD (divisors n) ≤ 2 * SQRT n
+</pre>
+
+<DT><span class="strong">divisors_cofactor_inj</span>
+<DD>
+<pre>
+⊢ ∀n. INJ (λj. n DIV j) (divisors n) 𝕌(:num)
+</pre>
+
+<DT><span class="strong">divisors_delete_last</span>
+<DD>
+<pre>
+⊢ ∀n. divisors n DELETE n = {m | 0 < m ∧ m < n ∧ m divides n}
+</pre>
+
+<DT><span class="strong">divisors_divisors_bij</span>
+<DD>
+<pre>
+⊢ ∀n. (λd. n DIV d) PERMUTES divisors n
+</pre>
+
+<DT><span class="strong">divisors_element</span>
+<DD>
+<pre>
+⊢ ∀n d. d ∈ divisors n ⇔ 0 < d ∧ d ≤ n ∧ d divides n
+</pre>
+
+<DT><span class="strong">divisors_element_alt</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀d. d ∈ divisors n ⇔ d divides n
+</pre>
+
+<DT><span class="strong">divisors_eq_empty</span>
+<DD>
+<pre>
+⊢ ∀n. divisors n = ∅ ⇔ n = 0
+</pre>
+
+<DT><span class="strong">divisors_eq_gcd_image</span>
+<DD>
+<pre>
+⊢ ∀n. divisors n = IMAGE (gcd n) (natural n)
+</pre>
+
+<DT><span class="strong">divisors_eq_image_gcd_count</span>
+<DD>
+<pre>
+⊢ ∀n. divisors n = IMAGE (gcd n) (count n)
+</pre>
+
+<DT><span class="strong">divisors_eq_image_gcd_natural</span>
+<DD>
+<pre>
+⊢ ∀n. divisors n = IMAGE (gcd n) (natural n)
+</pre>
+
+<DT><span class="strong">divisors_eq_image_gcd_upto</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ divisors n = IMAGE (gcd n) (upto n)
+</pre>
+
+<DT><span class="strong">divisors_eqn</span>
+<DD>
+<pre>
+⊢ ∀n. divisors n = IMAGE (λj. if j + 1 divides n then j + 1 else 1) (count n)
+</pre>
+
+<DT><span class="strong">divisors_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (divisors n)
+</pre>
+
+<DT><span class="strong">divisors_has_1</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ 1 ∈ divisors n
+</pre>
+
+<DT><span class="strong">divisors_has_cofactor</span>
+<DD>
+<pre>
+⊢ ∀n d. d ∈ divisors n ⇒ n DIV d ∈ divisors n
+</pre>
+
+<DT><span class="strong">divisors_has_element</span>
+<DD>
+<pre>
+⊢ ∀n d. d ∈ divisors n ⇒ 0 < n
+</pre>
+
+<DT><span class="strong">divisors_has_factor</span>
+<DD>
+<pre>
+⊢ ∀n p q. 0 < n ∧ n = p * q ⇒ p ∈ divisors n ∧ q ∈ divisors n
+</pre>
+
+<DT><span class="strong">divisors_has_last</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ n ∈ divisors n
+</pre>
+
+<DT><span class="strong">divisors_nonzero</span>
+<DD>
+<pre>
+⊢ ∀n d. d ∈ divisors n ⇒ 0 < d
+</pre>
+
+<DT><span class="strong">divisors_not_empty</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ divisors n ≠ ∅
+</pre>
+
+<DT><span class="strong">divisors_subset_natural</span>
+<DD>
+<pre>
+⊢ ∀n. divisors n ⊆ natural n
+</pre>
+
+<DT><span class="strong">even_sq_free_element</span>
+<DD>
+<pre>
+⊢ ∀s n.
+    n ∈ even_sq_free s ⇔ n ∈ s ∧ square_free n ∧ EVEN (CARD (prime_factors n))
+</pre>
+
+<DT><span class="strong">even_sq_free_finite</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ FINITE (even_sq_free s)
+</pre>
+
+<DT><span class="strong">even_sq_free_subset</span>
+<DD>
+<pre>
+⊢ ∀s. even_sq_free s ⊆ s
+</pre>
+
+<DT><span class="strong">exp_to_ulog</span>
+<DD>
+<pre>
+⊢ ∀m n. n ≤ 2 ** m ⇒ ulog n ≤ m
+</pre>
+
+<DT><span class="strong">factor_seek_bound</span>
+<DD>
+<pre>
+⊢ ∀n c q. 0 < n ⇒ factor_seek n c q ≤ n
+</pre>
+
+<DT><span class="strong">factor_seek_def</span>
+<DD>
+<pre>
+⊢ ∀q n c.
+    factor_seek n c q =
+    if c ≤ q then n
+    else if 1 < q ∧ n MOD q = 0 then q
+    else factor_seek n c (q + 1)
+</pre>
+
+<DT><span class="strong">factor_seek_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n c q. (¬(c ≤ q) ∧ ¬(1 < q ∧ n MOD q = 0) ⇒ P n c (q + 1)) ⇒ P n c q) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">factor_seek_thm</span>
+<DD>
+<pre>
+⊢ ∀n c q.
+    1 < q ∧ q ≤ c ∧ c ≤ n ⇒
+    (factor_seek n c q = n ⇔ ∀p. q ≤ p ∧ p < c ⇒ ¬(p divides n))
+</pre>
+
+<DT><span class="strong">gcd_eq_count_partition_by_divisors</span>
+<DD>
+<pre>
+⊢ ∀n. partition (feq (gcd n)) (count n) =
+      IMAGE (preimage (gcd n) (count n)) (divisors n)
+</pre>
+
+<DT><span class="strong">gcd_eq_equiv_class</span>
+<DD>
+<pre>
+⊢ ∀n d. preimage (gcd n) (natural n) d = gcd_matches n d
+</pre>
+
+<DT><span class="strong">gcd_eq_equiv_class_fun</span>
+<DD>
+<pre>
+⊢ ∀n. preimage (gcd n) (natural n) = gcd_matches n
+</pre>
+
+<DT><span class="strong">gcd_eq_equiv_on_count</span>
+<DD>
+<pre>
+⊢ ∀n. feq (gcd n) equiv_on count n
+</pre>
+
+<DT><span class="strong">gcd_eq_equiv_on_natural</span>
+<DD>
+<pre>
+⊢ ∀n. feq (gcd n) equiv_on natural n
+</pre>
+
+<DT><span class="strong">gcd_eq_equiv_on_upto</span>
+<DD>
+<pre>
+⊢ ∀n. feq (gcd n) equiv_on upto n
+</pre>
+
+<DT><span class="strong">gcd_eq_natural_partition_by_divisors</span>
+<DD>
+<pre>
+⊢ ∀n. partition (feq (gcd n)) (natural n) =
+      IMAGE (preimage (gcd n) (natural n)) (divisors n)
+</pre>
+
+<DT><span class="strong">gcd_eq_partition_by_divisors</span>
+<DD>
+<pre>
+⊢ ∀n. partition (feq (gcd n)) (natural n) = IMAGE (gcd_matches n) (divisors n)
+</pre>
+
+<DT><span class="strong">gcd_eq_upto_partition_by_divisors</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒
+      partition (feq (gcd n)) (upto n) =
+      IMAGE (preimage (gcd n) (upto n)) (divisors n)
+</pre>
+
+<DT><span class="strong">gcd_matches_0</span>
+<DD>
+<pre>
+⊢ ∀d. gcd_matches 0 d = ∅
+</pre>
+
+<DT><span class="strong">gcd_matches_1</span>
+<DD>
+<pre>
+⊢ ∀d. gcd_matches 1 d = if d = 1 then {1} else ∅
+</pre>
+
+<DT><span class="strong">gcd_matches_alt</span>
+<DD>
+<pre>
+⊢ ∀n d. gcd_matches n d = natural n ∩ {j | gcd j n = d}
+</pre>
+
+<DT><span class="strong">gcd_matches_and_coprimes_by_same_size</span>
+<DD>
+<pre>
+⊢ ∀n. CARD ∘ gcd_matches n = CARD ∘ coprimes_by n
+</pre>
+
+<DT><span class="strong">gcd_matches_bij_coprimes</span>
+<DD>
+<pre>
+⊢ ∀n d.
+    0 < n ∧ d divides n ⇒
+    BIJ (λj. j DIV d) (gcd_matches n d) (coprimes (n DIV d))
+</pre>
+
+<DT><span class="strong">gcd_matches_bij_coprimes_by</span>
+<DD>
+<pre>
+⊢ ∀n d. d divides n ⇒ BIJ (λj. j DIV d) (gcd_matches n d) (coprimes_by n d)
+</pre>
+
+<DT><span class="strong">gcd_matches_divisor_element</span>
+<DD>
+<pre>
+⊢ ∀n d. d divides n ⇒ ∀j. j ∈ gcd_matches n d ⇒ j DIV d ∈ coprimes_by n d
+</pre>
+
+<DT><span class="strong">gcd_matches_element</span>
+<DD>
+<pre>
+⊢ ∀n d j. j ∈ gcd_matches n d ⇔ 0 < j ∧ j ≤ n ∧ gcd j n = d
+</pre>
+
+<DT><span class="strong">gcd_matches_element_divides</span>
+<DD>
+<pre>
+⊢ ∀n d j. j ∈ gcd_matches n d ⇒ d divides j ∧ d divides n
+</pre>
+
+<DT><span class="strong">gcd_matches_eq_empty</span>
+<DD>
+<pre>
+⊢ ∀n d. 0 < n ⇒ (gcd_matches n d = ∅ ⇔ ¬(d divides n))
+</pre>
+
+<DT><span class="strong">gcd_matches_finite</span>
+<DD>
+<pre>
+⊢ ∀n d. FINITE (gcd_matches n d)
+</pre>
+
+<DT><span class="strong">gcd_matches_from_divisors_inj</span>
+<DD>
+<pre>
+⊢ ∀n. INJ (gcd_matches n) (divisors n) 𝕌(:num -> bool)
+</pre>
+
+<DT><span class="strong">gcd_matches_has_divisor</span>
+<DD>
+<pre>
+⊢ ∀n d. 0 < n ∧ d divides n ⇒ d ∈ gcd_matches n d
+</pre>
+
+<DT><span class="strong">gcd_matches_subset</span>
+<DD>
+<pre>
+⊢ ∀n d. gcd_matches n d ⊆ natural n
+</pre>
+
+<DT><span class="strong">gcd_matches_with_0</span>
+<DD>
+<pre>
+⊢ ∀n. gcd_matches n 0 = ∅
+</pre>
+
+<DT><span class="strong">gcd_park_decompose</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < m ∧ 0 < n ⇒
+    (let a = park m n; b = gcd m n DIV a in gcd m n = a * b ∧ coprime a b)
+</pre>
+
+<DT><span class="strong">gcd_park_decomposition</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < m ∧ 0 < n ⇒
+    (let
+       a = park m n;
+       b = gcd m n DIV a
+     in
+       b = PROD_SET (IMAGE (λp. p ** ppidx n) (park_off m n)) ∧
+       gcd m n = a * b ∧ coprime a b)
+</pre>
+
+<DT><span class="strong">gcd_prime_factorisation</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < m ∧ 0 < n ⇒
+    gcd m n =
+    PROD_SET
+      (IMAGE (λp. p ** MIN (ppidx m) (ppidx n)) (common_prime_divisors m n))
+</pre>
+
+<DT><span class="strong">gcd_prime_power_cofactor_coprime</span>
+<DD>
+<pre>
+⊢ ∀a b p.
+    0 < a ∧ 0 < b ∧ prime p ⇒
+    coprime p (gcd (a DIV p ** ppidx a) (b DIV p ** ppidx b))
+</pre>
+
+<DT><span class="strong">gcd_prime_power_divisibility</span>
+<DD>
+<pre>
+⊢ ∀a b p.
+    0 < a ∧ 0 < b ∧ prime p ⇒
+    ∀k. p ** k divides gcd a b ⇒ k ≤ MIN (ppidx a) (ppidx b)
+</pre>
+
+<DT><span class="strong">gcd_prime_power_factor</span>
+<DD>
+<pre>
+⊢ ∀a b p.
+    0 < a ∧ 0 < b ∧ prime p ⇒
+    gcd a b =
+    p ** MIN (ppidx a) (ppidx b) *
+    gcd (a DIV p ** ppidx a) (b DIV p ** ppidx b)
+</pre>
+
+<DT><span class="strong">gcd_prime_power_factor_divides_gcd</span>
+<DD>
+<pre>
+⊢ ∀a b p.
+    0 < a ∧ 0 < b ∧ prime p ⇒ p ** MIN (ppidx a) (ppidx b) divides gcd a b
+</pre>
+
+<DT><span class="strong">gcd_prime_power_index</span>
+<DD>
+<pre>
+⊢ ∀a b p. 0 < a ∧ 0 < b ∧ prime p ⇒ ppidx (gcd a b) = MIN (ppidx a) (ppidx b)
+</pre>
+
+<DT><span class="strong">halves_0</span>
+<DD>
+<pre>
+⊢ halves 0 = 0
+</pre>
+
+<DT><span class="strong">halves_1</span>
+<DD>
+<pre>
+⊢ halves 1 = SUC (halves 0)
+</pre>
+
+<DT><span class="strong">halves_2</span>
+<DD>
+<pre>
+⊢ halves 2 = SUC (SUC (halves 0))
+</pre>
+
+<DT><span class="strong">halves_alt</span>
+<DD>
+<pre>
+⊢ ∀n. halves n = if n = 0 then 0 else 1 + halves (n DIV 2)
+</pre>
+
+<DT><span class="strong">halves_by_LOG2</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ halves n = 1 + LOG2 n
+</pre>
+
+<DT><span class="strong">halves_def</span>
+<DD>
+<pre>
+⊢ ∀n. halves n = if n = 0 then 0 else SUC (halves (n DIV 2))
+</pre>
+
+<DT><span class="strong">halves_eq_0</span>
+<DD>
+<pre>
+⊢ ∀n. halves n = 0 ⇔ n = 0
+</pre>
+
+<DT><span class="strong">halves_eq_1</span>
+<DD>
+<pre>
+⊢ ∀n. halves n = 1 ⇔ n = 1
+</pre>
+
+<DT><span class="strong">halves_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n. (n ≠ 0 ⇒ P (n DIV 2)) ⇒ P n) ⇒ ∀v. P v
+</pre>
+
+<DT><span class="strong">halves_le</span>
+<DD>
+<pre>
+⊢ MONO halves
+</pre>
+
+<DT><span class="strong">halves_pos</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ 0 < halves n
+</pre>
+
+<DT><span class="strong">lcm_fun_0</span>
+<DD>
+<pre>
+⊢ lcm_fun 0 = 1
+</pre>
+
+<DT><span class="strong">lcm_fun_1</span>
+<DD>
+<pre>
+⊢ lcm_fun 1 = 1
+</pre>
+
+<DT><span class="strong">lcm_fun_2</span>
+<DD>
+<pre>
+⊢ lcm_fun 2 = 2
+</pre>
+
+<DT><span class="strong">lcm_fun_SUC</span>
+<DD>
+<pre>
+⊢ ∀n. lcm_fun (SUC n) =
+      if n = 0 then 1
+      else
+        case some p. ∃k. 0 < k ∧ prime p ∧ SUC n = p ** k of
+          NONE => lcm_fun n
+        | SOME p => p * lcm_fun n
+</pre>
+
+<DT><span class="strong">lcm_fun_compute</span>
+<DD>
+<pre>
+⊢ lcm_fun 0 = 1 ∧
+  (∀n. lcm_fun <..num comp'n..> =
+       if <..num comp'n..> − 1 = 0 then 1
+       else
+         case some p. ∃k. 0 < k ∧ prime p ∧ <..num comp'n..> = p ** k of
+           NONE => lcm_fun (<..num comp'n..> − 1)
+         | SOME p => p * lcm_fun (<..num comp'n..> − 1)) ∧
+  ∀n. lcm_fun <..num comp'n..> =
+      if <..num comp'n..> = 0 then 1
+      else
+        case some p. ∃k. 0 < k ∧ prime p ∧ <..num comp'n..> = p ** k of
+          NONE => lcm_fun <..num comp'n..>
+        | SOME p => p * lcm_fun <..num comp'n..>
+</pre>
+
+<DT><span class="strong">lcm_fun_lower_bound</span>
+<DD>
+<pre>
+⊢ ∀n. 2 ** n ≤ lcm_fun (n + 1)
+</pre>
+
+<DT><span class="strong">lcm_fun_lower_bound_alt</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ 2 ** (n − 1) ≤ lcm_fun n
+</pre>
+
+<DT><span class="strong">lcm_fun_suc_none</span>
+<DD>
+<pre>
+⊢ ∀n. ¬(∃p k. 0 < k ∧ prime p ∧ SUC n = p ** k) ⇒ lcm_fun (SUC n) = lcm_fun n
+</pre>
+
+<DT><span class="strong">lcm_fun_suc_some</span>
+<DD>
+<pre>
+⊢ ∀n p.
+    prime p ∧ (∃k. 0 < k ∧ SUC n = p ** k) ⇒ lcm_fun (SUC n) = p * lcm_fun n
+</pre>
+
+<DT><span class="strong">lcm_gcd_park_decompose</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < m ∧ 0 < n ⇒
+    (let
+       a = park m n;
+       b = gcd m n DIV a;
+       p = m DIV a;
+       q = a * n DIV gcd m n
+     in
+       lcm m n = p * q ∧ coprime p q ∧ gcd m n = a * b ∧ m = a * p ∧ n = b * q)
+</pre>
+
+<DT><span class="strong">lcm_park_decompose</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < m ∧ 0 < n ⇒
+    (let
+       a = park m n;
+       p = m DIV a;
+       q = a * n DIV gcd m n
+     in
+       lcm m n = p * q ∧ coprime p q)
+</pre>
+
+<DT><span class="strong">lcm_park_decomposition</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < m ∧ 0 < n ⇒
+    (let
+       a = park m n;
+       b = gcd m n DIV a;
+       p = m DIV a;
+       q = a * n DIV gcd m n
+     in
+       b = PROD_SET (IMAGE (λp. p ** ppidx n) (park_off m n)) ∧
+       p =
+       PROD_SET (IMAGE (λp. p ** ppidx m) (prime_divisors m DIFF park_on m n)) ∧
+       q =
+       PROD_SET
+         (IMAGE (λp. p ** ppidx n) (prime_divisors n DIFF park_off m n)) ∧
+       lcm m n = p * q ∧ coprime p q ∧ gcd m n = a * b ∧ m = a * p ∧ n = b * q)
+</pre>
+
+<DT><span class="strong">lcm_prime_factorisation</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < m ∧ 0 < n ⇒
+    lcm m n =
+    PROD_SET
+      (IMAGE (λp. p ** MAX (ppidx m) (ppidx n)) (total_prime_divisors m n))
+</pre>
+
+<DT><span class="strong">lcm_prime_power_cofactor_coprime</span>
+<DD>
+<pre>
+⊢ ∀a b p.
+    0 < a ∧ 0 < b ∧ prime p ⇒
+    coprime p (lcm (a DIV p ** ppidx a) (b DIV p ** ppidx b))
+</pre>
+
+<DT><span class="strong">lcm_prime_power_divisibility</span>
+<DD>
+<pre>
+⊢ ∀a b p.
+    0 < a ∧ 0 < b ∧ prime p ⇒
+    ∀k. p ** k divides lcm a b ⇒ k ≤ MAX (ppidx a) (ppidx b)
+</pre>
+
+<DT><span class="strong">lcm_prime_power_factor</span>
+<DD>
+<pre>
+⊢ ∀a b p.
+    0 < a ∧ 0 < b ∧ prime p ⇒
+    lcm a b =
+    p ** MAX (ppidx a) (ppidx b) *
+    lcm (a DIV p ** ppidx a) (b DIV p ** ppidx b)
+</pre>
+
+<DT><span class="strong">lcm_prime_power_factor_divides_lcm</span>
+<DD>
+<pre>
+⊢ ∀a b p.
+    0 < a ∧ 0 < b ∧ prime p ⇒ p ** MAX (ppidx a) (ppidx b) divides lcm a b
+</pre>
+
+<DT><span class="strong">lcm_prime_power_index</span>
+<DD>
+<pre>
+⊢ ∀a b p. 0 < a ∧ 0 < b ∧ prime p ⇒ ppidx (lcm a b) = MAX (ppidx a) (ppidx b)
+</pre>
+
+<DT><span class="strong">lcm_run_eq_prod_set_prime_powers</span>
+<DD>
+<pre>
+⊢ ∀n. lcm_run n = PROD_SET (prime_powers_upto n)
+</pre>
+
+<DT><span class="strong">lcm_run_eq_set_lcm_prime_powers</span>
+<DD>
+<pre>
+⊢ ∀n. lcm_run n = set_lcm (prime_powers_upto n)
+</pre>
+
+<DT><span class="strong">lcm_run_lower_by_primes_count</span>
+<DD>
+<pre>
+⊢ ∀n. SQRT (n ** primes_count n) ≤ lcm_run n
+</pre>
+
+<DT><span class="strong">lcm_run_lower_by_primes_product</span>
+<DD>
+<pre>
+⊢ ∀n. PROD_SET (primes_upto n) ≤ lcm_run n
+</pre>
+
+<DT><span class="strong">lcm_run_upper_by_primes_count</span>
+<DD>
+<pre>
+⊢ ∀n. lcm_run n ≤ n ** primes_count n
+</pre>
+
+<DT><span class="strong">lcm_special_for_coprime_factors</span>
+<DD>
+<pre>
+⊢ ∀n a b.
+    n = a * b ∧ coprime a b ⇒ ∀m. a divides m ∧ b divides m ⇒ lcm n m = m
+</pre>
+
+<DT><span class="strong">lcm_special_for_prime_power</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ ∀m n. n = p ** SUC (ppidx m) ⇒ lcm n m = p * m
+</pre>
+
+<DT><span class="strong">less_divisors_0</span>
+<DD>
+<pre>
+⊢ less_divisors 0 = ∅
+</pre>
+
+<DT><span class="strong">less_divisors_1</span>
+<DD>
+<pre>
+⊢ less_divisors 1 = ∅
+</pre>
+
+<DT><span class="strong">less_divisors_element</span>
+<DD>
+<pre>
+⊢ ∀n x. x ∈ less_divisors n ⇔ 0 < x ∧ x < n ∧ x divides n
+</pre>
+
+<DT><span class="strong">less_divisors_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (less_divisors n)
+</pre>
+
+<DT><span class="strong">less_divisors_has_1</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ 1 ∈ less_divisors n
+</pre>
+
+<DT><span class="strong">less_divisors_has_cofactor</span>
+<DD>
+<pre>
+⊢ ∀n d. 1 < d ∧ d ∈ less_divisors n ⇒ n DIV d ∈ less_divisors n
+</pre>
+
+<DT><span class="strong">less_divisors_max</span>
+<DD>
+<pre>
+⊢ ∀n. MAX_SET (less_divisors n) ≤ n DIV 2
+</pre>
+
+<DT><span class="strong">less_divisors_min</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ MIN_SET (less_divisors n) = 1
+</pre>
+
+<DT><span class="strong">less_divisors_nonzero</span>
+<DD>
+<pre>
+⊢ ∀n x. x ∈ less_divisors n ⇒ 0 < x
+</pre>
+
+<DT><span class="strong">less_divisors_prime</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇒ less_divisors n = {1}
+</pre>
+
+<DT><span class="strong">less_divisors_subset_divisors</span>
+<DD>
+<pre>
+⊢ ∀n. less_divisors n ⊆ divisors n
+</pre>
+
+<DT><span class="strong">less_divisors_subset_natural</span>
+<DD>
+<pre>
+⊢ ∀n. less_divisors n ⊆ natural (n DIV 2)
+</pre>
+
+<DT><span class="strong">list_lcm_by_last_non_prime_power</span>
+<DD>
+<pre>
+⊢ ∀n. ¬SING (prime_divisors (n + 1)) ⇒ lcm_run (n + 1) = lcm_run n
+</pre>
+
+<DT><span class="strong">list_lcm_by_last_prime_power</span>
+<DD>
+<pre>
+⊢ ∀n. SING (prime_divisors (n + 1)) ⇒
+      lcm_run (n + 1) = CHOICE (prime_divisors (n + 1)) * lcm_run n
+</pre>
+
+<DT><span class="strong">list_lcm_eq_lcm_fun</span>
+<DD>
+<pre>
+⊢ ∀n. lcm_run (n + 1) = lcm_fun (n + 1)
+</pre>
+
+<DT><span class="strong">list_lcm_option_last_non_prime_power</span>
+<DD>
+<pre>
+⊢ ∀n. (∀p. prime_divisors (n + 1) ≠ {p}) ⇒ lcm_run (n + 1) = lcm_run n
+</pre>
+
+<DT><span class="strong">list_lcm_option_last_prime_power</span>
+<DD>
+<pre>
+⊢ ∀n p. prime_divisors (n + 1) = {p} ⇒ lcm_run (n + 1) = p * lcm_run n
+</pre>
+
+<DT><span class="strong">list_lcm_option_recurrence</span>
+<DD>
+<pre>
+⊢ ∀n. lcm_run (n + 1) =
+      case some p. prime_divisors (n + 1) = {p} of
+        NONE => lcm_run n
+      | SOME p => p * lcm_run n
+</pre>
+
+<DT><span class="strong">list_lcm_prime_power_divisibility</span>
+<DD>
+<pre>
+⊢ ∀l p.
+    prime p ∧ POSITIVE l ⇒
+    ∀k. p ** k divides list_lcm l ⇒ k ≤ MAX_LIST (MAP ppidx l)
+</pre>
+
+<DT><span class="strong">list_lcm_prime_power_factor_divides</span>
+<DD>
+<pre>
+⊢ ∀l p. prime p ⇒ p ** MAX_LIST (MAP ppidx l) divides list_lcm l
+</pre>
+
+<DT><span class="strong">list_lcm_prime_power_factor_member</span>
+<DD>
+<pre>
+⊢ ∀l p.
+    prime p ∧ l ≠ [] ∧ POSITIVE l ⇒
+    ∀k. p ** k divides list_lcm l ⇒ ∃x. MEM x l ∧ p ** k divides x
+</pre>
+
+<DT><span class="strong">list_lcm_prime_power_index</span>
+<DD>
+<pre>
+⊢ ∀l p. prime p ∧ POSITIVE l ⇒ ppidx (list_lcm l) = MAX_LIST (MAP ppidx l)
+</pre>
+
+<DT><span class="strong">list_lcm_prime_power_index_lower</span>
+<DD>
+<pre>
+⊢ ∀l p.
+    prime p ∧ l ≠ [] ∧ POSITIVE l ⇒ ∀x. MEM x l ⇒ ppidx x ≤ ppidx (list_lcm l)
+</pre>
+
+<DT><span class="strong">list_lcm_recurrence</span>
+<DD>
+<pre>
+⊢ ∀n. lcm_run (n + 1) =
+      (let
+         s = prime_divisors (n + 1)
+       in
+         if SING s then CHOICE s * lcm_run n else lcm_run n)
+</pre>
+
+<DT><span class="strong">list_lcm_with_last_non_prime_power</span>
+<DD>
+<pre>
+⊢ ∀n. (∀p k. k = 0 ∨ ¬prime p ∨ n + 2 ≠ p ** k) ⇒
+      lcm_run (n + 2) = lcm_run (n + 1)
+</pre>
+
+<DT><span class="strong">list_lcm_with_last_prime_power</span>
+<DD>
+<pre>
+⊢ ∀n p k. prime p ∧ n + 2 = p ** k ⇒ lcm_run (n + 2) = p * lcm_run (n + 1)
+</pre>
+
+<DT><span class="strong">multiples_upto_0_n</span>
+<DD>
+<pre>
+⊢ ∀n. 0 multiples_upto n = ∅
+</pre>
+
+<DT><span class="strong">multiples_upto_1_n</span>
+<DD>
+<pre>
+⊢ ∀n. 1 multiples_upto n = natural n
+</pre>
+
+<DT><span class="strong">multiples_upto_alt</span>
+<DD>
+<pre>
+⊢ ∀m n. m multiples_upto n = {x | ∃k. x = k * m ∧ 0 < x ∧ x ≤ n}
+</pre>
+
+<DT><span class="strong">multiples_upto_card</span>
+<DD>
+<pre>
+⊢ ∀m n. CARD (m multiples_upto n) = if m = 0 then 0 else n DIV m
+</pre>
+
+<DT><span class="strong">multiples_upto_element</span>
+<DD>
+<pre>
+⊢ ∀m n x. x ∈ m multiples_upto n ⇔ m divides x ∧ 0 < x ∧ x ≤ n
+</pre>
+
+<DT><span class="strong">multiples_upto_element_alt</span>
+<DD>
+<pre>
+⊢ ∀m n x. x ∈ m multiples_upto n ⇔ ∃k. x = k * m ∧ 0 < x ∧ x ≤ n
+</pre>
+
+<DT><span class="strong">multiples_upto_eqn</span>
+<DD>
+<pre>
+⊢ ∀m n. m multiples_upto n = {x | m divides x ∧ x ∈ natural n}
+</pre>
+
+<DT><span class="strong">multiples_upto_finite</span>
+<DD>
+<pre>
+⊢ ∀m n. FINITE (m multiples_upto n)
+</pre>
+
+<DT><span class="strong">multiples_upto_m_0</span>
+<DD>
+<pre>
+⊢ ∀m. m multiples_upto 0 = ∅
+</pre>
+
+<DT><span class="strong">multiples_upto_m_1</span>
+<DD>
+<pre>
+⊢ ∀m. m multiples_upto 1 = if m = 1 then {1} else ∅
+</pre>
+
+<DT><span class="strong">multiples_upto_subset</span>
+<DD>
+<pre>
+⊢ ∀m n. m multiples_upto n ⊆ natural n
+</pre>
+
+<DT><span class="strong">multiples_upto_thm</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    m multiples_upto n = if m = 0 then ∅ else IMAGE ($* m) (natural (n DIV m))
+</pre>
+
+<DT><span class="strong">non_prime_power_coprime_factors</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ∧ ¬(∃p k. 0 < k ∧ prime p ∧ n = p ** k) ⇒
+      ∃a b. n = a * b ∧ coprime a b ∧ 1 < a ∧ a < n ∧ 1 < b ∧ b < n
+</pre>
+
+<DT><span class="strong">non_sq_free_element</span>
+<DD>
+<pre>
+⊢ ∀s n. n ∈ non_sq_free s ⇔ n ∈ s ∧ ¬square_free n
+</pre>
+
+<DT><span class="strong">non_sq_free_finite</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ FINITE (non_sq_free s)
+</pre>
+
+<DT><span class="strong">non_sq_free_subset</span>
+<DD>
+<pre>
+⊢ ∀s. non_sq_free s ⊆ s
+</pre>
+
+<DT><span class="strong">odd_sq_free_element</span>
+<DD>
+<pre>
+⊢ ∀s n.
+    n ∈ odd_sq_free s ⇔ n ∈ s ∧ square_free n ∧ ODD (CARD (prime_factors n))
+</pre>
+
+<DT><span class="strong">odd_sq_free_finite</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ FINITE (odd_sq_free s)
+</pre>
+
+<DT><span class="strong">odd_sq_free_subset</span>
+<DD>
+<pre>
+⊢ ∀s. odd_sq_free s ⊆ s
+</pre>
+
+<DT><span class="strong">odd_square_lt</span>
+<DD>
+<pre>
+⊢ ∀n m. ¬square n ⇒ ((2 * m + 1)² < n ⇔ m < (1 + SQRT n) DIV 2)
+</pre>
+
+<DT><span class="strong">pairwise_coprime_for_prime_powers</span>
+<DD>
+<pre>
+⊢ ∀s f. s ⊆ prime ⇒ PAIRWISE_COPRIME (IMAGE (λp. p ** f p) s)
+</pre>
+
+<DT><span class="strong">park_off_alt</span>
+<DD>
+<pre>
+⊢ ∀m n. park_off m n = common_prime_divisors m n DIFF park_on m n
+</pre>
+
+<DT><span class="strong">park_off_element</span>
+<DD>
+<pre>
+⊢ ∀m n p.
+    p ∈ park_off m n ⇔
+    p ∈ prime_divisors m ∧ p ∈ prime_divisors n ∧ ppidx n < ppidx m
+</pre>
+
+<DT><span class="strong">park_off_image_has_not_1</span>
+<DD>
+<pre>
+⊢ ∀m n. 1 ∉ IMAGE (λp. p ** ppidx m) (park_off m n)
+</pre>
+
+<DT><span class="strong">park_off_subset_common</span>
+<DD>
+<pre>
+⊢ ∀m n. park_off m n ⊆ common_prime_divisors m n
+</pre>
+
+<DT><span class="strong">park_off_subset_total</span>
+<DD>
+<pre>
+⊢ ∀m n. park_off m n ⊆ total_prime_divisors m n
+</pre>
+
+<DT><span class="strong">park_on_element</span>
+<DD>
+<pre>
+⊢ ∀m n p.
+    p ∈ park_on m n ⇔
+    p ∈ prime_divisors m ∧ p ∈ prime_divisors n ∧ ppidx m ≤ ppidx n
+</pre>
+
+<DT><span class="strong">park_on_off_common_image_partition</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    (let
+       s =
+         IMAGE (λp. p ** MIN (ppidx m) (ppidx n)) (common_prime_divisors m n);
+       u = IMAGE (λp. p ** ppidx m) (park_on m n);
+       v = IMAGE (λp. p ** ppidx n) (park_off m n)
+     in
+       0 < m ⇒ s =|= u # v)
+</pre>
+
+<DT><span class="strong">park_on_off_partition</span>
+<DD>
+<pre>
+⊢ ∀m n. common_prime_divisors m n =|= park_on m n # park_off m n
+</pre>
+
+<DT><span class="strong">park_on_off_total_image_partition</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    (let
+       s = IMAGE (λp. p ** MAX (ppidx m) (ppidx n)) (total_prime_divisors m n);
+       u = IMAGE (λp. p ** ppidx m) (prime_divisors m DIFF park_on m n);
+       v = IMAGE (λp. p ** ppidx n) (prime_divisors n DIFF park_off m n)
+     in
+       0 < m ∧ 0 < n ⇒ s =|= u # v)
+</pre>
+
+<DT><span class="strong">park_on_subset_common</span>
+<DD>
+<pre>
+⊢ ∀m n. park_on m n ⊆ common_prime_divisors m n
+</pre>
+
+<DT><span class="strong">park_on_subset_total</span>
+<DD>
+<pre>
+⊢ ∀m n. park_on m n ⊆ total_prime_divisors m n
+</pre>
+
+<DT><span class="strong">perfect_power_0_m</span>
+<DD>
+<pre>
+⊢ ∀m. 0 power_of m ⇔ m = 0
+</pre>
+
+<DT><span class="strong">perfect_power_1_m</span>
+<DD>
+<pre>
+⊢ ∀m. 1 power_of m
+</pre>
+
+<DT><span class="strong">perfect_power_2_odd</span>
+<DD>
+<pre>
+⊢ ∀n. n power_of 2 ⇒ (ODD n ⇔ n = 1)
+</pre>
+
+<DT><span class="strong">perfect_power_bound_LOG2</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀m. n power_of m ⇔ ∃k. k ≤ LOG2 n ∧ n = m ** k
+</pre>
+
+<DT><span class="strong">perfect_power_bound_ulog</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀m. n power_of m ⇔ ∃k. k ≤ ulog n ∧ n = m ** k
+</pre>
+
+<DT><span class="strong">perfect_power_cofactor</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < p ∧ p divides n ⇒ (n power_of p ⇔ n DIV p power_of p)
+</pre>
+
+<DT><span class="strong">perfect_power_cofactor_alt</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ p divides n ⇒ (n power_of p ⇔ n DIV p power_of p)
+</pre>
+
+<DT><span class="strong">perfect_power_condition</span>
+<DD>
+<pre>
+⊢ ∀p q. prime p ∧ (∃x y. 0 < x ∧ p ** x = q ** y) ⇒ q power_of p
+</pre>
+
+<DT><span class="strong">perfect_power_half_inequality_1</span>
+<DD>
+<pre>
+⊢ ∀p n. 1 < p ∧ 0 < n ⇒ 2 * p ** (n DIV 2) ≤ p ** n
+</pre>
+
+<DT><span class="strong">perfect_power_half_inequality_2</span>
+<DD>
+<pre>
+⊢ ∀p n.
+    1 < p ∧ 0 < n ⇒
+    (p ** (n DIV 2) − 2) * p ** (n DIV 2) ≤ p ** n − 2 * p ** (n DIV 2)
+</pre>
+
+<DT><span class="strong">perfect_power_mod_eq_0</span>
+<DD>
+<pre>
+⊢ ∀n m. 0 < m ∧ 1 < n ∧ n MOD m = 0 ⇒ (n power_of m ⇔ n DIV m power_of m)
+</pre>
+
+<DT><span class="strong">perfect_power_mod_ne_0</span>
+<DD>
+<pre>
+⊢ ∀n m. 0 < m ∧ 1 < n ∧ n MOD m ≠ 0 ⇒ ¬(n power_of m)
+</pre>
+
+<DT><span class="strong">perfect_power_n_0</span>
+<DD>
+<pre>
+⊢ ∀n. n power_of 0 ⇔ n = 0 ∨ n = 1
+</pre>
+
+<DT><span class="strong">perfect_power_n_1</span>
+<DD>
+<pre>
+⊢ ∀n. n power_of 1 ⇔ n = 1
+</pre>
+
+<DT><span class="strong">perfect_power_not_suc</span>
+<DD>
+<pre>
+⊢ ∀m n. 1 < m ∧ 1 < n ∧ n power_of m ⇒ ¬(SUC n power_of m)
+</pre>
+
+<DT><span class="strong">perfect_power_self</span>
+<DD>
+<pre>
+⊢ ∀n. n power_of n
+</pre>
+
+<DT><span class="strong">perfect_power_special_inequality</span>
+<DD>
+<pre>
+⊢ ∀p. 1 < p ⇒ ∀n. p * tops p n < (p − 1) * (2 * p ** n)
+</pre>
+
+<DT><span class="strong">perfect_power_suc</span>
+<DD>
+<pre>
+⊢ ∀m n. 1 < m ∧ n power_of m ∧ SUC n power_of m ⇒ m = 2 ∧ n = 1
+</pre>
+
+<DT><span class="strong">perfect_power_test</span>
+<DD>
+<pre>
+⊢ ∀n m.
+    n power_of m ⇔
+    if n = 0 then m = 0
+    else if n = 1 then T
+    else if m = 0 then n ≤ 1
+    else if m = 1 then n = 1
+    else if n MOD m = 0 then n DIV m power_of m
+    else F
+</pre>
+
+<DT><span class="strong">phi_0</span>
+<DD>
+<pre>
+⊢ phi 0 = 0
+</pre>
+
+<DT><span class="strong">phi_1</span>
+<DD>
+<pre>
+⊢ phi 1 = 1
+</pre>
+
+<DT><span class="strong">phi_2</span>
+<DD>
+<pre>
+⊢ phi 2 = 1
+</pre>
+
+<DT><span class="strong">phi_eq_0</span>
+<DD>
+<pre>
+⊢ ∀n. phi n = 0 ⇔ n = 0
+</pre>
+
+<DT><span class="strong">phi_eq_totient</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ phi n = totient n
+</pre>
+
+<DT><span class="strong">phi_fun</span>
+<DD>
+<pre>
+⊢ phi = CARD ∘ coprimes
+</pre>
+
+<DT><span class="strong">phi_gt_1</span>
+<DD>
+<pre>
+⊢ ∀n. 2 < n ⇒ 1 < phi n
+</pre>
+
+<DT><span class="strong">phi_le</span>
+<DD>
+<pre>
+⊢ ∀n. phi n ≤ n
+</pre>
+
+<DT><span class="strong">phi_lt</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ phi n < n
+</pre>
+
+<DT><span class="strong">phi_mult</span>
+<DD>
+<pre>
+⊢ ∀m n. coprime m n ⇒ phi (m * n) = phi m * phi n
+</pre>
+
+<DT><span class="strong">phi_pos</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ 0 < phi n
+</pre>
+
+<DT><span class="strong">phi_prime</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇒ phi n = n − 1
+</pre>
+
+<DT><span class="strong">phi_prime_power</span>
+<DD>
+<pre>
+⊢ ∀p n. prime p ⇒ phi (p ** SUC n) = (p − 1) * p ** n
+</pre>
+
+<DT><span class="strong">phi_prime_sq</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ phi (p * p) = p * (p − 1)
+</pre>
+
+<DT><span class="strong">phi_primes</span>
+<DD>
+<pre>
+⊢ ∀p q.
+    prime p ∧ prime q ⇒
+    phi (p * q) = if p = q then p * (p − 1) else (p − 1) * (q − 1)
+</pre>
+
+<DT><span class="strong">phi_primes_distinct</span>
+<DD>
+<pre>
+⊢ ∀p q. prime p ∧ prime q ∧ p ≠ q ⇒ phi (p * q) = (p − 1) * (q − 1)
+</pre>
+
+<DT><span class="strong">phi_thm</span>
+<DD>
+<pre>
+⊢ ∀n. phi n = LENGTH (FILTER (λj. coprime j n) (GENLIST SUC n))
+</pre>
+
+<DT><span class="strong">power_free_0</span>
+<DD>
+<pre>
+⊢ power_free 0 ⇔ F
+</pre>
+
+<DT><span class="strong">power_free_1</span>
+<DD>
+<pre>
+⊢ power_free 1 ⇔ F
+</pre>
+
+<DT><span class="strong">power_free_2</span>
+<DD>
+<pre>
+⊢ power_free 2
+</pre>
+
+<DT><span class="strong">power_free_3</span>
+<DD>
+<pre>
+⊢ power_free 3
+</pre>
+
+<DT><span class="strong">power_free_alt</span>
+<DD>
+<pre>
+⊢ power_free n ⇔ 1 < n ∧ ∀m. n power_of m ⇒ n = m
+</pre>
+
+<DT><span class="strong">power_free_by_power_index_LOG2</span>
+<DD>
+<pre>
+⊢ ∀n. power_free n ⇔ 1 < n ∧ power_index n (LOG2 n) = 1
+</pre>
+
+<DT><span class="strong">power_free_by_power_index_ulog</span>
+<DD>
+<pre>
+⊢ ∀n. power_free n ⇔ 1 < n ∧ power_index n (ulog n) = 1
+</pre>
+
+<DT><span class="strong">power_free_check_all</span>
+<DD>
+<pre>
+⊢ ∀n. power_free n ⇔ 1 < n ∧ ∀j. 1 < j ⇒ ROOT j n ** j ≠ n
+</pre>
+
+<DT><span class="strong">power_free_check_upto</span>
+<DD>
+<pre>
+⊢ ∀n b. LOG2 n ≤ b ⇒ (power_free n ⇔ 1 < n ∧ n power_free_upto b)
+</pre>
+
+<DT><span class="strong">power_free_check_upto_LOG2</span>
+<DD>
+<pre>
+⊢ ∀n. power_free n ⇔ 1 < n ∧ n power_free_upto LOG2 n
+</pre>
+
+<DT><span class="strong">power_free_check_upto_ulog</span>
+<DD>
+<pre>
+⊢ ∀n. power_free n ⇔ 1 < n ∧ n power_free_upto ulog n
+</pre>
+
+<DT><span class="strong">power_free_gt_1</span>
+<DD>
+<pre>
+⊢ ∀n. power_free n ⇒ 1 < n
+</pre>
+
+<DT><span class="strong">power_free_perfect_power</span>
+<DD>
+<pre>
+⊢ ∀m n. power_free n ∧ n power_of m ⇒ n = m
+</pre>
+
+<DT><span class="strong">power_free_property</span>
+<DD>
+<pre>
+⊢ ∀n. power_free n ⇒ ∀j. 1 < j ⇒ ROOT j n ** j ≠ n
+</pre>
+
+<DT><span class="strong">power_free_test_eqn</span>
+<DD>
+<pre>
+⊢ ∀n. power_free_test n ⇔ power_free n
+</pre>
+
+<DT><span class="strong">power_free_test_upto_LOG2</span>
+<DD>
+<pre>
+⊢ ∀n. power_free n ⇔ 1 < n ∧ ∀j. 1 < j ∧ j ≤ LOG2 n ⇒ ROOT j n ** j ≠ n
+</pre>
+
+<DT><span class="strong">power_free_test_upto_ulog</span>
+<DD>
+<pre>
+⊢ ∀n. power_free n ⇔ 1 < n ∧ ∀j. 1 < j ∧ j ≤ ulog n ⇒ ROOT j n ** j ≠ n
+</pre>
+
+<DT><span class="strong">power_free_upto_0</span>
+<DD>
+<pre>
+⊢ ∀n. n power_free_upto 0 ⇔ T
+</pre>
+
+<DT><span class="strong">power_free_upto_1</span>
+<DD>
+<pre>
+⊢ ∀n. n power_free_upto 1 ⇔ T
+</pre>
+
+<DT><span class="strong">power_free_upto_suc</span>
+<DD>
+<pre>
+⊢ ∀n k.
+    0 < k ∧ n power_free_upto k ⇒
+    (n power_free_upto k + 1 ⇔ ROOT (k + 1) n ** (k + 1) ≠ n)
+</pre>
+
+<DT><span class="strong">power_index_0</span>
+<DD>
+<pre>
+⊢ ∀n. power_index n 0 = 1
+</pre>
+
+<DT><span class="strong">power_index_1</span>
+<DD>
+<pre>
+⊢ ∀n. power_index n 1 = 1
+</pre>
+
+<DT><span class="strong">power_index_def</span>
+<DD>
+<pre>
+⊢ ∀n k.
+    power_index n k =
+    if k ≤ 1 then 1
+    else if ROOT k n ** k = n then k
+    else power_index n (k − 1)
+</pre>
+
+<DT><span class="strong">power_index_eqn</span>
+<DD>
+<pre>
+⊢ ∀n k. ROOT (power_index n k) n ** power_index n k = n
+</pre>
+
+<DT><span class="strong">power_index_equal</span>
+<DD>
+<pre>
+⊢ ∀m n k.
+    0 < k ∧ k ≤ m ⇒
+    (power_index n m = power_index n k ⇔ ∀j. k < j ∧ j ≤ m ⇒ ROOT j n ** j ≠ n)
+</pre>
+
+<DT><span class="strong">power_index_exact_root</span>
+<DD>
+<pre>
+⊢ ∀n k. 0 < k ∧ ROOT k n ** k = n ⇒ power_index n k = k
+</pre>
+
+<DT><span class="strong">power_index_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n k. (¬(k ≤ 1) ∧ ROOT k n ** k ≠ n ⇒ P n (k − 1)) ⇒ P n k) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">power_index_lower</span>
+<DD>
+<pre>
+⊢ ∀m n k. k ≤ m ∧ ROOT k n ** k = n ⇒ k ≤ power_index n m
+</pre>
+
+<DT><span class="strong">power_index_no_exact_roots</span>
+<DD>
+<pre>
+⊢ ∀m n k.
+    k ≤ m ∧ (∀j. k < j ∧ j ≤ m ⇒ ROOT j n ** j ≠ n) ⇒
+    power_index n m = power_index n k
+</pre>
+
+<DT><span class="strong">power_index_not_exact_root</span>
+<DD>
+<pre>
+⊢ ∀n k. ROOT k n ** k ≠ n ⇒ power_index n k = power_index n (k − 1)
+</pre>
+
+<DT><span class="strong">power_index_of_1</span>
+<DD>
+<pre>
+⊢ ∀k. power_index 1 k = if k = 0 then 1 else k
+</pre>
+
+<DT><span class="strong">power_index_pos</span>
+<DD>
+<pre>
+⊢ ∀n k. 0 < power_index n k
+</pre>
+
+<DT><span class="strong">power_index_property</span>
+<DD>
+<pre>
+⊢ ∀m n k. power_index n m = k ⇒ ∀j. k < j ∧ j ≤ m ⇒ ROOT j n ** j ≠ n
+</pre>
+
+<DT><span class="strong">power_index_root</span>
+<DD>
+<pre>
+⊢ ∀n k. n power_of ROOT (power_index n k) n
+</pre>
+
+<DT><span class="strong">power_index_upper</span>
+<DD>
+<pre>
+⊢ ∀n k. 0 < k ⇒ power_index n k ≤ k
+</pre>
+
+<DT><span class="strong">prime_by_sqrt_factors</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇔ 1 < p ∧ ∀q. 1 < q ∧ q ≤ SQRT p ⇒ ¬(q divides p)
+</pre>
+
+<DT><span class="strong">prime_divisors_0</span>
+<DD>
+<pre>
+⊢ prime_divisors 0 = {p | prime p}
+</pre>
+
+<DT><span class="strong">prime_divisors_0_not_sing</span>
+<DD>
+<pre>
+⊢ ¬SING (prime_divisors 0)
+</pre>
+
+<DT><span class="strong">prime_divisors_1</span>
+<DD>
+<pre>
+⊢ prime_divisors 1 = ∅
+</pre>
+
+<DT><span class="strong">prime_divisors_common_divisor</span>
+<DD>
+<pre>
+⊢ ∀n m x.
+    x divides m ∧ x divides n ⇒ prime_divisors x ⊆ common_prime_divisors m n
+</pre>
+
+<DT><span class="strong">prime_divisors_common_multiple</span>
+<DD>
+<pre>
+⊢ ∀n m x.
+    m divides x ∧ n divides x ⇒ total_prime_divisors m n ⊆ prime_divisors x
+</pre>
+
+<DT><span class="strong">prime_divisors_divisor_subset</span>
+<DD>
+<pre>
+⊢ ∀m n. m divides n ⇒ prime_divisors m ⊆ prime_divisors n
+</pre>
+
+<DT><span class="strong">prime_divisors_element</span>
+<DD>
+<pre>
+⊢ ∀n p. p ∈ prime_divisors n ⇔ prime p ∧ p divides n
+</pre>
+
+<DT><span class="strong">prime_divisors_empty_iff</span>
+<DD>
+<pre>
+⊢ ∀n. prime_divisors n = ∅ ⇔ n = 1
+</pre>
+
+<DT><span class="strong">prime_divisors_finite</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ FINITE (prime_divisors n)
+</pre>
+
+<DT><span class="strong">prime_divisors_nonempty</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ prime_divisors n ≠ ∅
+</pre>
+
+<DT><span class="strong">prime_divisors_prime</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇒ prime_divisors n = {n}
+</pre>
+
+<DT><span class="strong">prime_divisors_prime_power</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇒ ∀k. 0 < k ⇒ prime_divisors (n ** k) = {n}
+</pre>
+
+<DT><span class="strong">prime_divisors_sing</span>
+<DD>
+<pre>
+⊢ ∀n. SING (prime_divisors n) ⇔ ∃p k. prime p ∧ 0 < k ∧ n = p ** k
+</pre>
+
+<DT><span class="strong">prime_divisors_sing_alt</span>
+<DD>
+<pre>
+⊢ ∀n p. prime_divisors n = {p} ⇔ ∃k. prime p ∧ 0 < k ∧ n = p ** k
+</pre>
+
+<DT><span class="strong">prime_divisors_sing_property</span>
+<DD>
+<pre>
+⊢ ∀n. SING (prime_divisors n) ⇒
+      (let p = CHOICE (prime_divisors n) in prime p ∧ n = p ** ppidx n)
+</pre>
+
+<DT><span class="strong">prime_divisors_subset_natural</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ prime_divisors n ⊆ natural n
+</pre>
+
+<DT><span class="strong">prime_divisors_subset_prime</span>
+<DD>
+<pre>
+⊢ ∀n. prime_divisors n ⊆ prime
+</pre>
+
+<DT><span class="strong">prime_factor_estimate</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ (¬prime n ⇔ ∃p. prime p ∧ p divides n ∧ p ≤ SQRT n)
+</pre>
+
+<DT><span class="strong">prime_factorisation</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ n = PROD_SET (prime_power_divisors n)
+</pre>
+
+<DT><span class="strong">prime_factors_element</span>
+<DD>
+<pre>
+⊢ ∀n p. p ∈ prime_factors n ⇔ prime p ∧ p ≤ n ∧ p divides n
+</pre>
+
+<DT><span class="strong">prime_factors_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (prime_factors n)
+</pre>
+
+<DT><span class="strong">prime_factors_subset</span>
+<DD>
+<pre>
+⊢ ∀n. prime_factors n ⊆ divisors n
+</pre>
+
+<DT><span class="strong">prime_is_power_free</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇒ power_free n
+</pre>
+
+<DT><span class="strong">prime_non_square</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ ¬square p
+</pre>
+
+<DT><span class="strong">prime_power_cofactor_coprime</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ prime p ⇒ coprime p (n DIV p ** ppidx n)
+</pre>
+
+<DT><span class="strong">prime_power_divisibility</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ prime p ⇒ ∀k. p ** k divides n ⇔ k ≤ ppidx n
+</pre>
+
+<DT><span class="strong">prime_power_divisors_1</span>
+<DD>
+<pre>
+⊢ prime_power_divisors 1 = ∅
+</pre>
+
+<DT><span class="strong">prime_power_divisors_element</span>
+<DD>
+<pre>
+⊢ ∀n x.
+    x ∈ prime_power_divisors n ⇔ ∃p. x = p ** ppidx n ∧ prime p ∧ p divides n
+</pre>
+
+<DT><span class="strong">prime_power_divisors_element_alt</span>
+<DD>
+<pre>
+⊢ ∀p n. prime p ∧ p divides n ⇒ p ** ppidx n ∈ prime_power_divisors n
+</pre>
+
+<DT><span class="strong">prime_power_divisors_finite</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ FINITE (prime_power_divisors n)
+</pre>
+
+<DT><span class="strong">prime_power_divisors_pairwise_coprime</span>
+<DD>
+<pre>
+⊢ ∀n x y.
+    x ∈ prime_power_divisors n ∧ y ∈ prime_power_divisors n ∧ x ≠ y ⇒
+    coprime x y
+</pre>
+
+<DT><span class="strong">prime_power_eqn</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ prime p ⇒ n = p ** ppidx n * (n DIV p ** ppidx n)
+</pre>
+
+<DT><span class="strong">prime_power_factor_divides</span>
+<DD>
+<pre>
+⊢ ∀n p. prime p ⇒ p ** ppidx n divides n
+</pre>
+
+<DT><span class="strong">prime_power_index_1</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ ppidx 1 = 0
+</pre>
+
+<DT><span class="strong">prime_power_index_common_divisor</span>
+<DD>
+<pre>
+⊢ ∀n m x.
+    0 < m ∧ 0 < n ∧ x divides m ∧ x divides n ⇒
+    ∀p. prime p ⇒ ppidx x ≤ MIN (ppidx m) (ppidx n)
+</pre>
+
+<DT><span class="strong">prime_power_index_common_multiple</span>
+<DD>
+<pre>
+⊢ ∀n m x.
+    0 < x ∧ m divides x ∧ n divides x ⇒
+    ∀p. prime p ⇒ MAX (ppidx m) (ppidx n) ≤ ppidx x
+</pre>
+
+<DT><span class="strong">prime_power_index_eq_0</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ prime p ∧ ¬(p divides n) ⇒ ppidx n = 0
+</pre>
+
+<DT><span class="strong">prime_power_index_eqn</span>
+<DD>
+<pre>
+⊢ ∀n p.
+    0 < n ∧ prime p ⇒
+    (let q = n DIV p ** ppidx n in n = p ** ppidx n * q ∧ coprime p q)
+</pre>
+
+<DT><span class="strong">prime_power_index_exists</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ prime p ⇒ ∃m. p ** m divides n ∧ coprime p (n DIV p ** m)
+</pre>
+
+<DT><span class="strong">prime_power_index_le_log_index</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ prime p ⇒ ppidx n ≤ LOG p n
+</pre>
+
+<DT><span class="strong">prime_power_index_maximal</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ prime p ⇒ ∀k. k > ppidx n ⇒ ¬(p ** k divides n)
+</pre>
+
+<DT><span class="strong">prime_power_index_of_divisor</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ m divides n ⇒ ∀p. prime p ⇒ ppidx m ≤ ppidx n
+</pre>
+
+<DT><span class="strong">prime_power_index_pos</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ prime p ∧ p divides n ⇒ 0 < ppidx n
+</pre>
+
+<DT><span class="strong">prime_power_index_prime</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ ppidx p = 1
+</pre>
+
+<DT><span class="strong">prime_power_index_prime_power</span>
+<DD>
+<pre>
+⊢ ∀p. prime p ⇒ ∀k. ppidx (p ** k) = k
+</pre>
+
+<DT><span class="strong">prime_power_index_suc_property</span>
+<DD>
+<pre>
+⊢ ∀n p.
+    0 < n ∧ prime p ∧ n + 1 = p ** ppidx (n + 1) ⇒
+    ppidx (n + 1) = 1 + ppidx (lcm_run n)
+</pre>
+
+<DT><span class="strong">prime_power_index_suc_special</span>
+<DD>
+<pre>
+⊢ ∀n p.
+    0 < n ∧ prime p ∧ SUC n = p ** ppidx (SUC n) ⇒
+    ppidx (SUC n) = SUC (ppidx (lcm_run n))
+</pre>
+
+<DT><span class="strong">prime_power_index_test</span>
+<DD>
+<pre>
+⊢ ∀n p. 0 < n ∧ prime p ⇒ ∀k. k = ppidx n ⇔ ∃q. n = p ** k * q ∧ coprime p q
+</pre>
+
+<DT><span class="strong">prime_power_or_coprime_factors</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒
+      (∃p k. 0 < k ∧ prime p ∧ n = p ** k) ∨
+      ∃a b. n = a * b ∧ coprime a b ∧ 1 < a ∧ 1 < b ∧ a < n ∧ b < n
+</pre>
+
+<DT><span class="strong">prime_powers_upto_0</span>
+<DD>
+<pre>
+⊢ prime_powers_upto 0 = ∅
+</pre>
+
+<DT><span class="strong">prime_powers_upto_1</span>
+<DD>
+<pre>
+⊢ prime_powers_upto 1 = ∅
+</pre>
+
+<DT><span class="strong">prime_powers_upto_element</span>
+<DD>
+<pre>
+⊢ ∀n x. x ∈ prime_powers_upto n ⇔ ∃p. x = p ** LOG p n ∧ prime p ∧ p ≤ n
+</pre>
+
+<DT><span class="strong">prime_powers_upto_element_alt</span>
+<DD>
+<pre>
+⊢ ∀p n. prime p ∧ p ≤ n ⇒ p ** LOG p n ∈ prime_powers_upto n
+</pre>
+
+<DT><span class="strong">prime_powers_upto_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (prime_powers_upto n)
+</pre>
+
+<DT><span class="strong">prime_powers_upto_lcm_divisor</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 < x ∧ x ≤ n ⇒ x divides set_lcm (prime_powers_upto n)
+</pre>
+
+<DT><span class="strong">prime_powers_upto_lcm_prime_divisor</span>
+<DD>
+<pre>
+⊢ ∀n p. prime p ∧ p ≤ n ⇒ p divides set_lcm (prime_powers_upto n)
+</pre>
+
+<DT><span class="strong">prime_powers_upto_lcm_prime_to_log_divisor</span>
+<DD>
+<pre>
+⊢ ∀n p. prime p ∧ p ≤ n ⇒ p ** LOG p n divides set_lcm (prime_powers_upto n)
+</pre>
+
+<DT><span class="strong">prime_powers_upto_lcm_prime_to_power_divisor</span>
+<DD>
+<pre>
+⊢ ∀n p. prime p ∧ p ≤ n ⇒ p ** ppidx n divides set_lcm (prime_powers_upto n)
+</pre>
+
+<DT><span class="strong">prime_powers_upto_list_mem</span>
+<DD>
+<pre>
+⊢ ∀n x.
+    MEM x (SET_TO_LIST (prime_powers_upto n)) ⇔
+    ∃p. x = p ** LOG p n ∧ prime p ∧ p ≤ n
+</pre>
+
+<DT><span class="strong">prime_powers_upto_pairwise_coprime</span>
+<DD>
+<pre>
+⊢ ∀n x y.
+    x ∈ prime_powers_upto n ∧ y ∈ prime_powers_upto n ∧ x ≠ y ⇒ coprime x y
+</pre>
+
+<DT><span class="strong">prime_powers_upto_prod_set_ge</span>
+<DD>
+<pre>
+⊢ ∀n. PROD_SET (primes_upto n) ≤ PROD_SET (prime_powers_upto n)
+</pre>
+
+<DT><span class="strong">prime_powers_upto_prod_set_le</span>
+<DD>
+<pre>
+⊢ ∀n. PROD_SET (prime_powers_upto n) ≤ n ** primes_count n
+</pre>
+
+<DT><span class="strong">prime_powers_upto_prod_set_mix_ge</span>
+<DD>
+<pre>
+⊢ ∀n. n ** primes_count n ≤
+      PROD_SET (primes_upto n) * PROD_SET (prime_powers_upto n)
+</pre>
+
+<DT><span class="strong">prime_test_thm</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇔ prime_test n
+</pre>
+
+<DT><span class="strong">primes_count_0</span>
+<DD>
+<pre>
+⊢ primes_count 0 = 0
+</pre>
+
+<DT><span class="strong">primes_count_1</span>
+<DD>
+<pre>
+⊢ primes_count 1 = 0
+</pre>
+
+<DT><span class="strong">primes_count_upper_by_lcm_run</span>
+<DD>
+<pre>
+⊢ ∀n. n ** primes_count n ≤ (lcm_run n)²
+</pre>
+
+<DT><span class="strong">primes_count_upper_by_product</span>
+<DD>
+<pre>
+⊢ ∀n. n ** primes_count n ≤ PROD_SET (primes_upto n) * lcm_run n
+</pre>
+
+<DT><span class="strong">primes_upto_0</span>
+<DD>
+<pre>
+⊢ primes_upto 0 = ∅
+</pre>
+
+<DT><span class="strong">primes_upto_1</span>
+<DD>
+<pre>
+⊢ primes_upto 1 = ∅
+</pre>
+
+<DT><span class="strong">primes_upto_element</span>
+<DD>
+<pre>
+⊢ ∀n p. p ∈ primes_upto n ⇔ prime p ∧ p ≤ n
+</pre>
+
+<DT><span class="strong">primes_upto_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (primes_upto n)
+</pre>
+
+<DT><span class="strong">primes_upto_pairwise_coprime</span>
+<DD>
+<pre>
+⊢ ∀n x y. x ∈ primes_upto n ∧ y ∈ primes_upto n ∧ x ≠ y ⇒ coprime x y
+</pre>
+
+<DT><span class="strong">primes_upto_subset_natural</span>
+<DD>
+<pre>
+⊢ ∀n. primes_upto n ⊆ natural n
+</pre>
+
+<DT><span class="strong">proper_divisors_0</span>
+<DD>
+<pre>
+⊢ proper_divisors 0 = ∅
+</pre>
+
+<DT><span class="strong">proper_divisors_1</span>
+<DD>
+<pre>
+⊢ proper_divisors 1 = ∅
+</pre>
+
+<DT><span class="strong">proper_divisors_by_less_divisors</span>
+<DD>
+<pre>
+⊢ ∀n. proper_divisors n = less_divisors n DELETE 1
+</pre>
+
+<DT><span class="strong">proper_divisors_element</span>
+<DD>
+<pre>
+⊢ ∀n x. x ∈ proper_divisors n ⇔ 1 < x ∧ x < n ∧ x divides n
+</pre>
+
+<DT><span class="strong">proper_divisors_finite</span>
+<DD>
+<pre>
+⊢ ∀n. FINITE (proper_divisors n)
+</pre>
+
+<DT><span class="strong">proper_divisors_has_cofactor</span>
+<DD>
+<pre>
+⊢ ∀n d. d ∈ proper_divisors n ⇒ n DIV d ∈ proper_divisors n
+</pre>
+
+<DT><span class="strong">proper_divisors_max_min</span>
+<DD>
+<pre>
+⊢ ∀n. proper_divisors n ≠ ∅ ⇒
+      MAX_SET (proper_divisors n) = n DIV MIN_SET (proper_divisors n) ∧
+      MIN_SET (proper_divisors n) = n DIV MAX_SET (proper_divisors n)
+</pre>
+
+<DT><span class="strong">proper_divisors_min_gt_1</span>
+<DD>
+<pre>
+⊢ ∀n. proper_divisors n ≠ ∅ ⇒ 1 < MIN_SET (proper_divisors n)
+</pre>
+
+<DT><span class="strong">proper_divisors_not_1</span>
+<DD>
+<pre>
+⊢ ∀n. 1 ∉ proper_divisors n
+</pre>
+
+<DT><span class="strong">proper_divisors_prime</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇒ proper_divisors n = ∅
+</pre>
+
+<DT><span class="strong">proper_divisors_subset</span>
+<DD>
+<pre>
+⊢ ∀n. proper_divisors n ⊆ less_divisors n
+</pre>
+
+<DT><span class="strong">rec_phi_0</span>
+<DD>
+<pre>
+⊢ rec_phi 0 = 0
+</pre>
+
+<DT><span class="strong">rec_phi_1</span>
+<DD>
+<pre>
+⊢ rec_phi 1 = 1
+</pre>
+
+<DT><span class="strong">rec_phi_def</span>
+<DD>
+<pre>
+⊢ ∀n. rec_phi n =
+      if n = 0 then 0
+      else if n = 1 then 1
+      else n − ∑ (λa. rec_phi a) {m | m < n ∧ m divides n}
+</pre>
+
+<DT><span class="strong">rec_phi_eq_phi</span>
+<DD>
+<pre>
+⊢ ∀n. rec_phi n = phi n
+</pre>
+
+<DT><span class="strong">rec_phi_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n. (∀a. n ≠ 0 ∧ n ≠ 1 ∧ a ∈ {m | m < n ∧ m divides n} ⇒ P a) ⇒ P n) ⇒
+      ∀v. P v
+</pre>
+
+<DT><span class="strong">self_to_log_index_member</span>
+<DD>
+<pre>
+⊢ ∀n x. MEM x [1 .. n] ⇒ MEM (x ** LOG x n) [1 .. n]
+</pre>
+
+<DT><span class="strong">set_lcm_prime_powers_upto_eqn</span>
+<DD>
+<pre>
+⊢ ∀n. set_lcm (prime_powers_upto n) = PROD_SET (prime_powers_upto n)
+</pre>
+
+<DT><span class="strong">sigma_eq_perfect_power_bounds_1</span>
+<DD>
+<pre>
+⊢ ∀p. 1 < p ⇒
+      ∀f. (∀n. 0 < n ⇒ p ** n = ∑ (λd. d * f d) (divisors n)) ⇒
+          (∀n. 0 < n ⇒ n * f n ≤ p ** n) ∧
+          ∀n. 0 < n ⇒ p ** n − 2 * p ** (n DIV 2) < n * f n
+</pre>
+
+<DT><span class="strong">sigma_eq_perfect_power_bounds_2</span>
+<DD>
+<pre>
+⊢ ∀p. 1 < p ⇒
+      ∀f. (∀n. 0 < n ⇒ p ** n = ∑ (λd. d * f d) (divisors n)) ⇒
+          (∀n. 0 < n ⇒ n * f n ≤ p ** n) ∧
+          ∀n. 0 < n ⇒ (p ** (n DIV 2) − 2) * p ** (n DIV 2) < n * f n
+</pre>
+
+<DT><span class="strong">sq_free_disjoint</span>
+<DD>
+<pre>
+⊢ ∀s. DISJOINT (sq_free s) (non_sq_free s)
+</pre>
+
+<DT><span class="strong">sq_free_disjoint_even_odd</span>
+<DD>
+<pre>
+⊢ ∀s. DISJOINT (even_sq_free s) (odd_sq_free s)
+</pre>
+
+<DT><span class="strong">sq_free_element</span>
+<DD>
+<pre>
+⊢ ∀s n. n ∈ sq_free s ⇔ n ∈ s ∧ square_free n
+</pre>
+
+<DT><span class="strong">sq_free_finite</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ FINITE (sq_free s)
+</pre>
+
+<DT><span class="strong">sq_free_inter</span>
+<DD>
+<pre>
+⊢ ∀s. sq_free s ∩ non_sq_free s = ∅
+</pre>
+
+<DT><span class="strong">sq_free_inter_even_odd</span>
+<DD>
+<pre>
+⊢ ∀s. even_sq_free s ∩ odd_sq_free s = ∅
+</pre>
+
+<DT><span class="strong">sq_free_split</span>
+<DD>
+<pre>
+⊢ ∀s. s = sq_free s ∪ non_sq_free s ∧ sq_free s ∩ non_sq_free s = ∅
+</pre>
+
+<DT><span class="strong">sq_free_split_even_odd</span>
+<DD>
+<pre>
+⊢ ∀s. sq_free s = even_sq_free s ∪ odd_sq_free s ∧
+      even_sq_free s ∩ odd_sq_free s = ∅
+</pre>
+
+<DT><span class="strong">sq_free_subset</span>
+<DD>
+<pre>
+⊢ ∀s. sq_free s ⊆ s
+</pre>
+
+<DT><span class="strong">sq_free_union</span>
+<DD>
+<pre>
+⊢ ∀s. s = sq_free s ∪ non_sq_free s
+</pre>
+
+<DT><span class="strong">sq_free_union_even_odd</span>
+<DD>
+<pre>
+⊢ ∀s. sq_free s = even_sq_free s ∪ odd_sq_free s
+</pre>
+
+<DT><span class="strong">sqrt_upper</span>
+<DD>
+<pre>
+⊢ ∀n. SQRT n ≤ 2 ** ulog n
+</pre>
+
+<DT><span class="strong">square_0</span>
+<DD>
+<pre>
+⊢ square 0
+</pre>
+
+<DT><span class="strong">square_1</span>
+<DD>
+<pre>
+⊢ square 1
+</pre>
+
+<DT><span class="strong">square_alt</span>
+<DD>
+<pre>
+⊢ ∀n. square n ⇔ ∃k. n = k²
+</pre>
+
+<DT><span class="strong">square_eqn</span>
+<DD>
+<pre>
+⊢ ∀n. square n ⇔ (SQRT n)² = n
+</pre>
+
+<DT><span class="strong">square_free_1</span>
+<DD>
+<pre>
+⊢ square_free 1
+</pre>
+
+<DT><span class="strong">square_free_prime</span>
+<DD>
+<pre>
+⊢ ∀n. prime n ⇒ square_free n
+</pre>
+
+<DT><span class="strong">sum_image_divisors_cong</span>
+<DD>
+<pre>
+⊢ ∀f g. f 0 = g 0 ∧ (∀n. ∑ f (divisors n) = ∑ g (divisors n)) ⇒ f = g
+</pre>
+
+<DT><span class="strong">sum_over_count_by_divisors</span>
+<DD>
+<pre>
+⊢ ∀f n.
+    ∑ f (count n) = ∑ (∑ f) (IMAGE (preimage (gcd n) (count n)) (divisors n))
+</pre>
+
+<DT><span class="strong">sum_over_count_by_gcd_partition</span>
+<DD>
+<pre>
+⊢ ∀f n. ∑ f (count n) = ∑ (∑ f) (partition (feq (gcd n)) (count n))
+</pre>
+
+<DT><span class="strong">sum_over_natural_by_divisors</span>
+<DD>
+<pre>
+⊢ ∀f n. ∑ f (natural n) = ∑ (∑ f) (IMAGE (gcd_matches n) (divisors n))
+</pre>
+
+<DT><span class="strong">sum_over_natural_by_gcd_partition</span>
+<DD>
+<pre>
+⊢ ∀f n. ∑ f (natural n) = ∑ (∑ f) (partition (feq (gcd n)) (natural n))
+</pre>
+
+<DT><span class="strong">sum_over_natural_by_preimage_divisors</span>
+<DD>
+<pre>
+⊢ ∀f n.
+    ∑ f (natural n) =
+    ∑ (∑ f) (IMAGE (preimage (gcd n) (natural n)) (divisors n))
+</pre>
+
+<DT><span class="strong">sum_over_upto_by_divisors</span>
+<DD>
+<pre>
+⊢ ∀f n.
+    0 < n ⇒
+    ∑ f (upto n) = ∑ (∑ f) (IMAGE (preimage (gcd n) (upto n)) (divisors n))
+</pre>
+
+<DT><span class="strong">sum_over_upto_by_gcd_partition</span>
+<DD>
+<pre>
+⊢ ∀f n. ∑ f (upto n) = ∑ (∑ f) (partition (feq (gcd n)) (upto n))
+</pre>
+
+<DT><span class="strong">total_prime_divisors_element</span>
+<DD>
+<pre>
+⊢ ∀m n p.
+    p ∈ total_prime_divisors m n ⇔ p ∈ prime_divisors m ∨ p ∈ prime_divisors n
+</pre>
+
+<DT><span class="strong">total_prime_divisors_finite</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ 0 < n ⇒ FINITE (total_prime_divisors m n)
+</pre>
+
+<DT><span class="strong">total_prime_divisors_max_image_pairwise_coprime</span>
+<DD>
+<pre>
+⊢ ∀m n x y.
+    x ∈ IMAGE (λp. p ** MAX (ppidx m) (ppidx n)) (total_prime_divisors m n) ∧
+    y ∈ IMAGE (λp. p ** MAX (ppidx m) (ppidx n)) (total_prime_divisors m n) ∧
+    x ≠ y ⇒
+    coprime x y
+</pre>
+
+<DT><span class="strong">total_prime_divisors_pairwise_coprime</span>
+<DD>
+<pre>
+⊢ ∀m n x y.
+    x ∈ total_prime_divisors m n ∧ y ∈ total_prime_divisors m n ∧ x ≠ y ⇒
+    coprime x y
+</pre>
+
+<DT><span class="strong">two_factors_property</span>
+<DD>
+<pre>
+⊢ ∀n a b. n = a * b ⇒ a ≤ SQRT n ∨ b ≤ SQRT n
+</pre>
+
+<DT><span class="strong">two_factors_property_1</span>
+<DD>
+<pre>
+⊢ ∀n a b. n = a * b ∧ a < SQRT n ⇒ SQRT n ≤ b
+</pre>
+
+<DT><span class="strong">two_factors_property_2</span>
+<DD>
+<pre>
+⊢ ∀n a b. n = a * b ∧ SQRT n < a ⇒ b ≤ SQRT n
+</pre>
+
+<DT><span class="strong">ulog_0</span>
+<DD>
+<pre>
+⊢ ulog 0 = 0
+</pre>
+
+<DT><span class="strong">ulog_1</span>
+<DD>
+<pre>
+⊢ ulog 1 = 0
+</pre>
+
+<DT><span class="strong">ulog_2</span>
+<DD>
+<pre>
+⊢ ulog 2 = 1
+</pre>
+
+<DT><span class="strong">ulog_2_exp</span>
+<DD>
+<pre>
+⊢ ∀n. ulog (2 ** n) = n
+</pre>
+
+<DT><span class="strong">ulog_LOG2</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ LOG2 n ≤ ulog n ∧ ulog n ≤ 1 + LOG2 n
+</pre>
+
+<DT><span class="strong">ulog_alt</span>
+<DD>
+<pre>
+⊢ ∀n. ulog n =
+      if n = 0 then 0 else if n power_of 2 then LOG2 n else SUC (LOG2 n)
+</pre>
+
+<DT><span class="strong">ulog_def_alt</span>
+<DD>
+<pre>
+⊢ ulog 0 = 0 ∧ ∀n. 0 < n ⇒ ∀m. ulog n = m ⇔ n ≤ 2 ** m ∧ 2 ** m < 2 * n
+</pre>
+
+<DT><span class="strong">ulog_eq_0</span>
+<DD>
+<pre>
+⊢ ∀n. ulog n = 0 ⇔ n = 0 ∨ n = 1
+</pre>
+
+<DT><span class="strong">ulog_eq_1</span>
+<DD>
+<pre>
+⊢ ∀n. ulog n = 1 ⇔ n = 2
+</pre>
+
+<DT><span class="strong">ulog_eq_self</span>
+<DD>
+<pre>
+⊢ ∀n. ulog n = n ⇔ n = 0
+</pre>
+
+<DT><span class="strong">ulog_eqn</span>
+<DD>
+<pre>
+⊢ ∀n. ulog n = if 1 < n then SUC (LOG2 (n − 1)) else 0
+</pre>
+
+<DT><span class="strong">ulog_even</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ∧ EVEN n ⇒ ulog n = 1 + ulog (n DIV 2)
+</pre>
+
+<DT><span class="strong">ulog_exp</span>
+<DD>
+<pre>
+⊢ ∀m n. ulog (m ** n) ≤ n * ulog m
+</pre>
+
+<DT><span class="strong">ulog_exp_exact</span>
+<DD>
+<pre>
+⊢ ∀n. 2 ** ulog n = n ⇔ n power_of 2
+</pre>
+
+<DT><span class="strong">ulog_exp_not_exact</span>
+<DD>
+<pre>
+⊢ ∀n. ¬(n power_of 2) ⇒ 2 ** ulog n ≠ n
+</pre>
+
+<DT><span class="strong">ulog_ge_1</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ 1 ≤ ulog n
+</pre>
+
+<DT><span class="strong">ulog_half</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ ulog (n DIV 2) + 1 ≤ ulog n
+</pre>
+
+<DT><span class="strong">ulog_le</span>
+<DD>
+<pre>
+⊢ ∀m n. n ≤ m ⇒ ulog n ≤ ulog m
+</pre>
+
+<DT><span class="strong">ulog_le_1</span>
+<DD>
+<pre>
+⊢ ∀n. ulog n ≤ 1 ⇔ n ≤ 2
+</pre>
+
+<DT><span class="strong">ulog_le_self</span>
+<DD>
+<pre>
+⊢ ∀n. ulog n ≤ n
+</pre>
+
+<DT><span class="strong">ulog_lt</span>
+<DD>
+<pre>
+⊢ ∀m n. n < m ⇒ ulog n ≤ ulog m
+</pre>
+
+<DT><span class="strong">ulog_lt_self</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ulog n < n
+</pre>
+
+<DT><span class="strong">ulog_mult</span>
+<DD>
+<pre>
+⊢ ∀m n. ulog (m * n) ≤ ulog m + ulog n
+</pre>
+
+<DT><span class="strong">ulog_odd</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ∧ ODD n ⇒ ulog (n DIV 2) + 1 ≤ ulog n
+</pre>
+
+<DT><span class="strong">ulog_pos</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ 0 < ulog n
+</pre>
+
+<DT><span class="strong">ulog_property</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ 2 ** ulog n < 2 * n ∧ n ≤ 2 ** ulog n
+</pre>
+
+<DT><span class="strong">ulog_property_not_exact</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ∧ ¬(n power_of 2) ⇒ n < 2 ** ulog n
+</pre>
+
+<DT><span class="strong">ulog_property_odd</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ∧ ODD n ⇒ n < 2 ** ulog n
+</pre>
+
+<DT><span class="strong">ulog_sq_gt_1</span>
+<DD>
+<pre>
+⊢ ∀n. 2 < n ⇒ 1 < (ulog n)²
+</pre>
+
+<DT><span class="strong">ulog_suc</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ulog (SUC n) = SUC (LOG2 n)
+</pre>
+
+<DT><span class="strong">ulog_thm</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ ∀m. ulog n = m ⇔ 2 ** m < 2 * n ∧ n ≤ 2 ** m
+</pre>
+
+<DT><span class="strong">ulog_twice_sq</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ 4 ≤ (2 * ulog n)²
+</pre>
+
+<DT><span class="strong">ulog_unique</span>
+<DD>
+<pre>
+⊢ ∀m n. 2 ** m < 2 * n ∧ n ≤ 2 ** m ⇒ ulog n = m
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

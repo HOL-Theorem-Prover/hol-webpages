@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>blastLib.BBLAST_CONV</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="bblast_conv"><code>BBLAST_CONV</code></h2>
+<pre class="hol4"><code>blastLib.BBLAST_CONV : conv</code></pre>
+<hr />
+<p>Bit-blasting conversion for words.</p>
+<p>This conversion expands bit-vector terms into Boolean propositions.
+It goes beyond the functionality of
+<code>wordsLib.WORD_BIT_EQ_CONV</code> by handling addition, subtraction
+and orderings. Consequently, this conversion can automatically handle
+small, but tricky, bit-vector goals that
+<code>wordsLib.WORD_DECIDE</code> cannot handle. Obviously bit-blasting
+is a brute force approach, so this conversion should be used with care.
+It will only work well for smallish word sizes and when there is only
+and handful of additions around. It is also “eager” – additions are
+expanded out even when not strictly necessary. For example, in</p>
+<pre class="hol4"><code>(a + b) &lt;+ c /\ c &lt;+ d ==&gt; (a + b) &lt;+ d:word32</code></pre>
+<p>the sum <code>a + b</code> is expanded. Users may be able to achieve
+speed-ups by first introducing abbreviations and then proving general
+forms, e.g.</p>
+<pre class="hol4"><code>x &lt;+ c /\ c &lt;+ d ==&gt; x &lt;+ d:word32</code></pre>
+<p>The conversion handles most operators, however, the following are not
+covered / interpreted:</p>
+<p>– Type variables for word lengths, i.e. terms of type
+<code>:'a word</code>.</p>
+<p>– General multiplication, i.e. <code>w1 * w2</code>. Multiplication
+by a literal is okay, although this may introduce many additions.</p>
+<p>– Bit-field selections with non-literal bounds,
+e.g. <code>(expr1 -- expr2) w</code>.</p>
+<p>– Shifting by non-literal amounts,
+e.g. <code>w &lt;&lt; expr</code>.</p>
+<p>– <code>n2w expr</code> and <code>w2n w</code>. Also
+<code>w2s</code>, <code>s2w</code>, <code>w2l</code> and
+<code>l2w</code>.</p>
+<p>– <code>word_div</code>, <code>word_sdiv</code>,
+<code>word_mod</code> and <code>word_log2</code>.</p>
+<h3 id="example">Example</h3>
+<p>Word orderings are handled:</p>
+<pre class="hol4"><code>- blastLib.BBLAST_CONV ``!a b. ~word_msb a /\ ~word_msb b ==&gt; (a &lt;+ b = a &lt; b:word32)``;
+val it =
+   |- (!a b. ~word_msb a /\ ~word_msb b ==&gt; (a &lt;+ b &lt;=&gt; a &lt; b)) &lt;=&gt; T
+   : thm</code></pre>
+<p>In some cases the result will be a proposition over bit values:</p>
+<pre class="hol4"><code>- blastLib.BBLAST_CONV ``!a. (a + 1w:word8) &#39; 1``;
+val it =
+   |- (!a. (a + 1w) &#39; 1) &lt;=&gt; !a. a &#39; 1 &lt;=&gt; ~a &#39; 0
+   : thm</code></pre>
+<p>This conversion is especially useful where “logical” and “arithmetic”
+bit-vector operations are combined:</p>
+<pre class="hol4"><code>- blastLib.BBLAST_CONV ``!a. ((((((a:word8) * 16w) + 0x10w)) &amp;&amp; 0xF0w) &gt;&gt;&gt; 4) = (3 -- 0) (a + 1w)``;
+val it =
+   |- (!a. (a * 16w + 16w &amp;&amp; 240w) &gt;&gt;&gt; 4 = (3 -- 0) (a + 1w)) &lt;=&gt; T
+   : thm</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a href="wordsLib.WORD_ss.html"><code>wordsLib.WORD_ss</code></a>, <a
+href="wordsLib.WORD_ARITH_CONV.html"><code>wordsLib.WORD_ARITH_CONV</code></a>,
+<a
+href="wordsLib.WORD_LOGIC_CONV.html"><code>wordsLib.WORD_LOGIC_CONV</code></a>,
+<a
+href="wordsLib.WORD_MUL_LSL_CONV.html"><code>wordsLib.WORD_MUL_LSL_CONV</code></a>,
+<a
+href="wordsLib.WORD_BIT_EQ_CONV.html"><code>wordsLib.WORD_BIT_EQ_CONV</code></a>,
+<a
+href="wordsLib.WORD_EVAL_CONV.html"><code>wordsLib.WORD_EVAL_CONV</code></a>,
+<a
+href="wordsLib.WORD_CONV.html"><code>wordsLib.WORD_CONV</code></a></p>
+</body>
+</html>

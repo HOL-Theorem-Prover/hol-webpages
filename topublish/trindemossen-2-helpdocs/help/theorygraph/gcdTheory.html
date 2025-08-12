@@ -1,0 +1,803 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: gcd</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "gcd"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "dividesTheory.html"><span class="strong">divides</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">gcd</span>
+    <td>
+    :num -> num -> num
+    <tr><td>
+    <span class="strong">is_gcd</span>
+    <td>
+    :num -> num -> num -> bool
+    <tr><td> <span class="strong">lcm</span> <td> :num -> num -> num
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">is_gcd_def</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    is_gcd a b c ⇔
+    c divides a ∧ c divides b ∧ ∀d. d divides a ∧ d divides b ⇒ d divides c
+</pre>
+
+<DT><span class="strong">lcm_def</span>
+<DD>
+<pre>
+⊢ ∀m n. lcm m n = if m = 0 ∨ n = 0 then 0 else m * n DIV gcd m n
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">BINARY_GCD</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    (EVEN m ∧ EVEN n ⇒ gcd m n = 2 * gcd (m DIV 2) (n DIV 2)) ∧
+    (EVEN m ∧ ODD n ⇒ gcd m n = gcd (m DIV 2) n)
+</pre>
+
+<DT><span class="strong">DIVIDES_EXP_BASE</span>
+<DD>
+<pre>
+⊢ ∀a b n. prime a ∧ 0 < n ⇒ (a divides b ⇔ a divides b ** n)
+</pre>
+
+<DT><span class="strong">EUCLID_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀p x y. prime p ⇒ ((x * y) MOD p = 0 ⇔ x MOD p = 0 ∨ y MOD p = 0)
+</pre>
+
+<DT><span class="strong">FACTOR_OUT_GCD</span>
+<DD>
+<pre>
+⊢ ∀n m. n ≠ 0 ∧ m ≠ 0 ⇒ ∃p q. n = p * gcd n m ∧ m = q * gcd n m ∧ coprime p q
+</pre>
+
+<DT><span class="strong">FACT_MOD_PRIME</span>
+<DD>
+<pre>
+⊢ ∀p n. prime p ∧ n < p ⇒ FACT n MOD p ≠ 0
+</pre>
+
+<DT><span class="strong">GCD_0</span>
+<DD>
+<pre>
+⊢ ∀x. gcd 0 x = x ∧ gcd x 0 = x
+</pre>
+
+<DT><span class="strong">GCD_0L</span>
+<DD>
+<pre>
+⊢ ∀a. gcd 0 a = a
+</pre>
+
+<DT><span class="strong">GCD_0R</span>
+<DD>
+<pre>
+⊢ ∀a. gcd a 0 = a
+</pre>
+
+<DT><span class="strong">GCD_1</span>
+<DD>
+<pre>
+⊢ coprime 1 x ∧ coprime x 1
+</pre>
+
+<DT><span class="strong">GCD_ADD_L</span>
+<DD>
+<pre>
+⊢ ∀a b. gcd (a + b) a = gcd a b
+</pre>
+
+<DT><span class="strong">GCD_ADD_L_THM</span>
+<DD>
+<pre>
+⊢ (∀a b. gcd (a + b) a = gcd a b) ∧ ∀a b. gcd (b + a) a = gcd a b
+</pre>
+
+<DT><span class="strong">GCD_ADD_R</span>
+<DD>
+<pre>
+⊢ ∀a b. gcd a (a + b) = gcd a b
+</pre>
+
+<DT><span class="strong">GCD_ADD_R_THM</span>
+<DD>
+<pre>
+⊢ (∀a b. gcd a (a + b) = gcd a b) ∧ ∀a b. gcd a (b + a) = gcd a b
+</pre>
+
+<DT><span class="strong">GCD_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀a b c. gcd a (gcd b c) = gcd (gcd a b) c
+</pre>
+
+<DT><span class="strong">GCD_ASSOC_COMM</span>
+<DD>
+<pre>
+⊢ ∀a b c. gcd a (gcd b c) = gcd b (gcd a c)
+</pre>
+
+<DT><span class="strong">GCD_CANCEL_MULT</span>
+<DD>
+<pre>
+⊢ ∀m n k. coprime m k ⇒ gcd m (k * n) = gcd m n
+</pre>
+
+<DT><span class="strong">GCD_COMM</span>
+<DD>
+<pre>
+⊢ gcd a b = gcd b a
+</pre>
+
+<DT><span class="strong">GCD_COMMON_FACTOR</span>
+<DD>
+<pre>
+⊢ ∀m n k. gcd (k * m) (k * n) = k * gcd m n
+</pre>
+
+<DT><span class="strong">GCD_DIVIDES</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ 0 < m ⇒ 0 < gcd n m ∧ n MOD gcd n m = 0 ∧ m MOD gcd n m = 0
+</pre>
+
+<DT><span class="strong">GCD_EFFICIENTLY</span>
+<DD>
+<pre>
+⊢ ∀a b. gcd a b = if a = 0 then b else gcd (b MOD a) a
+</pre>
+
+<DT><span class="strong">GCD_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀n m. gcd n m = 0 ⇔ n = 0 ∧ m = 0
+</pre>
+
+<DT><span class="strong">GCD_EUCLID</span>
+<DD>
+<pre>
+⊢ ∀a b c. gcd a (b * a + c) = gcd a c
+</pre>
+
+<DT><span class="strong">GCD_GCD</span>
+<DD>
+<pre>
+⊢ ∀m n. gcd n (gcd n m) = gcd n m
+</pre>
+
+<DT><span class="strong">GCD_IS_GCD</span>
+<DD>
+<pre>
+⊢ ∀a b. is_gcd a b (gcd a b)
+</pre>
+
+<DT><span class="strong">GCD_IS_GREATEST_COMMON_DIVISOR</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    gcd a b divides a ∧ gcd a b divides b ∧
+    ∀d. d divides a ∧ d divides b ⇒ d divides gcd a b
+</pre>
+
+<DT><span class="strong">GCD_LCM</span>
+<DD>
+<pre>
+⊢ ∀m n. gcd m n * lcm m n = m * n
+</pre>
+
+<DT><span class="strong">GCD_LINEAR</span>
+<DD>
+<pre>
+⊢ ∀j k. 0 < j ⇒ ∃p q. p * j = q * k + gcd j k
+</pre>
+
+<DT><span class="strong">GCD_MOD</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ⇒ gcd m n = gcd m (n MOD m)
+</pre>
+
+<DT><span class="strong">GCD_MOD_COMM</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ⇒ gcd n m = gcd (n MOD m) m
+</pre>
+
+<DT><span class="strong">GCD_MULTIPLE</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < n ∧ m MOD n = 0 ⇒ gcd m n = n
+</pre>
+
+<DT><span class="strong">GCD_MULTIPLE_ALT</span>
+<DD>
+<pre>
+⊢ ∀m n. gcd (m * n) n = n
+</pre>
+
+<DT><span class="strong">GCD_ONE_PROPERTY</span>
+<DD>
+<pre>
+⊢ ∀n x. 1 < n ∧ coprime n x ⇒ ∃k. (k * x) MOD n = 1 ∧ coprime n k
+</pre>
+
+<DT><span class="strong">GCD_POS</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∨ 0 < n ⇒ 0 < gcd m n
+</pre>
+
+<DT><span class="strong">GCD_PROPERTY</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    c = gcd a b ⇔
+    c divides a ∧ c divides b ∧ ∀x. x divides a ∧ x divides b ⇒ x divides c
+</pre>
+
+<DT><span class="strong">GCD_REDUCE</span>
+<DD>
+<pre>
+⊢ ∀a b c. gcd (b * a + c) a = gcd a c
+</pre>
+
+<DT><span class="strong">GCD_REDUCE_BY_COPRIME</span>
+<DD>
+<pre>
+⊢ ∀m n k. coprime m k ⇒ gcd m (k * n) = gcd m n
+</pre>
+
+<DT><span class="strong">GCD_REF</span>
+<DD>
+<pre>
+⊢ ∀a. gcd a a = a
+</pre>
+
+<DT><span class="strong">GCD_SUB_L</span>
+<DD>
+<pre>
+⊢ ∀a b. b ≤ a ⇒ gcd (a − b) b = gcd a b
+</pre>
+
+<DT><span class="strong">GCD_SUB_R</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ gcd a (b − a) = gcd a b
+</pre>
+
+<DT><span class="strong">GCD_SUCfree_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀y. P 0 y) ∧ (∀x y. P x y ⇒ P y x) ∧ (∀x. P x x) ∧
+      (∀x y. 0 < x ∧ 0 < y ∧ P x y ⇒ P x (x + y)) ⇒
+      ∀m n. P m n
+</pre>
+
+<DT><span class="strong">GCD_SYM</span>
+<DD>
+<pre>
+⊢ ∀a b. gcd a b = gcd b a
+</pre>
+
+<DT><span class="strong">IS_GCD_0L</span>
+<DD>
+<pre>
+⊢ ∀a. is_gcd 0 a a
+</pre>
+
+<DT><span class="strong">IS_GCD_0R</span>
+<DD>
+<pre>
+⊢ ∀a. is_gcd a 0 a
+</pre>
+
+<DT><span class="strong">IS_GCD_MINUS_L</span>
+<DD>
+<pre>
+⊢ ∀a b c. b ≤ a ∧ is_gcd (a − b) b c ⇒ is_gcd a b c
+</pre>
+
+<DT><span class="strong">IS_GCD_MINUS_R</span>
+<DD>
+<pre>
+⊢ ∀a b c. a ≤ b ∧ is_gcd a (b − a) c ⇒ is_gcd a b c
+</pre>
+
+<DT><span class="strong">IS_GCD_REF</span>
+<DD>
+<pre>
+⊢ ∀a. is_gcd a a a
+</pre>
+
+<DT><span class="strong">IS_GCD_SYM</span>
+<DD>
+<pre>
+⊢ ∀a b c. is_gcd a b c ⇔ is_gcd b a c
+</pre>
+
+<DT><span class="strong">IS_GCD_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀a b c d. is_gcd a b c ∧ is_gcd a b d ⇒ c = d
+</pre>
+
+<DT><span class="strong">LCM_0</span>
+<DD>
+<pre>
+⊢ lcm 0 x = 0 ∧ lcm x 0 = 0
+</pre>
+
+<DT><span class="strong">LCM_1</span>
+<DD>
+<pre>
+⊢ lcm 1 x = x ∧ lcm x 1 = x
+</pre>
+
+<DT><span class="strong">LCM_ASSOC</span>
+<DD>
+<pre>
+⊢ ∀a b c. lcm a (lcm b c) = lcm (lcm a b) c
+</pre>
+
+<DT><span class="strong">LCM_ASSOC_COMM</span>
+<DD>
+<pre>
+⊢ ∀a b c. lcm a (lcm b c) = lcm b (lcm a c)
+</pre>
+
+<DT><span class="strong">LCM_COMM</span>
+<DD>
+<pre>
+⊢ lcm a b = lcm b a
+</pre>
+
+<DT><span class="strong">LCM_COMMON_COPRIME</span>
+<DD>
+<pre>
+⊢ ∀a b. coprime a b ⇒ ∀c. lcm (a * c) (b * c) = a * b * c
+</pre>
+
+<DT><span class="strong">LCM_COMMON_FACTOR</span>
+<DD>
+<pre>
+⊢ ∀m n k. lcm (k * m) (k * n) = k * lcm m n
+</pre>
+
+<DT><span class="strong">LCM_COPRIME</span>
+<DD>
+<pre>
+⊢ ∀m n. coprime m n ⇒ lcm m n = m * n
+</pre>
+
+<DT><span class="strong">LCM_DIVIDES</span>
+<DD>
+<pre>
+⊢ ∀n a b. a divides n ∧ b divides n ⇒ lcm a b divides n
+</pre>
+
+<DT><span class="strong">LCM_DIVISORS</span>
+<DD>
+<pre>
+⊢ ∀m n. m divides lcm m n ∧ n divides lcm m n
+</pre>
+
+<DT><span class="strong">LCM_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀m n. lcm m n = 0 ⇔ m = 0 ∨ n = 0
+</pre>
+
+<DT><span class="strong">LCM_IS_LCM</span>
+<DD>
+<pre>
+⊢ ∀m n p. m divides p ∧ n divides p ⇒ lcm m n divides p
+</pre>
+
+<DT><span class="strong">LCM_IS_LEAST_COMMON_MULTIPLE</span>
+<DD>
+<pre>
+⊢ m divides lcm m n ∧ n divides lcm m n ∧
+  ∀p. m divides p ∧ n divides p ⇒ lcm m n divides p
+</pre>
+
+<DT><span class="strong">LCM_LE</span>
+<DD>
+<pre>
+⊢ 0 < m ∧ 0 < n ⇒ m ≤ lcm m n ∧ m ≤ lcm n m
+</pre>
+
+<DT><span class="strong">LCM_LEAST</span>
+<DD>
+<pre>
+⊢ 0 < m ∧ 0 < n ⇒ ∀p. 0 < p ∧ p < lcm m n ⇒ ¬(m divides p) ∨ ¬(n divides p)
+</pre>
+
+<DT><span class="strong">LCM_POS</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ 0 < n ⇒ 0 < lcm m n
+</pre>
+
+<DT><span class="strong">LCM_PROPERTY</span>
+<DD>
+<pre>
+⊢ ∀a b c.
+    c = lcm a b ⇔
+    a divides c ∧ b divides c ∧ ∀x. a divides x ∧ b divides x ⇒ c divides x
+</pre>
+
+<DT><span class="strong">LCM_REF</span>
+<DD>
+<pre>
+⊢ ∀a. lcm a a = a
+</pre>
+
+<DT><span class="strong">LCM_SYM</span>
+<DD>
+<pre>
+⊢ ∀a b. lcm a b = lcm b a
+</pre>
+
+<DT><span class="strong">LINEAR_GCD</span>
+<DD>
+<pre>
+⊢ ∀n m. n ≠ 0 ⇒ ∃p q. p * n = q * m + gcd m n
+</pre>
+
+<DT><span class="strong">L_EUCLIDES</span>
+<DD>
+<pre>
+⊢ ∀a b c. coprime a b ∧ b divides a * c ⇒ b divides c
+</pre>
+
+<DT><span class="strong">MOD_EQ</span>
+<DD>
+<pre>
+⊢ ∀n a b. 0 < n ∧ b ≤ a ⇒ ((a − b) MOD n = 0 ⇔ a MOD n = b MOD n)
+</pre>
+
+<DT><span class="strong">MOD_EQ_DIFF</span>
+<DD>
+<pre>
+⊢ ∀n a b. 0 < n ∧ a MOD n = b MOD n ⇒ (a − b) MOD n = 0
+</pre>
+
+<DT><span class="strong">MOD_MOD_EQN</span>
+<DD>
+<pre>
+⊢ ∀n a b. 0 < n ∧ b ≤ a ⇒ (a MOD n = b MOD n ⇔ ∃c. a = b + c * n)
+</pre>
+
+<DT><span class="strong">MOD_NONZERO_WHEN_GCD_ONE</span>
+<DD>
+<pre>
+⊢ ∀n. 1 < n ⇒ ∀x. coprime n x ⇒ 0 < x ∧ 0 < x MOD n
+</pre>
+
+<DT><span class="strong">MOD_PLUS2</span>
+<DD>
+<pre>
+⊢ ∀n x y. 0 < n ⇒ (x + y) MOD n = (x + y MOD n) MOD n
+</pre>
+
+<DT><span class="strong">MOD_WITH_GCD_ONE</span>
+<DD>
+<pre>
+⊢ ∀n x. 0 < n ∧ coprime n x ⇒ coprime n (x MOD n)
+</pre>
+
+<DT><span class="strong">PRIME_BIG_NOT_DIVIDES_FACT</span>
+<DD>
+<pre>
+⊢ ∀p k. prime p ∧ k < p ⇒ ¬(p divides FACT k)
+</pre>
+
+<DT><span class="strong">PRIME_GCD</span>
+<DD>
+<pre>
+⊢ ∀p b. prime p ⇒ p divides b ∨ coprime p b
+</pre>
+
+<DT><span class="strong">PRIME_IS_GCD</span>
+<DD>
+<pre>
+⊢ ∀p b. prime p ⇒ p divides b ∨ is_gcd p b 1
+</pre>
+
+<DT><span class="strong">PRODUCT_WITH_GCD_ONE</span>
+<DD>
+<pre>
+⊢ ∀n x y. coprime n x ∧ coprime n y ⇒ coprime n (x * y)
+</pre>
+
+<DT><span class="strong">P_EUCLIDES</span>
+<DD>
+<pre>
+⊢ ∀p a b. prime p ∧ p divides a * b ⇒ p divides a ∨ p divides b
+</pre>
+
+<DT><span class="strong">coprime_0</span>
+<DD>
+<pre>
+⊢ ∀n. (coprime 0 n ⇔ n = 1) ∧ (coprime n 0 ⇔ n = 1)
+</pre>
+
+<DT><span class="strong">coprime_0L</span>
+<DD>
+<pre>
+⊢ ∀n. coprime 0 n ⇔ n = 1
+</pre>
+
+<DT><span class="strong">coprime_0R</span>
+<DD>
+<pre>
+⊢ ∀n. coprime n 0 ⇔ n = 1
+</pre>
+
+<DT><span class="strong">coprime_PRE</span>
+<DD>
+<pre>
+⊢ ∀n. 0 < n ⇒ coprime n (n − 1)
+</pre>
+
+<DT><span class="strong">coprime_SUC</span>
+<DD>
+<pre>
+⊢ ∀n. coprime n (n + 1)
+</pre>
+
+<DT><span class="strong">coprime_by_prime_factor</span>
+<DD>
+<pre>
+⊢ ∀m n. coprime m n ⇔ ∀p. prime p ⇒ ¬(p divides m ∧ p divides n)
+</pre>
+
+<DT><span class="strong">coprime_by_prime_factor_le</span>
+<DD>
+<pre>
+⊢ ∀m n.
+    0 < m ∧ 0 < n ⇒
+    (coprime m n ⇔ ∀p. prime p ∧ p ≤ m ∧ p ≤ n ⇒ ¬(p divides m ∧ p divides n))
+</pre>
+
+<DT><span class="strong">coprime_common_factor</span>
+<DD>
+<pre>
+⊢ ∀a b c. coprime a b ∧ c divides a ∧ c divides b ⇒ c = 1
+</pre>
+
+<DT><span class="strong">coprime_exp</span>
+<DD>
+<pre>
+⊢ ∀c m. coprime c m ⇒ ∀n. coprime (c ** n) m
+</pre>
+
+<DT><span class="strong">coprime_exp_comm</span>
+<DD>
+<pre>
+⊢ ∀a b. coprime a b ⇒ ∀n. coprime a (b ** n)
+</pre>
+
+<DT><span class="strong">coprime_factor_coprime</span>
+<DD>
+<pre>
+⊢ ∀m n. m divides n ⇒ ∀k. coprime n k ⇒ coprime m k
+</pre>
+
+<DT><span class="strong">coprime_factor_not_divides</span>
+<DD>
+<pre>
+⊢ ∀n k. 1 < n ∧ coprime n k ⇒ ∀p. 1 < p ∧ p divides n ⇒ ¬(p divides k)
+</pre>
+
+<DT><span class="strong">coprime_gt_1</span>
+<DD>
+<pre>
+⊢ ∀n k. coprime k n ∧ 1 < n ⇒ 0 < k
+</pre>
+
+<DT><span class="strong">coprime_mod</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ coprime m n ⇒ coprime m (n MOD m)
+</pre>
+
+<DT><span class="strong">coprime_mod_iff</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ⇒ (coprime m n ⇔ coprime m (n MOD m))
+</pre>
+
+<DT><span class="strong">coprime_neq_1</span>
+<DD>
+<pre>
+⊢ ∀n k. coprime k n ∧ n ≠ 1 ⇒ k ≠ 0
+</pre>
+
+<DT><span class="strong">coprime_prime_factor_coprime</span>
+<DD>
+<pre>
+⊢ ∀n p. 1 < n ∧ prime p ∧ p divides n ⇒ ∀k. coprime n k ⇒ coprime p k
+</pre>
+
+<DT><span class="strong">coprime_product_coprime</span>
+<DD>
+<pre>
+⊢ ∀x y z. coprime x z ∧ coprime y z ⇒ coprime (x * y) z
+</pre>
+
+<DT><span class="strong">coprime_product_coprime_iff</span>
+<DD>
+<pre>
+⊢ ∀x y z. coprime x z ⇒ (coprime y z ⇔ coprime (x * y) z)
+</pre>
+
+<DT><span class="strong">coprime_product_coprime_sym</span>
+<DD>
+<pre>
+⊢ ∀x y z. coprime z x ∧ coprime z y ⇒ coprime z (x * y)
+</pre>
+
+<DT><span class="strong">coprime_product_divides</span>
+<DD>
+<pre>
+⊢ ∀n a b. a divides n ∧ b divides n ∧ coprime a b ⇒ a * b divides n
+</pre>
+
+<DT><span class="strong">coprime_sym</span>
+<DD>
+<pre>
+⊢ ∀x y. coprime x y ⇔ coprime y x
+</pre>
+
+<DT><span class="strong">divides_coprime_mul</span>
+<DD>
+<pre>
+⊢ ∀n m k. coprime n m ⇒ (n divides m * k ⇔ n divides k)
+</pre>
+
+<DT><span class="strong">divides_iff_gcd_fix</span>
+<DD>
+<pre>
+⊢ ∀m n. n divides m ⇔ gcd n m = n
+</pre>
+
+<DT><span class="strong">divides_iff_lcm_fix</span>
+<DD>
+<pre>
+⊢ ∀m n. n divides m ⇔ lcm n m = m
+</pre>
+
+<DT><span class="strong">divides_imp_coprime_with_predecessor</span>
+<DD>
+<pre>
+⊢ ∀m n. 0 < m ∧ n divides m ⇒ coprime n (PRE m)
+</pre>
+
+<DT><span class="strong">divides_imp_coprime_with_successor</span>
+<DD>
+<pre>
+⊢ ∀m n. n divides m ⇒ coprime n (SUC m)
+</pre>
+
+<DT><span class="strong">gcd_LESS_EQ</span>
+<DD>
+<pre>
+⊢ ∀m n. n ≠ 0 ⇒ gcd m n ≤ n
+</pre>
+
+<DT><span class="strong">gcd_compute</span>
+<DD>
+<pre>
+⊢ (∀y. gcd 0 y = y) ∧ (∀x. gcd <..num comp'n..> 0 = <..num comp'n..> ) ∧
+  (∀x. gcd <..num comp'n..> 0 = <..num comp'n..> ) ∧
+  (∀y x.
+     gcd <..num comp'n..> <..num comp'n..> =
+     if <..num comp'n..> − 1 ≤ <..num comp'n..> − 1 then
+       gcd (<..num comp'n..> − 1 − (<..num comp'n..> − 1)) <..num comp'n..>
+     else gcd <..num comp'n..> (<..num comp'n..> − 1 − (<..num comp'n..> − 1))) ∧
+  (∀y x.
+     gcd <..num comp'n..> <..num comp'n..> =
+     if <..num comp'n..> − 1 ≤ <..num comp'n..> then
+       gcd (<..num comp'n..> − (<..num comp'n..> − 1)) <..num comp'n..>
+     else gcd <..num comp'n..> (<..num comp'n..> − 1 − <..num comp'n..> )) ∧
+  (∀y x.
+     gcd <..num comp'n..> <..num comp'n..> =
+     if <..num comp'n..> ≤ <..num comp'n..> − 1 then
+       gcd (<..num comp'n..> − 1 − <..num comp'n..> ) <..num comp'n..>
+     else gcd <..num comp'n..> (<..num comp'n..> − (<..num comp'n..> − 1))) ∧
+  ∀y x.
+    gcd <..num comp'n..> <..num comp'n..> =
+    if <..num comp'n..> ≤ <..num comp'n..> then
+      gcd (<..num comp'n..> − <..num comp'n..> ) <..num comp'n..>
+    else gcd <..num comp'n..> (<..num comp'n..> − <..num comp'n..> )
+</pre>
+
+<DT><span class="strong">gcd_coprime_cancel</span>
+<DD>
+<pre>
+⊢ ∀m n p. coprime p n ⇒ gcd (p * m) n = gcd m n
+</pre>
+
+<DT><span class="strong">gcd_def</span>
+<DD>
+<pre>
+⊢ (∀y. gcd 0 y = y) ∧ (∀x. gcd (SUC x) 0 = SUC x) ∧
+  ∀y x.
+    gcd (SUC x) (SUC y) =
+    if y ≤ x then gcd (x − y) (SUC y) else gcd (SUC x) (y − x)
+</pre>
+
+<DT><span class="strong">gcd_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀y. P 0 y) ∧ (∀x. P (SUC x) 0) ∧
+      (∀x y.
+         (¬(y ≤ x) ⇒ P (SUC x) (y − x)) ∧ (y ≤ x ⇒ P (x − y) (SUC y)) ⇒
+         P (SUC x) (SUC y)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">prime_not_coprime_divides</span>
+<DD>
+<pre>
+⊢ ∀n p. prime p ∧ gcd p n ≠ 1 ⇒ p divides n
+</pre>
+
+<DT><span class="strong">prime_not_divides_coprime</span>
+<DD>
+<pre>
+⊢ ∀n p. prime p ∧ ¬(p divides n) ⇒ coprime p n
+</pre>
+
+<DT><span class="strong">primes_coprime</span>
+<DD>
+<pre>
+⊢ ∀p q. prime p ∧ prime q ∧ p ≠ q ⇒ coprime p q
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Parse.add_rule</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="add_rule"><code>add_rule</code></h2>
+<pre class="hol4"><code>Parse.add_rule :
+  {term_name : string, fixity : fixity,
+   pp_elements: term_grammar.pp_element list,
+   paren_style : term_grammar.ParenStyle,
+   block_style : term_grammar.PhraseBlockStyle *
+                 term_grammar.block_info}  -&gt; unit</code></pre>
+<hr />
+<p>Adds a parsing/printing rule to the global grammar.</p>
+<p>The function <code>add_rule</code> is a fundamental method for adding
+parsing (and thus printing) rules to the global term grammar that sits
+behind the term-parsing function <code>Parse.Term</code>, and the
+pretty-printer installed for terms. It is used for everything except the
+addition of list-forms, for which refer to the entry for
+<code>add_listform</code>.</p>
+<p>There are five components in the record argument to
+<code>add_rule</code>. The <code>term_name</code> component is the name
+of the term (whether a constant or a variable) that will be generated at
+the head of the function application. Thus, the <code>term_name</code>
+component when specifying parsing for conditional expressions is
+<code>COND</code>.</p>
+<p>The following values (all in structure <code>Parse</code>) are useful
+for constructing fixity values:</p>
+<pre class="hol4"><code>   val LEFT       : HOLgrammars.associativity
+   val RIGHT      : HOLgrammars.associativity
+   val NONASSOC   : HOLgrammars.associativity
+
+   val Binder     : fixity
+   val Closefix   : fixity
+   val Infixl     : int -&gt; fixity
+   val Infixr     : int -&gt; fixity
+   val Infix      : HOLgrammars.associativity * int -&gt; fixity
+   val Prefix     : int -&gt; fixity
+   val Suffix     : int -&gt; fixity</code></pre>
+<p>The <code>Binder</code> fixity is for binders such as universal and
+existential quantifiers (<code>!</code> and <code>?</code>). Binders can
+actually be seen as (true) prefixes (should <code>`!x. p /\ q`</code> be
+parsed as <code>`(!x. p) /\ q`</code> or as
+<code>`!x. (p /\ q)`</code>?), but the <code>add_rule</code> interface
+only allows binders to be added at the one level (the weakest in the
+grammar). Further, when binders are added using this interface, all
+elements of the record apart from the <code>term_name</code> are
+ignored, so the name of the binder must be the same as the string that
+is parsed and printed (but see also restricted quantifiers:
+<code>associate_restriction</code>).</p>
+<p>The remaining fixities all cause <code>add_rule</code> to pay due
+heed to the <code>pp_elements</code> (“parsing/printing elements”)
+component of the record. As far as parsing is concerned, the only
+important elements are <code>TOK</code> and <code>TM</code> values, of
+the following types:</p>
+<pre class="hol4"><code>   val TM  : term_grammar.pp_element
+   val TOK : string -&gt; term_grammar.pp_element</code></pre>
+<p>The <code>TM</code> value corresponds to a “hole” where a sub-term is
+possible. The <code>TOK</code> value corresponds to a piece of concrete
+syntax, a string that is required when parsing, and which will appear
+when printing. The sequence of <code>pp_elements</code> specified in the
+record passed to <code>add_rule</code> specifies the “kernel” syntax of
+an operator in the grammar. The “kernel” of a rule is extended (or not)
+by additional sub-terms depending on the fixity type, thus:</p>
+<pre class="hol4"><code>   Closefix    :      [Kernel]     (* no external arguments *)
+   Prefix      :      [Kernel] _   (* an argument to the right *)
+   Suffix      :    _ [Kernel]     (* an argument to the left *)
+   Infix       :    _ [Kernel] _   (* arguments on both sides *)</code></pre>
+<p>Thus simple infixes, suffixes and prefixes would have singleton
+<code>pp_element</code> lists, consisting of just the symbol desired.
+More complicated mix-fix syntax can be constructed by identifying
+whether or not sub-term arguments exist beyond the kernel of concrete
+syntax. For example, syntax for the evaluation relation of an
+operational semantics (<code>_ |- _ --&gt; _</code>) is an infix with a
+kernel delimited by <code>|-</code> and <code>--&gt;</code> tokens.
+Syntax for denotation brackets <code>[| _ |]</code> is a closefix with
+one internal argument in the kernel.</p>
+<p>The remaining sorts of possible <code>pp_element</code> values are
+concerned with pretty-printing. (The basic scheme is implemented on top
+of a standard Oppen-style pretty-printing package.) They are</p>
+<pre class="hol4"><code>   (* where
+        type term_grammar.block_info = PP.break_style * int
+   *)
+   val BreakSpace : (int * int) -&gt; term_grammar.pp_element
+   val HardSpace : int -&gt; term_grammar.pp_element
+
+   val BeginFinalBlock : term_grammar.block_info -&gt; term_grammar.pp_element
+   val EndInitialBlock : term_grammar.block_info -&gt; term_grammar.pp_element
+   val PPBlock : term_grammar.pp_element list * term_grammar.block_info
+                 -&gt; term_grammar.pp_element
+
+   val OnlyIfNecessary : term_grammar.ParenStyle
+   val ParoundName : term_grammar.ParenStyle
+   val ParoundPrec : term_grammar.ParenStyle
+   val Always : term_grammar.ParenStyle
+   val IfNotTop : {realonly:bool} -&gt; term_grammar.ParenStyle
+
+   val AroundEachPhrase : term_grammar.PhraseBlockStyle
+   val AroundSamePrec   : term_grammar.PhraseBlockStyle
+   val AroundSameName   : term_grammar.PhraseBlockStyle
+   val NoPhrasing       : term_grammar.PhraseBlockStyle</code></pre>
+<p>The two spacing values provide ways of specifying white-space should
+be added when terms are printed. Use of <code>HardSpace n</code> results
+in <code>n</code> spaces being added to the term whatever the context.
+On the other hand, <code>BreakSpace(m,n)</code> results in a break of
+width <code>m</code> spaces unless this makes the current line too wide,
+in which case a line-break will occur, and the next line will be
+indented an extra <code>n</code> spaces.</p>
+<p>For example, the <code>add_infix</code> function (q.v.) is
+implemented in terms of <code>add_rule</code> in such a way that a
+single token infix <code>s</code>, has a <code>pp_element</code> list
+of</p>
+<pre class="hol4"><code>   [HardSpace 1, TOK s, BreakSpace(1,0)]</code></pre>
+<p>This results in chains of infixes (such as those that occur with
+conjunctions) that break so as to leave the infix on the right hand side
+of the line. Under this constraint, printing can’t break so as to put
+the infix symbol on the start of a line, because that would imply that
+the <code>HardSpace</code> had in fact been broken. (Consequently, if a
+change to this behaviour is desired, there is no global way of effecting
+it, but one can do it on an infix-by-infix basis by deleting the given
+rule (see, for example, <code>remove_termtok</code>) and then “putting
+it back” with different pretty-printing constraints.)</p>
+<p>The <code>PPBlock</code> function allows the specification of nested
+blocks (blocks in the Oppen pretty-printing sense) within the list of
+<code>pp_element</code>s. Because there are sub-terms in all but the
+<code>Closefix</code> fixities that occur beyond the scope of the
+<code>pp_element</code> list, the <code>BeginFinalBlock</code> and
+<code>EndInitialBlock</code> functions can also be used to indicate the
+boundary of blocks whose outer extent is the term beyond the kernel
+represented by the <code>pp_element</code> list. There is an example of
+this below.</p>
+<p>The possible <code>ParenStyle</code> values describe when parentheses
+should be added to terms. The <code>OnlyIfNecessary</code> value will
+cause parentheses to be added only when required to disambiguate syntax.
+The <code>ParoundName</code> will cause parentheses to be added if
+necessary, or where the head symbol has the given <code>term_name</code>
+and where this term is not the argument of a function with the same head
+name. This style of parenthesisation is used with tuples, for example.
+The <code>ParoundPrec</code> value is similar, but causes parentheses to
+be added when the term is the argument to a function with a different
+precedence level. The <code>IfNotTop</code> value will cause parentheses
+to appear whenever the term is not being printed as the “top” term. A
+term is considered to be “top” if it is the whole term being printed
+(and this is known as the “real top”), or if it occurs between two
+tokens that always delimit complete terms. For example, the semi-colons
+in a list-like form are such delimiters, as are the list-form’s left and
+right brackets, as are the “if” and “then” tokens in an if-then-else
+form. Having the <code>realonly</code> parameter set to true will cause
+parentheses whenever the context is anything not the real top, while
+having it set to false will cause parentheses if in neither sort of
+“top”. Finally, the <code>Always</code> value causes parentheses always
+to be added.</p>
+<p>The <code>PhraseBlockStyle</code> values describe when
+pretty-printing blocks involving this term should be entered. The
+<code>AroundEachPhrase</code> style causes a pretty-printing block to be
+created around each term. This is not appropriate for operators such as
+conjunction however, where all of the arguments to the conjunctions in a
+list are more pleasingly thought of as being at the same level. This
+effect is gained by specifying either <code>AroundSamePrec</code> or
+<code>AroundSameName</code>. The former will cause the creation of a new
+block for the phrase if it is at a different precedence level from its
+parent, while the latter creates the block if the parent name is not the
+same. The former is appropriate for <code>+</code> and <code>-</code>
+which are at the same precedence level, while the latter is appropriate
+for <code>/\</code>. Finally, the <code>NoPhrasing</code> style causes
+there to be no block at all around terms controlled by this rule. The
+intention in using such a style is to have block structure controlled by
+the level above.</p>
+<h3 id="failure">Failure</h3>
+<p>This function will fail if the <code>pp_element</code> list does not
+have <code>TOK</code> values at the beginning and the end of the list,
+or if there are two adjacent <code>TM</code> values in the list. It will
+fail if the rule specifies a fixity with a precedence, and if that
+precedence level in the grammar is already taken by rules with a
+different sort of fixity.</p>
+<h3 id="example">Example</h3>
+<p>The traditional (now discontinued) HOL88/90 syntax for conditionals
+is <code>b =&gt; t | e</code>. With “dangling” terms (the <code>b</code>
+and the <code>e</code>) to the left and right, it is an infix (and one
+of very weak precedence at that).</p>
+<pre class="hol4"><code>   val _ = add_rule{term_name = &quot;COND&quot;,
+                    fixity = Infix (HOLgrammars.RIGHT, 3),
+                    pp_elements = [HardSpace 1, TOK &quot;=&gt;&quot;,
+                                   BreakSpace(1,0), TM,
+                                   BreakSpace(1,0), TOK &quot;|&quot;,
+                                   HardSpace 1],
+                    paren_style = OnlyIfNecessary,
+                    block_style = (AroundEachPhrase,
+                                   (PP.INCONSISTENT, 0))};</code></pre>
+<p>The more familiar <code>if-then-else</code> syntax has a “dangling”
+term only to the right of the construction, so this rule’s fixity is of
+type <code>Prefix</code>. (If the rule was made a <code>Closefix</code>,
+strings such as <code>`if P then Q else R`</code> would still parse, but
+so too would <code>`if P then Q else`</code>.) This example also
+illustrates the use of blocks within rules to improve
+pretty-printing.</p>
+<pre class="hol4"><code>   val _ = add_rule{term_name = &quot;COND&quot;, fixity = Prefix 70,
+                    pp_elements = [PPBlock([TOK &quot;if&quot;, BreakSpace(1,2),
+                                            TM, BreakSpace(1,0),
+                                            TOK &quot;then&quot;], (PP.CONSISTENT, 0)),
+                                   BreakSpace(1,2), TM, BreakSpace(1,0),
+                                   BeginFinalBlock(PP.CONSISTENT, 2),
+                                   TOK &quot;else&quot;, BreakSpace(1,0)],
+                    paren_style = OnlyIfNecessary,
+                    block_style = (AroundEachPhrase,
+                                   (PP.INCONSISTENT, 0))};</code></pre>
+<p>Note that the above form is not that actually used in the system. As
+written, it allows for pretty-printing some expressions as:</p>
+<pre class="hol4"><code>   if P then
+      &lt;very long term&gt; else Q</code></pre>
+<p>because the <code>block_style</code> is <code>INCONSISTENT</code>.
+The actual pretty-printer for if-then-else is a custom piece of code
+installed with <code>add_user_printer</code>. This handles nice printing
+of chained conditionals.</p>
+<p>The pretty-printer prefers later rules over earlier rules by default
+(though this choice can be changed with
+<code>prefer_form_with_tok</code> (q.v.)), so if both of these calls
+were made, conditional expressions would print using the
+<code>if-then-else</code> syntax rather than the
+<code>_ =&gt; _ | _</code> syntax.</p>
+<p>For making pretty concrete syntax possible.</p>
+<h3 id="comments">Comments</h3>
+<p>Because adding new rules to the grammar may result in precedence
+conflicts in the operator-precedence matrix, it is as well with
+interactive use to test the <code>Term</code> parser immediately after
+adding a new rule, as it is only with this call that the precedence
+matrix is built.</p>
+<p>As with other functions in the <code>Parse</code> structure, there is
+a companion <code>temp_add_rule</code> function, which has the same
+effect on the global grammar, but which does not cause this effect to
+persist when the current theory is exported.</p>
+<p>An Isabelle-style concrete syntax for specifying rules would probably
+be desirable as it would conceal the complexity of the above from most
+users.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Parse.add_listform.html"><code>Parse.add_listform</code></a>, <a
+href="Parse.add_infix.html"><code>Parse.add_infix</code></a>, <a
+href="Parse.prefer_form_with_tok.html"><code>Parse.prefer_form_with_tok</code></a>,
+<a
+href="Parse.remove_rules_for_term.html"><code>Parse.remove_rules_for_term</code></a></p>
+</body>
+</html>

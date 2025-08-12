@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure errorMonadTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure errorMonadTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/monad/more_monads/.hol/objs/errorMonadScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature errorMonadTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#bind_def-val">bind_def</a> : thm
+<a name="line7"></a>    val <a href="#choice_def-val">choice_def</a> : thm
+<a name="line8"></a>    val <a href="#error_TY_DEF-val">error_TY_DEF</a> : thm
+<a name="line9"></a>    val <a href="#error_case_def-val">error_case_def</a> : thm
+<a name="line10"></a>    val <a href="#error_size_def-val">error_size_def</a> : thm
+<a name="line11"></a>    val <a href="#guard_def-val">guard_def</a> : thm
+<a name="line12"></a>    val <a href="#try_def-val">try_def</a> : thm
+<a name="line13"></a>  
+<a name="line14"></a>  (*  Theorems  *)
+<a name="line15"></a>    val <a href="#EXISTS_ERROR-val">EXISTS_ERROR</a> : thm
+<a name="line16"></a>    val <a href="#FORALL_ERROR-val">FORALL_ERROR</a> : thm
+<a name="line17"></a>    val <a href="#bind_EQ_error-val">bind_EQ_error</a> : thm
+<a name="line18"></a>    val <a href="#bind_EQ_return-val">bind_EQ_return</a> : thm
+<a name="line19"></a>    val <a href="#bind_return-val">bind_return</a> : thm
+<a name="line20"></a>    val <a href="#datatype_error-val">datatype_error</a> : thm
+<a name="line21"></a>    val <a href="#error_11-val">error_11</a> : thm
+<a name="line22"></a>    val <a href="#error_Axiom-val">error_Axiom</a> : thm
+<a name="line23"></a>    val <a href="#error_case_cong-val">error_case_cong</a> : thm
+<a name="line24"></a>    val <a href="#error_case_eq-val">error_case_eq</a> : thm
+<a name="line25"></a>    val <a href="#error_distinct-val">error_distinct</a> : thm
+<a name="line26"></a>    val <a href="#error_induction-val">error_induction</a> : thm
+<a name="line27"></a>    val <a href="#error_nchotomy-val">error_nchotomy</a> : thm
+<a name="line28"></a>(*
+   [hol] Parent theory of "errorMonad"
+   
+   [<a name="bind_def-val"><b>bind_def</b></a>]  Definition
+      
+      ⊢ (∀v f. bind (return v) f = f v) ∧ ∀e f. bind (error e) f = error e
+   
+   [<a name="choice_def-val"><b>choice_def</b></a>]  Definition
+      
+      ⊢ (∀v m. choice (return v) m = return v) ∧
+        ∀e m. choice (error e) m = m
+   
+   [<a name="error_TY_DEF-val"><b>error_TY_DEF</b></a>]  Definition
+      
+      ⊢ ∃rep.
+          TYPE_DEFINITION
+            (λa0.
+                 ∀ $var$('error').
+                   (∀a0.
+                      (∃a. a0 =
+                           (λa.
+                                ind_type$CONSTR 0 (a,ARB)
+                                  (λn. ind_type$BOTTOM)) a) ∨
+                      (∃a. a0 =
+                           (λa.
+                                ind_type$CONSTR (SUC 0) (ARB,a)
+                                  (λn. ind_type$BOTTOM)) a) ⇒
+                      $var$('error') a0) ⇒
+                   $var$('error') a0) rep
+   
+   [<a name="error_case_def-val"><b>error_case_def</b></a>]  Definition
+      
+      ⊢ (∀a f f1. error_CASE (return a) f f1 = f a) ∧
+        ∀a f f1. error_CASE (error a) f f1 = f1 a
+   
+   [<a name="error_size_def-val"><b>error_size_def</b></a>]  Definition
+      
+      ⊢ (∀f f1 a. error_size f f1 (return a) = 1 + f a) ∧
+        ∀f f1 a. error_size f f1 (error a) = 1 + f1 a
+   
+   [<a name="guard_def-val"><b>guard_def</b></a>]  Definition
+      
+      ⊢ ∀e b. guard e b = if b then return () else error e
+   
+   [<a name="try_def-val"><b>try_def</b></a>]  Definition
+      
+      ⊢ (∀v f. try (return v) f = return v) ∧ ∀e f. try (error e) f = f e
+   
+   [<a name="EXISTS_ERROR-val"><b>EXISTS_ERROR</b></a>]  Theorem
+      
+      ⊢ (∃e. P e) ⇔ (∃a. P (return a)) ∨ ∃e. P (error e)
+   
+   [<a name="FORALL_ERROR-val"><b>FORALL_ERROR</b></a>]  Theorem
+      
+      ⊢ (∀e. P e) ⇔ (∀a. P (return a)) ∧ ∀e. P (error e)
+   
+   [<a name="bind_EQ_error-val"><b>bind_EQ_error</b></a>]  Theorem
+      
+      ⊢ bind m f = error e ⇔ m = error e ∨ ∃u. m = return u ∧ f u = error e
+   
+   [<a name="bind_EQ_return-val"><b>bind_EQ_return</b></a>]  Theorem
+      
+      ⊢ bind m f = return v ⇔ ∃u. m = return u ∧ f u = return v
+   
+   [<a name="bind_return-val"><b>bind_return</b></a>]  Theorem
+      
+      ⊢ bind m return = m
+   
+   [<a name="datatype_error-val"><b>datatype_error</b></a>]  Theorem
+      
+      ⊢ DATATYPE (error return error)
+   
+   [<a name="error_11-val"><b>error_11</b></a>]  Theorem
+      
+      ⊢ (∀a a'. return a = return a' ⇔ a = a') ∧
+        ∀a a'. error a = error a' ⇔ a = a'
+   
+   [<a name="error_Axiom-val"><b>error_Axiom</b></a>]  Theorem
+      
+      ⊢ ∀f0 f1. ∃fn. (∀a. fn (return a) = f0 a) ∧ ∀a. fn (error a) = f1 a
+   
+   [<a name="error_case_cong-val"><b>error_case_cong</b></a>]  Theorem
+      
+      ⊢ ∀M M' f f1.
+          M = M' ∧ (∀a. M' = return a ⇒ f a = f' a) ∧
+          (∀a. M' = error a ⇒ f1 a = f1' a) ⇒
+          error_CASE M f f1 = error_CASE M' f' f1'
+   
+   [<a name="error_case_eq-val"><b>error_case_eq</b></a>]  Theorem
+      
+      ⊢ error_CASE x f f1 = v ⇔
+        (∃a. x = return a ∧ f a = v) ∨ ∃e. x = error e ∧ f1 e = v
+   
+   [<a name="error_distinct-val"><b>error_distinct</b></a>]  Theorem
+      
+      ⊢ ∀a' a. return a ≠ error a'
+   
+   [<a name="error_induction-val"><b>error_induction</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀a. P (return a)) ∧ (∀e. P (error e)) ⇒ ∀e. P e
+   
+   [<a name="error_nchotomy-val"><b>error_nchotomy</b></a>]  Theorem
+      
+      ⊢ ∀ee. (∃a. ee = return a) ∨ ∃e. ee = error e
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/monad/more_monads/.hol/objs/errorMonadScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cond_rewrite.COND_REWR_TAC</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="cond_rewr_tac"><code>COND_REWR_TAC</code></h2>
+<pre class="hol4"><code>Cond_rewrite.COND_REWR_TAC :
+ (term -&gt; term -&gt; ((term * term) list * (type * type) list) list) -&gt;
+ thm_tactic</code></pre>
+<hr />
+<p>A lower level tactic used to implement simple conditional rewriting
+tactic.</p>
+<p><code>COND_REWR_TAC</code> is one of the basic building blocks for
+the implementation of conditional rewriting in the HOL system. In
+particular, the conditional term replacement or rewriting done by all
+the built-in conditional rewriting tactics is ultimately done by
+applications of <code>COND_REWR_TAC</code>. The description given here
+for <code>COND_REWR_TAC</code> may therefore be taken as a specification
+of the atomic action of replacing equals by equals in the goal under
+certain conditions that aare used in all these higher level conditional
+rewriting tactics.</p>
+<p>The first argument to <code>COND_REWR_TAC</code> is expected to be a
+function which returns a list of matches. Each of these matches is in
+the form of the value returned by the built-in function
+<code>match</code>. It is used to search the goal for instances which
+may be rewritten.</p>
+<p>The second argument to <code>COND_REWR_TAC</code> is expected to be
+an implicative theorem in the following form:</p>
+<pre class="hol4"><code>   A |- !x1 ... xn. P1 ==&gt; ... Pm ==&gt; (Q[x1,...,xn] = R[x1,...,xn])</code></pre>
+<p>where <code>x1</code>, …, <code>xn</code> are all the variables that
+occur free in the left-hand side of the conclusion of the theorem but do
+not occur free in the assumptions.</p>
+<p>If <code>fn</code> is a function and <code>th</code> is an
+implicative theorem of the kind shown above, then
+<code>COND_REWR_TAC fn th</code> will be a tactic which returns a list
+of subgoals if evaluating</p>
+<pre class="hol4"><code>   fn Q[x1,...,xn] gl</code></pre>
+<p>returns a non-empty list of matches when applied to a goal
+<code>(asm,gl)</code>.</p>
+<p>Let <code>ml</code> be the match list returned by evaluating
+<code>fn Q[x1,...,xn] gl</code>. Each element in this list is in the
+form of</p>
+<pre class="hol4"><code>   ([(e1,x1);...;(ep,xp)], [(ty1,vty1);...;(tyq,vtyq)])</code></pre>
+<p>which specifies the term and type instantiations of the input theorem
+<code>th</code>. Either the term pair list or the type pair list may be
+empty. In the case that both lists are empty, an exact match is found,
+i.e., no instantiation is required. If <code>ml</code> is an empty list,
+no match has been found and the tactic will fail.</p>
+<p>For each match in <code>ml</code>, <code>COND_REWR_TAC</code> will
+perform the following: 1) instantiate the input theorem <code>th</code>
+to get</p>
+<pre class="hol4"><code>   th&#39; = A |- P1&#39; ==&gt; ... ==&gt; Pm&#39; ==&gt; (Q&#39; = R&#39;)</code></pre>
+<p>where the primed subterms are instances of the corresponding unprimed
+subterms obtained by applying <code>INST_TYPE</code> with
+<code>[(ty1,vty1);...;(tyq,vtyq)]</code> and then <code>INST</code> with
+<code>[(e1,x1);...;(ep,xp)]</code>; 2) search the assumption list
+<code>asm</code> for occurrences of any antecedents <code>P1'</code>, …,
+<code>Pm'</code>; 3) if all antecedents appear in <code>asm</code>, the
+goal <code>gl</code> is reduced to <code>gl'</code> by substituting
+<code>R'</code> for each free occurrence of <code>Q'</code>, otherwise,
+in addition to the substitution, all antecedents which do not appear in
+<code>asm</code> are added to it and new subgoals corresponding to these
+antecedents are created. For example, if <code>Pk'</code>, …,
+<code>Pm'</code> do not appear in <code>asm</code>, the following
+subgoals are returned:</p>
+<pre class="hol4"><code>   asm ?- Pk&#39;  ...  asm ?- Pm&#39;   {{asm,Pk&#39;,...,Pm&#39;}} ?- gl&#39;</code></pre>
+<p>If <code>COND_REWR_TAC</code> is given a theorem <code>th</code>:</p>
+<pre class="hol4"><code>   A |- !x1 ... xn y1 ... yk. P1 ==&gt; ... ==&gt; Pm ==&gt; (Q = R)</code></pre>
+<p>where the variables <code>y1</code>, …, <code>ym</code> do not occur
+free in the left-hand side of the conclusion <code>Q</code> but they do
+occur free in the antecedents, then, when carrying out Step 2 described
+above, <code>COND_REWR_TAC</code> will attempt to find instantiations
+for these variables from the assumption <code>asm</code>. For example,
+if <code>x1</code> and <code>y1</code> occur free in <code>P1</code>,
+and a match is found in which <code>e1</code> is an instantiation of
+<code>x1</code>, then <code>P1'</code> will become
+<code>P1[e1/x1, y1]</code>. If a term
+<code>P1'' = P1[e1,e1'/x1,y1]</code> appears in <code>asm</code>,
+<code>th'</code> is instantiated with <code>(e1', y1)</code> to get</p>
+<pre class="hol4"><code>   th&#39;&#39; = A |- P1&#39;&#39; ==&gt; ... ==&gt; Pm&#39;&#39; ==&gt; (Q&#39; = R&#39;&#39;)</code></pre>
+<p>then <code>R''</code> is substituted into <code>gl</code> for all
+free occurrences of <code>Q'</code>. If no consistent instantiation is
+found, then <code>P1'</code> which contains the uninstantiated variable
+<code>y1</code> will become one of the new subgoals. In such a case, the
+user has no control over the choice of the variable <code>yi</code>.</p>
+<h3 id="failure">Failure</h3>
+<p><code>COND_REWR_TAC fn th</code> fails if <code>th</code> is not an
+implication of the form described above. If <code>th</code> is such an
+equation, but the function <code>fn</code> returns a null list of
+matches, or the function <code>fn</code> returns a non-empty list of
+matches, but the term or type instantiation fails.</p>
+<h3 id="example">Example</h3>
+<p>The following example illustrates a straightforward use of
+<code>COND_REWR_TAC</code>. We use the built-in theorem
+<code>LESS_MOD</code> as the input theorem, and the function
+<code>search_top_down</code> as the search function.</p>
+<pre class="hol4"><code>   #LESS_MOD;;
+   Theorem LESS_MOD autoloading from theory `arithmetic` ...
+   LESS_MOD = |- !n k. k &lt; n ==&gt; (k MOD n = k)
+
+   |- !n k. k &lt; n ==&gt; (k MOD n = k)
+
+   #search_top_down;;
+   - : (term -&gt; term -&gt; ((term # term) list # (type # type) list) list)</code></pre>
+<p>We set up a goal</p>
+<pre class="hol4"><code>   #g&quot;2 MOD 3 = 2&quot;;;
+   &quot;2 MOD 3 = 2&quot;
+
+   () : void</code></pre>
+<p>and then apply the tactic</p>
+<pre class="hol4"><code>   #e(COND_REWR_TAC search_top_down LESS_MOD);;
+   OK..
+   2 subgoals
+   &quot;2 = 2&quot;
+       [ &quot;2 &lt; 3&quot; ]
+
+   &quot;2 &lt; 3&quot;
+
+    () : void</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Cond_rewrite.COND_REWRITE1_TAC.html"><code>Cond_rewrite.COND_REWRITE1_TAC</code></a>,
+<a
+href="Cond_rewrite.COND_REWRITE1_CONV.html"><code>Cond_rewrite.COND_REWRITE1_CONV</code></a>,
+<a
+href="Cond_rewrite.COND_REWR_CONV.html"><code>Cond_rewrite.COND_REWR_CONV</code></a>,
+<a
+href="Cond_rewrite.COND_REWR_CANON.html"><code>Cond_rewrite.COND_REWR_CANON</code></a>,
+<a
+href="Cond_rewrite.search_top_down.html"><code>Cond_rewrite.search_top_down</code></a></p>
+</body>
+</html>

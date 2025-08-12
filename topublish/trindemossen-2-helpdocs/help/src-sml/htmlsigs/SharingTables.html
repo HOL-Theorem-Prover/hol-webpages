@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure SharingTables</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure SharingTables</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/postkernel/SharingTables.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature SharingTables =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>  structure Map : Binarymap
+<a name="line5"></a>  exception SharingTables of string
+<a name="line6"></a>
+<a name="line7"></a>  type id = {Thy : string, Other : string}
+<a name="line8"></a>  datatype raw_type = datatype RawTheory_dtype.raw_type
+<a name="line9"></a>  type thminfo = DB_dtype.thminfo
+<a name="line10"></a>  datatype raw_term = datatype RawTheory_dtype.raw_term
+<a name="line11"></a>
+<a name="line12"></a>  type stringtable =
+<a name="line13"></a>       {size : int, map : (string,int) Map.dict, list : string list}
+<a name="line14"></a>  type idtable = {idsize : int,
+<a name="line15"></a>                  idmap : (id, int) Map.dict,
+<a name="line16"></a>                  idlist : (int * int) list}
+<a name="line17"></a>  type typetable = {tysize : int,
+<a name="line18"></a>                    tymap : (Type.hol_type, int)Map.dict,
+<a name="line19"></a>                    tylist : raw_type list}
+<a name="line20"></a>  type termtable = {termsize : int,
+<a name="line21"></a>                    termmap : (Term.term, int)Map.dict,
+<a name="line22"></a>                    termlist : raw_term list}
+<a name="line23"></a>
+<a name="line24"></a>  val empty_strtable : stringtable
+<a name="line25"></a>  val empty_idtable : idtable
+<a name="line26"></a>  val empty_tytable : typetable
+<a name="line27"></a>  val empty_termtable : termtable
+<a name="line28"></a>
+<a name="line29"></a>  val enc_strtable : stringtable HOLsexp.encoder
+<a name="line30"></a>  val enc_idtable  : idtable HOLsexp.encoder
+<a name="line31"></a>  val enc_tytable  : typetable HOLsexp.encoder
+<a name="line32"></a>  val enc_tmtable  : termtable HOLsexp.encoder
+<a name="line33"></a>
+<a name="line34"></a>  val dec_ids      : string Vector.vector -&gt; id Vector.vector HOLsexp.decoder
+<a name="line35"></a>
+<a name="line36"></a>  val make_raw_type : Type.hol_type -&gt; stringtable -&gt; idtable -&gt; typetable -&gt;
+<a name="line37"></a>                         (int * stringtable * idtable * typetable)
+<a name="line38"></a>
+<a name="line39"></a>  val make_raw_term : Term.term -&gt;
+<a name="line40"></a>                         (stringtable * idtable * typetable * termtable) -&gt;
+<a name="line41"></a>                         int * (stringtable * idtable * typetable * termtable)
+<a name="line42"></a>
+<a name="line43"></a>  val build_id_vector   : string Vector.vector -&gt; (int * int) list -&gt;
+<a name="line44"></a>                          id Vector.vector
+<a name="line45"></a>  val build_type_vector : id Vector.vector -&gt; raw_type list -&gt;
+<a name="line46"></a>                          Type.hol_type Vector.vector
+<a name="line47"></a>
+<a name="line48"></a>  val build_term_vector : id Vector.vector -&gt; Type.hol_type Vector.vector -&gt;
+<a name="line49"></a>                          raw_term list -&gt; Term.term Vector.vector
+<a name="line50"></a>
+<a name="line51"></a>  type sharing_data_in
+<a name="line52"></a>  type sharing_data_out
+<a name="line53"></a>  type extract_data = {named_terms : (string * Term.term) list,
+<a name="line54"></a>                       unnamed_terms : Term.term list,
+<a name="line55"></a>                       named_types : (string * Type.hol_type) list,
+<a name="line56"></a>                       unnamed_types : Type.hol_type list,
+<a name="line57"></a>                       theorems : (string * Thm.thm * thminfo) list}
+<a name="line58"></a>  val build_sharing_data : extract_data -&gt; sharing_data_in
+<a name="line59"></a>  val add_strings : string list -&gt; sharing_data_in -&gt; sharing_data_in
+<a name="line60"></a>  val add_types : Type.hol_type list -&gt; sharing_data_in -&gt; sharing_data_in
+<a name="line61"></a>  val add_terms : Term.term list -&gt; sharing_data_in -&gt; sharing_data_in
+<a name="line62"></a>  val write_string : sharing_data_in -&gt; string -&gt; int
+<a name="line63"></a>  val write_type : sharing_data_in -&gt; Type.hol_type -&gt; int
+<a name="line64"></a>  val write_term : sharing_data_in -&gt; Term.term -&gt; string
+<a name="line65"></a>  val enc_sdata : sharing_data_in HOLsexp.encoder
+<a name="line66"></a>
+<a name="line67"></a>  val dec_sdata :
+<a name="line68"></a>      {before_types: unit -&gt; unit,
+<a name="line69"></a>       before_terms: Type.hol_type Vector.vector -&gt; unit,
+<a name="line70"></a>       tables : RawTheory_dtype.sharing_tables,
+<a name="line71"></a>       exports : string RawTheory_dtype.raw_exports} -&gt;
+<a name="line72"></a>      sharing_data_out
+<a name="line73"></a>  val export_from_sharing_data : sharing_data_out -&gt; extract_data
+<a name="line74"></a>  val read_term : sharing_data_out -&gt; string -&gt; Term.term
+<a name="line75"></a>  val read_string : sharing_data_out -&gt; int -&gt; string
+<a name="line76"></a>
+<a name="line77"></a>end
+<a name="line78"></a>
+<a name="line79"></a>(*
+<a name="line80"></a>    [export_from_sharing_data{data,with_strings,with_stridty}] will
+<a name="line81"></a>    return the represented data. The functions with_strings and
+<a name="line82"></a>    with_stridty give the caller a chance to update the state of the
+<a name="line83"></a>    theory context before types and then terms are constructed. This
+<a name="line84"></a>    is necessary in the theory-loading situation where the desired
+<a name="line85"></a>    values may depend on new type operators and new term constants
+<a name="line86"></a>    that have to be defined before the rest of the process can be
+<a name="line87"></a>    continued.
+<a name="line88"></a>*)
+<a name="line89"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/postkernel/SharingTables.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

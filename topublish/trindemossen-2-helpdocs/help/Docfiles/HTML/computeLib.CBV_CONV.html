@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>computeLib.CBV_CONV</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="cbv_conv"><code>CBV_CONV</code></h2>
+<pre class="hol4"><code>computeLib.CBV_CONV : compset -&gt; conv</code></pre>
+<hr />
+<p>Call by value rewriting.</p>
+<p>The conversion <code>CBV_CONV</code> expects a simplification set and
+a term. Its term argument is rewritten using the equations added in the
+simplification set. The strategy used is somewhat similar to ML’s, that
+is call-by-value (arguments of constants are completely reduced before
+the rewrites associated to the constant are applied) with weak reduction
+(no reduction of the function body before the function is applied). The
+main differences are that beta-redexes are reduced with a call-by-name
+strategy (the argument is not reduced), and reduction under binders is
+done when it occurs in a position where it cannot be substituted.</p>
+<p>The simplification sets are mutable objects, this means they are
+extended by side-effect. The function <code>new_compset</code> will
+create a new set containing reflexivity (<code>REFL_CLAUSE</code>), plus
+the supplied rewrites. Theorems can be added to an existing compset with
+the function <code>add_thms</code>.</p>
+<p>This function (<code>add_thms</code>) scans the supplied theorems
+using <code>BODY_CONJUNCTS</code>. Let <code>thm</code> be one such
+element. If <code>thm</code> is of the form
+<code>P1 ⇒ P2 ⇒ ... ⇒ t</code> for possibly-zero implications, then
+proccess <code>t</code>. If <code>t</code> is an equation, add it as a
+reduction rule. If <code>t</code> is of the form <code>¬t'</code>, then
+add the rule <code>t ⇔ F</code>, otherwise add the rule
+<code>t ⇔ T</code>. If there is at least one implication then also add
+<code>P1 ⇒ P2 ⇒ ... ⇒ t ⇔ T</code>.</p>
+<p>It is also possible to add conversions to a simplification set with
+<code>add_conv</code>. The only restriction is that a constant
+(<code>c</code>) and an arity (<code>n</code>) must be provided. The
+conversion will be called only on terms in which <code>c</code> is
+applied to <code>n</code> arguments.</p>
+<p>Two theorem “preprocessors” are provided to control the strictness of
+the arguments of a constant. <code>lazyfy_thm</code> has pattern
+variables on the left hand side turned into abstractions on the right
+hand side. This transformation is applied on every conjunct, and removes
+prenex universal quantifications. A typical example is
+<code>COND_CLAUSES</code>:</p>
+<pre class="hol4"><code>  (COND T a b = a) /\ (COND F a b = b)</code></pre>
+<p>Using these equations is very inefficient because both <code>a</code>
+and <code>b</code> are evaluated, regardless of the value of the boolean
+expression. It is better to use <code>COND_CLAUSES</code> with the form
+above</p>
+<pre class="hol4"><code>  (COND T = \a b. a) /\ (COND F = \a b. b)</code></pre>
+<p>The call-by-name evaluation of beta redexes avoids computing the
+unused branch of the conditional.</p>
+<p>Conversely, <code>strictify_thm</code> does the reverse
+transformation. This is particularly relevant for
+<code>LET_DEF</code>:</p>
+<pre class="hol4"><code>  LET = \f x. f x   --&gt;   LET f x = f x</code></pre>
+<p>This forces the evaluation of the argument before reducing the
+beta-redex. Hence the usual behaviour of <code>LET</code>.</p>
+<p>It is necessary to provide rules for all the constants appearing in
+the expression to reduce (all also for those that appear in the right
+hand side of a rule), unless the given constant is considered as a
+constructor of the representation chosen. As an example,
+<code>reduceLib.num_compset</code> creates a new simplification set with
+all the rules needed for basic boolean and arithmetical calculations
+built in.</p>
+<h3 id="example">Example</h3>
+<pre class="hol4"><code>   - val rws = computeLib.new_compset [computeLib.lazyfy_thm COND_CLAUSES];
+   &gt; val rws = &lt;compset&gt; : compset
+
+   - computeLib.CBV_CONV rws ``(\x.x) ((\x.x) if T then 0+0 else 10)``;
+   &gt; val it = |- (\x. x) ((\x. x) (if T then 0 + 0 else 10)) = 0 + 0 : thm
+
+   - computeLib.CBV_CONV (reduceLib.num_compset())
+              ``if 100 - 5 * 5 &lt; 80  then 2 EXP 16 else 3``;
+   &gt; val it = |- (if 100 - 5 * 5 &lt; 80 then 2 ** 16 else 3) = 65536 : thm</code></pre>
+<p>Failing to give enough rules may make <code>CBV_CONV</code> build a
+huge result, or even loop. The same may occur if the initial term to
+reduce contains free variables.</p>
+<pre class="hol4"><code>   val eqn = bossLib.Define `exp n p = if p=0 then 1 else n * (exp n (p-1))`;
+   val _ = computeLib.add_thms [eqn] rws;
+
+   - computeLib.CBV_CONV rws ``exp 2 n``;
+   &gt; Interrupted.
+
+   - computeLib.set_skip rws ``COND`` (SOME 1);
+   &gt; val it = () : unit
+
+   - computeLib.CBV_CONV rws ``exp 2 n``;
+   &gt; val it = |- exp 2 n = if n = 0 then 1 else 2 * exp 2 (n - 1) : thm</code></pre>
+<p>The first invocation of <code>CBV_CONV</code> loops since the
+exponent never reduces to 0. Below the first steps are computed:</p>
+<pre class="hol4"><code>    exp 2 n
+    if n = 0 then 1 else 2 * exp 2 (n-1)
+    if n = 0 then 1 else 2 * if (n-1) = 0 then 1 else 2 * exp 2 (n-1-1)
+    ...</code></pre>
+<p>The call to <code>set_skip</code> means that if the constants
+<code>COND</code> appears applied to one argument and does not create a
+redex (in the example, if the condition does not reduce to
+<code>T</code> or <code>F</code>), then the forthcoming arguments (the
+two branches of the conditional) are not reduced at all.</p>
+<h3 id="failure">Failure</h3>
+<p>Should never fail. Nonetheless, using rewrites with assumptions may
+cause problems when rewriting under abstractions. The following example
+illustrates that issue.</p>
+<pre class="hol4"><code>   - val th = ASSUME “0 = x”;
+   - val tm = Term`\(x:num). x = 0`;
+   - val rws = from_list [th];
+   - CBV_CONV rws tm;</code></pre>
+<p>This fails because the 0 is replaced by <code>x</code>, making the
+assumption <code>0 = x</code>. Then, the abstraction cannot be rebuilt
+since <code>x</code> appears free in the assumptions.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="numLib.REDUCE_CONV.html"><code>numLib.REDUCE_CONV</code></a>, <a
+href="computeLib.bool_compset.html"><code>computeLib.bool_compset</code></a>,
+<a href="bossLib.EVAL.html"><code>bossLib.EVAL</code></a></p>
+</body>
+</html>

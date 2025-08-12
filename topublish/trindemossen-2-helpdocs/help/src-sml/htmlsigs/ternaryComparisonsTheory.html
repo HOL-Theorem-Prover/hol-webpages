@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure ternaryComparisonsTheory</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure ternaryComparisonsTheory</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/sort/.hol/objs/ternaryComparisonsScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature ternaryComparisonsTheory =
+<a name="line2"></a>sig
+<a name="line3"></a>  type thm = Thm.thm
+<a name="line4"></a>  
+<a name="line5"></a>  (*  Definitions  *)
+<a name="line6"></a>    val <a href="#invert_comparison_def-val">invert_comparison_def</a> : thm
+<a name="line7"></a>    val <a href="#num_compare_def-val">num_compare_def</a> : thm
+<a name="line8"></a>    val <a href="#ordering_BIJ-val">ordering_BIJ</a> : thm
+<a name="line9"></a>    val <a href="#ordering_CASE-val">ordering_CASE</a> : thm
+<a name="line10"></a>    val <a href="#ordering_TY_DEF-val">ordering_TY_DEF</a> : thm
+<a name="line11"></a>    val <a href="#ordering_size_def-val">ordering_size_def</a> : thm
+<a name="line12"></a>    val <a href="#pair_compare_def-val">pair_compare_def</a> : thm
+<a name="line13"></a>  
+<a name="line14"></a>  (*  Theorems  *)
+<a name="line15"></a>    val <a href="#bool_compare_def-val">bool_compare_def</a> : thm
+<a name="line16"></a>    val <a href="#bool_compare_ind-val">bool_compare_ind</a> : thm
+<a name="line17"></a>    val <a href="#compare_equal-val">compare_equal</a> : thm
+<a name="line18"></a>    val <a href="#datatype_ordering-val">datatype_ordering</a> : thm
+<a name="line19"></a>    val <a href="#invert_eq_EQUAL-val">invert_eq_EQUAL</a> : thm
+<a name="line20"></a>    val <a href="#list_compare_def-val">list_compare_def</a> : thm
+<a name="line21"></a>    val <a href="#list_compare_ind-val">list_compare_ind</a> : thm
+<a name="line22"></a>    val <a href="#list_merge_def-val">list_merge_def</a> : thm
+<a name="line23"></a>    val <a href="#list_merge_ind-val">list_merge_ind</a> : thm
+<a name="line24"></a>    val <a href="#num2ordering_11-val">num2ordering_11</a> : thm
+<a name="line25"></a>    val <a href="#num2ordering_ONTO-val">num2ordering_ONTO</a> : thm
+<a name="line26"></a>    val <a href="#num2ordering_ordering2num-val">num2ordering_ordering2num</a> : thm
+<a name="line27"></a>    val <a href="#num2ordering_thm-val">num2ordering_thm</a> : thm
+<a name="line28"></a>    val <a href="#option_compare_def-val">option_compare_def</a> : thm
+<a name="line29"></a>    val <a href="#option_compare_ind-val">option_compare_ind</a> : thm
+<a name="line30"></a>    val <a href="#ordering2num_11-val">ordering2num_11</a> : thm
+<a name="line31"></a>    val <a href="#ordering2num_ONTO-val">ordering2num_ONTO</a> : thm
+<a name="line32"></a>    val <a href="#ordering2num_num2ordering-val">ordering2num_num2ordering</a> : thm
+<a name="line33"></a>    val <a href="#ordering2num_thm-val">ordering2num_thm</a> : thm
+<a name="line34"></a>    val <a href="#ordering_Axiom-val">ordering_Axiom</a> : thm
+<a name="line35"></a>    val <a href="#ordering_EQ_ordering-val">ordering_EQ_ordering</a> : thm
+<a name="line36"></a>    val <a href="#ordering_case_cong-val">ordering_case_cong</a> : thm
+<a name="line37"></a>    val <a href="#ordering_case_def-val">ordering_case_def</a> : thm
+<a name="line38"></a>    val <a href="#ordering_case_eq-val">ordering_case_eq</a> : thm
+<a name="line39"></a>    val <a href="#ordering_distinct-val">ordering_distinct</a> : thm
+<a name="line40"></a>    val <a href="#ordering_distinct1-val">ordering_distinct1</a> : thm
+<a name="line41"></a>    val <a href="#ordering_distinct2-val">ordering_distinct2</a> : thm
+<a name="line42"></a>    val <a href="#ordering_eq_dec-val">ordering_eq_dec</a> : thm
+<a name="line43"></a>    val <a href="#ordering_induction-val">ordering_induction</a> : thm
+<a name="line44"></a>    val <a href="#ordering_nchotomy-val">ordering_nchotomy</a> : thm
+<a name="line45"></a>(*
+   [hol] Parent theory of "ternaryComparisons"
+   
+   [<a name="invert_comparison_def-val"><b>invert_comparison_def</b></a>]  Definition
+      
+      ⊢ invert_comparison GREATER = LESS ∧
+        invert_comparison LESS = GREATER ∧ invert_comparison EQUAL = EQUAL
+   
+   [<a name="num_compare_def-val"><b>num_compare_def</b></a>]  Definition
+      
+      ⊢ ∀n1 n2.
+          num_compare n1 n2 =
+          if n1 = n2 then EQUAL else if n1 &lt; n2 then LESS else GREATER
+   
+   [<a name="ordering_BIJ-val"><b>ordering_BIJ</b></a>]  Definition
+      
+      ⊢ (∀a. num2ordering (ordering2num a) = a) ∧
+        ∀r. (λn. n &lt; 3) r ⇔ ordering2num (num2ordering r) = r
+   
+   [<a name="ordering_CASE-val"><b>ordering_CASE</b></a>]  Definition
+      
+      ⊢ ∀x v0 v1 v2.
+          (case x of LESS =&gt; v0 | EQUAL =&gt; v1 | GREATER =&gt; v2) =
+          (λm. if m &lt; 1 then v0 else if m = 1 then v1 else v2)
+            (ordering2num x)
+   
+   [<a name="ordering_TY_DEF-val"><b>ordering_TY_DEF</b></a>]  Definition
+      
+      ⊢ ∃rep. TYPE_DEFINITION (λn. n &lt; 3) rep
+   
+   [<a name="ordering_size_def-val"><b>ordering_size_def</b></a>]  Definition
+      
+      ⊢ ∀x. ordering_size x = 0
+   
+   [<a name="pair_compare_def-val"><b>pair_compare_def</b></a>]  Definition
+      
+      ⊢ ∀c1 c2 a b x y.
+          pair_compare c1 c2 (a,b) (x,y) =
+          case c1 a x of
+            LESS =&gt; LESS
+          | EQUAL =&gt; c2 b y
+          | GREATER =&gt; GREATER
+   
+   [<a name="bool_compare_def-val"><b>bool_compare_def</b></a>]  Theorem
+      
+      ⊢ bool_compare T T = EQUAL ∧ bool_compare F F = EQUAL ∧
+        bool_compare T F = GREATER ∧ bool_compare F T = LESS
+   
+   [<a name="bool_compare_ind-val"><b>bool_compare_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. P T T ∧ P F F ∧ P T F ∧ P F T ⇒ ∀v v1. P v v1
+   
+   [<a name="compare_equal-val"><b>compare_equal</b></a>]  Theorem
+      
+      ⊢ (∀x y. cmp x y = EQUAL ⇔ x = y) ⇒
+        ∀l1 l2. list_compare cmp l1 l2 = EQUAL ⇔ l1 = l2
+   
+   [<a name="datatype_ordering-val"><b>datatype_ordering</b></a>]  Theorem
+      
+      ⊢ DATATYPE (ordering LESS EQUAL GREATER)
+   
+   [<a name="invert_eq_EQUAL-val"><b>invert_eq_EQUAL</b></a>]  Theorem
+      
+      ⊢ ∀x. invert_comparison x = EQUAL ⇔ x = EQUAL
+   
+   [<a name="list_compare_def-val"><b>list_compare_def</b></a>]  Theorem
+      
+      ⊢ (∀cmp. list_compare cmp [] [] = EQUAL) ∧
+        (∀v9 v8 cmp. list_compare cmp [] (v8::v9) = LESS) ∧
+        (∀v5 v4 cmp. list_compare cmp (v4::v5) [] = GREATER) ∧
+        ∀y x l2 l1 cmp.
+          list_compare cmp (x::l1) (y::l2) =
+          case cmp x y of
+            LESS =&gt; LESS
+          | EQUAL =&gt; list_compare cmp l1 l2
+          | GREATER =&gt; GREATER
+   
+   [<a name="list_compare_ind-val"><b>list_compare_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀cmp. P cmp [] []) ∧ (∀cmp v8 v9. P cmp [] (v8::v9)) ∧
+            (∀cmp v4 v5. P cmp (v4::v5) []) ∧
+            (∀cmp x l1 y l2.
+               (cmp x y = EQUAL ⇒ P cmp l1 l2) ⇒ P cmp (x::l1) (y::l2)) ⇒
+            ∀v v1 v2. P v v1 v2
+   
+   [<a name="list_merge_def-val"><b>list_merge_def</b></a>]  Theorem
+      
+      ⊢ (∀l1 a_lt. list_merge a_lt l1 [] = l1) ∧
+        (∀v5 v4 a_lt. list_merge a_lt [] (v4::v5) = v4::v5) ∧
+        ∀y x l2 l1 a_lt.
+          list_merge a_lt (x::l1) (y::l2) =
+          if a_lt x y then x::list_merge a_lt l1 (y::l2)
+          else y::list_merge a_lt (x::l1) l2
+   
+   [<a name="list_merge_ind-val"><b>list_merge_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀a_lt l1. P a_lt l1 []) ∧ (∀a_lt v4 v5. P a_lt [] (v4::v5)) ∧
+            (∀a_lt x l1 y l2.
+               (¬a_lt x y ⇒ P a_lt (x::l1) l2) ∧
+               (a_lt x y ⇒ P a_lt l1 (y::l2)) ⇒
+               P a_lt (x::l1) (y::l2)) ⇒
+            ∀v v1 v2. P v v1 v2
+   
+   [<a name="num2ordering_11-val"><b>num2ordering_11</b></a>]  Theorem
+      
+      ⊢ ∀r r'. r &lt; 3 ⇒ r' &lt; 3 ⇒ (num2ordering r = num2ordering r' ⇔ r = r')
+   
+   [<a name="num2ordering_ONTO-val"><b>num2ordering_ONTO</b></a>]  Theorem
+      
+      ⊢ ∀a. ∃r. a = num2ordering r ∧ r &lt; 3
+   
+   [<a name="num2ordering_ordering2num-val"><b>num2ordering_ordering2num</b></a>]  Theorem
+      
+      ⊢ ∀a. num2ordering (ordering2num a) = a
+   
+   [<a name="num2ordering_thm-val"><b>num2ordering_thm</b></a>]  Theorem
+      
+      ⊢ num2ordering 0 = LESS ∧ num2ordering 1 = EQUAL ∧
+        num2ordering 2 = GREATER
+   
+   [<a name="option_compare_def-val"><b>option_compare_def</b></a>]  Theorem
+      
+      ⊢ option_compare c NONE NONE = EQUAL ∧
+        option_compare c NONE (SOME v0) = LESS ∧
+        option_compare c (SOME v3) NONE = GREATER ∧
+        option_compare c (SOME v1) (SOME v2) = c v1 v2
+   
+   [<a name="option_compare_ind-val"><b>option_compare_ind</b></a>]  Theorem
+      
+      ⊢ ∀P. (∀c. P c NONE NONE) ∧ (∀c v0. P c NONE (SOME v0)) ∧
+            (∀c v3. P c (SOME v3) NONE) ∧
+            (∀c v1 v2. P c (SOME v1) (SOME v2)) ⇒
+            ∀v v1 v2. P v v1 v2
+   
+   [<a name="ordering2num_11-val"><b>ordering2num_11</b></a>]  Theorem
+      
+      ⊢ ∀a a'. ordering2num a = ordering2num a' ⇔ a = a'
+   
+   [<a name="ordering2num_ONTO-val"><b>ordering2num_ONTO</b></a>]  Theorem
+      
+      ⊢ ∀r. r &lt; 3 ⇔ ∃a. r = ordering2num a
+   
+   [<a name="ordering2num_num2ordering-val"><b>ordering2num_num2ordering</b></a>]  Theorem
+      
+      ⊢ ∀r. r &lt; 3 ⇔ ordering2num (num2ordering r) = r
+   
+   [<a name="ordering2num_thm-val"><b>ordering2num_thm</b></a>]  Theorem
+      
+      ⊢ ordering2num LESS = 0 ∧ ordering2num EQUAL = 1 ∧
+        ordering2num GREATER = 2
+   
+   [<a name="ordering_Axiom-val"><b>ordering_Axiom</b></a>]  Theorem
+      
+      ⊢ ∀x0 x1 x2. ∃f. f LESS = x0 ∧ f EQUAL = x1 ∧ f GREATER = x2
+   
+   [<a name="ordering_EQ_ordering-val"><b>ordering_EQ_ordering</b></a>]  Theorem
+      
+      ⊢ ∀a a'. a = a' ⇔ ordering2num a = ordering2num a'
+   
+   [<a name="ordering_case_cong-val"><b>ordering_case_cong</b></a>]  Theorem
+      
+      ⊢ ∀M M' v0 v1 v2.
+          M = M' ∧ (M' = LESS ⇒ v0 = v0') ∧ (M' = EQUAL ⇒ v1 = v1') ∧
+          (M' = GREATER ⇒ v2 = v2') ⇒
+          (case M of LESS =&gt; v0 | EQUAL =&gt; v1 | GREATER =&gt; v2) =
+          case M' of LESS =&gt; v0' | EQUAL =&gt; v1' | GREATER =&gt; v2'
+   
+   [<a name="ordering_case_def-val"><b>ordering_case_def</b></a>]  Theorem
+      
+      ⊢ (∀v0 v1 v2.
+           (case LESS of LESS =&gt; v0 | EQUAL =&gt; v1 | GREATER =&gt; v2) = v0) ∧
+        (∀v0 v1 v2.
+           (case EQUAL of LESS =&gt; v0 | EQUAL =&gt; v1 | GREATER =&gt; v2) = v1) ∧
+        ∀v0 v1 v2.
+          (case GREATER of LESS =&gt; v0 | EQUAL =&gt; v1 | GREATER =&gt; v2) = v2
+   
+   [<a name="ordering_case_eq-val"><b>ordering_case_eq</b></a>]  Theorem
+      
+      ⊢ (case x of LESS =&gt; v0 | EQUAL =&gt; v1 | GREATER =&gt; v2) = v ⇔
+        x = LESS ∧ v0 = v ∨ x = EQUAL ∧ v1 = v ∨ x = GREATER ∧ v2 = v
+   
+   [<a name="ordering_distinct-val"><b>ordering_distinct</b></a>]  Theorem
+      
+      ⊢ LESS ≠ EQUAL ∧ LESS ≠ GREATER ∧ EQUAL ≠ GREATER
+   
+   [<a name="ordering_distinct1-val"><b>ordering_distinct1</b></a>]  Theorem
+      
+      ⊢ EQUAL ≠ LESS
+   
+   [<a name="ordering_distinct2-val"><b>ordering_distinct2</b></a>]  Theorem
+      
+      ⊢ GREATER ≠ EQUAL
+   
+   [<a name="ordering_eq_dec-val"><b>ordering_eq_dec</b></a>]  Theorem
+      
+      ⊢ (∀x. x = x ⇔ T) ∧ (LESS = EQUAL ⇔ F) ∧ (LESS = GREATER ⇔ F) ∧
+        (EQUAL = GREATER ⇔ F) ∧ (EQUAL = LESS ⇔ F) ∧ (GREATER = LESS ⇔ F) ∧
+        (GREATER = EQUAL ⇔ F) ∧ (∀x. ordering_size x = 0) ∧
+        (ordering2num LESS = 0 ∧ ordering2num EQUAL = 1 ∧
+         ordering2num GREATER = 2) ∧ num2ordering 0 = LESS ∧
+        num2ordering 1 = EQUAL ∧ num2ordering 2 = GREATER
+   
+   [<a name="ordering_induction-val"><b>ordering_induction</b></a>]  Theorem
+      
+      ⊢ ∀P. P EQUAL ∧ P GREATER ∧ P LESS ⇒ ∀a. P a
+   
+   [<a name="ordering_nchotomy-val"><b>ordering_nchotomy</b></a>]  Theorem
+      
+      ⊢ ∀a. a = LESS ∨ a = EQUAL ∨ a = GREATER
+   
+   
+*)
+end
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/sort/.hol/objs/ternaryComparisonsScript.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

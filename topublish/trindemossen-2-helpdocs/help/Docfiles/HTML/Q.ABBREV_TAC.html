@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Q.ABBREV_TAC</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="abbrev_tac"><code>ABBREV_TAC</code></h2>
+<pre class="hol4"><code>Q.ABBREV_TAC : term quotation -&gt; tactic</code></pre>
+<hr />
+<p>Introduces an abbreviation into a goal.</p>
+<p>The tactic <code>Q.ABBREV_TAC q</code> parses the quotation
+<code>q</code> in the context of the goal to which it is applied. The
+result must be a term of the form <code>v = e</code> with <code>v</code>
+a variable. The effect of the tactic is to replace the term
+<code>e</code> wherever it occurs in the goal by <code>v</code> (or a
+primed variant of <code>v</code> if <code>v</code> already occurs in the
+goal), and to add the assumption <code>Abbrev(v = e)</code> to the
+goal’s assumptions. Again, if <code>v</code> already occurs free in the
+goal, then the new assumption will be <code>Abbrev(v' = e)</code>, with
+<code>v'</code> a suitably primed version of <code>v</code>.</p>
+<p>It is not an error if the expression <code>e</code> does not occur
+anywhere within the goal. In this situation, the effect of the tactic is
+simply to add the assumption <code>Abbrev(v = e)</code>.</p>
+<p>The <code>Abbrev</code> constant is defined in
+<code>markerTheory</code> to be the identity function over boolean
+values. It is used solely as a tag, so that abbreviations can be found
+by other tools, and so that simplification tactics such as
+<code>RW_TAC</code> will not eliminate them. When it sees them as part
+of its context, the simplifier treats terms of the form
+<code>Abbrev(v = e)</code> as assumptions <code>e = v</code>. In this
+way, the simplifier can use abbreviations to create further sharing,
+after an abbreviation’s creation.</p>
+<p>Abbreviation assumptions of this form “protect” their variable
+argument; simplification tactics (e.g., <code>fs</code>) will not
+replace the variable <code>v</code>, even though they may have been
+passed rewrites to use such as <code>v = e'</code>.</p>
+<h3 id="failure">Failure</h3>
+<p>Fails if the quotation is ill-typed. This may happen because
+variables in the quotation that also appear in the goal are given the
+same type in the quotation as they have in the goal. Also fails if the
+variable of the equation appears in the expression that it is supposed
+to be abbreviating.</p>
+<h3 id="example">Example</h3>
+<p>Substitution in the goal:</p>
+<pre class="hol4"><code>   &gt; Q.ABBREV_TAC ‘n = 10’ ([], “10 &lt; 9 * 10”);
+   val it = ([([“Abbrev(n = 10)”], “n &lt; 9 * n”)], fn) :
+     (term list * term) list * (thm list -&gt; thm)</code></pre>
+<p>and the assumptions:</p>
+<pre class="hol4"><code>   &gt; Q.ABBREV_TAC ‘m = n + 2’ ([“f (n + 2) &lt; 6”], “n &lt; 7”);
+   val it = ([([“Abbrev(m = n + 2)”, “f m &lt; 6”], “n &lt; 7”)], fn) :
+     (term list * term) list * (thm list -&gt; thm)</code></pre>
+<p>and both</p>
+<pre class="hol4"><code>   &gt; Q.ABBREV_TAC ‘u = x ** 32’ ([“x ** 32 = f z”],
+                                  “g (x ** 32 + 6) - 10 &lt; 65”);
+   val it =
+       ([([“Abbrev(u = x ** 32)”, “u = f z”], “g (u + 6) - 10 &lt; 65”)],
+        fn) :
+       (term list * term) list * (thm list -&gt; thm)</code></pre>
+<h3 id="comments">Comments</h3>
+<p>The <code>bossLib</code> library provides <code>qabbrev_tac</code> as
+a synonym for <code>Q.ABBREV_TAC</code>.</p>
+<p>It is possible to abbreviate functions, using quotations such as
+<code>‘f = \n. n + 3’</code>. When this is done <code>ABBREV_TAC</code>
+will not itself do anything more than replace exact copies of the
+abstraction, but the simplifier will subsequently see occurrences of the
+pattern and replace them.</p>
+<p>Thus:</p>
+<pre class="hol4"><code>   &gt; (qabbrev_tac ‘f = \x. x + 1’ &gt;&gt; asm_simp_tac bool_ss [])
+        ([], “3 + 1 = 4 + 1”);
+   val it =
+      ([([“Abbrev (f = (\x. x + 1))”], “f 3 = f 4”)], fn):
+      goal list * (thm list -&gt; thm)</code></pre>
+<p>where the simplifier has seen occurrences of the <code>x+1</code>
+pattern and replaced it with calls to the
+<code>f</code>-abbreviation.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="BasicProvers.Abbr.html"><code>BasicProvers.Abbr</code></a>,
+<a
+href="Q.HO_MATCH_ABBREV_TAC.html"><code>Q.HO_MATCH_ABBREV_TAC</code></a>,
+<a href="Q.MATCH_ABBREV_TAC.html"><code>Q.MATCH_ABBREV_TAC</code></a>,
+<a href="Q.UNABBREV_TAC.html"><code>Q.UNABBREV_TAC</code></a></p>
+</body>
+</html>

@@ -1,0 +1,721 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: ordinalNotation</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "ordinalNotation"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "holTheory.html"><span class="strong">hol</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">osyntax</span>
+    <td>
+    0
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">End</span>
+    <td>
+    :num -> osyntax
+    <tr><td>
+    <span class="strong">Plus</span>
+    <td>
+    :osyntax -> num -> osyntax -> osyntax
+    <tr><td> <span class="strong">cf1</span> <td> :osyntax -> osyntax -> num
+    <tr><td>
+    <span class="strong">cf2</span>
+    <td>
+    :osyntax -> osyntax -> num -> num
+    <tr><td> <span class="strong">coeff</span> <td> :osyntax -> num
+    <tr><td> <span class="strong">expt</span> <td> :osyntax -> osyntax
+    <tr><td> <span class="strong">finp</span> <td> :osyntax -> bool
+    <tr><td> <span class="strong">is_ord</span> <td> :osyntax -> bool
+    <tr><td>
+    <span class="strong">oless</span>
+    <td>
+    :osyntax -> osyntax -> bool
+    <tr><td>
+    <span class="strong">ord_add</span>
+    <td>
+    :osyntax -> osyntax -> osyntax
+    <tr><td>
+    <span class="strong">ord_less</span>
+    <td>
+    :osyntax -> osyntax -> bool
+    <tr><td>
+    <span class="strong">ord_mult</span>
+    <td>
+    :osyntax -> osyntax -> osyntax
+    <tr><td>
+    <span class="strong">ord_sub</span>
+    <td>
+    :osyntax -> osyntax -> osyntax
+    <tr><td>
+    <span class="strong">osyntax_CASE</span>
+    <td>
+    :osyntax -> (num -> α) -> (osyntax -> num -> osyntax -> α) -> α
+    <tr><td> <span class="strong">osyntax_size</span> <td> :osyntax -> num
+    <tr><td>
+    <span class="strong">padd</span>
+    <td>
+    :osyntax -> osyntax -> num -> osyntax
+    <tr><td>
+    <span class="strong">pmult</span>
+    <td>
+    :osyntax -> osyntax -> num -> osyntax
+    <tr><td> <span class="strong">rank</span> <td> :osyntax -> num
+    <tr><td> <span class="strong">restn</span> <td> :osyntax -> num -> osyntax
+    <tr><td> <span class="strong">tail</span> <td> :osyntax -> osyntax
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">@tempis_ord_def</span>
+<DD>
+<pre>
+⊢ is_ord =
+  (λa0.
+       ∀is_ord'.
+         (∀a0.
+            (∃k. a0 = End k) ∨
+            (∃e k t.
+               a0 = Plus e k t ∧ is_ord' e ∧ e ≠ End 0 ∧ 0 < k ∧ is_ord' t ∧
+               oless (expt t) e) ⇒
+            is_ord' a0) ⇒
+         is_ord' a0)
+</pre>
+
+<DT><span class="strong">@tempoless_def</span>
+<DD>
+<pre>
+⊢ oless =
+  (λa0 a1.
+       ∀oless'.
+         (∀a0 a1.
+            (∃k1 k2. a0 = End k1 ∧ a1 = End k2 ∧ k1 < k2) ∨
+            (∃k1 e2 k2 t2. a0 = End k1 ∧ a1 = Plus e2 k2 t2) ∨
+            (∃e1 k1 t1 e2 k2 t2.
+               a0 = Plus e1 k1 t1 ∧ a1 = Plus e2 k2 t2 ∧ oless' e1 e2) ∨
+            (∃e1 k1 t1 e2 k2 t2.
+               a0 = Plus e1 k1 t1 ∧ a1 = Plus e2 k2 t2 ∧ e1 = e2 ∧ k1 < k2) ∨
+            (∃e1 k1 t1 e2 k2 t2.
+               a0 = Plus e1 k1 t1 ∧ a1 = Plus e2 k2 t2 ∧ e1 = e2 ∧ k1 = k2 ∧
+               oless' t1 t2) ⇒
+            oless' a0 a1) ⇒
+         oless' a0 a1)
+</pre>
+
+<DT><span class="strong">cf1_def</span>
+<DD>
+<pre>
+⊢ (∀v0 b. cf1 (End v0) b = 0) ∧
+  ∀e1 c1 k1 b.
+    cf1 (Plus e1 c1 k1) b = if ord_less (expt b) e1 then 1 + cf1 k1 b else 0
+</pre>
+
+<DT><span class="strong">cf2_def</span>
+<DD>
+<pre>
+⊢ ∀a b n. cf2 a b n = n + cf1 (restn a n) b
+</pre>
+
+<DT><span class="strong">coeff_def</span>
+<DD>
+<pre>
+⊢ (∀x. coeff (End x) = x) ∧ ∀e k t. coeff (Plus e k t) = k
+</pre>
+
+<DT><span class="strong">expt_def</span>
+<DD>
+<pre>
+⊢ (∀v0. expt (End v0) = End 0) ∧ ∀e k t. expt (Plus e k t) = e
+</pre>
+
+<DT><span class="strong">finp_def</span>
+<DD>
+<pre>
+⊢ (∀v0. finp (End v0) ⇔ T) ∧ ∀v1 v2 v3. finp (Plus v1 v2 v3) ⇔ F
+</pre>
+
+<DT><span class="strong">ord_less_def</span>
+<DD>
+<pre>
+⊢ ∀x y. ord_less x y ⇔ is_ord x ∧ is_ord y ∧ oless x y
+</pre>
+
+<DT><span class="strong">osyntax_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep.
+    TYPE_DEFINITION
+      (λa0'.
+           ∀ $var$('osyntax').
+             (∀a0'.
+                (∃a. a0' = (λa. ind_type$CONSTR 0 a (λn. ind_type$BOTTOM)) a) ∨
+                (∃a0 a1 a2.
+                   a0' =
+                   (λa0 a1 a2.
+                        ind_type$CONSTR (SUC 0) a1
+                          (ind_type$FCONS a0
+                             (ind_type$FCONS a2 (λn. ind_type$BOTTOM)))) a0 a1
+                     a2 ∧ $var$('osyntax') a0 ∧ $var$('osyntax') a2) ⇒
+                $var$('osyntax') a0') ⇒
+             $var$('osyntax') a0') rep
+</pre>
+
+<DT><span class="strong">osyntax_case_def</span>
+<DD>
+<pre>
+⊢ (∀a f f1. osyntax_CASE (End a) f f1 = f a) ∧
+  ∀a0 a1 a2 f f1. osyntax_CASE (Plus a0 a1 a2) f f1 = f1 a0 a1 a2
+</pre>
+
+<DT><span class="strong">osyntax_size_def</span>
+<DD>
+<pre>
+⊢ (∀a. osyntax_size (End a) = 1 + a) ∧
+  ∀a0 a1 a2.
+    osyntax_size (Plus a0 a1 a2) =
+    1 + (osyntax_size a0 + (a1 + osyntax_size a2))
+</pre>
+
+<DT><span class="strong">padd_def</span>
+<DD>
+<pre>
+⊢ (∀a b. padd a b 0 = ord_add a b) ∧
+  ∀a b n. padd a b (SUC n) = Plus (expt a) (coeff a) (padd (tail a) b n)
+</pre>
+
+<DT><span class="strong">rank_def</span>
+<DD>
+<pre>
+⊢ (∀v0. rank (End v0) = 0) ∧ ∀e k t. rank (Plus e k t) = 1 + rank e
+</pre>
+
+<DT><span class="strong">restn_def</span>
+<DD>
+<pre>
+⊢ (∀a. restn a 0 = a) ∧ ∀a n. restn a (SUC n) = restn (tail a) n
+</pre>
+
+<DT><span class="strong">tail_def</span>
+<DD>
+<pre>
+⊢ ∀e k t. tail (Plus e k t) = t
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">WF_ord_less</span>
+<DD>
+<pre>
+⊢ WF ord_less
+</pre>
+
+<DT><span class="strong">datatype_osyntax</span>
+<DD>
+<pre>
+⊢ DATATYPE (osyntax End Plus)
+</pre>
+
+<DT><span class="strong">decompose_plus</span>
+<DD>
+<pre>
+⊢ ∀e k t.
+    is_ord (Plus e k t) ⇒
+    is_ord e ∧ e ≠ End 0 ∧ 0 < k ∧ is_ord t ∧ oless (expt t) e
+</pre>
+
+<DT><span class="strong">e0_INDUCTION</span>
+<DD>
+<pre>
+⊢ ∀P f. (∀x. (∀y. ord_less (f y) (f x) ⇒ P y) ⇒ P x) ⇒ ∀x. P x
+</pre>
+
+<DT><span class="strong">e0_RECURSION</span>
+<DD>
+<pre>
+⊢ ∀f. ∃!g. ∀x. g x = M (RESTRICT g (λx y. ord_less (f x) (f y)) x) x
+</pre>
+
+<DT><span class="strong">is_ord_cases</span>
+<DD>
+<pre>
+⊢ ∀a0.
+    is_ord a0 ⇔
+    (∃k. a0 = End k) ∨
+    ∃e k t.
+      a0 = Plus e k t ∧ is_ord e ∧ e ≠ End 0 ∧ 0 < k ∧ is_ord t ∧
+      oless (expt t) e
+</pre>
+
+<DT><span class="strong">is_ord_coeff_pos</span>
+<DD>
+<pre>
+⊢ ∀x. ¬finp x ∧ is_ord x ⇒ 0 < coeff x
+</pre>
+
+<DT><span class="strong">is_ord_downclosed</span>
+<DD>
+<pre>
+⊢ is_ord (Plus w k t) ⇒ is_ord w ∧ is_ord t
+</pre>
+
+<DT><span class="strong">is_ord_equations</span>
+<DD>
+<pre>
+⊢ (is_ord (End k) ⇔ T) ∧
+  (is_ord (Plus e k t) ⇔
+   is_ord e ∧ e ≠ End 0 ∧ 0 < k ∧ is_ord t ∧ oless (expt t) e)
+</pre>
+
+<DT><span class="strong">is_ord_expt_closed</span>
+<DD>
+<pre>
+⊢ ∀x. is_ord x ⇒ is_ord (expt x)
+</pre>
+
+<DT><span class="strong">is_ord_ind</span>
+<DD>
+<pre>
+⊢ ∀is_ord'.
+    (∀k. is_ord' (End k)) ∧
+    (∀e k t.
+       is_ord' e ∧ e ≠ End 0 ∧ 0 < k ∧ is_ord' t ∧ oless (expt t) e ⇒
+       is_ord' (Plus e k t)) ⇒
+    ∀a0. is_ord a0 ⇒ is_ord' a0
+</pre>
+
+<DT><span class="strong">is_ord_rules</span>
+<DD>
+<pre>
+⊢ (∀k. is_ord (End k)) ∧
+  ∀e k t.
+    is_ord e ∧ e ≠ End 0 ∧ 0 < k ∧ is_ord t ∧ oless (expt t) e ⇒
+    is_ord (Plus e k t)
+</pre>
+
+<DT><span class="strong">is_ord_strong_ind</span>
+<DD>
+<pre>
+⊢ ∀is_ord'.
+    (∀k. is_ord' (End k)) ∧
+    (∀e k t.
+       is_ord e ∧ is_ord' e ∧ e ≠ End 0 ∧ 0 < k ∧ is_ord t ∧ is_ord' t ∧
+       oless (expt t) e ⇒
+       is_ord' (Plus e k t)) ⇒
+    ∀a0. is_ord a0 ⇒ is_ord' a0
+</pre>
+
+<DT><span class="strong">is_ord_strongind</span>
+<DD>
+<pre>
+⊢ ∀is_ord'.
+    (∀k. is_ord' (End k)) ∧
+    (∀e k t.
+       is_ord e ∧ is_ord' e ∧ e ≠ End 0 ∧ 0 < k ∧ is_ord t ∧ is_ord' t ∧
+       oless (expt t) e ⇒
+       is_ord' (Plus e k t)) ⇒
+    ∀a0. is_ord a0 ⇒ is_ord' a0
+</pre>
+
+<DT><span class="strong">is_ord_tail_closed</span>
+<DD>
+<pre>
+⊢ ∀x. ¬finp x ∧ is_ord x ⇒ is_ord (tail x)
+</pre>
+
+<DT><span class="strong">lemma</span>
+<DD>
+<pre>
+⊢ ∀n P.
+    (∃x. is_ord x ∧ P x ∧ rank x ≤ n) ⇒
+    ∃m. is_ord m ∧ P m ∧ rank m ≤ n ∧
+        ∀y. is_ord y ∧ rank y ≤ n ∧ oless y m ⇒ ¬P y
+</pre>
+
+<DT><span class="strong">main_lemma</span>
+<DD>
+<pre>
+⊢ ∀P. (∃x. P x ∧ is_ord x) ⇒
+      ∃x. P x ∧ is_ord x ∧ ∀y. is_ord y ∧ oless y x ⇒ ¬P y
+</pre>
+
+<DT><span class="strong">oless_End_End</span>
+<DD>
+<pre>
+⊢ ∀k1 k2. oless (End k1) (End k2) ⇒ k1 < k2
+</pre>
+
+<DT><span class="strong">oless_antirefl</span>
+<DD>
+<pre>
+⊢ ∀x. is_ord x ⇒ ¬oless x x
+</pre>
+
+<DT><span class="strong">oless_antisym</span>
+<DD>
+<pre>
+⊢ ∀x y. is_ord x ∧ is_ord y ∧ oless x y ⇒ ¬oless y x
+</pre>
+
+<DT><span class="strong">oless_cases</span>
+<DD>
+<pre>
+⊢ ∀a0 a1.
+    oless a0 a1 ⇔
+    (∃k1 k2. a0 = End k1 ∧ a1 = End k2 ∧ k1 < k2) ∨
+    (∃k1 e2 k2 t2. a0 = End k1 ∧ a1 = Plus e2 k2 t2) ∨
+    (∃e1 k1 t1 e2 k2 t2. a0 = Plus e1 k1 t1 ∧ a1 = Plus e2 k2 t2 ∧ oless e1 e2) ∨
+    (∃e1 k1 t1 e2 k2 t2.
+       a0 = Plus e1 k1 t1 ∧ a1 = Plus e2 k2 t2 ∧ e1 = e2 ∧ k1 < k2) ∨
+    ∃e1 k1 t1 e2 k2 t2.
+      a0 = Plus e1 k1 t1 ∧ a1 = Plus e2 k2 t2 ∧ e1 = e2 ∧ k1 = k2 ∧
+      oless t1 t2
+</pre>
+
+<DT><span class="strong">oless_equations</span>
+<DD>
+<pre>
+⊢ (oless (End m) (End n) ⇔ m < n) ∧ (oless (End m) (Plus e k t) ⇔ T) ∧
+  (oless (Plus e k t) (End m) ⇔ F) ∧
+  (oless (Plus e1 k1 t1) (Plus e2 k2 t2) ⇔
+   if oless e1 e2 then T
+   else if e1 = e2 ∧ k1 < k2 then T
+   else if e1 = e2 ∧ k1 = k2 ∧ oless t1 t2 then T
+   else F)
+</pre>
+
+<DT><span class="strong">oless_expt</span>
+<DD>
+<pre>
+⊢ ∀e k t. is_ord (Plus e k t) ⇒ oless e (Plus e k t)
+</pre>
+
+<DT><span class="strong">oless_imp_rank_leq</span>
+<DD>
+<pre>
+⊢ ∀x y. is_ord x ∧ is_ord y ∧ oless x y ⇒ rank x ≤ rank y
+</pre>
+
+<DT><span class="strong">oless_ind</span>
+<DD>
+<pre>
+⊢ ∀oless'.
+    (∀k1 k2. k1 < k2 ⇒ oless' (End k1) (End k2)) ∧
+    (∀k1 e2 k2 t2. oless' (End k1) (Plus e2 k2 t2)) ∧
+    (∀e1 k1 t1 e2 k2 t2. oless' e1 e2 ⇒ oless' (Plus e1 k1 t1) (Plus e2 k2 t2)) ∧
+    (∀e1 k1 t1 e2 k2 t2.
+       e1 = e2 ∧ k1 < k2 ⇒ oless' (Plus e1 k1 t1) (Plus e2 k2 t2)) ∧
+    (∀e1 k1 t1 e2 k2 t2.
+       e1 = e2 ∧ k1 = k2 ∧ oless' t1 t2 ⇒
+       oless' (Plus e1 k1 t1) (Plus e2 k2 t2)) ⇒
+    ∀a0 a1. oless a0 a1 ⇒ oless' a0 a1
+</pre>
+
+<DT><span class="strong">oless_rules</span>
+<DD>
+<pre>
+⊢ (∀k1 k2. k1 < k2 ⇒ oless (End k1) (End k2)) ∧
+  (∀k1 e2 k2 t2. oless (End k1) (Plus e2 k2 t2)) ∧
+  (∀e1 k1 t1 e2 k2 t2. oless e1 e2 ⇒ oless (Plus e1 k1 t1) (Plus e2 k2 t2)) ∧
+  (∀e1 k1 t1 e2 k2 t2.
+     e1 = e2 ∧ k1 < k2 ⇒ oless (Plus e1 k1 t1) (Plus e2 k2 t2)) ∧
+  ∀e1 k1 t1 e2 k2 t2.
+    e1 = e2 ∧ k1 = k2 ∧ oless t1 t2 ⇒ oless (Plus e1 k1 t1) (Plus e2 k2 t2)
+</pre>
+
+<DT><span class="strong">oless_strong_ind</span>
+<DD>
+<pre>
+⊢ ∀oless'.
+    (∀k1 k2. k1 < k2 ⇒ oless' (End k1) (End k2)) ∧
+    (∀k1 e2 k2 t2. oless' (End k1) (Plus e2 k2 t2)) ∧
+    (∀e1 k1 t1 e2 k2 t2.
+       oless e1 e2 ∧ oless' e1 e2 ⇒ oless' (Plus e1 k1 t1) (Plus e2 k2 t2)) ∧
+    (∀e1 k1 t1 e2 k2 t2.
+       e1 = e2 ∧ k1 < k2 ⇒ oless' (Plus e1 k1 t1) (Plus e2 k2 t2)) ∧
+    (∀e1 k1 t1 e2 k2 t2.
+       e1 = e2 ∧ k1 = k2 ∧ oless t1 t2 ∧ oless' t1 t2 ⇒
+       oless' (Plus e1 k1 t1) (Plus e2 k2 t2)) ⇒
+    ∀a0 a1. oless a0 a1 ⇒ oless' a0 a1
+</pre>
+
+<DT><span class="strong">oless_strongind</span>
+<DD>
+<pre>
+⊢ ∀oless'.
+    (∀k1 k2. k1 < k2 ⇒ oless' (End k1) (End k2)) ∧
+    (∀k1 e2 k2 t2. oless' (End k1) (Plus e2 k2 t2)) ∧
+    (∀e1 k1 t1 e2 k2 t2.
+       oless e1 e2 ∧ oless' e1 e2 ⇒ oless' (Plus e1 k1 t1) (Plus e2 k2 t2)) ∧
+    (∀e1 k1 t1 e2 k2 t2.
+       e1 = e2 ∧ k1 < k2 ⇒ oless' (Plus e1 k1 t1) (Plus e2 k2 t2)) ∧
+    (∀e1 k1 t1 e2 k2 t2.
+       e1 = e2 ∧ k1 = k2 ∧ oless t1 t2 ∧ oless' t1 t2 ⇒
+       oless' (Plus e1 k1 t1) (Plus e2 k2 t2)) ⇒
+    ∀a0 a1. oless a0 a1 ⇒ oless' a0 a1
+</pre>
+
+<DT><span class="strong">oless_tail</span>
+<DD>
+<pre>
+⊢ ∀x. is_ord x ∧ ¬finp x ⇒ oless (tail x) x
+</pre>
+
+<DT><span class="strong">ord_add_def</span>
+<DD>
+<pre>
+⊢ (∀n m. ord_add (End m) (End n) = End (m + n)) ∧
+  (∀t p m k. ord_add (End m) (Plus p k t) = Plus p k t) ∧
+  (∀t m k e. ord_add (Plus e k t) (End m) = Plus e k (ord_add t (End m))) ∧
+  ∀t2 t1 k2 k1 e2 e1.
+    ord_add (Plus e1 k1 t1) (Plus e2 k2 t2) =
+    if oless e1 e2 then Plus e2 k2 t2
+    else if e1 = e2 then Plus e2 (k1 + k2) t2
+    else Plus e1 k1 (ord_add t1 (Plus e2 k2 t2))
+</pre>
+
+<DT><span class="strong">ord_add_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀m n. P (End m) (End n)) ∧ (∀m p k t. P (End m) (Plus p k t)) ∧
+      (∀e k t m. P t (End m) ⇒ P (Plus e k t) (End m)) ∧
+      (∀e1 k1 t1 e2 k2 t2.
+         (¬oless e1 e2 ∧ e1 ≠ e2 ⇒ P t1 (Plus e2 k2 t2)) ⇒
+         P (Plus e1 k1 t1) (Plus e2 k2 t2)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">ord_mult_def</span>
+<DD>
+<pre>
+⊢ ∀y x.
+    ord_mult x y =
+    if x = End 0 ∨ y = End 0 then End 0
+    else
+      case (x,y) of
+        (End m,End n) => End (m * n)
+      | (End m,Plus e k t) => Plus (ord_add (End 0) e) k (ord_mult (End m) t)
+      | (Plus e' k' t',End n') => Plus e' (k' * n') t'
+      | (Plus e' k' t',Plus e2 k2 t2) =>
+        Plus (ord_add e' e2) k2 (ord_mult (Plus e' k' t') t2)
+</pre>
+
+<DT><span class="strong">ord_mult_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀x y.
+         (∀v v1 m e k t.
+            ¬(x = End 0 ∨ y = End 0) ∧ (x,y) = (v,v1) ∧ v = End m ∧
+            v1 = Plus e k t ⇒
+            P (End m) t) ∧
+         (∀v v1 e' k' t' e2 k2 t2.
+            ¬(x = End 0 ∨ y = End 0) ∧ (x,y) = (v,v1) ∧ v = Plus e' k' t' ∧
+            v1 = Plus e2 k2 t2 ⇒
+            P (Plus e' k' t') t2) ⇒
+         P x y) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">ord_sub_def</span>
+<DD>
+<pre>
+⊢ (∀n m. ord_sub (End m) (End n) = End (m − n)) ∧
+  (∀t p m k. ord_sub (End m) (Plus p k t) = End 0) ∧
+  (∀t m k e. ord_sub (Plus e k t) (End m) = Plus e k t) ∧
+  ∀t2 t1 k2 k1 e2 e1.
+    ord_sub (Plus e1 k1 t1) (Plus e2 k2 t2) =
+    if oless e1 e2 then End 0
+    else if e1 = e2 then
+      if k1 < k2 then End 0
+      else if k1 > k2 then Plus e1 (k1 − k2) t1
+      else ord_sub t1 t2
+    else Plus e1 k1 t1
+</pre>
+
+<DT><span class="strong">ord_sub_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀m n. P (End m) (End n)) ∧ (∀m p k t. P (End m) (Plus p k t)) ∧
+      (∀e k t m. P (Plus e k t) (End m)) ∧
+      (∀e1 k1 t1 e2 k2 t2.
+         (¬oless e1 e2 ∧ e1 = e2 ∧ ¬(k1 < k2) ∧ ¬(k1 > k2) ⇒ P t1 t2) ⇒
+         P (Plus e1 k1 t1) (Plus e2 k2 t2)) ⇒
+      ∀v v1. P v v1
+</pre>
+
+<DT><span class="strong">osyntax_11</span>
+<DD>
+<pre>
+⊢ (∀a a'. End a = End a' ⇔ a = a') ∧
+  ∀a0 a1 a2 a0' a1' a2'.
+    Plus a0 a1 a2 = Plus a0' a1' a2' ⇔ a0 = a0' ∧ a1 = a1' ∧ a2 = a2'
+</pre>
+
+<DT><span class="strong">osyntax_Axiom</span>
+<DD>
+<pre>
+⊢ ∀f0 f1. ∃fn.
+    (∀a. fn (End a) = f0 a) ∧
+    ∀a0 a1 a2. fn (Plus a0 a1 a2) = f1 a1 a0 a2 (fn a0) (fn a2)
+</pre>
+
+<DT><span class="strong">osyntax_case_cong</span>
+<DD>
+<pre>
+⊢ ∀M M' f f1.
+    M = M' ∧ (∀a. M' = End a ⇒ f a = f' a) ∧
+    (∀a0 a1 a2. M' = Plus a0 a1 a2 ⇒ f1 a0 a1 a2 = f1' a0 a1 a2) ⇒
+    osyntax_CASE M f f1 = osyntax_CASE M' f' f1'
+</pre>
+
+<DT><span class="strong">osyntax_case_eq</span>
+<DD>
+<pre>
+⊢ osyntax_CASE x f f1 = v ⇔
+  (∃n. x = End n ∧ f n = v) ∨ ∃o' n o0. x = Plus o' n o0 ∧ f1 o' n o0 = v
+</pre>
+
+<DT><span class="strong">osyntax_distinct</span>
+<DD>
+<pre>
+⊢ ∀a2 a1 a0 a. End a ≠ Plus a0 a1 a2
+</pre>
+
+<DT><span class="strong">osyntax_induction</span>
+<DD>
+<pre>
+⊢ ∀P. (∀n. P (End n)) ∧ (∀ $o o0. P $o ∧ P o0 ⇒ ∀n. P (Plus $o n o0)) ⇒
+      ∀ $o. P $o
+</pre>
+
+<DT><span class="strong">osyntax_nchotomy</span>
+<DD>
+<pre>
+⊢ ∀oo. (∃n. oo = End n) ∨ ∃ $o n o0. oo = Plus $o n o0
+</pre>
+
+<DT><span class="strong">padd_compute</span>
+<DD>
+<pre>
+⊢ (∀a b. padd a b 0 = ord_add a b) ∧
+  (∀a b n.
+     padd a b <..num comp'n..> =
+     Plus (expt a) (coeff a) (padd (tail a) b (<..num comp'n..> − 1))) ∧
+  ∀a b n.
+    padd a b <..num comp'n..> =
+    Plus (expt a) (coeff a) (padd (tail a) b <..num comp'n..> )
+</pre>
+
+<DT><span class="strong">pmult_def</span>
+<DD>
+<pre>
+⊢ ∀n b a.
+    pmult a b n =
+    if a = End 0 ∨ b = End 0 then End 0
+    else
+      case (a,b) of
+        (End i,End j) => End (i * j)
+      | (Plus e1 c1 k1,End j) => Plus e1 (c1 * j) k1
+      | (v,Plus e2 c2 k2) =>
+        (let
+           m = cf2 (expt a) e2 n
+         in
+           Plus (padd (expt a) e2 m) c2 (pmult a k2 m))
+</pre>
+
+<DT><span class="strong">pmult_ind</span>
+<DD>
+<pre>
+⊢ ∀P. (∀a b n.
+         (∀v v1 e2 c2 k2 m.
+            ¬(a = End 0 ∨ b = End 0) ∧ (a,b) = (v,v1) ∧ v1 = Plus e2 c2 k2 ∧
+            m = cf2 (expt a) e2 n ⇒
+            P a k2 m) ⇒
+         P a b n) ⇒
+      ∀v v1 v2. P v v1 v2
+</pre>
+
+<DT><span class="strong">rank_0_End</span>
+<DD>
+<pre>
+⊢ ∀x. rank x = 0 ⇔ ∃n. x = End n
+</pre>
+
+<DT><span class="strong">rank_expt</span>
+<DD>
+<pre>
+⊢ ∀x n. is_ord x ∧ rank x = SUC n ⇒ rank (expt x) = n
+</pre>
+
+<DT><span class="strong">rank_finp</span>
+<DD>
+<pre>
+⊢ ∀x. rank x = 0 ⇔ finp x
+</pre>
+
+<DT><span class="strong">rank_less_imp_oless</span>
+<DD>
+<pre>
+⊢ ∀x y. is_ord x ∧ is_ord y ∧ rank x < rank y ⇒ oless x y
+</pre>
+
+<DT><span class="strong">rank_positive</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < rank x ⇔ x = Plus (expt x) (coeff x) (tail x)
+</pre>
+
+<DT><span class="strong">rank_positive_exists</span>
+<DD>
+<pre>
+⊢ ∀x. 0 < rank x ⇔ ∃e c t. x = Plus e c t
+</pre>
+
+<DT><span class="strong">rank_positive_expt</span>
+<DD>
+<pre>
+⊢ ∀x n. rank x = SUC n ⇒ rank (expt x) = n
+</pre>
+
+<DT><span class="strong">restn_compute</span>
+<DD>
+<pre>
+⊢ (∀a. restn a 0 = a) ∧
+  (∀a n. restn a <..num comp'n..> = restn (tail a) (<..num comp'n..> − 1)) ∧
+  ∀a n. restn a <..num comp'n..> = restn (tail a) <..num comp'n..>
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

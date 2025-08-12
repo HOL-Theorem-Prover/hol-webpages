@@ -1,0 +1,1675 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: borel</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "borel"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "real_borelTheory.html"><span class="strong">real_borel</span></a>&nbsp;&nbsp;
+    <a href = "measureTheory.html"><span class="strong">measure</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">AE</span>
+    <td>
+    :(real -> bool) -> bool
+    <tr><td> <span class="strong">Borel</span> <td> :extreal algebra
+    <tr><td>
+    <span class="strong">almost_everywhere</span>
+    <td>
+    :α m_space -> (α -> bool) -> bool
+    <tr><td> <span class="strong">ext_lborel</span> <td> :extreal m_space
+    <tr><td> <span class="strong">lambda0</span> <td> :real measure
+    <tr><td> <span class="strong">lborel</span> <td> :real m_space
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">AE_def</span>
+<DD>
+<pre>
+⊢ $AE = (λP. almost_everywhere lborel P)
+</pre>
+
+<DT><span class="strong">Borel</span>
+<DD>
+<pre>
+⊢ Borel =
+  (𝕌(:extreal),
+   {B' |
+    ∃B S.
+      B' = IMAGE Normal B ∪ S ∧ B ∈ subsets borel ∧
+      S ∈ {∅; {−∞}; {+∞}; {−∞; +∞}}})
+</pre>
+
+<DT><span class="strong">almost_everywhere_def</span>
+<DD>
+<pre>
+⊢ ∀m P.
+    almost_everywhere m P ⇔ ∃N. null_set m N ∧ ∀x. x ∈ m_space m DIFF N ⇒ P x
+</pre>
+
+<DT><span class="strong">ext_lborel_def</span>
+<DD>
+<pre>
+⊢ ext_lborel = (space Borel,subsets Borel,lambda ∘ real_set)
+</pre>
+
+<DT><span class="strong">lambda0_def</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ lambda0 (right_open_interval a b) = Normal (b − a)
+</pre>
+
+<DT><span class="strong">lborel_def</span>
+<DD>
+<pre>
+⊢ (∀s. s ∈ subsets right_open_intervals ⇒ lambda s = lambda0 s) ∧
+  measurable_space lborel = borel ∧ measure_space lborel
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">AE_ALT</span>
+<DD>
+<pre>
+⊢ ∀m P. (AE x::m. P x) ⇔ ∃N. null_set m N ∧ {x | x ∈ m_space m ∧ ¬P x} ⊆ N
+</pre>
+
+<DT><span class="strong">AE_BIGINTER</span>
+<DD>
+<pre>
+⊢ ∀m P s.
+    measure_space m ∧ countable s ∧ (∀n. n ∈ s ⇒ AE x::m. P n x) ⇒
+    AE x::m. ∀n. n ∈ s ⇒ P n x
+</pre>
+
+<DT><span class="strong">AE_BIGUNION</span>
+<DD>
+<pre>
+⊢ ∀m P s.
+    measure_space m ∧ (∃n. n ∈ s ∧ AE x::m. P n x) ⇒
+    AE x::m. ∃n. n ∈ s ∧ P n x
+</pre>
+
+<DT><span class="strong">AE_DEF</span>
+<DD>
+<pre>
+⊢ ∀m P. (AE x::m. P x) ⇔ ∃N. null_set m N ∧ ∀x. x ∈ m_space m DIFF N ⇒ P x
+</pre>
+
+<DT><span class="strong">AE_FORALL_SWAP_THM</span>
+<DD>
+<pre>
+⊢ ∀m P.
+    measure_space m ∧ countable 𝕌(:'index) ⇒
+    ((AE x::m. ∀i. P i x) ⇔ ∀i. AE x::m. P i x)
+</pre>
+
+<DT><span class="strong">AE_I</span>
+<DD>
+<pre>
+⊢ ∀N M P. null_set M N ⇒ {x | x ∈ m_space M ∧ ¬P x} ⊆ N ⇒ AE x::M. P x
+</pre>
+
+<DT><span class="strong">AE_IMP_MEASURABLE_SETS</span>
+<DD>
+<pre>
+⊢ ∀m P.
+    complete_measure_space m ∧ (AE x::m. P x) ⇒
+    {x | x ∈ m_space m ∧ P x} ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">AE_INTER</span>
+<DD>
+<pre>
+⊢ ∀m P Q.
+    measure_space m ∧ (AE x::m. P x) ∧ (AE x::m. Q x) ⇒ AE x::m. P x ∧ Q x
+</pre>
+
+<DT><span class="strong">AE_NOT_IN</span>
+<DD>
+<pre>
+⊢ ∀N M. null_set M N ⇒ AE x::M. x ∉ N
+</pre>
+
+<DT><span class="strong">AE_T</span>
+<DD>
+<pre>
+⊢ ∀m. measure_space m ⇒ AE x::m. T
+</pre>
+
+<DT><span class="strong">AE_THM</span>
+<DD>
+<pre>
+⊢ ∀m P. (AE x::m. P x) ⇔ almost_everywhere m P
+</pre>
+
+<DT><span class="strong">AE_UNION</span>
+<DD>
+<pre>
+⊢ ∀m P Q.
+    measure_space m ∧ ((AE x::m. P x) ∨ AE x::m. Q x) ⇒ AE x::m. P x ∨ Q x
+</pre>
+
+<DT><span class="strong">AE_cong</span>
+<DD>
+<pre>
+⊢ ∀m P Q. (∀x. x ∈ m_space m ⇒ (P x ⇔ Q x)) ⇒ ((AE x::m. P x) ⇔ AE x::m. Q x)
+</pre>
+
+<DT><span class="strong">AE_eq_add</span>
+<DD>
+<pre>
+⊢ ∀m f fae g gae.
+    measure_space m ∧ (AE x::m. f x = fae x) ∧ (AE x::m. g x = gae x) ⇒
+    AE x::m. f x + g x = fae x + gae x
+</pre>
+
+<DT><span class="strong">AE_eq_sum</span>
+<DD>
+<pre>
+⊢ ∀m f fae s.
+    FINITE s ∧ measure_space m ∧ (∀n. n ∈ s ⇒ AE x::m. f n x = fae n x) ⇒
+    AE x::m. ∑ (flip f x) s = ∑ (flip fae x) s
+</pre>
+
+<DT><span class="strong">AE_filter</span>
+<DD>
+<pre>
+⊢ ∀m P. (AE x::m. P x) ⇔ ∃N. N ∈ null_set m ∧ {x | x ∈ m_space m ∧ x ∉ P} ⊆ N
+</pre>
+
+<DT><span class="strong">AE_iff_measurable</span>
+<DD>
+<pre>
+⊢ ∀N M P.
+    measure_space M ∧ N ∈ measurable_sets M ∧ {x | x ∈ m_space M ∧ ¬P x} = N ⇒
+    ((AE x::M. P x) ⇔ measure M N = 0)
+</pre>
+
+<DT><span class="strong">AE_iff_null</span>
+<DD>
+<pre>
+⊢ ∀M P.
+    measure_space M ∧ {x | x ∈ m_space M ∧ ¬P x} ∈ measurable_sets M ⇒
+    ((AE x::M. P x) ⇔ null_set M {x | x ∈ m_space M ∧ ¬P x})
+</pre>
+
+<DT><span class="strong">AE_iff_null_sets</span>
+<DD>
+<pre>
+⊢ ∀N M.
+    measure_space M ∧ N ∈ measurable_sets M ⇒ (null_set M N ⇔ AE x::M. ¬N x)
+</pre>
+
+<DT><span class="strong">AE_not_in</span>
+<DD>
+<pre>
+⊢ ∀N M. null_set M N ⇒ AE x::M. ¬N x
+</pre>
+
+<DT><span class="strong">AE_subset</span>
+<DD>
+<pre>
+⊢ ∀m P Q. (AE x::m. P x) ∧ (∀x. x ∈ m_space m ∧ P x ⇒ Q x) ⇒ AE x::m. Q x
+</pre>
+
+<DT><span class="strong">BOREL_2D</span>
+<DD>
+<pre>
+⊢ Borel × Borel =
+  (𝕌(:extreal # extreal),
+   {B' |
+    ∃B S B1 B2 B3 B4.
+      B' = IMAGE (λ(x,y). (Normal x,Normal y)) B ∪ S ∧
+      B ∈ subsets (borel × borel) ∧
+      S = {+∞} × B1 ∪ {−∞} × B2 ∪ B3 × {+∞} ∪ B4 × {−∞} ∧ B1 ∈ subsets Borel ∧
+      B2 ∈ subsets Borel ∧ B3 ∈ subsets Borel ∧ B4 ∈ subsets Borel})
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_INFINITY</span>
+<DD>
+<pre>
+⊢ {+∞} ∈ subsets Borel ∧ {−∞} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS</span>
+<DD>
+<pre>
+⊢ (∀c. {x | x < c} ∈ subsets Borel) ∧ (∀c. {x | c < x} ∈ subsets Borel) ∧
+  (∀c. {x | x ≤ c} ∈ subsets Borel) ∧ (∀c. {x | c ≤ x} ∈ subsets Borel) ∧
+  (∀c d. {x | c ≤ x ∧ x < d} ∈ subsets Borel) ∧
+  (∀c d. {x | c < x ∧ x ≤ d} ∈ subsets Borel) ∧
+  (∀c d. {x | c ≤ x ∧ x ≤ d} ∈ subsets Borel) ∧
+  (∀c d. {x | c < x ∧ x < d} ∈ subsets Borel) ∧ (∀c. {c} ∈ subsets Borel) ∧
+  ∀c. {x | x ≠ c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS1</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x < c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS10</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x ≠ c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS2</span>
+<DD>
+<pre>
+⊢ ∀c. {x | c ≤ x} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS3</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x ≤ c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS4</span>
+<DD>
+<pre>
+⊢ ∀c. {x | c < x} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS5</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c ≤ x ∧ x < d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS6</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c < x ∧ x ≤ d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS7</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c ≤ x ∧ x ≤ d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS8</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c < x ∧ x < d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS9</span>
+<DD>
+<pre>
+⊢ ∀c. {c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_CC</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c ≤ x ∧ x ≤ d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_CO</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c ≤ x ∧ x < d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_CR</span>
+<DD>
+<pre>
+⊢ ∀c. {x | c ≤ x} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_EMPTY</span>
+<DD>
+<pre>
+⊢ ∅ ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_FINITE</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ s ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_NORMAL</span>
+<DD>
+<pre>
+⊢ ∀b. b ∈ subsets borel ⇒ IMAGE Normal b ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_NOT_SING</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x ≠ c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_OC</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c < x ∧ x ≤ d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_OO</span>
+<DD>
+<pre>
+⊢ ∀c d. {x | c < x ∧ x < d} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_OR</span>
+<DD>
+<pre>
+⊢ ∀c. {x | c < x} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_RC</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x ≤ c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_RO</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x < c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_SING</span>
+<DD>
+<pre>
+⊢ ∀c. {c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">BOREL_MEASURABLE_SETS_SING'</span>
+<DD>
+<pre>
+⊢ ∀c. {x | x = c} ∈ subsets Borel
+</pre>
+
+<DT><span class="strong">Borel_def</span>
+<DD>
+<pre>
+⊢ Borel = sigma 𝕌(:extreal) (IMAGE (λa. {x | x < Normal a}) 𝕌(:real))
+</pre>
+
+<DT><span class="strong">Borel_eq_ge</span>
+<DD>
+<pre>
+⊢ Borel = sigma 𝕌(:extreal) (IMAGE (λa. {x | Normal a ≤ x}) 𝕌(:real))
+</pre>
+
+<DT><span class="strong">Borel_eq_gr</span>
+<DD>
+<pre>
+⊢ Borel = sigma 𝕌(:extreal) (IMAGE (λa. {x | Normal a < x}) 𝕌(:real))
+</pre>
+
+<DT><span class="strong">Borel_eq_le</span>
+<DD>
+<pre>
+⊢ Borel = sigma 𝕌(:extreal) (IMAGE (λa. {x | x ≤ Normal a}) 𝕌(:real))
+</pre>
+
+<DT><span class="strong">Borel_eq_le_ext</span>
+<DD>
+<pre>
+⊢ Borel = sigma 𝕌(:extreal) (IMAGE (λc. {x | x ≤ c}) 𝕌(:extreal))
+</pre>
+
+<DT><span class="strong">FORALL_IMP_AE</span>
+<DD>
+<pre>
+⊢ ∀m P. measure_space m ∧ (∀x. x ∈ m_space m ⇒ P x) ⇒ AE x::m. P x
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ⇒
+    (f ∈ Borel_measurable a ⇔
+     f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c. {x | f x < Normal c} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_2D_FUNCTION</span>
+<DD>
+<pre>
+⊢ ∀a X Y f.
+    sigma_algebra a ∧ X ∈ Borel_measurable a ∧ Y ∈ Borel_measurable a ∧
+    f ∈ Borel_measurable (Borel × Borel) ⇒
+    (λx. f (X x,Y x)) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_2D_MUL</span>
+<DD>
+<pre>
+⊢ (λ(x,y). x * y) ∈ Borel_measurable (Borel × Borel)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_2D_VECTOR</span>
+<DD>
+<pre>
+⊢ ∀a X Y.
+    sigma_algebra a ∧ X ∈ Borel_measurable a ∧ Y ∈ Borel_measurable a ⇒
+    (λx. (X x,Y x)) ∈ measurable a (Borel × Borel)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ABS</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ g x = abs (f x)) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ABS'</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒ abs ∘ f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ABS_POWR</span>
+<DD>
+<pre>
+⊢ ∀a p f.
+    f ∈ Borel_measurable a ∧ 0 ≤ p ∧ p ≠ +∞ ⇒
+    (λx. abs (f x) powr p) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ADD</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ f x ≠ −∞ ∧ g x ≠ −∞ ∨ f x ≠ +∞ ∧ g x ≠ +∞) ∧
+    (∀x. x ∈ space a ⇒ h x = f x + g x) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ADD'</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ h x = f x + g x) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_AE_EQ</span>
+<DD>
+<pre>
+⊢ ∀m f g.
+    complete_measure_space m ∧ (AE x::m. f x = g x) ∧
+    f ∈ Borel_measurable (measurable_space m) ⇒
+    g ∈ Borel_measurable (measurable_space m)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_AINV</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒ (λx. -f x) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALL</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    (∀c. {x | f x < c} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | c ≤ f x} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | f x ≤ c} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | c < f x} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c ≤ f x ∧ f x < d} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c < f x ∧ f x ≤ d} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c ≤ f x ∧ f x ≤ d} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c < f x ∧ f x < d} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | f x = c} ∩ space a ∈ subsets a) ∧
+    ∀c. {x | f x ≠ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALL_ABS</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    (∀c. {x | f x < c} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | c ≤ f x} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | f x ≤ c} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | c < f x} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | abs (f x) < c} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | c ≤ abs (f x)} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | abs (f x) ≤ c} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | c < abs (f x)} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c ≤ f x ∧ f x < d} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c < f x ∧ f x ≤ d} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c ≤ f x ∧ f x ≤ d} ∩ space a ∈ subsets a) ∧
+    (∀c d. {x | c < f x ∧ f x < d} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | f x = c} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | f x ≠ c} ∩ space a ∈ subsets a) ∧
+    (∀c. {x | abs (f x) = c} ∩ space a ∈ subsets a) ∧
+    ∀c. {x | abs (f x) ≠ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALL_MEASURE</span>
+<DD>
+<pre>
+⊢ ∀f m.
+    sigma_algebra (measurable_space m) ∧
+    f ∈ Borel_measurable (measurable_space m) ⇒
+    (∀c. {x | f x < c} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | c ≤ f x} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | f x ≤ c} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | c < f x} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c ≤ f x ∧ f x < d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c < f x ∧ f x ≤ d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c ≤ f x ∧ f x ≤ d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c < f x ∧ f x < d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | f x = c} ∩ m_space m ∈ measurable_sets m) ∧
+    ∀c. {x | f x ≠ c} ∩ m_space m ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALL_MEASURE_ABS</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧ f ∈ Borel_measurable (measurable_space m) ⇒
+    (∀c. {x | f x < c} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | c ≤ f x} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | f x ≤ c} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | c < f x} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | abs (f x) < c} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | c ≤ abs (f x)} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | abs (f x) ≤ c} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | c < abs (f x)} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c ≤ f x ∧ f x < d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c < f x ∧ f x ≤ d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c ≤ f x ∧ f x ≤ d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c d. {x | c < f x ∧ f x < d} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | f x = c} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | f x ≠ c} ∩ m_space m ∈ measurable_sets m) ∧
+    (∀c. {x | abs (f x) = c} ∩ m_space m ∈ measurable_sets m) ∧
+    ∀c. {x | abs (f x) ≠ c} ∩ m_space m ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALL_MEASURE_ABS'</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧ f ∈ Borel_measurable (measurable_space m) ⇒
+    (∀c. {x | x ∈ m_space m ∧ f x < c} ∈ measurable_sets m) ∧
+    (∀c. {x | x ∈ m_space m ∧ c ≤ f x} ∈ measurable_sets m) ∧
+    (∀c. {x | x ∈ m_space m ∧ f x ≤ c} ∈ measurable_sets m) ∧
+    (∀c. {x | x ∈ m_space m ∧ c < f x} ∈ measurable_sets m) ∧
+    (∀c. {x | x ∈ m_space m ∧ abs (f x) < c} ∈ measurable_sets m) ∧
+    (∀c. {x | x ∈ m_space m ∧ c ≤ abs (f x)} ∈ measurable_sets m) ∧
+    (∀c. {x | x ∈ m_space m ∧ abs (f x) ≤ c} ∈ measurable_sets m) ∧
+    (∀c. {x | x ∈ m_space m ∧ c < abs (f x)} ∈ measurable_sets m) ∧
+    (∀c d. {x | x ∈ m_space m ∧ c ≤ f x ∧ f x < d} ∈ measurable_sets m) ∧
+    (∀c d. {x | x ∈ m_space m ∧ c < f x ∧ f x ≤ d} ∈ measurable_sets m) ∧
+    (∀c d. {x | x ∈ m_space m ∧ c ≤ f x ∧ f x ≤ d} ∈ measurable_sets m) ∧
+    (∀c d. {x | x ∈ m_space m ∧ c < f x ∧ f x < d} ∈ measurable_sets m) ∧
+    (∀c. {x | x ∈ m_space m ∧ f x = c} ∈ measurable_sets m) ∧
+    (∀c. {x | x ∈ m_space m ∧ f x ≠ c} ∈ measurable_sets m) ∧
+    (∀c. {x | x ∈ m_space m ∧ abs (f x) = c} ∈ measurable_sets m) ∧
+    ∀c. {x | x ∈ m_space m ∧ abs (f x) ≠ c} ∈ measurable_sets m
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT1</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ⇒
+    (f ∈ Borel_measurable a ⇔
+     f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c. {x | Normal c ≤ f x} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT1_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | c ≤ f x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT2</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ⇒
+    (f ∈ Borel_measurable a ⇔
+     f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c. {x | f x ≤ Normal c} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT2_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | f x ≤ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT3</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ⇒
+    (f ∈ Borel_measurable a ⇔
+     f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c. {x | Normal c < f x} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT3_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | c < f x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT4</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ (∀x. x ∈ space a ⇒ f x ≠ −∞) ⇒
+    (f ∈ Borel_measurable a ⇔
+     f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c d. {x | Normal c ≤ f x ∧ f x < Normal d} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT4_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c ≤ f x ∧ f x < d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT5</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ (∀x. x ∈ space a ⇒ f x ≠ −∞) ⇒
+    (f ∈ Borel_measurable a ⇔
+     f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c d. {x | Normal c < f x ∧ f x ≤ Normal d} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT5_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c < f x ∧ f x ≤ d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT6</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ (∀x. x ∈ space a ⇒ f x ≠ −∞) ⇒
+    (f ∈ Borel_measurable a ⇔
+     f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c d. {x | Normal c ≤ f x ∧ f x ≤ Normal d} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT6_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c ≤ f x ∧ f x ≤ d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT7</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ (∀x. x ∈ space a ⇒ f x ≠ −∞) ⇒
+    (f ∈ Borel_measurable a ⇔
+     f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c d. {x | Normal c < f x ∧ f x < Normal d} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT7_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c < f x ∧ f x < d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT8</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | f x = c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_ALT9</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | f x ≠ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_ABS</span>
+<DD>
+<pre>
+⊢ abs ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_ABS_POWR</span>
+<DD>
+<pre>
+⊢ ∀p. 0 ≤ p ∧ p ≠ +∞ ⇒ (λx. abs x powr p) ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_AINV</span>
+<DD>
+<pre>
+⊢ numeric_negate ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_CONST</span>
+<DD>
+<pre>
+⊢ ∀c. (λx. c) ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_I</span>
+<DD>
+<pre>
+⊢ (λx. x) ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_MAX</span>
+<DD>
+<pre>
+⊢ ∀c. (λx. max x c) ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_MIN</span>
+<DD>
+<pre>
+⊢ ∀c. (λx. min x c) ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_MONO_DECREASING</span>
+<DD>
+<pre>
+⊢ ∀f. (∀x y. x ≤ y ⇒ f y ≤ f x) ⇒ f ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_MONO_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀f. (∀x y. x ≤ y ⇒ f x ≤ f y) ⇒ f ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_BOREL_POW</span>
+<DD>
+<pre>
+⊢ ∀n. (λx. x pow n) ∈ Borel_measurable Borel
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CC</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c ≤ f x ∧ f x ≤ d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CMUL</span>
+<DD>
+<pre>
+⊢ ∀a f g z.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ g x = Normal z * f x) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CMUL_INDICATOR</span>
+<DD>
+<pre>
+⊢ ∀a z s.
+    sigma_algebra a ∧ s ∈ subsets a ⇒
+    (λx. Normal z * 𝟙 s x) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CMUL_INDICATOR'</span>
+<DD>
+<pre>
+⊢ ∀a c s.
+    sigma_algebra a ∧ s ∈ subsets a ⇒ (λx. c * 𝟙 s x) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CO</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c ≤ f x ∧ f x < d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_COMP</span>
+<DD>
+<pre>
+⊢ ∀a b f g h.
+    f ∈ Borel_measurable b ∧ g ∈ measurable a b ∧
+    (∀x. x ∈ space a ⇒ h x = f (g x)) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_COMP_BOREL</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    f ∈ Borel_measurable Borel ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ h x = f (g x)) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CONG</span>
+<DD>
+<pre>
+⊢ ∀m f g.
+    (∀x. x ∈ m_space m ⇒ f x = g x) ⇒
+    (f ∈ Borel_measurable (measurable_space m) ⇔
+     g ∈ Borel_measurable (measurable_space m))
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CONG'</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    (∀x. x ∈ space a ⇒ f x = g x) ⇒
+    (f ∈ Borel_measurable a ⇔ g ∈ Borel_measurable a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CONST</span>
+<DD>
+<pre>
+⊢ ∀a k f.
+    sigma_algebra a ∧ (∀x. x ∈ space a ⇒ f x = k) ⇒ f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CONST'</span>
+<DD>
+<pre>
+⊢ ∀a k. sigma_algebra a ⇒ (λx. k) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_CR</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | c ≤ f x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_EQ</span>
+<DD>
+<pre>
+⊢ ∀m f g.
+    (∀x. x ∈ m_space m ⇒ f x = g x) ∧
+    g ∈ Borel_measurable (measurable_space m) ⇒
+    f ∈ Borel_measurable (measurable_space m)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_EQ'</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    (∀x. x ∈ space a ⇒ f x = g x) ∧ g ∈ Borel_measurable a ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_EQ_SYM</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    (∀x. x ∈ space a ⇒ f x = g x) ⇒
+    (f ∈ Borel_measurable a ⇔ g ∈ Borel_measurable a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_EXP</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ g x = exp (f x)) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_FN_MINUS</span>
+<DD>
+<pre>
+⊢ ∀a f. sigma_algebra a ∧ f ∈ Borel_measurable a ⇒ f⁻ ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_FN_PLUS</span>
+<DD>
+<pre>
+⊢ ∀a f. sigma_algebra a ∧ f ∈ Borel_measurable a ⇒ f⁺ ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_IMP</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | f x < c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_IMP_BOREL</span>
+<DD>
+<pre>
+⊢ ∀f m.
+    f ∈ borel_measurable (measurable_space m) ⇒
+    Normal ∘ f ∈ Borel_measurable (measurable_space m)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_IMP_BOREL'</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ∧ f ∈ borel_measurable a ⇒ Normal ∘ f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_INDICATOR</span>
+<DD>
+<pre>
+⊢ ∀a A f.
+    sigma_algebra a ∧ A ∈ subsets a ∧ (∀x. x ∈ space a ⇒ f x = 𝟙 A x) ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_INF</span>
+<DD>
+<pre>
+⊢ ∀a fi f X.
+    sigma_algebra a ∧ X ≠ ∅ ∧ (∀n. n ∈ X ⇒ fi n ∈ Borel_measurable a) ∧
+    (∀x. x ∈ space a ⇒ f x = inf (IMAGE (λn. fi n x) X)) ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_INV</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ g x = (f x)⁻¹ * 𝟙 {y | f y ≠ 0} x) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_LE</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ⇒
+    {x | f x ≤ g x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_LT</span>
+<DD>
+<pre>
+⊢ ∀f g a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ⇒
+    {x | f x < g x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MAX</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ⇒
+    (λx. max (f x) (g x)) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MAXIMAL</span>
+<DD>
+<pre>
+⊢ ∀N. FINITE N ⇒
+      ∀g f a.
+        sigma_algebra a ∧ (∀n. g n ∈ Borel_measurable a) ∧
+        (∀x. f x = sup (IMAGE (λn. g n x) N)) ⇒
+        f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MAX_FN_SEQ</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ∧ (∀i. f i ∈ Borel_measurable a) ⇒
+    ∀n. max_fn_seq f n ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MIN</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ⇒
+    (λx. min (f x) (g x)) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MINIMAL</span>
+<DD>
+<pre>
+⊢ ∀N. FINITE N ⇒
+      ∀g f a.
+        sigma_algebra a ∧ (∀n. g n ∈ Borel_measurable a) ∧
+        (∀x. f x = inf (IMAGE (λn. g n x) N)) ⇒
+        f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MINUS</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ (∀x. x ∈ space a ⇒ g x = -f x) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MONO_INCREASING</span>
+<DD>
+<pre>
+⊢ ∀f sp.
+    (∀x y. x ≤ y ⇒ f x ≤ f y) ∧ sp ∈ subsets Borel ⇒
+    f ∈ Borel_measurable (restrict_algebra Borel sp)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MONO_INF</span>
+<DD>
+<pre>
+⊢ ∀fi f a.
+    sigma_algebra a ∧ (∀n. fi n ∈ Borel_measurable a) ∧
+    (∀x. x ∈ space a ⇒ f x = inf (IMAGE (λn. fi n x) 𝕌(:num))) ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MONO_SUP</span>
+<DD>
+<pre>
+⊢ ∀fi f a.
+    sigma_algebra a ∧ (∀n. fi n ∈ Borel_measurable a) ∧
+    (∀n x. x ∈ space a ⇒ fi n x ≤ fi (SUC n) x) ∧
+    (∀x. x ∈ space a ⇒ f x = sup (IMAGE (λn. fi n x) 𝕌(:num))) ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MUL</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ h x = f x * g x) ∧
+    (∀x. x ∈ space a ⇒ f x ≠ −∞ ∧ f x ≠ +∞ ∧ g x ≠ −∞ ∧ g x ≠ +∞) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MUL'</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ h x = f x * g x) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MUL_INDICATOR</span>
+<DD>
+<pre>
+⊢ ∀a f s.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ s ∈ subsets a ⇒
+    (λx. f x * 𝟙 s x) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MUL_INDICATOR_EQ</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ⇒
+    (f ∈ Borel_measurable a ⇔ (λx. f x * 𝟙 (space a) x) ∈ Borel_measurable a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_MUL_INV</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ∧ g x = 0 ⇒ f x = 0) ∧
+    (∀x. x ∈ space a ⇒ h x = f x * (g x)⁻¹) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_NEGINF</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    {x | f x = −∞} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_NORMAL_REAL</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    Normal ∘ real ∘ f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_NOT_NEGINF</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    {x | f x ≠ −∞} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_NOT_POSINF</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    {x | f x ≠ +∞} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_NOT_SING</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | f x ≠ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_OC</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c < f x ∧ f x ≤ d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_OO</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c d. {x | c < f x ∧ f x < d} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_OR</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | c < f x} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_PLUS_MINUS</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ⇒
+    (f ∈ Borel_measurable a ⇔
+     f⁺ ∈ Borel_measurable a ∧ f⁻ ∈ Borel_measurable a)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_POSINF</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    {x | f x = +∞} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_POW</span>
+<DD>
+<pre>
+⊢ ∀n a f. f ∈ Borel_measurable a ⇒ (λx. f x pow n) ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_POW'</span>
+<DD>
+<pre>
+⊢ ∀n a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ g x = f x pow n) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_POW_EXP</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀n. {x | g x = n} ∩ space a ∈ subsets a) ∧
+    (∀x. x ∈ space a ⇒ h x = f x pow g x) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_PROD</span>
+<DD>
+<pre>
+⊢ ∀a f g s.
+    FINITE s ∧ sigma_algebra a ∧ (∀i. i ∈ s ⇒ f i ∈ Borel_measurable a) ∧
+    (∀i x. i ∈ s ∧ x ∈ space a ⇒ f i x ≠ −∞ ∧ f i x ≠ +∞) ∧
+    (∀x. x ∈ space a ⇒ g x = ∏ (λi. f i x) s) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_PROD'</span>
+<DD>
+<pre>
+⊢ ∀a f g s.
+    FINITE s ∧ sigma_algebra a ∧ (∀i. i ∈ s ⇒ f i ∈ Borel_measurable a) ∧
+    (∀x. x ∈ space a ⇒ g x = ∏ (λi. f i x) s) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_RC</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | f x ≤ c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_RO</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | f x < c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SING</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒
+    ∀c. {x | f x = c} ∩ space a ∈ subsets a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SQR</span>
+<DD>
+<pre>
+⊢ ∀a f g.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ g x = (f x)²) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SUB</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ f x ≠ −∞ ∧ g x ≠ +∞ ∨ f x ≠ +∞ ∧ g x ≠ −∞) ∧
+    (∀x. x ∈ space a ⇒ h x = f x − g x) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SUB'</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ h x = f x − g x) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SUM</span>
+<DD>
+<pre>
+⊢ ∀a f g s.
+    FINITE s ∧ sigma_algebra a ∧ (∀i. i ∈ s ⇒ f i ∈ Borel_measurable a) ∧
+    (∀i x. i ∈ s ∧ x ∈ space a ⇒ f i x ≠ −∞) ∧
+    (∀x. x ∈ space a ⇒ g x = ∑ (λi. f i x) s) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SUM'</span>
+<DD>
+<pre>
+⊢ ∀a f g s.
+    FINITE s ∧ sigma_algebra a ∧ (∀i. i ∈ s ⇒ f i ∈ Borel_measurable a) ∧
+    (∀x. x ∈ space a ⇒ g x = ∑ (λi. f i x) s) ⇒
+    g ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SUMINF</span>
+<DD>
+<pre>
+⊢ ∀fn f a.
+    sigma_algebra a ∧ (∀n. fn n ∈ Borel_measurable a) ∧
+    (∀i x. x ∈ space a ⇒ 0 ≤ fn i x) ∧
+    (∀x. x ∈ space a ⇒ f x = suminf (λn. fn n x)) ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_SUP</span>
+<DD>
+<pre>
+⊢ ∀a fi f X.
+    sigma_algebra a ∧ X ≠ ∅ ∧ (∀n. n ∈ X ⇒ fi n ∈ Borel_measurable a) ∧
+    (∀x. x ∈ space a ⇒ f x = sup (IMAGE (λn. fi n x) X)) ⇒
+    f ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_TIMES</span>
+<DD>
+<pre>
+⊢ ∀m f g h.
+    measure_space m ∧ f ∈ Borel_measurable (measurable_space m) ∧
+    g ∈ Borel_measurable (measurable_space m) ∧
+    (∀x. x ∈ m_space m ⇒ h x = f x * g x) ⇒
+    h ∈ Borel_measurable (measurable_space m)
+</pre>
+
+<DT><span class="strong">IN_MEASURABLE_BOREL_TIMES'</span>
+<DD>
+<pre>
+⊢ ∀a f g h.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ∧ g ∈ Borel_measurable a ∧
+    (∀x. x ∈ space a ⇒ h x = f x * g x) ⇒
+    h ∈ Borel_measurable a
+</pre>
+
+<DT><span class="strong">MEASURABLE_BOREL</span>
+<DD>
+<pre>
+⊢ ∀f a.
+    sigma_algebra a ⇒
+    (f ∈ Borel_measurable a ⇔
+     f ∈ (space a → 𝕌(:extreal)) ∧
+     ∀c. PREIMAGE f {x | x < Normal c} ∩ space a ∈ subsets a)
+</pre>
+
+<DT><span class="strong">RIGHT_IMP_AE_THM</span>
+<DD>
+<pre>
+⊢ ∀m P Q. measure_space m ⇒ (P ⇒ (AE x::m. Q x) ⇔ AE x::m. P ⇒ Q x)
+</pre>
+
+<DT><span class="strong">RIGHT_IMP_AE_THM'</span>
+<DD>
+<pre>
+⊢ ∀m P Q.
+    measure_space m ⇒ ((∀i. P i ⇒ AE x::m. Q i x) ⇔ ∀i. AE x::m. P i ⇒ Q i x)
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_BOREL</span>
+<DD>
+<pre>
+⊢ sigma_algebra Borel
+</pre>
+
+<DT><span class="strong">SIGMA_ALGEBRA_BOREL_2D</span>
+<DD>
+<pre>
+⊢ sigma_algebra (Borel × Borel)
+</pre>
+
+<DT><span class="strong">SPACE_BOREL</span>
+<DD>
+<pre>
+⊢ space Borel = 𝕌(:extreal)
+</pre>
+
+<DT><span class="strong">SPACE_BOREL_2D</span>
+<DD>
+<pre>
+⊢ space (Borel × Borel) = 𝕌(:extreal # extreal)
+</pre>
+
+<DT><span class="strong">borel_eq_real_set</span>
+<DD>
+<pre>
+⊢ borel = (𝕌(:real),IMAGE real_set (subsets Borel))
+</pre>
+
+<DT><span class="strong">borel_measurable_real_set</span>
+<DD>
+<pre>
+⊢ ∀s. s ∈ subsets Borel ⇒ real_set s ∈ subsets borel
+</pre>
+
+<DT><span class="strong">in_borel_measurable_from_Borel</span>
+<DD>
+<pre>
+⊢ ∀a f.
+    sigma_algebra a ∧ f ∈ Borel_measurable a ⇒ real ∘ f ∈ borel_measurable a
+</pre>
+
+<DT><span class="strong">in_borel_measurable_imp</span>
+<DD>
+<pre>
+⊢ ∀m f.
+    measure_space m ∧
+    (∀s. open s ⇒ PREIMAGE f s ∩ m_space m ∈ measurable_sets m) ⇒
+    f ∈ borel_measurable (measurable_space m)
+</pre>
+
+<DT><span class="strong">in_measurable_sigma_pow</span>
+<DD>
+<pre>
+⊢ ∀m sp N f.
+    measure_space m ∧ N ⊆ POW sp ∧ f ∈ (m_space m → sp) ∧
+    (∀y. y ∈ N ⇒ PREIMAGE f y ∩ m_space m ∈ measurable_sets m) ⇒
+    f ∈ measurable (measurable_space m) (sigma sp N)
+</pre>
+
+<DT><span class="strong">lambda0_empty</span>
+<DD>
+<pre>
+⊢ lambda0 ∅ = 0
+</pre>
+
+<DT><span class="strong">lambda0_not_infty</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    lambda0 (right_open_interval a b) ≠ +∞ ∧
+    lambda0 (right_open_interval a b) ≠ −∞
+</pre>
+
+<DT><span class="strong">lambda_closed_interval</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ lambda (interval [(a,b)]) = Normal (b − a)
+</pre>
+
+<DT><span class="strong">lambda_closed_interval_content</span>
+<DD>
+<pre>
+⊢ ∀a b. lambda (interval [(a,b)]) = Normal (content (interval [(a,b)]))
+</pre>
+
+<DT><span class="strong">lambda_countable</span>
+<DD>
+<pre>
+⊢ ∀c. countable c ⇒ lambda c = 0
+</pre>
+
+<DT><span class="strong">lambda_empty</span>
+<DD>
+<pre>
+⊢ lambda ∅ = 0
+</pre>
+
+<DT><span class="strong">lambda_eq</span>
+<DD>
+<pre>
+⊢ ∀m. (∀a b.
+         measure m (interval [(a,b)]) = Normal (content (interval [(a,b)]))) ∧
+      measure_space m ∧ m_space m = space borel ∧
+      measurable_sets m = subsets borel ⇒
+      ∀s. s ∈ subsets borel ⇒ lambda s = measure m s
+</pre>
+
+<DT><span class="strong">lambda_finite</span>
+<DD>
+<pre>
+⊢ ∀c. FINITE c ⇒ lambda c = 0
+</pre>
+
+<DT><span class="strong">lambda_not_infty</span>
+<DD>
+<pre>
+⊢ ∀a b.
+    lambda (right_open_interval a b) ≠ +∞ ∧
+    lambda (right_open_interval a b) ≠ −∞
+</pre>
+
+<DT><span class="strong">lambda_open_interval</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ lambda (interval (a,b)) = Normal (b − a)
+</pre>
+
+<DT><span class="strong">lambda_prop</span>
+<DD>
+<pre>
+⊢ ∀a b. a ≤ b ⇒ lambda (right_open_interval a b) = Normal (b − a)
+</pre>
+
+<DT><span class="strong">lambda_sing</span>
+<DD>
+<pre>
+⊢ ∀c. lambda {c} = 0
+</pre>
+
+<DT><span class="strong">lborel0_additive</span>
+<DD>
+<pre>
+⊢ additive lborel0
+</pre>
+
+<DT><span class="strong">lborel0_finite_additive</span>
+<DD>
+<pre>
+⊢ finite_additive lborel0
+</pre>
+
+<DT><span class="strong">lborel0_positive</span>
+<DD>
+<pre>
+⊢ positive lborel0
+</pre>
+
+<DT><span class="strong">lborel0_premeasure</span>
+<DD>
+<pre>
+⊢ premeasure lborel0
+</pre>
+
+<DT><span class="strong">lborel0_subadditive</span>
+<DD>
+<pre>
+⊢ subadditive lborel0
+</pre>
+
+<DT><span class="strong">lborel_eqI</span>
+<DD>
+<pre>
+⊢ ∀M. (∀a b.
+         measure M (interval [(a,b)]) = Normal (content (interval [(a,b)]))) ∧
+      measure_space M ∧ measurable_sets M = subsets borel ⇒
+      measure_of lborel = measure_of M
+</pre>
+
+<DT><span class="strong">m_space_lborel</span>
+<DD>
+<pre>
+⊢ m_space lborel = space borel
+</pre>
+
+<DT><span class="strong">measure_space_ext_lborel</span>
+<DD>
+<pre>
+⊢ measure_space ext_lborel
+</pre>
+
+<DT><span class="strong">measure_space_lborel</span>
+<DD>
+<pre>
+⊢ measure_space lborel
+</pre>
+
+<DT><span class="strong">real_in_borel_measurable</span>
+<DD>
+<pre>
+⊢ real ∈ borel_measurable Borel
+</pre>
+
+<DT><span class="strong">sets_lborel</span>
+<DD>
+<pre>
+⊢ measurable_sets lborel = subsets borel
+</pre>
+
+<DT><span class="strong">sigma_finite_ext_lborel</span>
+<DD>
+<pre>
+⊢ sigma_finite ext_lborel
+</pre>
+
+<DT><span class="strong">sigma_finite_lborel</span>
+<DD>
+<pre>
+⊢ sigma_finite lborel
+</pre>
+
+<DT><span class="strong">space_lborel</span>
+<DD>
+<pre>
+⊢ m_space lborel = 𝕌(:real)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

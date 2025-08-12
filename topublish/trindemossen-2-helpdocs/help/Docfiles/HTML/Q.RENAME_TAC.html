@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Q.RENAME_TAC</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="rename_tac"><code>RENAME_TAC</code></h2>
+<pre class="hol4"><code>Q.RENAME_TAC : term quotation list -&gt; tactic</code></pre>
+<hr />
+<p>Renames free variables or subterms within a goal.</p>
+<p>A call to <code>RENAME_TAC qs</code> searches the current goal for
+matches to the patterns in the list <code>qs</code>, and then
+substitutes out the matches (in the “reverse direction”) so that the
+goal becomes one that uses the names from <code>qs</code>. This can
+cause subterms within the goal to turn into simple variables, but the
+usual intention is to rename free variables into the variables that
+appear in the patterns.</p>
+<p>The matching is done without reference to the goal’s existing free
+variables. If a variable in <code>qs</code> clashes with an existing
+variable in the goal, then the goal’s variable will be renamed away. It
+is sufficient for variables to have the same name to “clash”; they need
+not also have the same type. The search for matches begins by attempting
+to find matches against the whole of the goal, against whole
+assumptions, for sub-terms within the goal, and then sub-terms of
+assumptions.</p>
+<p>These four different flavours of searching can additionally be
+controlled by adding comments <code>(* ... *)</code> to the end of the
+relevant quotation. The string in the comment has its whitespace
+stripped, and is then split into fields using the pipe character
+<code>|</code> as a separator. If the string consisting of the single
+character <code>g</code> is present, the pattern is checked against the
+entirety of the goal’s conclusion; the string of character
+<code>a</code> causes a check against each individual assumption; the
+strings <code>sg</code> and <code>sa</code> cause checks against
+sub-terms present in the conclusion, or in any assumption
+respectively.</p>
+<p>If multiple matches are possible, a variant tactic,
+<code>Q.kRENAME_TAC</code>, can be used: this tactic takes an additional
+“continuation” tactic argument that can be used to discriminate between
+these matches.</p>
+<p>Patterns can use underscores to match anything without any change in
+the goal’s naming being introduced. Underscores can match against
+sub-terms that include bound variables. Matching is first-order.</p>
+<h3 id="failure">Failure</h3>
+<p>Fails if it is impossible to consistently match the combination of
+patterns in the provided list of quotations (<code>qs</code>).</p>
+<h3 id="example">Example</h3>
+<p>If the goal is of the form</p>
+<pre class="hol4"><code>   x &lt; y, y &lt; z ?- x &lt; f a</code></pre>
+<p>then invoking <code>Q.RENAME_TAC [`b &lt; c`, `a &lt; b`]</code> will
+produce the sub-goal:</p>
+<pre class="hol4"><code>   a &lt; b, b &lt; c ?- a &lt; f a&#39;</code></pre>
+<p>where the goal’s original <code>a</code> variable (which is not even
+of type <code>num</code>), has been renamed away from <code>a</code>
+because that variable occurs in the patterns. (If the right hand side of
+the inequality was simply <code>a</code> and was thus of type num, it
+would also be renamed to <code>a'</code>.)</p>
+<p>If <code>Q.RENAME_TAC [`b &lt; c`]</code> is invoked on the same
+initial goal, the result is:</p>
+<pre class="hol4"><code>   b &lt; y, y &lt; z ?- b &lt; c</code></pre>
+<p>illustrating the way in which variables can eliminate more
+complicated sub-terms.</p>
+<p>The useful way in which underscores in patterns can be used to
+“dodge” terms including bound variables is illustrated in the next
+example, where the initial goal is:</p>
+<pre class="hol4"><code>   (!a. f a &lt; z), z &lt; c ?- z &lt; d</code></pre>
+<p>After applying <code>Q.RENAME_TAC [`_ &lt; x`, `x &lt; c`]</code>,
+the goal becomes</p>
+<pre class="hol4"><code>   (!a. f a &lt; x), x &lt; c&#39; ?- x &lt; c</code></pre>
+<p>The goal was chosen for the match to the second pattern because the
+goal is considered first. If the initial goal had been</p>
+<pre class="hol4"><code>   (!a. f a &lt; z), z &lt; c ?- z &lt; d /\ P z</code></pre>
+<p>then the result of the same application would be</p>
+<pre class="hol4"><code>   (!a. f a &lt; z), z &lt; c ?- x &lt; d /\ P x</code></pre>
+<p>because whole assumptions are considered before sub-terms of the
+goal.</p>
+<p>The pattern-specification comments can be important when selecting
+for certain assumptions. Here,
+<code>Q.RENAME_TAC [‘x &lt; _ (* a *)’]</code> will fail because there
+is no assumption of the required shape, even though the shape appears as
+a subterm in the assumptions, and is the shape of the goal’s
+conclusion:</p>
+<pre class="hol4"><code>   ~(a &lt; b) ?- c &lt; d</code></pre>
+<p>Similarly, using the comment <code>(* a|sg *)</code> would also fail
+because the pattern is not present as a sub-term of the goal’s
+conclusion.</p>
+<h3 id="comments">Comments</h3>
+<p>This function is also available under the name
+<code>bossLib.rename</code>.</p>
+<p>Note that <code>Q.RENAME_TAC [q]</code> is <em>not</em> the same as
+<code>Q.RENAME1_TAC q</code>. The latter pays attention to the goal’s
+free variables, using these to constrain the match to the pattern. In
+contrast, <code>Q.RENAME_TAC</code> completely ignores all of the goal’s
+free variables, such that using an existing name in a pattern doesn’t
+make any difference to the matching behaviour.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Q.RENAME1_TAC.html"><code>Q.RENAME1_TAC</code></a></p>
+</body>
+</html>

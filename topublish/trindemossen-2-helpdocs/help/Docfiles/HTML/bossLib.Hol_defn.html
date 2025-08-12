@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>bossLib.Hol_defn</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="hol_defn"><code>Hol_defn</code></h2>
+<pre class="hol4"><code>bossLib.Hol_defn : string -&gt; term quotation -&gt; defn</code></pre>
+<hr />
+<p>General-purpose function definition facility.</p>
+<p><code>Hol_defn</code> allows one to define functions, recursive
+functions in particular, while deferring termination issues.
+<code>Hol_defn</code> should be used when <code>Define</code> or
+<code>xDefine</code> fails, or when the context required by
+<code>Define</code> or <code>xDefine</code> is too much.</p>
+<p><code>Hol_defn</code> takes the same arguments as
+<code>xDefine</code>.</p>
+<p><code>Hol_defn s q</code> automatically constructs termination
+constraints for the function specified by <code>q</code>, defines the
+function, derives the specified equations, and proves an induction
+theorem. All these results are packaged up in the returned
+<code>defn</code> value. The <code>defn</code> type is best thought of
+as an intermediate step in the process of deriving the unconstrained
+equations and induction theorem for the function.</p>
+<p>The termination conditions constructed by <code>Hol_defn</code> are
+for a function that takes a single tuple as an argument. This is an
+artifact of the way that recursive functions are modelled.</p>
+<p>A prettyprinter, which prints out a summary of the known information
+on the results of <code>Hol_defn</code>, has been installed in the
+interactive system.</p>
+<p><code>Hol_defn</code> may be found in <code>bossLib</code> and also
+in <code>Defn</code>.</p>
+<h3 id="failure">Failure</h3>
+<p><code>Hol_defn s q</code> fails if <code>s</code> is not an
+alphanumeric identifier.</p>
+<p><code>Hol_defn s q</code> fails if <code>q</code> fails to parse or
+typecheck.</p>
+<p><code>Hol_defn</code> may extract unsatisfiable termination
+conditions when asked to define a higher-order recursion involving a
+higher-order function that the termination condition extraction
+mechanism of <code>Hol_defn</code> is unaware of.</p>
+<h3 id="example">Example</h3>
+<p>Here we attempt to define a quick-sort function
+<code>qsort</code>:</p>
+<pre class="hol4"><code>   - Hol_defn &quot;qsort&quot;
+         `(qsort ___ [] = []) /\
+          (qsort ord (x::rst) =
+             APPEND (qsort ord (FILTER ($~ o ord x) rst))
+               (x :: qsort ord (FILTER (ord x) rst)))`;
+
+   &lt;&lt;HOL message: inventing new type variable names: &#39;a&gt;&gt;
+   &gt; val it =
+       HOL function definition (recursive)
+
+       Equation(s) :
+        [...]
+       |- (qsort v0 [] = []) /\
+          (qsort ord (x::rst) =
+           APPEND (qsort ord (FILTER ($~ o ord x) rst))
+             (x::qsort ord (FILTER (ord x) rst)))
+
+       Induction :
+        [...]
+       |- !P.
+            (!v0. P v0 []) /\
+            (!ord x rst.
+               P ord (FILTER ($~ o ord x) rst) /\
+               P ord (FILTER (ord x) rst) ==&gt; P ord (x::rst))
+              ==&gt; !v v1. P v v1
+
+       Termination conditions :
+         0. WF R
+         1. !rst x ord. R (ord,FILTER ($~ o ord x) rst) (ord,x::rst)
+         2. !rst x ord. R (ord,FILTER (ord x) rst) (ord,x::rst)</code></pre>
+<p>In the following we give an example of how to use
+<code>Hol_defn</code> to define a nested recursion. In processing this
+definition, an auxiliary function <code>N_aux</code> is defined. The
+termination conditions of <code>N</code> are phrased in terms of
+<code>N_aux</code> for technical reasons.</p>
+<pre class="hol4"><code>   - Hol_defn &quot;ninety1&quot;
+       `N x = if x&gt;100 then x-10
+                       else N(N(x+11))`;
+
+   &gt; val it =
+       HOL function definition (nested recursion)
+
+       Equation(s) :
+        [...] |- N x = (if x &gt; 100 then x - 10 else N (N (x + 11)))
+
+       Induction :
+        [...]
+       |- !P.
+            (!x. (~(x &gt; 100) ==&gt; P (x + 11)) /\
+                 (~(x &gt; 100) ==&gt; P (N (x + 11))) ==&gt; P x)
+            ==&gt;
+             !v. P v
+
+       Termination conditions :
+         0. WF R
+         1. !x. ~(x &gt; 100) ==&gt; R (x + 11) x
+         2. !x. ~(x &gt; 100) ==&gt; R (N_aux R (x + 11)) x</code></pre>
+<h3 id="comments">Comments</h3>
+<p>An invocation of <code>Hol_defn</code> is usually the first step in a
+multi-step process that ends with unconstrained recursion equations for
+a function, along with an induction theorem. <code>Hol_defn</code> is
+used to construct the function and synthesize its termination
+conditions; next, one invokes <code>tgoal</code> to set up a goal to
+prove termination of the function. The termination proof usually starts
+with an invocation of <code>WF_REL_TAC</code>. After the proof is over,
+the desired recursion equations and induction theorem are available for
+further use.</p>
+<p>It is occasionally important to understand, at least in part, how
+<code>Hol_defn</code> constructs termination constraints. In some cases,
+it is necessary for users to influence this process in order to have
+correct termination constraints extracted. The process is driven by
+so-called congruence theorems for particular HOL constants. For example,
+suppose we were interested in defining a ‘destructor-style’ version of
+the factorial function over natural numbers:</p>
+<pre class="hol4"><code>   fact n = if n=0 then 1 else n * fact (n-1).</code></pre>
+<p>In the absence of a congruence theorem for the ‘if-then-else’
+construct, <code>Hol_defn</code> would extract the termination
+constraints</p>
+<pre class="hol4"><code>   0. WF R
+   1. !n. R (n - 1) n</code></pre>
+<p>which are unprovable, because the context of the recursive call has
+not been taken account of. This example is in fact not a problem for
+HOL, since the following congruence theorem is known to
+<code>Hol_defn</code>:</p>
+<pre class="hol4"><code>   |- !b b&#39; x x&#39; y y&#39;.
+         (b = b&#39;) /\
+         (b&#39; ==&gt; (x = x&#39;)) /\
+         (~b&#39; ==&gt; (y = y&#39;)) ==&gt;
+         ((if b then x else y) = (if b&#39; then x&#39; else y&#39;))</code></pre>
+<p>This theorem is interpreted by <code>Hol_defn</code> as an ordered
+sequence of instructions to follow when the termination condition
+extractor hits an ‘if-then-else’. The theorem is read as follows:</p>
+<pre class="hol4"><code>   When an instance `if B then X else Y` is encountered while the
+   extractor traverses the function definition, do the following:
+
+     1. Go into B and extract termination conditions TCs(B) from
+        any recursive calls in it. This returns a theorem
+        TCs(B) |- B = B&#39;.
+
+     2. Assume B&#39; and extract termination conditions from any
+        recursive calls in X. This returns a theorem
+        TCs(X) |- X = X&#39;. Each element of TCs(X) will have
+        the form &quot;B&#39; ==&gt; M&quot;.
+
+     3. Assume ~B&#39; and extract termination conditions from any
+        recursive calls in Y. This returns a theorem
+        TCs(Y) |- Y = Y&#39;. Each element of TCs(Y) will have
+        the form &quot;~B&#39; ==&gt; M&quot;.
+
+     4. By equality reasoning with (1), (2), and (3), derive
+
+            TCs(B) u TCs(X) u TCs(Y)
+             |-
+            (if B then X else Y) = (if B&#39; then X&#39; else Y&#39;)
+
+     5. Replace &quot;if B then X else Y&quot; by &quot;if B&#39; then X&#39; else Y&#39;&quot;.</code></pre>
+<p>The accumulated termination conditions are propagated until the
+extraction process finishes, and appear as hypotheses in the final
+result. In our example, context is properly accounted for in recursive
+calls under either branch of an ‘if-then-else’. Thus the extracted
+termination conditions for <code>fact</code> are</p>
+<pre class="hol4"><code>   0. WF R
+   1. !n. ~(n = 0) ==&gt; R (n - 1) n</code></pre>
+<p>and are easy to prove.</p>
+<p>Now we discuss congruence theorems for higher-order functions. A
+‘higher-order’ recursion is one in which a higher-order function is used
+to apply the recursive function to arguments. In order for the correct
+termination conditions to be proved for such a recursion, congruence
+rules for the higher order function must be known to the termination
+condition extraction mechanism. Congruence rules for common higher-order
+functions, e.g., <code>MAP</code>, <code>EVERY</code>, and
+<code>EXISTS</code> for lists, are already known to the mechanism.
+However, at times, one must manually prove and install a congruence
+theorem for a higher-order function.</p>
+<p>For example, suppose we define a higher-order function
+<code>SIGMA</code> for summing the results of a function in a list. We
+then use <code>SIGMA</code> in the definition of a function for summing
+the results of a function in an arbitrarily (finitely) branching
+tree.</p>
+<pre class="hol4"><code>   - Define `(SIGMA f [] = 0) /\
+             (SIGMA f (h::t) = f h + SIGMA f t)`;
+
+
+   - Hol_datatype `ltree = Node of &#39;a =&gt; ltree list`;
+   &gt; val it = () : unit
+
+   - Defn.Hol_defn
+        &quot;ltree_sigma&quot;     (* higher order recursion *)
+        `ltree_sigma f (Node v tl) = f v + SIGMA (ltree_sigma f) tl`;
+
+   &gt; val it =
+     HOL function definition (recursive)
+
+       Equation(s) :
+        [..] |- ltree_sigma f (Node v tl)
+                  = f v + SIGMA (\a. ltree_sigma f a) tl
+
+       Induction :
+        [..] |- !P. (!f v tl. (!a. P f a) ==&gt; P f (Node v tl))
+                    ==&gt; !v v1. P v v1
+
+       Termination conditions :
+         0. WF R
+         1. !tl v f a. R (f,a) (f,Node v tl) : defn</code></pre>
+<p>The termination conditions for <code>ltree_sigma</code> seem to
+require finding a well-founded relation <code>R</code> such that the
+pair <code>(f,a)</code> is <code>R</code>-less than
+<code>(f, Node v tl)</code>. However, this is a hopeless task, since
+there is no relation between <code>a</code> and <code>Node v tl</code>,
+besides the fact that they are both <code>ltree</code>s. The termination
+condition extractor has not performed properly, because it didn’t know a
+congruence rule for <code>SIGMA</code>. Such a congruence theorem is the
+following:</p>
+<pre class="hol4"><code>   SIGMA_CONG =
+    |- !l1 l2 f g.
+         (l1=l2) /\ (!x. MEM x l2 ==&gt; (f x = g x)) ==&gt;
+         (SIGMA f l1 = SIGMA g l2)</code></pre>
+<p>Once <code>Hol_defn</code> has been told about this theorem, via
+<code>write_congs</code>, the termination conditions extracted for the
+definition are provable, since <code>a</code> is a proper subterm of
+<code>Node v tl</code>.</p>
+<pre class="hol4"><code>   - local open DefnBase
+     in
+     val _ = write_congs (SIGMA_CONG::read_congs())
+     end;
+
+   - Defn.Hol_defn
+        &quot;ltree_sigma&quot;
+        `ltree_sigma f (Node v tl) = f v + SIGMA (ltree_sigma f) tl`;
+
+   &gt; val it =
+       HOL function definition (recursive)
+
+       Equation(s) :  ...  (* as before *)
+       Induction :    ...  (* as before *)
+
+       Termination conditions :
+         0. WF R
+         1. !v f tl a. MEM a tl ==&gt; R (f,a) (f,Node v tl)</code></pre>
+<p>One final point : for every HOL datatype defined by application of
+<code>Hol_datatype</code>, a congruence theorem is automatically proved
+for the ‘case’ constant for that type, and stored in the
+<code>TypeBase</code>. For example, the following congruence theorem for
+<code>num_case</code> is stored in the <code>TypeBase</code>:</p>
+<pre class="hol4"><code>    |- !f&#39; f b&#39; b M&#39; M.
+         (M = M&#39;) /\
+         ((M&#39; = 0) ==&gt; (b = b&#39;)) /\
+         (!n. (M&#39; = SUC n) ==&gt; (f n = f&#39; n))
+        ==&gt;
+         (num_case b f M = num_case b&#39; f&#39; M&#39;)</code></pre>
+<p>This allows the contexts of recursive calls in branches of ‘case’
+expressions to be tracked.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Defn.tgoal.html"><code>Defn.tgoal</code></a>, <a
+href="Defn.tprove.html"><code>Defn.tprove</code></a>, <a
+href="bossLib.WF_REL_TAC.html"><code>bossLib.WF_REL_TAC</code></a>, <a
+href="bossLib.Define.html"><code>bossLib.Define</code></a>, <a
+href="bossLib.xDefine.html"><code>bossLib.xDefine</code></a>, <a
+href="bossLib.Hol_datatype.html"><code>bossLib.Hol_datatype</code></a></p>
+</body>
+</html>

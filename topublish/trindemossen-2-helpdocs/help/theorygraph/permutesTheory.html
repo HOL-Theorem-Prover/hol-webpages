@@ -1,0 +1,628 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: permutes</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "permutes"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "pred_setTheory.html"><span class="strong">pred_set</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">evenperm</span>
+    <td>
+    :(α -> α) -> bool
+    <tr><td> <span class="strong">inverse</span> <td> :(α -> β) -> β -> α
+    <tr><td> <span class="strong">permutation</span> <td> :(α -> α) -> bool
+    <tr><td>
+    <span class="strong">permutes</span>
+    <td>
+    :(α -> α) -> (α -> bool) -> bool
+    <tr><td> <span class="strong">swap</span> <td> :α # α -> α -> α
+    <tr><td> <span class="strong">swapseq</span> <td> :num -> (α -> α) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">@tempswapseq_def</span>
+<DD>
+<pre>
+⊢ swapseq =
+  (λa0 a1.
+       ∀swapseq'.
+         (∀a0 a1.
+            a0 = 0 ∧ a1 = I ∨
+            (∃a b p n. a0 = SUC n ∧ a1 = swap (a,b) ∘ p ∧ swapseq' n p ∧ a ≠ b) ⇒
+            swapseq' a0 a1) ⇒
+         swapseq' a0 a1)
+</pre>
+
+<DT><span class="strong">evenperm</span>
+<DD>
+<pre>
+⊢ ∀p. evenperm p ⇔ EVEN (@n. swapseq n p)
+</pre>
+
+<DT><span class="strong">inverse</span>
+<DD>
+<pre>
+⊢ ∀f. inverse f = (λy. @x. f x = y)
+</pre>
+
+<DT><span class="strong">permutation</span>
+<DD>
+<pre>
+⊢ ∀p. permutation p ⇔ ∃n. swapseq n p
+</pre>
+
+<DT><span class="strong">permutes</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ⇔ (∀x. x ∉ s ⇒ p x = x) ∧ ∀y. ∃!x. p x = y
+</pre>
+
+<DT><span class="strong">swap_def</span>
+<DD>
+<pre>
+⊢ ∀i j k. swap (i,j) k = if k = i then j else if k = j then i else k
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">CARD_PERMUTATIONS</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ CARD {p | p permutes s} = FACT (CARD s)
+</pre>
+
+<DT><span class="strong">EVENPERM_COMPOSE</span>
+<DD>
+<pre>
+⊢ ∀p q.
+    permutation p ∧ permutation q ⇒
+    (evenperm (p ∘ q) ⇔ (evenperm p ⇔ evenperm q))
+</pre>
+
+<DT><span class="strong">EVENPERM_I</span>
+<DD>
+<pre>
+⊢ evenperm I ⇔ T
+</pre>
+
+<DT><span class="strong">EVENPERM_INVERSE</span>
+<DD>
+<pre>
+⊢ ∀p. permutation p ⇒ (evenperm (inverse p) ⇔ evenperm p)
+</pre>
+
+<DT><span class="strong">EVENPERM_SWAP</span>
+<DD>
+<pre>
+⊢ ∀a b. evenperm (swap (a,b)) ⇔ a = b
+</pre>
+
+<DT><span class="strong">EVENPERM_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀n p b. swapseq n p ∧ (EVEN n ⇔ b) ⇒ (evenperm p ⇔ b)
+</pre>
+
+<DT><span class="strong">FINITE_PERMUTATIONS</span>
+<DD>
+<pre>
+⊢ ∀s. FINITE s ⇒ FINITE {p | p permutes s}
+</pre>
+
+<DT><span class="strong">FIXING_SWAPSEQ_DECREASE</span>
+<DD>
+<pre>
+⊢ ∀n p a b.
+    swapseq n p ∧ a ≠ b ∧ (swap (a,b) ∘ p) a = a ⇒
+    n ≠ 0 ∧ swapseq (n − 1) (swap (a,b) ∘ p)
+</pre>
+
+<DT><span class="strong">HAS_SIZE_PERMUTATIONS</span>
+<DD>
+<pre>
+⊢ ∀s n. s HAS_SIZE n ⇒ {p | p permutes s} HAS_SIZE FACT n
+</pre>
+
+<DT><span class="strong">IMAGE_COMPOSE_PERMUTATIONS_L</span>
+<DD>
+<pre>
+⊢ ∀s q. q permutes s ⇒ {q ∘ p | p permutes s} = {p | p permutes s}
+</pre>
+
+<DT><span class="strong">IMAGE_COMPOSE_PERMUTATIONS_R</span>
+<DD>
+<pre>
+⊢ ∀s q. q permutes s ⇒ {p ∘ q | p permutes s} = {p | p permutes s}
+</pre>
+
+<DT><span class="strong">IMAGE_INVERSE_PERMUTATIONS</span>
+<DD>
+<pre>
+⊢ ∀s. {inverse p | p permutes s} = {p | p permutes s}
+</pre>
+
+<DT><span class="strong">INJECTIVE_INVERSE</span>
+<DD>
+<pre>
+⊢ ∀f. (∀x y. f x = f y ⇒ x = y) ⇔ ∀x. inverse f (f x) = x
+</pre>
+
+<DT><span class="strong">INJECTIVE_INVERSE_o</span>
+<DD>
+<pre>
+⊢ ∀f. (∀x y. f x = f y ⇒ x = y) ⇔ inverse f ∘ f = I
+</pre>
+
+<DT><span class="strong">INVERSE_I</span>
+<DD>
+<pre>
+⊢ inverse I = I
+</pre>
+
+<DT><span class="strong">INVERSE_SWAP</span>
+<DD>
+<pre>
+⊢ ∀a b. inverse (swap (a,b)) = swap (a,b)
+</pre>
+
+<DT><span class="strong">INVERSE_UNIQUE_o</span>
+<DD>
+<pre>
+⊢ ∀f g. f ∘ g = I ∧ g ∘ f = I ⇒ inverse f = g
+</pre>
+
+<DT><span class="strong">PERMUTATION</span>
+<DD>
+<pre>
+⊢ ∀p. permutation p ⇔ (∀y. ∃!x. p x = y) ∧ FINITE {x | p x ≠ x}
+</pre>
+
+<DT><span class="strong">PERMUTATION_BIJECTIVE</span>
+<DD>
+<pre>
+⊢ ∀p. permutation p ⇒ ∀y. ∃!x. p x = y
+</pre>
+
+<DT><span class="strong">PERMUTATION_COMPOSE</span>
+<DD>
+<pre>
+⊢ ∀p q. permutation p ∧ permutation q ⇒ permutation (p ∘ q)
+</pre>
+
+<DT><span class="strong">PERMUTATION_COMPOSE_EQ</span>
+<DD>
+<pre>
+⊢ (∀p q. permutation p ⇒ (permutation (p ∘ q) ⇔ permutation q)) ∧
+  ∀p q. permutation q ⇒ (permutation (p ∘ q) ⇔ permutation p)
+</pre>
+
+<DT><span class="strong">PERMUTATION_COMPOSE_SWAP</span>
+<DD>
+<pre>
+⊢ (∀p a b. permutation (swap (a,b) ∘ p) ⇔ permutation p) ∧
+  ∀p a b. permutation (p ∘ swap (a,b)) ⇔ permutation p
+</pre>
+
+<DT><span class="strong">PERMUTATION_FINITE_SUPPORT</span>
+<DD>
+<pre>
+⊢ ∀p. permutation p ⇒ FINITE {x | p x ≠ x}
+</pre>
+
+<DT><span class="strong">PERMUTATION_I</span>
+<DD>
+<pre>
+⊢ permutation I
+</pre>
+
+<DT><span class="strong">PERMUTATION_INVERSE</span>
+<DD>
+<pre>
+⊢ ∀p. permutation p ⇒ permutation (inverse p)
+</pre>
+
+<DT><span class="strong">PERMUTATION_INVERSE_COMPOSE</span>
+<DD>
+<pre>
+⊢ ∀p q.
+    permutation p ∧ permutation q ⇒ inverse (p ∘ q) = inverse q ∘ inverse p
+</pre>
+
+<DT><span class="strong">PERMUTATION_INVERSE_WORKS</span>
+<DD>
+<pre>
+⊢ ∀p. permutation p ⇒ inverse p ∘ p = I ∧ p ∘ inverse p = I
+</pre>
+
+<DT><span class="strong">PERMUTATION_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀s p. FINITE s ∧ (∀y. ∃!x. p x = y) ∧ (∀x. x ∉ s ⇒ p x = x) ⇒ permutation p
+</pre>
+
+<DT><span class="strong">PERMUTATION_PERMUTES</span>
+<DD>
+<pre>
+⊢ ∀p. permutation p ⇔ ∃s. FINITE s ∧ p permutes s
+</pre>
+
+<DT><span class="strong">PERMUTATION_SWAP</span>
+<DD>
+<pre>
+⊢ ∀a b. permutation (swap (a,b))
+</pre>
+
+<DT><span class="strong">PERMUTES_COMPOSE</span>
+<DD>
+<pre>
+⊢ ∀p q s x. p permutes s ∧ q permutes s ⇒ q ∘ p permutes s
+</pre>
+
+<DT><span class="strong">PERMUTES_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀p. p permutes ∅ ⇔ p = I
+</pre>
+
+<DT><span class="strong">PERMUTES_FINITE_INJECTIVE</span>
+<DD>
+<pre>
+⊢ ∀s p.
+    FINITE s ⇒
+    (p permutes s ⇔
+     (∀x. x ∉ s ⇒ p x = x) ∧ (∀x. x ∈ s ⇒ p x ∈ s) ∧
+     ∀x y. x ∈ s ∧ y ∈ s ∧ p x = p y ⇒ x = y)
+</pre>
+
+<DT><span class="strong">PERMUTES_FINITE_SURJECTIVE</span>
+<DD>
+<pre>
+⊢ ∀s p.
+    FINITE s ⇒
+    (p permutes s ⇔
+     (∀x. x ∉ s ⇒ p x = x) ∧ (∀x. x ∈ s ⇒ p x ∈ s) ∧
+     ∀y. y ∈ s ⇒ ∃x. x ∈ s ∧ p x = y)
+</pre>
+
+<DT><span class="strong">PERMUTES_I</span>
+<DD>
+<pre>
+⊢ ∀s. I permutes s
+</pre>
+
+<DT><span class="strong">PERMUTES_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ⇒ IMAGE p s = s
+</pre>
+
+<DT><span class="strong">PERMUTES_INDUCT</span>
+<DD>
+<pre>
+⊢ ∀P s.
+    FINITE s ∧ P I ∧
+    (∀a b p. a ∈ s ∧ b ∈ s ∧ P p ∧ permutation p ⇒ P (swap (a,b) ∘ p)) ⇒
+    ∀p. p permutes s ⇒ P p
+</pre>
+
+<DT><span class="strong">PERMUTES_INJECTIVE</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ⇒ ∀x y. p x = p y ⇔ x = y
+</pre>
+
+<DT><span class="strong">PERMUTES_INSERT</span>
+<DD>
+<pre>
+⊢ {p | p permutes a INSERT s} =
+  IMAGE (λ(b,p). swap (a,b) ∘ p)
+    {(b,p) | b ∈ a INSERT s ∧ p ∈ {p | p permutes s}}
+</pre>
+
+<DT><span class="strong">PERMUTES_INSERT_LEMMA</span>
+<DD>
+<pre>
+⊢ ∀p a s. p permutes a INSERT s ⇒ swap (a,p a) ∘ p permutes s
+</pre>
+
+<DT><span class="strong">PERMUTES_INVERSE</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ⇒ inverse p permutes s
+</pre>
+
+<DT><span class="strong">PERMUTES_INVERSES</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ⇒ (∀x. p (inverse p x) = x) ∧ ∀x. inverse p (p x) = x
+</pre>
+
+<DT><span class="strong">PERMUTES_INVERSES_o</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ⇒ p ∘ inverse p = I ∧ inverse p ∘ p = I
+</pre>
+
+<DT><span class="strong">PERMUTES_INVERSE_EQ</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ⇒ ∀x y. inverse p y = x ⇔ p x = y
+</pre>
+
+<DT><span class="strong">PERMUTES_INVERSE_INVERSE</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ⇒ inverse (inverse p) = p
+</pre>
+
+<DT><span class="strong">PERMUTES_IN_COUNT</span>
+<DD>
+<pre>
+⊢ ∀p n i. p permutes count n ∧ i ∈ count n ⇒ p i < n
+</pre>
+
+<DT><span class="strong">PERMUTES_IN_IMAGE</span>
+<DD>
+<pre>
+⊢ ∀p s x. p permutes s ⇒ (p x ∈ s ⇔ x ∈ s)
+</pre>
+
+<DT><span class="strong">PERMUTES_NUMSET_GE</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ∧ (∀i. i ∈ s ⇒ i ≤ p i) ⇒ p = I
+</pre>
+
+<DT><span class="strong">PERMUTES_NUMSET_LE</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ∧ (∀i. i ∈ s ⇒ p i ≤ i) ⇒ p = I
+</pre>
+
+<DT><span class="strong">PERMUTES_SING</span>
+<DD>
+<pre>
+⊢ ∀p a. p permutes {a} ⇔ p = I
+</pre>
+
+<DT><span class="strong">PERMUTES_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀p s t. p permutes s ∧ s ⊆ t ⇒ p permutes t
+</pre>
+
+<DT><span class="strong">PERMUTES_SUPERSET</span>
+<DD>
+<pre>
+⊢ ∀p s t. p permutes s ∧ (∀x. x ∈ s DIFF t ⇒ p x = x) ⇒ p permutes t
+</pre>
+
+<DT><span class="strong">PERMUTES_SURJECTIVE</span>
+<DD>
+<pre>
+⊢ ∀p s. p permutes s ⇒ ∀y. ∃x. p x = y
+</pre>
+
+<DT><span class="strong">PERMUTES_SWAP</span>
+<DD>
+<pre>
+⊢ ∀a b s. a ∈ s ∧ b ∈ s ⇒ swap (a,b) permutes s
+</pre>
+
+<DT><span class="strong">PERMUTES_UNIV</span>
+<DD>
+<pre>
+⊢ ∀p. p permutes 𝕌(:α) ⇔ ∀y. ∃!x. p x = y
+</pre>
+
+<DT><span class="strong">SURJECTIVE_INVERSE</span>
+<DD>
+<pre>
+⊢ ∀f. (∀y. ∃x. f x = y) ⇔ ∀y. f (inverse f y) = y
+</pre>
+
+<DT><span class="strong">SURJECTIVE_INVERSE_o</span>
+<DD>
+<pre>
+⊢ ∀f. (∀y. ∃x. f x = y) ⇔ f ∘ inverse f = I
+</pre>
+
+<DT><span class="strong">SWAPSEQ_COMPOSE</span>
+<DD>
+<pre>
+⊢ ∀n p m q. swapseq n p ∧ swapseq m q ⇒ swapseq (n + m) (p ∘ q)
+</pre>
+
+<DT><span class="strong">SWAPSEQ_ENDSWAP</span>
+<DD>
+<pre>
+⊢ ∀n p a b. swapseq n p ∧ a ≠ b ⇒ swapseq (SUC n) (p ∘ swap (a,b))
+</pre>
+
+<DT><span class="strong">SWAPSEQ_EVEN_EVEN</span>
+<DD>
+<pre>
+⊢ ∀m n p. swapseq m p ∧ swapseq n p ⇒ (EVEN m ⇔ EVEN n)
+</pre>
+
+<DT><span class="strong">SWAPSEQ_I</span>
+<DD>
+<pre>
+⊢ swapseq 0 I
+</pre>
+
+<DT><span class="strong">SWAPSEQ_IDENTITY_EVEN</span>
+<DD>
+<pre>
+⊢ ∀n. swapseq n I ⇒ EVEN n
+</pre>
+
+<DT><span class="strong">SWAPSEQ_INVERSE</span>
+<DD>
+<pre>
+⊢ ∀n p. swapseq n p ⇒ swapseq n (inverse p)
+</pre>
+
+<DT><span class="strong">SWAPSEQ_INVERSE_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀n p. swapseq n p ⇒ ∃q. swapseq n q ∧ p ∘ q = I ∧ q ∘ p = I
+</pre>
+
+<DT><span class="strong">SWAPSEQ_SWAP</span>
+<DD>
+<pre>
+⊢ ∀a b. swapseq (if a = b then 0 else 1) (swap (a,b))
+</pre>
+
+<DT><span class="strong">SWAP_COMMON</span>
+<DD>
+<pre>
+⊢ ∀a b c. a ≠ c ∧ b ≠ c ⇒ swap (a,b) ∘ swap (a,c) = swap (b,c) ∘ swap (a,b)
+</pre>
+
+<DT><span class="strong">SWAP_COMMON'</span>
+<DD>
+<pre>
+⊢ ∀a b c. a ≠ b ∧ a ≠ c ⇒ swap (a,c) ∘ swap (b,c) = swap (b,c) ∘ swap (a,b)
+</pre>
+
+<DT><span class="strong">SWAP_GALOIS</span>
+<DD>
+<pre>
+⊢ ∀a b x y. x = swap (a,b) y ⇔ y = swap (a,b) x
+</pre>
+
+<DT><span class="strong">SWAP_GENERAL</span>
+<DD>
+<pre>
+⊢ ∀a b c d.
+    a ≠ b ∧ c ≠ d ⇒
+    swap (a,b) ∘ swap (c,d) = I ∨
+    ∃x y z.
+      x ≠ a ∧ y ≠ a ∧ z ≠ a ∧ x ≠ y ∧
+      swap (a,b) ∘ swap (c,d) = swap (x,y) ∘ swap (a,z)
+</pre>
+
+<DT><span class="strong">SWAP_IDEMPOTENT</span>
+<DD>
+<pre>
+⊢ ∀a b. swap (a,b) ∘ swap (a,b) = I
+</pre>
+
+<DT><span class="strong">SWAP_INDEPENDENT</span>
+<DD>
+<pre>
+⊢ ∀a b c d.
+    a ≠ c ∧ a ≠ d ∧ b ≠ c ∧ b ≠ d ⇒
+    swap (a,b) ∘ swap (c,d) = swap (c,d) ∘ swap (a,b)
+</pre>
+
+<DT><span class="strong">SWAP_REFL</span>
+<DD>
+<pre>
+⊢ ∀a. swap (a,a) = I
+</pre>
+
+<DT><span class="strong">SWAP_SYM</span>
+<DD>
+<pre>
+⊢ ∀a b. swap (a,b) = swap (b,a)
+</pre>
+
+<DT><span class="strong">inverse_alt_LINV</span>
+<DD>
+<pre>
+⊢ ∀f. (∀y. ∃x. f x = y) ∧ (∀x y. f x = f y ⇒ x = y) ⇒ inverse f = LINV f 𝕌(:α)
+</pre>
+
+<DT><span class="strong">permutes_alt</span>
+<DD>
+<pre>
+⊢ ∀f s. f permutes s ⇔ f PERMUTES s ∧ ∀x. x ∉ s ⇒ f x = x
+</pre>
+
+<DT><span class="strong">permutes_alt_univ</span>
+<DD>
+<pre>
+⊢ ∀f. f permutes 𝕌(:α) ⇔ f PERMUTES 𝕌(:α)
+</pre>
+
+<DT><span class="strong">permutes_imp</span>
+<DD>
+<pre>
+⊢ ∀f s. f permutes s ⇒ f PERMUTES s
+</pre>
+
+<DT><span class="strong">swapseq_cases</span>
+<DD>
+<pre>
+⊢ ∀a0 a1.
+    swapseq a0 a1 ⇔
+    a0 = 0 ∧ a1 = I ∨
+    ∃a b p n. a0 = SUC n ∧ a1 = swap (a,b) ∘ p ∧ swapseq n p ∧ a ≠ b
+</pre>
+
+<DT><span class="strong">swapseq_ind</span>
+<DD>
+<pre>
+⊢ ∀swapseq'.
+    swapseq' 0 I ∧
+    (∀a b p n. swapseq' n p ∧ a ≠ b ⇒ swapseq' (SUC n) (swap (a,b) ∘ p)) ⇒
+    ∀a0 a1. swapseq a0 a1 ⇒ swapseq' a0 a1
+</pre>
+
+<DT><span class="strong">swapseq_rules</span>
+<DD>
+<pre>
+⊢ swapseq 0 I ∧
+  ∀a b p n. swapseq n p ∧ a ≠ b ⇒ swapseq (SUC n) (swap (a,b) ∘ p)
+</pre>
+
+<DT><span class="strong">swapseq_strongind</span>
+<DD>
+<pre>
+⊢ ∀swapseq'.
+    swapseq' 0 I ∧
+    (∀a b p n.
+       swapseq n p ∧ swapseq' n p ∧ a ≠ b ⇒ swapseq' (SUC n) (swap (a,b) ∘ p)) ⇒
+    ∀a0 a1. swapseq a0 a1 ⇒ swapseq' a0 a1
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Term.raw_match</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="raw_match"><code>raw_match</code></h2>
+<pre class="hol4"><code>Term.raw_match :
+  hol_type list -&gt; term set -&gt;
+  term -&gt; term -&gt;
+  (term,term) subst * (hol_type,hol_type) subst -&gt;
+    ((term,term) subst * term set) *
+    ((hol_type,hol_type) subst * hol_type list)</code></pre>
+<hr />
+<p>Primitive term matcher.</p>
+<p>The most primitive matching algorithm for HOL terms is
+<code>raw_match</code>. An invocation
+<code>raw_match avoid_tys avoid_tms pat ob (tmS,tyS)</code>, if it
+succeeds, returns a substitution pair
+<code>((TmS,TmID),(TyS,TyID))</code> such that</p>
+<pre class="hol4"><code>   aconv (subst TmS&#39; (inst TyS pat)) ob.</code></pre>
+<p>where <code>TmS'</code> is <code>TmS</code> instantiated by
+<code>TyS</code>. The arguments <code>avoid_tys</code> and
+<code>avoid_tms</code> specify type and term variables in
+<code>pat</code> that are not allowed to become <code>redex</code>es in
+<code>S</code> and <code>T</code>.</p>
+<p>The pair <code>(tmS,tyS)</code> is an accumulator argument. This
+allows <code>raw_match</code> to be folded through lists of terms to be
+matched. <code>(TmS,TyS)</code> must agree with <code>(tmS,tyS)</code>.
+This means that if there is a <code>{redex,residue}</code> in
+<code>TmS</code> and also a <code>{redex,residue}</code> in
+<code>tmS</code> so that both <code>redex</code> fields are equal, then
+the <code>residue</code> fields must be alpha-convertible. Similarly for
+types: if there is a <code>{redex,residue}</code> in <code>TyS</code>
+and also a <code>{redex,residue}</code> in <code>tyS</code> so that both
+<code>redex</code> fields are equal, then the <code>residue</code>
+fields must also be equal. If these conditions hold, then the
+result-pair <code>(TmS,TyS)</code> includes <code>(tmS,tyS)</code>.</p>
+<p>Finally, note that the result also includes a set (resp. a list) of
+term and type variables, accompanying the substitutions. These represent
+identity bindings that have occurred in the process of doing the match.
+If <code>raw_match</code> is to be folded across multiple problems,
+these output values will need to be merged with <code>avoid_tms</code>
+and <code>avoid_tys</code> respectively on the next call so that they
+cannot be instantiated a second time. Because they are identity
+bindings, they do not need to be referred to in validating the central
+identity above.</p>
+<h3 id="failure">Failure</h3>
+<p><code>raw_match</code> will fail if no <code>TmS</code> and
+<code>TyS</code> meeting the above requirements can be found. If a match
+<code>(TmS,TyS)</code> between <code>pat</code> and <code>ob</code> can
+be found, but elements of <code>avoid_tys</code> would appear as redexes
+in <code>TyS</code> or elements of <code>avoid_tms</code> would appear
+as redexes in <code>TmS</code>, then <code>raw_match</code> will also
+fail.</p>
+<h3 id="example">Example</h3>
+<p>We first perform a match that requires type instantitations, and also
+alpha-convertibility.</p>
+<pre class="hol4"><code>   &gt; val ((S,_),(T,_)) =
+       raw_match [] empty_varset
+                 (Term `\x:&#39;a. x = f (y:&#39;b)`)
+                 (Term `\a.    a = ~p`) ([],[]);
+   val S =
+     [{redex = `(y :&#39;b)`,       residue = `(p :bool)`},
+      {redex = `(f :&#39;b -&gt; &#39;a)`, residue = `$~`}] : ...
+
+   val T =
+     [{redex = `:&#39;b`, residue = `:bool`},
+      {redex = `:&#39;a`, residue = `:bool`}] : ...</code></pre>
+<p>One of the main differences between <code>raw_match</code> and more
+refined derivatives of it, is that the returned substitutions are
+un-normalized by <code>raw_match</code>. If one naively applied
+<code>(S,T)</code> to <code>\x:'a. x = f (y:'b)</code>, type
+instantiation with <code>T</code> would be applied first, yielding
+<code>\x:bool. x = f (y:bool)</code>. Then substitution with
+<code>S</code> would be applied, unsuccessfully, since both
+<code>f</code> and <code>y</code> in the pattern term have been type
+instantiated, but the corresponding elements of the substitution
+haven’t. Thus, higher level operations building on
+<code>raw_match</code> typically instantiate <code>S</code> by
+<code>T</code> to get <code>S'</code> before applying
+<code>(S',T)</code> to the pattern term. This can be achieved by using
+<code>norm_subst</code>. However, <code>raw_match</code> exposes this
+level of detail to the programmer.</p>
+<h3 id="comments">Comments</h3>
+<p>Higher level matchers are generally preferable, but
+<code>raw_match</code> is occasionally useful when programming inference
+rules.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Term.match_term.html"><code>Term.match_term</code></a>, <a
+href="Term.match_terml.html"><code>Term.match_terml</code></a>, <a
+href="Term.norm_subst.html"><code>Term.norm_subst</code></a>, <a
+href="Term.subst.html"><code>Term.subst</code></a>, <a
+href="Term.inst.html"><code>Term.inst</code></a>, <a
+href="Type.raw_match_type.html"><code>Type.raw_match_type</code></a>, <a
+href="Type.match_type.html"><code>Type.match_type</code></a>, <a
+href="Type.match_typel.html"><code>Type.match_typel</code></a>, <a
+href="Type.type_subst.html"><code>Type.type_subst</code></a></p>
+</body>
+</html>

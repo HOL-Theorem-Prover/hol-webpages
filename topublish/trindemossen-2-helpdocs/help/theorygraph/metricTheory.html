@@ -1,0 +1,1150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: metric</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "metric"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "real_sigmaTheory.html"><span class="strong">real_sigma</span></a>&nbsp;&nbsp;
+    <a href = "topologyTheory.html"><span class="strong">topology</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Type <th> Arity<tr><td>
+    <span class="strong">metric</span>
+    <td>
+    1
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">B</span>
+    <td>
+    :α metric -> α # real -> α -> bool
+    <tr><td>
+    <span class="strong">Lipschitz_condition</span>
+    <td>
+    :α metric # β metric -> real -> (α -> β) -> bool
+    <tr><td>
+    <span class="strong">Lipschitz_continuous_map</span>
+    <td>
+    :α metric # β metric -> (α -> β) -> bool
+    <tr><td>
+    <span class="strong">bounded_metric</span>
+    <td>
+    :α metric -> α metric
+    <tr><td> <span class="strong">dist</span> <td> :α metric -> α # α -> real
+    <tr><td>
+    <span class="strong">fsigma_in</span>
+    <td>
+    :α topology -> (α -> bool) -> bool
+    <tr><td>
+    <span class="strong">gdelta_in</span>
+    <td>
+    :α topology -> (α -> bool) -> bool
+    <tr><td> <span class="strong">ismet</span> <td> :(α # α -> real) -> bool
+    <tr><td>
+    <span class="strong">mcball</span>
+    <td>
+    :α metric -> α # real -> α -> bool
+    <tr><td>
+    <span class="strong">metric</span>
+    <td>
+    :(α # α -> real) -> α metric
+    <tr><td>
+    <span class="strong">metrizable_space</span>
+    <td>
+    :α topology -> bool
+    <tr><td> <span class="strong">mr1</span> <td> :real metric
+    <tr><td> <span class="strong">mr2</span> <td> :(real # real) metric
+    <tr><td> <span class="strong">mspace</span> <td> :α metric -> α -> bool
+    <tr><td> <span class="strong">mtop</span> <td> :α metric -> α topology
+    <tr><td> <span class="strong">real_dist</span> <td> :real # real -> real
+    <tr><td>
+    <span class="strong">set_dist</span>
+    <td>
+    :α metric -> (α -> bool) # (α -> bool) -> real
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">Lipschitz_condition_def</span>
+<DD>
+<pre>
+⊢ ∀E1 E2 k f.
+    Lipschitz_condition (E1,E2) k f ⇔
+    ∀x y. dist E2 (f x,f y) ≤ k * dist E1 (x,y)
+</pre>
+
+<DT><span class="strong">Lipschitz_continuous_map</span>
+<DD>
+<pre>
+⊢ ∀E1 E2 f.
+    Lipschitz_continuous_map (E1,E2) f ⇔
+    ∃k. 0 < k ∧ Lipschitz_condition (E1,E2) k f
+</pre>
+
+<DT><span class="strong">ball</span>
+<DD>
+<pre>
+⊢ ∀m x e. mball m (x,e) = (λy. dist m (x,y) < e)
+</pre>
+
+<DT><span class="strong">bounded_metric_def</span>
+<DD>
+<pre>
+⊢ ∀m. bounded_metric m = metric (λ(x,y). dist m (x,y) / (1 + dist m (x,y)))
+</pre>
+
+<DT><span class="strong">dist_def</span>
+<DD>
+<pre>
+⊢ dist = dist mr1
+</pre>
+
+<DT><span class="strong">fsigma_in</span>
+<DD>
+<pre>
+⊢ ∀top. fsigma_in top = countable UNION_OF closed_in top
+</pre>
+
+<DT><span class="strong">gdelta_in</span>
+<DD>
+<pre>
+⊢ ∀top.
+    gdelta_in top =
+    countable INTERSECTION_OF open_in top relative_to topspace top
+</pre>
+
+<DT><span class="strong">ismet</span>
+<DD>
+<pre>
+⊢ ∀m. ismet m ⇔
+      (∀x y. m (x,y) = 0 ⇔ x = y) ∧ ∀x y z. m (y,z) ≤ m (x,y) + m (x,z)
+</pre>
+
+<DT><span class="strong">mcball</span>
+<DD>
+<pre>
+⊢ ∀m x r.
+    mcball m (x,r) = {y | x ∈ mspace m ∧ y ∈ mspace m ∧ dist m (x,y) ≤ r}
+</pre>
+
+<DT><span class="strong">metric_TY_DEF</span>
+<DD>
+<pre>
+⊢ ∃rep. TYPE_DEFINITION ismet rep
+</pre>
+
+<DT><span class="strong">metric_tybij</span>
+<DD>
+<pre>
+⊢ (∀a. metric (dist a) = a) ∧ ∀r. ismet r ⇔ dist (metric r) = r
+</pre>
+
+<DT><span class="strong">metrizable_space</span>
+<DD>
+<pre>
+⊢ ∀top. metrizable_space top ⇔ ∃m. top = mtop m
+</pre>
+
+<DT><span class="strong">mr1</span>
+<DD>
+<pre>
+⊢ mr1 = metric (λ(x,y). abs (y − x))
+</pre>
+
+<DT><span class="strong">mr2</span>
+<DD>
+<pre>
+⊢ mr2 = metric (λ((x1,x2),y1,y2). sqrt ((x1 − y1)² + (x2 − y2)²))
+</pre>
+
+<DT><span class="strong">mspace</span>
+<DD>
+<pre>
+⊢ ∀m. mspace m = topspace (mtop m)
+</pre>
+
+<DT><span class="strong">mtop</span>
+<DD>
+<pre>
+⊢ ∀m. mtop m =
+      topology (λS'. ∀x. S' x ⇒ ∃e. 0 < e ∧ ∀y. dist m (x,y) < e ⇒ S' y)
+</pre>
+
+<DT><span class="strong">set_dist_def</span>
+<DD>
+<pre>
+⊢ ∀d s t.
+    set_dist d (s,t) =
+    if s = ∅ ∨ t = ∅ then 0 else inf {dist d (x,y) | x ∈ s ∧ y ∈ t}
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">BALL_NEIGH</span>
+<DD>
+<pre>
+⊢ ∀m x e. 0 < e ⇒ neigh (mtop m) (mball m (x,e),x)
+</pre>
+
+<DT><span class="strong">BALL_OPEN</span>
+<DD>
+<pre>
+⊢ ∀m x e. 0 < e ⇒ open_in (mtop m) (mball m (x,e))
+</pre>
+
+<DT><span class="strong">CENTRE_IN_MBALL</span>
+<DD>
+<pre>
+⊢ ∀m x r. 0 < r ∧ x ∈ mspace m ⇒ x ∈ mball m (x,r)
+</pre>
+
+<DT><span class="strong">CENTRE_IN_MBALL_EQ</span>
+<DD>
+<pre>
+⊢ ∀m x r. x ∈ mball m (x,r) ⇔ x ∈ mspace m ∧ 0 < r
+</pre>
+
+<DT><span class="strong">CENTRE_IN_MCBALL</span>
+<DD>
+<pre>
+⊢ ∀m x r. 0 ≤ r ∧ x ∈ mspace m ⇒ x ∈ mcball m (x,r)
+</pre>
+
+<DT><span class="strong">CENTRE_IN_MCBALL_EQ</span>
+<DD>
+<pre>
+⊢ ∀m x r. x ∈ mcball m (x,r) ⇔ x ∈ mspace m ∧ 0 ≤ r
+</pre>
+
+<DT><span class="strong">CLOSED_IMP_FSIGMA_IN</span>
+<DD>
+<pre>
+⊢ ∀top s. closed_in top s ⇒ fsigma_in top s
+</pre>
+
+<DT><span class="strong">CLOSED_IMP_GDELTA_IN</span>
+<DD>
+<pre>
+⊢ ∀top s. metrizable_space top ∧ closed_in top s ⇒ gdelta_in top s
+</pre>
+
+<DT><span class="strong">CLOSED_IN_MCBALL</span>
+<DD>
+<pre>
+⊢ ∀m x r. closed_in (mtop m) (mcball m (x,r))
+</pre>
+
+<DT><span class="strong">CLOSED_IN_METRIC</span>
+<DD>
+<pre>
+⊢ ∀m c.
+    closed_in (mtop m) c ⇔
+    c ⊆ mspace m ∧
+    ∀x. x ∈ mspace m DIFF c ⇒ ∃r. 0 < r ∧ DISJOINT c (mball m (x,r))
+</pre>
+
+<DT><span class="strong">CONTINUOUS_MAP_FROM_METRIC</span>
+<DD>
+<pre>
+⊢ ∀m top f.
+    continuous_map (mtop m,top) f ⇔
+    IMAGE f (mspace m) ⊆ topspace top ∧
+    ∀a. a ∈ mspace m ⇒
+        ∀u. open_in top u ∧ f a ∈ u ⇒
+            ∃d. 0 < d ∧ ∀x. x ∈ mspace m ∧ dist m (a,x) < d ⇒ f x ∈ u
+</pre>
+
+<DT><span class="strong">CONTINUOUS_MAP_TO_METRIC</span>
+<DD>
+<pre>
+⊢ ∀t m f.
+    continuous_map (t,mtop m) f ⇔
+    ∀x. x ∈ topspace t ⇒
+        ∀r. 0 < r ⇒
+            ∃u. open_in t u ∧ x ∈ u ∧ ∀y. y ∈ u ⇒ f y ∈ mball m (f x,r)
+</pre>
+
+<DT><span class="strong">DIST_0</span>
+<DD>
+<pre>
+⊢ ∀x. dist (x,0) = abs x ∧ dist (0,x) = abs x
+</pre>
+
+<DT><span class="strong">DIST_EQ</span>
+<DD>
+<pre>
+⊢ ∀w x y z. dist (w,x) = dist (y,z) ⇔ (dist (w,x))² = (dist (y,z))²
+</pre>
+
+<DT><span class="strong">DIST_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀x y. dist (x,y) = 0 ⇔ x = y
+</pre>
+
+<DT><span class="strong">DIST_LE_0</span>
+<DD>
+<pre>
+⊢ ∀x y. dist (x,y) ≤ 0 ⇔ x = y
+</pre>
+
+<DT><span class="strong">DIST_MUL</span>
+<DD>
+<pre>
+⊢ ∀x y c. dist (c * x,c * y) = abs c * dist (x,y)
+</pre>
+
+<DT><span class="strong">DIST_NZ</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ y ⇔ 0 < dist (x,y)
+</pre>
+
+<DT><span class="strong">DIST_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀x y. 0 ≤ dist (x,y)
+</pre>
+
+<DT><span class="strong">DIST_POS_LT</span>
+<DD>
+<pre>
+⊢ ∀x y. x ≠ y ⇒ 0 < dist (x,y)
+</pre>
+
+<DT><span class="strong">DIST_REFL</span>
+<DD>
+<pre>
+⊢ ∀x. dist (x,x) = 0
+</pre>
+
+<DT><span class="strong">DIST_SYM</span>
+<DD>
+<pre>
+⊢ ∀x y. dist (x,y) = dist (y,x)
+</pre>
+
+<DT><span class="strong">DIST_TRIANGLE</span>
+<DD>
+<pre>
+⊢ ∀x y z. dist (x,z) ≤ dist (x,y) + dist (y,z)
+</pre>
+
+<DT><span class="strong">DIST_TRIANGLE_ADD</span>
+<DD>
+<pre>
+⊢ ∀x x' y y'. dist (x + y,x' + y') ≤ dist (x,x') + dist (y,y')
+</pre>
+
+<DT><span class="strong">DIST_TRIANGLE_ADD_HALF</span>
+<DD>
+<pre>
+⊢ ∀x x' y y'.
+    dist (x,x') < e / 2 ∧ dist (y,y') < e / 2 ⇒ dist (x + y,x' + y') < e
+</pre>
+
+<DT><span class="strong">DIST_TRIANGLE_ALT</span>
+<DD>
+<pre>
+⊢ ∀x y z. dist (y,z) ≤ dist (x,y) + dist (x,z)
+</pre>
+
+<DT><span class="strong">DIST_TRIANGLE_HALF_L</span>
+<DD>
+<pre>
+⊢ ∀x1 x2 y. dist (x1,y) < e / 2 ∧ dist (x2,y) < e / 2 ⇒ dist (x1,x2) < e
+</pre>
+
+<DT><span class="strong">DIST_TRIANGLE_HALF_R</span>
+<DD>
+<pre>
+⊢ ∀x1 x2 y. dist (y,x1) < e / 2 ∧ dist (y,x2) < e / 2 ⇒ dist (x1,x2) < e
+</pre>
+
+<DT><span class="strong">DIST_TRIANGLE_LE</span>
+<DD>
+<pre>
+⊢ ∀x y z e. dist (x,z) + dist (y,z) ≤ e ⇒ dist (x,y) ≤ e
+</pre>
+
+<DT><span class="strong">DIST_TRIANGLE_LT</span>
+<DD>
+<pre>
+⊢ ∀x y z e. dist (x,z) + dist (y,z) < e ⇒ dist (x,y) < e
+</pre>
+
+<DT><span class="strong">EXISTS_METRIZABLE_SPACE</span>
+<DD>
+<pre>
+⊢ ∀P. (∃top. metrizable_space top ∧ P top (topspace top)) ⇔
+      ∃m. P (mtop m) (mspace m)
+</pre>
+
+<DT><span class="strong">FORALL_METRIC_TOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀P. (∀m. P (mtop m) (mspace m)) ⇔
+      ∀top. metrizable_space top ⇒ P top (topspace top)
+</pre>
+
+<DT><span class="strong">FORALL_METRIZABLE_SPACE</span>
+<DD>
+<pre>
+⊢ ∀P. (∀top. metrizable_space top ⇒ P top (topspace top)) ⇔
+      ∀m. P (mtop m) (mspace m)
+</pre>
+
+<DT><span class="strong">FORALL_POS_MONO</span>
+<DD>
+<pre>
+⊢ ∀P. (∀d e. d < e ∧ P d ⇒ P e) ∧ (∀n. n ≠ 0 ⇒ P (&n)⁻¹) ⇒ ∀e. 0 < e ⇒ P e
+</pre>
+
+<DT><span class="strong">FORALL_POS_MONO_1</span>
+<DD>
+<pre>
+⊢ ∀P. (∀d e. d < e ∧ P d ⇒ P e) ∧ (∀n. P (&n + 1)⁻¹) ⇒ ∀e. 0 < e ⇒ P e
+</pre>
+
+<DT><span class="strong">FORALL_POS_MONO_1_EQ</span>
+<DD>
+<pre>
+⊢ ∀P. (∀d e. d < e ∧ P d ⇒ P e) ⇒ ((∀e. 0 < e ⇒ P e) ⇔ ∀n. P (&n + 1)⁻¹)
+</pre>
+
+<DT><span class="strong">FORALL_POS_MONO_EQ</span>
+<DD>
+<pre>
+⊢ ∀P. (∀d e. d < e ∧ P d ⇒ P e) ⇒ ((∀e. 0 < e ⇒ P e) ⇔ ∀n. n ≠ 0 ⇒ P (&n)⁻¹)
+</pre>
+
+<DT><span class="strong">FORALL_SUC</span>
+<DD>
+<pre>
+⊢ (∀n. n ≠ 0 ⇒ P n) ⇔ ∀n. P (SUC n)
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_ASCENDING</span>
+<DD>
+<pre>
+⊢ ∀top s.
+    fsigma_in top s ⇔
+    ∃c. (∀n. closed_in top (c n)) ∧ (∀n. c n ⊆ c (n + 1)) ∧
+        BIGUNION {c n | n ∈ 𝕌(:num)} = s
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_DIFF</span>
+<DD>
+<pre>
+⊢ ∀top s t. fsigma_in top s ∧ gdelta_in top t ⇒ fsigma_in top (s DIFF t)
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀top. fsigma_in top ∅
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_FSIGMA_SUBTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀top s t.
+    fsigma_in top s ⇒
+    (fsigma_in (subtopology top s) t ⇔ fsigma_in top t ∧ t ⊆ s)
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_GDELTA_IN</span>
+<DD>
+<pre>
+⊢ ∀top s.
+    fsigma_in top s ⇔ s ⊆ topspace top ∧ gdelta_in top (topspace top DIFF s)
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_INTER</span>
+<DD>
+<pre>
+⊢ ∀top s t. fsigma_in top s ∧ fsigma_in top t ⇒ fsigma_in top (s ∩ t)
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀top s. fsigma_in top relative_to s = fsigma_in (subtopology top s)
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_RELATIVE_TO_TOPSPACE</span>
+<DD>
+<pre>
+⊢ ∀top. fsigma_in top relative_to topspace top = fsigma_in top
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀top s. fsigma_in top s ⇒ s ⊆ topspace top
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_SUBTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀top u s. fsigma_in (subtopology top u) s ⇔ ∃t. fsigma_in top t ∧ s = t ∩ u
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_TOPSPACE</span>
+<DD>
+<pre>
+⊢ ∀top. fsigma_in top (topspace top)
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_UNION</span>
+<DD>
+<pre>
+⊢ ∀top s t. fsigma_in top s ∧ fsigma_in top t ⇒ fsigma_in top (s ∪ t)
+</pre>
+
+<DT><span class="strong">FSIGMA_IN_UNIONS</span>
+<DD>
+<pre>
+⊢ ∀top t.
+    countable t ∧ (∀s. s ∈ t ⇒ fsigma_in top s) ⇒ fsigma_in top (BIGUNION t)
+</pre>
+
+<DT><span class="strong">GDELTA_IN_ALT</span>
+<DD>
+<pre>
+⊢ ∀top s.
+    gdelta_in top s ⇔
+    s ⊆ topspace top ∧ (countable INTERSECTION_OF open_in top) s
+</pre>
+
+<DT><span class="strong">GDELTA_IN_DESCENDING</span>
+<DD>
+<pre>
+⊢ ∀top s.
+    gdelta_in top s ⇔
+    ∃c. (∀n. open_in top (c n)) ∧ (∀n. c (n + 1) ⊆ c n) ∧
+        BIGINTER {c n | n ∈ 𝕌(:num)} = s
+</pre>
+
+<DT><span class="strong">GDELTA_IN_DIFF</span>
+<DD>
+<pre>
+⊢ ∀top s t. gdelta_in top s ∧ fsigma_in top t ⇒ gdelta_in top (s DIFF t)
+</pre>
+
+<DT><span class="strong">GDELTA_IN_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀top. gdelta_in top ∅
+</pre>
+
+<DT><span class="strong">GDELTA_IN_FSIGMA_IN</span>
+<DD>
+<pre>
+⊢ ∀top s.
+    gdelta_in top s ⇔ s ⊆ topspace top ∧ fsigma_in top (topspace top DIFF s)
+</pre>
+
+<DT><span class="strong">GDELTA_IN_GDELTA_SUBTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀top s t.
+    gdelta_in top s ⇒
+    (gdelta_in (subtopology top s) t ⇔ gdelta_in top t ∧ t ⊆ s)
+</pre>
+
+<DT><span class="strong">GDELTA_IN_INTER</span>
+<DD>
+<pre>
+⊢ ∀top s t. gdelta_in top s ∧ gdelta_in top t ⇒ gdelta_in top (s ∩ t)
+</pre>
+
+<DT><span class="strong">GDELTA_IN_INTERS</span>
+<DD>
+<pre>
+⊢ ∀top t.
+    countable t ∧ t ≠ ∅ ∧ (∀s. s ∈ t ⇒ gdelta_in top s) ⇒
+    gdelta_in top (BIGINTER t)
+</pre>
+
+<DT><span class="strong">GDELTA_IN_RELATIVE_TO</span>
+<DD>
+<pre>
+⊢ ∀top s. gdelta_in top relative_to s = gdelta_in (subtopology top s)
+</pre>
+
+<DT><span class="strong">GDELTA_IN_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀top s. gdelta_in top s ⇒ s ⊆ topspace top
+</pre>
+
+<DT><span class="strong">GDELTA_IN_SUBTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀top u s. gdelta_in (subtopology top u) s ⇔ ∃t. gdelta_in top t ∧ s = t ∩ u
+</pre>
+
+<DT><span class="strong">GDELTA_IN_TOPSPACE</span>
+<DD>
+<pre>
+⊢ ∀top. gdelta_in top (topspace top)
+</pre>
+
+<DT><span class="strong">GDELTA_IN_UNION</span>
+<DD>
+<pre>
+⊢ ∀top s t. gdelta_in top s ∧ gdelta_in top t ⇒ gdelta_in top (s ∪ t)
+</pre>
+
+<DT><span class="strong">IN_MBALL</span>
+<DD>
+<pre>
+⊢ ∀m x y r. y ∈ mball m (x,r) ⇔ x ∈ mspace m ∧ y ∈ mspace m ∧ dist m (x,y) < r
+</pre>
+
+<DT><span class="strong">IN_MCBALL</span>
+<DD>
+<pre>
+⊢ ∀m x r y.
+    y ∈ mcball m (x,r) ⇔ x ∈ mspace m ∧ y ∈ mspace m ∧ dist m (x,y) ≤ r
+</pre>
+
+<DT><span class="strong">ISMET_R1</span>
+<DD>
+<pre>
+⊢ ismet (λ(x,y). abs (y − x))
+</pre>
+
+<DT><span class="strong">ISMET_R2</span>
+<DD>
+<pre>
+⊢ ismet (λ((x1,x2),y1,y2). sqrt ((x1 − y1)² + (x2 − y2)²))
+</pre>
+
+<DT><span class="strong">IS_TOPOLOGY_METRIC_TOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀m. istopology
+        {u | u ⊆ mspace m ∧ ∀x. x ∈ u ⇒ ∃r. 0 < r ∧ mball m (x,r) ⊆ u}
+</pre>
+
+<DT><span class="strong">Lipschitz_continuous_map_def</span>
+<DD>
+<pre>
+⊢ ∀E1 E2 f.
+    Lipschitz_continuous_map (E1,E2) f ⇔
+    ∃k. 0 < k ∧ ∀x y. dist E2 (f x,f y) ≤ k * dist E1 (x,y)
+</pre>
+
+<DT><span class="strong">Lipschitz_continuous_map_exists</span>
+<DD>
+<pre>
+⊢ ∀E A e.
+    0 < e ⇒
+    ∃f. Lipschitz_continuous_map (E,mr1) f ∧ (∀x. 0 ≤ f x ∧ f x ≤ 1) ∧
+        (∀x. x ∈ A ⇒ f x = 1) ∧ ∀x. e ≤ set_dist E ({x},A) ⇒ f x = 0
+</pre>
+
+<DT><span class="strong">Lipschitz_continuous_map_imp_continuous_map</span>
+<DD>
+<pre>
+⊢ ∀E1 E2 f.
+    Lipschitz_continuous_map (E1,E2) f ⇒ continuous_map (mtop E1,mtop E2) f
+</pre>
+
+<DT><span class="strong">Lipschitz_continuous_map_set_dist</span>
+<DD>
+<pre>
+⊢ ∀E s. Lipschitz_continuous_map (E,mr1) (λx. set_dist E ({x},s))
+</pre>
+
+<DT><span class="strong">MBALL_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀m x r. r ≤ 0 ⇒ mball m (x,r) = ∅
+</pre>
+
+<DT><span class="strong">MBALL_SUBSET_MCBALL</span>
+<DD>
+<pre>
+⊢ ∀m x r. mball m (x,r) ⊆ mcball m (x,r)
+</pre>
+
+<DT><span class="strong">MBALL_SUBSET_MSPACE</span>
+<DD>
+<pre>
+⊢ ∀m x r. mball m (x,r) ⊆ mspace m
+</pre>
+
+<DT><span class="strong">MCBALL_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀m x r. r < 0 ⇒ mcball m (x,r) = ∅
+</pre>
+
+<DT><span class="strong">MCBALL_EMPTY_ALT</span>
+<DD>
+<pre>
+⊢ ∀m x r. x ∉ mspace m ⇒ mcball m (x,r) = ∅
+</pre>
+
+<DT><span class="strong">MCBALL_EQ_EMPTY</span>
+<DD>
+<pre>
+⊢ ∀m x r. mcball m (x,r) = ∅ ⇔ x ∉ mspace m ∨ r < 0
+</pre>
+
+<DT><span class="strong">MCBALL_SUBSET</span>
+<DD>
+<pre>
+⊢ ∀m x y a b.
+    y ∈ mspace m ∧ dist m (x,y) + a ≤ b ⇒ mcball m (x,a) ⊆ mcball m (y,b)
+</pre>
+
+<DT><span class="strong">MCBALL_SUBSET_CONCENTRIC</span>
+<DD>
+<pre>
+⊢ ∀m x a b. a ≤ b ⇒ mcball m (x,a) ⊆ mcball m (x,b)
+</pre>
+
+<DT><span class="strong">MCBALL_SUBSET_MSPACE</span>
+<DD>
+<pre>
+⊢ ∀m x r. mcball m (x,r) ⊆ mspace m
+</pre>
+
+<DT><span class="strong">MDIST_EQ_0</span>
+<DD>
+<pre>
+⊢ ∀m x y. dist m (x,y) = 0 ⇔ x = y
+</pre>
+
+<DT><span class="strong">MDIST_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀m x y. 0 ≤ dist m (x,y)
+</pre>
+
+<DT><span class="strong">MDIST_REFL</span>
+<DD>
+<pre>
+⊢ ∀m x. dist m (x,x) = 0
+</pre>
+
+<DT><span class="strong">MDIST_SYM</span>
+<DD>
+<pre>
+⊢ ∀m x y. dist m (x,y) = dist m (y,x)
+</pre>
+
+<DT><span class="strong">MDIST_TRIANGLE</span>
+<DD>
+<pre>
+⊢ ∀m x y z. dist m (x,z) ≤ dist m (x,y) + dist m (y,z)
+</pre>
+
+<DT><span class="strong">MDIST_TRIANGLE_SUB</span>
+<DD>
+<pre>
+⊢ ∀m x y z. dist m (x,y) − dist m (y,z) ≤ dist m (x,z)
+</pre>
+
+<DT><span class="strong">METRIC_CONTINUOUS_MAP</span>
+<DD>
+<pre>
+⊢ ∀m m' f.
+    continuous_map (mtop m,mtop m') f ⇔
+    (∀x. x ∈ mspace m ⇒ f x ∈ mspace m') ∧
+    ∀a e.
+      0 < e ∧ a ∈ mspace m ⇒
+      ∃d. 0 < d ∧ ∀x. x ∈ mspace m ∧ dist m (a,x) < d ⇒ dist m' (f a,f x) < e
+</pre>
+
+<DT><span class="strong">METRIC_ISMET</span>
+<DD>
+<pre>
+⊢ ∀m. ismet (dist m)
+</pre>
+
+<DT><span class="strong">METRIC_NZ</span>
+<DD>
+<pre>
+⊢ ∀m x y. x ≠ y ⇒ 0 < dist m (x,y)
+</pre>
+
+<DT><span class="strong">METRIC_POS</span>
+<DD>
+<pre>
+⊢ ∀m x y. 0 ≤ dist m (x,y)
+</pre>
+
+<DT><span class="strong">METRIC_SAME</span>
+<DD>
+<pre>
+⊢ ∀m x. dist m (x,x) = 0
+</pre>
+
+<DT><span class="strong">METRIC_SYM</span>
+<DD>
+<pre>
+⊢ ∀m x y. dist m (x,y) = dist m (y,x)
+</pre>
+
+<DT><span class="strong">METRIC_TRIANGLE</span>
+<DD>
+<pre>
+⊢ ∀m x y z. dist m (x,z) ≤ dist m (x,y) + dist m (y,z)
+</pre>
+
+<DT><span class="strong">METRIC_ZERO</span>
+<DD>
+<pre>
+⊢ ∀m x y. dist m (x,y) = 0 ⇔ x = y
+</pre>
+
+<DT><span class="strong">METRIZABLE_SPACE_MTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀m. metrizable_space (mtop m)
+</pre>
+
+<DT><span class="strong">MR1_ADD</span>
+<DD>
+<pre>
+⊢ ∀x d. dist mr1 (x,x + d) = abs d
+</pre>
+
+<DT><span class="strong">MR1_ADD_LT</span>
+<DD>
+<pre>
+⊢ ∀x d. 0 < d ⇒ dist mr1 (x,x + d) = d
+</pre>
+
+<DT><span class="strong">MR1_ADD_POS</span>
+<DD>
+<pre>
+⊢ ∀x d. 0 ≤ d ⇒ dist mr1 (x,x + d) = d
+</pre>
+
+<DT><span class="strong">MR1_BETWEEN1</span>
+<DD>
+<pre>
+⊢ ∀x y z. x < z ∧ dist mr1 (x,y) < z − x ⇒ y < z
+</pre>
+
+<DT><span class="strong">MR1_DEF</span>
+<DD>
+<pre>
+⊢ ∀x y. dist mr1 (x,y) = abs (y − x)
+</pre>
+
+<DT><span class="strong">MR1_LIMPT</span>
+<DD>
+<pre>
+⊢ ∀x. limpt (mtop mr1) x 𝕌(:real)
+</pre>
+
+<DT><span class="strong">MR1_SUB</span>
+<DD>
+<pre>
+⊢ ∀x d. dist mr1 (x,x − d) = abs d
+</pre>
+
+<DT><span class="strong">MR1_SUB_LE</span>
+<DD>
+<pre>
+⊢ ∀x d. 0 ≤ d ⇒ dist mr1 (x,x − d) = d
+</pre>
+
+<DT><span class="strong">MR1_SUB_LT</span>
+<DD>
+<pre>
+⊢ ∀x d. 0 < d ⇒ dist mr1 (x,x − d) = d
+</pre>
+
+<DT><span class="strong">MR2_DEF</span>
+<DD>
+<pre>
+⊢ ∀x1 x2 y1 y2. dist mr2 ((x1,x2),y1,y2) = sqrt ((x1 − y1)² + (x2 − y2)²)
+</pre>
+
+<DT><span class="strong">MR2_MIRROR</span>
+<DD>
+<pre>
+⊢ ∀x1 x2 y1 y2. dist mr2 ((-x1,-x2),-y1,-y2) = dist mr2 ((x1,x2),y1,y2)
+</pre>
+
+<DT><span class="strong">MTOP_LIMPT</span>
+<DD>
+<pre>
+⊢ ∀m x S'.
+    limpt (mtop m) x S' ⇔ ∀e. 0 < e ⇒ ∃y. x ≠ y ∧ S' y ∧ dist m (x,y) < e
+</pre>
+
+<DT><span class="strong">MTOP_OPEN</span>
+<DD>
+<pre>
+⊢ ∀S' m.
+    open_in (mtop m) S' ⇔ ∀x. S' x ⇒ ∃e. 0 < e ∧ ∀y. dist m (x,y) < e ⇒ S' y
+</pre>
+
+<DT><span class="strong">OPEN_IMP_FSIGMA_IN</span>
+<DD>
+<pre>
+⊢ ∀top s. metrizable_space top ∧ open_in top s ⇒ fsigma_in top s
+</pre>
+
+<DT><span class="strong">OPEN_IMP_GDELTA_IN</span>
+<DD>
+<pre>
+⊢ ∀top s. open_in top s ⇒ gdelta_in top s
+</pre>
+
+<DT><span class="strong">OPEN_IN_MBALL</span>
+<DD>
+<pre>
+⊢ ∀m x r. open_in (mtop m) (mball m (x,r))
+</pre>
+
+<DT><span class="strong">OPEN_IN_MTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀m u.
+    open_in (mtop m) u ⇔
+    u ⊆ mspace m ∧ ∀x. x ∈ u ⇒ ∃r. 0 < r ∧ mball m (x,r) ⊆ u
+</pre>
+
+<DT><span class="strong">REAL_CHOOSE_DIST</span>
+<DD>
+<pre>
+⊢ ∀x e. 0 ≤ e ⇒ ∃y. dist (x,y) = e
+</pre>
+
+<DT><span class="strong">REAL_LE_SET_DIST</span>
+<DD>
+<pre>
+⊢ ∀s t d.
+    s ≠ ∅ ∧ t ≠ ∅ ∧ (∀x y. x ∈ s ∧ y ∈ t ⇒ d ≤ dist m (x,y)) ⇒
+    d ≤ set_dist m (s,t)
+</pre>
+
+<DT><span class="strong">REAL_LE_SET_DIST_EQ</span>
+<DD>
+<pre>
+⊢ ∀d s t.
+    d ≤ set_dist m (s,t) ⇔
+    (∀x y. x ∈ s ∧ y ∈ t ⇒ d ≤ dist m (x,y)) ∧ (s = ∅ ∨ t = ∅ ⇒ d ≤ 0)
+</pre>
+
+<DT><span class="strong">REAL_SET_DIST_LT_EXISTS</span>
+<DD>
+<pre>
+⊢ ∀s t b.
+    s ≠ ∅ ∧ t ≠ ∅ ∧ set_dist m (s,t) < b ⇒
+    ∃x y. x ∈ s ∧ y ∈ t ∧ dist m (x,y) < b
+</pre>
+
+<DT><span class="strong">SET_DIST_EMPTY</span>
+<DD>
+<pre>
+⊢ (∀t. set_dist m (∅,t) = 0) ∧ ∀s. set_dist m (s,∅) = 0
+</pre>
+
+<DT><span class="strong">SET_DIST_EQ_0_CLOSED</span>
+<DD>
+<pre>
+⊢ ∀s x. closed_in (mtop m) s ⇒ (set_dist m ({x},s) = 0 ⇔ s = ∅ ∨ x ∈ s)
+</pre>
+
+<DT><span class="strong">SET_DIST_LE_DIST</span>
+<DD>
+<pre>
+⊢ ∀s t x y. x ∈ s ∧ y ∈ t ⇒ set_dist m (s,t) ≤ dist m (x,y)
+</pre>
+
+<DT><span class="strong">SET_DIST_LE_SING</span>
+<DD>
+<pre>
+⊢ ∀s t x. x ∈ s ⇒ set_dist m (s,t) ≤ set_dist m ({x},t)
+</pre>
+
+<DT><span class="strong">SET_DIST_LIPSCHITZ</span>
+<DD>
+<pre>
+⊢ ∀s t x y. abs (set_dist m ({x},s) − set_dist m ({y},s)) ≤ dist m (x,y)
+</pre>
+
+<DT><span class="strong">SET_DIST_POS_LE</span>
+<DD>
+<pre>
+⊢ ∀s t. 0 ≤ set_dist m (s,t)
+</pre>
+
+<DT><span class="strong">SET_DIST_REFL</span>
+<DD>
+<pre>
+⊢ ∀s. set_dist m (s,s) = 0
+</pre>
+
+<DT><span class="strong">SET_DIST_SINGS</span>
+<DD>
+<pre>
+⊢ ∀x y. set_dist m ({x},{y}) = dist m (x,y)
+</pre>
+
+<DT><span class="strong">SET_DIST_SING_IN_SET</span>
+<DD>
+<pre>
+⊢ ∀x s. x ∈ s ⇒ set_dist m ({x},s) = 0
+</pre>
+
+<DT><span class="strong">SET_DIST_SUBSETS_EQ</span>
+<DD>
+<pre>
+⊢ ∀s t s' t'.
+    s' ⊆ s ∧ t' ⊆ t ∧
+    (∀x y.
+       x ∈ s ∧ y ∈ t ⇒
+       ∃x' y'. x' ∈ s' ∧ y' ∈ t' ∧ dist m (x',y') ≤ dist m (x,y)) ⇒
+    set_dist m (s',t') = set_dist m (s,t)
+</pre>
+
+<DT><span class="strong">SET_DIST_SUBSET_LEFT</span>
+<DD>
+<pre>
+⊢ ∀s t u. s ≠ ∅ ∧ s ⊆ t ⇒ set_dist m (t,u) ≤ set_dist m (s,u)
+</pre>
+
+<DT><span class="strong">SET_DIST_SUBSET_RIGHT</span>
+<DD>
+<pre>
+⊢ ∀s t u. t ≠ ∅ ∧ t ⊆ u ⇒ set_dist m (s,u) ≤ set_dist m (s,t)
+</pre>
+
+<DT><span class="strong">SET_DIST_SYM</span>
+<DD>
+<pre>
+⊢ ∀s t. set_dist m (s,t) = set_dist m (t,s)
+</pre>
+
+<DT><span class="strong">SET_DIST_TRIANGLE</span>
+<DD>
+<pre>
+⊢ ∀s a t. set_dist m (s,t) ≤ set_dist m (s,{a}) + set_dist m ({a},t)
+</pre>
+
+<DT><span class="strong">SET_DIST_UNIQUE</span>
+<DD>
+<pre>
+⊢ ∀s t a b d.
+    a ∈ s ∧ b ∈ t ∧ dist m (a,b) = d ∧
+    (∀x y. x ∈ s ∧ y ∈ t ⇒ dist m (a,b) ≤ dist m (x,y)) ⇒
+    set_dist m (s,t) = d
+</pre>
+
+<DT><span class="strong">SET_DIST_UNIV</span>
+<DD>
+<pre>
+⊢ (∀s. set_dist m (s,𝕌(:α)) = 0) ∧ ∀t. set_dist m (𝕌(:α),t) = 0
+</pre>
+
+<DT><span class="strong">SET_DIST_ZERO</span>
+<DD>
+<pre>
+⊢ ∀s t. ¬DISJOINT s t ⇒ set_dist m (s,t) = 0
+</pre>
+
+<DT><span class="strong">TOPSPACE_MTOP</span>
+<DD>
+<pre>
+⊢ topspace (mtop m) = 𝕌(:α)
+</pre>
+
+<DT><span class="strong">TOPSPACE_MTOPOLOGY</span>
+<DD>
+<pre>
+⊢ ∀m. topspace (mtop m) = mspace m
+</pre>
+
+<DT><span class="strong">bounded_metric_alt</span>
+<DD>
+<pre>
+⊢ ∀m x y. dist m (x,y) / (1 + dist m (x,y)) = 1 − (1 + dist m (x,y))⁻¹
+</pre>
+
+<DT><span class="strong">bounded_metric_ismet</span>
+<DD>
+<pre>
+⊢ ∀m. ismet (λ(x,y). dist m (x,y) / (1 + dist m (x,y)))
+</pre>
+
+<DT><span class="strong">bounded_metric_lt_1</span>
+<DD>
+<pre>
+⊢ ∀m x y. dist (bounded_metric m) (x,y) < 1
+</pre>
+
+<DT><span class="strong">bounded_metric_thm</span>
+<DD>
+<pre>
+⊢ ∀m x y. dist (bounded_metric m) (x,y) = dist m (x,y) / (1 + dist m (x,y))
+</pre>
+
+<DT><span class="strong">dist</span>
+<DD>
+<pre>
+⊢ ∀x y. dist (x,y) = abs (x − y)
+</pre>
+
+<DT><span class="strong">mball</span>
+<DD>
+<pre>
+⊢ ∀m x r. mball m (x,r) = {y | x ∈ mspace m ∧ y ∈ mspace m ∧ dist m (x,y) < r}
+</pre>
+
+<DT><span class="strong">mtop_istopology</span>
+<DD>
+<pre>
+⊢ ∀m. istopology (λS'. ∀x. S' x ⇒ ∃e. 0 < e ∧ ∀y. dist m (x,y) < e ⇒ S' y)
+</pre>
+
+<DT><span class="strong">mtopology</span>
+<DD>
+<pre>
+⊢ ∀m. mtop m =
+      topology {u | u ⊆ mspace m ∧ ∀x. x ∈ u ⇒ ∃r. 0 < r ∧ mball m (x,r) ⊆ u}
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

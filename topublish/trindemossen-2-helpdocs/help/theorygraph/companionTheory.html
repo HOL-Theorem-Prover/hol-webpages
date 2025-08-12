@@ -1,0 +1,486 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: companion</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "companion"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "fixedPointTheory.html"><span class="strong">fixedPoint</span></a>&nbsp;&nbsp;
+    <a href = "holTheory.html"><span class="strong">hol</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">B_join</span>
+    <td>
+    :α poset -> (α -> α) -> ((α -> α) -> α -> α) -> bool
+    <tr><td>
+    <span class="strong">companion</span>
+    <td>
+    :α poset -> (α -> α) -> (α -> α) -> bool
+    <tr><td>
+    <span class="strong">compatible</span>
+    <td>
+    :α poset -> (α -> α) -> (α -> α) -> bool
+    <tr><td>
+    <span class="strong">endo</span>
+    <td>
+    :α poset -> (α -> α) -> bool
+    <tr><td>
+    <span class="strong">endo_lift</span>
+    <td>
+    :α poset -> (α -> α) poset
+    <tr><td>
+    <span class="strong">higher_compat</span>
+    <td>
+    :(((α -> bool) -> α -> bool) -> (α -> bool) -> α -> bool) ->
+    ((α -> bool) -> α -> bool) -> bool
+    <tr><td>
+    <span class="strong">higher_monotone</span>
+    <td>
+    :(((α -> bool) -> β -> bool) -> γ -> δ -> bool) -> bool
+    <tr><td>
+    <span class="strong">lift_rel</span>
+    <td>
+    :(α -> bool) # (β -> γ -> bool) -> (α -> β) -> (α -> γ) -> bool
+    <tr><td>
+    <span class="strong">set_B</span>
+    <td>
+    :(α -> β -> bool) -> (α -> α) -> (β -> bool) -> β -> bool
+    <tr><td>
+    <span class="strong">set_T</span>
+    <td>
+    :((α -> bool) -> α -> bool) ->
+    ((α -> bool) -> α -> bool) -> (α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">set_companion</span>
+    <td>
+    :((α -> bool) -> α -> bool) -> (α -> bool) -> α -> bool
+    <tr><td>
+    <span class="strong">set_compatible</span>
+    <td>
+    :((α -> bool) -> α -> bool) -> ((α -> bool) -> α -> bool) -> bool
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">B_join_def</span>
+<DD>
+<pre>
+⊢ ∀s r b B.
+    B_join (s,r) b B ⇔
+    function (endo (s,r)) (endo (s,r)) B ∧ monotonic (endo_lift (s,r)) B ∧
+    ∀g x.
+      lub (s,r) {f x | endo (s,r) f ∧ lift_rel (s,r) (f ∘ b) (b ∘ g)} (B g x)
+</pre>
+
+<DT><span class="strong">companion_def</span>
+<DD>
+<pre>
+⊢ ∀s r b t.
+    companion (s,r) b t ⇔
+    function s s t ∧ ∀x. lub (s,r) {f x | compatible (s,r) b f} (t x)
+</pre>
+
+<DT><span class="strong">compatible_def</span>
+<DD>
+<pre>
+⊢ ∀s r b f.
+    compatible (s,r) b f ⇔
+    function s s f ∧ monotonic (s,r) f ∧ lift_rel (s,r) (f ∘ b) (b ∘ f)
+</pre>
+
+<DT><span class="strong">endo_def</span>
+<DD>
+<pre>
+⊢ ∀s r f.
+    endo (s,r) f ⇔
+    monotonic (s,r) f ∧ ∀x. if s x then s (f x) else f x = @y. ¬s y
+</pre>
+
+<DT><span class="strong">endo_lift_def</span>
+<DD>
+<pre>
+⊢ ∀s r. endo_lift (s,r) = (endo (s,r),lift_rel (s,r))
+</pre>
+
+<DT><span class="strong">higher_compat_def</span>
+<DD>
+<pre>
+⊢ ∀fn b.
+    higher_compat fn b ⇔
+    (∀f. monotone f ⇒ monotone (fn f)) ∧ higher_monotone fn ∧
+    ∀f X. monotone f ⇒ fn (set_B b f) X ⊆ set_B b (fn f) X
+</pre>
+
+<DT><span class="strong">higher_monotone</span>
+<DD>
+<pre>
+⊢ ∀fn.
+    higher_monotone fn ⇔
+    ∀f g. monotone f ∧ monotone g ∧ (∀X. f X ⊆ g X) ⇒ ∀X. fn f X ⊆ fn g X
+</pre>
+
+<DT><span class="strong">lift_rel</span>
+<DD>
+<pre>
+⊢ ∀s r f g. lift_rel (s,r) f g ⇔ ∀x. s x ⇒ r (f x) (g x)
+</pre>
+
+<DT><span class="strong">set_B_def</span>
+<DD>
+<pre>
+⊢ ∀b. set_B b = (λg X. BIGUNION {f X | monotone f ∧ ∀Y. f (b Y) ⊆ b (g Y)})
+</pre>
+
+<DT><span class="strong">set_T_def</span>
+<DD>
+<pre>
+⊢ ∀b. set_T b =
+      (λf X. BIGUNION {fn f X | fn | monotone (fn f) ∧ higher_compat fn b})
+</pre>
+
+<DT><span class="strong">set_companion_def</span>
+<DD>
+<pre>
+⊢ ∀b X. set_companion b X = BIGUNION {f X | set_compatible b f}
+</pre>
+
+<DT><span class="strong">set_compatible_def</span>
+<DD>
+<pre>
+⊢ ∀b f. set_compatible b f ⇔ monotone f ∧ ∀X. f (b X) ⊆ b (f X)
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">B_greatest_fixpoint_is_companion</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ endo (s,r) b ∧ endo (s,r) t ∧ companion (s,r) b t ∧
+  B_join (s,r) b B ⇒
+  po_gfp (endo_lift (s,r)) B t
+</pre>
+
+<DT><span class="strong">Bf_compatible_f</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ endo (s,r) b ∧ endo (s,r) f ∧ B_join (s,r) b B ⇒
+  lift_rel (s,r) (B f ∘ b) (b ∘ f)
+</pre>
+
+<DT><span class="strong">Tf_idem</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ endo (s,r) b ∧ B_join (s,r) b B ∧ endo (s,r) t ∧
+  companion (s,r) b t ∧ companion (endo_lift (s,r)) B T' ∧
+  bottom (endo_lift (s,r)) bot ∧ endo (s,r) f ⇒
+  T' f ∘ T' f = T' f
+</pre>
+
+<DT><span class="strong">companion_bot_gfp</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ monotonic (s,r) b ∧ function s s b ∧ bottom (s,r) bot ∧
+  po_gfp (s,r) b gfix ∧ companion (s,r) b t ⇒
+  t bot = gfix
+</pre>
+
+<DT><span class="strong">companion_coinduct</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ monotonic (s,r) b ∧ function s s b ∧ companion (s,r) b t ∧
+  po_gfp (s,r) b gfix ∧ s x ∧ r x ((b ∘ t) x) ⇒
+  r x gfix
+</pre>
+
+<DT><span class="strong">companion_expansive</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ function s s b ∧ monotonic (s,r) b ∧ companion (s,r) b t ∧ s x ⇒
+  r x (t x)
+</pre>
+
+<DT><span class="strong">companion_idem</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ function s s b ∧ monotonic (s,r) b ∧ companion (s,r) b t ∧ s x ⇒
+  t (t x) = t x
+</pre>
+
+<DT><span class="strong">companion_mono</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ function s s b ∧ monotonic (s,r) b ∧ companion (s,r) b t ⇒
+  monotonic (s,r) t
+</pre>
+
+<DT><span class="strong">compatible_B_functional_postfix</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ endo (s,r) b ∧ B_join (s,r) b B ∧ endo (s,r) f ⇒
+  (lift_rel (s,r) f (B f) ⇔ lift_rel (s,r) (f ∘ b) (b ∘ f))
+</pre>
+
+<DT><span class="strong">compatible_below_companion</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ compatible (s,r) b f ∧ companion (s,r) b t ⇒
+  lift_rel (s,r) f t
+</pre>
+
+<DT><span class="strong">compatible_companion</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ function s s b ∧ monotonic (s,r) b ∧ companion (s,r) b t ⇒
+  compatible (s,r) b t
+</pre>
+
+<DT><span class="strong">compatible_compose</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ function s s b ∧ monotonic (s,r) b ∧ compatible (s,r) b f ∧
+  compatible (s,r) b g ⇒
+  compatible (s,r) b (f ∘ g)
+</pre>
+
+<DT><span class="strong">compatible_const_gfp</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ function s s b ∧ monotonic (s,r) b ∧ po_gfp (s,r) b fp ⇒
+  compatible (s,r) b (K fp)
+</pre>
+
+<DT><span class="strong">compatible_id</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ function s s b ∧ monotonic (s,r) b ⇒ compatible (s,r) b I
+</pre>
+
+<DT><span class="strong">compatible_self</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ function s s b ∧ monotonic (s,r) b ⇒ compatible (s,r) b b
+</pre>
+
+<DT><span class="strong">doubling_compatible_B</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ endo (s,r) b ∧ B_join (s,r) b B ⇒
+  compatible (endo_lift (s,r)) B (λf. f ∘ f)
+</pre>
+
+<DT><span class="strong">endo_comp</span>
+<DD>
+<pre>
+⊢ endo (s,r) f ∧ endo (s,r) g ⇒ endo (s,r) (f ∘ g)
+</pre>
+
+<DT><span class="strong">endo_function</span>
+<DD>
+<pre>
+⊢ endo (s,r) f ⇒ function s s f
+</pre>
+
+<DT><span class="strong">endo_in</span>
+<DD>
+<pre>
+⊢ endo (s,r) t ∧ s x ⇒ s (t x)
+</pre>
+
+<DT><span class="strong">endo_poset</span>
+<DD>
+<pre>
+⊢ poset (s,r) ⇒ poset (endo_lift (s,r))
+</pre>
+
+<DT><span class="strong">enhanced_gfp</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ monotonic (s,r) b ∧ function s s b ∧ po_gfp (s,r) b gfix ∧
+  companion (s,r) b t ∧ po_gfp (s,r) (b ∘ t) efix ⇒
+  efix = gfix
+</pre>
+
+<DT><span class="strong">lift_rel_comp</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ function s s g ∧ function s s f ∧ function s s f' ∧
+  function s s g' ∧ monotonic (s,r) f ∧ monotonic (s,r) f' ∧
+  lift_rel (s,r) f f' ∧ lift_rel (s,r) g g' ⇒
+  lift_rel (s,r) (f ∘ g) (f' ∘ g')
+</pre>
+
+<DT><span class="strong">lub_is_gfp</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ function s s f ∧ monotonic (s,r) f ∧
+  lub (s,r) {x | r x (f x)} l ⇒
+  po_gfp (s,r) f l
+</pre>
+
+<DT><span class="strong">param_coind</span>
+<DD>
+<pre>
+⊢ complete (s,r) ∧ complete (endo_lift (s,r)) ∧ poset (s,r) ∧ endo (s,r) b ∧
+  companion (s,r) b t ∧ endo (s,r) t ∧ B_join (s,r) b B ∧
+  companion (endo_lift (s,r)) B T' ∧ po_gfp (s,r) b gfix ∧ s x ∧ s y ∧
+  lub (s,r) {x; y} xy ⇒
+  r y (b (t xy)) ⇒
+  r y (t x)
+</pre>
+
+<DT><span class="strong">param_coind_done</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ monotonic (s,r) b ∧ function s s b ∧ companion (s,r) b t ⇒
+  s x ∧ s y ∧ r y x ⇒
+  r y (t x)
+</pre>
+
+<DT><span class="strong">param_coind_init</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ monotonic (s,r) b ∧ function s s b ∧ bottom (s,r) bot ∧
+  po_gfp (s,r) b gfix ∧ companion (s,r) b t ⇒
+  r x (t bot) ⇒
+  r x gfix
+</pre>
+
+<DT><span class="strong">param_coind_upto_f</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ monotonic (s,r) b ∧ function s s b ∧ companion (s,r) b t ⇒
+  function s s f ∧ (∀x. r (f x) (t x)) ⇒
+  s x ∧ s y ∧ r y (f (t x)) ⇒
+  r y (t x)
+</pre>
+
+<DT><span class="strong">set_companion</span>
+<DD>
+<pre>
+⊢ companion (𝕌(:α -> bool),$SUBSET) b (set_companion b)
+</pre>
+
+<DT><span class="strong">set_companion_coinduct</span>
+<DD>
+<pre>
+⊢ monotone b ∧ X ⊆ (b ∘ set_companion b) X ⇒ X ⊆ gfp b
+</pre>
+
+<DT><span class="strong">set_companion_compatible</span>
+<DD>
+<pre>
+⊢ monotone b ⇒ set_compatible b (set_companion b)
+</pre>
+
+<DT><span class="strong">set_compatible</span>
+<DD>
+<pre>
+⊢ set_compatible b f ⇒ compatible (𝕌(:α -> bool),$SUBSET) b f
+</pre>
+
+<DT><span class="strong">set_compatible_compose</span>
+<DD>
+<pre>
+⊢ monotone b ⇒
+  set_compatible b f ∧ set_compatible b g ⇒
+  set_compatible b (f ∘ g)
+</pre>
+
+<DT><span class="strong">set_compatible_enhance</span>
+<DD>
+<pre>
+⊢ monotone b ∧ set_compatible b f ∧ Y ⊆ f X ⇒ Y ⊆ set_companion b X
+</pre>
+
+<DT><span class="strong">set_compatible_id</span>
+<DD>
+<pre>
+⊢ monotone b ⇒ set_compatible b I
+</pre>
+
+<DT><span class="strong">set_compatible_self</span>
+<DD>
+<pre>
+⊢ monotone b ⇒ set_compatible b b
+</pre>
+
+<DT><span class="strong">set_gfp_sub_companion</span>
+<DD>
+<pre>
+⊢ monotone b ⇒ gfp b ⊆ set_companion b x
+</pre>
+
+<DT><span class="strong">set_higher_complete</span>
+<DD>
+<pre>
+⊢ complete (endo_lift (𝕌(:α -> bool),$SUBSET))
+</pre>
+
+<DT><span class="strong">set_param_coind</span>
+<DD>
+<pre>
+⊢ monotone b ⇒ Y ⊆ b (set_companion b (X ∪ Y)) ⇒ Y ⊆ set_companion b X
+</pre>
+
+<DT><span class="strong">set_param_coind_done</span>
+<DD>
+<pre>
+⊢ monotone b ∧ Y ⊆ X ⇒ Y ⊆ set_companion b X
+</pre>
+
+<DT><span class="strong">set_param_coind_init</span>
+<DD>
+<pre>
+⊢ monotone b ∧ X ⊆ set_companion b ∅ ⇒ X ⊆ gfp b
+</pre>
+
+<DT><span class="strong">set_param_coind_upto_f</span>
+<DD>
+<pre>
+⊢ monotone b ∧ (∀X. f X ⊆ set_companion b X) ∧ Y ⊆ f (set_companion b X) ⇒
+  Y ⊆ set_companion b X
+</pre>
+
+<DT><span class="strong">t_below_Tf</span>
+<DD>
+<pre>
+⊢ poset (s,r) ∧ endo (s,r) b ∧ endo (s,r) t ∧ companion (s,r) b t ∧
+  B_join (s,r) b B ∧ bottom (endo_lift (s,r)) bot ∧
+  companion (endo_lift (s,r)) B T' ∧ endo (s,r) f ⇒
+  lift_rel (s,r) t (T' f)
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

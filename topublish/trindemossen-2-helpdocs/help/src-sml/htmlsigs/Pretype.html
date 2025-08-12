@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure Pretype</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure Pretype</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Pretype.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature Pretype =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>datatype pretype = datatype Pretype_dtype.pretype
+<a name="line5"></a>
+<a name="line6"></a>structure Env : sig
+<a name="line7"></a>  type t
+<a name="line8"></a>  val lookup : t -&gt; int -&gt; pretype option
+<a name="line9"></a>  val update : (int * pretype) -&gt; t -&gt; t
+<a name="line10"></a>  val empty : t
+<a name="line11"></a>  val new : t -&gt; t * int
+<a name="line12"></a>  val toList : t -&gt; (int * pretype option) list
+<a name="line13"></a>end
+<a name="line14"></a>
+<a name="line15"></a>type error = typecheck_error.error
+<a name="line16"></a>type 'a in_env = (Env.t,'a,error) errormonad.t
+<a name="line17"></a>
+<a name="line18"></a>val tyvars : pretype -&gt; string list in_env
+<a name="line19"></a>val new_uvar : pretype in_env
+<a name="line20"></a>val ref_occurs_in : int * pretype -&gt; bool in_env
+<a name="line21"></a>val ref_equiv : int * pretype -&gt; bool in_env
+<a name="line22"></a>val <a href="#has_unbound_uvar-val">has_unbound_uvar</a> : pretype -&gt; bool in_env
+<a name="line23"></a>val <a href="#mk_fun_ty-val">mk_fun_ty</a> : pretype * pretype -&gt; pretype
+<a name="line24"></a>
+<a name="line25"></a>val unify : pretype -&gt; pretype -&gt; unit in_env
+<a name="line26"></a>val can_unify : pretype -&gt; pretype -&gt; bool in_env
+<a name="line27"></a>
+<a name="line28"></a>val apply_subst : Env.t -&gt; pretype -&gt; pretype
+<a name="line29"></a>
+<a name="line30"></a>val rename_typevars : string list -&gt; pretype -&gt; pretype in_env
+<a name="line31"></a>val rename_tv : string list -&gt; pretype -&gt;
+<a name="line32"></a>                (Env.t * (string * pretype) list, pretype, error) errormonad.t
+<a name="line33"></a>val fromType : Type.hol_type -&gt; pretype
+<a name="line34"></a>val remove_made_links : pretype -&gt; pretype in_env
+<a name="line35"></a>val replace_null_links :
+<a name="line36"></a>    pretype -&gt; (Env.t * string list, pretype, error) errormonad.t
+<a name="line37"></a>val typecheck_listener : (pretype -&gt; Env.t -&gt; unit) ref
+<a name="line38"></a>val clean : pretype -&gt; Type.hol_type
+<a name="line39"></a>val toTypeM : pretype -&gt; Type.hol_type in_env
+<a name="line40"></a>val toType : pretype -&gt; Type.hol_type
+<a name="line41"></a>val <a href="#chase-val">chase</a> : pretype -&gt; pretype in_env
+<a name="line42"></a>
+<a name="line43"></a>val pp_pretype : pretype -&gt; HOLPP.pretty
+<a name="line44"></a>
+<a name="line45"></a>val termantiq_constructors : (pretype,Term.term) parse_type.tyconstructors
+<a name="line46"></a>val typantiq_constructors : (pretype,Type.hol_type) parse_type.tyconstructors
+<a name="line47"></a>
+<a name="line48"></a>end
+<a name="line49"></a>
+<a name="line50"></a>(*
+   [<a name="chase-val"><b>chase</b></a> pty]  If pty is of the form (dom --&gt; rng), once all necessary
+   uvar references have been followed, returns rng.
+
+   [rename_typvars avds pty]  Avoiding type variables with names from avds,
+   renames Vartypes into uvar references.
+
+   [<a name="has_unbound_uvar-val"><b>has_unbound_uvar</b></a> pty] Returns true if pty includes (after chasing bound
+   uvars), any unbound uvars.
+
+   [<a name="mk_fun_ty-val"><b>mk_fun_ty</b></a> (dom,rng)] Makes the pretype corresponding to the function space
+   from dom to rng.
+*)
+
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="../../../src/parse/Pretype.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-2</a></em></p></body></html>

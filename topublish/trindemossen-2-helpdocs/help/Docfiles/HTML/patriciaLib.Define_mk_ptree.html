@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>patriciaLib.Define_mk_ptree</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="define_mk_ptree"><code>Define_mk_ptree</code></h2>
+<pre class="hol4"><code>patriciaLib.Define_mk_ptree : string -&gt; term_ptree -&gt; thm</code></pre>
+<hr />
+<p>Define a new Patricia tree constant.</p>
+<p>A call to <code>Define_mk_ptree c t</code> builds a HOL Patricia tree
+from the ML tree <code>t</code> and uses this to define a new constant
+<code>c</code>. This provides and efficient mechanism to define large
+patricia trees in HOL: the trees can be quickly built in ML and then
+imported into HOL via <code>patriciaLib.mk_ptree</code>. Provided the
+tree is not too large, a side-effect of <code>Define_mk_ptree</code> is
+to prove the theorem <code>|- IS_PTREE c</code>. This is controlled by
+the reference <code>is_ptree_term_size_limit</code>.</p>
+<p>To avoid producing large terms, a call to <code>EVAL</code> will not
+expand out the definition of the new constant <code>c</code>. However,
+it will efficiently evaluate operations performed on <code>c</code>,
+e.g. <code>PEEK c n</code> for ground <code>n</code>.</p>
+<h3 id="failure">Failure</h3>
+<p><code>Define_mk_ptree</code> will fail when
+<code>patriciaLib.mk_ptree</code> fails.</p>
+<h3 id="example">Example</h3>
+<p>The following session shows the construction of Patricia trees in ML,
+which are then imported into HOL.</p>
+<pre class="hol4"><code>open patriciaLib;
+...
+&gt; val ptree = Define_mk_ptree &quot;ptree&quot; (int_ptree_of_list [(1,``1``), (2, ``2``)]);
+&lt;&lt;HOL message: Saved IS_PTREE theorem for new constant &quot;ptree&quot;&gt;&gt;
+val ptree = |- ptree = Branch 0 0 (Leaf 1 1) (Leaf 2 2): thm
+&gt; DB.theorem &quot;ptree_is_ptree_thm&quot;;
+val it = |- IS_PTREE ptree: thm
+
+&gt; val _ = Globals.max_print_depth := 7;
+&gt; let
+    fun pp _ _ (_: term_ptree) = PolyML.PrettyString &quot;&lt;ptree&gt;&quot;
+  in
+    PolyML.addPrettyPrinter pp
+  end;
+val it = (): unit
+
+&gt; val random_ptree =
+  real_time patriciaLib.ptree_of_ints
+    (Random.rangelist (0,100000) (10000,Random.newgenseed 1.0));
+realtime: 0.091s
+val random_ptree = &lt;ptree&gt;: term_ptree
+
+&gt; val random = real_time (patriciaLib.Define_mk_ptree &quot;random&quot;) random_ptree;
+&lt;&lt;HOL warning: patriciaLib.Define_ptree: Failed to prove IS_PTREE (is_ptree_term_size_limit might be too small).&gt;&gt;
+realtime: 0.196s
+val random =
+   |- random =
+   Branch 0 0
+     (... ... 1 (... ... (... ... ))
+        (... ... (... ... ) (... ... (... ... ))))
+     (Branch 0 1 (... ... (... ... ) (... ... (... ... )))
+        (... ... 2 (... ... (... ... ))
+           (... ... (... ... ) (... ... (... ... ))))):
+   thm
+
+&gt; patriciaLib.size random_ptree;
+val it = 9517: int
+&gt; real_time EVAL ``SIZE random``;
+realtime: 3.531s
+val it = |- SIZE random = 9517: thm
+
+&gt; int_peek random_ptree 3;
+val it = SOME ``()``: term option
+&gt; real_time EVAL ``random &#39; 3``;
+realtime: 0.004s
+val it = |- random &#39; 3 = SOME (): thm
+
+&gt; int_peek random_ptree 100;
+val it = NONE: term option
+&gt; real_time EVAL ``random &#39; 100``;
+realtime: 0.004s
+val it = |- random &#39; 100 = NONE: thm</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a
+href="patriciaLib.mk_ptree.html"><code>patriciaLib.mk_ptree</code></a>,
+<a
+href="patriciaLib.PTREE_CONV.html"><code>patriciaLib.PTREE_CONV</code></a>,
+<a
+href="patriciaLib.PTREE_DEFN_CONV.html"><code>patriciaLib.PTREE_DEFN_CONV</code></a></p>
+</body>
+</html>

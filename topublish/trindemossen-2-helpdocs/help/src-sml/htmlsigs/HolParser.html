@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html><head><link rel="icon" href="../../../../images/logo.ico" type="image/vnd.microsoft.icon">
+<meta charset="utf-8">
+<title>Structure HolParser</title>
+<style type="text/css">
+<!--
+  body {background: #fbf2e7}
+-->
+</style></head>
+<body>
+<h1>Structure HolParser</h1>
+<hr><table width="100%"><tr align = center>
+<th><a href="file:///Users/michaeln/various-hols/mcandidate/tools/Holmake/HolParser.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<pre>
+<a name="line1"></a>signature HolParser =
+<a name="line2"></a>sig
+<a name="line3"></a>
+<a name="line4"></a>structure Simple: sig
+<a name="line5"></a>
+<a name="line6"></a>  datatype decl = datatype HolLex.UserDeclarations.decl
+<a name="line7"></a>  datatype decls = datatype HolLex.UserDeclarations.decls
+<a name="line8"></a>  datatype antiq = datatype HolLex.UserDeclarations.antiq
+<a name="line9"></a>  datatype qdecl = datatype HolLex.UserDeclarations.qdecl
+<a name="line10"></a>  datatype qbody = datatype HolLex.UserDeclarations.qbody
+<a name="line11"></a>
+<a name="line12"></a>  datatype topdecl
+<a name="line13"></a>    = TopDecl of decl
+<a name="line14"></a>    | EOF of int
+<a name="line15"></a>
+<a name="line16"></a>  datatype type_kind =
+<a name="line17"></a>      OverloadKind of {by_nametype: bool, inferior: bool}
+<a name="line18"></a>    | TypeKind of {pp: bool}
+<a name="line19"></a>
+<a name="line20"></a>  val destAttrs: substring -&gt; (substring * substring list) list
+<a name="line21"></a>  val destMLThmBinding: substring -&gt;
+<a name="line22"></a>    {keyword: substring, name: substring, attrs: substring, name_attrs: substring}
+<a name="line23"></a>  val destNameAttrs: substring -&gt; substring * substring
+<a name="line24"></a>  val fromSS: int * substring -&gt; int * int
+<a name="line25"></a>  val killEnvelopingSpace: substring -&gt; substring
+<a name="line26"></a>  val kindToName: bool -&gt; type_kind -&gt; string
+<a name="line27"></a>  val parseBeginType: int * string -&gt; (int * int -&gt; string -&gt; unit) -&gt;
+<a name="line28"></a>    {local_: bool, kind: type_kind, keyword: substring, tyname: substring}
+<a name="line29"></a>  val parseDefinitionPfx: string -&gt;
+<a name="line30"></a>    {keyword: substring, name: substring, attrs: substring, name_attrs: substring}
+<a name="line31"></a>  val parseDefnLabel: string -&gt;
+<a name="line32"></a>    {name: substring option, attrs: substring, name_attrs: substring, tilde: bool}
+<a name="line33"></a>  val parseInductivePfx: string -&gt; {isCo: bool, keyword: substring, thmname: substring}
+<a name="line34"></a>  val parseQuoteEqnPfx: string -&gt; {bind: substring, keyword: substring, name: substring}
+<a name="line35"></a>  val parseQuotePfx: string -&gt; {keyword: substring, name: substring}
+<a name="line36"></a>  val parseTheoremPfx: string -&gt;
+<a name="line37"></a>    {isTriv: bool, keyword: substring, thmname: substring, attrs: substring, name_attrs: substring}
+<a name="line38"></a>
+<a name="line39"></a>  val mkParser:
+<a name="line40"></a>    {parseError: int * int -&gt; string -&gt; unit, pos: int, read: int -&gt; string} -&gt;
+<a name="line41"></a>    unit -&gt; topdecl
+<a name="line42"></a>
+<a name="line43"></a>end
+<a name="line44"></a>
+<a name="line45"></a>structure ToSML: sig
+<a name="line46"></a>
+<a name="line47"></a>  type double_reader =
+<a name="line48"></a>    {read: int -&gt; string, readAt: int -&gt; int -&gt; (int * substring -&gt; unit) -&gt; unit}
+<a name="line49"></a>  val mkDoubleReader: (int -&gt; string) -&gt; int -&gt; double_reader
+<a name="line50"></a>
+<a name="line51"></a>  type args = {
+<a name="line52"></a>    read: int -&gt; string,
+<a name="line53"></a>    filename: string,
+<a name="line54"></a>    parseError: int * int -&gt; string -&gt; unit,
+<a name="line55"></a>    quietOpen: bool
+<a name="line56"></a>  }
+<a name="line57"></a>
+<a name="line58"></a>  val mkPullTranslator: args -&gt; unit -&gt; string
+<a name="line59"></a>
+<a name="line60"></a>  type strcode = {
+<a name="line61"></a>    aux: string -&gt; unit,
+<a name="line62"></a>    regular: int * substring -&gt; unit,
+<a name="line63"></a>    strcode: int * substring -&gt; unit,
+<a name="line64"></a>    strstr: int * substring -&gt; unit
+<a name="line65"></a>  }
+<a name="line66"></a>  val strstr: (string -&gt; unit) -&gt; int * substring -&gt; unit
+<a name="line67"></a>  val strcode: (string -&gt; unit) -&gt; int * substring -&gt; unit
+<a name="line68"></a>  val mkStrcode: (string -&gt; unit) -&gt; strcode
+<a name="line69"></a>
+<a name="line70"></a>  type doDecl_args = {
+<a name="line71"></a>    aux: string -&gt; unit,
+<a name="line72"></a>    cat: substring list -&gt; string,
+<a name="line73"></a>    countlines: int * substring -&gt; unit,
+<a name="line74"></a>    doDecls: int -&gt; Simple.decl list -&gt; int -&gt; unit,
+<a name="line75"></a>    doQuote: Simple.qbody -&gt; unit,
+<a name="line76"></a>    doQuoteConj: Simple.qbody -&gt; (bool -&gt; int * string -&gt; unit) -&gt; unit,
+<a name="line77"></a>    doThmAttrs: bool -&gt; substring -&gt; substring -&gt; unit,
+<a name="line78"></a>    filename: string ref,
+<a name="line79"></a>    full: string -&gt; substring,
+<a name="line80"></a>    isTheory: bool ref,
+<a name="line81"></a>    line: (int * int) ref,
+<a name="line82"></a>    magicBind: string -&gt; unit,
+<a name="line83"></a>    parseError: int * int -&gt; string -&gt; unit,
+<a name="line84"></a>    quietOpen: bool,
+<a name="line85"></a>    readAt: int -&gt; int -&gt; (int * substring -&gt; unit) -&gt; unit,
+<a name="line86"></a>    regular: int * int -&gt; unit,
+<a name="line87"></a>    regular': int * substring -&gt; unit,
+<a name="line88"></a>    ss: substring -&gt; string,
+<a name="line89"></a>    strstr: int * int -&gt; unit,
+<a name="line90"></a>    strstr': int * substring -&gt; unit
+<a name="line91"></a>  }
+<a name="line92"></a>  val mkDoDecl: doDecl_args -&gt; Simple.decl -&gt; unit
+<a name="line93"></a>
+<a name="line94"></a>  type ret = {
+<a name="line95"></a>    doDecl: bool -&gt; int -&gt; Simple.decl -&gt; int,
+<a name="line96"></a>    feed: unit -&gt; Simple.topdecl,
+<a name="line97"></a>    finish: unit -&gt; unit,
+<a name="line98"></a>    regular: int * int -&gt; unit
+<a name="line99"></a>  }
+<a name="line100"></a>
+<a name="line101"></a>  val mkPushTranslatorCore': (doDecl_args -&gt; Simple.decl -&gt; unit) -&gt;
+<a name="line102"></a>    args -&gt; strcode -&gt; ret
+<a name="line103"></a>  val mkPushTranslatorCore: args -&gt; strcode -&gt; ret
+<a name="line104"></a>
+<a name="line105"></a>  val mkPushTranslator: args -&gt; strcode -&gt; unit -&gt; bool
+<a name="line106"></a>
+<a name="line107"></a>end
+<a name="line108"></a>
+<a name="line109"></a>type reader = {read : unit -&gt; char option, eof : unit -&gt; bool}
+<a name="line110"></a>type args = {quietOpen: bool}
+<a name="line111"></a>
+<a name="line112"></a>val inputFile : args -&gt; string -&gt; string
+<a name="line113"></a>val fromString : args -&gt; string -&gt; string
+<a name="line114"></a>
+<a name="line115"></a>val fileToReader : args -&gt; string -&gt; reader
+<a name="line116"></a>val stringToReader : args -&gt; string -&gt; reader
+<a name="line117"></a>val inputToReader : args -&gt; string -&gt; (int -&gt; string) -&gt; reader
+<a name="line118"></a>val streamToReader : args -&gt; string -&gt; TextIO.instream -&gt; reader
+<a name="line119"></a>
+<a name="line120"></a>end
+<a name="line121"></a>
+</pre><hr><table width="100%"><tr align = center>
+<th><a href="file:///Users/michaeln/various-hols/mcandidate/tools/Holmake/HolParser.sml" type="text/plain" type="text/plain">Source File</a>
+<th><a href="idIndex.html">Identifier index</A>
+<th><a href="TheoryIndex.html">Theory binding index</A>
+</table><hr>
+<p><em><a href="http://hol.sourceforge.net">HOL&nbsp;4,&nbsp;Trindemossen-1</a></em></p></body></html>

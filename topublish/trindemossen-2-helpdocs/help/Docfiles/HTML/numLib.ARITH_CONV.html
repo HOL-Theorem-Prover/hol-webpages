@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>numLib.ARITH_CONV</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="arith_conv"><code>ARITH_CONV</code></h2>
+<pre class="hol4"><code>numLib.ARITH_CONV : conv</code></pre>
+<hr />
+<p>Partial decision procedure for a subset of linear natural number
+arithmetic.</p>
+<p><code>ARITH_CONV</code> is a partial decision procedure for
+Presburger natural arithmetic. Presburger natural arithmetic is the
+subset of arithmetic formulae made up from natural number constants,
+numeric variables, addition, multiplication by a constant, the relations
+<code>&lt;</code>, <code>&lt;=</code>, <code>=</code>,
+<code>&gt;=</code>, <code>&gt;</code> and the logical connectives
+<code>~</code>, <code>/\</code>, <code>\/</code>, <code>==&gt;</code>,
+<code>=</code> (if-and-only-if), <code>!</code> (‘forall’) and
+<code>?</code> (‘there exists’). Products of two expressions which both
+contain variables are not included in the subset, but the functions
+<code>SUC</code> and <code>PRE</code> which are not normally included in
+a specification of Presburger arithmetic are allowed in this HOL
+implementation.</p>
+<p><code>ARITH_CONV</code> further restricts the subset as follows: when
+the formula has been put in prenex normal form it must contain only one
+kind of quantifier, that is the quantifiers must either all be universal
+(‘forall’) or all existential. Variables may appear free (unquantified)
+provided any quantifiers that do appear in the prenex normal form are
+universal; free variables are taken as being implicitly universally
+quantified so mixing them with existential quantifiers would violate the
+above restriction.</p>
+<p>Given a formula in the permitted subset, <code>ARITH_CONV</code>
+attempts to prove that it is equal to <code>T</code> (true). For
+universally quantified formulae the procedure only works if the formula
+would also be true of the non-negative rationals; it cannot prove
+formulae whose truth depends on the integral properties of the natural
+numbers. The procedure is also incomplete for existentially quantified
+formulae, but in this case there is no rule-of-thumb for determining
+whether the procedure will work.</p>
+<p>The function features a number of preprocessors which extend the
+coverage beyond the subset specified above. In particular, natural
+number subtraction and conditional statements are allowed. Another
+permits substitution instances of universally quantified formulae to be
+accepted. Note that Boolean-valued variables are not allowed.</p>
+<h3 id="failure">Failure</h3>
+<p>The function can fail in two ways. It fails if the argument term is
+not a formula in the specified subset, and it also fails if it is unable
+to prove the formula. The failure strings are different in each case.
+However, the function may announce that it is unable to prove a formula
+that one would expect it to reject as being outside the subset. This is
+due to it looking for substitution instances; it has generalised the
+formula so that the new formula is in the subset but is not valid.</p>
+<h3 id="example">Example</h3>
+<p>A simple example containing a free variable:</p>
+<pre class="hol4"><code>   - ARITH_CONV ``m &lt; SUC m``;
+   &gt; val it = |- m &lt; (SUC m) = T : thm</code></pre>
+<p>A more complex example with subtraction and universal quantifiers,
+and which is not initially in prenex normal form:</p>
+<pre class="hol4"><code>   - ARITH_CONV
+     ``!m p. p &lt; m ==&gt; !q r. (m &lt; (p + q) + r) ==&gt; ((m - p) &lt; q + r)``;
+   &gt; val it = |- (!m p. p &lt; m ==&gt; (!q r. m &lt; ((p + q) + r) ==&gt; (m - p) &lt; (q + r))) = T</code></pre>
+<p>Two examples with existential quantifiers:</p>
+<pre class="hol4"><code>   - ARITH_CONV ``?m n. m &lt; n``;
+   &gt; val it = |- (?m n. m &lt; n) = T
+
+   - ARITH_CONV ``?m n. (2 * m) + (3 * n) = 10``;
+   &gt; val it = |- (?m n. (2 * m) + (3 * n) = 10) = T</code></pre>
+<p>An instance of a universally quantified formula involving a
+conditional statement and subtraction:</p>
+<pre class="hol4"><code>   - ARITH_CONV
+     ``((p + 3) &lt;= n) ==&gt; (!m. ((m EXP 2 = 0) =&gt; (n - 1) | (n - 2)) &gt; p)``;
+   &gt; val it = |- (p + 3) &lt;= n ==&gt; (!m. ((m EXP 2 = 0) =&gt; n - 1 | n - 2) &gt; p) = T</code></pre>
+<p>Failure due to mixing quantifiers:</p>
+<pre class="hol4"><code>   - ARITH_CONV ``!m. ?n. m &lt; n``;
+   evaluation failed     ARITH_CONV -- formula not in the allowed subset</code></pre>
+<p>Failure because the truth of the formula relies on the fact that the
+variables cannot have fractional values:</p>
+<pre class="hol4"><code>   - ARITH_CONV ``!m n. ~(SUC (2 * m) = 2 * n)``;
+   evaluation failed     ARITH_CONV -- cannot prove formula</code></pre>
+<h3 id="see-also">See also</h3>
+<p><a href="Arith.NEGATE_CONV.html"><code>Arith.NEGATE_CONV</code></a>,
+<a
+href="Arith.EXISTS_ARITH_CONV.html"><code>Arith.EXISTS_ARITH_CONV</code></a>,
+<a
+href="Arith.FORALL_ARITH_CONV.html"><code>Arith.FORALL_ARITH_CONV</code></a>,
+<a
+href="Arith.INSTANCE_T_CONV.html"><code>Arith.INSTANCE_T_CONV</code></a>,
+<a href="Arith.PRENEX_CONV.html"><code>Arith.PRENEX_CONV</code></a>, <a
+href="Arith.SUB_AND_COND_ELIM_CONV.html"><code>Arith.SUB_AND_COND_ELIM_CONV</code></a></p>
+</body>
+</html>

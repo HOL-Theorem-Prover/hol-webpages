@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Conv.DEPTH_CONV</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="depth_conv"><code>DEPTH_CONV</code></h2>
+<pre class="hol4"><code>Conv.DEPTH_CONV : conv -&gt; conv</code></pre>
+<hr />
+<p>Applies a conversion repeatedly to all the sub-terms of a term, in
+bottom-up order.</p>
+<p><code>DEPTH_CONV c tm</code> repeatedly applies the conversion
+<code>c</code> to all the subterms of the term <code>tm</code>,
+including the term <code>tm</code> itself. The supplied conversion is
+applied repeatedly (zero or more times, as is done by
+<code>REPEATC</code>) to each subterm until it fails. The conversion is
+applied to subterms in bottom-up order.</p>
+<h3 id="failure">Failure</h3>
+<p><code>DEPTH_CONV c tm</code> never fails but can diverge if the
+conversion <code>c</code> can be applied repeatedly to some subterm of
+<code>tm</code> without failing.</p>
+<h3 id="example">Example</h3>
+<p>The following example shows how <code>DEPTH_CONV</code> applies a
+conversion to all subterms to which it applies:</p>
+<pre class="hol4"><code>   - DEPTH_CONV BETA_CONV (Term `(\x. (\y. y + x) 1) 2`);
+   &gt; val it = |- (\x. (\y. y + x)1)2 = 1 + 2 : thm</code></pre>
+<p>Here, there are two beta-redexes in the input term, one of which
+occurs within the other. <code>DEPTH_CONV BETA_CONV</code> applies
+beta-conversion to innermost beta-redex <code>(\y. y + x) 1</code>
+first. The outermost beta-redex is then <code>(\x. 1 + x) 2</code>, and
+beta-conversion of this redex gives <code>1 + 2</code>.</p>
+<p>Because <code>DEPTH_CONV</code> applies a conversion bottom-up, the
+final result may still contain subterms to which the supplied conversion
+applies. For example, in:</p>
+<pre class="hol4"><code>   - DEPTH_CONV BETA_CONV (Term `(\f x. (f x) + 1) (\y.y) 2`);
+   &gt; val it = |- (\f x. (f x) + 1)(\y. y)2 = ((\y. y)2) + 1 : thm</code></pre>
+<p>the right-hand side of the result still contains a beta-redex,
+because the redex <code>(\y.y)2</code> is introduced by virtue of an
+application of <code>BETA_CONV</code> higher-up in the structure of the
+input term. By contrast, in the example:</p>
+<pre class="hol4"><code>   - DEPTH_CONV BETA_CONV (Term `(\f x. (f x)) (\y.y) 2`);
+   &gt; val it = |- (\f x. f x)(\y. y)2 = 2 : thm</code></pre>
+<p>all beta-redexes are eliminated, because <code>DEPTH_CONV</code>
+repeats the supplied conversion (in this case, <code>BETA_CONV</code>)
+at each subterm (in this case, at the top-level term).</p>
+<p>If the conversion <code>c</code> implements the evaluation of a
+function in logic, then <code>DEPTH_CONV c</code> will do bottom-up
+evaluation of nested applications of it. For example, the conversion
+<code>ADD_CONV</code> implements addition of natural number constants
+within the logic. Thus, the effect of:</p>
+<pre class="hol4"><code>   - DEPTH_CONV reduceLib.ADD_CONV (Term `(1 + 2) + (3 + 4 + 5)`);
+   &gt; val it = |- (1 + 2) + (3 + (4 + 5)) = 15 : thm</code></pre>
+<p>is to compute the sum represented by the input term.</p>
+<h3 id="comments">Comments</h3>
+<p>The implementation of this function uses failure to avoid rebuilding
+unchanged subterms. That is to say, during execution the exception
+<code>QConv.UNCHANGED</code> may be generated and later trapped. The
+behaviour of the function is dependent on this use of failure. So, if
+the conversion given as an argument happens to generate the same
+exception, the operation of <code>DEPTH_CONV</code> will be
+unpredictable.</p>
+<h3 id="see-also">See also</h3>
+<p><a
+href="Conv.ONCE_DEPTH_CONV.html"><code>Conv.ONCE_DEPTH_CONV</code></a>,
+<a href="Conv.REDEPTH_CONV.html"><code>Conv.REDEPTH_CONV</code></a>, <a
+href="Conv.TOP_DEPTH_CONV.html"><code>Conv.TOP_DEPTH_CONV</code></a></p>
+</body>
+</html>

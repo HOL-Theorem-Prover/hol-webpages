@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head><link rel="icon" href="../../../images/logo.ico" type="image/vnd.microsoft.icon"><title>Theory: errorLogMonad</title><meta http-equiv="content-type" content="text/html;charset=UTF-8">
+<style type="text/css">
+<!--
+  body {background: #faf0e6; color: #191970; }
+  span.freevar  { color: blue}
+  span.boundvar { color: green}
+  span.typevar  { color: purple}
+  span.type     { color: teal}
+  span.strong   { color: black; font-weight: bold}
+  span.vstrong  { color: black; 
+                  font-weight: bold;
+                  font-size: larger}
+  h1 {color: black}
+  th {color: crimson}
+-->
+</style>
+</head>
+<body>
+<h1>Theory "errorLogMonad"</h1>
+<span class="vstrong">Parents</span>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href = "errorMonadTheory.html"><span class="strong">errorMonad</span></a>
+
+<h1>Signature</h1>
+<center>
+    <table BORDER=4 CELLPADDING=10 CELLSPACING=1>
+    
+    <tr> <th> Constant <th> Type<tr><td>
+    <span class="strong">bind</span>
+    <td>
+    :(α, ε) error # μ list ->
+    (α -> (β, ε) error # μ list) -> (β, ε) error # μ list
+    <tr><td>
+    <span class="strong">choice</span>
+    <td>
+    :(α, δ) error # γ list -> (α, β) error # γ list -> (α, β) error # γ list
+    <tr><td>
+    <span class="strong">error</span>
+    <td>
+    :ε -> (α, ε) error # μ list
+    <tr><td>
+    <span class="strong">log</span>
+    <td>
+    :μ -> (unit, ε) error # μ list
+    <tr><td>
+    <span class="strong">return</span>
+    <td>
+    :α -> (α, ε) error # χ list
+    <tr><td> <span class="strong">silently</span> <td> :α # γ -> α # β list
+    
+</table>
+</center>
+
+<h1>Definitions</h1>
+<DL>
+<DT><span class="strong">bind_def</span>
+<DD>
+<pre>
+⊢ ∀M f.
+    bind M f =
+    case M of
+      (emret u,ms1) => (I ## $++ ms1) (f u)
+    | (error e,ms1) => (error e,ms1)
+</pre>
+
+<DT><span class="strong">choice_def</span>
+<DD>
+<pre>
+⊢ ∀M1 M2.
+    choice M1 M2 =
+    case M1 of
+      (emret v,ms1) => (emret v,ms1)
+    | (error e,ms1) => (I ## $++ ms1) M2
+</pre>
+
+<DT><span class="strong">error_def</span>
+<DD>
+<pre>
+⊢ ∀e. error e = (error e,[])
+</pre>
+
+<DT><span class="strong">log_def</span>
+<DD>
+<pre>
+⊢ ∀m. log m = (emret (),[m])
+</pre>
+
+<DT><span class="strong">return_def</span>
+<DD>
+<pre>
+⊢ ∀v. return v = (emret v,[])
+</pre>
+
+<DT><span class="strong">silently_def</span>
+<DD>
+<pre>
+⊢ ∀M. silently M = (I ## K []) M
+</pre>
+
+</DL>
+
+
+<hr>
+
+<hr>
+<h1>Theorems</h1>
+<DL>
+<DT><span class="strong">M_CASES</span>
+<DD>
+<pre>
+⊢ ∀M. (∃v ms. M = (emret v,ms)) ∨ ∃e ms. M = (error e,ms)
+</pre>
+
+<DT><span class="strong">bind_EQ_success</span>
+<DD>
+<pre>
+⊢ bind M f = (emret v,ms) ⇔
+  ∃u ms0 ms1. M = (emret u,ms0) ∧ f u = (emret v,ms1) ∧ ms = ms0 ++ ms1
+</pre>
+
+<DT><span class="strong">bind_IDL</span>
+<DD>
+<pre>
+⊢ bind (return v) f = f v
+</pre>
+
+<DT><span class="strong">bind_IDR</span>
+<DD>
+<pre>
+⊢ bind M return = M
+</pre>
+
+<DT><span class="strong">choice_return</span>
+<DD>
+<pre>
+⊢ choice (return v) M = return v
+</pre>
+
+</DL>
+
+
+
+<hr>
+</body>
+</html>

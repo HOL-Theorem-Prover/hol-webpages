@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Defn.tprove</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="tprove"><code>tprove</code></h2>
+<pre class="hol4"><code>Defn.tprove : defn * tactic -&gt; thm * thm</code></pre>
+<hr />
+<p>Prove termination of a <code>defn</code>.</p>
+<p><code>tprove</code> takes a <code>defn</code> and a
+<code>tactic</code>, and uses the tactic to prove the termination
+constraints of the <code>defn</code>. A pair of theorems
+<code>(eqns,ind)</code> is returned: <code>eqns</code> is the
+unconstrained recursion equations of the <code>defn</code>, and
+<code>ind</code> is the corresponding induction theorem for the
+equations, also unconstrained.</p>
+<p><code>tprove</code> and <code>tgoal</code> can be seen as analogues
+of <code>prove</code> and <code>set_goal</code> in the specialized
+domain of proving termination of recursive functions.</p>
+<p>It is up to the user to store the results of <code>tprove</code> in
+the current theory segment.</p>
+<h3 id="failure">Failure</h3>
+<p><code>tprove (defn,tac)</code> fails if <code>tac</code> fails to
+prove the termination conditions of <code>defn</code>.</p>
+<p><code>tprove (defn,tac)</code> fails if <code>defn</code> represents
+a non-recursive or primitive recursive function.</p>
+<h3 id="example">Example</h3>
+<p>Suppose that we have defined a version of Quicksort as follows:</p>
+<pre class="hol4"><code>   - val qsort_defn =
+       Hol_defn &quot;qsort&quot;
+          `(qsort ___ [] = []) /\
+           (qsort ord (x::rst) =
+               APPEND (qsort ord (FILTER ($~ o ord x) rst))
+                 (x :: qsort ord (FILTER (ord x) rst)))`</code></pre>
+<p>Also suppose that a tactic <code>tac</code> proves termination of
+<code>qsort</code>. (This tactic has probably been built by interactive
+proof after starting a goalstack with <code>tgoal qsort_defn</code>.)
+Then</p>
+<pre class="hol4"><code>   - val (qsort_eqns, qsort_ind) = tprove(qsort_defn, tac);
+
+   &gt; val qsort_eqns =
+       |- (qsort v0 [] = []) /\
+          (qsort ord (x::rst) =
+             APPEND (qsort ord (FILTER ($~ o ord x) rst))
+                 (x::qsort ord (FILTER (ord x) rst))) : thm
+
+     val qsort_ind =
+       |- !P.
+            (!v0. P v0 []) /\
+            (!ord x rst.
+               P ord (FILTER ($~ o ord x) rst) /\
+               P ord (FILTER (ord x) rst) ==&gt; P ord (x::rst))
+            ==&gt;
+           !v v1. P v v1 : thm</code></pre>
+<h3 id="comments">Comments</h3>
+<p>The recursion equations returned by a successful invocation of
+<code>tprove</code> are automatically added to the global
+<code>compset</code> accessed by <code>EVAL</code>.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Defn.tgoal.html"><code>Defn.tgoal</code></a>, <a
+href="Defn.Hol_defn.html"><code>Defn.Hol_defn</code></a>, <a
+href="bossLib.EVAL.html"><code>bossLib.EVAL</code></a></p>
+</body>
+</html>

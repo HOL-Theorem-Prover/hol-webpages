@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tactic.drule_all</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="drule_all"><code>drule_all</code></h2>
+<pre class="hol4"><code>Tactic.drule_all : thm -&gt; tactic</code></pre>
+<hr />
+<p>Attempts to discharge all of a theorem’s antecedents from
+assumptions</p>
+<p>If <code>th</code> is a theorem with a conclusion that is a (possibly
+universally quantified) implication (or negation), the theorem-tactic
+<code>drule_all</code> (implicitly) normalises it have form</p>
+<pre class="hol4"><code>    !v1 .. vn. P1 ==&gt; (P2 ==&gt; (P3 ==&gt; ... Q)...)</code></pre>
+<p>where each <code>Pi</code> is not a conjunction. (In other words,
+<code>P /\ Q ==&gt; R</code> is normalised to
+<code>P ==&gt; (Q ==&gt; R)</code>.) An application of
+<code>drule_all th</code> to a goal then attempts to find a consistent
+instantiation so that all of the <code>Pi</code> antecedents can be
+discharged by appeal to the goal’s assumptions. If this repeated
+instantiation and use of <code>MP</code> is possible, then the
+(instantiated) conclusion <code>Q</code> is added to the goal with the
+<code>MP_TAC</code> <code>thm_tactic</code>.</p>
+<p>When finding assumptions, those that have been most recently added to
+the assumption list will be preferred.</p>
+<h3 id="failure">Failure</h3>
+<p>An invocation of <code>drule_all th</code> can only fail when applied
+to a goal. It can then fail if <code>th</code> is not an implication, or
+if all of <code>th</code>’s implications cannot be eliminated by
+matching against the goal’s assumptions.</p>
+<h3 id="example">Example</h3>
+<p>The <code>LESS_LESS_EQ_TRANS</code> theorem states:</p>
+<pre class="hol4"><code>   !m n p. m &lt; n /\ n &lt;= p ==&gt; m &lt; p</code></pre>
+<p>Then:</p>
+<pre class="hol4"><code>   &gt; drule_all arithmeticTheory.LESS_LESS_EQ_TRANS
+      ([“x &lt; w”, “1 &lt; x”, “z &lt;= y”, “x &lt;= z”, “y &lt; z”], “P:bool”);
+   val it =
+      ([([“x &lt; w”, “1 &lt; x”, “z &lt;= y”, “x &lt;= z”, “y &lt; z”],
+         “1 &lt; z ==&gt; P”)], fn): goal list * validation</code></pre>
+<p>Note how the other possible instance of the theorem (chaining
+<code>y &lt; z</code> and <code>z &lt;= y</code>) is not found.</p>
+<h3 id="comments">Comments</h3>
+<p>The variant <code>dxrule_all</code> removes used assumptions from the
+assumption list as they resolve against the theorem. The variant
+<code>drule_all_then</code> allows a continuation other than
+<code>MP_TAC</code> to be used. The variant <code>dxrule_all_then</code>
+combines both.</p>
+<p>A negated conclusion (<code>~Q</code>) is not treated as an
+implication (<code>Q ==&gt; F</code>) so the tactic will not attempt to
+find an instantiation of <code>Q</code> among the assumptions.</p>
+<h3 id="see-also">See also</h3>
+<p><a href="Tactic.drule.html"><code>Tactic.drule</code></a>, <a
+href="Tactic.IMP_RES_TAC.html"><code>Tactic.IMP_RES_TAC</code></a></p>
+</body>
+</html>
