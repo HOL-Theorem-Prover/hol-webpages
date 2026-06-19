@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# push-docs <releasename> <holdir>
+#
+# Publish the freshly-built mdbook documentation site to the existing web
+# server over rsync/SSH, under /docs/<releasename>/, and repoint the
+# rolling /docs/latest pointer at it.  This is the "keep the current
+# host" alternative to deploy-cf (Cloudflare Pages).
+#
+#   <releasename>  e.g. trindemossen-2
+#   <holdir>       a local HOL checkout in which
+#                      bin/build -F && (cd Manual && Holmake mdbook)
+#                  has already been run, so <holdir>/Manual/book exists.
+#
+# Configure the target via the environment (the docroot path depends on
+# the server's layout -- confirm with the site owner):
+#   HOL_WEB_SSH      user@host for the web server
+#   HOL_WEB_DOCROOT  absolute path to the served document root
+#
+# Only the generated mdbook tree travels this way; the hand-maintained
+# chrome (index.html, ...) continues through the normal git + update.cgi
+# channel.
+
+set -euo pipefail
+
+if [ ! -d topublish ] || [ ! -d tools ]; then
+    echo "Run this from the root web-pages directory" >&2
+    exit 1
+fi
+
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <releasename> <holdir>" >&2
+    exit 1
+fi
+
+release=$1
+holdir=$2
+book="$holdir/Manual/book"
+: "${HOL_WEB_SSH:?set HOL_WEB_SSH=user@host}"
+: "${HOL_WEB_DOCROOT:?set HOL_WEB_DOCROOT=/abs/path/to/docroot}"
+
+if [ ! -f "$book/index.html" ]; then
+    echo "No built mdbook site at $book" >&2
+    echo "Run: (cd $holdir && bin/build -F && cd Manual && Holmake mdbook)" >&2
+    exit 1
+fi
+
+# -a preserves the per-manual searchindex.js -> searchindex-<hash>.js
+# symlinks; --delete clears the previous build's orphaned hashed assets.
+echo "Pushing mdbook site -> $HOL_WEB_SSH:$HOL_WEB_DOCROOT/docs/$release/"
+rsync -avP --delete -e ssh "$book/" \
+      "$HOL_WEB_SSH:$HOL_WEB_DOCROOT/docs/$release/"
+
+# Repoint latest.  If the server does not follow symlinks when serving,
+# replace this with an rsync copy or a meta-refresh redirect page.
+echo "Repointing docs/latest -> $release"
+ssh "$HOL_WEB_SSH" "ln -sfn '$release' '$HOL_WEB_DOCROOT/docs/latest'"

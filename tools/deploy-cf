@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+# deploy-cf <releasename> <holdir>
+#
+# Publish the HOL website to Cloudflare Pages (Direct Upload).  Assembles
+# a staging tree from the hand-maintained chrome under new-look/ plus the
+# freshly-built mdbook documentation site at <holdir>/Manual/book, writes
+# a _redirects file giving a rolling /docs/latest/ pointer, and uploads
+# the result with wrangler.
+#
+#   <releasename>  e.g. trindemossen-2  (docs land at /docs/<releasename>/)
+#   <holdir>       a local HOL checkout in which
+#                      bin/build -F && (cd Manual && Holmake mdbook)
+#                  has already been run, so <holdir>/Manual/book exists.
+#
+# Requires: rsync, and wrangler on PATH (or run via npx, as below).
+# Authentication: set CLOUDFLARE_API_TOKEN (and CLOUDFLARE_ACCOUNT_ID) in
+# the environment, or have run `wrangler login` interactively.
+#
+# The bulky per-release *-helpdocs snapshots are deliberately NOT carried
+# into the deployment (the mdbook site's htmlsigs/ and theory-graph/
+# supersede them, and they would threaten Cloudflare's 20,000-files-per-
+# deployment limit).  Historical release pages that link to old helpdocs
+# will 404 for those links; if archived helpdocs must stay browsable,
+# host the docs in a separate Pages project instead.
+
+set -euo pipefail
+
+if [ ! -d topublish ] || [ ! -d tools ]; then
+    echo "Run this from the root web-pages directory" >&2
+    exit 1
+fi
+
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <releasename> <holdir>" >&2
+    exit 1
+fi
+
+release=$1
+holdir=$2
+project=${CF_PAGES_PROJECT:-hol-webpages}
+book="$holdir/Manual/book"
+
+if [ ! -f "$book/index.html" ]; then
+    echo "No built mdbook site at $book" >&2
+    echo "Run: (cd $holdir && bin/build -F && cd Manual && Holmake mdbook)" >&2
+    exit 1
+fi
+
+stage=$(mktemp -d)
+trap 'rm -rf "$stage"' EXIT
+
+echo "Staging chrome from new-look/"
+rsync -a --copy-unsafe-links --exclude '*-helpdocs' --exclude '*~' \
+      new-look/ "$stage/"
+
+echo "Staging mdbook site -> docs/$release/"
+mkdir -p "$stage/docs"
+rsync -a "$book/" "$stage/docs/$release/"
+
+echo "Writing _redirects (latest -> $release)"
+# Append so any redirects shipped in new-look/_redirects are preserved.
+printf '/docs/latest/* /docs/%s/:splat 302\n' "$release" >> "$stage/_redirects"
+
+# Guard against Cloudflare's free-tier deployment limits before upload.
+nfiles=$(find "$stage" -type f | wc -l | tr -d ' ')
+echo "Staged $nfiles files"
+if [ "$nfiles" -gt 20000 ]; then
+    echo "WARNING: $nfiles files exceeds Cloudflare's 20,000/deployment cap" >&2
+fi
+big=$(find "$stage" -type f -size +25M)
+if [ -n "$big" ]; then
+    echo "WARNING: files over Cloudflare's 25 MiB/file cap:" >&2
+    echo "$big" >&2
+fi
+
+echo "Deploying to Cloudflare Pages project '$project'"
+npx wrangler pages deploy "$stage" --project-name="$project"
