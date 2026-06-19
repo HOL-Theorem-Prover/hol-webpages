@@ -39,6 +39,10 @@ fi
 release=$1
 holdir=$2
 project=${CF_PAGES_PROJECT:-hol-webpages}
+# Must match the project's production branch, else the upload lands as an
+# isolated preview deployment rather than on the custom domain.  We stage
+# from a temp dir (no git), so wrangler can't infer this -- pass it.
+branch=${CF_PAGES_BRANCH:-master}
 book="$holdir/Manual/book"
 
 if [ ! -f "$book/index.html" ]; then
@@ -74,5 +78,5 @@ if [ -n "$big" ]; then
     echo "$big" >&2
 fi
 
-echo "Deploying to Cloudflare Pages project '$project'"
-npx wrangler pages deploy "$stage" --project-name="$project"
+echo "Deploying to Cloudflare Pages project '$project' (branch $branch)"
+npx wrangler pages deploy "$stage" --project-name="$project" --branch="$branch"
