@@ -55,7 +55,10 @@ stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
 
 echo "Staging chrome from new-look/"
-rsync -a --copy-unsafe-links --exclude '*-helpdocs' --exclude '*~' \
+# Do NOT dereference symlinks: the *-helpdocs symlinks point into
+# topublish/, which contains a self-referential symlink (ELOOP).  We
+# exclude them anyway; -a records any other symlink as a symlink.
+rsync -a --exclude '*-helpdocs' --exclude '*~' \
       new-look/ "$stage/"
 
 echo "Staging mdbook site -> docs/$release/"
