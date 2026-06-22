@@ -1,7 +1,44 @@
 HOL web-pages
 =============
 
-This repository stores the content for our HOL4 web-site.
-Currently, this is hosted at the URL <http://hol-theorem-prover.org>.
+This repository holds the content for the HOL4 web-site,
+<https://hol-theorem-prover.org>.
 
-Much of the content is generated automatically from the HOL4 help sources.
+Hosting
+-------
+
+The site is served by Cloudflare Pages (project `hol-webpages`) and
+published by direct upload -- there is no long-running server to log
+into.  A deploy is:
+
+    tools/deploy-cf <release> <holdir>
+
+This stages the hand-maintained pages from `new-look/` together with a
+freshly built copy of the HOL manuals (`<holdir>/Manual/book`, produced
+by `bin/build` followed by `Holmake mdbook` in `<holdir>/Manual`) under
+`docs/<release>/`, writes a `_redirects` rule so `/docs/latest/` points
+at the newest release, and uploads the result with `wrangler`.  See the
+comments at the top of the script for the environment it expects
+(`CLOUDFLARE_API_TOKEN`, etc.).
+
+`tools/push-docs` is an rsync-over-SSH alternative for serving the same
+built manuals from a traditional web host; it is not used for the
+Cloudflare deployment.
+
+Content
+-------
+
+`new-look/` holds the hand-written pages (landing page, FAQ, cheatsheet,
+release notes, ...).  The reference documentation and the manuals are no
+longer kept in this repository: they are built from the HOL sources as
+the unified mdbook site and published under `docs/<release>/` by
+`deploy-cf`.
+
+Retired
+-------
+
+`tools/mkhelpdocs` and the per-release `*-helpdocs` snapshots it
+produced are retired: the mdbook site's reference pages and theory
+graph supersede them, so new releases no longer run it.  The script is
+kept only for historical reference.  `tools/push-webpages` (rsync to
+SourceForge) is likewise no longer used.
