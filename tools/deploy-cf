@@ -83,6 +83,20 @@ if [ "${#missing[@]}" -gt 0 ]; then
     exit 1
 fi
 
+# Refuse a complete-but-stale tree.  The presence checks above pass even
+# when book/ is a full site left over from an earlier `Holmake mdbook'
+# that a later `bin/build' has since outdated.  build_help regenerates
+# help/HOL.LanderFragment.html, which the aggregator's book/index.html
+# target lists as a prerequisite (see Manual/Holmakefile), so "fragment
+# newer than book/index.html" is precisely Holmake's own out-of-date
+# test.  A missing fragment makes -nt false, so this never false-flags.
+if [ "$holdir/help/HOL.LanderFragment.html" -nt "$book/index.html" ]; then
+    echo "deploy-cf: $book is stale -- bin/build ran after the last" \
+         "Holmake mdbook, so the staged docs are out of date." >&2
+    echo "Refresh it: (cd \"$holdir/Manual\" && Holmake mdbook)" >&2
+    exit 1
+fi
+
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
 
