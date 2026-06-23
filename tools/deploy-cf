@@ -45,9 +45,41 @@ project=${CF_PAGES_PROJECT:-hol-webpages}
 branch=${CF_PAGES_BRANCH:-master}
 book="$holdir/Manual/book"
 
-if [ ! -f "$book/index.html" ]; then
-    echo "No built mdbook site at $book" >&2
-    echo "Run: (cd $holdir && bin/build -F && cd Manual && Holmake mdbook)" >&2
+# Pre-flight: refuse to publish a tree that was never built, or only
+# half-built.  deploy-cf stages $book verbatim, so a missing build here
+# means silently shipping a broken site.  Check a sample of indicative
+# outputs from each required step:
+#   - <book>/index.html and <book>/<manual>/index.html come from
+#     `Holmake mdbook' (the landing page + one book per manual);
+#   - <book>/htmlsigs/idIndex.html and <book>/theory-graph/ come from
+#     `bin/build' (its build_help step), so their absence means the HOL
+#     repo itself was not built before Holmake mdbook ran.
+# `bin/build' alone populates only htmlsigs/ (+ Reference/), so checking
+# the per-manual books and theory-graph catches the common
+# "forgot Holmake mdbook" / "forgot bin/build" mistakes.  A missing
+# $book entirely just shows up as every indicative file being absent.
+build_hint="(cd \"$holdir\" && bin/build -F && cd Manual && Holmake mdbook)"
+
+missing=()
+[ -f "$book/index.html" ] || missing+=("index.html  (Holmake mdbook)")
+manuals=""
+if [ -f "$holdir/Manual/mdbook.mk" ]; then
+    manuals=$(sed -n 's/^MANUALS[[:space:]]*=[[:space:]]*//p' \
+                  "$holdir/Manual/mdbook.mk")
+fi
+for m in $manuals; do
+    [ -f "$book/$m/index.html" ] || \
+        missing+=("$m/index.html  (Holmake mdbook -- $m not built)")
+done
+[ -f "$book/htmlsigs/idIndex.html" ] || \
+    missing+=("htmlsigs/idIndex.html  (bin/build -- HOL repo not built?)")
+[ -d "$book/theory-graph" ] || \
+    missing+=("theory-graph/  (bin/build -- HOL repo not built?)")
+
+if [ "${#missing[@]}" -gt 0 ]; then
+    echo "deploy-cf: $book looks incompletely built; missing:" >&2
+    for m in "${missing[@]}"; do echo "  - $m" >&2; done
+    echo "Build it first: $build_hint" >&2
     exit 1
 fi
 
